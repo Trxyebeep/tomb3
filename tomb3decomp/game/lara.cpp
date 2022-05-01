@@ -801,6 +801,62 @@ long LaraDeflectEdgeDuck(ITEM_INFO* item, COLL_INFO* coll)
 	return 0;
 }
 
+void lara_as_all4turnl(ITEM_INFO* item, COLL_INFO* coll)
+{
+	if (item->hit_points <= 0)
+	{
+		item->goal_anim_state = AS_ALL4S;
+		return;
+	}
+
+	coll->enable_spaz = 0;
+	coll->enable_baddie_push = 1;
+	lara.torso_x_rot = 0;
+	lara.torso_y_rot = 0;
+	camera.target_elevation = -4186;
+
+	if (!TestLaraSlide(item, coll))
+	{
+		item->pos.y_rot -= 273;
+
+		if (!(input & IN_LEFT))
+			item->goal_anim_state = AS_ALL4S;
+	}
+}
+
+void lara_col_all4turnl(ITEM_INFO* item, COLL_INFO* coll)
+{
+	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
+}
+
+void lara_as_all4turnr(ITEM_INFO* item, COLL_INFO* coll)
+{
+	if (item->hit_points <= 0)
+	{
+		item->goal_anim_state = AS_ALL4S;
+		return;
+	}
+
+	coll->enable_spaz = 0;
+	coll->enable_baddie_push = 1;
+	lara.torso_x_rot = 0;
+	lara.torso_y_rot = 0;
+	camera.target_elevation = -4186;
+
+	if (!TestLaraSlide(item, coll))
+	{
+		item->pos.y_rot += 273;
+
+		if (!(input & IN_RIGHT))
+			item->goal_anim_state = AS_ALL4S;
+	}
+}
+
+void lara_col_all4turnr(ITEM_INFO* item, COLL_INFO* coll)
+{
+	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
+}
+
 void inject_lara(bool replace)
 {
 	INJECT(0x00444C20, LaraLandedBad, replace);
@@ -824,4 +880,8 @@ void inject_lara(bool replace)
 	INJECT(0x0043EF10, lara_as_crawl, replace);
 	INJECT(0x0043EFE0, lara_col_crawl, replace);
 	INJECT(0x0043F0D0, LaraDeflectEdgeDuck, replace);
+	INJECT(0x0043F150, lara_as_all4turnl, replace);
+	INJECT(0x0043F1C0, lara_col_all4turnl, replace);
+	INJECT(0x0043F1F0, lara_as_all4turnr, replace);
+//	INJECT(----------, lara_col_all4turnr, replace);	//replaced with lara_col_all4turnl
 }

@@ -24,6 +24,10 @@ short LaraCeilingFront(ITEM_INFO* item, short ang, long dist);
 void lara_as_crawl(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_crawl(ITEM_INFO* item, COLL_INFO* coll);
 long LaraDeflectEdgeDuck(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_all4turnl(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_all4turnl(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_all4turnr(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_all4turnr(ITEM_INFO* item, COLL_INFO* coll);
 
 #define LookUpDown	( (void(__cdecl*)()) 0x004446E0 )
 #define GetStaticObjects	( (long(__cdecl*)(ITEM_INFO*, short, long, long, long)) 0x00445020 )
