@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32413.511
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tomb3decomp", "tomb3decomp.vcxproj", "{CB038090-6E9C-48AE-8D36-56EB883F9040}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CB038090-6E9C-48AE-8D36-56EB883F9040}.Debug|x86.ActiveCfg = Debug|Win32
+		{CB038090-6E9C-48AE-8D36-56EB883F9040}.Debug|x86.Build.0 = Debug|Win32
+		{CB038090-6E9C-48AE-8D36-56EB883F9040}.Release|x86.ActiveCfg = Release|Win32
+		{CB038090-6E9C-48AE-8D36-56EB883F9040}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {06F7EC65-32C8-4BDD-9428-BD2C71F3A9BD}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{cb038090-6e9c-48ae-8d36-56eb883f9040}</ProjectGuid>
+    <RootNamespace>tomb3decomp</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)Build\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectDir)Build\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;TOMB3DECOMP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>../tomb3/pch.h</PrecompiledHeaderFile>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalOptions>/SECTION:.text,RWE %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;TOMB3DECOMP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>../tomb3/pch.h</PrecompiledHeaderFile>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalOptions>/SECTION:.text,RWE %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;TOMB3DECOMP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;TOMB3DECOMP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="tomb3decomp\3dsystem\phd_math.h" />
+    <ClInclude Include="tomb3decomp\game\51baton.h" />
+    <ClInclude Include="tomb3decomp\game\51civvy.h" />
+    <ClInclude Include="tomb3decomp\game\51laser.h" />
+    <ClInclude Include="tomb3decomp\game\51rocket.h" />
+    <ClInclude Include="tomb3decomp\game\autogun.h" />
+    <ClInclude Include="tomb3decomp\game\biggun.h" />
+    <ClInclude Include="tomb3decomp\game\bird.h" />
+    <ClInclude Include="tomb3decomp\game\blowpipe.h" />
+    <ClInclude Include="tomb3decomp\game\boat.h" />
+    <ClInclude Include="tomb3decomp\game\boomute.h" />
+    <ClInclude Include="tomb3decomp\game\box.h" />
+    <ClInclude Include="tomb3decomp\game\camera.h" />
+    <ClInclude Include="tomb3decomp\game\cinema.h" />
+    <ClInclude Include="tomb3decomp\game\clawmute.h" />
+    <ClInclude Include="tomb3decomp\game\cleaner.h" />
+    <ClInclude Include="tomb3decomp\game\cobra.h" />
+    <ClInclude Include="tomb3decomp\game\compy.h" />
+    <ClInclude Include="tomb3decomp\game\croc.h" />
+    <ClInclude Include="tomb3decomp\game\demo.h" />
+    <ClInclude Include="tomb3decomp\game\diver.h" />
+    <ClInclude Include="tomb3decomp\game\dog.h" />
+    <ClInclude Include="tomb3decomp\game\dragfire.h" />
+    <ClInclude Include="tomb3decomp\game\draw.h" />
+    <ClInclude Include="tomb3decomp\game\effect2.h" />
+    <ClInclude Include="tomb3decomp\game\effects.h" />
+    <ClInclude Include="tomb3decomp\game\firehead.h" />
+    <ClInclude Include="tomb3decomp\game\fish.h" />
+    <ClInclude Include="tomb3decomp\game\flamer.h" />
+    <ClInclude Include="tomb3decomp\game\flymaker.h" />
+    <ClInclude Include="tomb3decomp\game\footprnt.h" />
+    <ClInclude Include="tomb3decomp\game\gameflow.h" />
+    <ClInclude Include="tomb3decomp\game\hair.h" />
+    <ClInclude Include="tomb3decomp\game\larafire.h" />
+    <ClInclude Include="tomb3decomp\game\health.h" />
+    <ClInclude Include="tomb3decomp\game\hybrid.h" />
+    <ClInclude Include="tomb3decomp\game\inventry.h" />
+    <ClInclude Include="tomb3decomp\game\invfunc.h" />
+    <ClInclude Include="tomb3decomp\game\items.h" />
+    <ClInclude Include="tomb3decomp\game\kayak.h" />
+    <ClInclude Include="tomb3decomp\game\lara1gun.h" />
+    <ClInclude Include="tomb3decomp\game\lara2gun.h" />
+    <ClInclude Include="tomb3decomp\game\laraanim.h" />
+    <ClInclude Include="tomb3decomp\game\armysmg.h" />
+    <ClInclude Include="tomb3decomp\game\collide.h" />
+    <ClInclude Include="tomb3decomp\game\control.h" />
+    <ClInclude Include="tomb3decomp\game\lara.h" />
+    <ClInclude Include="tomb3decomp\game\laraclmb.h" />
+    <ClInclude Include="tomb3decomp\game\laraelec.h" />
+    <ClInclude Include="tomb3decomp\game\laraflar.h" />
+    <ClInclude Include="tomb3decomp\game\laramisc.h" />
+    <ClInclude Include="tomb3decomp\game\larasurf.h" />
+    <ClInclude Include="tomb3decomp\game\laraswim.h" />
+    <ClInclude Include="tomb3decomp\game\lasers.h" />
+    <ClInclude Include="tomb3decomp\game\lizman.h" />
+    <ClInclude Include="tomb3decomp\game\londboss.h" />
+    <ClInclude Include="tomb3decomp\game\londsec.h" />
+    <ClInclude Include="tomb3decomp\game\lot.h" />
+    <ClInclude Include="tomb3decomp\game\minecart.h" />
+    <ClInclude Include="tomb3decomp\game\missile.h" />
+    <ClInclude Include="tomb3decomp\game\monkey.h" />
+    <ClInclude Include="tomb3decomp\game\moveblok.h" />
+    <ClInclude Include="tomb3decomp\game\mpgun.h" />
+    <ClInclude Include="tomb3decomp\game\objects.h" />
+    <ClInclude Include="tomb3decomp\game\objlight.h" />
+    <ClInclude Include="tomb3decomp\game\oilred.h" />
+    <ClInclude Include="tomb3decomp\game\oilsmg.h" />
+    <ClInclude Include="tomb3decomp\game\orca.h" />
+    <ClInclude Include="tomb3decomp\game\people.h" />
+    <ClInclude Include="tomb3decomp\game\pickup.h" />
+    <ClInclude Include="tomb3decomp\game\prisoner.h" />
+    <ClInclude Include="tomb3decomp\game\punk.h" />
+    <ClInclude Include="tomb3decomp\game\quadbike.h" />
+    <ClInclude Include="tomb3decomp\game\rapmaker.h" />
+    <ClInclude Include="tomb3decomp\game\raptor.h" />
+    <ClInclude Include="tomb3decomp\game\rat.h" />
+    <ClInclude Include="tomb3decomp\game\savegame.h" />
+    <ClInclude Include="tomb3decomp\game\sealmute.h" />
+    <ClInclude Include="tomb3decomp\game\setup.h" />
+    <ClInclude Include="tomb3decomp\game\shiva.h" />
+    <ClInclude Include="tomb3decomp\game\sound.h" />
+    <ClInclude Include="tomb3decomp\game\sphere.h" />
+    <ClInclude Include="tomb3decomp\game\sub.h" />
+    <ClInclude Include="tomb3decomp\game\swat.h" />
+    <ClInclude Include="tomb3decomp\game\target.h" />
+    <ClInclude Include="tomb3decomp\game\text.h" />
+    <ClInclude Include="tomb3decomp\game\tiger.h" />
+    <ClInclude Include="tomb3decomp\game\tonyboss.h" />
+    <ClInclude Include="tomb3decomp\game\train.h" />
+    <ClInclude Include="tomb3decomp\game\traps.h" />
+    <ClInclude Include="tomb3decomp\game\trex.h" />
+    <ClInclude Include="tomb3decomp\game\tribeaxe.h" />
+    <ClInclude Include="tomb3decomp\game\triboss.h" />
+    <ClInclude Include="tomb3decomp\game\willboss.h" />
+    <ClInclude Include="tomb3decomp\game\wingmute.h" />
+    <ClInclude Include="tomb3decomp\game\winston.h" />
+    <ClInclude Include="tomb3decomp\global\types.h" />
+    <ClInclude Include="tomb3decomp\global\vars.h" />
+    <ClInclude Include="tomb3decomp\tomb3\framework.h" />
+    <ClInclude Include="tomb3decomp\tomb3\pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="tomb3decomp\3dsystem\phd_math.cpp" />
+    <ClCompile Include="tomb3decomp\game\51baton.cpp" />
+    <ClCompile Include="tomb3decomp\game\51civvy.cpp" />
+    <ClCompile Include="tomb3decomp\game\51laser.cpp" />
+    <ClCompile Include="tomb3decomp\game\51rocket.cpp" />
+    <ClCompile Include="tomb3decomp\game\armysmg.cpp" />
+    <ClCompile Include="tomb3decomp\game\autogun.cpp" />
+    <ClCompile Include="tomb3decomp\game\biggun.cpp" />
+    <ClCompile Include="tomb3decomp\game\bird.cpp" />
+    <ClCompile Include="tomb3decomp\game\blowpipe.cpp" />
+    <ClCompile Include="tomb3decomp\game\boat.cpp" />
+    <ClCompile Include="tomb3decomp\game\boomute.cpp" />
+    <ClCompile Include="tomb3decomp\game\box.cpp" />
+    <ClCompile Include="tomb3decomp\game\camera.cpp" />
+    <ClCompile Include="tomb3decomp\game\cinema.cpp" />
+    <ClCompile Include="tomb3decomp\game\clawmute.cpp" />
+    <ClCompile Include="tomb3decomp\game\cleaner.cpp" />
+    <ClCompile Include="tomb3decomp\game\cobra.cpp" />
+    <ClCompile Include="tomb3decomp\game\collide.cpp" />
+    <ClCompile Include="tomb3decomp\game\compy.cpp" />
+    <ClCompile Include="tomb3decomp\game\control.cpp" />
+    <ClCompile Include="tomb3decomp\game\croc.cpp" />
+    <ClCompile Include="tomb3decomp\game\demo.cpp" />
+    <ClCompile Include="tomb3decomp\game\diver.cpp" />
+    <ClCompile Include="tomb3decomp\game\dog.cpp" />
+    <ClCompile Include="tomb3decomp\game\dragfire.cpp" />
+    <ClCompile Include="tomb3decomp\game\draw.cpp" />
+    <ClCompile Include="tomb3decomp\game\effect2.cpp" />
+    <ClCompile Include="tomb3decomp\game\effects.cpp" />
+    <ClCompile Include="tomb3decomp\game\firehead.cpp" />
+    <ClCompile Include="tomb3decomp\game\fish.cpp" />
+    <ClCompile Include="tomb3decomp\game\flamer.cpp" />
+    <ClCompile Include="tomb3decomp\game\flymaker.cpp" />
+    <ClCompile Include="tomb3decomp\game\footprnt.cpp" />
+    <ClCompile Include="tomb3decomp\game\gameflow.cpp" />
+    <ClCompile Include="tomb3decomp\game\hair.cpp" />
+    <ClCompile Include="tomb3decomp\game\health.cpp" />
+    <ClCompile Include="tomb3decomp\game\hybrid.cpp" />
+    <ClCompile Include="tomb3decomp\game\inventry.cpp" />
+    <ClCompile Include="tomb3decomp\game\invfunc.cpp" />
+    <ClCompile Include="tomb3decomp\game\items.cpp" />
+    <ClCompile Include="tomb3decomp\game\kayak.cpp" />
+    <ClCompile Include="tomb3decomp\game\lara.cpp" />
+    <ClCompile Include="tomb3decomp\game\lara1gun.cpp" />
+    <ClCompile Include="tomb3decomp\game\lara2gun.cpp" />
+    <ClCompile Include="tomb3decomp\game\laraclmb.cpp" />
+    <ClCompile Include="tomb3decomp\game\laraelec.cpp" />
+    <ClCompile Include="tomb3decomp\game\larafire.cpp" />
+    <ClCompile Include="tomb3decomp\game\laraflar.cpp" />
+    <ClCompile Include="tomb3decomp\game\laramisc.cpp" />
+    <ClCompile Include="tomb3decomp\game\larasurf.cpp" />
+    <ClCompile Include="tomb3decomp\game\laraswim.cpp" />
+    <ClCompile Include="tomb3decomp\game\lasers.cpp" />
+    <ClCompile Include="tomb3decomp\game\lizman.cpp" />
+    <ClCompile Include="tomb3decomp\game\londboss.cpp" />
+    <ClCompile Include="tomb3decomp\game\londsec.cpp" />
+    <ClCompile Include="tomb3decomp\game\lot.cpp" />
+    <ClCompile Include="tomb3decomp\game\minecart.cpp" />
+    <ClCompile Include="tomb3decomp\game\missile.cpp" />
+    <ClCompile Include="tomb3decomp\game\monkey.cpp" />
+    <ClCompile Include="tomb3decomp\game\moveblok.cpp" />
+    <ClCompile Include="tomb3decomp\game\mpgun.cpp" />
+    <ClCompile Include="tomb3decomp\game\objects.cpp" />
+    <ClCompile Include="tomb3decomp\game\objlight.cpp" />
+    <ClCompile Include="tomb3decomp\game\oilred.cpp" />
+    <ClCompile Include="tomb3decomp\game\oilsmg.cpp" />
+    <ClCompile Include="tomb3decomp\game\orca.cpp" />
+    <ClCompile Include="tomb3decomp\game\people.cpp" />
+    <ClCompile Include="tomb3decomp\game\pickup.cpp" />
+    <ClCompile Include="tomb3decomp\game\prisoner.cpp" />
+    <ClCompile Include="tomb3decomp\game\punk.cpp" />
+    <ClCompile Include="tomb3decomp\game\quadbike.cpp" />
+    <ClCompile Include="tomb3decomp\game\rapmaker.cpp" />
+    <ClCompile Include="tomb3decomp\game\raptor.cpp" />
+    <ClCompile Include="tomb3decomp\game\rat.cpp" />
+    <ClCompile Include="tomb3decomp\game\savegame.cpp" />
+    <ClCompile Include="tomb3decomp\game\sealmute.cpp" />
+    <ClCompile Include="tomb3decomp\game\setup.cpp" />
+    <ClCompile Include="tomb3decomp\game\shiva.cpp" />
+    <ClCompile Include="tomb3decomp\game\sound.cpp" />
+    <ClCompile Include="tomb3decomp\game\sphere.cpp" />
+    <ClCompile Include="tomb3decomp\game\sub.cpp" />
+    <ClCompile Include="tomb3decomp\game\swat.cpp" />
+    <ClCompile Include="tomb3decomp\game\target.cpp" />
+    <ClCompile Include="tomb3decomp\game\text.cpp" />
+    <ClCompile Include="tomb3decomp\game\tiger.cpp" />
+    <ClCompile Include="tomb3decomp\game\tonyboss.cpp" />
+    <ClCompile Include="tomb3decomp\game\train.cpp" />
+    <ClCompile Include="tomb3decomp\game\traps.cpp" />
+    <ClCompile Include="tomb3decomp\game\trex.cpp" />
+    <ClCompile Include="tomb3decomp\game\tribeaxe.cpp" />
+    <ClCompile Include="tomb3decomp\game\triboss.cpp" />
+    <ClCompile Include="tomb3decomp\game\willboss.cpp" />
+    <ClCompile Include="tomb3decomp\game\wingmute.cpp" />
+    <ClCompile Include="tomb3decomp\game\winston.cpp" />
+    <ClCompile Include="tomb3decomp\tomb3\dllmain.cpp" />
+    <ClCompile Include="tomb3decomp\tomb3\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="tomb3decomp\global\progress.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
