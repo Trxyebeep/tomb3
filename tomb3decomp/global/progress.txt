@@ -657,9 +657,9 @@ tomb3decomp progress.
 0x0043EAA0	+	lara_col_duck
 0x0043EBA0	+	lara_as_all4s
 0x0043EC20	+	lara_col_all4s
-0x0043EF10		lara_as_crawl
-0x0043EFE0		lara_col_crawl
-0x0043F0D0		LaraDeflectEdgeDuck
+0x0043EF10	+	lara_as_crawl
+0x0043EFE0	+	lara_col_crawl
+0x0043F0D0	+	LaraDeflectEdgeDuck
 0x0043F150		lara_as_all4turnl
 0x0043F1C0		lara_col_all4turnl
 0x0043F1F0		lara_as_all4turnr

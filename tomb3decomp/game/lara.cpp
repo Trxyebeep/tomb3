@@ -494,8 +494,8 @@ void lara_as_duck(ITEM_INFO* item, COLL_INFO* coll)
 
 	if (input & (IN_FORWARD | IN_BACK) && lara.gun_status == LG_NO_ARMS && item->frame_number > anims[ANIM_DUCKBREATHE].frame_base + 10)
 	{
-		lara.torso_y_rot = 0;
 		lara.torso_x_rot = 0;
+		lara.torso_y_rot = 0;
 		item->goal_anim_state = AS_ALL4S;
 	}
 }
@@ -541,8 +541,8 @@ void lara_as_all4s(ITEM_INFO* item, COLL_INFO* coll)
 	if (input & IN_LOOK)
 		LookUpDown();
 
-	lara.torso_y_rot = 0;
 	lara.torso_x_rot = 0;
+	lara.torso_y_rot = 0;
 	coll->enable_spaz = 0;
 	coll->enable_baddie_push = 1;
 
@@ -701,6 +701,106 @@ short LaraCeilingFront(ITEM_INFO* item, short ang, long dist)
 	return (short)height;
 }
 
+void lara_as_crawl(ITEM_INFO* item, COLL_INFO* coll)
+{
+	if (item->hit_points <= 0)
+	{
+		item->goal_anim_state = AS_ALL4S;
+		return;
+	}
+
+	if (input & IN_LOOK)
+		LookUpDown();
+
+	lara.torso_x_rot = 0;
+	lara.torso_y_rot = 0;
+	coll->enable_spaz = 0;
+	coll->enable_baddie_push = 1;
+	camera.target_elevation = -4186;
+
+	if (TestLaraSlide(item, coll))
+		return;
+
+	if (!(input & IN_FORWARD) && (!(input & IN_DUCK) && !lara.keep_ducked))
+	{
+		item->goal_anim_state = AS_ALL4S;
+		return;
+	}
+
+	if (input & IN_LEFT)
+	{
+		lara.turn_rate -= 409;
+
+		if (lara.turn_rate < -546)
+			lara.turn_rate = -546;
+	}
+	else if (input & IN_RIGHT)
+	{
+		lara.turn_rate += 409;
+
+		if (lara.turn_rate > 546)
+			lara.turn_rate = 546;
+	}
+}
+
+void lara_col_crawl(ITEM_INFO* item, COLL_INFO* coll)
+{
+	item->gravity_status = 0;
+	item->fallspeed = 0;
+	lara.move_angle = item->pos.y_rot;
+	coll->radius = 200;
+	coll->bad_pos = 255;
+	coll->bad_neg = -255;
+	coll->bad_ceiling = 400;
+	coll->slopes_are_walls = 1;
+	coll->slopes_are_pits = 1;
+	coll->facing = lara.move_angle;
+	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
+
+	if (LaraDeflectEdgeDuck(item, coll))
+	{
+		item->current_anim_state = AS_ALL4S;
+		item->goal_anim_state = AS_ALL4S;
+
+		if (item->anim_number != ANIM_ALL4S)
+		{
+			item->anim_number = ANIM_ALL4S;
+			item->frame_number = anims[ANIM_ALL4S].frame_base;
+		}
+	}
+	else if (LaraFallen(item, coll))
+		lara.gun_status = LG_NO_ARMS;
+	else
+	{
+		ShiftItem(item, coll);
+		item->pos.y_pos += coll->mid_floor;
+	}
+}
+
+long LaraDeflectEdgeDuck(ITEM_INFO* item, COLL_INFO* coll)
+{
+	if (coll->coll_type == CT_FRONT || coll->coll_type == CT_TOP_FRONT)
+	{
+		ShiftItem(item, coll);
+		item->speed = 0;
+		item->gravity_status = 0;
+		return 1;
+	}
+
+	if (coll->coll_type == CT_LEFT)
+	{
+		ShiftItem(item, coll);
+		item->pos.y_rot += 364;
+	}
+	else if (coll->coll_type == CT_RIGHT)
+	{
+		ShiftItem(item, coll);
+		item->pos.y_rot -= 364;
+	}
+
+	return 0;
+}
+
 void inject_lara(bool replace)
 {
 	INJECT(0x00444C20, LaraLandedBad, replace);
@@ -721,4 +821,7 @@ void inject_lara(bool replace)
 	INJECT(0x0043EC20, lara_col_all4s, replace);
 	INJECT(0x00444D80, LaraFloorFront, replace);
 	INJECT(0x00444E00, LaraCeilingFront, replace);
+	INJECT(0x0043EF10, lara_as_crawl, replace);
+	INJECT(0x0043EFE0, lara_col_crawl, replace);
+	INJECT(0x0043F0D0, LaraDeflectEdgeDuck, replace);
 }
