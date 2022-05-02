@@ -65,9 +65,44 @@ long LaraTestHangJumpUp(ITEM_INFO* item, COLL_INFO* coll);
 void lara_as_forwardjump(ITEM_INFO* item, COLL_INFO* coll);
 void lara_as_walk(ITEM_INFO* item, COLL_INFO* coll);
 void lara_as_run(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_fastback(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_turn_r(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_turn_l(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_death(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_fastfall(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_hang(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_reach(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_splat(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_compress(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_back(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_fastturn(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_stepright(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_stepleft(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_slide(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_backjump(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_rightjump(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_leftjump(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_fallback(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_hangleft(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_hangright(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_slideback(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_pushblock(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_pullblock(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_ppready(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_pickup(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_pickupflare(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_switchon(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_switchoff(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_usekey(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_usepuzzle(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_special(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_swandive(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_fastdive(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_gymnast(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_waterout(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_wade(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_deathslide(ITEM_INFO* item, COLL_INFO* coll);
 
 #define LookUpDown	( (void(__cdecl*)()) 0x004446E0 )
 #define GetStaticObjects	( (long(__cdecl*)(ITEM_INFO*, short, long, long, long)) 0x00445020 )
 #define LaraHangTest	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x0043E1C0 )
-#define lara_as_wade	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x00441A80 )
-#define lara_as_back	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x00441450 )

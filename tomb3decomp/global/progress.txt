@@ -698,40 +698,40 @@ tomb3decomp progress.
 0x00440DB0	+	lara_as_forwardjump
 0x00440E90	+	lara_as_walk
 0x00440F20	+	lara_as_run
-0x004410A0		lara_as_fastback
-0x00441100		lara_as_turn_r
-0x004411A0		lara_as_turn_l
-0x00441240		lara_as_death
-0x00441260		lara_as_fastfall
-0x004412A0		lara_as_hang
-0x00441310		lara_as_reach
-0x00441330		lara_as_splat
-0x00441340		lara_as_compress
-0x00441450		lara_as_back
-0x004414E0		lara_as_fastturn
-0x00441530		lara_as_stepright
-0x004415B0		lara_as_stepleft
-0x00441630		lara_as_slide
-0x00441660		lara_as_backjump
-0x004416B0		lara_as_rightjump
-0x004416F0		lara_as_leftjump
-0x00441730		lara_as_fallback
-0x00441760		lara_as_hangleft
-0x004417A0		lara_as_hangright
-0x004417E0		lara_as_slideback
-0x00441800		lara_as_pushblock
-0x00441840		lara_as_ppready
-0x00441870		lara_as_pickup
-0x004418B0		lara_as_pickupflare
-0x00441910		lara_as_switchon
-0x00441950		lara_as_usekey
-0x00441990		lara_as_usepuzzle
-0x004419B0		lara_as_swandive
-0x004419F0		lara_as_fastdive
-0x00441A50		lara_as_gymnast
-0x00441A60		lara_as_waterout
-0x00441A80		lara_as_wade
-0x00441C00		lara_as_deathslide
+0x004410A0	+	lara_as_fastback
+0x00441100	+	lara_as_turn_r
+0x004411A0	+	lara_as_turn_l
+0x00441240	+	lara_as_death
+0x00441260	+	lara_as_fastfall
+0x004412A0	+	lara_as_hang
+0x00441310	+	lara_as_reach
+0x00441330	+	lara_as_splat
+0x00441340	+	lara_as_compress
+0x00441450	+	lara_as_back
+0x004414E0	+	lara_as_fastturn
+0x00441530	+	lara_as_stepright
+0x004415B0	+	lara_as_stepleft
+0x00441630	+	lara_as_slide
+0x00441660	+	lara_as_backjump
+0x004416B0	+	lara_as_rightjump
+0x004416F0	+	lara_as_leftjump
+0x00441730	+	lara_as_fallback
+0x00441760	+	lara_as_hangleft
+0x004417A0	+	lara_as_hangright
+0x004417E0	+	lara_as_slideback
+0x00441800	+	lara_as_pushblock
+0x00441840	+	lara_as_ppready
+0x00441870	+	lara_as_pickup
+0x004418B0	+	lara_as_pickupflare
+0x00441910	+	lara_as_switchon
+0x00441950	+	lara_as_usekey
+0x00441990	+	lara_as_special
+0x004419B0	+	lara_as_swandive
+0x004419F0	+	lara_as_fastdive
+0x00441A50	+	lara_as_gymnast
+0x00441A60	+	lara_as_waterout
+0x00441A80	+	lara_as_wade
+0x00441C00	+	lara_as_deathslide
 0x00441CA0		extra_as_breath
 0x00441CF0		extra_as_sharkkill
 0x00441D90		extra_as_airlock
