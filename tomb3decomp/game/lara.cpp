@@ -2026,6 +2026,158 @@ long LaraTestHangJumpUp(ITEM_INFO* item, COLL_INFO* coll)
 	return 1;
 }
 
+void lara_as_forwardjump(ITEM_INFO* item, COLL_INFO* coll)
+{
+	if (item->goal_anim_state == AS_SWANDIVE || item->goal_anim_state == AS_REACH)
+		item->goal_anim_state = AS_FORWARDJUMP;
+
+	if (item->goal_anim_state != AS_DEATH && item->goal_anim_state != AS_STOP && item->goal_anim_state != AS_RUN)
+	{
+		if (input & IN_ACTION && lara.gun_status == LG_ARMLESS)
+			item->goal_anim_state = AS_REACH;
+
+		if (input & IN_ROLL || input & IN_BACK)
+			item->goal_anim_state = AS_TWIST;
+
+		if (input & IN_WALK && lara.gun_status == LG_ARMLESS)
+			item->goal_anim_state = AS_SWANDIVE;
+
+		if (item->fallspeed > 131)
+			item->goal_anim_state = AS_FASTFALL;
+	}
+
+	if (input & IN_LEFT)
+	{
+		lara.turn_rate -= 409;
+
+		if (lara.turn_rate < -546)
+			lara.turn_rate = -546;
+	}
+	else if (input & IN_RIGHT)
+	{
+		lara.turn_rate += 409;
+
+		if (lara.turn_rate > 546)
+			lara.turn_rate = 546;
+	}
+}
+
+void lara_as_walk(ITEM_INFO* item, COLL_INFO* coll)
+{
+	if (item->hit_points <= 0)
+	{
+		item->goal_anim_state = AS_STOP;
+		return;
+	}
+
+	if (input & IN_LEFT)
+	{
+		lara.turn_rate -= 409;
+
+		if (lara.turn_rate < -728)
+			lara.turn_rate = -728;
+	}
+	else if (input & IN_RIGHT)
+	{
+		lara.turn_rate += 409;
+
+		if (lara.turn_rate > 728)
+			lara.turn_rate = 728;
+	}
+
+	if (input & IN_FORWARD)
+	{
+		if (lara.water_status == LARA_WADE)
+			item->goal_anim_state = AS_WADE;
+		else if (input & IN_WALK)
+			item->goal_anim_state = AS_WALK;
+		else
+			item->goal_anim_state = AS_RUN;
+	}
+	else
+		item->goal_anim_state = AS_STOP;
+}
+
+void lara_as_run(ITEM_INFO* item, COLL_INFO* coll)
+{
+	static long jump_ok = 1;
+
+	if (item->hit_points <= 0)
+	{
+		item->goal_anim_state = AS_DEATH;
+		return;
+	}
+
+	if (input & IN_ROLL)
+	{
+		item->anim_number = ANIM_ROLL;
+		item->frame_number = anims[ANIM_ROLL].frame_base + 2;
+		item->current_anim_state = AS_ROLL;
+		item->goal_anim_state = AS_STOP;
+		return;
+	}
+
+	if (input & IN_SPRINT && DashTimer == 120)
+	{
+		item->goal_anim_state = AS_DASH;
+		return;
+	}
+
+	if (input & IN_DUCK && lara.water_status != LARA_WADE)
+	{
+		item->goal_anim_state = AS_STOP;
+		return;
+	}
+
+	if (input & IN_LEFT)
+	{
+		lara.turn_rate -= 409;
+
+		if (lara.turn_rate < -1456)
+			lara.turn_rate = -1456;
+
+		item->pos.z_rot -= 273;
+
+		if (item->pos.z_rot < -2002)
+			item->pos.z_rot = -2002;
+	}
+	else if (input & IN_RIGHT)
+	{
+		lara.turn_rate += 409;
+
+		if (lara.turn_rate > 1456)
+			lara.turn_rate = 1456;
+
+		item->pos.z_rot += 273;
+
+		if (item->pos.z_rot > 2002)
+			item->pos.z_rot = 2002;
+	}
+
+	if (item->anim_number == ANIM_STARTRUN)
+		jump_ok = 0;
+	else if (item->anim_number != ANIM_RUN || item->frame_number == 4)
+		jump_ok = 1;
+
+	if (input & IN_JUMP && jump_ok && !item->gravity_status)
+	{
+		item->goal_anim_state = AS_FORWARDJUMP;
+		return;
+	}
+
+	if (input & IN_FORWARD)
+	{
+		if (lara.water_status == LARA_WADE)
+			item->goal_anim_state = AS_WADE;
+		else if (input & IN_WALK)
+			item->goal_anim_state = AS_WALK;
+		else
+			item->goal_anim_state = AS_RUN;
+	}
+	else
+		item->goal_anim_state = AS_STOP;
+}
+
 void inject_lara(bool replace)
 {
 	INJECT(0x00444C20, LaraLandedBad, replace);
@@ -2087,4 +2239,7 @@ void inject_lara(bool replace)
 	INJECT(0x00440A20, lara_as_upjump, replace);
 	INJECT(0x00440A40, lara_col_upjump, replace);
 	INJECT(0x00440B90, LaraTestHangJumpUp, replace);
+	INJECT(0x00440DB0, lara_as_forwardjump, replace);
+	INJECT(0x00440E90, lara_as_walk, replace);
+	INJECT(0x00440F20, lara_as_run, replace);
 }

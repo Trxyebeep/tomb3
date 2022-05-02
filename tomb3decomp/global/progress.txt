@@ -695,9 +695,9 @@ tomb3decomp progress.
 0x00440A20	+	lara_as_upjump
 0x00440A40	+	lara_col_upjump
 0x00440B90	+	LaraTestHangJumpUp
-0x00440DB0		lara_as_forwardjump
-0x00440E90		lara_as_walk
-0x00440F20		lara_as_run
+0x00440DB0	+	lara_as_forwardjump
+0x00440E90	+	lara_as_walk
+0x00440F20	+	lara_as_run
 0x004410A0		lara_as_fastback
 0x00441100		lara_as_turn_r
 0x004411A0		lara_as_turn_l

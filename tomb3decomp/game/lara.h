@@ -62,11 +62,12 @@ void lara_col_stop(ITEM_INFO* item, COLL_INFO* coll);
 void lara_as_upjump(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_upjump(ITEM_INFO* item, COLL_INFO* coll);
 long LaraTestHangJumpUp(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_forwardjump(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_walk(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_run(ITEM_INFO* item, COLL_INFO* coll);
 
 #define LookUpDown	( (void(__cdecl*)()) 0x004446E0 )
 #define GetStaticObjects	( (long(__cdecl*)(ITEM_INFO*, short, long, long, long)) 0x00445020 )
 #define LaraHangTest	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x0043E1C0 )
 #define lara_as_wade	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x00441A80 )
-#define lara_as_run	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x00440F20 )
-#define lara_as_walk	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x00440E90 )
 #define lara_as_back	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x00441450 )
