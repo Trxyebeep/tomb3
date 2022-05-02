@@ -28,6 +28,15 @@ void lara_as_all4turnl(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_all4turnl(ITEM_INFO* item, COLL_INFO* coll);
 void lara_as_all4turnr(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_all4turnr(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_crawlb(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_crawlb(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_crawl2hang(ITEM_INFO* item, COLL_INFO* coll);
+long LaraTestEdgeCatch(ITEM_INFO* item, COLL_INFO* coll, long* edge);
+long LaraTestHangOnClimbWall(ITEM_INFO* item, COLL_INFO* coll);
+long TestWall(ITEM_INFO* item, long front, long right, long down);
+void LaraCollideStop(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_dash(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_dash(ITEM_INFO* item, COLL_INFO* coll);
 
 #define LookUpDown	( (void(__cdecl*)()) 0x004446E0 )
 #define GetStaticObjects	( (long(__cdecl*)(ITEM_INFO*, short, long, long, long)) 0x00445020 )
