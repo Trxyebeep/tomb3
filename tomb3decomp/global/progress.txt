@@ -670,31 +670,31 @@ tomb3decomp progress.
 0x0043F720	+	lara_col_dash
 0x0043F870	+	TestWall
 0x0043F980	+	LaraCollideStop
-0x0043FA40		lara_as_dashdive
-0x0043FA70		lara_col_dashdive
-0x0043FB90		lara_as_hang2
-0x0043FC10		MonkeySwingFall
-0x0043FC70		lara_col_hang2
-0x0043FE90		MonkeySwingSnap
-0x0043FEE0		TestMonkeyLeft
-0x0043FFB0		GetDirOctant
-0x0043FFD0		TestMonkeyRight
-0x004400A0		lara_as_monkeyswing
-0x00440140		lara_col_monkeyswing
-0x00440220		lara_as_monkeyl
-0x00440280		lara_col_monkeyl
-0x004402F0		lara_as_monkeyr
-0x00440350		lara_col_monkeyr
-0x004403C0		lara_as_hangturnl
-0x00440400		lara_col_hangturnlr
-0x004404A0		lara_as_hangturnr
-0x004404E0		lara_as_monkey180
-0x00440500		lara_col_monkey180
-0x00440520		lara_as_stop
-0x00440960		lara_col_stop
-0x00440A20		lara_as_upjump
-0x00440A40		lara_col_upjump
-0x00440B90		LaraTestHangJumpUp
+0x0043FA40	+	lara_as_dashdive
+0x0043FA70	+	lara_col_dashdive
+0x0043FB90	+	lara_as_hang2
+0x0043FC10	+	MonkeySwingFall
+0x0043FC70	+	lara_col_hang2
+0x0043FE90	+	MonkeySwingSnap
+0x0043FEE0	+	TestMonkeyLeft
+0x0043FFB0	+	GetDirOctant
+0x0043FFD0	+	TestMonkeyRight
+0x004400A0	+	lara_as_monkeyswing
+0x00440140	+	lara_col_monkeyswing
+0x00440220	+	lara_as_monkeyl
+0x00440280	+	lara_col_monkeyl
+0x004402F0	+	lara_as_monkeyr
+0x00440350	+	lara_col_monkeyr
+0x004403C0	+	lara_as_hangturnl
+0x00440400	+	lara_col_hangturnlr
+0x004404A0	+	lara_as_hangturnr
+0x004404E0	+	lara_as_monkey180
+0x00440500	+	lara_col_monkey180
+0x00440520	+	lara_as_stop
+0x00440960	+	lara_col_stop
+0x00440A20	+	lara_as_upjump
+0x00440A40	+	lara_col_upjump
+0x00440B90	+	LaraTestHangJumpUp
 0x00440DB0		lara_as_forwardjump
 0x00440E90		lara_as_walk
 0x00440F20		lara_as_run

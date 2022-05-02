@@ -80,12 +80,12 @@ enum input_buttons
 
 enum lara_gun_status
 {
-	LG_NO_ARMS,
-	LG_HANDS_BUSY,
-	LG_DRAW_GUNS,
-	LG_UNDRAW_GUNS,
+	LG_ARMLESS,
+	LG_HANDSBUSY,
+	LG_DRAW,
+	LG_UNDRAW,
 	LG_READY,
-	LG_FLARE,
+	LG_SPECIAL,
 };
 
 enum collision_types
@@ -109,13 +109,13 @@ enum room_flags
 	ROOM_SWAMP = 0x80
 };
 
-enum lara_water_status
+enum lara_water_states
 {
-	LW_ABOVE_WATER,
-	LW_UNDERWATER,
-	LW_SURFACE,
-	LW_FLYCHEAT,
-	LW_WADE
+	LARA_ABOVEWATER,
+	LARA_UNDERWATER,
+	LARA_SURFACE,
+	LARA_CHEAT,
+	LARA_WADE
 };
 
 enum camera_type
@@ -143,6 +143,22 @@ enum quadrant_names
 	EAST,
 	SOUTH,
 	WEST
+};
+
+enum lara_gun_types
+{
+	LG_UNARMED,
+	LG_PISTOLS,
+	LG_MAGNUMS,
+	LG_UZIS,
+	LG_SHOTGUN,
+	LG_M16,
+	LG_ROCKET,
+	LG_GRENADE,
+	LG_HARPOON,
+	LG_FLARE,
+	LG_SKIDOO,
+	NUM_WEAPONS
 };
 
 /*structs*/

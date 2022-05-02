@@ -37,6 +37,36 @@ long TestWall(ITEM_INFO* item, long front, long right, long down);
 void LaraCollideStop(ITEM_INFO* item, COLL_INFO* coll);
 void lara_as_dash(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_dash(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_dashdive(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_dashdive(ITEM_INFO* item, COLL_INFO* coll);
+void MonkeySwingFall(ITEM_INFO* item);
+void MonkeySwingSnap(ITEM_INFO* item, COLL_INFO* coll);
+short GetDirOctant(long rot);
+short TestMonkeyLeft(ITEM_INFO* item, COLL_INFO* coll);
+short TestMonkeyRight(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_hang2(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_hang2(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_monkeyswing(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_monkeyswing(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_monkeyl(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_monkeyl(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_monkeyr(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_monkeyr(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_hangturnl(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_hangturnr(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_hangturnlr(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_monkey180(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_monkey180(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_stop(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_stop(ITEM_INFO* item, COLL_INFO* coll);
+void lara_as_upjump(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_upjump(ITEM_INFO* item, COLL_INFO* coll);
+long LaraTestHangJumpUp(ITEM_INFO* item, COLL_INFO* coll);
 
 #define LookUpDown	( (void(__cdecl*)()) 0x004446E0 )
 #define GetStaticObjects	( (long(__cdecl*)(ITEM_INFO*, short, long, long, long)) 0x00445020 )
+#define LaraHangTest	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x0043E1C0 )
+#define lara_as_wade	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x00441A80 )
+#define lara_as_run	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x00440F20 )
+#define lara_as_walk	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x00440E90 )
+#define lara_as_back	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x00441450 )
