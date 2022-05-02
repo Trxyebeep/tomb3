@@ -315,6 +315,12 @@
     <ClInclude Include="tomb3decomp\3dsystem\phd_math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tomb3decomp\3dsystem\3d_gen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3decomp\specific\function_stubs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tomb3decomp\tomb3\dllmain.cpp">
@@ -606,6 +612,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tomb3decomp\3dsystem\phd_math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tomb3decomp\3dsystem\3d_gen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tomb3decomp\specific\function_stubs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -8,6 +8,9 @@
 #include "laramisc.h"
 #include "sound.h"
 #include "draw.h"
+#include "../3dsystem/3d_gen.h"
+#include "effect2.h"
+#include "../specific/function_stubs.h"
 
 long LaraLandedBad(ITEM_INFO* item, COLL_INFO* coll)
 {
@@ -2383,11 +2386,15 @@ void lara_as_fastturn(ITEM_INFO* item, COLL_INFO* coll)
 
 	if (lara.turn_rate < 0)
 	{
+		lara.turn_rate = -1456;
+
 		if (!(input & IN_LEFT))
 			item->goal_anim_state = AS_STOP;
 	}
 	else
 	{
+		lara.turn_rate = 1456;
+
 		if (!(input & IN_RIGHT))
 			item->goal_anim_state = AS_STOP;
 	}
@@ -2778,6 +2785,106 @@ void lara_as_deathslide(ITEM_INFO* item, COLL_INFO* coll)
 	}
 }
 
+void extra_as_breath(ITEM_INFO* item, COLL_INFO* coll)
+{
+	item->anim_number = ANIM_BREATH;
+	item->frame_number = anims[ANIM_BREATH].frame_base;
+	item->current_anim_state = AS_STOP;
+	item->goal_anim_state = AS_STOP;
+	lara.gun_status = LG_ARMLESS;
+	camera.type = CHASE_CAMERA;
+	AlterFOV(14560);
+	lara.extra_anim = 0;
+}
+
+void extra_as_sharkkill(ITEM_INFO* item, COLL_INFO* coll)
+{
+	long wh;
+
+	camera.target_angle = 29120;
+	camera.target_distance = 3072;
+	lara.hit_direction = -1;
+
+	if (item->frame_number == anims[item->anim_number].frame_end)
+	{
+		wh = GetWaterHeight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number);
+
+		if (wh != NO_HEIGHT && wh < item->pos.y_pos - 100)
+			item->pos.y_pos -= 5;
+	}
+
+	if (item->frame_number < anims[item->anim_number].frame_end - 30)
+		lara.death_count = 1;
+}
+
+void extra_as_airlock(ITEM_INFO* item, COLL_INFO* coll)
+{
+	camera.target_angle = 14560;
+	camera.target_elevation = -4550;
+}
+
+void extra_as_gongbong(ITEM_INFO* item, COLL_INFO* coll)
+{
+	camera.target_angle = -4550;
+	camera.target_elevation = -3640;
+	camera.target_distance = 3072;
+}
+
+void extra_as_dinokill(ITEM_INFO* item, COLL_INFO* coll)
+{
+	camera.flags = 1;
+	camera.target_angle = 30940;
+	camera.target_elevation = -4550;
+	lara.hit_direction = -1;
+
+	if (item->frame_number < anims[item->anim_number].frame_end - 30)
+		lara.death_count = 1;
+}
+
+void extra_as_startanim(ITEM_INFO* item, COLL_INFO* coll)
+{
+	FLOOR_INFO* floor;
+	short room_number;
+
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+	TestTriggers(trigger_index, 0);
+}
+
+void extra_as_trainkill(ITEM_INFO* item, COLL_INFO* coll)
+{
+	FLOOR_INFO* floor;
+	short room_number;
+
+	lara.hit_direction = -1;
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	item->pos.y_pos = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (item->frame_number < anims[item->anim_number].frame_end - 30)
+		lara.death_count = 1;
+
+	item->gravity_status = 0;
+	item->hit_points = -1;
+}
+
+void extra_as_rapidsdrown(ITEM_INFO* item, COLL_INFO* coll)
+{
+	FLOOR_INFO* floor;
+	short room_number;
+
+	GetLaraCollisionInfo(item, coll);
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	item->pos.y_pos = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos) + 384;
+	item->pos.y_rot += 1024;
+	lara.death_count++;
+
+	if (!(wibble & 3))
+		TriggerWaterfallMist(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, GetRandomControl() & 0xFFF);
+}
+
 void inject_lara(bool replace)
 {
 	INJECT(0x00444C20, LaraLandedBad, replace);
@@ -2879,4 +2986,12 @@ void inject_lara(bool replace)
 	INJECT(0x00441A60, lara_as_waterout, replace);
 	INJECT(0x00441A80, lara_as_wade, replace);
 	INJECT(0x00441C00, lara_as_deathslide, replace);
+	INJECT(0x00441CA0, extra_as_breath, replace);
+	INJECT(0x00441CF0, extra_as_sharkkill, replace);
+	INJECT(0x00441D90, extra_as_airlock, replace);
+	INJECT(0x00441DB0, extra_as_gongbong, replace);
+	INJECT(0x00441DD0, extra_as_dinokill, replace);
+	INJECT(0x00441E30, extra_as_startanim, replace);
+	INJECT(0x00441E80, extra_as_trainkill, replace);
+	INJECT(0x00441F00, extra_as_rapidsdrown, replace);
 }

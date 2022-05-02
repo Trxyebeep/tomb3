@@ -102,6 +102,14 @@ void lara_as_gymnast(ITEM_INFO* item, COLL_INFO* coll);
 void lara_as_waterout(ITEM_INFO* item, COLL_INFO* coll);
 void lara_as_wade(ITEM_INFO* item, COLL_INFO* coll);
 void lara_as_deathslide(ITEM_INFO* item, COLL_INFO* coll);
+void extra_as_breath(ITEM_INFO* item, COLL_INFO* coll);
+void extra_as_sharkkill(ITEM_INFO* item, COLL_INFO* coll);
+void extra_as_airlock(ITEM_INFO* item, COLL_INFO* coll);
+void extra_as_gongbong(ITEM_INFO* item, COLL_INFO* coll);
+void extra_as_dinokill(ITEM_INFO* item, COLL_INFO* coll);
+void extra_as_startanim(ITEM_INFO* item, COLL_INFO* coll);
+void extra_as_trainkill(ITEM_INFO* item, COLL_INFO* coll);
+void extra_as_rapidsdrown(ITEM_INFO* item, COLL_INFO* coll);
 
 #define LookUpDown	( (void(__cdecl*)()) 0x004446E0 )
 #define GetStaticObjects	( (long(__cdecl*)(ITEM_INFO*, short, long, long, long)) 0x00445020 )

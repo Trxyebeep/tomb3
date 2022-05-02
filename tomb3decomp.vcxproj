@@ -157,6 +157,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="tomb3decomp\3dsystem\3d_gen.h" />
     <ClInclude Include="tomb3decomp\3dsystem\phd_math.h" />
     <ClInclude Include="tomb3decomp\game\51baton.h" />
     <ClInclude Include="tomb3decomp\game\51civvy.h" />
@@ -255,10 +256,12 @@
     <ClInclude Include="tomb3decomp\game\winston.h" />
     <ClInclude Include="tomb3decomp\global\types.h" />
     <ClInclude Include="tomb3decomp\global\vars.h" />
+    <ClInclude Include="tomb3decomp\specific\function_stubs.h" />
     <ClInclude Include="tomb3decomp\tomb3\framework.h" />
     <ClInclude Include="tomb3decomp\tomb3\pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="tomb3decomp\3dsystem\3d_gen.cpp" />
     <ClCompile Include="tomb3decomp\3dsystem\phd_math.cpp" />
     <ClCompile Include="tomb3decomp\game\51baton.cpp" />
     <ClCompile Include="tomb3decomp\game\51civvy.cpp" />
@@ -354,6 +357,7 @@
     <ClCompile Include="tomb3decomp\game\willboss.cpp" />
     <ClCompile Include="tomb3decomp\game\wingmute.cpp" />
     <ClCompile Include="tomb3decomp\game\winston.cpp" />
+    <ClCompile Include="tomb3decomp\specific\function_stubs.cpp" />
     <ClCompile Include="tomb3decomp\tomb3\dllmain.cpp" />
     <ClCompile Include="tomb3decomp\tomb3\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

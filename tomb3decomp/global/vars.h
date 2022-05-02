@@ -15,6 +15,7 @@
 #define camera	VAR_(0x006E3040, CAMERA_INFO)
 #define height_type	VAR_(0x006E2A24, long)
 #define DashTimer	VAR_(0x006D62A0, short)
+#define wibble	VAR_(0x006261A8, long)
 
 /*arrays*/
 
