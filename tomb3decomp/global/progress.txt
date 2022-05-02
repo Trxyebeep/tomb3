@@ -648,7 +648,7 @@ tomb3decomp progress.
 0x0043DE00	+	GetLaraCollisionInfo
 0x0043DE40	+	LaraDeflectEdgeJump
 0x0043DFC0	+	LaraSlideEdgeJump
-0x0043E0B0		LaraTestHangOnClimbWall
+0x0043E0B0	+	LaraTestHangOnClimbWall
 0x0043E1C0		LaraHangTest
 0x0043E4E0		LaraTestHangJump
 0x0043E730	+	TestHangSwingIn
@@ -663,13 +663,13 @@ tomb3decomp progress.
 0x0043F150	+	lara_as_all4turnl
 0x0043F1C0	+	lara_col_all4turnl
 0x0043F1F0	+	lara_as_all4turnr
-0x0043F260		lara_as_crawlb
-0x0043F330		lara_col_crawlb
-0x0043F430		lara_col_crawl2hang
-0x0043F600		lara_as_dash
-0x0043F720		lara_col_dash
-0x0043F870		TestWall
-0x0043F980		LaraCollideStop
+0x0043F260	+	lara_as_crawlb
+0x0043F330	+	lara_col_crawlb
+0x0043F430	+	lara_col_crawl2hang
+0x0043F600	+	lara_as_dash
+0x0043F720	+	lara_col_dash
+0x0043F870	+	TestWall
+0x0043F980	+	LaraCollideStop
 0x0043FA40		lara_as_dashdive
 0x0043FA70		lara_col_dashdive
 0x0043FB90		lara_as_hang2
@@ -785,7 +785,7 @@ tomb3decomp progress.
 0x00444D80	+	LaraFloorFront
 0x00444E00	+	LaraCeilingFront
 0x00444E80	+	LaraFallen
-0x00444EE0		LaraTestEdgeCatch
+0x00444EE0	+	LaraTestEdgeCatch
 0x00444F90	+	LaraDeflectEdge
 0x00445020		GetStaticObjects
 
