@@ -915,21 +915,21 @@ tomb3decomp progress.
 		game/laraswim.cpp
 
 0x0044E950		LaraUnderWater
-0x0044EBA0		lara_as_swim
-0x0044EC10		SwimTurn
-0x0044ECA0		lara_as_glide
-0x0044ED20		lara_as_tread
-0x0044EDB0		lara_as_dive
-0x0044EDD0		lara_as_uwdeath
-0x0044EE30		lara_as_waterroll
-0x0044EE40		lara_col_swim
+0x0044EBA0	+	lara_as_swim
+0x0044EC10	+	SwimTurn
+0x0044ECA0	+	lara_as_glide
+0x0044ED20	+	lara_as_tread
+0x0044EDB0	+	lara_as_dive
+0x0044EDD0	+	lara_as_uwdeath
+0x0044EE30	+	lara_as_waterroll
+0x0044EE40	+	lara_col_swim
 0x0044EE60		LaraSwimCollision
 0x0044EFC0		LaraTestWaterDepth
-0x0044F0A0		lara_col_glide
-0x0044F0C0		lara_col_tread
-0x0044F0E0		lara_col_dive
-0x0044F100		lara_col_uwdeath
-0x0044F160		lara_col_waterroll
+0x0044F0A0	+	lara_col_glide
+0x0044F0C0	+	lara_col_tread
+0x0044F0E0	+	lara_col_dive
+0x0044F100	+	lara_col_uwdeath
+0x0044F160	+	lara_col_waterroll
 0x0044F180		GetWaterDepth
 0x0044F310		LaraWaterCurrent
 
