@@ -257,6 +257,7 @@
     <ClInclude Include="tomb3decomp\global\types.h" />
     <ClInclude Include="tomb3decomp\global\vars.h" />
     <ClInclude Include="tomb3decomp\specific\function_stubs.h" />
+    <ClInclude Include="tomb3decomp\specific\specific.h" />
     <ClInclude Include="tomb3decomp\tomb3\framework.h" />
     <ClInclude Include="tomb3decomp\tomb3\pch.h" />
   </ItemGroup>
@@ -358,6 +359,7 @@
     <ClCompile Include="tomb3decomp\game\wingmute.cpp" />
     <ClCompile Include="tomb3decomp\game\winston.cpp" />
     <ClCompile Include="tomb3decomp\specific\function_stubs.cpp" />
+    <ClCompile Include="tomb3decomp\specific\specific.cpp" />
     <ClCompile Include="tomb3decomp\tomb3\dllmain.cpp" />
     <ClCompile Include="tomb3decomp\tomb3\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

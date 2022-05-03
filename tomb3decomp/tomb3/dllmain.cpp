@@ -5,6 +5,7 @@
 #include "../game/laraclmb.h"
 #include "../game/larasurf.h"
 #include "../game/laraswim.h"
+#include "../game/laramisc.h"
 
 HINSTANCE hinstance = 0;
 
@@ -32,6 +33,7 @@ void inject_all(bool replace)
 	inject_laraclmb(replace);
 	inject_larasurf(replace);
 	inject_laraswim(replace);
+	inject_laramisc(replace);
 
 	//specific
 }

@@ -881,11 +881,11 @@ tomb3decomp progress.
 
 		game/laramisc.cpp
 
-0x0044C630		LaraCheatGetStuff
-0x0044C6F0		LaraControl
-0x0044CFC0		LaraCheat
-0x0044D060		LaraInitialiseMeshes
-0x0044D1A0		LaraCheatyBits
+0x0044C630	+	LaraCheatGetStuff
+0x0044C6F0	+	LaraControl
+0x0044CFC0	+	LaraCheat
+0x0044D060	+	LaraInitialiseMeshes
+0x0044D1A0	+	LaraCheatyBits
 0x0044D2A0		AnimateLara
 0x0044D690		UseItem
 0x0044D880		ControlLaraExtra

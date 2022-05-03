@@ -31,6 +31,7 @@ do \
 } while (false)
 
 #define ABS(x) (((x)<0) ? (-(x)) : (x))
+#define SQUARE(x) ((x)*(x))
 
 /*enums*/
 enum mood_type
@@ -217,6 +218,25 @@ enum trigobj_types
 	TO_BODYBAG
 };
 
+enum lara_meshes
+{
+	HIPS,
+	THIGH_L,
+	CALF_L,
+	FOOT_L,
+	THIGH_R,
+	CALF_R,
+	FOOT_R,
+	TORSO,
+	UARM_R,
+	LARM_R,
+	HAND_R,
+	UARM_L,
+	LARM_L,
+	HAND_L,
+	HEAD
+};
+
 /*structs*/
 struct PHD_VECTOR
 {
@@ -383,6 +403,11 @@ struct CREATURE_INFO
 	LOT_INFO LOT;
 };
 
+struct AMMO_INFO
+{
+	long ammo;
+};
+
 struct LARA_INFO
 {
 	short item_number;
@@ -440,14 +465,14 @@ struct LARA_INFO
 	short torso_z_rot;
 	LARA_ARM left_arm;
 	LARA_ARM right_arm;
-	long pistols;
-	long magnums;
-	long uzis;
-	long shotgun;
-	long harpoon;
-	long rocket;
-	long grenade;
-	long m16;
+	AMMO_INFO pistols;
+	AMMO_INFO magnums;
+	AMMO_INFO uzis;
+	AMMO_INFO shotgun;
+	AMMO_INFO harpoon;
+	AMMO_INFO rocket;
+	AMMO_INFO grenade;
+	AMMO_INFO m16;
 	CREATURE_INFO* creature;
 };
 
@@ -641,5 +666,164 @@ struct CAMERA_INFO
 	OBJECT_VECTOR* fixed;
 	long mike_at_lara;
 	PHD_VECTOR mike_pos;
+};
+
+struct GAMEFLOW_INFO
+{
+	long firstOption;
+	long title_replace;
+	long ondeath_demo_mode;
+	long ondeath_ingame;
+	long noinput_time;
+	long on_demo_interrupt;
+	long on_demo_end;
+	long unused1[9];
+	short num_levels;
+	short num_picfiles;
+	short num_titlefiles;
+	short num_fmvfiles;
+	short num_cutfiles;
+	short num_demos;
+	short title_track;
+	short singlelevel;
+	short unused2[16];
+	ushort demoversion : 1;
+	ushort title_disabled : 1;
+	ushort cheatmodecheck_disabled : 1;
+	ushort noinput_timeout : 1;
+	ushort loadsave_disabled : 1;
+	ushort screensizing_disabled : 1;
+	ushort lockout_optionring : 1;
+	ushort dozy_cheat_enabled : 1;
+	ushort cyphered_strings : 1;
+	ushort gym_enabled : 1;
+	ushort play_any_level : 1;
+	ushort cheat_enable : 1;
+	ushort securitytag : 1;
+	ushort unused3[3];
+	uchar cypher_code;
+	uchar language;
+	uchar secret_track;
+	uchar stats_track;
+	char pads[4];
+};
+
+struct START_INFO
+{
+	ushort pistol_ammo;
+	ushort magnum_ammo;
+	ushort uzi_ammo;
+	ushort shotgun_ammo;
+	ushort m16_ammo;
+	ushort rocket_ammo;
+	ushort harpoon_ammo;
+	ushort grenade_ammo;
+	uchar num_medis;
+	uchar num_big_medis;
+	uchar num_scions;
+	uchar num_flares;
+	uchar num_sgcrystals;
+	char gun_status;
+	char gun_type;
+	ushort available : 1;
+	ushort got_pistols : 1;
+	ushort got_magnums : 1;
+	ushort got_uzis : 1;
+	ushort got_shotgun : 1;
+	ushort got_m16 : 1;
+	ushort got_rocket : 1;
+	ushort got_grenade : 1;
+	ushort got_harpoon : 1;
+	ushort secrets;
+	uchar num_icon1;
+	uchar num_icon2;
+	uchar num_icon3;
+	uchar num_icon4;
+	ulong timer;
+	ulong ammo_used;
+	ulong ammo_hit;
+	ulong distance_travelled;
+	ushort kills;
+	uchar secrets_found;
+	uchar health_used;
+};
+
+struct SAVEGAME_INFO
+{
+	ulong best_assault_times[10];
+	ulong best_quadbike_times[10];
+	ulong QuadbikeKeyFlag;
+	START_INFO start[25];
+	ulong timer;
+	ulong ammo_used;
+	ulong ammo_hit;
+	ulong distance_travelled;
+	ushort kills;
+	uchar secrets;
+	uchar health_used;
+	ulong cp_timer;
+	ulong cp_ammo_used;
+	ulong cp_ammo_hit;
+	ulong cp_distance_travelled;
+	ushort cp_kills;
+	uchar cp_secrets;
+	uchar cp_health_used;
+	short current_level;
+	uchar bonus_flag;
+	uchar num_pickup1;
+	uchar num_pickup2;
+	uchar num_puzzle1;
+	uchar num_puzzle2;
+	uchar num_puzzle3;
+	uchar num_puzzle4;
+	uchar num_key1;
+	uchar num_key2;
+	uchar num_key3;
+	uchar num_key4;
+	char checksum;
+	char GameComplete;
+	ulong mid_level_save : 1;
+	ulong AfterAdventureSave : 1;
+	ulong WorldRequired : 3;
+	ulong IndiaComplete : 1;
+	ulong SPacificComplete : 1;
+	ulong LondonComplete : 1;
+	ulong NevadaComplete : 1;
+	ulong AntarcticaComplete : 1;
+	ulong PeruComplete : 1;
+	ulong AfterIndia : 3;
+	ulong AfterSPacific : 3;
+	ulong AfterLondon : 3;
+	ulong AfterNevada : 3;
+	char buffer[12416];
+};
+
+struct OBJECT_INFO
+{
+	short nmeshes;
+	short mesh_index;
+	long bone_index;
+	short* frame_base;
+	void (*initialise)(short item_number);
+	void (*control)(short item_number);
+	void (*floor)(ITEM_INFO* item, long x, long y, long z, long* height);
+	void (*ceiling)(ITEM_INFO* item, long x, long y, long z, long* height);
+	void (*draw_routine)(ITEM_INFO* item);
+	void (*collision)(short item_num, ITEM_INFO* laraitem, COLL_INFO* coll);
+	short anim_index;
+	short hit_points;
+	short pivot_length;
+	short radius;
+	short shadow_size;
+	ushort bite_offset;
+	ushort loaded : 1;
+	ushort intelligent : 1;
+	ushort non_lot : 1;
+	ushort save_position : 1;
+	ushort save_hitpoints : 1;
+	ushort save_flags : 1;
+	ushort save_anim : 1;
+	ushort semi_transparent : 1;
+	ushort water_creature : 1;
 };
 #pragma pack(pop)

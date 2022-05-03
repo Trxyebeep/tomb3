@@ -17,9 +17,17 @@
 #define DashTimer	VAR_(0x006D62A0, short)
 #define wibble	VAR_(0x006261A8, long)
 #define items	VAR_(0x006E2A1C, ITEM_INFO*)
+#define gameflow	VAR_(0x006D77C0, GAMEFLOW_INFO)
+#define cheat_hit_points	VAR_(0x006D6182, short)
+#define savegame	VAR_(0x006D2280, SAVEGAME_INFO)
+#define meshes	VAR_(0x006E1434, short**)
+#define GF_NoFloor	VAR_(0x006261F0, short)
+#define ExposureMeter	VAR_(0x006D6180, short)
+#define mycoll	VAR_(0x004C7448, COLL_INFO*)
+#define CurrentLevel	VAR_(0x00633F50, long)
 
 /*arrays*/
-
+#define objects	ARRAY_(0x006DCAC0, OBJECT_INFO, [376])
 
 /*constants*/
 #define NO_HEIGHT -32512
