@@ -1880,7 +1880,7 @@ void lara_col_stop(ITEM_INFO* item, COLL_INFO* coll)
 
 	ShiftItem(item, coll);
 
-	if (room[item->room_number].flags & ROOM_SWAMP)
+	if (room[item->room_number].flags & ROOM_SWAMP && coll->mid_floor >= 0)
 		item->pos.y_pos += 2;
 	else
 		item->pos.y_pos += coll->mid_floor;
