@@ -650,7 +650,7 @@ tomb3decomp progress.
 0x0043DFC0	+	LaraSlideEdgeJump
 0x0043E0B0	+	LaraTestHangOnClimbWall
 0x0043E1C0		LaraHangTest
-0x0043E4E0		LaraTestHangJump
+0x0043E4E0	+	LaraTestHangJump
 0x0043E730	+	TestHangSwingIn
 0x0043E800		LaraAboveWater
 0x0043EA20	+	lara_as_duck
@@ -749,7 +749,7 @@ tomb3decomp progress.
 0x004425A0	+	lara_col_death
 0x00442610	+	lara_col_fastfall
 0x004426B0	+	lara_col_hang
-0x00442830		lara_col_reach
+0x00442830	+	lara_col_reach
 0x004428E0		lara_col_splat
 0x00442950		lara_col_land
 0x00442970		lara_col_compress

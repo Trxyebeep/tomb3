@@ -981,8 +981,8 @@ void lara_col_crawl2hang(ITEM_INFO* item, COLL_INFO* coll)
 		lara.head_y_rot = 0;
 		lara.torso_x_rot = 0;
 		lara.torso_y_rot = 0;
-		item->anim_number = ANIM_HANG2STOP;
-		item->frame_number = anims[ANIM_HANG2STOP].frame_base;
+		item->anim_number = ANIM_GRABLEDGEIN;
+		item->frame_number = anims[ANIM_GRABLEDGEIN].frame_base;
 		item->current_anim_state = AS_HANG2;
 		item->goal_anim_state = AS_HANG2;
 	}
@@ -3215,6 +3215,121 @@ void lara_col_hang(ITEM_INFO* item, COLL_INFO* coll)
 	}
 }
 
+long LaraTestHangJump(ITEM_INFO* item, COLL_INFO* coll)
+{
+	short* bounds;
+	long edge, edge_catch;
+	short angle;
+
+	if (!(input & IN_ACTION) || lara.gun_status != LG_ARMLESS || coll->hit_static)
+		return 0;
+
+	if (lara.CanMonkeySwing && coll->coll_type == CT_TOP)
+	{
+		lara.head_x_rot = 0;
+		lara.head_y_rot = 0;
+		lara.torso_x_rot = 0;
+		lara.torso_y_rot = 0;
+		item->anim_number = ANIM_GRABLEDGEIN;
+		item->frame_number = anims[ANIM_GRABLEDGEIN].frame_base;
+		item->current_anim_state = AS_HANG2;
+		item->goal_anim_state = AS_HANG2;
+		item->gravity_status = 0;
+		item->speed = 0;
+		item->fallspeed = 0;
+		lara.gun_status = LG_HANDSBUSY;
+		return 1;
+	}
+
+	if (coll->mid_ceiling > -384 || coll->mid_floor < 200 || coll->coll_type != CT_FRONT)
+		return 0;
+
+	edge_catch = LaraTestEdgeCatch(item, coll, &edge);
+
+	if (!edge_catch || edge_catch < 0 && !LaraTestHangOnClimbWall(item, coll))
+		return 0;
+
+	angle = item->pos.y_rot;
+
+	if (angle >= -6370 && angle <= 6370)
+		angle = 0;
+	else if (angle >= 10014 && angle <= 22754)
+		angle = 0x4000;
+	else if (angle >= 26397 || angle <= -26397)
+		angle = -0x8000;
+	else if (angle >= -22754 && angle <= -10014)
+		angle = -0x4000;
+
+	if (angle & 0x3FFF)
+		return 0;
+
+	if (TestHangSwingIn(item, angle))
+	{
+		lara.head_x_rot = 0;
+		lara.head_y_rot = 0;
+		lara.torso_x_rot = 0;
+		lara.torso_y_rot = 0;
+		item->anim_number = ANIM_GRABLEDGEIN;
+		item->frame_number = anims[ANIM_GRABLEDGEIN].frame_base;
+		item->current_anim_state = AS_HANG2;
+		item->goal_anim_state = AS_HANG2;
+	}
+	else
+	{
+		item->anim_number = ANIM_GRABLEDGE;
+		item->frame_number = anims[ANIM_GRABLEDGE].frame_base;
+		item->current_anim_state = AS_HANG;
+		item->goal_anim_state = AS_HANG;
+	}
+
+	bounds = GetBoundsAccurate(item);
+
+	if (edge_catch <= 0)
+		item->pos.y_pos = edge - bounds[2];
+	else
+	{
+		item->pos.y_pos += coll->front_floor - bounds[2];
+		item->pos.x_pos += coll->shift.x;
+		item->pos.z_pos += coll->shift.z;
+	}
+
+	item->gravity_status = 1;
+	item->pos.y_rot = angle;
+	item->speed = 2;
+	item->fallspeed = 1;
+	lara.gun_status = LG_HANDSBUSY;
+	return 1;
+}
+
+void lara_col_reach(ITEM_INFO* item, COLL_INFO* coll)
+{
+	item->gravity_status = 1;
+	lara.move_angle = item->pos.y_rot;
+	coll->bad_pos = -NO_HEIGHT;
+	coll->bad_neg = 0;
+	coll->bad_ceiling = 192;
+	GetLaraCollisionInfo(item, coll);
+
+	if (LaraTestHangJump(item, coll))
+		return;
+
+	LaraSlideEdgeJump(item, coll);
+	GetLaraCollisionInfo(item, coll);
+	ShiftItem(item, coll);
+
+	if (item->fallspeed > 0 && coll->mid_floor <= 0)
+	{
+		if (LaraLandedBad(item, coll))
+			item->goal_anim_state = AS_DEATH;
+		else
+			item->goal_anim_state = AS_STOP;
+
+		item->fallspeed = 0;
+		item->gravity_status = 0;
+		item->pos.y_pos += coll->mid_floor;
+	}
+}
+
 void inject_lara(bool replace)
 {
 	INJECT(0x00444C20, LaraLandedBad, replace);
@@ -3333,4 +3448,6 @@ void inject_lara(bool replace)
 	INJECT(0x004425A0, lara_col_death, replace);
 	INJECT(0x00442610, lara_col_fastfall, replace);
 	INJECT(0x004426B0, lara_col_hang, replace);
+	INJECT(0x0043E4E0, LaraTestHangJump, replace);
+	INJECT(0x00442830, lara_col_reach, replace);
 }
