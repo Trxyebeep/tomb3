@@ -740,15 +740,15 @@ tomb3decomp progress.
 0x00441E30	+	extra_as_startanim
 0x00441E80	+	extra_as_trainkill
 0x00441F00	+	extra_as_rapidsdrown
-0x00441F90		lara_col_walk
-0x00442140		lara_col_run
-0x004422D0		lara_col_forwardjump
-0x004423B0		lara_col_fastback
-0x00442490		lara_col_turn_r
-0x00442580		lara_col_turn_l
-0x004425A0		lara_col_death
-0x00442610		lara_col_fastfall
-0x004426B0		lara_col_hang
+0x00441F90	+	lara_col_walk
+0x00442140	+	lara_col_run
+0x004422D0	+	lara_col_forwardjump
+0x004423B0	+	lara_col_fastback
+0x00442490	+	lara_col_turn_r
+0x00442580	+	lara_col_turn_l
+0x004425A0	+	lara_col_death
+0x00442610	+	lara_col_fastfall
+0x004426B0	+	lara_col_hang
 0x00442830		lara_col_reach
 0x004428E0		lara_col_splat
 0x00442950		lara_col_land

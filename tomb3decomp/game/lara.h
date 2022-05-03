@@ -110,6 +110,15 @@ void extra_as_dinokill(ITEM_INFO* item, COLL_INFO* coll);
 void extra_as_startanim(ITEM_INFO* item, COLL_INFO* coll);
 void extra_as_trainkill(ITEM_INFO* item, COLL_INFO* coll);
 void extra_as_rapidsdrown(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_walk(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_run(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_forwardjump(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_fastback(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_turn_r(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_turn_l(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_death(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_fastfall(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_hang(ITEM_INFO* item, COLL_INFO* coll);
 
 #define LookUpDown	( (void(__cdecl*)()) 0x004446E0 )
 #define GetStaticObjects	( (long(__cdecl*)(ITEM_INFO*, short, long, long, long)) 0x00445020 )
