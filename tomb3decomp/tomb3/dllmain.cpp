@@ -2,6 +2,7 @@
 #include "../tomb3/pch.h"
 #include "../game/lara.h"
 #include "../game/collide.h"
+#include "../game/laraclmb.h"
 
 HINSTANCE hinstance = 0;
 
@@ -26,6 +27,7 @@ void inject_all(bool replace)
 	//game
 	inject_lara(replace);
 	inject_collide(replace);
+	inject_laraclmb(replace);
 
 	//specific
 }

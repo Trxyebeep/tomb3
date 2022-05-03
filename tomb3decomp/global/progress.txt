@@ -828,19 +828,19 @@ tomb3decomp progress.
 0x00448BE0		LaraTestClimb
 0x00448E60		LaraTestClimbUpPos
 0x00449090		LaraTestClimbPos
-0x00449140		lara_as_climbleft
-0x00449180		lara_as_climbright
-0x004491C0		lara_as_climbstnc
-0x00449240		lara_as_climbing
-0x00449260		lara_as_climbend
-0x00449290		lara_as_climbdown
-0x004492B0		lara_col_climbleft
-0x00449310		LaraCheckForLetGo
-0x004493E0		LaraDoClimbLeftRight
-0x004494D0		lara_col_climbright
-0x00449530		lara_col_climbstnc
-0x00449740		lara_col_climbing
-0x00449890		lara_col_climbdown
+0x00449140	+	lara_as_climbleft
+0x00449180	+	lara_as_climbright
+0x004491C0	+	lara_as_climbstnc
+0x00449240	+	lara_as_climbing
+0x00449260	+	lara_as_climbend
+0x00449290	+	lara_as_climbdown
+0x004492B0	+	lara_col_climbleft
+0x00449310	+	LaraCheckForLetGo
+0x004493E0	+	LaraDoClimbLeftRight
+0x004494D0	+	lara_col_climbright
+0x00449530	+	lara_col_climbstnc
+0x00449740	+	lara_col_climbing
+0x00449890	+	lara_col_climbdown
 
 
 		game/laraelec.cpp
