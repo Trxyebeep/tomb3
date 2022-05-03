@@ -3,6 +3,7 @@
 #include "../game/lara.h"
 #include "../game/collide.h"
 #include "../game/laraclmb.h"
+#include "../game/larasurf.h"
 
 HINSTANCE hinstance = 0;
 
@@ -28,6 +29,7 @@ void inject_all(bool replace)
 	inject_lara(replace);
 	inject_collide(replace);
 	inject_laraclmb(replace);
+	inject_larasurf(replace);
 
 	//specific
 }

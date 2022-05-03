@@ -897,19 +897,19 @@ tomb3decomp progress.
 		game/larasurf.cpp
 
 0x0044E050		LaraSurface
-0x0044E1C0		lara_as_surfswim
-0x0044E230		lara_as_surfback
-0x0044E290		lara_as_surfleft
-0x0044E2F0		lara_as_surfright
-0x0044E350		lara_as_surftread
-0x0044E410		lara_col_surfswim
+0x0044E1C0	+	lara_as_surfswim
+0x0044E230	+	lara_as_surfback
+0x0044E290	+	lara_as_surfleft
+0x0044E2F0	+	lara_as_surfright
+0x0044E350	+	lara_as_surftread
+0x0044E410	+	lara_col_surfswim
 0x0044E450		LaraTestWaterClimbOut
 0x0044E670		LaraSurfaceCollision
 0x0044E770		LaraTestWaterStepOut
-0x0044E860		lara_col_surfback
-0x0044E890		lara_col_surfleft
-0x0044E8C0		lara_col_surfright
-0x0044E8F0		lara_col_surftread
+0x0044E860	+	lara_col_surfback
+0x0044E890	+	lara_col_surfleft
+0x0044E8C0	+	lara_col_surfright
+0x0044E8F0	+	lara_col_surftread
 
 
 		game/laraswim.cpp
