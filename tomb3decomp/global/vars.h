@@ -16,6 +16,7 @@
 #define height_type	VAR_(0x006E2A24, long)
 #define DashTimer	VAR_(0x006D62A0, short)
 #define wibble	VAR_(0x006261A8, long)
+#define items	VAR_(0x006E2A1C, ITEM_INFO*)
 
 /*arrays*/
 

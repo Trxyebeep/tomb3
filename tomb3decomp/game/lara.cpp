@@ -11,6 +11,122 @@
 #include "../3dsystem/3d_gen.h"
 #include "effect2.h"
 #include "../specific/function_stubs.h"
+#include "objects.h"
+#include "kayak.h"
+#include "quadbike.h"
+#include "sub.h"
+#include "biggun.h"
+#include "minecart.h"
+#include "larafire.h"
+
+void LaraAboveWater(ITEM_INFO* item, COLL_INFO* coll)
+{
+	short vehicle;
+
+	coll->old.x = item->pos.x_pos;
+	coll->old.y = item->pos.y_pos;
+	coll->old.z = item->pos.z_pos;
+	coll->old_anim_state = item->current_anim_state;
+	coll->old_anim_number = item->anim_number;
+	coll->old_frame_number = item->frame_number;
+	coll->radius = 100;
+	coll->trigger = 0;
+	coll->lava_is_pit = 0;
+	coll->slopes_are_walls = 0;
+	coll->slopes_are_pits = 0;
+	coll->enable_spaz = 1;
+	coll->enable_baddie_push = 1;
+
+	if (input & IN_LOOK && !lara.extra_anim	&& lara.look)
+		LookLeftRight();
+	else
+		ResetLook();
+
+	lara.look = 1;
+
+	if (lara.skidoo != NO_ITEM)
+	{
+		vehicle = items[lara.skidoo].object_number;
+
+		if (vehicle == KAYAK)
+		{
+			if (KayakControl())
+				return;
+		}
+		else if (vehicle == QUADBIKE)
+		{
+			if (QuadBikeControl())
+				return;
+		}
+		else if (vehicle == UPV)
+		{
+			if (SubControl())
+				return;
+		}
+		else if (vehicle == BIGGUN)
+		{
+			if (BigGunControl(coll))
+				return;
+		}
+		else if (vehicle == MINECART)
+		{
+			if (MineCartControl())
+				return;
+		}
+		else
+		{
+			LaraGun();
+			return;
+		}
+	}
+
+	if (lara.extra_anim)
+		extra_control_routines[item->current_anim_state](item, coll);
+	else
+		lara_control_routines[item->current_anim_state](item, coll);
+
+	if (item->pos.z_rot < -182)
+		item->pos.z_rot += 182;
+	else if (item->pos.z_rot > 182)
+		item->pos.z_rot -= 182;
+	else item->pos.z_rot = 0;
+
+	if (lara.turn_rate < -364)
+		lara.turn_rate += 364;
+	else if (lara.turn_rate > 364)
+		lara.turn_rate -= 364;
+	else
+		lara.turn_rate = 0;
+
+	item->pos.y_rot += lara.turn_rate;
+	AnimateLara(item);
+
+	if (!lara.extra_anim)
+	{
+		LaraBaddieCollision(item, coll);
+
+		if (lara.skidoo == NO_ITEM)
+			lara_collision_routines[item->current_anim_state](item, coll);
+	}
+
+	UpdateLaraRoom(item, -381);
+	LaraGun();
+	LaraOnPad = 0;
+	TestTriggers(coll->trigger, 0);
+
+	if (!LaraOnPad)
+		lara_item->item_flags[1] = 0;
+}
+
+void lara_void_func(ITEM_INFO* item, COLL_INFO* coll)
+{
+
+}
+
+void extra_void_func(ITEM_INFO* item, COLL_INFO* coll)
+{
+
+}
 
 long LaraLandedBad(ITEM_INFO* item, COLL_INFO* coll)
 {
@@ -3683,6 +3799,7 @@ void lara_col_wade(ITEM_INFO* item, COLL_INFO* coll)
 
 void inject_lara(bool replace)
 {
+	INJECT(0x0043E800, LaraAboveWater, replace);
 	INJECT(0x00444C20, LaraLandedBad, replace);
 	INJECT(0x0043D780, TestLaraSlide, replace);
 	INJECT(0x0043D8C0, LaraTestClimbStance, replace);

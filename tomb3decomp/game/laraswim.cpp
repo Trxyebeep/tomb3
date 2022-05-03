@@ -3,6 +3,87 @@
 #include "laraanim.h"
 #include "lara.h"
 #include "control.h"
+#include "laramisc.h"
+#include "../3dsystem/phd_math.h"
+#include "collide.h"
+#include "larafire.h"
+
+void LaraUnderWater(ITEM_INFO* item, COLL_INFO* coll)
+{
+	coll->bad_pos = -NO_HEIGHT;
+	coll->bad_neg = -400;
+	coll->bad_ceiling = 400;
+	coll->old.x = item->pos.x_pos;
+	coll->old.y = item->pos.y_pos;
+	coll->old.z = item->pos.z_pos;
+	coll->radius = 300;
+	coll->trigger = 0;
+	coll->slopes_are_walls = 0;
+	coll->slopes_are_pits = 0;
+	coll->lava_is_pit = 0;
+	coll->enable_spaz = 0;
+	coll->enable_baddie_push = 1;
+
+	if (input & IN_LOOK && lara.look)
+		LookLeftRight();
+	else
+		ResetLook();
+
+	lara.look = 1;
+
+	if (lara.extra_anim)
+		extra_control_routines[item->current_anim_state](item, coll);
+	else
+		lara_control_routines[item->current_anim_state](item, coll);
+
+	if (item->pos.z_rot >= -364 && item->pos.z_rot <= 364)
+		item->pos.z_rot = 0;
+	else if (item->pos.z_rot < 0)
+		item->pos.z_rot += 364;
+	else
+		item->pos.z_rot -= 364;
+
+	if (item->pos.x_rot < -15470)
+		item->pos.x_rot = -15470;
+	else if (item->pos.x_rot > 15470)
+		item->pos.x_rot = 15470;
+
+	if (item->pos.z_rot < -4004)
+		item->pos.z_rot = -4004;
+	else if (item->pos.z_rot > 4004)
+		item->pos.z_rot = 4004;
+
+	if (lara.turn_rate >= -364 && lara.turn_rate <= 364)
+		lara.turn_rate = 0;
+	else if (lara.turn_rate < -364)
+		lara.turn_rate += 364;
+	else
+		lara.turn_rate -= 364;
+
+	item->pos.y_rot += lara.turn_rate;
+
+	if (lara.current_active && lara.water_status != 3)
+		LaraWaterCurrent(coll);
+
+	AnimateLara(item);
+	item->pos.x_pos += (((phd_sin(item->pos.y_rot) * item->fallspeed) >> 16) * phd_cos(item->pos.x_rot)) >> 14;
+	item->pos.y_pos -= (phd_sin(item->pos.x_rot) * item->fallspeed) >> 16;
+	item->pos.z_pos += (((phd_cos(item->pos.y_rot) * item->fallspeed) >> 16) * phd_cos(item->pos.x_rot)) >> 14;
+
+	if (lara.water_status != LARA_CHEAT && !lara.extra_anim)
+		LaraBaddieCollision(item, coll);
+
+	if (!lara.extra_anim && lara.skidoo == NO_ITEM)
+		lara_collision_routines[item->current_anim_state](item, coll);
+
+	UpdateLaraRoom(item, 0);
+	LaraGun();
+	LaraOnPad = 0;
+	TestTriggers(coll->trigger, 0);
+
+	if (!LaraOnPad)
+		lara_item->item_flags[1] = 0;
+}
 
 void SwimTurn(ITEM_INFO* item)
 {
@@ -192,6 +273,7 @@ void lara_col_waterroll(ITEM_INFO* item, COLL_INFO* coll)
 
 void inject_laraswim(bool replace)
 {
+	INJECT(0x0044E950, LaraUnderWater, replace);
 	INJECT(0x0044EC10, SwimTurn, replace);
 	INJECT(0x0044EBA0, lara_as_swim, replace);
 	INJECT(0x0044ECA0, lara_as_glide, replace);

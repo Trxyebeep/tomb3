@@ -652,7 +652,7 @@ tomb3decomp progress.
 0x0043E1C0		LaraHangTest
 0x0043E4E0	+	LaraTestHangJump
 0x0043E730	+	TestHangSwingIn
-0x0043E800		LaraAboveWater
+0x0043E800	+	LaraAboveWater
 0x0043EA20	+	lara_as_duck
 0x0043EAA0	+	lara_col_duck
 0x0043EBA0	+	lara_as_all4s
@@ -896,7 +896,7 @@ tomb3decomp progress.
 
 		game/larasurf.cpp
 
-0x0044E050		LaraSurface
+0x0044E050	+	LaraSurface
 0x0044E1C0	+	lara_as_surfswim
 0x0044E230	+	lara_as_surfback
 0x0044E290	+	lara_as_surfleft
@@ -914,7 +914,7 @@ tomb3decomp progress.
 
 		game/laraswim.cpp
 
-0x0044E950		LaraUnderWater
+0x0044E950	+	LaraUnderWater
 0x0044EBA0	+	lara_as_swim
 0x0044EC10	+	SwimTurn
 0x0044ECA0	+	lara_as_glide
