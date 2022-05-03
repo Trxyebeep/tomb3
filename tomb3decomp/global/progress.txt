@@ -750,28 +750,28 @@ tomb3decomp progress.
 0x00442610	+	lara_col_fastfall
 0x004426B0	+	lara_col_hang
 0x00442830	+	lara_col_reach
-0x004428E0		lara_col_splat
-0x00442950		lara_col_land
-0x00442970		lara_col_compress
-0x00442A10		lara_col_back
-0x00442B50		lara_col_stepright
-0x00442C30		lara_col_stepleft
-0x00442C50		lara_col_slide
-0x00442C70		lara_col_backjump
-0x00442CA0		lara_col_rightjump
-0x00442CD0		lara_col_leftjump
-0x00442D00		lara_col_fallback
-0x00442D90		lara_col_hangleft
-0x00442DD0		lara_col_hangright
-0x00442E10		lara_col_slideback
-0x00442E40		lara_col_pushblock
-0x00442E60		lara_col_roll
-0x00442F00		lara_col_roll2
-0x00442FD0		lara_col_swandive
-0x00443040		lara_col_fastdive
-0x004430C0		lara_col_wade
-0x00443290		lara_default_col
-0x004432E0		lara_col_jumper
+0x004428E0	+	lara_col_splat
+0x00442950	+	lara_col_land
+0x00442970	+	lara_col_compress
+0x00442A10	+	lara_col_back
+0x00442B50	+	lara_col_stepright
+0x00442C30	+	lara_col_stepleft
+0x00442C50	+	lara_col_slide
+0x00442C70	+	lara_col_backjump
+0x00442CA0	+	lara_col_rightjump
+0x00442CD0	+	lara_col_leftjump
+0x00442D00	+	lara_col_fallback
+0x00442D90	+	lara_col_hangleft
+0x00442DD0	+	lara_col_hangright
+0x00442E10	+	lara_col_slideback
+0x00442E40	+	lara_col_pushblock
+0x00442E60	+	lara_col_roll
+0x00442F00	+	lara_col_roll2
+0x00442FD0	+	lara_col_swandive
+0x00443040	+	lara_col_fastdive
+0x004430C0	+	lara_col_wade
+0x00443290	+	lara_default_col
+0x004432E0	+	lara_col_jumper
 0x00443360		GetLaraHandAbsPosition
 0x00443C10		AddJointPos
 0x00443CA0		GetLHAInt
