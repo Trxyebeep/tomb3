@@ -36,6 +36,7 @@
 #define phd_znear	VAR_(0x005316E8, long)
 #define bBlueEffect	VAR_(0x005BAB00, bool)
 #define BarsWidth	VAR_(0x004C805C, long)
+#define DumpWidth	VAR_(0x004CD900, short)
 
 /*arrays*/
 #define objects	ARRAY_(0x006DCAC0, OBJECT_INFO, [376])
