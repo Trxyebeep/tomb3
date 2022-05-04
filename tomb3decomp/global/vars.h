@@ -25,6 +25,17 @@
 #define ExposureMeter	VAR_(0x006D6180, short)
 #define mycoll	VAR_(0x004C7448, COLL_INFO*)
 #define CurrentLevel	VAR_(0x00633F50, long)
+#define phd_winxmax	VAR_(0x005316E0, short)
+#define assault_timer_display	VAR_(0x006261BC, long)
+#define QuadbikeLapTimeDisplayTimer	VAR_(0x006261D4, long)
+#define assault_penalty_display_timer	VAR_(0x006261C8, long)
+#define assault_target_penalties	VAR_(0x006D8760, long)
+#define assault_penalties	VAR_(0x006261C4, long)
+#define QuadbikeLapTime	VAR_(0x006261D0, long)
+#define GlobalAlpha	VAR_(0x00625DF0, long)
+#define phd_znear	VAR_(0x005316E8, long)
+#define bBlueEffect	VAR_(0x005BAB00, bool)
+#define BarsWidth	VAR_(0x004C805C, long)
 
 /*arrays*/
 #define objects	ARRAY_(0x006DCAC0, OBJECT_INFO, [376])

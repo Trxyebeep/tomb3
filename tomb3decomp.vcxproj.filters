@@ -324,6 +324,15 @@
     <ClInclude Include="tomb3decomp\specific\specific.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tomb3decomp\3dsystem\scalespr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3decomp\specific\drawbars.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3decomp\specific\hwrender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tomb3decomp\tomb3\dllmain.cpp">
@@ -624,6 +633,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tomb3decomp\specific\specific.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tomb3decomp\3dsystem\scalespr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tomb3decomp\specific\drawbars.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tomb3decomp\specific\hwrender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

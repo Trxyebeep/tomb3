@@ -518,10 +518,10 @@ tomb3decomp progress.
 
 		game/health.cpp
 
-0x00434360		FlashIt
-0x00434390		DrawAssaultTimer
-0x00434510		DrawAssaultPenalties
-0x00434770		DrawQuadbikeLapTime
+0x00434360	+	FlashIt
+0x00434390	+	DrawAssaultTimer
+0x00434510	+	DrawAssaultPenalties
+0x00434770	+	DrawQuadbikeLapTime
 0x00434930		DrawGameInfo
 0x00434A10		DrawHealthBar
 0x00434AE0		DrawAirBar

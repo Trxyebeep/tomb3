@@ -88,7 +88,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;TOMB3DECOMP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;TOMB3DECOMP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>../tomb3/pch.h</PrecompiledHeaderFile>
@@ -107,7 +107,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;TOMB3DECOMP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;TOMB3DECOMP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>../tomb3/pch.h</PrecompiledHeaderFile>
@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClInclude Include="tomb3decomp\3dsystem\3d_gen.h" />
     <ClInclude Include="tomb3decomp\3dsystem\phd_math.h" />
+    <ClInclude Include="tomb3decomp\3dsystem\scalespr.h" />
     <ClInclude Include="tomb3decomp\game\51baton.h" />
     <ClInclude Include="tomb3decomp\game\51civvy.h" />
     <ClInclude Include="tomb3decomp\game\51laser.h" />
@@ -256,7 +257,9 @@
     <ClInclude Include="tomb3decomp\game\winston.h" />
     <ClInclude Include="tomb3decomp\global\types.h" />
     <ClInclude Include="tomb3decomp\global\vars.h" />
+    <ClInclude Include="tomb3decomp\specific\drawbars.h" />
     <ClInclude Include="tomb3decomp\specific\function_stubs.h" />
+    <ClInclude Include="tomb3decomp\specific\hwrender.h" />
     <ClInclude Include="tomb3decomp\specific\specific.h" />
     <ClInclude Include="tomb3decomp\tomb3\framework.h" />
     <ClInclude Include="tomb3decomp\tomb3\pch.h" />
@@ -264,6 +267,7 @@
   <ItemGroup>
     <ClCompile Include="tomb3decomp\3dsystem\3d_gen.cpp" />
     <ClCompile Include="tomb3decomp\3dsystem\phd_math.cpp" />
+    <ClCompile Include="tomb3decomp\3dsystem\scalespr.cpp" />
     <ClCompile Include="tomb3decomp\game\51baton.cpp" />
     <ClCompile Include="tomb3decomp\game\51civvy.cpp" />
     <ClCompile Include="tomb3decomp\game\51laser.cpp" />
@@ -358,7 +362,9 @@
     <ClCompile Include="tomb3decomp\game\willboss.cpp" />
     <ClCompile Include="tomb3decomp\game\wingmute.cpp" />
     <ClCompile Include="tomb3decomp\game\winston.cpp" />
+    <ClCompile Include="tomb3decomp\specific\drawbars.cpp" />
     <ClCompile Include="tomb3decomp\specific\function_stubs.cpp" />
+    <ClCompile Include="tomb3decomp\specific\hwrender.cpp" />
     <ClCompile Include="tomb3decomp\specific\specific.cpp" />
     <ClCompile Include="tomb3decomp\tomb3\dllmain.cpp" />
     <ClCompile Include="tomb3decomp\tomb3\pch.cpp">
