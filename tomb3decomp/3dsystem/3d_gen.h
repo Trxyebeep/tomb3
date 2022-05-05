@@ -4,6 +4,12 @@
 void inject_3dgen(bool replace);
 
 void phd_PutPolygons(short* objptr, long clip);
+void phd_RotX(short angle);
+void phd_RotY(short angle);
+void phd_RotZ(short angle);
+void phd_RotYXZ(short y, short x, short z);
+void phd_RotYXZpack(long angles);
+long phd_TranslateRel(long x, long y, long z);
 
 #define AlterFOV	( (void(__cdecl*)(short)) 0x00402030 )
 

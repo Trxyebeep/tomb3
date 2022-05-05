@@ -32,7 +32,6 @@
 #define assault_penalties	VAR_(0x006261C4, long)
 #define QuadbikeLapTime	VAR_(0x006261D0, long)
 #define GlobalAlpha	VAR_(0x00625DF0, long)
-#define phd_znear	VAR_(0x005316E8, long)
 #define bBlueEffect	VAR_(0x005BAB00, bool)
 #define BarsWidth	VAR_(0x004C805C, long)
 #define DumpWidth	VAR_(0x004CD900, short)
@@ -55,11 +54,15 @@
 #define f_centery	VAR_(0x005316FC, float)
 #define phd_centerx	VAR_(0x004D7914, long)
 #define phd_centery	VAR_(0x004D7918, long)
+#define phd_mxptr	VAR_(0x005A6A2C, long*)
+#define phd_zfar	VAR_(0x004F6D44, long)
+#define phd_znear	VAR_(0x005316E8, long)
 /**/
 
 /*arrays*/
 #define objects	ARRAY_(0x006DCAC0, OBJECT_INFO, [376])
 #define pickups	ARRAY_(0x006263F4, DISPLAYPU, [1])
+#define w2v_matrix	ARRAY_(0x005A6AC0, long, [12])
 
 /*constants*/
 #define NO_HEIGHT -32512
