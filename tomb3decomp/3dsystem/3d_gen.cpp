@@ -275,6 +275,17 @@ void phd_TranslateAbs(long x, long y, long z)
 	phd_mxptr[M23] = fx * phd_mxptr[M20] + fy * phd_mxptr[M21] + fz * phd_mxptr[M22];
 }
 
+void AlterFOV(short fov)
+{
+	fov /= 2;
+	phd_persp = ((phd_winwidth / 2) * phd_cos(fov)) / phd_sin(fov);
+	f_persp = (float)phd_persp;
+	f_oneopersp = one / f_persp;
+	f_perspoznear = f_persp / f_znear;
+	LfAspectCorrection = (4.0F / 3.0F) / (float(phd_winwidth) / float(phd_winheight));
+	InitZTable();
+}
+
 void inject_3dgen(bool replace)
 {
 	INJECT(0x00401AF0, phd_PutPolygons, replace);
@@ -285,4 +296,5 @@ void inject_3dgen(bool replace)
 	INJECT(0x004017D0, phd_RotYXZpack, replace);
 	INJECT(0x004019C0, phd_TranslateRel, replace);
 	INJECT(0x00401A70, phd_TranslateAbs, replace);
+	INJECT(0x00402030, AlterFOV, replace);
 }

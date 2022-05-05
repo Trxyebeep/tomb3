@@ -10,8 +10,7 @@ void phd_RotZ(short angle);
 void phd_RotYXZ(short y, short x, short z);
 void phd_RotYXZpack(long angles);
 long phd_TranslateRel(long x, long y, long z);
-
-#define AlterFOV	( (void(__cdecl*)(short)) 0x00402030 )
+void AlterFOV(short fov);
 
 
 #define InsertLine	( *(void(__cdecl**)(long, long, long, long, long, long, long)) 0x005A6AF8 )

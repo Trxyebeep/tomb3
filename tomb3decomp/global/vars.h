@@ -57,12 +57,22 @@
 #define phd_mxptr	VAR_(0x005A6A2C, long*)
 #define phd_zfar	VAR_(0x004F6D44, long)
 #define phd_znear	VAR_(0x005316E8, long)
+#define f_oneopersp	VAR_(0x004F6D48, float)
+#define f_persp	VAR_(0x005A6AB8, float)
+#define one	VAR_(0x004C5084, float)
+#define phd_persp	VAR_(0x004F6D50, long)
+#define phd_winwidth	VAR_(0x005A6AF4, long)
+#define phd_winheight	VAR_(0x004D790C, long)
+#define f_znear	VAR_(0x0056C0A0, float)
+#define f_perspoznear	VAR_(0x0053170C, float)
+#define LfAspectCorrection	VAR_(0x004D38D8, float)
 /**/
 
 /*arrays*/
 #define objects	ARRAY_(0x006DCAC0, OBJECT_INFO, [376])
 #define pickups	ARRAY_(0x006263F4, DISPLAYPU, [1])
 #define w2v_matrix	ARRAY_(0x005A6AC0, long, [12])
+#define ZTable	ARRAY_(0x006A2088, float, [40960])
 
 /*constants*/
 #define NO_HEIGHT -32512

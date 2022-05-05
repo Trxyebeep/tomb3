@@ -11,6 +11,8 @@
 #include "../3dsystem/3d_gen.h"
 
 #include "../specific/drawbars.h"
+#include "../specific/transform.h"
+
 
 HINSTANCE hinstance = 0;
 
@@ -43,6 +45,7 @@ void inject_all(bool replace)
 
 	//specific
 	inject_drawbars(replace);
+	inject_transform(replace);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
