@@ -260,7 +260,9 @@
     <ClInclude Include="tomb3decomp\specific\drawbars.h" />
     <ClInclude Include="tomb3decomp\specific\function_stubs.h" />
     <ClInclude Include="tomb3decomp\specific\hwrender.h" />
+    <ClInclude Include="tomb3decomp\specific\litesrc.h" />
     <ClInclude Include="tomb3decomp\specific\specific.h" />
+    <ClInclude Include="tomb3decomp\specific\transform.h" />
     <ClInclude Include="tomb3decomp\tomb3\framework.h" />
     <ClInclude Include="tomb3decomp\tomb3\pch.h" />
   </ItemGroup>
@@ -365,7 +367,9 @@
     <ClCompile Include="tomb3decomp\specific\drawbars.cpp" />
     <ClCompile Include="tomb3decomp\specific\function_stubs.cpp" />
     <ClCompile Include="tomb3decomp\specific\hwrender.cpp" />
+    <ClCompile Include="tomb3decomp\specific\litesrc.cpp" />
     <ClCompile Include="tomb3decomp\specific\specific.cpp" />
+    <ClCompile Include="tomb3decomp\specific\transform.cpp" />
     <ClCompile Include="tomb3decomp\tomb3\dllmain.cpp" />
     <ClCompile Include="tomb3decomp\tomb3\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -8,6 +8,8 @@
 #include "../game/laramisc.h"
 #include "../game/health.h"
 
+#include "../3dsystem/3d_gen.h"
+
 #include "../specific/drawbars.h"
 
 HINSTANCE hinstance = 0;
@@ -28,7 +30,7 @@ long dummyz()
 void inject_all(bool replace)
 {
 	//3dsystem
-	
+	inject_3dgen(replace);
 
 	//game
 	inject_lara(replace);

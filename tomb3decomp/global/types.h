@@ -237,6 +237,13 @@ enum lara_meshes
 	HEAD
 };
 
+enum sort_type
+{
+	MID_SORT,
+	FAR_SORT,
+	BACK_SORT
+};
+
 /*structs*/
 struct PHD_VECTOR
 {

@@ -25,7 +25,6 @@
 #define ExposureMeter	VAR_(0x006D6180, short)
 #define mycoll	VAR_(0x004C7448, COLL_INFO*)
 #define CurrentLevel	VAR_(0x00633F50, long)
-#define phd_winxmax	VAR_(0x005316E0, short)
 #define assault_timer_display	VAR_(0x006261BC, long)
 #define QuadbikeLapTimeDisplayTimer	VAR_(0x006261D4, long)
 #define assault_penalty_display_timer	VAR_(0x006261C8, long)
@@ -43,6 +42,20 @@
 #define overlay_flag	VAR_(0x004C5834, long)
 #define LpModeTS	VAR_(0x006263FC, TEXTSTRING*)
 #define LnModeTSLife	VAR_(0x00626400, long)
+/*phd stuff*/
+#define phd_leftfloat	VAR_(0x004F6D30, float)
+#define phd_topfloat	VAR_(0x004E34A8, float)
+#define phd_rightfloat	VAR_(0x005D7A48, float)
+#define phd_bottomfloat	VAR_(0x004D78F4, float)
+#define phd_winxmin	VAR_(0x00531708, short)
+#define phd_winxmax	VAR_(0x005316E0, short)
+#define phd_winymin	VAR_(0x004F6D34, short)
+#define phd_winymax	VAR_(0x00531714, short)
+#define f_centerx	VAR_(0x005316F8, float)
+#define f_centery	VAR_(0x005316FC, float)
+#define phd_centerx	VAR_(0x004D7914, long)
+#define phd_centery	VAR_(0x004D7918, long)
+/**/
 
 /*arrays*/
 #define objects	ARRAY_(0x006DCAC0, OBJECT_INFO, [376])
