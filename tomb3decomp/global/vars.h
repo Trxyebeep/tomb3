@@ -37,6 +37,12 @@
 #define bBlueEffect	VAR_(0x005BAB00, bool)
 #define BarsWidth	VAR_(0x004C805C, long)
 #define DumpWidth	VAR_(0x004CD900, short)
+#define health_bar_timer	VAR_(0x006266C8, long)
+#define PoisonFlag	VAR_(0x006D77A0, char)
+#define ammotext	VAR_(0x006263F8, TEXTSTRING*)
+#define overlay_flag	VAR_(0x004C5834, long)
+#define LpModeTS	VAR_(0x006263FC, TEXTSTRING*)
+#define LnModeTSLife	VAR_(0x00626400, long)
 
 /*arrays*/
 #define objects	ARRAY_(0x006DCAC0, OBJECT_INFO, [376])

@@ -826,4 +826,32 @@ struct OBJECT_INFO
 	ushort semi_transparent : 1;
 	ushort water_creature : 1;
 };
+
+struct TEXTSTRING
+{
+	long flags;
+	ushort textflags;
+	ushort bgndflags;
+	ushort outlflags;
+	short xpos;
+	short ypos;
+	short zpos;
+	short letterSpacing;
+	short wordSpacing;
+	short flashRate;
+	short flashCount;
+	short bgndColour;
+	ushort* bgndGour;
+	short outlColour;
+	ushort* outlGour;
+	short bgndSizeX;
+	short bgndSizeY;
+	short bgndOffX;
+	short bgndOffY;
+	short bgndOffZ;
+	long scaleH;
+	long scaleV;
+	short Colour;
+	char* string;
+};
 #pragma pack(pop)
