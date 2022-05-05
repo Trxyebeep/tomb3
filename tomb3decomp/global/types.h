@@ -876,4 +876,12 @@ struct DISPLAYPU
 	short duration;
 	short sprnum;
 };
+
+struct OLD_CAMERA
+{
+	short current_anim_state;
+	short goal_anim_state;
+	PHD_3DPOS pos;
+	PHD_3DPOS pos2;
+};
 #pragma pack(pop)

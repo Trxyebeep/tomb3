@@ -7,6 +7,7 @@
 #include "../game/laraswim.h"
 #include "../game/laramisc.h"
 #include "../game/health.h"
+#include "../game/camera.h"
 
 #include "../3dsystem/3d_gen.h"
 
@@ -42,6 +43,7 @@ void inject_all(bool replace)
 	inject_laraswim(replace);
 	inject_laramisc(replace);
 	inject_health(replace);
+	inject_camera(replace);
 
 	//specific
 	inject_drawbars(replace);

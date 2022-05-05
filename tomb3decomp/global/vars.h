@@ -41,6 +41,12 @@
 #define overlay_flag	VAR_(0x004C5834, long)
 #define LpModeTS	VAR_(0x006263FC, TEXTSTRING*)
 #define LnModeTSLife	VAR_(0x00626400, long)
+#define last_target	VAR_(0x006E30D0, GAME_VECTOR)
+#define ForcedFixedCamera	VAR_(0x006E30C0, GAME_VECTOR)
+#define UseForcedFixedCamera	VAR_(0x006E30F0, char)
+#define last_ideal	VAR_(0x006E30E0, GAME_VECTOR)
+#define old_cam	VAR_(0x006E3100, OLD_CAMERA)
+#define camerasnaps	VAR_(0x00625F3C, char)
 /*phd stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
