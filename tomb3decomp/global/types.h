@@ -854,4 +854,10 @@ struct TEXTSTRING
 	short Colour;
 	char* string;
 };
+
+struct DISPLAYPU
+{
+	short duration;
+	short sprnum;
+};
 #pragma pack(pop)

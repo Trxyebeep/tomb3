@@ -4,6 +4,7 @@
 #include "../3dsystem/scalespr.h"
 #include "../specific/drawbars.h"
 #include "text.h"
+#include "../specific/specific.h"
 
 long FlashIt()
 {
@@ -375,6 +376,21 @@ void DrawGameInfo(long timed)
 	T_DrawText();
 }
 
+void InitialisePickUpDisplay()
+{
+	for (int i = 0; i < 1; i++)
+		pickups[i].duration = 0;
+}
+
+void AddDisplayPickup(short objnum)
+{
+	if (objnum == SECRET_ITEM1 || objnum == SECRET_ITEM2 || objnum == SECRET_ITEM3)
+		S_CDPlay(gameflow.secret_track, 0);
+
+	pickups[0].sprnum = objnum;
+	pickups[0].duration = 75;
+}
+
 void inject_health(bool replace)
 {
 	INJECT(0x00434360, FlashIt, replace);
@@ -388,4 +404,6 @@ void inject_health(bool replace)
 	INJECT(0x00434E30, DrawModeInfo, replace);
 	INJECT(0x00434DB0, DisplayModeInfo, replace);
 	INJECT(0x00434930, DrawGameInfo, replace);
+	INJECT(0x00434D50, InitialisePickUpDisplay, replace);
+	INJECT(0x00434D70, AddDisplayPickup, replace);
 }

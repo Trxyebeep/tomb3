@@ -13,3 +13,5 @@ void RemoveAmmoText();
 void DrawModeInfo();
 void DisplayModeInfo(char* string);
 void DrawAmmoInfo();
+void InitialisePickUpDisplay();
+void AddDisplayPickup(short objnum);

@@ -527,8 +527,8 @@ tomb3decomp progress.
 0x00434AE0	+	DrawAirBar
 0x00434BD0	+	RemoveAmmoText
 0x00434BF0	+	DrawAmmoInfo
-0x00434D50		InitialisePickUpDisplay
-0x00434D70		AddDisplayPickup
+0x00434D50	+	InitialisePickUpDisplay
+0x00434D70	+	AddDisplayPickup
 0x00434DB0	+	DisplayModeInfo
 0x00434E30	+	DrawModeInfo
 

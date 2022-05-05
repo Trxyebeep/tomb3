@@ -46,6 +46,7 @@
 
 /*arrays*/
 #define objects	ARRAY_(0x006DCAC0, OBJECT_INFO, [376])
+#define pickups	ARRAY_(0x006263F4, DISPLAYPU, [1])
 
 /*constants*/
 #define NO_HEIGHT -32512
