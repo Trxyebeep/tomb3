@@ -37,6 +37,185 @@ void InitialiseCamera()
 	CalculateCamera();
 }
 
+long mgLOS(GAME_VECTOR* start, GAME_VECTOR* target, long push)
+{
+	FLOOR_INFO* floor;
+	long x, y, z, h, c, cdiff, hdiff, dx, dy, dz, clipped, nc, i;
+	short room_number, room_number2;
+
+	dx = (target->x - start->x) >> 3;
+	dy = (target->y - start->y) >> 3;
+	dz = (target->z - start->z) >> 3;
+	x = start->x;
+	y = start->y;
+	z = start->z;
+	room_number = start->room_number;
+	room_number2 = room_number;
+	nc = 0;
+	clipped = 0;
+
+	for (i = 0; i < 8; i++)
+	{
+		room_number = room_number2;
+		floor = GetFloor(x, y, z, &room_number2);
+
+		if (room[room_number2].flags & ROOM_SWAMP)
+		{
+			clipped = 1;
+			break;
+		}
+
+		h = GetHeight(floor, x, y, z);
+		c = GetCeiling(floor, x, y, z);
+
+		if (h == NO_HEIGHT || c == NO_HEIGHT || c >= h)
+		{
+			if (!nc)
+			{
+				x += dx;
+				y += dy;
+				z += dz;
+				continue;
+			}
+
+			clipped = 1;
+			break;
+		}
+
+		if (y > h)
+		{
+			hdiff = y - h;
+
+			if (hdiff < push)
+				y = h;
+			else
+			{
+				clipped = 1;
+				break;
+			}
+		}
+
+		if (y < c)
+		{
+			cdiff = c - y;
+
+			if (cdiff < push)
+				y = c;
+			else
+			{
+				clipped = 1;
+				break;
+			}
+		}
+
+		nc = 1;
+		x += dx;
+		y += dy;
+		z += dz;
+	}
+
+	if (i)
+	{
+		x -= dx;
+		y -= dy;
+		z -= dz;
+	}
+
+	target->x = x;
+	target->y = y;
+	target->z = z;
+	GetFloor(x, y, z, &room_number);
+	target->room_number = room_number;
+	return !clipped;
+}
+
+long CameraCollisionBounds(GAME_VECTOR* ideal, long push, long yfirst)
+{
+	FLOOR_INFO* floor;
+	long wx, wy, wz, h, c;
+	short room_number;
+
+	wx = ideal->x;
+	wy = ideal->y;
+	wz = ideal->z;
+
+	if (yfirst)
+	{
+		room_number = ideal->room_number;
+		floor = GetFloor(wx, wy, wz, &room_number);
+		h = GetHeight(floor, wx, wy, wz);
+		c = GetCeiling(floor, wx, wy, wz);
+
+		if (c > wy - 255 && h < wy + 255 && c < h && c != NO_HEIGHT && h != NO_HEIGHT)
+			wy = (c + h) >> 1;
+		else if (h < wy + 255 && c < h && c != NO_HEIGHT && h != NO_HEIGHT)
+			wy = h - 255;
+		else if (c > wy - 255 && c < h && c != NO_HEIGHT && h != NO_HEIGHT)
+			wy = c + 255;
+	}
+
+	room_number = ideal->room_number;
+	floor = GetFloor(wx - push, wy, wz, &room_number);
+	h = GetHeight(floor, wx - push, wy, wz);
+	c = GetCeiling(floor, wx - push, wy, wz);
+
+	if (h < wy || h == NO_HEIGHT || c == NO_HEIGHT || c >= h || wy < c)
+		wx = push + (wx & ~0x3FF);
+
+	room_number = ideal->room_number;
+	floor = GetFloor(wx, wy, wz - push, &room_number);
+	h = GetHeight(floor, wx, wy, wz - push);
+	c = GetCeiling(floor, wx, wy, wz - push);
+
+	if (h < wy || h == NO_HEIGHT || c == NO_HEIGHT || c >= h || wy < c)
+		wz = push + (wz & ~0x3FF);
+
+	room_number = ideal->room_number;
+	floor = GetFloor(wx + push, wy, wz, &room_number);
+	h = GetHeight(floor, wx + push, wy, wz);
+	c = GetCeiling(floor, wx + push, wy, wz);
+
+	if (h < wy || h == NO_HEIGHT || c == NO_HEIGHT || c >= h || wy < c)
+		wx = (wx | 0x3FF) - push;
+
+	room_number = ideal->room_number;
+	floor = GetFloor(wx, wy, wz + push, &room_number);
+	h = GetHeight(floor, wx, wy, wz + push);
+	c = GetCeiling(floor, wx, wy, wz + push);
+
+	if (h < wy || h == NO_HEIGHT || c == NO_HEIGHT || c >= h || wy < c)
+		wz = (wz | 0x3FF) - push;
+
+	if (!yfirst)
+	{
+		room_number = ideal->room_number;
+		floor = GetFloor(wx, wy, wz, &room_number);
+		h = GetHeight(floor, wx, wy, wz);
+		c = GetCeiling(floor, wx, wy, wz);
+
+		if (c > wy - 255 && h < wy + 255 && c < h && c != NO_HEIGHT && h != NO_HEIGHT)
+			wy = (h + c) >> 1;
+		else if (h < wy + 255 && c < h && c != NO_HEIGHT && h != NO_HEIGHT)
+			wy = h - 255;
+		else if (c > wy - 255 && c < h && c != NO_HEIGHT && h != NO_HEIGHT)
+			wy = c + 255;
+	}
+
+	room_number = ideal->room_number;
+	floor = GetFloor(wx, wy, wz, &room_number);
+	h = GetHeight(floor, wx, wy, wz);
+	c = GetCeiling(floor, wx, wy, wz);
+
+	if (h < wy || wy < c || h == NO_HEIGHT || c == NO_HEIGHT || c >= h)
+		return 1;
+
+	GetFloor(wx, wy, wz, &ideal->room_number);
+	ideal->x = wx;
+	ideal->y = wy;
+	ideal->z = wz;
+	return 0;
+}
+
 void MoveCamera(GAME_VECTOR* ideal, long speed)
 {
 	FLOOR_INFO* floor;
@@ -203,8 +382,152 @@ void MoveCamera(GAME_VECTOR* ideal, long speed)
 	camera.old_type = camera.type;
 }
 
+void ChaseCamera(ITEM_INFO* item)
+{
+	FLOOR_INFO* floor;
+	GAME_VECTOR ideal;
+	GAME_VECTOR ideals[5];
+	GAME_VECTOR temp[2];
+	long distance, dx, dz, farthest, farthestnum, h, c, x, y, z;
+	short angle, room_number;
+
+	if (!camera.target_elevation)
+		camera.target_elevation = -1820;
+
+	camera.target_elevation += item->pos.x_rot;
+
+	if (camera.target_elevation > 15470)
+		camera.target_elevation = 15470;
+	else if (camera.target_elevation < -15470)
+		camera.target_elevation = -15470;
+
+	distance = (phd_cos(camera.target_elevation) * camera.target_distance) >> 14;
+	x = camera.target.x;
+	y = camera.target.y;
+	z = camera.target.z;
+	floor = GetFloor(x, y, z, &camera.target.room_number);
+	h = GetHeight(floor, x, y, z);
+	c = GetCeiling(floor, x, y, z);
+
+	if (c + 16 > h - 16 && h != NO_HEIGHT && c != NO_HEIGHT)
+	{
+		camera.target.y = (h + c) >> 1;
+		camera.target_elevation = 0;
+	}
+	else if (y > h - 16 && h != NO_HEIGHT)
+	{
+		camera.target.y = h - 16;
+		camera.target_elevation = 0;
+	}
+	else if (y < c + 16 && c != NO_HEIGHT)
+	{
+		camera.target.y = c + 16;
+		camera.target_elevation = 0;
+	}
+
+	floor = GetFloor(camera.target.x, camera.target.y, camera.target.z, &camera.target.room_number);
+	x = camera.target.x;
+	y = camera.target.y;
+	z = camera.target.z;
+	room_number = camera.target.room_number;
+	floor = GetFloor(camera.target.x, camera.target.y, camera.target.z, &room_number);
+	h = GetHeight(floor, x, y, z);
+	c = GetCeiling(floor, x, y, z);
+
+	if (y < c || y > h || c >= h || h == NO_HEIGHT || c == NO_HEIGHT)
+	{
+		camera.target.x = last_target.x;
+		camera.target.y = last_target.y;
+		camera.target.z = last_target.z;
+		camera.target.room_number = last_target.room_number;
+	}
+
+	for (int i = 0; i < 5; i++)
+		ideals[i].y = ((phd_sin(camera.target_elevation) * camera.target_distance) >> 14) + camera.target.y;
+
+	farthest = 0x7FFFFFFF;
+	farthestnum = 0;
+
+	for (int i = 0; i < 5; i++)
+	{
+		if (i)
+			angle = (i - 1) << 14;
+		else
+			angle = camera.target_angle + item->pos.y_rot;
+
+		ideals[i].x = camera.target.x - ((distance * phd_sin(angle)) >> 14);
+		ideals[i].z = camera.target.z - ((distance * phd_cos(angle)) >> 14);
+		ideals[i].room_number = camera.target.room_number;
+
+		if (mgLOS(&camera.target, &ideals[i], 200))
+		{
+			temp[0].x = ideals[i].x;
+			temp[0].y = ideals[i].y;
+			temp[0].z = ideals[i].z;
+			temp[0].room_number = ideals[i].room_number;
+			temp[1].x = camera.pos.x;
+			temp[1].y = camera.pos.y;
+			temp[1].z = camera.pos.z;
+			temp[1].room_number = camera.pos.room_number;
+
+			if (!i || mgLOS(&temp[0], &temp[1], 0))
+			{
+				if (!i)
+				{
+					farthestnum = 0;
+					break;
+				}
+
+				dx = SQUARE(camera.pos.x - ideals[i].x);
+				dz = SQUARE(camera.pos.z - ideals[i].z);
+				dz += dx;
+
+				if (dz < farthest)
+				{
+					farthest = dz;
+					farthestnum = i;
+				}
+			}
+		}
+		else if (!i)
+		{
+			temp[0].x = ideals[i].x;
+			temp[0].y = ideals[i].y;
+			temp[0].z = ideals[i].z;
+			temp[0].room_number = ideals[i].room_number;
+			temp[1].x = camera.pos.x;
+			temp[1].y = camera.pos.y;
+			temp[1].z = camera.pos.z;
+			temp[1].room_number = camera.pos.room_number;
+			dx = SQUARE(camera.target.x - ideals[i].x);
+			dz = SQUARE(camera.target.z - ideals[i].z);
+			dz += dx;
+
+			if (dz > 0x90000)
+			{
+				farthestnum = 0;
+				break;
+			}
+		}
+	}
+
+	ideal.x = ideals[farthestnum].x;
+	ideal.y = ideals[farthestnum].y;
+	ideal.z = ideals[farthestnum].z;
+	ideal.room_number = ideals[farthestnum].room_number;
+	CameraCollisionBounds(&ideal, 384, 1);
+
+	if (camera.old_type == FIXED_CAMERA)
+		camera.speed = 1;
+
+	MoveCamera(&ideal, camera.speed);
+}
+
 void inject_camera(bool replace)
 {
 	INJECT(0x00417300, InitialiseCamera, replace);
+	INJECT(0x0041A641, mgLOS, replace);
+	INJECT(0x0041A0BE, CameraCollisionBounds, replace);
 	INJECT(0x0041743C, MoveCamera, replace);
+	INJECT(0x00417CA3, ChaseCamera, replace);
 }
