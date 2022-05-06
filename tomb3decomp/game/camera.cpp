@@ -1056,7 +1056,7 @@ void CalculateCamera()
 	else
 		y += bounds[3] + ((bounds[2] - bounds[3]) * 3 >> 2);
 
-	if (camera.item && !fixed_camera)	//FIX ME
+	if (camera.item && !fixed_camera)
 	{
 		dx = camera.item->pos.x_pos - item->pos.x_pos;
 		dz = camera.item->pos.z_pos - item->pos.z_pos;
