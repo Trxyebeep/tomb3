@@ -82,9 +82,10 @@
 /*arrays*/
 #define objects	ARRAY_(0x006DCAC0, OBJECT_INFO, [376])
 #define pickups	ARRAY_(0x006263F4, DISPLAYPU, [1])
-#define w2v_matrix	ARRAY_(0x005A6AC0, long, [12])
+#define w2v_matrix	ARRAY_(0x005A6AC0, long, [indices_count])
 #define ZTable	ARRAY_(0x006A2088, float, [40960])
 
 /*constants*/
 #define NO_HEIGHT -32512
 #define NO_ITEM	-1
+#define W2V_SHIFT	14

@@ -286,6 +286,26 @@ void AlterFOV(short fov)
 	InitZTable();
 }
 
+void phd_PushMatrix()
+{
+	memcpy(phd_mxptr + 12, phd_mxptr, 48);
+	phd_mxptr += indices_count;
+}
+
+void phd_PushUnitMatrix()
+{
+	phd_mxptr += indices_count;
+	phd_mxptr[M00] = 1 << W2V_SHIFT;
+	phd_mxptr[M01] = 0;
+	phd_mxptr[M02] = 0;
+	phd_mxptr[M10] = 0;
+	phd_mxptr[M11] = 1 << W2V_SHIFT;
+	phd_mxptr[M12] = 0;
+	phd_mxptr[M20] = 0;
+	phd_mxptr[M21] = 0;
+	phd_mxptr[M22] = 1 << W2V_SHIFT;
+}
+
 void inject_3dgen(bool replace)
 {
 	INJECT(0x00401AF0, phd_PutPolygons, replace);
@@ -297,4 +317,7 @@ void inject_3dgen(bool replace)
 	INJECT(0x004019C0, phd_TranslateRel, replace);
 	INJECT(0x00401A70, phd_TranslateAbs, replace);
 	INJECT(0x00402030, AlterFOV, replace);
+	INJECT(0x004B4280, phd_PushMatrix, replace);
+	INJECT(0x004B429E, phd_PushUnitMatrix, replace);
+//	INJECT(----------, phd_PopMatrix, replace);
 }

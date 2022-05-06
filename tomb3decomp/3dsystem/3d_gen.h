@@ -11,6 +11,13 @@ void phd_RotYXZ(short y, short x, short z);
 void phd_RotYXZpack(long angles);
 long phd_TranslateRel(long x, long y, long z);
 void AlterFOV(short fov);
+void phd_PushMatrix();
+void phd_PushUnitMatrix();
+
+__inline void phd_PopMatrix()
+{
+	phd_mxptr -= indices_count;
+}
 
 #define phd_LookAt	( (void(__cdecl*)(long, long, long, long, long, long, short)) 0x004011D0 )
 
