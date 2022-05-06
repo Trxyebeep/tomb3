@@ -163,7 +163,7 @@ tomb3decomp progress.
 0x00417300	+	InitialiseCamera
 0x0041743C	+	MoveCamera
 0x00417CA3	+	ChaseCamera
-0x0041835C		CombatCamera
+0x0041835C	+	CombatCamera
 0x00418A56		LookCamera
 0x004198FC		CalculateCamera
 0x0041A000		FixedCamera

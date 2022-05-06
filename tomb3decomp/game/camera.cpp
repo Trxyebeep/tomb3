@@ -523,6 +523,157 @@ void ChaseCamera(ITEM_INFO* item)
 	MoveCamera(&ideal, camera.speed);
 }
 
+void CombatCamera(ITEM_INFO* item)
+{
+	FLOOR_INFO* floor;
+	GAME_VECTOR ideal;
+	GAME_VECTOR ideals[9];
+	GAME_VECTOR temp[2];
+	long distance, dx, dz, farthest, farthestnum, h, c, x, y, z;
+	short angle, room_number;
+
+	camera.target.x = item->pos.x_pos;
+	camera.target.z = item->pos.z_pos;
+
+	if (lara.target)
+	{
+		camera.target_angle = lara.target_angles[0] + item->pos.y_rot;
+		camera.target_elevation = lara.target_angles[1] + item->pos.x_rot;
+	}
+	else
+	{
+		camera.target_angle = lara.torso_y_rot + lara.head_y_rot + item->pos.y_rot;
+		camera.target_elevation = lara.head_x_rot + item->pos.x_rot + lara.torso_x_rot - 2730;
+	}
+
+	room_number = camera.target.room_number;
+	floor = GetFloor(camera.target.x, camera.target.y + 256, camera.target.z, &room_number);
+	if (room[room_number].flags & ROOM_SWAMP)
+		camera.target.y = room[room_number].maxceiling - 256;	//check me
+
+	x = camera.target.x;
+	y = camera.target.y;
+	z = camera.target.z;
+	floor = GetFloor(x, y, z, &camera.target.room_number);
+	h = GetHeight(floor, x, y, z);
+	c = GetCeiling(floor, x, y, z);
+
+	if (c + 64 > h - 64 && h != NO_HEIGHT && c != NO_HEIGHT)
+	{
+		camera.target.y = (c + h) >> 1;
+		camera.target_elevation = 0;
+	}
+	else if (camera.target.y > h - 64 && h != NO_HEIGHT)
+	{
+		camera.target.y = h - 64;
+		camera.target_elevation = 0;
+	}
+	else if (camera.target.y < c + 64 && c != NO_HEIGHT)
+	{
+		camera.target.y = c + 64;
+		camera.target_elevation = 0;
+	}
+
+	x = camera.target.x;
+	y = camera.target.y;
+	z = camera.target.z;
+	GetFloor(x, y, z, &camera.target.room_number);
+	room_number = camera.target.room_number;
+	floor = GetFloor(x, y, z, &room_number);
+	h = GetHeight(floor, x, y, z);
+	c = GetCeiling(floor, x, y, z);
+
+	if (y < c || y > h || c >= h || h == NO_HEIGHT || c == NO_HEIGHT)
+	{
+		camera.target.x = last_target.x;
+		camera.target.y = last_target.y;
+		camera.target.z = last_target.z;
+		camera.target.room_number = last_target.room_number;
+	}
+
+	camera.target_distance = 1536;
+	distance = camera.target_distance * phd_cos(camera.target_elevation) >> 14;
+
+	for (int i = 0; i < 5; i++)
+		ideals[i].y = (camera.target_distance * phd_sin(camera.target_elevation) >> 14) + camera.target.y;
+
+	farthest = 0x7FFFFFFF;
+	farthestnum = 0;
+
+	for (int i = 0; i < 5; i++)
+	{
+		if (i)
+			angle = (i - 1) << 14;
+		else
+			angle = camera.target_angle;
+
+		ideals[i].x = camera.target.x - ((distance * phd_sin(angle)) >> 14);
+		ideals[i].z = camera.target.z - ((distance * phd_cos(angle)) >> 14);
+		ideals[i].room_number = camera.target.room_number;
+
+		if (mgLOS(&camera.target, &ideals[i], 200))
+		{
+			temp[0].x = ideals[i].x;
+			temp[0].y = ideals[i].y;
+			temp[0].z = ideals[i].z;
+			temp[0].room_number = ideals[i].room_number;
+			temp[1].x = camera.pos.x;
+			temp[1].y = camera.pos.y;
+			temp[1].z = camera.pos.z;
+			temp[1].room_number = camera.pos.room_number;
+			if (!i || mgLOS(temp, &temp[1], 0))
+			{
+				if (!i)
+				{
+					farthestnum = 0;
+					break;
+				}
+
+				dx = SQUARE(camera.pos.x - ideals[i].x);
+				dz = SQUARE(camera.pos.z - ideals[i].z);
+				dz += dx;
+
+				if (dz < farthest)
+				{
+					farthest = dz;
+					farthestnum = i;
+				}
+			}
+		}
+		else if (!i)
+		{
+			temp[0].x = ideals[i].x;
+			temp[0].y = ideals[i].y;
+			temp[0].z = ideals[i].z;
+			temp[0].room_number = ideals[i].room_number;
+			temp[1].x = camera.pos.x;
+			temp[1].y = camera.pos.y;
+			temp[1].z = camera.pos.z;
+			temp[1].room_number = camera.pos.room_number;
+			dx = SQUARE(camera.target.x - ideals[i].x);
+			dz = SQUARE(camera.target.z - ideals[i].z);
+			dz += dx;
+
+			if (dz > 0x90000)
+			{
+				farthestnum = 0;
+				break;
+			}
+		}
+	}
+
+	ideal.x = ideals[farthestnum].x;
+	ideal.y = ideals[farthestnum].y;
+	ideal.z = ideals[farthestnum].z;
+	ideal.room_number = ideals[farthestnum].room_number;
+	CameraCollisionBounds(&ideal, 384, 1);
+
+	if (camera.old_type == FIXED_CAMERA)
+		camera.speed = 1;
+
+	MoveCamera(&ideal, camera.speed);
+}
+
 void inject_camera(bool replace)
 {
 	INJECT(0x00417300, InitialiseCamera, replace);
@@ -530,4 +681,5 @@ void inject_camera(bool replace)
 	INJECT(0x0041A0BE, CameraCollisionBounds, replace);
 	INJECT(0x0041743C, MoveCamera, replace);
 	INJECT(0x00417CA3, ChaseCamera, replace);
+	INJECT(0x0041835C, CombatCamera, replace);
 }
