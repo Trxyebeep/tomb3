@@ -237,6 +237,17 @@ enum lara_meshes
 	HEAD
 };
 
+enum lara_get_meshes
+{
+	LEFT_HAND,
+	RIGHT_HAND,
+	LARA_HIPS,
+	LARA_TORSO,
+	LARA_HEAD,
+	LEFT_FOOT,
+	RIGHT_FOOT
+};
+
 enum sort_type
 {
 	MID_SORT,

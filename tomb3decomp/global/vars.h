@@ -47,6 +47,8 @@
 #define last_ideal	VAR_(0x006E30E0, GAME_VECTOR)
 #define old_cam	VAR_(0x006E3100, OLD_CAMERA)
 #define camerasnaps	VAR_(0x00625F3C, char)
+#define static_lookcamp	VAR_(0x006E3150, GAME_VECTOR)
+#define static_lookcamt	VAR_(0x006E3140, GAME_VECTOR)
 /*phd stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
