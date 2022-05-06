@@ -77,6 +77,9 @@
 #define f_znear	VAR_(0x0056C0A0, float)
 #define f_perspoznear	VAR_(0x0053170C, float)
 #define LfAspectCorrection	VAR_(0x004D38D8, float)
+#define IMptr	VAR_(0x006E288C, long*)
+#define IM_rate	VAR_(0x006E2884, long)
+#define IM_frac	VAR_(0x006E2070, long)
 /**/
 
 /*arrays*/
@@ -84,6 +87,7 @@
 #define pickups	ARRAY_(0x006263F4, DISPLAYPU, [1])
 #define w2v_matrix	ARRAY_(0x005A6AC0, long, [indices_count])
 #define ZTable	ARRAY_(0x006A2088, float, [40960])
+#define IMstack	ARRAY_(0x006E1440, long, [768])
 
 /*constants*/
 #define NO_HEIGHT -32512

@@ -319,20 +319,20 @@ tomb3decomp progress.
 0x00425EA0		DrawAnimatingItem
 0x004265E0		DrawLara
 0x00427E20		DrawLaraInt
-0x00429350		InitInterpolate
-0x00429390		phd_PopMatrix_I
-0x004293C0		phd_PushMatrix_I
-0x004293F0		phd_RotY_I
-0x00429430		phd_RotX_I
-0x00429470		phd_RotZ_I
-0x004294B0		phd_TranslateRel_I
-0x00429500		phd_TranslateRel_ID
-0x00429550		phd_RotYXZ_I
-0x004295A0		gar_RotYXZsuperpack_I
-0x004295E0		gar_RotYXZsuperpack
-0x00429690		phd_PutPolygons_I
-0x004296C0		InterpolateMatrix
-0x00429930		InterpolateArmMatrix
+0x00429350	+	InitInterpolate
+0x00429390	+	phd_PopMatrix_I
+0x004293C0	+	phd_PushMatrix_I
+0x004293F0	+	phd_RotY_I
+0x00429430	+	phd_RotX_I
+0x00429470	+	phd_RotZ_I
+0x004294B0	+	phd_TranslateRel_I
+0x00429500	+	phd_TranslateRel_ID
+0x00429550	+	phd_RotYXZ_I
+0x004295A0	+	gar_RotYXZsuperpack_I
+0x004295E0	+	gar_RotYXZsuperpack
+0x00429690	+	phd_PutPolygons_I
+0x004296C0	+	InterpolateMatrix
+0x00429930	+	InterpolateArmMatrix
 0x00429A30		DrawGunFlash
 0x00429BA0		CalculateObjectLighting
 0x00429D00		CalculateObjectLightingLara
