@@ -229,6 +229,64 @@ void InterpolateArmMatrix()
 	}
 }
 
+long GetFrames(ITEM_INFO* item, short* frm[], long* rate)
+{
+	ANIM_STRUCT* anim;
+	long frame, size, frac, num;
+
+	anim = &anims[item->anim_number];
+	frm[0] = anim->frame_ptr;
+	frm[1] = anim->frame_ptr;
+	*rate = anim->interpolation & 0xFF;
+	frame = item->frame_number - anim->frame_base;
+	size = anim->interpolation >> 8;
+	frm[0] += frame / *rate * size;
+	frm[1] = frm[0] + size;
+	frac = (frame % *rate);
+
+	if (!frac)
+		return 0;
+
+	num = *rate * (frame / *rate + 1);
+
+	if (num > anim->frame_end)
+		*rate = *rate + anim->frame_end - num;
+
+	return frac;
+}
+
+short* GetBestFrame(ITEM_INFO* item)
+{
+	short* frm[2];
+	long frac, rate;
+
+	frac = GetFrames(item, frm, &rate);
+
+	if (frac > (rate >> 1))
+		return frm[1];
+	else
+		return frm[0];
+}
+
+short* GetBoundsAccurate(ITEM_INFO* item)
+{
+	short* frmptr[2];
+	short* bptr;
+	long frac, rate;
+
+	frac = GetFrames(item, frmptr, &rate);
+
+	if (!frac)
+		return frmptr[0];
+
+	bptr = interpolated_bounds;
+
+	for (int i = 0; i < 6; i++, bptr++, frmptr[0]++, frmptr[1]++)
+		*bptr = short(*frmptr[0] + (frac + (*frmptr[1] - *frmptr[0]) / rate));
+
+	return interpolated_bounds;
+}
+
 void inject_draw(bool replace)
 {
 	INJECT(0x00429390, phd_PopMatrix_I, replace);
@@ -245,4 +303,7 @@ void inject_draw(bool replace)
 	INJECT(0x00429350, InitInterpolate, replace);
 	INJECT(0x004296C0, InterpolateMatrix, replace);
 	INJECT(0x00429930, InterpolateArmMatrix, replace);
+	INJECT(0x00429DB0, GetFrames, replace);
+	INJECT(0x00429ED0, GetBestFrame, replace);
+	INJECT(0x00429E50, GetBoundsAccurate, replace);
 }

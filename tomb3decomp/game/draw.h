@@ -15,5 +15,6 @@ void gar_RotYXZsuperpack_I(short** pprot1, short** pprot2, long skip);
 void InitInterpolate(long frac, long rate);
 void InterpolateMatrix();
 void InterpolateArmMatrix();
-
-#define GetBoundsAccurate	( (short*(__cdecl*)(ITEM_INFO*)) 0x00429E50 )
+long GetFrames(ITEM_INFO* item, short* frm[], long* rate);
+short* GetBestFrame(ITEM_INFO* item);
+short* GetBoundsAccurate(ITEM_INFO* item);

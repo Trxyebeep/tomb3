@@ -88,6 +88,7 @@
 #define w2v_matrix	ARRAY_(0x005A6AC0, long, [indices_count])
 #define ZTable	ARRAY_(0x006A2088, float, [40960])
 #define IMstack	ARRAY_(0x006E1440, long, [768])
+#define interpolated_bounds	ARRAY_(0x006E28B0, short, [6])
 
 /*constants*/
 #define NO_HEIGHT -32512
