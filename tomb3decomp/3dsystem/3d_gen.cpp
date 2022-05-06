@@ -38,18 +38,18 @@ void phd_RotX(short angle)
 
 		mx1 = cos * phd_mxptr[M01] + sin * phd_mxptr[M02];
 		mx2 = cos * phd_mxptr[M02] - sin * phd_mxptr[M01];
-		phd_mxptr[M01] = mx1 >> 14;
-		phd_mxptr[M02] = mx2 >> 14;
+		phd_mxptr[M01] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M02] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M11] + sin * phd_mxptr[M12];
 		mx2 = cos * phd_mxptr[M12] - sin * phd_mxptr[M11];
-		phd_mxptr[M11] = mx1 >> 14;
-		phd_mxptr[M12] = mx2 >> 14;
+		phd_mxptr[M11] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M12] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M21] + sin * phd_mxptr[M22];
 		mx2 = cos * phd_mxptr[M22] - sin * phd_mxptr[M21];
-		phd_mxptr[M21] = mx1 >> 14;
-		phd_mxptr[M22] = mx2 >> 14;
+		phd_mxptr[M21] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M22] = mx2 >> W2V_SHIFT;
 	}
 }
 
@@ -64,18 +64,18 @@ void phd_RotY(short angle)
 
 		mx1 = cos * phd_mxptr[M00] - sin * phd_mxptr[M02];
 		mx2 = cos * phd_mxptr[M02] + sin * phd_mxptr[M00];
-		phd_mxptr[M00] = mx1 >> 14;
-		phd_mxptr[M02] = mx2 >> 14;
+		phd_mxptr[M00] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M02] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M10] - sin * phd_mxptr[M12];
 		mx2 = cos * phd_mxptr[M12] + sin * phd_mxptr[M10];
-		phd_mxptr[M10] = mx1 >> 14;
-		phd_mxptr[M12] = mx2 >> 14;
+		phd_mxptr[M10] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M12] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M20] - sin * phd_mxptr[M22];
 		mx2 = cos * phd_mxptr[M22] + sin * phd_mxptr[M20];
-		phd_mxptr[M20] = mx1 >> 14;
-		phd_mxptr[M22] = mx2 >> 14;
+		phd_mxptr[M20] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M22] = mx2 >> W2V_SHIFT;
 	}
 }
 
@@ -90,18 +90,18 @@ void phd_RotZ(short angle)
 
 		mx1 = cos * phd_mxptr[M00] + sin * phd_mxptr[M01];
 		mx2 = cos * phd_mxptr[M01] - sin * phd_mxptr[M00];
-		phd_mxptr[M00] = mx1 >> 14;
-		phd_mxptr[M01] = mx2 >> 14;
+		phd_mxptr[M00] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M01] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M10] + sin * phd_mxptr[M11];
 		mx2 = cos * phd_mxptr[M11] - sin * phd_mxptr[M10];
-		phd_mxptr[M10] = mx1 >> 14;
-		phd_mxptr[M11] = mx2 >> 14;
+		phd_mxptr[M10] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M11] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M20] + sin * phd_mxptr[M21];
 		mx2 = cos * phd_mxptr[M21] - sin * phd_mxptr[M20];
-		phd_mxptr[M20] = mx1 >> 14;
-		phd_mxptr[M21] = mx2 >> 14;
+		phd_mxptr[M20] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M21] = mx2 >> W2V_SHIFT;
 	}
 }
 
@@ -116,18 +116,18 @@ void phd_RotYXZ(short y, short x, short z)
 
 		mx1 = cos * phd_mxptr[M00] - sin * phd_mxptr[M02];
 		mx2 = cos * phd_mxptr[M02] + sin * phd_mxptr[M00];
-		phd_mxptr[M00] = mx1 >> 14;
-		phd_mxptr[M02] = mx2 >> 14;
+		phd_mxptr[M00] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M02] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M10] - sin * phd_mxptr[M12];
 		mx2 = cos * phd_mxptr[M12] + sin * phd_mxptr[M10];
-		phd_mxptr[M10] = mx1 >> 14;
-		phd_mxptr[M12] = mx2 >> 14;
+		phd_mxptr[M10] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M12] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M20] - sin * phd_mxptr[M22];
 		mx2 = cos * phd_mxptr[M22] + sin * phd_mxptr[M20];
-		phd_mxptr[M20] = mx1 >> 14;
-		phd_mxptr[M22] = mx2 >> 14;
+		phd_mxptr[M20] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M22] = mx2 >> W2V_SHIFT;
 	}
 
 	if (x)
@@ -137,18 +137,18 @@ void phd_RotYXZ(short y, short x, short z)
 
 		mx1 = cos * phd_mxptr[M01] + sin * phd_mxptr[M02];
 		mx2 = cos * phd_mxptr[M02] - sin * phd_mxptr[M01];
-		phd_mxptr[M01] = mx1 >> 14;
-		phd_mxptr[M02] = mx2 >> 14;
+		phd_mxptr[M01] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M02] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M11] + sin * phd_mxptr[M12];
 		mx2 = cos * phd_mxptr[M12] - sin * phd_mxptr[M11];
-		phd_mxptr[M11] = mx1 >> 14;
-		phd_mxptr[M12] = mx2 >> 14;
+		phd_mxptr[M11] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M12] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M21] + sin * phd_mxptr[M22];
 		mx2 = cos * phd_mxptr[M22] - sin * phd_mxptr[M21];
-		phd_mxptr[M21] = mx1 >> 14;
-		phd_mxptr[M22] = mx2 >> 14;
+		phd_mxptr[M21] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M22] = mx2 >> W2V_SHIFT;
 	}
 
 	if (z)
@@ -158,18 +158,18 @@ void phd_RotYXZ(short y, short x, short z)
 
 		mx1 = cos * phd_mxptr[M00] + sin * phd_mxptr[M01];
 		mx2 = cos * phd_mxptr[M01] - sin * phd_mxptr[M00];
-		phd_mxptr[M00] = mx1 >> 14;
-		phd_mxptr[M01] = mx2 >> 14;
+		phd_mxptr[M00] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M01] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M10] + sin * phd_mxptr[M11];
 		mx2 = cos * phd_mxptr[M11] - sin * phd_mxptr[M10];
-		phd_mxptr[M10] = mx1 >> 14;
-		phd_mxptr[M11] = mx2 >> 14;
+		phd_mxptr[M10] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M11] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M20] + sin * phd_mxptr[M21];
 		mx2 = cos * phd_mxptr[M21] - sin * phd_mxptr[M20];
-		phd_mxptr[M20] = mx1 >> 14;
-		phd_mxptr[M21] = mx2 >> 14;
+		phd_mxptr[M20] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M21] = mx2 >> W2V_SHIFT;
 	}
 }
 
@@ -188,18 +188,18 @@ void phd_RotYXZpack(long angles)
 
 		mx1 = cos * phd_mxptr[M00] - sin * phd_mxptr[M02];
 		mx2 = cos * phd_mxptr[M02] + sin * phd_mxptr[M00];
-		phd_mxptr[M00] = mx1 >> 14;
-		phd_mxptr[M02] = mx2 >> 14;
+		phd_mxptr[M00] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M02] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M10] - sin * phd_mxptr[M12];
 		mx2 = cos * phd_mxptr[M12] + sin * phd_mxptr[M10];
-		phd_mxptr[M10] = mx1 >> 14;
-		phd_mxptr[M12] = mx2 >> 14;
+		phd_mxptr[M10] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M12] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M20] - sin * phd_mxptr[M22];
 		mx2 = cos * phd_mxptr[M22] + sin * phd_mxptr[M20];
-		phd_mxptr[M20] = mx1 >> 14;
-		phd_mxptr[M22] = mx2 >> 14;
+		phd_mxptr[M20] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M22] = mx2 >> W2V_SHIFT;
 	}
 
 	angle = (angles >> 20) & 0x3FF;
@@ -212,18 +212,18 @@ void phd_RotYXZpack(long angles)
 
 		mx1 = cos * phd_mxptr[M01] + sin * phd_mxptr[M02];
 		mx2 = cos * phd_mxptr[M02] - sin * phd_mxptr[M01];
-		phd_mxptr[M01] = mx1 >> 14;
-		phd_mxptr[M02] = mx2 >> 14;
+		phd_mxptr[M01] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M02] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M11] + sin * phd_mxptr[M12];
 		mx2 = cos * phd_mxptr[M12] - sin * phd_mxptr[M11];
-		phd_mxptr[M11] = mx1 >> 14;
-		phd_mxptr[M12] = mx2 >> 14;
+		phd_mxptr[M11] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M12] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M21] + sin * phd_mxptr[M22];
 		mx2 = cos * phd_mxptr[M22] - sin * phd_mxptr[M21];
-		phd_mxptr[M21] = mx1 >> 14;
-		phd_mxptr[M22] = mx2 >> 14;
+		phd_mxptr[M21] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M22] = mx2 >> W2V_SHIFT;
 	}
 
 	angle = angles & 0x3FF;
@@ -236,18 +236,18 @@ void phd_RotYXZpack(long angles)
 
 		mx1 = cos * phd_mxptr[M00] + sin * phd_mxptr[M01];
 		mx2 = cos * phd_mxptr[M01] - sin * phd_mxptr[M00];
-		phd_mxptr[M00] = mx1 >> 14;
-		phd_mxptr[M01] = mx2 >> 14;
+		phd_mxptr[M00] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M01] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M10] + sin * phd_mxptr[M11];
 		mx2 = cos * phd_mxptr[M11] - sin * phd_mxptr[M10];
-		phd_mxptr[M10] = mx1 >> 14;
-		phd_mxptr[M11] = mx2 >> 14;
+		phd_mxptr[M10] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M11] = mx2 >> W2V_SHIFT;
 
 		mx1 = cos * phd_mxptr[M20] + sin * phd_mxptr[M21];
 		mx2 = cos * phd_mxptr[M21] - sin * phd_mxptr[M20];
-		phd_mxptr[M20] = mx1 >> 14;
-		phd_mxptr[M21] = mx2 >> 14;
+		phd_mxptr[M20] = mx1 >> W2V_SHIFT;
+		phd_mxptr[M21] = mx2 >> W2V_SHIFT;
 	}
 }
 

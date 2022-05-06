@@ -379,8 +379,8 @@ void MoveCamera(GAME_VECTOR* ideal, long speed)
 		x = camera.target.x - camera.pos.x;
 		z = camera.target.z - camera.pos.z;
 		camera.actual_angle = (short)phd_atan(x, z);
-		camera.mike_pos.x = ((phd_sin(camera.actual_angle) * phd_persp) >> 14) + camera.pos.x;
-		camera.mike_pos.z = ((phd_cos(camera.actual_angle) * phd_persp) >> 14) + camera.pos.z;
+		camera.mike_pos.x = ((phd_sin(camera.actual_angle) * phd_persp) >> W2V_SHIFT) + camera.pos.x;
+		camera.mike_pos.z = ((phd_cos(camera.actual_angle) * phd_persp) >> W2V_SHIFT) + camera.pos.z;
 		camera.mike_pos.y = camera.pos.y;
 	}
 
@@ -406,7 +406,7 @@ void ChaseCamera(ITEM_INFO* item)
 	else if (camera.target_elevation < -15470)
 		camera.target_elevation = -15470;
 
-	distance = (phd_cos(camera.target_elevation) * camera.target_distance) >> 14;
+	distance = (phd_cos(camera.target_elevation) * camera.target_distance) >> W2V_SHIFT;
 	room_number = camera.target.room_number;
 	floor = GetFloor(camera.target.x, camera.target.y + 256, camera.target.z, &room_number);
 
@@ -454,7 +454,7 @@ void ChaseCamera(ITEM_INFO* item)
 	}
 
 	for (int i = 0; i < 5; i++)
-		ideals[i].y = ((phd_sin(camera.target_elevation) * camera.target_distance) >> 14) + camera.target.y;
+		ideals[i].y = ((phd_sin(camera.target_elevation) * camera.target_distance) >> W2V_SHIFT) + camera.target.y;
 
 	farthest = 0x7FFFFFFF;
 	farthestnum = 0;
@@ -462,12 +462,12 @@ void ChaseCamera(ITEM_INFO* item)
 	for (int i = 0; i < 5; i++)
 	{
 		if (i)
-			angle = (i - 1) << 14;
+			angle = (i - 1) << W2V_SHIFT;
 		else
 			angle = camera.target_angle + item->pos.y_rot;
 
-		ideals[i].x = camera.target.x - ((distance * phd_sin(angle)) >> 14);
-		ideals[i].z = camera.target.z - ((distance * phd_cos(angle)) >> 14);
+		ideals[i].x = camera.target.x - ((distance * phd_sin(angle)) >> W2V_SHIFT);
+		ideals[i].z = camera.target.z - ((distance * phd_cos(angle)) >> W2V_SHIFT);
 		ideals[i].room_number = camera.target.room_number;
 
 		if (mgLOS(&camera.target, &ideals[i], 200))
@@ -603,10 +603,10 @@ void CombatCamera(ITEM_INFO* item)
 	}
 
 	camera.target_distance = 1536;
-	distance = camera.target_distance * phd_cos(camera.target_elevation) >> 14;
+	distance = camera.target_distance * phd_cos(camera.target_elevation) >> W2V_SHIFT;
 
 	for (int i = 0; i < 5; i++)
-		ideals[i].y = (camera.target_distance * phd_sin(camera.target_elevation) >> 14) + camera.target.y;
+		ideals[i].y = (camera.target_distance * phd_sin(camera.target_elevation) >> W2V_SHIFT) + camera.target.y;
 
 	farthest = 0x7FFFFFFF;
 	farthestnum = 0;
@@ -614,12 +614,12 @@ void CombatCamera(ITEM_INFO* item)
 	for (int i = 0; i < 5; i++)
 	{
 		if (i)
-			angle = (i - 1) << 14;
+			angle = (i - 1) << W2V_SHIFT;
 		else
 			angle = camera.target_angle;
 
-		ideals[i].x = camera.target.x - ((distance * phd_sin(angle)) >> 14);
-		ideals[i].z = camera.target.z - ((distance * phd_cos(angle)) >> 14);
+		ideals[i].x = camera.target.x - ((distance * phd_sin(angle)) >> W2V_SHIFT);
+		ideals[i].z = camera.target.z - ((distance * phd_cos(angle)) >> W2V_SHIFT);
 		ideals[i].room_number = camera.target.room_number;
 
 		if (mgLOS(&camera.target, &ideals[i], 200))
@@ -952,8 +952,8 @@ void LookCamera(ITEM_INFO* item)
 		dx = camera.target.x - camera.pos.x;
 		dz = camera.target.z - camera.pos.z;
 		camera.actual_angle = (short)phd_atan(dx, dz);
-		camera.mike_pos.x = ((phd_sin(camera.actual_angle) * phd_persp) >> 14) + camera.pos.x;
-		camera.mike_pos.z = ((phd_cos(camera.actual_angle) * phd_persp) >> 14) + camera.pos.z;
+		camera.mike_pos.x = ((phd_sin(camera.actual_angle) * phd_persp) >> W2V_SHIFT) + camera.pos.x;
+		camera.mike_pos.z = ((phd_cos(camera.actual_angle) * phd_persp) >> W2V_SHIFT) + camera.pos.z;
 		camera.mike_pos.y = camera.pos.y;
 	}
 
@@ -1134,8 +1134,8 @@ void CalculateCamera()
 		if (camera.flags == 1)
 		{
 			shift = (bounds[5] + bounds[4]) / 2;
-			camera.target.z += (shift * phd_cos(item->pos.y_rot)) >> 14;
-			camera.target.x += (shift * phd_sin(item->pos.y_rot)) >> 14;
+			camera.target.z += (shift * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+			camera.target.x += (shift * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
 		}
 
 		camera.target.room_number = item->room_number;

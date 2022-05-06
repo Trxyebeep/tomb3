@@ -493,8 +493,8 @@ void LaraDeflectEdgeJump(ITEM_INFO* item, COLL_INFO* coll)
 		break;
 
 	case CT_CLAMP:
-		item->pos.x_pos -= (100 * phd_sin(coll->facing)) >> 14;
-		item->pos.z_pos -= (100 * phd_cos(coll->facing)) >> 14;
+		item->pos.x_pos -= (100 * phd_sin(coll->facing)) >> W2V_SHIFT;
+		item->pos.z_pos -= (100 * phd_cos(coll->facing)) >> W2V_SHIFT;
 		item->speed = 0;
 		coll->mid_floor = 0;
 
@@ -528,8 +528,8 @@ void LaraSlideEdgeJump(ITEM_INFO* item, COLL_INFO* coll)
 		break;
 
 	case CT_CLAMP:
-		item->pos.z_pos -= (100 * phd_cos(coll->facing)) >> 14;
-		item->pos.x_pos -= (100 * phd_sin(coll->facing)) >> 14;
+		item->pos.z_pos -= (100 * phd_cos(coll->facing)) >> W2V_SHIFT;
+		item->pos.x_pos -= (100 * phd_sin(coll->facing)) >> W2V_SHIFT;
 		item->speed = 0;
 		coll->mid_floor = 0;
 
@@ -795,9 +795,9 @@ short LaraFloorFront(ITEM_INFO* item, short ang, long dist)
 	short room_num;
 
 	room_num = item->room_number;
-	x = item->pos.x_pos + ((dist * phd_sin(ang)) >> 14);
+	x = item->pos.x_pos + ((dist * phd_sin(ang)) >> W2V_SHIFT);
 	y = item->pos.y_pos - 762;
-	z = item->pos.z_pos + ((dist * phd_cos(ang)) >> 14);
+	z = item->pos.z_pos + ((dist * phd_cos(ang)) >> W2V_SHIFT);
 	height = GetHeight(GetFloor(x, y, z, &room_num), x, y, z);
 
 	if (height != NO_HEIGHT)
@@ -811,9 +811,9 @@ short LaraCeilingFront(ITEM_INFO* item, short ang, long dist)
 	long x, y, z, height;
 	short room_num;
 
-	x = item->pos.x_pos + ((dist * phd_sin(ang)) >> 14);
+	x = item->pos.x_pos + ((dist * phd_sin(ang)) >> W2V_SHIFT);
 	y = item->pos.y_pos - 762;
-	z = item->pos.z_pos + ((dist * phd_cos(ang)) >> 14);
+	z = item->pos.z_pos + ((dist * phd_cos(ang)) >> W2V_SHIFT);
 	room_num = item->room_number;
 	height = GetCeiling(GetFloor(x, y, z, &room_num), x, y, z);
 

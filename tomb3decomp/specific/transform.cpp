@@ -10,7 +10,7 @@ void InitZTable()
 
 	for (int i = 0; i < 20480; i++)
 	{
-		zv = float(z << 14);
+		zv = float(z << W2V_SHIFT);
 		z++;
 		ZTable[i * 2] = f_persp / zv;
 		ZTable[(i * 2) + 1] = f_oneopersp * f_persp / zv;
