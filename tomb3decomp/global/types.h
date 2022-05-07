@@ -291,6 +291,14 @@ struct GAME_VECTOR
 	short box_number;
 };
 
+struct SPHERE
+{
+	long x;
+	long y;
+	long z;
+	long r;
+};
+
 struct OBJECT_VECTOR
 {
 	long x;
