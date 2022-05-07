@@ -516,7 +516,7 @@ tomb3decomp progress.
 
 0x00433790	+	InitialiseHair
 0x00433810	+	HairControl
-0x004342E0		DrawHair
+0x004342E0	+	DrawHair
 
 
 		game/health.cpp

@@ -339,6 +339,9 @@
     <ClInclude Include="tomb3decomp\specific\litesrc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tomb3decomp\global\math_tbls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tomb3decomp\tomb3\dllmain.cpp">

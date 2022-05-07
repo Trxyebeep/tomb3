@@ -7,6 +7,13 @@
 #include "control.h"
 #include "../specific/function_stubs.h"
 #include "../3dsystem/phd_math.h"
+#include "../global/math_tbls.h"
+
+static PHD_3DPOS hair[7];
+static PHD_VECTOR hvel[7];
+static long wind = 0;
+static long wind_angle = 2048;
+static long dwind_angle = 2048;
 
 void InitialiseHair()
 {
@@ -33,7 +40,6 @@ void InitialiseHair()
 
 void HairControl(long in_cutscene)
 {
-	ITEM_INFO* item;
 	FLOOR_INFO* floor;
 	long* bone;
 	short* frame;
@@ -42,7 +48,7 @@ void HairControl(long in_cutscene)
 	SPHERE sphere[5];
 	PHD_VECTOR pos;
 	long water_level, x, y, z, h, dist;
-	short spaz, state, room_number;
+	short spaz, room_number;
 
 	if (lara.hit_direction < 0)
 		frame = GetBestFrame(lara_item);
@@ -112,18 +118,13 @@ void HairControl(long in_cutscene)
 
 	phd_TranslateRel(bone[25], bone[26], bone[27]);
 
-	if (lara.weapon_item != NO_ITEM)
+	if (lara.weapon_item != NO_ITEM && lara.gun_type == LG_M16 &&
+		(items[lara.weapon_item].current_anim_state == 0 ||
+			items[lara.weapon_item].current_anim_state == 2 ||
+			items[lara.weapon_item].current_anim_state == 4))
 	{
-		item = &items[lara.weapon_item];
-		state = item->current_anim_state;
-
-		if (lara.gun_type == LG_M16 && (!state || state == 2 || state == 4))
-		{
-			rotation = &lara.right_arm.frame_base[lara.right_arm.frame_number * (anims[lara.right_arm.anim_number].interpolation >> 8) + 9];
-			gar_RotYXZsuperpack(&rotation, 7);
-		}
-		else
-			gar_RotYXZsuperpack(&rotation, 6);
+		rotation = lara.right_arm.frame_base + lara.right_arm.frame_number * (anims[lara.right_arm.anim_number].interpolation >> 8) + 9;
+		gar_RotYXZsuperpack(&rotation, 7);
 	}
 	else
 		gar_RotYXZsuperpack(&rotation, 6);
@@ -341,8 +342,26 @@ void HairControl(long in_cutscene)
 	}
 }
 
+void DrawHair()
+{
+	short** meshpp;
+
+	meshpp = &meshes[objects[HAIR].mesh_index];
+
+	for (int i = 0; i < 6; i++)
+	{
+		phd_PushMatrix();
+		phd_TranslateAbs(hair[i].x_pos, hair[i].y_pos, hair[i].z_pos);
+		phd_RotY(hair[i].y_rot);
+		phd_RotX(hair[i].x_rot);
+		phd_PutPolygons(*meshpp++, 1);
+		phd_PopMatrix();
+	}
+}
+
 void inject_hair(bool replace)
 {
 	INJECT(0x00433790, InitialiseHair, replace);
 	INJECT(0x00433810, HairControl, replace);
+	INJECT(0x004342E0, DrawHair, replace);
 }

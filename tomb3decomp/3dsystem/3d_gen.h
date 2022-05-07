@@ -10,6 +10,7 @@ void phd_RotZ(short angle);
 void phd_RotYXZ(short y, short x, short z);
 void phd_RotYXZpack(long angles);
 long phd_TranslateRel(long x, long y, long z);
+void phd_TranslateAbs(long x, long y, long z);
 void AlterFOV(short fov);
 void phd_PushMatrix();
 void phd_PushUnitMatrix();

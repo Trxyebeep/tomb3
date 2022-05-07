@@ -255,6 +255,7 @@
     <ClInclude Include="tomb3decomp\game\willboss.h" />
     <ClInclude Include="tomb3decomp\game\wingmute.h" />
     <ClInclude Include="tomb3decomp\game\winston.h" />
+    <ClInclude Include="tomb3decomp\global\math_tbls.h" />
     <ClInclude Include="tomb3decomp\global\types.h" />
     <ClInclude Include="tomb3decomp\global\vars.h" />
     <ClInclude Include="tomb3decomp\specific\drawbars.h" />

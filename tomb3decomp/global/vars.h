@@ -56,9 +56,6 @@
 #define bones	VAR_(0x006E22E8, long*)
 #define SmokeWindX	VAR_(0x006DB880, long)
 #define SmokeWindZ	VAR_(0x006DB884, long)
-#define wind	VAR_(0x006263F0, long)
-#define wind_angle	VAR_(0x004C582C, long)
-#define dwind_angle	VAR_(0x004C5830, long)
 /*phd stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -96,9 +93,6 @@
 #define ZTable	ARRAY_(0x006A2088, float, [40960])
 #define IMstack	ARRAY_(0x006E1440, long, [768])
 #define interpolated_bounds	ARRAY_(0x006E28B0, short, [6])
-#define hair	ARRAY_(0x00626370, PHD_3DPOS, [7])
-#define hvel	ARRAY_(0x00626318, PHD_VECTOR, [7])
-#define rcossin_tbl	ARRAY_(0x004C8848, ushort, [8192])
 
 /*constants*/
 #define NO_HEIGHT -32512
