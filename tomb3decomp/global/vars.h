@@ -52,6 +52,8 @@
 #define old_target	VAR_(0x006E3128, PHD_VECTOR)
 #define Option_Music_Volume	VAR_(0x004C70B0, short)
 #define chunky_flag	VAR_(0x006E2A10, long)
+#define first_hair	VAR_(0x00626310, long)
+#define bones	VAR_(0x006E22E8, long*)
 /*phd stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -89,6 +91,8 @@
 #define ZTable	ARRAY_(0x006A2088, float, [40960])
 #define IMstack	ARRAY_(0x006E1440, long, [768])
 #define interpolated_bounds	ARRAY_(0x006E28B0, short, [6])
+#define hair	ARRAY_(0x00626370, PHD_3DPOS, [7])
+#define hvel	ARRAY_(0x00626318, PHD_VECTOR, [7])
 
 /*constants*/
 #define NO_HEIGHT -32512

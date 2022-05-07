@@ -8,12 +8,12 @@
 #include "../game/laramisc.h"
 #include "../game/health.h"
 #include "../game/camera.h"
+#include "../game/hair.h"
 
 #include "../3dsystem/3d_gen.h"
 
 #include "../specific/drawbars.h"
 #include "../specific/transform.h"
-
 
 HINSTANCE hinstance = 0;
 
@@ -44,6 +44,7 @@ void inject_all(bool replace)
 	inject_laramisc(replace);
 	inject_health(replace);
 	inject_camera(replace);
+	inject_hair(replace);
 
 	//specific
 	inject_drawbars(replace);

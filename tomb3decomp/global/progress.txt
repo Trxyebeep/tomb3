@@ -514,7 +514,7 @@ tomb3decomp progress.
 
 		game/hair.cpp
 
-0x00433790		InitialiseHair
+0x00433790	+	InitialiseHair
 0x00433810		HairControl
 0x004342E0		DrawHair
 
