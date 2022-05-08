@@ -59,6 +59,12 @@
 #define outside	VAR_(0x006E1438, long)
 #define bound_start	VAR_(0x00626188, long)
 #define bound_end	VAR_(0x0062618C, long)
+#define mid_sort	VAR_(0x004D38D0, long)
+#define number_draw_rooms	VAR_(0x006E143C, long)
+#define outside_left	VAR_(0x006E2878, long)
+#define outside_right	VAR_(0x006E28A0, long)
+#define outside_top	VAR_(0x006E28BC, long)
+#define outside_bottom	VAR_(0x006E2200, long)
 /*phd stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -101,6 +107,7 @@
 #define IMstack	ARRAY_(0x006E1440, long, [768])
 #define interpolated_bounds	ARRAY_(0x006E28B0, short, [6])
 #define bound_list	ARRAY_(0x00625F88, long, [128])
+#define draw_rooms	ARRAY_(0x006E2220, short, [100])
 
 /*constants*/
 #define NO_HEIGHT -32512

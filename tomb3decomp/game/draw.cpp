@@ -436,6 +436,80 @@ void SetRoomBounds(short* door, long rn, ROOM_INFO* actualRoom)
 	}
 }
 
+void GetRoomBounds()
+{
+	ROOM_INFO* r;
+	short* door;
+	long rn, drn;
+
+	while (bound_start != bound_end)
+	{
+		rn = bound_list[bound_start % 128];
+		bound_start++;
+		r = &room[rn];
+		r->bound_active -= 2;
+		mid_sort = (r->bound_active >> 8) + 1;
+
+		if (r->test_left < r->left)
+			r->left = r->test_left;
+
+		if (r->test_top < r->top)
+			r->top = r->test_top;
+
+		if (r->test_right > r->right)
+			r->right = r->test_right;
+
+		if (r->test_bottom > r->bottom)
+			r->bottom = r->test_bottom;
+
+		if (!(r->bound_active & 1))
+		{
+			draw_rooms[number_draw_rooms] = (short)rn;
+			number_draw_rooms++;
+			r->bound_active |= 1;
+
+			if (r->flags & ROOM_OUTSIDE)
+				outside = ROOM_OUTSIDE;
+		}
+
+		if (r->flags & ROOM_OUTSIDE)
+		{
+			if (r->left < outside_left)
+				outside_left = r->left;
+
+			if (r->right > outside_right)
+				outside_right = r->right;
+
+			if (r->top < outside_top)
+				outside_top = r->top;
+
+			if (r->bottom > outside_bottom)
+				outside_bottom = r->bottom;
+		}
+
+		phd_PushMatrix();
+		phd_TranslateAbs(r->x, r->y, r->z);
+		door = r->door;
+
+		if (door)
+		{
+			for (drn = *door++; drn > 0; drn--)
+			{
+				rn = *door++;
+
+				if (door[0] * (r->x + door[3] - w2v_matrix[M03]) +
+					door[1] * (r->y + door[4] - w2v_matrix[M13]) +
+					door[2] * (r->z + door[5] - w2v_matrix[M23]) < 0)
+					SetRoomBounds(door, rn, r);
+
+				door += 15;
+			}
+		}
+
+		phd_PopMatrix();
+	}
+}
+
 void inject_draw(bool replace)
 {
 	INJECT(0x00429390, phd_PopMatrix_I, replace);
@@ -456,4 +530,5 @@ void inject_draw(bool replace)
 	INJECT(0x00429ED0, GetBestFrame, replace);
 	INJECT(0x00429E50, GetBoundsAccurate, replace);
 	INJECT(0x00425590, SetRoomBounds, replace);
+	INJECT(0x004253C0, GetRoomBounds, replace);
 }
