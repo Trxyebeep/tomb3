@@ -18,3 +18,4 @@ void InterpolateArmMatrix();
 long GetFrames(ITEM_INFO* item, short* frm[], long* rate);
 short* GetBestFrame(ITEM_INFO* item);
 short* GetBoundsAccurate(ITEM_INFO* item);
+void SetRoomBounds(short* door, long rn, ROOM_INFO* actualRoom);

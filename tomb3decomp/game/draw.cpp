@@ -287,6 +287,155 @@ short* GetBoundsAccurate(ITEM_INFO* item)
 	return interpolated_bounds;
 }
 
+void SetRoomBounds(short* door, long rn, ROOM_INFO* actualRoom)
+{
+	ROOM_INFO* r;
+	PHD_VECTOR* v;
+	PHD_VECTOR* lastV;
+	static PHD_VECTOR vbuf[4];
+	long x, y, z, tooNear, tooFar, tL, tR, tT, tB;
+
+	r = &room[rn];
+
+	if (r->left <= actualRoom->test_left && r->right >= actualRoom->test_right && r->top <= actualRoom->test_top && r->bottom >= actualRoom->test_bottom)
+		return;
+
+	tL = actualRoom->test_right;
+	tR = actualRoom->test_left;
+	tB = actualRoom->test_top;
+	tT = actualRoom->test_bottom;
+	door += 3;
+	v = vbuf;
+	tooNear = 0;
+	tooFar = 0;
+
+	for (int i = 0; i < 4; i++, v++, door += 3)
+	{
+		v->x = phd_mxptr[M00] * door[0] + phd_mxptr[M01] * door[1] + phd_mxptr[M02] * door[2] + phd_mxptr[M03];
+		v->y = phd_mxptr[M10] * door[0] + phd_mxptr[M11] * door[1] + phd_mxptr[M12] * door[2] + phd_mxptr[M13];
+		v->z = phd_mxptr[M20] * door[0] + phd_mxptr[M21] * door[1] + phd_mxptr[M22] * door[2] + phd_mxptr[M23];
+		x = v->x;
+		y = v->y;
+		z = v->z;
+
+
+		if (z <= 0)
+			tooNear++;
+		else
+		{
+			if (z > phd_zfar)
+				tooFar++;
+
+			z /= phd_persp;
+
+			if (z)
+			{
+				x = x / z + phd_centerx;
+				y = y / z + phd_centery;
+			}
+			else
+			{
+				if (x < 0)
+					x = phd_left;
+				else
+					x = phd_right;
+
+				if (y < 0)
+					y = phd_top;
+				else
+					y = phd_bottom;
+			}
+
+			if (x - 1 < tL)
+				tL = x - 1;
+
+			if (x + 1 > tR)
+				tR = x + 1;
+
+			if (y - 1 < tT)
+				tT = y - 1;
+
+			if (y + 1 > tB)
+				tB = y + 1;
+		}
+	}
+
+	if (tooNear == 4 || (tooFar == 4 && !outside))
+		return;
+
+	if (tooNear > 0)
+	{
+		v = vbuf;
+		lastV = &vbuf[3];
+
+		for (int i = 0; i < 4; i++, lastV = v, v++)
+		{
+			if (lastV->z <= 0 == v->z <= 0)
+				continue;
+
+			if (v->x < 0 && lastV->x < 0)
+				tL = 0;
+			else if (v->x > 0 && lastV->x > 0)
+				tR = phd_winxmax;
+			else
+			{
+				tL = 0;
+				tR = phd_winxmax;
+			}
+
+			if (v->y < 0 && lastV->y < 0)
+				tT = 0;
+			else if (v->y > 0 && lastV->y > 0)
+				tB = phd_winymax;
+			else
+			{
+				tT = 0;
+				tB = phd_winymax;
+			}
+		}
+	}
+
+	if (tL < actualRoom->test_left)
+		tL = actualRoom->test_left;
+
+	if (tR > actualRoom->test_right)
+		tR = actualRoom->test_right;
+
+	if (tT < actualRoom->test_top)
+		tT = actualRoom->test_top;
+
+	if (tB > actualRoom->test_bottom)
+		tB = actualRoom->test_bottom;
+
+	if (tL >= tR || tT >= tB)
+		return;
+
+	if (r->bound_active & 2)
+	{
+		if (tL < r->test_left)
+			r->test_left = (short)tL;
+
+		if (tT < r->test_top)
+			r->test_top = (short)tT;
+
+		if (tR > r->test_right)
+			r->test_right = (short)tR;
+
+		if (tB > r->test_bottom)
+			r->test_bottom = (short)tB;
+	}
+	else
+	{
+		bound_list[bound_end % 128] = rn;
+		bound_end++;
+		r->bound_active |= 2;
+		r->test_left = (short)tL;
+		r->test_right = (short)tR;
+		r->test_top = (short)tT;
+		r->test_bottom = (short)tB;
+	}
+}
+
 void inject_draw(bool replace)
 {
 	INJECT(0x00429390, phd_PopMatrix_I, replace);
@@ -306,4 +455,5 @@ void inject_draw(bool replace)
 	INJECT(0x00429DB0, GetFrames, replace);
 	INJECT(0x00429ED0, GetBestFrame, replace);
 	INJECT(0x00429E50, GetBoundsAccurate, replace);
+	INJECT(0x00425590, SetRoomBounds, replace);
 }

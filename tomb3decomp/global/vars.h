@@ -56,6 +56,9 @@
 #define bones	VAR_(0x006E22E8, long*)
 #define SmokeWindX	VAR_(0x006DB880, long)
 #define SmokeWindZ	VAR_(0x006DB884, long)
+#define outside	VAR_(0x006E1438, long)
+#define bound_start	VAR_(0x00626188, long)
+#define bound_end	VAR_(0x0062618C, long)
 /*phd stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -84,6 +87,10 @@
 #define IMptr	VAR_(0x006E288C, long*)
 #define IM_rate	VAR_(0x006E2884, long)
 #define IM_frac	VAR_(0x006E2070, long)
+#define phd_right	VAR_(0x005D7AE0, long)
+#define phd_left	VAR_(0x004F6D58, long)
+#define phd_bottom	VAR_(0x004F6D4C, long)
+#define phd_top	VAR_(0x004D58E8, long)
 /**/
 
 /*arrays*/
@@ -93,6 +100,7 @@
 #define ZTable	ARRAY_(0x006A2088, float, [40960])
 #define IMstack	ARRAY_(0x006E1440, long, [768])
 #define interpolated_bounds	ARRAY_(0x006E28B0, short, [6])
+#define bound_list	ARRAY_(0x00625F88, long, [128])
 
 /*constants*/
 #define NO_HEIGHT -32512
