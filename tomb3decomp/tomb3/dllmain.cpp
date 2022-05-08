@@ -14,6 +14,7 @@
 
 #include "../specific/drawbars.h"
 #include "../specific/transform.h"
+#include "../specific/litesrc.h"
 
 HINSTANCE hinstance = 0;
 
@@ -49,6 +50,7 @@ void inject_all(bool replace)
 	//specific
 	inject_drawbars(replace);
 	inject_transform(replace);
+	inject_litesrc(replace);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)

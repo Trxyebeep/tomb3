@@ -903,4 +903,18 @@ struct OLD_CAMERA
 	PHD_3DPOS pos;
 	PHD_3DPOS pos2;
 };
+
+struct DYNAMIC
+{
+	long x;
+	long y;
+	long z;
+	ushort falloff;
+	uchar used;
+	uchar pad1;
+	uchar on;
+	uchar r;
+	uchar g;
+	uchar b;
+};
 #pragma pack(pop)
