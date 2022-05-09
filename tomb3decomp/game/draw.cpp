@@ -292,7 +292,7 @@ void SetRoomBounds(short* door, long rn, ROOM_INFO* actualRoom)
 	ROOM_INFO* r;
 	PHD_VECTOR* v;
 	PHD_VECTOR* lastV;
-	static PHD_VECTOR vbuf[4];
+	static PHD_VECTOR vtxbuf[4];
 	long x, y, z, tooNear, tooFar, tL, tR, tT, tB;
 
 	r = &room[rn];
@@ -305,7 +305,7 @@ void SetRoomBounds(short* door, long rn, ROOM_INFO* actualRoom)
 	tB = actualRoom->test_top;
 	tT = actualRoom->test_bottom;
 	door += 3;
-	v = vbuf;
+	v = vtxbuf;
 	tooNear = 0;
 	tooFar = 0;
 
@@ -365,8 +365,8 @@ void SetRoomBounds(short* door, long rn, ROOM_INFO* actualRoom)
 
 	if (tooNear > 0)
 	{
-		v = vbuf;
-		lastV = &vbuf[3];
+		v = vtxbuf;
+		lastV = &vtxbuf[3];
 
 		for (int i = 0; i < 4; i++, lastV = v, v++)
 		{

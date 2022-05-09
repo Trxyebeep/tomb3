@@ -942,4 +942,21 @@ struct WEAPON_INFO
 	char draw_frame;
 	short sample_num;
 };
+
+struct PHD_VBUF
+{
+	float xv;
+	float yv;
+	float zv;
+	float ooz;
+	float xs;
+	float ys;
+	long z;
+	char clip;
+	uchar fog;
+	short g;
+	ushort u;
+	ushort v;
+	long dynamic;
+};
 #pragma pack(pop)

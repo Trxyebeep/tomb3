@@ -117,6 +117,7 @@
 #define draw_rooms	ARRAY_(0x006E2220, short, [100])
 #define dynamics	ARRAY_(0x006DB380, DYNAMIC, [64])
 #define weapons	ARRAY_(0x004C7280, WEAPON_INFO, [11])	//put this in dll asap
+#define vbuf	ARRAY_(0x005BD3E0, PHD_VBUF, [1500])
 
 /*constants*/
 #define NO_HEIGHT -32512

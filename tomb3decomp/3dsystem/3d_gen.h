@@ -27,3 +27,5 @@ __inline void phd_PopMatrix()
 #define InsertObjectGT3	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005A6A30 )
 #define InsertObjectG4	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005BAB0C )
 #define InsertObjectG3	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005BAB50 )
+
+#define InsertTrans8	( *(void(__cdecl**)(PHD_VBUF*, short)) 0x004E34A4 )
