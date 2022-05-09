@@ -69,6 +69,9 @@
 #define smcr	VAR_(0x0069FE90, long)
 #define smcg	VAR_(0x0069FE8C, long)
 #define smcb	VAR_(0x0069FE88, long)
+#define SmokeCountL	VAR_(0x006DB888, long)
+#define SmokeCountR	VAR_(0x006DB88C, long)
+#define SmokeWeapon	VAR_(0x006DCA60, long)
 /*phd stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -113,6 +116,7 @@
 #define bound_list	ARRAY_(0x00625F88, long, [128])
 #define draw_rooms	ARRAY_(0x006E2220, short, [100])
 #define dynamics	ARRAY_(0x006DB380, DYNAMIC, [64])
+#define weapons	ARRAY_(0x004C7280, WEAPON_INFO, [11])	//put this in dll asap
 
 /*constants*/
 #define NO_HEIGHT -32512

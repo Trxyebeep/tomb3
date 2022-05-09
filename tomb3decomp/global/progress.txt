@@ -815,15 +815,15 @@ tomb3decomp progress.
 
 		game/lara2gun.cpp
 
-0x00447F30		draw_pistols
-0x00447FD0		set_arm_info
-0x00448050		undraw_pistols
-0x004482D0		ready_pistols
-0x00448350		draw_pistol_meshes
-0x004483B0		undraw_pistol_mesh_left
-0x00448400		undraw_pistol_mesh_right
+0x00447F30	+	draw_pistols
+0x00447FD0	+	set_arm_info
+0x00448050	+	undraw_pistols
+0x004482D0	+	ready_pistols
+0x00448350	+	draw_pistol_meshes
+0x004483B0	+	undraw_pistol_mesh_left
+0x00448400	+	undraw_pistol_mesh_right
 0x00448440		PistolHandler
-0x00448650		AnimatePistols
+0x00448650	+	AnimatePistols
 
 
 		game/laraclmb.cpp
@@ -863,7 +863,7 @@ tomb3decomp progress.
 0x0044A890		FireWeapon
 0x0044AE20		HitTarget
 0x0044AEE0		SmashItem
-0x0044AF50		WeaponObject
+0x0044AF50	+	WeaponObject
 0x0044AFB0		DoProperDetection
 
 

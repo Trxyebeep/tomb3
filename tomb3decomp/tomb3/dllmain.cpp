@@ -9,6 +9,8 @@
 #include "../game/health.h"
 #include "../game/camera.h"
 #include "../game/hair.h"
+#include "../game/larafire.h"
+#include "../game/lara2gun.h"
 
 #include "../3dsystem/3d_gen.h"
 
@@ -46,6 +48,8 @@ void inject_all(bool replace)
 	inject_health(replace);
 	inject_camera(replace);
 	inject_hair(replace);
+	inject_larafire(replace);
+	inject_lara2gun(replace);
 
 	//specific
 	inject_drawbars(replace);
