@@ -32,6 +32,42 @@ tomb3decomp progress.
 0x004B429E	+	phd_PushUnitMatrix
 ---------	+	phd_PopMatrix		//in h file
 
+
+		3dsystem/hwinsert.cpp
+
+0x00405220		InitUVTable
+0x00405270		FindBucket
+0x004053A0		DrawBuckets
+0x004053E0		visible_zclip
+0x00405450		HWI_InsertClippedPoly_Textured
+0x00405980		HWI_InsertGT3_Sorted
+0x00405A80		HWI_InsertGT3_Poly
+0x00406750		GETR
+0x00406780		GETG
+0x004067B0		phdVtx2D3D
+0x00406880		SubdivideEdge
+0x004069E0		SubdivideGT4
+0x00406D50		SubdivideGT3
+0x00406FA0		HWI_InsertGT4_Sorted
+0x004070E0		HWI_InsertGT4_Poly
+0x004086B0		HWI_InsertObjectGT4_Sorted
+0x00408800		HWI_InsertObjectGT3_Sorted
+0x00408940		HWI_InsertPoly_Gouraud
+0x00408DA0		HWI_InsertObjectG4_Sorted
+0x004094D0		PHD_VBUF_To_VERTEX_INFO
+0x00409560		HWI_InsertObjectG3_Sorted
+0x00409BB0		HWI_InsertSprite_Sorted
+0x0040A030		HWI_InsertFlatRect_Sorted
+0x0040A510		HWI_InsertLine_Sorted
+0x0040A690		HWI_InsertTransQuad_Sorted
+0x0040A850	+	HWI_InsertTrans8_Sorted
+0x0040AA00		RoomZedClipper
+0x0040ABE0		RoomXYGUVClipper
+0x0040B6F0		HWI_InsertAlphaSprite_Sorted
+0x0040BCD0		HWI_InsertPoly_GouraudRGB
+0x0040C0B0		XYGClipper
+0x0040CA50		XYClipper
+
 //rest TBD
 
 // ======================================

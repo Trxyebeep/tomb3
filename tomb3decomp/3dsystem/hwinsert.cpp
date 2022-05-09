@@ -13,7 +13,7 @@ void HWI_InsertTrans8_Sorted(PHD_VBUF* buf, short shade)
 		(buf[2].xs - buf[1].xs) * (buf->ys - buf[1].ys) - (buf[2].ys - buf[1].ys) * (buf->xs - buf[1].xs) < 0)
 		return;
 
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < 8; i++)
 	{
 		v_buffer[i].x = buf[i].xs;
 		v_buffer[i].y = buf[i].ys;
@@ -33,6 +33,7 @@ void HWI_InsertTrans8_Sorted(PHD_VBUF* buf, short shade)
 		phd_bottomfloat = float(phd_winymin + phd_winheight);
 		nPoints = XYClipper(nPoints, v_buffer);
 	}
+
 	if (nPoints)
 	{
 		z = (buf[0].zv + buf[1].zv + buf[2].zv + buf[3].zv + buf[4].zv + buf[5].zv + buf[6].zv + buf[7].zv) * 0.125F - 131072;
