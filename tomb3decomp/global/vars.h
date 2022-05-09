@@ -72,7 +72,8 @@
 #define SmokeCountL	VAR_(0x006DB888, long)
 #define SmokeCountR	VAR_(0x006DB88C, long)
 #define SmokeWeapon	VAR_(0x006DCA60, long)
-/*phd stuff*/
+#define App	VAR_(0x006CED80, WINAPP)
+/*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
 #define phd_rightfloat	VAR_(0x005D7A48, float)
@@ -95,6 +96,7 @@
 #define phd_winwidth	VAR_(0x005A6AF4, long)
 #define phd_winheight	VAR_(0x004D790C, long)
 #define f_znear	VAR_(0x0056C0A0, float)
+#define f_zfar	VAR_(0x005316F4, float)
 #define f_perspoznear	VAR_(0x0053170C, float)
 #define LfAspectCorrection	VAR_(0x004D38D8, float)
 #define IMptr	VAR_(0x006E288C, long*)
@@ -104,6 +106,18 @@
 #define phd_left	VAR_(0x004F6D58, long)
 #define phd_bottom	VAR_(0x004F6D4C, long)
 #define phd_top	VAR_(0x004D58E8, long)
+#define m00	VAR_(0x006CA088, float)
+#define m01	VAR_(0x006CA08C, float)
+#define m02	VAR_(0x006CA090, float)
+#define m03	VAR_(0x006CA094, float)
+#define m10	VAR_(0x006CA098, float)
+#define m11	VAR_(0x006CA09C, float)
+#define m12	VAR_(0x006CA0A0, float)
+#define m13	VAR_(0x006CA0A4, float)
+#define m20	VAR_(0x006CA0A8, float)
+#define m21	VAR_(0x006CA0AC, float)
+#define m22	VAR_(0x006A2080, float)
+#define m23	VAR_(0x006A2084, float)
 /**/
 
 /*arrays*/
