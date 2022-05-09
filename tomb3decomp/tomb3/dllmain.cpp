@@ -13,6 +13,7 @@
 #include "../game/lara2gun.h"
 
 #include "../3dsystem/3d_gen.h"
+#include "../3dsystem/hwinsert.h"
 
 #include "../specific/drawbars.h"
 #include "../specific/transform.h"
@@ -38,6 +39,7 @@ void inject_all(bool replace)
 {
 	//3dsystem
 	inject_3dgen(replace);
+	inject_hwinsert(replace);
 
 	//game
 	inject_lara(replace);

@@ -158,6 +158,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="tomb3decomp\3dsystem\3d_gen.h" />
+    <ClInclude Include="tomb3decomp\3dsystem\hwinsert.h" />
     <ClInclude Include="tomb3decomp\3dsystem\phd_math.h" />
     <ClInclude Include="tomb3decomp\3dsystem\scalespr.h" />
     <ClInclude Include="tomb3decomp\game\51baton.h" />
@@ -270,6 +271,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tomb3decomp\3dsystem\3d_gen.cpp" />
+    <ClCompile Include="tomb3decomp\3dsystem\hwinsert.cpp" />
     <ClCompile Include="tomb3decomp\3dsystem\phd_math.cpp" />
     <ClCompile Include="tomb3decomp\3dsystem\scalespr.cpp" />
     <ClCompile Include="tomb3decomp\game\51baton.cpp" />

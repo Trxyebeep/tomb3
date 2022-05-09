@@ -959,4 +959,17 @@ struct PHD_VBUF
 	ushort v;
 	long dynamic;
 };
+
+struct VERTEX_INFO
+{
+	float x;
+	float y;
+	float ooz;
+	float u;
+	float v;
+	float g;
+	long vr;
+	long vg;
+	long vb;
+};
 #pragma pack(pop)
