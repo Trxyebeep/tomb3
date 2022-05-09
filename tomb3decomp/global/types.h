@@ -972,4 +972,121 @@ struct VERTEX_INFO
 	long vg;
 	long vb;
 };
+
+struct DISPLAYMODE
+{
+	long w;
+	long h;
+	ulong bpp;
+	bool bPalette;
+	uchar rbpp;
+	uchar gbpp;
+	uchar bbpp;
+	uchar abpp;
+	DDSURFACEDESC ddsd;
+	uchar rshift;
+	uchar gshift;
+	uchar bshift;
+	uchar ashift;
+};
+
+struct D3DTEXTUREINFO
+{
+	ulong bpp;
+	bool bPalette;
+	bool bAlpha;
+	uchar rbpp;
+	uchar gbpp;
+	uchar bbpp;
+	uchar abpp;
+	DDSURFACEDESC ddsd;
+	DDPIXELFORMAT ddpf;
+	uchar rshift;
+	uchar gshift;
+	uchar bshift;
+	uchar ashift;
+};
+
+struct DIRECT3DINFO
+{
+	char Name[30];
+	char About[80];
+	LPGUID lpGuid;
+	GUID Guid;
+	D3DDEVICEDESC DeviceDesc;
+	bool bAlpha;
+	bool bHardware;
+	long nDisplayMode;
+	DISPLAYMODE* DisplayMode;
+	long nTexture;
+	D3DTEXTUREINFO* Texture;
+};
+
+struct DIRECTDRAWINFO
+{
+	char Name[30];
+	char About[80];
+	LPGUID lpGuid;
+	GUID Guid;
+	DDCAPS DDCaps;
+	long nDisplayMode;
+	DISPLAYMODE* DisplayMode;
+	long nD3DInfo;
+	DIRECT3DINFO* D3DInfo;
+};
+
+struct DEVICEINFO
+{
+	long nDDInfo;
+	DIRECTDRAWINFO* DDInfo;
+	long DS;
+	char unk[4];
+	long DI;
+	char unk2[4];
+};
+
+struct DXCONFIG
+{
+	long nDD;
+	long nD3D;
+	long DS;
+	long nVMode;
+	long DI;
+	long Sound;
+	long bZBuffer;
+	long Dither;
+	long Filter;
+	long AGP;
+	long sound;
+	long Joystick;
+	long MMX;
+};
+
+struct WINAPP
+{
+	WNDCLASS WindowClass;
+	HWND WindowHandle;
+	HINSTANCE hInstance;
+	DEVICEINFO DeviceInfo;
+	DXCONFIG DXConfig;
+	DEVICEINFO* DeviceInfoPtr;
+	DXCONFIG* DXConfigPtr;
+	LPDIRECTDRAW2 lpDD;
+	LPDIRECT3D2 lpD3D;
+	LPDIRECT3DDEVICE2 lpD3DDevice;
+	LPDIRECTDRAWSURFACE3 lpFrontBuffer;
+	LPDIRECTDRAWSURFACE3 lpBackBuffer;
+	LPDIRECTDRAWSURFACE3 lpZBuffer;
+	LPDIRECTDRAWSURFACE3 lpPictureBuffer;
+	void* unk;
+	LPDIRECT3DVIEWPORT2 lpViewPort;
+	LPDIRECT3DMATERIAL2 lpViewPortMaterial;
+	LPDIRECTDRAWPALETTE Palette;
+	PALETTEENTRY PaletteEntries[257];
+	bool bFocus;
+	long nRenderMode;
+	long nUVAdd;
+	long SomeCounter;
+	float fps;
+};
 #pragma pack(pop)
