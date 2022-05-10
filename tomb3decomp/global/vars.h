@@ -73,6 +73,7 @@
 #define SmokeCountR	VAR_(0x006DB88C, long)
 #define SmokeWeapon	VAR_(0x006DCA60, long)
 #define App	VAR_(0x006CED80, WINAPP)
+#define distanceFogValue	VAR_(0x006CED7C, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -133,6 +134,9 @@
 #define weapons	ARRAY_(0x004C7280, WEAPON_INFO, [11])	//put this in dll asap
 #define vbuf	ARRAY_(0x005BD3E0, PHD_VBUF, [1500])
 #define v_buffer	ARRAY_(0x00625850, VERTEX_INFO, [40])
+#define LPos	ARRAY_(0x0069FE98, PHD_VECTOR, [3])
+#define LightPos	ARRAY_(0x0069FE58, long, [12])
+#define LightCol	ARRAY_(0x0069FE28, long, [12])
 
 /*constants*/
 #define NO_HEIGHT -32512

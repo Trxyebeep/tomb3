@@ -1437,7 +1437,7 @@ tomb3decomp progress.
 
 		specific/litesrc.cpp
 
-0x004866E0		calc_vertice_light
+0x004866E0	+	calc_vertice_light
 0x00486BA0		S_CalculateLight
 0x00487550	+	S_CalculateStaticLight
 0x00487590	+	S_CalculateStaticMeshLight
