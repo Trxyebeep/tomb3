@@ -11,6 +11,7 @@
 #include "../game/hair.h"
 #include "../game/larafire.h"
 #include "../game/lara2gun.h"
+#include "../game/fish.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -53,6 +54,7 @@ void inject_all(bool replace)
 	inject_hair(replace);
 	inject_larafire(replace);
 	inject_lara2gun(replace);
+	inject_fish(replace);
 
 	//specific
 	inject_drawbars(replace);

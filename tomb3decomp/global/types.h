@@ -1089,4 +1089,16 @@ struct WINAPP
 	long SomeCounter;
 	float fps;
 };
+
+struct LEADER_INFO
+{
+	short angle;
+	uchar speed;
+	uchar on;
+	short angle_time;
+	short speed_time;
+	short Xrange;
+	short Zrange;
+	short Yrange;
+};
 #pragma pack(pop)
