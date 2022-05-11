@@ -4,3 +4,4 @@
 void inject_fish(bool replace);
 
 void SetupShoal(long shoal_number);
+void SetupFish(long leader, ITEM_INFO* item);

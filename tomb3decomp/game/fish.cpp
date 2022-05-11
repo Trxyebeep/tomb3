@@ -1,6 +1,7 @@
 #include "../tomb3/pch.h"
 #include "fish.h"
 #include "gameflow.h"
+#include "../specific/function_stubs.h"
 
 uchar jungle_fish_ranges[1][3] =
 {
@@ -111,7 +112,45 @@ void SetupShoal(long shoal_number)
 	}
 }
 
+void SetupFish(long leader, ITEM_INFO* item)
+{
+	LEADER_INFO* pLeader;
+	FISH_INFO* pFish;
+	short x, y, z;
+
+	pLeader = &lead_info[leader];
+	pFish = &fish[leader];
+	x = pLeader->Xrange;
+	y = pLeader->Yrange;
+	z = pLeader->Zrange;
+	pFish->x = 0;
+	pFish->y = 0;
+	pFish->z = 0;
+	pFish->angle = 0;
+	pFish->speed = (GetRandomControl() & 0x3F) + 8;
+	pFish->swim = GetRandomControl() & 0x3F;
+
+	for (int i = 0; i < 24; i++)
+	{
+		pFish = &fish[(leader * 24) + 8 + i];
+		pFish->x = GetRandomControl() % (x << 1) - x;
+		pFish->y = GetRandomControl() % y;
+		pFish->z = GetRandomControl() % (z << 1) - z;
+		pFish->desty = GetRandomControl() % y;
+		pFish->angle = GetRandomControl() & 0xFFF;
+		pFish->speed = (GetRandomControl() & 0x1F) + 32;
+		pFish->swim = GetRandomControl() & 0x3F;
+	}
+
+	pLeader->on = 1;
+	pLeader->angle = 0;
+	pLeader->speed = (GetRandomControl() & 0x7F) + 32;
+	pLeader->angle_time = 0;
+	pLeader->speed_time = 0;
+}
+
 void inject_fish(bool replace)
 {
 	INJECT(0x00430050, SetupShoal, replace);
+	INJECT(0x004302B0, SetupFish, replace);
 }

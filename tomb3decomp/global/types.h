@@ -1101,4 +1101,17 @@ struct LEADER_INFO
 	short Zrange;
 	short Yrange;
 };
+
+struct FISH_INFO
+{
+	short x;
+	short y;
+	short z;
+	ushort angle;
+	short desty;
+	uchar angadd;
+	uchar speed;
+	uchar acc;
+	uchar swim;
+};
 #pragma pack(pop)

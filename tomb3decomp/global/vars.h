@@ -138,6 +138,7 @@
 #define LightPos	ARRAY_(0x0069FE58, long, [12])
 #define LightCol	ARRAY_(0x0069FE28, long, [12])
 #define lead_info	ARRAY_(0x006D86E0, LEADER_INFO, [8])
+#define fish	ARRAY_(0x006D7BE0, FISH_INFO, [200])
 
 /*constants*/
 #define NO_HEIGHT -32512
