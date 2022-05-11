@@ -157,9 +157,59 @@ void SubdivideGT4(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHD_VBUF* v4, PHDTEX
 	SubdivideGT4(&v14, &v13, &v34, v4, &tex, nSortType, double_sided, num - 1);
 }
 
+void SubdivideGT3(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHDTEXTURESTRUCT* pTex, sort_type nSortType, ushort double_sided, long num)
+{
+	PHD_VBUF v12;
+	PHD_VBUF v23;
+	PHD_VBUF v31;
+	PHDTEXTURESTRUCT tex;
+
+	if (!num)
+	{
+		HWI_InsertGT3_Poly(v1, v2, v3, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
+		return;
+	}
+
+	tex.drawtype = pTex->drawtype;
+	tex.tpage = pTex->tpage;
+	v1->u = pTex->u1;
+	v1->v = pTex->v1;
+	v2->u = pTex->u2;
+	v2->v = pTex->v2;
+	v3->u = pTex->u3;
+	v3->v = pTex->v3;
+	SubdivideEdge(v1, v2, &v12);
+	SubdivideEdge(v2, v3, &v23);
+	SubdivideEdge(v3, v1, &v31);
+	tex.u1 = v1->u;
+	tex.v1 = v1->v;
+	tex.u2 = v12.u;
+	tex.v2 = v12.v;
+	tex.u3 = v31.u;
+	tex.v3 = v31.v;
+	SubdivideGT3(v1, &v12, &v31, &tex, nSortType, double_sided, num - 1);
+	tex.u1 = v12.u;
+	tex.v1 = v12.v;
+	tex.u2 = v2->u;
+	tex.v2 = v2->v;
+	tex.u3 = v23.u;
+	tex.v3 = v23.v;
+	SubdivideGT3(&v12, v2, &v23, &tex, nSortType, double_sided, num - 1);
+	tex.u1 = v31.u;
+	tex.v1 = v31.v;
+	tex.u2 = v12.u;
+	tex.v2 = v12.v;
+	tex.u3 = v23.u;
+	tex.v3 = v23.v;
+	tex.u4 = v3->u;
+	tex.v4 = v3->v;
+	SubdivideGT4(&v31, &v12, &v23, v3, &tex, nSortType, double_sided, num - 1);
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
 	INJECT(0x00406880, SubdivideEdge, replace);
 	INJECT(0x004069E0, SubdivideGT4, replace);
+	INJECT(0x00406D50, SubdivideGT3, replace);
 }
