@@ -12,7 +12,7 @@ bool S_LoadSettings()
 	if (file)
 	{
 		fread(&savegame.best_assault_times, sizeof(long), sizeof(savegame.best_assault_times) / sizeof(long), file);
-		fread(savegame.best_quadbike_times, sizeof(long), sizeof(savegame.best_quadbike_times) / sizeof(long), file);
+		fread(&savegame.best_quadbike_times, sizeof(long), sizeof(savegame.best_quadbike_times) / sizeof(long), file);
 		fread(&savegame.QuadbikeKeyFlag, sizeof(long), 1, file);
 		fclose(file);
 	}
