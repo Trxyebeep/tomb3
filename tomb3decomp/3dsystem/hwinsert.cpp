@@ -3,6 +3,9 @@
 
 #define	SetBufferPtrs(sort, info, nDrawType, pass)\
 {\
+	if(CurrentTLVertex - VertexBuffer > MAX_TLVERTICES - 32)\
+		return;\
+	\
 	if (!App.lpZBuffer || !bAlphaTesting)\
 	{\
 		sort = sort3dptrbf;\
