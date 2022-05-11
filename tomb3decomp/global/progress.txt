@@ -516,8 +516,8 @@ tomb3decomp progress.
 
 0x00430050	+	SetupShoal
 0x004302B0	+	SetupFish
-0x004303E0		ControlFish
-0x00430D30		FishNearLara
+0x004303E0	+	ControlFish
+0x00430D30	+	FishNearLara
 
 
 		game/flamer.cpp

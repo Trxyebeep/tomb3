@@ -7,7 +7,6 @@
 #include "control.h"
 #include "../specific/function_stubs.h"
 #include "../3dsystem/phd_math.h"
-#include "../global/math_tbls.h"
 
 static PHD_3DPOS hair[7];
 static PHD_VECTOR hvel[7];

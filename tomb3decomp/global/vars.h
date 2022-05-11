@@ -1,5 +1,6 @@
 #pragma once
 #include "types.h"
+#include "math_tbls.h"
 
 #define VAR_(address, type)			(*(type*)(address))
 #define ARRAY_(address, type, length)	(*(type(*)length)(address))
@@ -74,6 +75,8 @@
 #define SmokeWeapon	VAR_(0x006DCA60, long)
 #define App	VAR_(0x006CED80, WINAPP)
 #define distanceFogValue	VAR_(0x006CED7C, long)
+#define CarcassItem	VAR_(0x006E2FFC, short)
+#define PirahnaHitWait	VAR_(0x006261D8, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
