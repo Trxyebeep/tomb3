@@ -1,6 +1,62 @@
 #include "../tomb3/pch.h"
 #include "hwinsert.h"
 
+#define	SetBufferPtrs(sort, info, nDrawType, pass)\
+{\
+	if (!App.lpZBuffer || !bAlphaTesting)\
+	{\
+		sort = sort3dptrbf;\
+		info = info3dptrbf;\
+		sort[2] = nPolyType;\
+		surfacenumbf++;\
+		sort3dptrbf += 3;\
+		info3dptrbf += 5;\
+	}\
+	else if (pass || nDrawType == 14 || nDrawType == 13 || nDrawType == 12 || nDrawType == 16)\
+	{\
+		sort = sort3dptrfb;\
+		info = info3dptrfb;\
+		sort[2] = nPolyType;\
+		surfacenumfb++;\
+		sort3dptrfb += 3;\
+		info3dptrfb += 5;\
+	}\
+	else\
+	{\
+		sort = sort3dptrbf;\
+		info = info3dptrbf;\
+		sort[2] = nPolyType;\
+		surfacenumbf++;\
+		sort3dptrbf += 3;\
+		info3dptrbf += 5;\
+	}\
+}\
+
+/*
+	"pass" should only be true when the code looks like
+
+	if (App.lpZBuffer && bAlphaTesting)
+	{
+		sort = sort3dptrfb;
+		info = info3dptrfb;
+		sort[2] = nPolyType;
+		surfacenumfb++;
+		sort3dptrfb += 3;
+		info3dptrfb += 5;
+	}
+	else
+	{
+		sort = sort3dptrbf;
+		info = info3dptrbf;
+		sort[2] = nPolyType;
+		surfacenumbf++;
+		sort3dptrbf += 3;
+		info3dptrbf += 5;
+	}
+
+	i.e when we only want to test zbuffer and alpha testing, and in all other cases go to fb- without falling back to bf if the drawtype doesn't match.
+	*/
+
 void HWI_InsertTrans8_Sorted(PHD_VBUF* buf, short shade)
 {
 	float z;
@@ -261,6 +317,50 @@ void HWI_InsertGT3_Sorted(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHDTEXTUREST
 		HWI_InsertGT3_Poly(v1, v2, v3, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
 }
 
+void HWI_InsertTransQuad_Sorted(long x, long y, long w, long h, long z)
+{
+	D3DTLVERTEX* v;
+	long* sort;
+	short* info;
+	float zv;
+
+	SetBufferPtrs(sort, info, 0, 1);
+	sort[0] = (long)info;
+	sort[1] = z;
+	info[0] = 13;
+	info[1] = 0;
+	info[2] = 4;
+
+	v = CurrentTLVertex;
+	*((D3DTLVERTEX**)(info + 3)) = CurrentTLVertex;
+	zv = one / (float)z;
+
+	v[0].sx = (float)x;
+	v[0].sy = (float)y;
+	v[0].sz = f_a - zv * f_boo;
+	v[0].rhw = zv;
+	v[0].color = 0x50003FFF;
+
+	v[1].sx = float(x + w);
+	v[1].sy = (float)y;
+	v[1].sz = f_a - zv * f_boo;
+	v[1].rhw = zv;
+	v[1].color = 0x50003FFF;
+
+	v[2].sx = float(x + w);
+	v[2].sy = float(y + h);
+	v[2].sz = f_a - zv * f_boo;
+	v[2].rhw = zv;
+	v[2].color = 0x50003F1F;
+
+	v[3].sx = (float)x;
+	v[3].sy = float(y + h);
+	v[3].sz = f_a - zv * f_boo;
+	v[3].rhw = zv;
+	v[3].color = 0x50003F1F;
+	CurrentTLVertex = v + 4;
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -269,4 +369,5 @@ void inject_hwinsert(bool replace)
 	INJECT(0x00406D50, SubdivideGT3, replace);
 	INJECT(0x00406FA0, HWI_InsertGT4_Sorted, replace);
 	INJECT(0x00405980, HWI_InsertGT3_Sorted, replace);
+	INJECT(0x0040A690, HWI_InsertTransQuad_Sorted, replace);
 }

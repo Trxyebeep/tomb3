@@ -125,6 +125,17 @@
 #define m21	VAR_(0x006CA0AC, float)
 #define m22	VAR_(0x006A2080, float)
 #define m23	VAR_(0x006A2084, float)
+#define CurrentTLVertex	VAR_(0x00634004, D3DTLVERTEX*)
+#define VertexBuffer	VAR_(0x00633FF8, D3DTLVERTEX*)
+#define bAlphaTesting	VAR_(0x00633FF4, bool)
+#define sort3dptrbf	VAR_(0x005316E4, long*)
+#define info3dptrbf	VAR_(0x004D7910, short*)
+#define surfacenumbf	VAR_(0x0053171C, long)
+#define sort3dptrfb	VAR_(0x005316EC, long*)
+#define info3dptrfb	VAR_(0x004F6D40, short*)
+#define surfacenumfb	VAR_(0x004F6D54, long)
+#define f_a	VAR_(0x004D78F8, float)
+#define f_boo	VAR_(0x005316F0, float)
 /**/
 
 /*arrays*/
@@ -150,3 +161,4 @@
 #define NO_HEIGHT -32512
 #define NO_ITEM	-1
 #define W2V_SHIFT	14
+#define MAX_TLVERTICES	0x2400
