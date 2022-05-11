@@ -538,6 +538,11 @@ tomb3decomp progress.
 0x00431F00		AddFootprint
 
 
+		game/fusebox.cpp
+
+0x0048EA30	+	ControlFusebox
+
+
 		game/gameflow.cpp
 
 0x00432020		SetCutsceneTrack

@@ -191,6 +191,7 @@
     <ClInclude Include="tomb3decomp\game\flamer.h" />
     <ClInclude Include="tomb3decomp\game\flymaker.h" />
     <ClInclude Include="tomb3decomp\game\footprnt.h" />
+    <ClInclude Include="tomb3decomp\game\fusebox.h" />
     <ClInclude Include="tomb3decomp\game\gameflow.h" />
     <ClInclude Include="tomb3decomp\game\hair.h" />
     <ClInclude Include="tomb3decomp\game\larafire.h" />
@@ -307,6 +308,7 @@
     <ClCompile Include="tomb3decomp\game\flamer.cpp" />
     <ClCompile Include="tomb3decomp\game\flymaker.cpp" />
     <ClCompile Include="tomb3decomp\game\footprnt.cpp" />
+    <ClCompile Include="tomb3decomp\game\fusebox.cpp" />
     <ClCompile Include="tomb3decomp\game\gameflow.cpp" />
     <ClCompile Include="tomb3decomp\game\hair.cpp" />
     <ClCompile Include="tomb3decomp\game\health.cpp" />

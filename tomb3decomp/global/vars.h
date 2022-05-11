@@ -77,6 +77,7 @@
 #define distanceFogValue	VAR_(0x006CED7C, long)
 #define CarcassItem	VAR_(0x006E2FFC, short)
 #define PirahnaHitWait	VAR_(0x006261D8, long)
+#define level_items	VAR_(0x006266B4, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
