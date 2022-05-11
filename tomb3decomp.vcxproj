@@ -265,6 +265,7 @@
     <ClInclude Include="tomb3decomp\specific\hwrender.h" />
     <ClInclude Include="tomb3decomp\specific\litesrc.h" />
     <ClInclude Include="tomb3decomp\specific\output.h" />
+    <ClInclude Include="tomb3decomp\specific\smain.h" />
     <ClInclude Include="tomb3decomp\specific\specific.h" />
     <ClInclude Include="tomb3decomp\specific\transform.h" />
     <ClInclude Include="tomb3decomp\tomb3\framework.h" />
@@ -375,6 +376,7 @@
     <ClCompile Include="tomb3decomp\specific\hwrender.cpp" />
     <ClCompile Include="tomb3decomp\specific\litesrc.cpp" />
     <ClCompile Include="tomb3decomp\specific\output.cpp" />
+    <ClCompile Include="tomb3decomp\specific\smain.cpp" />
     <ClCompile Include="tomb3decomp\specific\specific.cpp" />
     <ClCompile Include="tomb3decomp\specific\transform.cpp" />
     <ClCompile Include="tomb3decomp\tomb3\dllmain.cpp" />

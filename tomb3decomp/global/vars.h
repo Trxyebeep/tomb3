@@ -52,6 +52,7 @@
 #define static_lookcamt	VAR_(0x006E3140, GAME_VECTOR)
 #define old_target	VAR_(0x006E3128, PHD_VECTOR)
 #define Option_Music_Volume	VAR_(0x004C70B0, short)
+#define Option_SFX_Volume	VAR_(0x004C70AC, short)
 #define chunky_flag	VAR_(0x006E2A10, long)
 #define first_hair	VAR_(0x00626310, long)
 #define bones	VAR_(0x006E22E8, long*)
@@ -80,6 +81,7 @@
 #define level_items	VAR_(0x006266B4, long)
 #define effects	VAR_(0x006D8750, FX_INFO*)
 #define nPolyType	VAR_(0x00634008, long)
+#define GammaOption	VAR_(0x004CD8F4, float)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -156,6 +158,7 @@
 #define LightCol	ARRAY_(0x0069FE28, long, [12])
 #define lead_info	ARRAY_(0x006D86E0, LEADER_INFO, [8])
 #define fish	ARRAY_(0x006D7BE0, FISH_INFO, [200])
+#define layout	ARRAY_(0x004CDCA0, short, [2][15])
 
 /*constants*/
 #define NO_HEIGHT -32512

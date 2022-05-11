@@ -33,6 +33,8 @@ do \
 #define ABS(x) (((x)<0) ? (-(x)) : (x))
 #define SQUARE(x) ((x)*(x))
 
+
+
 /*enums*/
 enum mood_type
 {
@@ -1039,9 +1041,9 @@ struct DEVICEINFO
 {
 	long nDDInfo;
 	DIRECTDRAWINFO* DDInfo;
-	long DS;
+	long nDSInfo;
 	char unk[4];
-	long DI;
+	long nDIInfo;
 	char unk2[4];
 };
 
@@ -1052,7 +1054,7 @@ struct DXCONFIG
 	long DS;
 	long nVMode;
 	long DI;
-	long Sound;
+	long D3DTF;
 	long bZBuffer;
 	long Dither;
 	long Filter;
