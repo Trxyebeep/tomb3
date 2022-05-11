@@ -5,6 +5,7 @@
 #include "objects.h"
 #include "items.h"
 #include "kayak.h"
+#include "sound.h"
 
 void LaraBurn()
 {
@@ -53,8 +54,30 @@ void LavaBurn(ITEM_INFO* item)
 	}
 }
 
+void SpikeControl(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (TriggerActive(item) && (CurrentLevel == LV_SHORE || CurrentLevel == LV_RAPIDS))
+	{
+		if (item->frame_number == anims[item->anim_number].frame_base)
+		{
+			if (CurrentLevel == LV_SHORE)
+				SoundEffect(259, &item->pos, 2);
+			else
+				SoundEffect(34, &item->pos, 2);
+
+		}
+
+		AnimateItem(item);
+	}
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
 	INJECT(0x0046FB30, LavaBurn, replace);
+	INJECT(0x0046E340, SpikeControl, replace);
 }
