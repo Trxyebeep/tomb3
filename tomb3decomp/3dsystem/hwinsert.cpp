@@ -235,6 +235,32 @@ void HWI_InsertGT4_Sorted(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHD_VBUF* v4
 		HWI_InsertGT4_Poly(v1, v2, v3, v4, pTex, nSortType, double_sided);
 }
 
+void HWI_InsertGT3_Sorted(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHDTEXTURESTRUCT* pTex, ushort* uv1, ushort* uv2, ushort* uv3, sort_type nSortType, ushort double_sided)
+{
+	float zv;
+
+	if (App.lpZBuffer || nPolyType != 3 && nPolyType != 4)
+	{
+		HWI_InsertGT3_Poly(v1, v2, v3, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
+		return;
+	}
+
+	zv = v1->zv;
+
+	if (zv < v2->zv)
+		zv = v2->zv;
+
+	if (zv < v3->zv)
+		zv = v3->zv;
+
+	if (zv < 0x1F40000)
+		SubdivideGT3(v1, v2, v3, pTex, nSortType, double_sided, 2);
+	else if (zv < 0x36B0000)
+		SubdivideGT3(v1, v2, v3, pTex, nSortType, double_sided, 1);
+	else
+		HWI_InsertGT3_Poly(v1, v2, v3, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -242,4 +268,5 @@ void inject_hwinsert(bool replace)
 	INJECT(0x004069E0, SubdivideGT4, replace);
 	INJECT(0x00406D50, SubdivideGT3, replace);
 	INJECT(0x00406FA0, HWI_InsertGT4_Sorted, replace);
+	INJECT(0x00405980, HWI_InsertGT3_Sorted, replace);
 }
