@@ -48,7 +48,7 @@ tomb3decomp progress.
 0x00406880	+	SubdivideEdge
 0x004069E0	+	SubdivideGT4
 0x00406D50	+	SubdivideGT3
-0x00406FA0		HWI_InsertGT4_Sorted
+0x00406FA0	+	HWI_InsertGT4_Sorted
 0x004070E0		HWI_InsertGT4_Poly
 0x004086B0		HWI_InsertObjectGT4_Sorted
 0x00408800		HWI_InsertObjectGT3_Sorted

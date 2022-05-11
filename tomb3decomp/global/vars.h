@@ -79,6 +79,7 @@
 #define PirahnaHitWait	VAR_(0x006261D8, long)
 #define level_items	VAR_(0x006266B4, long)
 #define effects	VAR_(0x006D8750, FX_INFO*)
+#define nPolyType	VAR_(0x00634008, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
