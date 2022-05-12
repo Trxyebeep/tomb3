@@ -1130,4 +1130,49 @@ struct PHDTEXTURESTRUCT
 	ushort u4;
 	ushort v4;
 };
+
+struct SPARKS
+{
+	long x;
+	long y;
+	long z;
+	short Xvel;
+	short Yvel;
+	short Zvel;
+	short Gravity;
+	short RotAng;
+	short Flags;
+	uchar sWidth;
+	uchar dWidth;
+	uchar sHeight;
+	uchar dHeight;
+	uchar Friction;
+	uchar Width;
+	uchar Height;
+	uchar Scalar;
+	uchar Def;
+	char RotAdd;
+	char MaxYvel;
+	uchar On;
+	uchar sR;
+	uchar sG;
+	uchar sB;
+	uchar dR;
+	uchar dG;
+	uchar dB;
+	uchar R;
+	uchar G;
+	uchar B;
+	uchar ColFadeSpeed;
+	uchar FadeToBlack;
+	uchar sLife;
+	uchar Life;
+	uchar TransType;
+	uchar extras;
+	char Dynamic;
+	uchar FxObj;
+	uchar RoomNumber;
+	uchar NodeNumber;
+	uchar pad;
+};
 #pragma pack(pop)

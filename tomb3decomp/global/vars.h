@@ -159,6 +159,7 @@
 #define lead_info	ARRAY_(0x006D86E0, LEADER_INFO, [8])
 #define fish	ARRAY_(0x006D7BE0, FISH_INFO, [200])
 #define layout	ARRAY_(0x004CDCA0, short, [2][15])
+#define sparks	ARRAY_(0x006D8880, SPARKS, [192])
 
 /*constants*/
 #define NO_HEIGHT -32512
