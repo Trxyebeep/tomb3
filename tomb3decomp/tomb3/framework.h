@@ -1,6 +1,8 @@
 #pragma once
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#define DIRECTDRAW_VERSION	0x0500
+#define DIRECT3D_VERSION	0x0500
 // Windows Header Files
 #include <windows.h>
 #include <d3d.h>

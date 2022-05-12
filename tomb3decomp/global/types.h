@@ -1018,6 +1018,7 @@ struct DIRECT3DINFO
 	D3DDEVICEDESC DeviceDesc;
 	bool bAlpha;
 	bool bHardware;
+	bool bUnk;
 	long nDisplayMode;
 	DISPLAYMODE* DisplayMode;
 	long nTexture;

@@ -106,6 +106,49 @@ void HWR_ResetColorKey()
 	HWR_EnableColorAddition(0);
 }
 
+void HWR_EnablePerspCorrect(bool enable)
+{
+	static bool enabled;
+
+	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+		SetRenderState(D3DRENDERSTATE_TEXTUREPERSPECTIVE, 1);
+	else if (enable)
+	{
+		if (!enabled)
+		{
+			enabled = 1;
+			SetRenderState(D3DRENDERSTATE_TEXTUREPERSPECTIVE, 1);
+		}
+	}
+	else if (enabled)
+	{
+		enabled = 0;
+		SetRenderState(D3DRENDERSTATE_TEXTUREPERSPECTIVE, 0);
+	}
+}
+
+void HWR_EnableFilter(bool enable)
+{
+	static bool enabled;
+
+	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+	{
+		if (enable)
+		{
+			if (!enabled)
+			{
+				enabled = 1;
+				SetRenderState(D3DRENDERSTATE_TEXTUREMIN, D3DFILTER_MIPNEAREST);
+			}
+		}
+		else if (enabled)
+		{
+			enabled = 0;
+			SetRenderState(D3DRENDERSTATE_TEXTUREMIN, D3DFILTER_NEAREST);
+		}
+	}
+}
+
 void inject_hwrender(bool replace)
 {
 	INJECT(0x00484E20, HWR_EnableZBuffer, replace);
@@ -114,4 +157,6 @@ void inject_hwrender(bool replace)
 	INJECT(0x00484A80, HWR_EnableColorAddition, replace);
 	INJECT(0x00484A40, HWR_ResetZBuffer, replace);
 	INJECT(0x00484A20, HWR_ResetColorKey, replace);
+	INJECT(0x00484AE0, HWR_EnablePerspCorrect, replace);
+	INJECT(0x00484B70, HWR_EnableFilter, replace);
 }
