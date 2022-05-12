@@ -23,6 +23,7 @@
 #include "../specific/litesrc.h"
 #include "../specific/output.h"
 #include "../specific/smain.h"
+#include "../specific/hwrender.h"
 
 HINSTANCE hinstance = 0;
 
@@ -67,6 +68,7 @@ void inject_all(bool replace)
 	inject_litesrc(replace);
 	inject_output(replace);
 	inject_smain(replace);
+	inject_hwrender(replace);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)

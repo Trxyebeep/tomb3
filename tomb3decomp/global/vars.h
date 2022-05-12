@@ -138,6 +138,7 @@
 #define surfacenumfb	VAR_(0x004F6D54, long)
 #define f_a	VAR_(0x004D78F8, float)
 #define f_boo	VAR_(0x005316F0, float)
+
 /**/
 
 /*arrays*/
