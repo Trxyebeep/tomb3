@@ -1176,4 +1176,24 @@ struct SPARKS
 	uchar NodeNumber;
 	uchar pad;
 };
+
+struct DXTEXTURE
+{
+	IDirectDrawSurface3* pSystemSurface;
+	IDirectDrawSurface3* pDeviceSurface;
+	IDirectDrawPalette* pPalette;
+	IDirect3DTexture2* pTexture;
+	D3DTEXTUREHANDLE hTexture;
+	long nWidth;
+	long nHeight;
+	ulong dwFlags;
+	ushort* pSoftwareSurface;
+};
+
+struct TEXTUREBUCKET
+{
+	DXTEXTURE* TPage;
+	long nVtx;
+	D3DTLVERTEX vtx[288];
+};
 #pragma pack(pop)

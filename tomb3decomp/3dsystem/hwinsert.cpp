@@ -1,5 +1,6 @@
 #include "../tomb3/pch.h"
 #include "hwinsert.h"
+#include "../specific/hwrender.h"
 
 #define	SetBufferPtrs(sort, info, nDrawType, pass)\
 {\
@@ -436,6 +437,77 @@ long visible_zclip(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2)
 		(v0->yv * v2->zv - v2->yv * v0->zv) * v1->xv < 0;
 }
 
+long FindBucket(DXTEXTURE* TPage)
+{
+	TEXTUREBUCKET* bucket;
+	long nVtx, fullest;
+
+	if (nDrawnVerts > 2700)
+		return -1;
+
+	for (int i = 0; i < 6; i++)
+	{
+		bucket = &Buckets[i];
+
+		if (bucket->TPage == TPage && bucket->nVtx < 256)
+			return i;
+
+		if (bucket->nVtx > 256)
+		{
+			HWR_EnableZBuffer(1, 1);
+			HWR_SetCurrentTexture(bucket->TPage);
+			DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+			bucket->TPage = TPage;
+			bucket->nVtx = 0;
+			return i;
+		}
+	}
+
+	nVtx = 0;
+	fullest = 0;
+
+	for (int i = 0; i < 6; i++)
+	{
+		bucket = &Buckets[i];
+
+		if (bucket->TPage == (DXTEXTURE*)-1)
+		{
+			bucket->TPage = TPage;
+			return i;
+		}
+
+		if (bucket->nVtx > nVtx)
+		{
+			nVtx = bucket->nVtx;
+			fullest = i;
+		}
+	}
+
+	bucket = &Buckets[fullest];
+	HWR_EnableZBuffer(1, 1);
+	HWR_SetCurrentTexture(bucket->TPage);
+	DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+	bucket->TPage = TPage;
+	bucket->nVtx = 0;
+	return fullest;
+}
+
+void DrawBuckets()
+{
+	TEXTUREBUCKET* bucket;
+
+	for (int i = 0; i < 6; i++)
+	{
+		bucket = &Buckets[i];
+
+		if (bucket->nVtx)
+		{
+			HWR_SetCurrentTexture(bucket->TPage);
+			DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+		}
+	}
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -451,4 +523,6 @@ void inject_hwinsert(bool replace)
 	INJECT(0x004067B0, PHD_VBUF_To_D3DTLVTX, replace);
 	INJECT(0x004094D0, PHD_VBUF_To_VERTEX_INFO, replace);
 	INJECT(0x004053E0, visible_zclip, replace);
+	INJECT(0x00405270, FindBucket, 0);	//crash	probably wrong DXTEXTURE struct, check someday
+	INJECT(0x004053A0, DrawBuckets, 0);	//same crash
 }

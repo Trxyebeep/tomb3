@@ -36,8 +36,8 @@ tomb3decomp progress.
 		3dsystem/hwinsert.cpp
 
 0x00405220	+	InitUVTable
-0x00405270		FindBucket
-0x004053A0		DrawBuckets
+0x00405270	+	FindBucket
+0x004053A0	+	DrawBuckets
 0x004053E0	+	visible_zclip
 0x00405450		HWI_InsertClippedPoly_Textured
 0x00405980	+	HWI_InsertGT3_Sorted

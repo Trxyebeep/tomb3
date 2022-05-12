@@ -138,7 +138,7 @@
 #define surfacenumfb	VAR_(0x004F6D54, long)
 #define f_a	VAR_(0x004D78F8, float)
 #define f_boo	VAR_(0x005316F0, float)
-
+#define nDrawnVerts	VAR_(0x00634000, long)
 /**/
 
 /*arrays*/
@@ -163,6 +163,7 @@
 #define fish	ARRAY_(0x006D7BE0, FISH_INFO, [200])
 #define layout	ARRAY_(0x004CDCA0, short, [2][15])
 #define sparks	ARRAY_(0x006D8880, SPARKS, [192])
+#define Buckets	ARRAY_(0x00405270, TEXTUREBUCKET, [6])
 
 /*constants*/
 #define NO_HEIGHT -32512
