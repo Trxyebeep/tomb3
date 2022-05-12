@@ -364,6 +364,78 @@ void HWI_InsertTransQuad_Sorted(long x, long y, long w, long h, long z)
 	CurrentTLVertex = v + 4;
 }
 
+void InitUVTable()
+{
+	for (int i = 0; i < 65536; i++)
+		UVTable[i] = float(i + 1) * (1.0F / 65536.0F);
+}
+
+long GETR(long col)
+{
+	long r;
+
+	r = ColorTable[(col >> 7) & 0xF8];
+
+	if (bBlueEffect)
+		return (128 * r) >> 8;
+
+	return r;
+}
+
+long GETG(long col)
+{
+	long g;
+
+	g = ColorTable[(col >> 2) & 0xF8];
+
+	if (bBlueEffect)
+		return (224 * g) >> 8;
+
+	return g;
+}
+
+long GETB(long col)
+{
+	long b;
+
+	b = ColorTable[(col & 0x1F) << 3];
+	return b;
+}
+
+void PHD_VBUF_To_D3DTLVTX(PHD_VBUF* phdV, D3DTLVERTEX* v, ushort* uv)
+{
+	long r, g, b;
+
+	v->sx = phdV->xs;
+	v->sy = phdV->ys;
+	v->sz = f_a - f_boo * phdV->ooz;
+	v->rhw = phdV->ooz;
+	r = GETR(phdV->g);
+	g = GETG(phdV->g);
+	b = GETB(phdV->g);
+	v->color = GlobalAlpha | (r << 16) | (g << 8) | b;
+	v->tu = UVTable[uv[0]];
+	v->tv = UVTable[uv[1]];
+	v->specular = 0;
+}
+
+void PHD_VBUF_To_VERTEX_INFO(PHD_VBUF* phdV, VERTEX_INFO* v)
+{
+	v->x = phdV->xs;
+	v->y = phdV->ys;
+	v->ooz = phdV->ooz;
+	v->vr = GETR(phdV->g);
+	v->vg = GETG(phdV->g);
+	v->vb = GETB(phdV->g);
+}
+
+long visible_zclip(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2)
+{
+	return (v2->xv * v0->zv - v0->xv * v2->zv) * v1->yv +
+		(v0->xv * v2->yv - v2->xv * v0->yv) * v1->zv +
+		(v0->yv * v2->zv - v2->yv * v0->zv) * v1->xv < 0;
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -373,4 +445,10 @@ void inject_hwinsert(bool replace)
 	INJECT(0x00406FA0, HWI_InsertGT4_Sorted, replace);
 	INJECT(0x00405980, HWI_InsertGT3_Sorted, replace);
 	INJECT(0x0040A690, HWI_InsertTransQuad_Sorted, replace);
+	INJECT(0x00405220, InitUVTable, replace);
+	INJECT(0x00406750, GETR, replace);
+	INJECT(0x00406780, GETG, replace);
+	INJECT(0x004067B0, PHD_VBUF_To_D3DTLVTX, replace);
+	INJECT(0x004094D0, PHD_VBUF_To_VERTEX_INFO, replace);
+	INJECT(0x004053E0, visible_zclip, replace);
 }

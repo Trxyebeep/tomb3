@@ -145,6 +145,8 @@
 #define pickups	ARRAY_(0x006263F4, DISPLAYPU, [1])
 #define w2v_matrix	ARRAY_(0x005A6AC0, long, [indices_count])
 #define ZTable	ARRAY_(0x006A2088, float, [40960])
+#define UVTable	ARRAY_(0x005E5450, float, [65536])
+#define ColorTable	ARRAY_(0x00634010, uchar, [256])
 #define IMstack	ARRAY_(0x006E1440, long, [768])
 #define interpolated_bounds	ARRAY_(0x006E28B0, short, [6])
 #define bound_list	ARRAY_(0x00625F88, long, [128])

@@ -35,16 +35,16 @@ tomb3decomp progress.
 
 		3dsystem/hwinsert.cpp
 
-0x00405220		InitUVTable
+0x00405220	+	InitUVTable
 0x00405270		FindBucket
 0x004053A0		DrawBuckets
-0x004053E0		visible_zclip
+0x004053E0	+	visible_zclip
 0x00405450		HWI_InsertClippedPoly_Textured
 0x00405980	+	HWI_InsertGT3_Sorted
 0x00405A80		HWI_InsertGT3_Poly
-0x00406750		GETR
-0x00406780		GETG
-0x004067B0		phdVtx2D3D
+0x00406750	+	GETR
+0x00406780	+	GETG
+0x004067B0	+	PHD_VBUF_To_D3DTLVTX
 0x00406880	+	SubdivideEdge
 0x004069E0	+	SubdivideGT4
 0x00406D50	+	SubdivideGT3
@@ -54,7 +54,7 @@ tomb3decomp progress.
 0x00408800		HWI_InsertObjectGT3_Sorted
 0x00408940		HWI_InsertPoly_Gouraud
 0x00408DA0		HWI_InsertObjectG4_Sorted
-0x004094D0		PHD_VBUF_To_VERTEX_INFO
+0x004094D0	+	PHD_VBUF_To_VERTEX_INFO
 0x00409560		HWI_InsertObjectG3_Sorted
 0x00409BB0		HWI_InsertSprite_Sorted
 0x0040A030		HWI_InsertFlatRect_Sorted
