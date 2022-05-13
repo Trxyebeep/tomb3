@@ -1126,6 +1126,114 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 	}
 }
 
+void HWI_InsertPoly_Gouraud(long nPoints, float zdepth, long r, long g, long b, long nDrawType)
+{
+	VERTEX_INFO* vtx;
+	TEXTUREBUCKET* bucket;
+	D3DTLVERTEX* v;
+	long* sort;
+	short* info;
+	ulong maxCol;
+	long nBucket;
+
+	vtx = v_buffer;
+	maxCol = nDrawType != 13 ? 0xFFFFFFFF : 0x80FFFFFF;
+
+	if (App.lpZBuffer && nDrawType != 13)
+	{
+		nBucket = FindBucket(0);
+
+		if (nBucket == -1)
+			return;
+
+		bucket = &Buckets[nBucket];
+
+		for (int i = 0; i < 3; i++)
+		{
+			v = &bucket->vtx[bucket->nVtx];
+			v->sx = vtx->x;
+			v->sy = vtx->y;
+			v->sz = f_a - f_boo * vtx->ooz;
+			v->rhw = vtx->ooz;
+			vtx->vr = (vtx->vr * r) >> 8;
+			vtx->vg = (vtx->vg * g) >> 8;
+			vtx->vb = (vtx->vb * b) >> 8;
+			v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
+			v->specular = 0;
+			vtx++;
+			bucket->nVtx++;
+		}
+
+		nDrawnPoints++;
+		nPoints -= 3;
+		vtx--;
+
+		if (nPoints)
+		{
+			nDrawnPoints += nPoints;
+
+			for (int i = 0; i < nPoints; i++)
+			{
+				v = &bucket->vtx[bucket->nVtx];
+				v->sx = v_buffer->x;
+				v->sy = v_buffer->y;
+				v->sz = f_a - f_boo * v_buffer->ooz;
+				v->rhw = v_buffer->ooz;
+				v->color = (0xFF000000 | (v_buffer->vr << 16) | (v_buffer->vg << 8) | v_buffer->vb) & maxCol;
+				v->specular = 0;
+
+				v = &bucket->vtx[bucket->nVtx + 1];
+				v->sx = vtx->x;
+				v->sy = vtx->y;
+				v->sz = f_a - f_boo * vtx->ooz;
+				v->rhw = vtx->ooz;
+				v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
+				v->specular = 0;
+
+				vtx++;
+				vtx->vr = (vtx->vr * r) >> 8;
+				vtx->vg = (vtx->vg * g) >> 8;
+				vtx->vb = (vtx->vb * b) >> 8;
+				v = &bucket->vtx[bucket->nVtx + 2];
+				v->sx = vtx->x;
+				v->sy = vtx->y;
+				v->sz = f_a - f_boo * vtx->ooz;
+				v->rhw = vtx->ooz;
+				v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
+				v->specular = 0;
+
+				bucket->nVtx += 3;
+			}
+		}
+	}
+	else
+	{
+		SetBufferPtrs(sort, info, nDrawType, 0);
+		sort[0] = (long)info;
+		sort[1] = (long)zdepth;
+		info[0] = (short)nDrawType;
+		info[1] = 0;
+		info[2] = (short)nPoints;
+		v = CurrentTLVertex;
+		*((D3DTLVERTEX**)(info + 3)) = v;
+
+		for (int i = nPoints; i; i--, v++, vtx++)
+		{
+			v->sx = vtx->x;
+			v->sy = vtx->y;
+			v->rhw = vtx->ooz;
+			v->sz = f_a - f_boo * v->rhw;
+			vtx->vr = (vtx->vr * r) >> 8;
+			vtx->vg = (vtx->vg * g) >> 8;
+			vtx->vb = (vtx->vb * b) >> 8;
+			v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
+			v->specular = 0;
+		}
+
+		CurrentTLVertex = v;
+	}
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -1147,4 +1255,5 @@ void inject_hwinsert(bool replace)
 	INJECT(0x00405A80, HWI_InsertGT3_Poly, replace);
 	INJECT(0x0040A510, HWI_InsertLine_Sorted, replace);
 	INJECT(0x004070E0, HWI_InsertGT4_Poly, replace);
+	INJECT(0x00408940, HWI_InsertPoly_Gouraud, replace);
 }
