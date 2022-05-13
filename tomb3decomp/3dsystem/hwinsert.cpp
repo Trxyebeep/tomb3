@@ -932,16 +932,16 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 
 		if (v0->clip | v1->clip | v2->clip | v3->clip)
 		{
-			HWI_InsertGT3_Sorted(v0, v1, v2, pTex, &pTex->u3, &pTex->u2, &pTex->u1, nSortType, 0);
-			HWI_InsertGT3_Sorted(v0, v2, v3, pTex, &pTex->u3, &pTex->u1, &pTex->u4, nSortType, 0);
+			HWI_InsertGT3_Poly(v0, v1, v2, pTex, &pTex->u3, &pTex->u2, &pTex->u1, nSortType, 0);
+			HWI_InsertGT3_Poly(v0, v2, v3, pTex, &pTex->u3, &pTex->u1, &pTex->u4, nSortType, 0);
 			return;
 		}
 	}
 
 	if (v0->clip | v1->clip | v2->clip | v3->clip)
 	{
-		HWI_InsertGT3_Sorted(v0, v1, v2, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
-		HWI_InsertGT3_Sorted(v0, v2, v3, pTex, &pTex->u1, &pTex->u3, &pTex->u4, nSortType, double_sided);
+		HWI_InsertGT3_Poly(v0, v1, v2, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
+		HWI_InsertGT3_Poly(v0, v2, v3, pTex, &pTex->u1, &pTex->u3, &pTex->u4, nSortType, double_sided);
 		return;
 	}
 
@@ -1146,5 +1146,5 @@ void inject_hwinsert(bool replace)
 	INJECT(0x00405450, HWI_InsertClippedPoly_Textured, replace);
 	INJECT(0x00405A80, HWI_InsertGT3_Poly, replace);
 	INJECT(0x0040A510, HWI_InsertLine_Sorted, replace);
-	INJECT(0x004070E0, HWI_InsertGT4_Poly, 0);	//tris with 1 or more verts offscreen are flipped
+	INJECT(0x004070E0, HWI_InsertGT4_Poly, replace);
 }
