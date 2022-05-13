@@ -163,7 +163,8 @@
 #define fish	ARRAY_(0x006D7BE0, FISH_INFO, [200])
 #define layout	ARRAY_(0x004CDCA0, short, [2][15])
 #define sparks	ARRAY_(0x006D8880, SPARKS, [192])
-#define Buckets	ARRAY_(0x00405270, TEXTUREBUCKET, [6])
+#define Buckets	ARRAY_(0x005D7B00, TEXTUREBUCKET, [6])
+#define TPages	ARRAY_(0x00633F70, DXTEXTURE*, [32])
 
 /*constants*/
 #define NO_HEIGHT -32512

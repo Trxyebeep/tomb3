@@ -39,7 +39,7 @@ tomb3decomp progress.
 0x00405270	+	FindBucket
 0x004053A0	+	DrawBuckets
 0x004053E0	+	visible_zclip
-0x00405450		HWI_InsertClippedPoly_Textured
+0x00405450	+	HWI_InsertClippedPoly_Textured
 0x00405980	+	HWI_InsertGT3_Sorted
 0x00405A80		HWI_InsertGT3_Poly
 0x00406750	+	GETR

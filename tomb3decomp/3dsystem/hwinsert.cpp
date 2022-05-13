@@ -508,6 +508,121 @@ void DrawBuckets()
 	}
 }
 
+void HWI_InsertClippedPoly_Textured(long nPoints, float zdepth, long nDrawType, long nTPage)
+{
+	VERTEX_INFO* vtxbuf;
+	D3DTLVERTEX* v;
+	TEXTUREBUCKET* bucket;
+	long* sort;
+	short* info;
+	float z;
+	long nBucket, nVtx;
+
+	vtxbuf = v_buffer;
+
+	if (App.lpZBuffer && nDrawType != 14 && nDrawType != 10)
+	{
+		nBucket = FindBucket(TPages[nTPage]);
+
+		if (nBucket == -1)
+			return;
+
+		for (int i = 0; i < 3; i++, vtxbuf++)
+		{
+			bucket = &Buckets[nBucket];
+			nVtx = bucket->nVtx;
+			v = &bucket->vtx[nVtx];
+			v->sx = vtxbuf->x;
+			v->sy = vtxbuf->y;
+			v->sz = f_a - f_boo * vtxbuf->ooz;
+			v->rhw = vtxbuf->ooz;
+			v->color = GlobalAlpha | (vtxbuf->vr << 16) | (vtxbuf->vg << 8) | vtxbuf->vb;
+			v->specular = 0;
+			z = (1.0F / 65536.0F) / vtxbuf->ooz;
+			v->tu = vtxbuf->u * z;
+			v->tv = vtxbuf->v * z;
+			bucket->nVtx++;
+		}
+
+		vtxbuf--;
+		nPoints -= 3;
+		nDrawnVerts++;
+
+		if (nPoints)
+		{
+			nDrawnVerts += nPoints;
+
+			for (int i = nPoints; i; i--)
+			{
+				bucket = &Buckets[nBucket];
+				nVtx = bucket->nVtx;
+
+				v = &bucket->vtx[nVtx];
+				v->sx = v_buffer->x;
+				v->sy = v_buffer->y;
+				v->sz = f_a - f_boo * v_buffer->ooz;
+				v->rhw = v_buffer->ooz;
+				v->color = GlobalAlpha | (v_buffer->vr << 16) | (v_buffer->vg << 8) | v_buffer->vb;
+				v->specular = 0;
+				z = (1.0F / 65536.0F) / v_buffer->ooz;
+				v->tu = v_buffer->u * z;
+				v->tv = v_buffer->v * z;
+
+				v = &bucket->vtx[nVtx + 1];
+				v->sx = vtxbuf->x;
+				v->sy = vtxbuf->y;
+				v->sz = f_a - f_boo * vtxbuf->ooz;
+				v->rhw = vtxbuf->ooz;
+				v->color = GlobalAlpha | (vtxbuf->vr << 16) | (vtxbuf->vg << 8) | vtxbuf->vb;
+				v->specular = 0;
+				z = (1.0F / 65536.0F) / vtxbuf->ooz;
+				v->tu = vtxbuf->u * z;
+				v->tv = vtxbuf->v * z;
+
+				vtxbuf++;
+				v = &bucket->vtx[nVtx + 2];
+				v->sx = vtxbuf->x;
+				v->sy = vtxbuf->y;
+				v->sz = f_a - f_boo * vtxbuf->ooz;
+				v->rhw = vtxbuf->ooz;
+				v->color = GlobalAlpha | (vtxbuf->vr << 16) | (vtxbuf->vg << 8) | vtxbuf->vb;
+				v->specular = 0;
+				z = (1.0F / 65536.0F) / vtxbuf->ooz;
+				v->tu = vtxbuf->u * z;
+				v->tv = vtxbuf->v * z;
+
+				bucket->nVtx += 3;
+			}
+		}
+	}
+	else
+	{
+		SetBufferPtrs(sort, info, nDrawType, 0);
+		sort[0] = (long)info;
+		sort[1] = (long)zdepth;
+		info[0] = (short)nDrawType;
+		info[1] = (short)nTPage;
+		info[2] = (short)nPoints;
+		v = CurrentTLVertex;
+		*((D3DTLVERTEX**)(info + 3)) = v;
+
+		for (int i = nPoints; i; i--, v++, vtxbuf++)
+		{
+			v->sx = vtxbuf->x;
+			v->sy = vtxbuf->y;
+			v->sz = f_a - f_boo * vtxbuf->ooz;
+			v->rhw = vtxbuf->ooz;
+			v->color = GlobalAlpha | (vtxbuf->vr << 16) | (vtxbuf->vg << 8) | vtxbuf->vb;
+			v->specular = 0;
+			z = (1.0F / 65536.0F) / vtxbuf->ooz;
+			v->tu = vtxbuf->u * z;
+			v->tv = vtxbuf->v * z;
+		}
+
+		CurrentTLVertex = v;
+	}
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -523,6 +638,7 @@ void inject_hwinsert(bool replace)
 	INJECT(0x004067B0, PHD_VBUF_To_D3DTLVTX, replace);
 	INJECT(0x004094D0, PHD_VBUF_To_VERTEX_INFO, replace);
 	INJECT(0x004053E0, visible_zclip, replace);
-	INJECT(0x00405270, FindBucket, 0);	//crash	probably wrong DXTEXTURE struct, check someday
-	INJECT(0x004053A0, DrawBuckets, 0);	//same crash
+	INJECT(0x00405270, FindBucket, replace);
+	INJECT(0x004053A0, DrawBuckets, replace);
+	INJECT(0x00405450, HWI_InsertClippedPoly_Textured, replace);
 }
