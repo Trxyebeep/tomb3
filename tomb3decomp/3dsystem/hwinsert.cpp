@@ -1234,6 +1234,100 @@ void HWI_InsertPoly_Gouraud(long nPoints, float zdepth, long r, long g, long b, 
 	}
 }
 
+void HWI_InsertPoly_GouraudRGB(long nPoints, float zdepth, long nDrawType)
+{
+	VERTEX_INFO* vtx;
+	TEXTUREBUCKET* bucket;
+	D3DTLVERTEX* v;
+	long* sort;
+	short* info;
+	ulong maxCol;
+	long nBucket;
+
+	maxCol = (nDrawType == 13 || nDrawType == 16) ? 0x80FFFFFF : 0xFFFFFFFF;
+	vtx = v_buffer;
+
+	if (App.lpZBuffer && nDrawType != 13 && nDrawType != 16)
+	{
+		nBucket = FindBucket(0);
+
+		if (nBucket == -1)
+			return;
+
+		bucket = &Buckets[nBucket];
+
+		for (int i = 0; i < 3; i++)
+		{
+			v = &bucket->vtx[bucket->nVtx];
+			v->sx = vtx->x;
+			v->sy = vtx->y;
+			v->sz = f_a - f_boo * vtx->ooz;
+			v->rhw = vtx->ooz;
+			v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
+			vtx++;
+			bucket->nVtx++;
+		}
+
+		nDrawnPoints++;
+		nPoints -= 3;
+		vtx--;
+
+		if (nPoints)
+		{
+			nDrawnPoints += nPoints;
+
+			for (int i = 0; i < nPoints; i++)
+			{
+				v = &bucket->vtx[bucket->nVtx];
+				v->sx = v_buffer->x;
+				v->sy = v_buffer->y;
+				v->sz = f_a - f_boo * v_buffer->ooz;
+				v->rhw = v_buffer->ooz;
+				v->color = (0xFF000000 | (v_buffer->vr << 16) | (v_buffer->vg << 8) | v_buffer->vb) & maxCol;
+
+				v = &bucket->vtx[bucket->nVtx + 1];
+				v->sx = vtx->x;
+				v->sy = vtx->y;
+				v->sz = f_a - f_boo * vtx->ooz;
+				v->rhw = vtx->ooz;
+				v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
+
+				vtx++;
+				v = &bucket->vtx[bucket->nVtx + 2];
+				v->sx = vtx->x;
+				v->sy = vtx->y;
+				v->sz = f_a - f_boo * vtx->ooz;
+				v->rhw = vtx->ooz;
+				v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
+
+				bucket->nVtx += 3;
+			}
+		}
+	}
+	else
+	{
+		SetBufferPtrs(sort, info, nDrawType, 0);
+		sort[0] = (long)info;
+		sort[1] = (long)zdepth;
+		info[0] = (short)nDrawType;
+		info[1] = 0;
+		info[2] = (short)nPoints;
+		v = CurrentTLVertex;
+		*((D3DTLVERTEX**)(info + 3)) = v;
+
+		for (int i = nPoints; i; i--, v++, vtx++)
+		{
+			v->sx = vtx->x;
+			v->sy = vtx->y;
+			v->sz = f_a - f_boo * vtx->ooz;
+			v->rhw = vtx->ooz;
+			v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
+		}
+
+		CurrentTLVertex = v;
+	}
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -1256,4 +1350,5 @@ void inject_hwinsert(bool replace)
 	INJECT(0x0040A510, HWI_InsertLine_Sorted, replace);
 	INJECT(0x004070E0, HWI_InsertGT4_Poly, replace);
 	INJECT(0x00408940, HWI_InsertPoly_Gouraud, replace);
+	INJECT(0x0040BCD0, HWI_InsertPoly_GouraudRGB, replace);
 }

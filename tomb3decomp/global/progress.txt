@@ -64,7 +64,7 @@ tomb3decomp progress.
 0x0040AA00		RoomZedClipper
 0x0040ABE0		RoomXYGUVClipper
 0x0040B6F0		HWI_InsertAlphaSprite_Sorted
-0x0040BCD0		HWI_InsertPoly_GouraudRGB
+0x0040BCD0	+	HWI_InsertPoly_GouraudRGB
 0x0040C0B0		XYGClipper
 0x0040CA50		XYClipper
 
