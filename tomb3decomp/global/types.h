@@ -1196,4 +1196,20 @@ struct TEXTUREBUCKET
 	long nVtx;
 	D3DTLVERTEX vtx[288];
 };
+
+struct POINT_INFO
+{
+	float xv;
+	float yv;
+	float zv;
+	float ooz;
+	float xs;
+	float ys;
+	float u;
+	float v;
+	float g;
+	long vr;
+	long vg;
+	long vb;
+};
 #pragma pack(pop)

@@ -20,8 +20,10 @@ long visible_zclip(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2);
 long FindBucket(DXTEXTURE* TPage);
 void DrawBuckets();
 void HWI_InsertClippedPoly_Textured(long nPoints, float zdepth, long nDrawType, long nTPage);
+void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRUCT* pTex, ushort* uv0, ushort* uv1, ushort* uv2, sort_type nSortType, ushort double_sided);
 
 #define XYClipper	( (long(__cdecl*)(long, VERTEX_INFO*)) 0x0040CA50 )
 #define HWI_InsertPoly_Gouraud	( (void(__cdecl*)(long, float, long, long, long, long)) 0x00408940 )
-#define HWI_InsertGT3_Poly	( (void(__cdecl*)(PHD_VBUF*, PHD_VBUF*, PHD_VBUF*, PHDTEXTURESTRUCT*, ushort*, ushort*, ushort*, sort_type, ushort)) 0x00405A80 )
 #define HWI_InsertGT4_Poly	( (void(__cdecl*)(PHD_VBUF*, PHD_VBUF*, PHD_VBUF*, PHD_VBUF*, PHDTEXTURESTRUCT*, sort_type, ushort)) 0x004070E0 )
+#define RoomZedClipper	( (long(__cdecl*)(long, POINT_INFO*, VERTEX_INFO*)) 0x0040AA00 )
+#define RoomXYGUVClipper	( (long(__cdecl*)(long, VERTEX_INFO*)) 0x0040ABE0 )
