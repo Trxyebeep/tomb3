@@ -403,6 +403,17 @@ long GETB(long col)
 	return b;
 }
 
+static ulong RGB_TO_TLVTX_COLOR(long r, long g, long b)
+{
+	if (bBlueEffect)
+	{
+		r = (128 * r) >> 8;
+		g = (224 * g) >> 8;
+	}
+
+	return GlobalAlpha | (r << 16) | (g << 8) | b;
+}
+
 static void PHD_VBUF_To_D3DTLVTX(PHD_VBUF* phdV, D3DTLVERTEX* v)
 {
 	long r, g, b;
@@ -1328,6 +1339,138 @@ void HWI_InsertPoly_GouraudRGB(long nPoints, float zdepth, long nDrawType)
 	}
 }
 
+void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, long col)
+{
+	TEXTUREBUCKET* bucket;
+	D3DTLVERTEX* v;
+	long* sort;
+	short* info;
+	uchar* pC;
+	float z;
+	long nBucket;
+
+	pC = &game_palette[3 * col];
+
+	if (x2 <= x1 || y2 <= y1)
+		return;
+
+	if (x1 < phd_winxmin)
+		x1 = phd_winxmin;
+
+	if (y1 < phd_winymin)
+		y1 = phd_winymin;
+
+	if (x2 > phd_winwidth + phd_winxmin)
+		x2 = phd_winwidth + phd_winxmin;
+
+	if (y2 > phd_winheight + phd_winymin)
+		x2 = phd_winheight + phd_winymin;
+
+	z = one / (float)zdepth;
+
+	if (App.lpZBuffer)
+	{
+		nBucket = FindBucket(0);
+
+		if (nBucket == -1)
+			return;
+
+		bucket = &Buckets[nBucket];
+		v = &bucket->vtx[bucket->nVtx];
+
+		v->sx = (float)x1;
+		v->sy = (float)y1;
+		v->rhw = z;
+		v->sz = f_a - v->rhw * f_boo;
+		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+		v->specular = 0;
+
+		v = &bucket->vtx[bucket->nVtx + 1];
+		v->sx = (float)x2;
+		v->sy = (float)y1;
+		v->rhw = z;
+		v->sz = f_a - v->rhw * f_boo;
+		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+		v->specular = 0;
+
+		v = &bucket->vtx[bucket->nVtx + 2];
+		v->sx = (float)x2;
+		v->sy = (float)y2;
+		v->rhw = z;
+		v->sz = f_a - v->rhw * f_boo;
+		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+		v->specular = 0;
+
+		v = &bucket->vtx[bucket->nVtx + 3];
+		v->sx = (float)x1;
+		v->sy = (float)y1;
+		v->rhw = z;
+		v->sz = f_a - v->rhw * f_boo;
+		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+		v->specular = 0;
+
+		v = &bucket->vtx[bucket->nVtx + 4];
+		v->sx = (float)x2;
+		v->sy = (float)y2;
+		v->rhw = z;
+		v->sz = f_a - v->rhw * f_boo;
+		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+		v->specular = 0;
+
+		v = &bucket->vtx[bucket->nVtx + 5];
+		v->sx = (float)x1;
+		v->sy = (float)y2;
+		v->rhw = z;
+		v->sz = f_a - v->rhw * f_boo;
+		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+		v->specular = 0;
+
+		bucket->nVtx += 6;
+		nDrawnPoints += 2;
+	}
+	else
+	{
+		SetBufferPtrs(sort, info, 0, 0);
+		sort[0] = (long)info;
+		sort[1] = zdepth;
+		info[0] = 11;
+		info[1] = 0;
+		info[2] = 4;
+		v = CurrentTLVertex;
+		*((D3DTLVERTEX**)(info + 3)) = v;
+
+		v[0].sx = (float)x1;
+		v[0].sy = (float)y1;
+		v[0].rhw = z;
+		v[0].sz = f_a - v[0].rhw * f_boo;
+		v[0].color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+		v[0].specular = 0;
+
+		v[1].sx = (float)x2;
+		v[1].sy = (float)y1;
+		v[1].rhw = z;
+		v[1].sz = f_a - v[1].rhw * f_boo;
+		v[1].color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+		v[1].specular = 0;
+
+		v[2].sx = (float)x2;
+		v[2].sy = (float)y2;
+		v[2].rhw = z;
+		v[2].sz = f_a - v[2].rhw * f_boo;
+		v[2].color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+		v[2].specular = 0;
+
+		v[3].sx = (float)x1;
+		v[3].sy = (float)y2;
+		v[3].rhw = z;
+		v[3].sz = f_a - v[3].rhw * f_boo;
+		v[3].color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+		v[3].specular = 0;
+
+		CurrentTLVertex = v + 4;
+	}
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -1351,4 +1494,5 @@ void inject_hwinsert(bool replace)
 	INJECT(0x004070E0, HWI_InsertGT4_Poly, replace);
 	INJECT(0x00408940, HWI_InsertPoly_Gouraud, replace);
 	INJECT(0x0040BCD0, HWI_InsertPoly_GouraudRGB, replace);
+	INJECT(0x0040A030, HWI_InsertFlatRect_Sorted, replace);
 }

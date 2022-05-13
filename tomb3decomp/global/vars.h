@@ -166,6 +166,7 @@
 #define sparks	ARRAY_(0x006D8880, SPARKS, [192])
 #define Buckets	ARRAY_(0x005D7B00, TEXTUREBUCKET, [6])
 #define TPages	ARRAY_(0x00633F70, DXTEXTURE*, [32])
+#define game_palette	ARRAY_(0x006A1858, uchar, [768])
 
 /*constants*/
 #define NO_HEIGHT -32512
