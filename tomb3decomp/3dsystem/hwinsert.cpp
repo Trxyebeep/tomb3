@@ -403,7 +403,22 @@ long GETB(long col)
 	return b;
 }
 
-void PHD_VBUF_To_D3DTLVTX(PHD_VBUF* phdV, D3DTLVERTEX* v, ushort* uv)
+static void PHD_VBUF_To_D3DTLVTX(PHD_VBUF* phdV, D3DTLVERTEX* v)
+{
+	long r, g, b;
+
+	v->sx = phdV->xs;
+	v->sy = phdV->ys;
+	v->sz = f_a - f_boo * phdV->ooz;
+	v->rhw = phdV->ooz;
+	r = GETR(phdV->g);
+	g = GETG(phdV->g);
+	b = GETB(phdV->g);
+	v->color = GlobalAlpha | (r << 16) | (g << 8) | b;
+	v->specular = 0;
+}
+
+void PHD_VBUF_To_D3DTLVTX_WITHUV(PHD_VBUF* phdV, D3DTLVERTEX* v, ushort* uv)
 {
 	long r, g, b;
 
@@ -790,11 +805,11 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 		info[2] = 3;
 		v = CurrentTLVertex;
 		*((D3DTLVERTEX**)(info + 3)) = v;
-		PHD_VBUF_To_D3DTLVTX(v0, v, uv0);	//all 3 originally inlined
+		PHD_VBUF_To_D3DTLVTX_WITHUV(v0, v, uv0);	//all 3 originally inlined
 		v++;
-		PHD_VBUF_To_D3DTLVTX(v1, v, uv1);
+		PHD_VBUF_To_D3DTLVTX_WITHUV(v1, v, uv1);
 		v++;
-		PHD_VBUF_To_D3DTLVTX(v2, v, uv2);
+		PHD_VBUF_To_D3DTLVTX_WITHUV(v2, v, uv2);
 		v++;
 		CurrentTLVertex = v;
 	}
@@ -808,15 +823,15 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 			bucket = &Buckets[nBucket];
 
 			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX(v0, v, uv0);	//inlined
+			PHD_VBUF_To_D3DTLVTX_WITHUV(v0, v, uv0);	//inlined
 			bucket->nVtx++;
 
 			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX(v1, v, uv1);	//inlined
+			PHD_VBUF_To_D3DTLVTX_WITHUV(v1, v, uv1);	//inlined
 			bucket->nVtx++;
 
 			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX(v2, v, uv2);	//the one call that actually survived!!!!!!!!
+			PHD_VBUF_To_D3DTLVTX_WITHUV(v2, v, uv2);	//the one call that actually survived!!!!!!!!
 			bucket->nVtx++;
 		}
 	}
@@ -854,6 +869,263 @@ void HWI_InsertLine_Sorted(long x1, long y1, long x2, long y2, long z, long col)
 	CurrentTLVertex = v + 2;
 }
 
+void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHDTEXTURESTRUCT* pTex, sort_type nSortType, ushort double_sided)
+{
+	PHD_VBUF* swap;
+	D3DTLVERTEX* v;
+	TEXTUREBUCKET* bucket;
+	long* sort;
+	short* info;
+	float zdepth;
+	long nDrawType, nBucket;
+
+	if (outside && nPolyType != 1 &&
+		v0->zv == f_zfar && v1->zv == f_zfar && v2->zv == f_zfar && v3->zv == f_zfar &&
+		v0->ys > backgroundY && v1->ys > backgroundY && v2->ys > backgroundY && v3->ys > backgroundY)
+		return;
+
+	if (v0->clip & v1->clip & v2->clip & v3->clip)
+		return;
+
+	if ((v0->clip | v1->clip | v2->clip | v3->clip) < 0)
+	{
+		if (double_sided)
+		{
+			if (visible_zclip(v0, v1, v2))
+			{
+				HWI_InsertGT3_Poly(v0, v1, v2, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, 0);
+				HWI_InsertGT3_Poly(v0, v2, v3, pTex, &pTex->u1, &pTex->u3, &pTex->u4, nSortType, 0);
+			}
+
+			swap = v0;
+			v0 = v2;
+			v2 = swap;
+
+			if (visible_zclip(v0, v1, v2))
+			{
+				HWI_InsertGT3_Poly(v0, v1, v2, pTex, &pTex->u3, &pTex->u2, &pTex->u1, nSortType, 0);
+				HWI_InsertGT3_Poly(v0, v2, v3, pTex, &pTex->u3, &pTex->u1, &pTex->u4, nSortType, 0);
+			}
+		}
+		else
+		{
+			if (visible_zclip(v0, v1, v2))
+			{
+				HWI_InsertGT3_Poly(v0, v1, v2, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, 0);
+				HWI_InsertGT3_Poly(v0, v2, v3, pTex, &pTex->u1, &pTex->u3, &pTex->u4, nSortType, 0);
+			}
+		}
+
+		return;
+	}
+
+	if (long((v0->ys - v1->ys) * (v2->xs - v1->xs) - (v2->ys - v1->ys) * (v0->xs - v1->xs)) >= 0)
+		double_sided = 0;
+	else
+	{
+		if (!double_sided)
+			return;
+
+		swap = v0;
+		v0 = v2;
+		v2 = swap;
+
+		if (v0->clip | v1->clip | v2->clip | v3->clip)
+		{
+			HWI_InsertGT3_Sorted(v0, v1, v2, pTex, &pTex->u3, &pTex->u2, &pTex->u1, nSortType, 0);
+			HWI_InsertGT3_Sorted(v0, v2, v3, pTex, &pTex->u3, &pTex->u1, &pTex->u4, nSortType, 0);
+			return;
+		}
+	}
+
+	if (v0->clip | v1->clip | v2->clip | v3->clip)
+	{
+		HWI_InsertGT3_Sorted(v0, v1, v2, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
+		HWI_InsertGT3_Sorted(v0, v2, v3, pTex, &pTex->u1, &pTex->u3, &pTex->u4, nSortType, double_sided);
+		return;
+	}
+
+	if (pTex->drawtype > 1)
+		nDrawType = 14;
+	else
+		nDrawType = pTex->drawtype + 9;
+
+	if (nPolyType == 1)
+	{
+		if (v0->ys > backgroundY)
+			backgroundY = v0->ys;
+
+		if (v1->ys > backgroundY)
+			backgroundY = v1->ys;
+
+		if (v2->ys > backgroundY)
+			backgroundY = v2->ys;
+
+		if (v3->ys > backgroundY)
+			backgroundY = v3->ys;
+	}
+
+	if (!App.lpZBuffer || nDrawType == 14 || nDrawType == 10)
+	{
+		if (nSortType == MID_SORT)
+			zdepth = (v0->zv + v1->zv + v2->zv + v3->zv) * 0.25F;
+		else if (nSortType == FAR_SORT)
+		{
+			zdepth = v0->zv;
+
+			if (zdepth < v1->zv)
+				zdepth = v1->zv;
+
+			if (zdepth < v2->zv)
+				zdepth = v2->zv;
+
+			if (zdepth < v3->zv)
+				zdepth = v3->zv;
+		}
+		else
+			zdepth = 1000000000;
+
+		SetBufferPtrs(sort, info, nDrawType, 0);
+		sort[0] = (long)info;
+		sort[1] = (long)zdepth;
+		info[0] = (short)nDrawType;
+		info[1] = pTex->tpage;
+		info[2] = 4;
+
+		v = CurrentTLVertex;
+		*((D3DTLVERTEX**)(info + 3)) = v;
+
+		if (double_sided)
+		{
+			PHD_VBUF_To_D3DTLVTX(v0, v);
+			v->tu = UVTable[pTex->u3];
+			v->tv = UVTable[pTex->v3];
+			v++;
+
+			PHD_VBUF_To_D3DTLVTX(v1, v);
+			v->tu = UVTable[pTex->u2];
+			v->tv = UVTable[pTex->v2];
+			v++;
+
+			PHD_VBUF_To_D3DTLVTX(v2, v);
+			v->tu = UVTable[pTex->u1];
+			v->tv = UVTable[pTex->v1];
+			v++;
+		}
+		else
+		{
+			PHD_VBUF_To_D3DTLVTX(v0, v);
+			v->tu = UVTable[pTex->u1];
+			v->tv = UVTable[pTex->v1];
+			v++;
+
+			PHD_VBUF_To_D3DTLVTX(v1, v);
+			v->tu = UVTable[pTex->u2];
+			v->tv = UVTable[pTex->v2];
+			v++;
+
+			PHD_VBUF_To_D3DTLVTX(v2, v);
+			v->tu = UVTable[pTex->u3];
+			v->tv = UVTable[pTex->v3];
+			v++;
+		}
+
+		PHD_VBUF_To_D3DTLVTX(v3, v);
+		v->tu = UVTable[pTex->u4];
+		v->tv = UVTable[pTex->v4];
+		v++;
+
+		CurrentTLVertex = v;
+	}
+	else
+	{
+		nBucket = FindBucket(TPages[pTex->tpage]);
+
+		if (nBucket == -1)
+			return;
+
+		bucket = &Buckets[nBucket];
+		nDrawnPoints += 2;
+
+		if (double_sided)
+		{
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v0, v);
+			v->tu = UVTable[pTex->u3];
+			v->tv = UVTable[pTex->v3];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v1, v);
+			v->tu = UVTable[pTex->u2];
+			v->tv = UVTable[pTex->v2];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v2, v);
+			v->tu = UVTable[pTex->u1];
+			v->tv = UVTable[pTex->v1];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v0, v);
+			v->tu = UVTable[pTex->u3];
+			v->tv = UVTable[pTex->v3];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v2, v);
+			v->tu = UVTable[pTex->u1];
+			v->tv = UVTable[pTex->v1];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v3, v);
+			v->tu = UVTable[pTex->u4];
+			v->tv = UVTable[pTex->v4];
+			bucket->nVtx++;
+		}
+		else
+		{
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v0, v);
+			v->tu = UVTable[pTex->u1];
+			v->tv = UVTable[pTex->v1];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v1, v);
+			v->tu = UVTable[pTex->u2];
+			v->tv = UVTable[pTex->v2];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v2, v);
+			v->tu = UVTable[pTex->u3];
+			v->tv = UVTable[pTex->v3];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v0, v);
+			v->tu = UVTable[pTex->u1];
+			v->tv = UVTable[pTex->v1];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v2, v);
+			v->tu = UVTable[pTex->u3];
+			v->tv = UVTable[pTex->v3];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v3, v);
+			v->tu = UVTable[pTex->u4];
+			v->tv = UVTable[pTex->v4];
+			bucket->nVtx++;
+		}
+	}
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -866,7 +1138,7 @@ void inject_hwinsert(bool replace)
 	INJECT(0x00405220, InitUVTable, replace);
 	INJECT(0x00406750, GETR, replace);
 	INJECT(0x00406780, GETG, replace);
-	INJECT(0x004067B0, PHD_VBUF_To_D3DTLVTX, replace);
+	INJECT(0x004067B0, PHD_VBUF_To_D3DTLVTX_WITHUV, replace);
 	INJECT(0x004094D0, PHD_VBUF_To_VERTEX_INFO, replace);
 	INJECT(0x004053E0, visible_zclip, replace);
 	INJECT(0x00405270, FindBucket, replace);
@@ -874,4 +1146,5 @@ void inject_hwinsert(bool replace)
 	INJECT(0x00405450, HWI_InsertClippedPoly_Textured, replace);
 	INJECT(0x00405A80, HWI_InsertGT3_Poly, replace);
 	INJECT(0x0040A510, HWI_InsertLine_Sorted, replace);
+	INJECT(0x004070E0, HWI_InsertGT4_Poly, 0);	//tris with 1 or more verts offscreen are flipped
 }
