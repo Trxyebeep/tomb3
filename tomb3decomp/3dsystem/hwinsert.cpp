@@ -469,7 +469,7 @@ long FindBucket(DXTEXTURE* TPage)
 	TEXTUREBUCKET* bucket;
 	long nVtx, fullest;
 
-	if (nDrawnVerts > 2700)
+	if (nDrawnPoints > 2700)
 		return -1;
 
 	for (int i = 0; i < 6; i++)
@@ -573,11 +573,11 @@ void HWI_InsertClippedPoly_Textured(long nPoints, float zdepth, long nDrawType, 
 
 		vtxbuf--;
 		nPoints -= 3;
-		nDrawnVerts++;
+		nDrawnPoints++;
 
 		if (nPoints)
 		{
-			nDrawnVerts += nPoints;
+			nDrawnPoints += nPoints;
 
 			for (int i = nPoints; i; i--)
 			{
@@ -804,7 +804,7 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 
 		if (nBucket != -1)
 		{
-			nDrawnVerts++;
+			nDrawnPoints++;
 			bucket = &Buckets[nBucket];
 
 			v = &bucket->vtx[bucket->nVtx];
