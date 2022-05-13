@@ -822,6 +822,38 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 	}
 }
 
+void HWI_InsertLine_Sorted(long x1, long y1, long x2, long y2, long z, long col)
+{
+	D3DTLVERTEX* v;
+	long* sort;
+	short* info;
+
+	SetBufferPtrs(sort, info, 0, 1);
+	sort[0] = (long)info;
+	sort[1] = z;
+	info[0] = 12;
+	info[1] = 0;
+	info[2] = 2;
+	v = CurrentTLVertex;
+	*((D3DTLVERTEX**)(info + 3)) = v;
+
+	v[0].sx = float(phd_winxmin + x1);
+	v[0].sy = float(phd_winymin + y1);
+	v[0].rhw = one / (float)z;
+	v[0].sz = f_a - v[0].rhw * f_boo;
+	v[0].color = GlobalAlpha | col;
+	v[0].specular = 0;
+
+	v[1].sx = float(phd_winxmin + x2);
+	v[1].sy = float(phd_winymin + y2);
+	v[1].rhw = one / (float)z;
+	v[1].sz = f_a - v[1].rhw * f_boo;
+	v[1].color = GlobalAlpha | col;
+	v[1].specular = 0;
+
+	CurrentTLVertex = v + 2;
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -841,4 +873,5 @@ void inject_hwinsert(bool replace)
 	INJECT(0x004053A0, DrawBuckets, replace);
 	INJECT(0x00405450, HWI_InsertClippedPoly_Textured, replace);
 	INJECT(0x00405A80, HWI_InsertGT3_Poly, replace);
+	INJECT(0x0040A510, HWI_InsertLine_Sorted, replace);
 }

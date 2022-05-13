@@ -21,6 +21,7 @@ long FindBucket(DXTEXTURE* TPage);
 void DrawBuckets();
 void HWI_InsertClippedPoly_Textured(long nPoints, float zdepth, long nDrawType, long nTPage);
 void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRUCT* pTex, ushort* uv0, ushort* uv1, ushort* uv2, sort_type nSortType, ushort double_sided);
+void HWI_InsertLine_Sorted(long x1, long y1, long x2, long y2, long z, long col);
 
 #define XYClipper	( (long(__cdecl*)(long, VERTEX_INFO*)) 0x0040CA50 )
 #define HWI_InsertPoly_Gouraud	( (void(__cdecl*)(long, float, long, long, long, long)) 0x00408940 )
