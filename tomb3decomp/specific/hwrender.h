@@ -17,6 +17,8 @@ void HWR_EndScene();
 
 #define HWR_SetCurrentTexture	( (void(__cdecl*)(DXTEXTURE*)) 0x00484C30 )
 #define HWR_GetAllTextureHandles	( (void(__cdecl*)()) 0x00485A10 )
+#define HWR_DrawPolyListBF	( (void(__cdecl*)(long, long*)) 0x004855C0 )
+#define HWR_DrawPolyList	( (void(__cdecl*)(long, long*)) 0x004854C0 )
 
 #define SetRenderState	( *(HRESULT(__cdecl**)(D3DRENDERSTATETYPE, long)) 0x006CA1B8 )	//here FOR NOW
 #define DrawPrimitive	( *(HRESULT(__cdecl**)(D3DPRIMITIVETYPE, D3DVERTEXTYPE, LPVOID, ulong, ulong)) 0x006CA1C0 )

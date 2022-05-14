@@ -14,6 +14,8 @@ void phd_TranslateAbs(long x, long y, long z);
 void AlterFOV(short fov);
 void phd_PushMatrix();
 void phd_PushUnitMatrix();
+void SetZNear(long znear);
+void SetZFar(long zfar);
 
 __inline void phd_PopMatrix()
 {
@@ -21,6 +23,7 @@ __inline void phd_PopMatrix()
 }
 
 #define phd_LookAt	( (void(__cdecl*)(long, long, long, long, long, long, short)) 0x004011D0 )
+#define phd_SortPolyList	( (void(__cdecl*)(long, long*)) 0x00401F20 )
 
 #define InsertLine	( *(void(__cdecl**)(long, long, long, long, long, long, long)) 0x005A6AF8 )
 #define InsertObjectGT4	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005A6A34 )

@@ -140,7 +140,9 @@
 #define info3dptrfb	VAR_(0x004F6D40, short*)
 #define surfacenumfb	VAR_(0x004F6D54, long)
 #define f_a	VAR_(0x004D78F8, float)
+#define f_b	VAR_(0x004D78FC, float)
 #define f_boo	VAR_(0x005316F0, float)
+#define f_oneoznear	VAR_(0x00531710, float)
 #define nDrawnPoints	VAR_(0x00634000, long)
 #define backgroundY	VAR_(0x006E2898, float)
 /**/
@@ -173,6 +175,8 @@
 #define phdspriteinfo	ARRAY_(0x004D58F0, PHDSPRITESTRUCT, [512])
 #define phdtextinfo	ARRAY_(0x005A6B00, PHDTEXTURESTRUCT, [4096])
 #define G_GouraudPalette	ARRAY_(0x00625450, uchar, [1024])
+#define sort3d_bufferbf	ARRAY_(0x004EB1B0, long, [12000])
+#define sort3d_bufferfb	ARRAY_(0x004D7920, long, [12000])
 
 /*constants*/
 #define NO_HEIGHT -32512

@@ -306,6 +306,32 @@ void phd_PushUnitMatrix()
 	phd_mxptr[M22] = 1 << W2V_SHIFT;
 }
 
+void SetZNear(long znear)
+{
+	float z;
+
+	phd_znear = znear;
+	f_znear = (float)znear;
+	f_oneoznear = one / f_znear;
+	f_perspoznear = f_persp / f_znear;
+	z = f_zfar * f_znear * 0.990F / (f_znear - f_zfar);
+	f_b = -z;
+	f_boo = -z / one;
+	f_a = 0.005F - z / f_znear;
+}
+
+void SetZFar(long zfar)
+{
+	float z;
+
+	phd_zfar = zfar;
+	f_zfar = (float)zfar;
+	z = f_zfar * f_znear * 0.990F / (f_znear - f_zfar);
+	f_b = -z;
+	f_boo = -z / one;
+	f_a = 0.005F - z / f_znear;
+}
+
 void inject_3dgen(bool replace)
 {
 	INJECT(0x00401AF0, phd_PutPolygons, replace);
@@ -320,4 +346,6 @@ void inject_3dgen(bool replace)
 	INJECT(0x004B4280, phd_PushMatrix, replace);
 	INJECT(0x004B429E, phd_PushUnitMatrix, replace);
 //	INJECT(----------, phd_PopMatrix, replace);
+	INJECT(0x00402130, SetZNear, replace);
+	INJECT(0x00402180, SetZFar, replace);
 }
