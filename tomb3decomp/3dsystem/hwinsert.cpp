@@ -1850,6 +1850,121 @@ short* HWI_InsertObjectGT3_Sorted(short* pFaceInfo, long nFaces, sort_type nSort
 	return pFaceInfo;
 }
 
+short* HWI_InsertObjectG4_Sorted(short* pFaceInfo, long nFaces, sort_type nSortType)
+{
+	PHD_VBUF* v0;
+	PHD_VBUF* v1;
+	PHD_VBUF* v2;
+	PHD_VBUF* v3;
+	POINT_INFO points[4];
+	uchar* pC;
+	float zdepth;
+	long nPoints;
+
+	while (nFaces)
+	{
+		v0 = &vbuf[pFaceInfo[0]];
+		v1 = &vbuf[pFaceInfo[1]];
+		v2 = &vbuf[pFaceInfo[2]];
+		v3 = &vbuf[pFaceInfo[3]];
+
+		if (outside && nPolyType != 1 &&
+			v0->zv == f_zfar && v1->zv == f_zfar && v2->zv == f_zfar && v3->zv == f_zfar &&
+			v0->ys > backgroundY && v1->ys > backgroundY && v2->ys > backgroundY && v3->ys > backgroundY)
+		{
+			pFaceInfo += 5;
+			nFaces--;
+			continue;
+		}
+
+		if (v0->clip & v1->clip & v2->clip & v3->clip)
+		{
+			pFaceInfo += 5;
+			nFaces--;
+			continue;
+		}
+
+		if ((v0->clip | v1->clip | v2->clip | v3->clip) < 0)
+		{
+			if (!visible_zclip(v0, v1, v2))
+			{
+				pFaceInfo += 5;
+				nFaces--;
+				continue;
+			}
+
+			PHD_VBUF_To_POINT_INFO(v0, &points[0]);
+			PHD_VBUF_To_POINT_INFO(v1, &points[1]);
+			PHD_VBUF_To_POINT_INFO(v2, &points[2]);
+			PHD_VBUF_To_POINT_INFO(v3, &points[3]);
+			nPoints = RoomZedClipper(4, points, v_buffer);
+
+			if (nPoints)
+			{
+				phd_leftfloat = (float)phd_winxmin;
+				phd_topfloat = (float)phd_winymin;
+				phd_rightfloat = float(phd_winxmin + phd_winwidth);
+				phd_bottomfloat = float(phd_winymin + phd_winheight);
+				nPoints = XYGClipper(nPoints, v_buffer);
+			}
+		}
+		else
+		{
+			if (long((v0->ys - v1->ys) * (v2->xs - v1->xs) - (v0->xs - v1->xs) * (v2->ys - v1->ys)) < 0)
+			{
+				pFaceInfo += 5;
+				nFaces--;
+				continue;
+			}
+
+			PHD_VBUF_To_VERTEX_INFO(v0, &v_buffer[0]);
+			PHD_VBUF_To_VERTEX_INFO(v1, &v_buffer[1]);
+			PHD_VBUF_To_VERTEX_INFO(v2, &v_buffer[2]);
+			PHD_VBUF_To_VERTEX_INFO(v3, &v_buffer[3]);	//actually survived the inline
+			nPoints = 4;
+
+			if (v0->clip | v1->clip | v2->clip | v3->clip)
+			{
+				phd_leftfloat = (float)phd_winxmin;
+				phd_topfloat = (float)phd_winymin;
+				phd_rightfloat = float(phd_winxmin + phd_winwidth);
+				phd_bottomfloat = float(phd_winymin + phd_winheight);
+				nPoints = XYGClipper(nPoints, v_buffer);
+			}
+		}
+
+		if (nPoints)
+		{
+			pC = &G_GouraudPalette[(pFaceInfo[4] >> 6) & 0x3FC];
+
+			if (nSortType == MID_SORT)
+				zdepth = (v0->zv + v1->zv + v2->zv + v3->zv) * 0.25F;
+			else if (nSortType == FAR_SORT)
+			{
+				zdepth = v0->zv;
+
+				if (v1->zv > zdepth)
+					zdepth = v1->zv;
+
+				if (v2->zv > zdepth)
+					zdepth = v2->zv;
+
+				if (v3->zv > zdepth)
+					zdepth = v3->zv;
+			}
+			else
+				zdepth = 1000000000;
+
+			HWI_InsertPoly_Gouraud(nPoints, zdepth, *pC, pC[1], pC[2], 11);
+		}
+
+		pFaceInfo += 5;
+		nFaces--;
+	}
+
+	return pFaceInfo;
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -1878,4 +1993,5 @@ void inject_hwinsert(bool replace)
 	INJECT(0x0040B6F0, HWI_InsertAlphaSprite_Sorted, replace);
 	INJECT(0x00409560, HWI_InsertObjectG3_Sorted, replace);
 	INJECT(0x00408800, HWI_InsertObjectGT3_Sorted, replace);
+	INJECT(0x00408DA0, HWI_InsertObjectG4_Sorted, replace);
 }
