@@ -1212,4 +1212,16 @@ struct POINT_INFO
 	long vg;
 	long vb;
 };
+
+struct PHDSPRITESTRUCT
+{
+	ushort tpage;
+	ushort offset;
+	ushort width;
+	ushort height;
+	short x1;
+	short y1;
+	short x2;
+	short y2;
+};
 #pragma pack(pop)

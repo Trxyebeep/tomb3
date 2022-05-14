@@ -1471,6 +1471,99 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 	}
 }
 
+void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, long nSprite, long shade, long shade1, long nDrawType, long offset)
+{
+	PHDSPRITESTRUCT* sprite;
+	VERTEX_INFO* vtx;
+	float z, u1, v1, u2, v2;
+	long nPoints;
+	bool blueEffect;
+
+	if (x2 <= x1 || y2 <= y1 || x2 <= 0 || y2 <= 0 || x1 >= phd_winxmax || y1 >= phd_winymax)
+		return;
+
+	x1 += phd_winxmin;
+	y1 += phd_winymin;
+	x2 += phd_winxmin;
+	y2 += phd_winymin;
+
+	if (zdepth < phd_znear)
+		zdepth = phd_znear;
+
+	if (zdepth >= phd_zfar)
+		return;
+
+	sprite = &phdspriteinfo[nSprite];
+	z = one / (float)zdepth;
+	u1 = float((sprite->offset << 8) & 0xFF00);
+	v1 = float(sprite->offset & 0xFF00);
+	u2 = (u1 + sprite->width - float(App.nUVAdd)) * z;
+	v2 = (v1 + sprite->height - float(App.nUVAdd)) * z;
+	u1 = (u1 + float(App.nUVAdd)) * z;
+	v1 = (v1 + float(App.nUVAdd)) * z;
+	vtx = v_buffer;
+	nPoints = 4;
+
+	vtx->x = float(x1 + offset);
+	vtx->y = (float)y1;
+	vtx->ooz = z;
+	vtx->vr = GETR(shade);
+	vtx->vg = GETG(shade);
+	vtx->vb = GETB(shade);
+	vtx->u = u1;
+	vtx->v = v1;
+	vtx++;
+
+	vtx->x = float(x2 + offset);
+	vtx->y = (float)y1;
+	vtx->ooz = z;
+	vtx->vr = GETR(shade);
+	vtx->vg = GETG(shade);
+	vtx->vb = GETB(shade);
+	vtx->u = u2;
+	vtx->v = v1;
+	vtx++;
+
+	if (shade1 != -1)
+		shade = shade1;
+
+	vtx->x = (float)x2;
+	vtx->y = (float)y2;
+	vtx->ooz = z;
+	vtx->vr = GETR(shade);
+	vtx->vg = GETG(shade);
+	vtx->vb = GETB(shade);
+	vtx->u = u2;
+	vtx->v = v2;
+	vtx++;
+
+	vtx->x = (float)x1;
+	vtx->y = (float)y2;
+	vtx->ooz = z;
+	vtx->vr = GETR(shade);
+	vtx->vg = GETG(shade);
+	vtx->vb = GETB(shade);
+	vtx->u = u1;
+	vtx->v = v2;
+
+	if (x1 < phd_winxmin || x2 > phd_winxmin + phd_winwidth || y1 < phd_winymin || y2 > phd_winymin + phd_winheight)
+	{
+		phd_leftfloat = (float)phd_winxmin;
+		phd_rightfloat = float(phd_winxmin + phd_winwidth);
+		phd_topfloat = (float)phd_winymin;
+		phd_bottomfloat = float(phd_winymin + phd_winheight);
+		nPoints = RoomXYGUVClipper(nPoints, v_buffer);
+	}
+
+	if (nPoints)
+	{
+		blueEffect = bBlueEffect;
+		bBlueEffect = 0;
+		HWI_InsertClippedPoly_Textured(nPoints, (float)zdepth, nDrawType, sprite->tpage);
+		bBlueEffect = blueEffect;
+	}
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -1495,4 +1588,5 @@ void inject_hwinsert(bool replace)
 	INJECT(0x00408940, HWI_InsertPoly_Gouraud, replace);
 	INJECT(0x0040BCD0, HWI_InsertPoly_GouraudRGB, replace);
 	INJECT(0x0040A030, HWI_InsertFlatRect_Sorted, replace);
+	INJECT(0x00409BB0, HWI_InsertSprite_Sorted, replace);
 }

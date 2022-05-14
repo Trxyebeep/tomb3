@@ -26,6 +26,7 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 void HWI_InsertPoly_Gouraud(long nPoints, float zdepth, long r, long g, long b, long nDrawType);
 void HWI_InsertPoly_GouraudRGB(long nPoints, float zdepth, long nDrawType);
 void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, long col);
+void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, long nSprite, long shade, long shade1, long nDrawType, long offset);
 
 #define XYClipper	( (long(__cdecl*)(long, VERTEX_INFO*)) 0x0040CA50 )
 #define RoomZedClipper	( (long(__cdecl*)(long, POINT_INFO*, VERTEX_INFO*)) 0x0040AA00 )

@@ -56,7 +56,7 @@ tomb3decomp progress.
 0x00408DA0		HWI_InsertObjectG4_Sorted
 0x004094D0	+	PHD_VBUF_To_VERTEX_INFO
 0x00409560		HWI_InsertObjectG3_Sorted
-0x00409BB0		HWI_InsertSprite_Sorted
+0x00409BB0	+	HWI_InsertSprite_Sorted
 0x0040A030	+	HWI_InsertFlatRect_Sorted
 0x0040A510	+	HWI_InsertLine_Sorted
 0x0040A690	+	HWI_InsertTransQuad_Sorted
