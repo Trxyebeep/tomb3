@@ -71,7 +71,26 @@ void S_PrintShadow(short size, short* box, ITEM_INFO* item)
 	phd_PopMatrix();
 }
 
+void S_SetupAboveWater(long underwater)
+{
+	water_effect = underwater;
+	shade_effect = 0;
+	bBlueEffect = underwater;
+}
+
+void S_SetupBelowWater(long underwater)
+{
+	if (wet != underwater)
+		wet = underwater;
+
+	shade_effect = 1;
+	water_effect = !underwater;
+	bBlueEffect = 1;
+}
+
 void inject_output(bool replace)
 {
 	INJECT(0x0048A7B0, S_PrintShadow, replace);
+	INJECT(0x0048AB20, S_SetupAboveWater, replace);
+	INJECT(0x0048AAC0, S_SetupBelowWater, replace);
 }
