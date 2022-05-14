@@ -30,6 +30,8 @@ void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, lo
 void HWI_InsertAlphaSprite_Sorted(long x1, long y1, long z1, long shade1, long x2, long y2, long z2, long shade2,
 	long x3, long y3, long z3, long shade3, long x4, long y4, long z4, long shade4,
 	long nSprite, long nDrawtype, long double_sided);
+short* HWI_InsertObjectG3_Sorted(short* pFaceInfo, long nFaces, sort_type nSortType);
+short* HWI_InsertObjectGT3_Sorted(short* pFaceInfo, long nFaces, sort_type nSortType);
 
 #define XYClipper	( (long(__cdecl*)(long, VERTEX_INFO*)) 0x0040CA50 )
 #define RoomZedClipper	( (long(__cdecl*)(long, POINT_INFO*, VERTEX_INFO*)) 0x0040AA00 )

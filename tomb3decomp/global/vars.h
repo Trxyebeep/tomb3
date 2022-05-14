@@ -168,6 +168,8 @@
 #define TPages	ARRAY_(0x00633F70, DXTEXTURE*, [32])
 #define game_palette	ARRAY_(0x006A1858, uchar, [768])
 #define phdspriteinfo	ARRAY_(0x004D58F0, PHDSPRITESTRUCT, [512])
+#define phdtextinfo	ARRAY_(0x005A6B00, PHDTEXTURESTRUCT, [4096])
+#define G_GouraudPalette	ARRAY_(0x00625450, uchar, [1024])
 
 /*constants*/
 #define NO_HEIGHT -32512

@@ -468,7 +468,20 @@ static void PHD_VBUF_To_VERTEX_INFO_WITHUV(PHD_VBUF* phdV, VERTEX_INFO* v, ushor
 	v->v = phdV->ooz * uv[1];
 }
 
-static void PHD_VBUF_To_POINT_INFO(PHD_VBUF* v, POINT_INFO* point, ushort* uv)
+static void PHD_VBUF_To_POINT_INFO(PHD_VBUF* v, POINT_INFO* point)
+{
+	point->xv = v->xv;
+	point->yv = v->yv;
+	point->zv = v->zv;
+	point->ooz = v->ooz;
+	point->xs = v->xs;
+	point->ys = v->ys;
+	point->vr = GETR(v->g);
+	point->vg = GETG(v->g);
+	point->vb = GETB(v->g);
+}
+
+static void PHD_VBUF_To_POINT_INFO_WITHUV(PHD_VBUF* v, POINT_INFO* point, ushort* uv)
 {
 	point->xv = v->xv;
 	point->yv = v->yv;
@@ -695,9 +708,9 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 
 	if ((v0->clip | v2->clip | v1->clip) < 0)
 	{
-		PHD_VBUF_To_POINT_INFO(v0, &points[0], uv0);	//these 3 calls are originally inlined
-		PHD_VBUF_To_POINT_INFO(v1, &points[1], uv1);
-		PHD_VBUF_To_POINT_INFO(v2, &points[2], uv2);
+		PHD_VBUF_To_POINT_INFO_WITHUV(v0, &points[0], uv0);	//these 3 calls are originally inlined
+		PHD_VBUF_To_POINT_INFO_WITHUV(v1, &points[1], uv1);
+		PHD_VBUF_To_POINT_INFO_WITHUV(v2, &points[2], uv2);
 		nPoints = RoomZedClipper(3, points, v_buffer);
 
 		if (!nPoints)
@@ -1628,7 +1641,7 @@ void HWI_InsertAlphaSprite_Sorted(long x1, long y1, long z1, long shade1, long x
 	{
 		vtx = v_buffer;
 
-		if (double_sided)
+		if (!double_sided)
 		{
 			vtx->u = u1 * vtx->ooz;
 			vtx->v = v1 * vtx->ooz;
@@ -1696,6 +1709,147 @@ void HWI_InsertAlphaSprite_Sorted(long x1, long y1, long z1, long shade1, long x
 	bBlueEffect = blueEffect;
 }
 
+short* HWI_InsertObjectG3_Sorted(short* pFaceInfo, long nFaces, sort_type nSortType)
+{
+	PHD_VBUF* v0;
+	PHD_VBUF* v1;
+	PHD_VBUF* v2;
+	POINT_INFO points[3];
+	uchar* pC;
+	long nPoints;
+	float zdepth;
+
+	while (nFaces)
+	{
+		v0 = &vbuf[pFaceInfo[0]];
+		v1 = &vbuf[pFaceInfo[1]];
+		v2 = &vbuf[pFaceInfo[2]];
+
+		if (outside && nPolyType != 1 &&
+			v0->zv == f_zfar && v1->zv == f_zfar && v2->zv == f_zfar &&
+			v0->ys > backgroundY && v1->ys > backgroundY && v2->ys > backgroundY)
+		{
+			pFaceInfo += 4;
+			nFaces--;
+			continue;
+		}
+
+		if (v0->clip & v1->clip & v2->clip)
+		{
+			pFaceInfo += 4;
+			nFaces--;
+			continue;
+		}
+
+		if ((v0->clip | v1->clip | v2->clip) < 0)
+		{
+			if (!visible_zclip(v0, v1, v2))
+			{
+				pFaceInfo += 4;
+				nFaces--;
+				continue;
+			}
+
+			PHD_VBUF_To_POINT_INFO(v0, &points[0]);
+			PHD_VBUF_To_POINT_INFO(v1, &points[1]);
+			PHD_VBUF_To_POINT_INFO(v2, &points[2]);
+
+			nPoints = RoomZedClipper(3, points, v_buffer);
+
+			if (nPoints)
+			{
+				phd_leftfloat = (float)phd_winxmin;
+				phd_topfloat = (float)phd_winymin;
+				phd_rightfloat = float(phd_winxmin + phd_winwidth);
+				phd_bottomfloat = float(phd_winymin + phd_winheight);
+				nPoints = XYGClipper(nPoints, v_buffer);
+			}
+		}
+		else
+		{
+			if (long((v2->xs - v1->xs) * (v0->ys - v1->ys) - (v2->ys - v1->ys) * (v0->xs - v1->xs)) < 0)
+			{
+				pFaceInfo += 4;
+				nFaces--;
+				continue;
+			}
+
+			PHD_VBUF_To_VERTEX_INFO(v0, &v_buffer[0]);
+			PHD_VBUF_To_VERTEX_INFO(v1, &v_buffer[1]);
+			PHD_VBUF_To_VERTEX_INFO(v2, &v_buffer[2]);
+			nPoints = 3;
+
+			if (v0->clip | v1->clip | v2->clip)
+			{
+				phd_leftfloat = (float)phd_winxmin;
+				phd_topfloat = (float)phd_winymin;
+				phd_rightfloat = float(phd_winxmin + phd_winwidth);
+				phd_bottomfloat = float(phd_winymin + phd_winheight);
+				nPoints = XYGClipper(nPoints, v_buffer);
+			}
+		}
+
+		if (nPoints)
+		{
+			pC = &G_GouraudPalette[(pFaceInfo[3] >> 6) & 0x3FC];
+
+			if (nSortType == MID_SORT)
+				zdepth = (v0->zv + v1->zv + v2->zv) * 0.33333334F;
+			else if (nSortType == FAR_SORT)
+			{
+				zdepth = v0->zv;
+
+				if (v1->zv > zdepth)
+					zdepth = v1->zv;
+
+				if (v2->zv > zdepth)
+					zdepth = v2->zv;
+			}
+			else
+				zdepth = 1000000000;
+
+			HWI_InsertPoly_Gouraud(nPoints, zdepth, pC[0], pC[1], pC[2], 11);
+		}
+
+		pFaceInfo += 4;
+		nFaces--;
+	}
+
+	return pFaceInfo;
+}
+
+short* HWI_InsertObjectGT3_Sorted(short* pFaceInfo, long nFaces, sort_type nSortType)
+{
+	PHDTEXTURESTRUCT* pTex;
+	long nDrawType;
+	ushort double_sided;
+
+	while (nFaces)
+	{
+		pTex = &phdtextinfo[pFaceInfo[3] & 0x7FFF];
+		double_sided = (pFaceInfo[3] >> 0xF) & 1;
+
+		if (pTex->drawtype > 1)
+			nDrawType = 14;
+		else
+			nDrawType = pTex->drawtype + 9;
+
+		if (nDrawType == 10 || nDrawType == 14)
+			HWI_InsertGT3_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]],
+				pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
+		else if (vbuf[pFaceInfo[0]].g || vbuf[pFaceInfo[1]].g || vbuf[pFaceInfo[2]].g)
+			HWI_InsertGT3_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]],
+				pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
+		else
+			HWI_InsertObjectG3_Sorted(pFaceInfo, 1, nSortType);
+
+		pFaceInfo += 4;
+		nFaces--;
+	}
+
+	return pFaceInfo;
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -1722,4 +1876,6 @@ void inject_hwinsert(bool replace)
 	INJECT(0x0040A030, HWI_InsertFlatRect_Sorted, replace);
 	INJECT(0x00409BB0, HWI_InsertSprite_Sorted, replace);
 	INJECT(0x0040B6F0, HWI_InsertAlphaSprite_Sorted, replace);
+	INJECT(0x00409560, HWI_InsertObjectG3_Sorted, replace);
+	INJECT(0x00408800, HWI_InsertObjectGT3_Sorted, replace);
 }
