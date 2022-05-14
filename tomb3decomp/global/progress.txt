@@ -32,6 +32,7 @@ tomb3decomp progress.
 0x004B429E	+	phd_PushUnitMatrix
 ---------	+	phd_PopMatrix		//in h file
 
+0x00402360 to 0x00405216 is unknown
 
 		3dsystem/hwinsert.cpp
 
@@ -68,7 +69,21 @@ tomb3decomp progress.
 0x0040C0B0		XYGClipper
 0x0040CA50		XYClipper
 
-//rest TBD
+
+		3dsystem/phd_math.cpp
+
+0x004B4C10		phd_atan
+0x004B4C58		phd_cos
+0x004B4C5E		phd_sin
+0x004B4C93		phd_sqrt
+
+
+		3dsystem/scalespr.cpp
+
+0x0040CD20		S_DrawSprite
+0x0040D060		ins_room_sprite
+0x0040D1C0		S_DrawScreenSprite2d
+0x0040D320		S_DrawScreenSprite
 
 // ======================================
 // GAME
