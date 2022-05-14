@@ -5,6 +5,9 @@
 #include "control.h"
 #include "objects.h"
 #include "effects.h"
+#ifdef RANDO_STUFF
+#include "../specific/smain.h"
+#endif
 
 uchar jungle_fish_ranges[1][3] =
 {
@@ -65,19 +68,31 @@ void SetupShoal(long shoal_number)
 
 	leader = &lead_info[shoal_number];
 
+#ifdef RANDO_STUFF
+	if (rando.levels[CurrentLevel].current_id == LV_JUNGLE)
+#else
 	if (CurrentLevel == LV_JUNGLE)
+#endif
 	{
 		leader->Xrange = (jungle_fish_ranges[shoal_number][0] + 2) << 8;
 		leader->Yrange = jungle_fish_ranges[shoal_number][2] << 8;
 		leader->Zrange = (jungle_fish_ranges[shoal_number][1] + 2) << 8;
 	}
+#ifdef RANDO_STUFF
+	else if (rando.levels[CurrentLevel].current_id == LV_TEMPLE)
+#else
 	else if (CurrentLevel == LV_TEMPLE)
+#endif
 	{
 		leader->Xrange = (temple_fish_ranges[shoal_number][0] + 2) << 8;
 		leader->Yrange = temple_fish_ranges[shoal_number][2] << 8;
 		leader->Zrange = (temple_fish_ranges[shoal_number][1] + 2) << 8;
 	}
+#ifdef RANDO_STUFF
+	else if (rando.levels[CurrentLevel].current_id == LV_QUADBIKE)
+#else
 	else if (CurrentLevel == LV_QUADBIKE)
+#endif
 	{
 		leader->Xrange = (quadchase_fish_ranges[shoal_number][0] + 2) << 8;
 		leader->Yrange = quadchase_fish_ranges[shoal_number][2] << 8;
@@ -89,19 +104,31 @@ void SetupShoal(long shoal_number)
 		leader->Yrange = house_fish_ranges[shoal_number][2] << 8;
 		leader->Zrange = (house_fish_ranges[shoal_number][1] + 2) << 8;
 	}
+#ifdef RANDO_STUFF
+	else if (rando.levels[CurrentLevel].current_id == LV_SHORE)
+#else
 	else if (CurrentLevel == LV_SHORE)
+#endif
 	{
 		leader->Xrange = (shore_fish_ranges[shoal_number][0] + 2) << 8;
 		leader->Yrange = shore_fish_ranges[shoal_number][2] << 8;
 		leader->Zrange = (shore_fish_ranges[shoal_number][1] + 2) << 8;
 	}
+#ifdef RANDO_STUFF
+	else if (rando.levels[CurrentLevel].current_id == LV_CRASH)
+#else
 	else if (CurrentLevel == LV_CRASH)
+#endif
 	{
 		leader->Xrange = (crash_fish_ranges[shoal_number][0] + 2) << 8;
 		leader->Yrange = (crash_fish_ranges[shoal_number][2]) << 8;
 		leader->Zrange = (crash_fish_ranges[shoal_number][1] + 2) << 8;
 	}
+#ifdef RANDO_STUFF
+	else if (rando.levels[CurrentLevel].current_id == LV_RAPIDS)
+#else
 	else if (CurrentLevel == LV_RAPIDS)
+#endif
 	{
 		leader->Xrange = (rapids_fish_ranges[shoal_number][0] + 2) << 8;
 		leader->Yrange = rapids_fish_ranges[shoal_number][2] << 8;
