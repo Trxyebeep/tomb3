@@ -12,7 +12,6 @@
 
 void InitialiseCamera()
 {
-	sizeof(DIRECT3DINFO);
 	camera.shift = lara_item->pos.y_pos - 1024;
 	last_target.x = lara_item->pos.x_pos;
 	last_target.y = camera.shift;
