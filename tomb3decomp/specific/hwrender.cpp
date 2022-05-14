@@ -149,6 +149,37 @@ void HWR_EnableFilter(bool enable)
 	}
 }
 
+void HWR_ResetCurrentTexture()
+{
+	HWR_SetCurrentTexture(0);
+}
+
+void HWR_BeginScene()
+{
+	bBlueEffect = 0;
+	HWR_GetAllTextureHandles();
+	HWR_EnableAlphaBlend(0);
+	HWR_EnableColorKey(0);
+	HWR_EnableColorAddition(0);
+	HWR_ResetCurrentTexture();
+	BeginScene();
+	nDrawnPoints = 0;
+
+	if (App.lpZBuffer)
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			Buckets[i].TPage = (DXTEXTURE*)-1;
+			Buckets[i].nVtx = 0;
+		}
+	}
+}
+
+void HWR_EndScene()
+{
+	EndScene();
+}
+
 void inject_hwrender(bool replace)
 {
 	INJECT(0x00484E20, HWR_EnableZBuffer, replace);
@@ -159,4 +190,7 @@ void inject_hwrender(bool replace)
 	INJECT(0x00484A20, HWR_ResetColorKey, replace);
 	INJECT(0x00484AE0, HWR_EnablePerspCorrect, replace);
 	INJECT(0x00484B70, HWR_EnableFilter, replace);
+	INJECT(0x00484A10, HWR_ResetCurrentTexture, replace);
+	INJECT(0x00484EB0, HWR_BeginScene, replace);
+	INJECT(0x00484F00, HWR_EndScene, replace);
 }
