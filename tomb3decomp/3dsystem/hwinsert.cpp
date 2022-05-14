@@ -1965,6 +1965,36 @@ short* HWI_InsertObjectG4_Sorted(short* pFaceInfo, long nFaces, sort_type nSortT
 	return pFaceInfo;
 }
 
+short* HWI_InsertObjectGT4_Sorted(short* pFaceInfo, long nFaces, sort_type nSortType)
+{
+	PHDTEXTURESTRUCT* pTex;
+	long nDrawType;
+	ushort double_sided;
+
+	while (nFaces)
+	{
+		pTex = &phdtextinfo[pFaceInfo[4] & 0x7FFF];
+		double_sided = (pFaceInfo[4] >> 0xF) & 1;
+
+		if (pTex->drawtype > 1)
+			nDrawType = 14;
+		else
+			nDrawType = pTex->drawtype + 9;
+
+		if (nDrawType == 10 || nDrawType == 14)
+			HWI_InsertGT4_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]], &vbuf[pFaceInfo[3]], pTex, nSortType, double_sided);
+		else if (vbuf[pFaceInfo[0]].g || vbuf[pFaceInfo[1]].g || vbuf[pFaceInfo[2]].g || vbuf[pFaceInfo[3]].g)
+			HWI_InsertGT4_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]], &vbuf[pFaceInfo[3]], pTex, nSortType, double_sided);
+		else
+			HWI_InsertObjectG4_Sorted(pFaceInfo, 1, nSortType);
+
+		pFaceInfo += 5;
+		nFaces--;
+	}
+
+	return pFaceInfo;
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -1994,4 +2024,5 @@ void inject_hwinsert(bool replace)
 	INJECT(0x00409560, HWI_InsertObjectG3_Sorted, replace);
 	INJECT(0x00408800, HWI_InsertObjectGT3_Sorted, replace);
 	INJECT(0x00408DA0, HWI_InsertObjectG4_Sorted, replace);
+	INJECT(0x004086B0, HWI_InsertObjectGT4_Sorted, replace);
 }
