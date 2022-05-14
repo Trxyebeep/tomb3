@@ -12,3 +12,5 @@
 #include <process.h>
 #define DIRECTINPUT_VERSION 0x0500
 #include <dinput.h>
+
+//#define RANDO_STUFF	1

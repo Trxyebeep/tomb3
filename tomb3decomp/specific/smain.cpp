@@ -2,10 +2,34 @@
 #include "smain.h"
 #include "specific.h"
 
+#ifdef RANDO_STUFF
+rando_info rando;
+
+void LoadRandoInfo()
+{
+	FILE* file;
+
+	file = fopen("levelinfo.dat", "rb");
+
+	if (file)
+	{
+		fread(&rando, sizeof(rando_info), 1, file);
+		fclose(file);
+		return;
+	}
+
+	MessageBox(0, "Unable to load rando settings. Crashes may occur.", "TR Rando", MB_OK);
+}
+#endif
+
 bool S_LoadSettings()
 {
 	FILE* file;
 	char s[80];
+
+#ifdef RANDO_STUFF
+	LoadRandoInfo();
+#endif
 
 	file = fopen("data.bin", "rb");
 
