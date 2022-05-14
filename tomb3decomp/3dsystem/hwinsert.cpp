@@ -1564,6 +1564,138 @@ void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, lo
 	}
 }
 
+void HWI_InsertAlphaSprite_Sorted(long x1, long y1, long z1, long shade1, long x2, long y2, long z2, long shade2,
+	long x3, long y3, long z3, long shade3, long x4, long y4, long z4, long shade4,
+	long nSprite, long nDrawtype, long double_sided)
+{
+	PHDSPRITESTRUCT* sprite;
+	VERTEX_INFO* vtx;
+	VERTEX_INFO swap;
+	float u1, v1, u2, v2, zdepth;
+	long nPoints;
+	bool blueEffect;
+
+	blueEffect = bBlueEffect;
+	bBlueEffect = 0;
+	sprite = 0;	//new line: compiler complains that sprite is possibly uninitialized at the HWI_InsertClippedPoly_Textured below
+				//which is not possible anyway, so 0 is fine
+
+	if (nSprite != -1)
+	{
+		sprite = &phdspriteinfo[nSprite];
+		u1 = float((sprite->offset << 8) & 0xFF00);
+		v1 = float(sprite->offset & 0xFF00);
+		u2 = u1 + sprite->width - float(App.nUVAdd);
+		v2 = v1 + sprite->height - float(App.nUVAdd);
+		u1 += float(App.nUVAdd);
+		v1 += float(App.nUVAdd);
+	}
+
+	vtx = v_buffer;
+
+	vtx->x = (float)x1;
+	vtx->y = (float)y1;
+	vtx->ooz = one / (float)z1;
+	vtx->vr = GETR(shade1);
+	vtx->vg = GETG(shade1);
+	vtx->vb = GETB(shade1);
+	vtx++;
+
+	vtx->x = (float)x2;
+	vtx->y = (float)y2;
+	vtx->ooz = one / (float)z2;
+	vtx->vr = GETR(shade2);
+	vtx->vg = GETG(shade2);
+	vtx->vb = GETB(shade2);
+	vtx++;
+
+	vtx->x = (float)x3;
+	vtx->y = (float)y3;
+	vtx->ooz = one / (float)z3;
+	vtx->vr = GETR(shade3);
+	vtx->vg = GETG(shade3);
+	vtx->vb = GETB(shade3);
+	vtx++;
+
+	vtx->x = (float)x4;
+	vtx->y = (float)y4;
+	vtx->ooz = one / (float)z4;
+	vtx->vr = GETR(shade4);
+	vtx->vg = GETG(shade4);
+	vtx->vb = GETB(shade4);
+
+	if (nSprite != -1)
+	{
+		vtx = v_buffer;
+
+		if (double_sided)
+		{
+			vtx->u = u1 * vtx->ooz;
+			vtx->v = v1 * vtx->ooz;
+			vtx++;
+
+			vtx->u = u2 * vtx->ooz;
+			vtx->v = v1 * vtx->ooz;
+			vtx++;
+
+			vtx->u = u2 * vtx->ooz;
+			vtx->v = v2 * vtx->ooz;
+			vtx++;
+
+			vtx->u = u1 * vtx->ooz;
+			vtx->v = v2 * vtx->ooz;
+		}
+		else
+		{
+			vtx->u = u1 * vtx->ooz;
+			vtx->v = v1 * vtx->ooz;
+			vtx++;
+
+			vtx->u = u1 * vtx->ooz;
+			vtx->v = v2 * vtx->ooz;
+			vtx++;
+
+			vtx->u = u2 * vtx->ooz;
+			vtx->v = v2 * vtx->ooz;
+			vtx++;
+
+			vtx->u = u2 * vtx->ooz;
+			vtx->v = v1 * vtx->ooz;
+		}
+	}
+
+	if (nSprite == -1 && double_sided &&
+		long((v_buffer[0].y - v_buffer[1].y) * (v_buffer[2].x - v_buffer[1].x) - (v_buffer[0].x - v_buffer[1].x) * (v_buffer[2].y - v_buffer[1].y)) < 0)
+	{
+		swap = v_buffer[0];
+		v_buffer[0] = v_buffer[2];
+		v_buffer[2] = swap;
+	}
+
+	phd_leftfloat = (float)phd_winxmin;
+	phd_rightfloat = float(phd_winxmin + phd_winwidth);
+	phd_topfloat = (float)phd_winymin;
+	phd_bottomfloat = float(phd_winymin + phd_winheight);
+	nPoints = 4;
+
+	if (nSprite == -1)
+		nPoints = XYGClipper(nPoints, v_buffer);
+	else
+		nPoints = RoomXYGUVClipper(nPoints, v_buffer);
+
+	if (nPoints)
+	{
+		zdepth = float((z1 + z2 + z3 + z4) >> 2);
+
+		if (nSprite == -1)
+			HWI_InsertPoly_GouraudRGB(nPoints, zdepth, nDrawtype);
+		else
+			HWI_InsertClippedPoly_Textured(nPoints, zdepth, nDrawtype, sprite->tpage);
+	}
+
+	bBlueEffect = blueEffect;
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -1589,4 +1721,5 @@ void inject_hwinsert(bool replace)
 	INJECT(0x0040BCD0, HWI_InsertPoly_GouraudRGB, replace);
 	INJECT(0x0040A030, HWI_InsertFlatRect_Sorted, replace);
 	INJECT(0x00409BB0, HWI_InsertSprite_Sorted, replace);
+	INJECT(0x0040B6F0, HWI_InsertAlphaSprite_Sorted, replace);
 }

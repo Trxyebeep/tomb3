@@ -27,7 +27,11 @@ void HWI_InsertPoly_Gouraud(long nPoints, float zdepth, long r, long g, long b, 
 void HWI_InsertPoly_GouraudRGB(long nPoints, float zdepth, long nDrawType);
 void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, long col);
 void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, long nSprite, long shade, long shade1, long nDrawType, long offset);
+void HWI_InsertAlphaSprite_Sorted(long x1, long y1, long z1, long shade1, long x2, long y2, long z2, long shade2,
+	long x3, long y3, long z3, long shade3, long x4, long y4, long z4, long shade4,
+	long nSprite, long nDrawtype, long double_sided);
 
 #define XYClipper	( (long(__cdecl*)(long, VERTEX_INFO*)) 0x0040CA50 )
 #define RoomZedClipper	( (long(__cdecl*)(long, POINT_INFO*, VERTEX_INFO*)) 0x0040AA00 )
 #define RoomXYGUVClipper	( (long(__cdecl*)(long, VERTEX_INFO*)) 0x0040ABE0 )
+#define XYGClipper	( (long(__cdecl*)(long, VERTEX_INFO*)) 0x0040C0B0 )
