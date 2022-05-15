@@ -149,7 +149,6 @@
 
 /*arrays*/
 #define objects	ARRAY_(0x006DCAC0, OBJECT_INFO, [376])
-#define pickups	ARRAY_(0x006263F4, DISPLAYPU, [1])
 #define w2v_matrix	ARRAY_(0x005A6AC0, long, [indices_count])
 #define ZTable	ARRAY_(0x006A2088, float, [40960])
 #define UVTable	ARRAY_(0x005E5450, float, [65536])

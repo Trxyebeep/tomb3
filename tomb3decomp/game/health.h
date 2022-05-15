@@ -15,3 +15,5 @@ void DisplayModeInfo(char* string);
 void DrawAmmoInfo();
 void InitialisePickUpDisplay();
 void AddDisplayPickup(short objnum);
+
+extern DISPLAYPU pickups[];

@@ -6,6 +6,8 @@
 #include "text.h"
 #include "../specific/specific.h"
 
+DISPLAYPU pickups[1];
+
 long FlashIt()
 {
 	static long flash_state = 0, flash_count = 0;
