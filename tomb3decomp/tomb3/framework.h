@@ -14,3 +14,4 @@
 #include <dinput.h>
 
 //#define RANDO_STUFF	1
+#define TROYESTUFF	1

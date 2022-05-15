@@ -261,6 +261,7 @@
     <ClInclude Include="tomb3decomp\global\types.h" />
     <ClInclude Include="tomb3decomp\global\vars.h" />
     <ClInclude Include="tomb3decomp\specific\drawbars.h" />
+    <ClInclude Include="tomb3decomp\specific\dx.h" />
     <ClInclude Include="tomb3decomp\specific\function_stubs.h" />
     <ClInclude Include="tomb3decomp\specific\hwrender.h" />
     <ClInclude Include="tomb3decomp\specific\litesrc.h" />
@@ -373,6 +374,7 @@
     <ClCompile Include="tomb3decomp\game\wingmute.cpp" />
     <ClCompile Include="tomb3decomp\game\winston.cpp" />
     <ClCompile Include="tomb3decomp\specific\drawbars.cpp" />
+    <ClCompile Include="tomb3decomp\specific\dx.cpp" />
     <ClCompile Include="tomb3decomp\specific\function_stubs.cpp" />
     <ClCompile Include="tomb3decomp\specific\hwrender.cpp" />
     <ClCompile Include="tomb3decomp\specific\litesrc.cpp" />

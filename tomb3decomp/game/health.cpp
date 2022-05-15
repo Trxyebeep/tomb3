@@ -6,7 +6,58 @@
 #include "text.h"
 #include "../specific/specific.h"
 
+#ifndef TROYESTUFF
 DISPLAYPU pickups[1];
+#else
+DISPLAYPU pickups[8];
+short PickupX, PickupY, PickupVel, CurrentPickup;
+
+static void DrawPickups()
+{
+	DISPLAYPU* pu;
+	long lp;
+
+	pu = &pickups[CurrentPickup];
+
+	if (pu->duration > 0)
+	{
+		if (PickupX > 0)
+			PickupX += -PickupX >> 3;
+		else
+			pu->duration--;
+	}
+	else if (!pu->duration)
+	{
+		if (PickupX < 128)
+		{
+			if (PickupVel < 16)
+			{
+				PickupVel++;
+				PickupX += PickupVel;
+			}
+		}
+		else
+		{
+			pu->duration = -1;
+			PickupVel = 0;
+		}
+	}
+	else
+	{
+		for (lp = 0; lp < 8; lp++)
+		{
+			if (pickups[CurrentPickup].duration > 0)
+				break;
+
+			CurrentPickup++;
+			CurrentPickup &= 7;
+		}
+
+		if (lp == 8)
+			CurrentPickup = 0;
+	}
+}
+#endif
 
 long FlashIt()
 {
@@ -362,6 +413,9 @@ void DrawGameInfo(long timed)
 		DrawQuadbikeLapTime();
 		DrawHealthBar(flash_state);
 		DrawAirBar(flash_state);
+#ifdef TROYESTUFF
+		DrawPickups();
+#endif
 
 		if (DashTimer < 120)
 			S_DrawDashBar(100 * DashTimer / 120);
@@ -380,8 +434,18 @@ void DrawGameInfo(long timed)
 
 void InitialisePickUpDisplay()
 {
+#ifdef TROYESTUFF
+	for (int i = 0; i < 8; i++)
+		pickups[i].duration = -1;
+
+	PickupY = 128;
+	PickupX = 128;
+	PickupVel = 0;
+	CurrentPickup = 0;
+#else
 	for (int i = 0; i < 1; i++)
 		pickups[i].duration = 0;
+#endif
 }
 
 void AddDisplayPickup(short objnum)
@@ -389,8 +453,20 @@ void AddDisplayPickup(short objnum)
 	if (objnum == SECRET_ITEM1 || objnum == SECRET_ITEM2 || objnum == SECRET_ITEM3)
 		S_CDPlay(gameflow.secret_track, 0);
 
+#ifdef TROYESTUFF
+	for (int i = 0; i < 8; i++)
+	{
+		if (pickups[i].duration == -1)
+		{
+			pickups[i].sprnum = objnum;
+			pickups[i].duration = 45;
+			break;
+		}
+	}
+#else
 	pickups[0].sprnum = objnum;
 	pickups[0].duration = 75;
+#endif
 }
 
 void inject_health(bool replace)

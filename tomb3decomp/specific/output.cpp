@@ -5,6 +5,11 @@
 #include "hwrender.h"
 #include "../3dsystem/hwinsert.h"
 #include "picture.h"
+#ifdef TROYESTUFF
+#include "../game/health.h"
+#include "dx.h"
+#include "../game/objects.h"
+#endif
 
 static short shadow[6 + (3 * 8)] =
 {
@@ -91,6 +96,51 @@ void S_SetupBelowWater(long underwater)
 	bBlueEffect = 1;
 }
 
+#ifdef TROYESTUFF
+static void DrawPickup(short obj_num)
+{
+	smcr = 128;
+	smcg = 128;
+	smcb = 128;
+
+	LightCol[M00] = 3312;
+	LightCol[M01] = 3312;
+	LightCol[M02] = 0;
+
+	LightCol[M10] = 1664;
+	LightCol[M11] = 3312;
+	LightCol[M12] = 0;
+
+	LightCol[M20] = 0;
+	LightCol[M21] = 3312;
+	LightCol[M22] = 3072;
+
+	LPos[0].x = 0x4000;
+	LPos[0].y = -0x4000;
+	LPos[0].z = 0x3000;
+	LPos[1].x = -0x4000;
+	LPos[1].y = -0x4000;
+	LPos[1].z = 0x3000;
+	LPos[2].x = 0;
+	LPos[2].y = 0x2000;
+	LPos[2].z = 0x3000;
+
+	PickupY += 640;
+
+	phd_PushUnitMatrix();
+	phd_mxptr[M03] = (640 * long(float(phd_winxmax) / 512.0F) + PickupX) << W2V_SHIFT;
+	phd_mxptr[M13] = 240 << W2V_SHIFT;
+	phd_mxptr[M23] = 1024 << W2V_SHIFT;
+	phd_RotY(PickupY);
+
+	if (obj_num == SHOTGUN_ITEM)	//slightly nicer. todo: test every pickup, maybe make a table.
+		phd_RotZ(0x2000);
+
+	phd_PutPolygons(meshes[objects[obj_num].mesh_index], 1);
+	phd_PopMatrix();
+}
+#endif
+
 void S_OutputPolyList()
 {
 	if (App.lpZBuffer)
@@ -119,6 +169,28 @@ void S_OutputPolyList()
 			phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
 			HWR_DrawPolyListBF(surfacenumbf, sort3d_bufferbf);
 		}
+
+#ifdef TROYESTUFF
+		for (int i = 0; i < 6; i++)
+		{
+			Buckets[i].TPage = (DXTEXTURE*)-1;
+			Buckets[i].nVtx = 0;
+		}
+
+		DX_ClearBuffers(8, 0);
+		HWR_EnableZBuffer(0, 1);
+
+		if (level_complete)
+			InitialisePickUpDisplay();
+
+		if (pickups[CurrentPickup].duration != -1)
+		{
+			bBlueEffect = 0;
+			DrawPickup(pickups[CurrentPickup].sprnum);
+			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 0);
+			DrawBuckets();
+		}
+#endif
 	}
 	else
 	{

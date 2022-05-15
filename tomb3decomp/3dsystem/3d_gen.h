@@ -24,6 +24,7 @@ __inline void phd_PopMatrix()
 
 #define phd_LookAt	( (void(__cdecl*)(long, long, long, long, long, long, short)) 0x004011D0 )
 #define phd_SortPolyList	( (void(__cdecl*)(long, long*)) 0x00401F20 )
+#define phd_InitPolyList	( (void(__cdecl*)()) 0x00401EC0 )
 
 #define InsertLine	( *(void(__cdecl**)(long, long, long, long, long, long, long)) 0x005A6AF8 )
 #define InsertObjectGT4	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005A6A34 )

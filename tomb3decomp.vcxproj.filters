@@ -357,6 +357,9 @@
     <ClInclude Include="tomb3decomp\specific\picture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tomb3decomp\specific\dx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tomb3decomp\tomb3\dllmain.cpp">
@@ -687,6 +690,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tomb3decomp\specific\picture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tomb3decomp\specific\dx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

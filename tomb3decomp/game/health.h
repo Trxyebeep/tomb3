@@ -17,3 +17,6 @@ void InitialisePickUpDisplay();
 void AddDisplayPickup(short objnum);
 
 extern DISPLAYPU pickups[];
+#ifdef TROYESTUFF
+extern short PickupX, PickupY, PickupVel, CurrentPickup;
+#endif
