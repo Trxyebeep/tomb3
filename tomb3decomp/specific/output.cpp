@@ -97,8 +97,71 @@ void S_SetupBelowWater(long underwater)
 }
 
 #ifdef TROYESTUFF
+struct display_rots
+{
+	short obj_num;
+	short rot_x;
+	short rot_z;
+};
+
+display_rots rots[32] =
+{
+	{PICKUP_ITEM1, 0, 0},
+	{PICKUP_ITEM2, 0, 0},
+
+	{KEY_ITEM1, 0, 0},
+	{KEY_ITEM2, 0, 0},
+	{KEY_ITEM3, 0, 0},
+	{KEY_ITEM4, 0, 0},
+
+	{PUZZLE_ITEM1, 0, 0},
+	{PUZZLE_ITEM2, 0, 0},
+	{PUZZLE_ITEM3, 0, 0},
+	{PUZZLE_ITEM4, 0, 0},
+
+	{GUN_ITEM, 0, 0},
+	{SHOTGUN_ITEM, 0x5000, -0x2000},
+	{HARPOON_ITEM, -0x3000, 0},
+	{ROCKET_GUN_ITEM, 0x1000, -0x2000},
+	{GRENADE_GUN_ITEM, -0x3000, 0},
+	{M16_ITEM, -0x3000, 0},
+	{MAGNUM_ITEM, -0x2500, -0x2000},
+	{UZI_ITEM, 0x4000, 0},
+	{FLAREBOX_ITEM, 0, 0},
+
+	{SG_AMMO_ITEM, 0xE38, 0},
+	{MAG_AMMO_ITEM, 0x1000, 0},
+	{UZI_AMMO_ITEM, -0x2000, 0},
+	{HARPOON_AMMO_ITEM, 0xE38, 0},
+	{M16_AMMO_ITEM, 0x1000, 0},
+	{ROCKET_AMMO_ITEM, 0, 0},
+	{GRENADE_AMMO_ITEM, 0, 0},
+
+	{MEDI_ITEM, 0, 0},
+	{BIGMEDI_ITEM, 0, 0},
+
+	{ICON_PICKUP1_ITEM, 0, 0},
+	{ICON_PICKUP2_ITEM, 0, 0},
+	{ICON_PICKUP3_ITEM, 0, 0},
+	{ICON_PICKUP4_ITEM, 0, 0},
+};
+
+long find_display_entry(short obj_num)
+{
+	for (int i = 0; i < 32; i++)
+	{
+		if (rots[i].obj_num == obj_num)
+			return i;
+	}
+
+	return -1;
+}
+
 static void DrawPickup(short obj_num)
 {
+	long entry;
+	short rotx, rotz;
+
 	smcr = 128;
 	smcg = 128;
 	smcb = 128;
@@ -125,17 +188,26 @@ static void DrawPickup(short obj_num)
 	LPos[2].y = 0x2000;
 	LPos[2].z = 0x3000;
 
-	PickupY += 640;
+	PickupY += 728;
+
+	entry = find_display_entry(obj_num);
+
+	if (entry == -1)
+	{
+		rotx = 0;
+		rotz = 0;
+	}
+	else
+	{
+		rotx = rots[entry].rot_x;
+		rotz = rots[entry].rot_z;
+	}
 
 	phd_PushUnitMatrix();
-	phd_mxptr[M03] = (640 * long(float(phd_winxmax) / 512.0F) + PickupX) << W2V_SHIFT;
-	phd_mxptr[M13] = 240 << W2V_SHIFT;
-	phd_mxptr[M23] = 1024 << W2V_SHIFT;
-	phd_RotY(PickupY);
-
-	if (obj_num == SHOTGUN_ITEM)	//slightly nicer. todo: test every pickup, maybe make a table.
-		phd_RotZ(0x2000);
-
+	phd_mxptr[M03] = (640 * long(float(phd_winxmax) / 582.0F) + PickupX) << W2V_SHIFT;
+	phd_mxptr[M13] = long(float(phd_winymax) / 256.0F * 108.0F) << W2V_SHIFT;
+	phd_mxptr[M23] = 1280  << W2V_SHIFT;
+	phd_RotYXZ(PickupY, rotx, rotz);
 	phd_PutPolygons(meshes[objects[obj_num].mesh_index], 1);
 	phd_PopMatrix();
 }
@@ -178,7 +250,10 @@ void S_OutputPolyList()
 		}
 
 		DX_ClearBuffers(8, 0);
-		HWR_EnableZBuffer(0, 1);
+		HWR_EnableColorKey(0);
+		HWR_EnableAlphaBlend(0);
+		HWR_EnableColorAddition(0);
+		HWR_EnableZBuffer(1, 1);
 
 		if (level_complete)
 			InitialisePickUpDisplay();
@@ -187,7 +262,6 @@ void S_OutputPolyList()
 		{
 			bBlueEffect = 0;
 			DrawPickup(pickups[CurrentPickup].sprnum);
-			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 0);
 			DrawBuckets();
 		}
 #endif

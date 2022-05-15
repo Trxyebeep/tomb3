@@ -28,9 +28,9 @@ static void DrawPickups()
 	}
 	else if (!pu->duration)
 	{
-		if (PickupX < 128)
+		if (PickupX < 256)
 		{
-			if (PickupVel < 16)
+			if (PickupVel < 32)
 			{
 				PickupVel++;
 				PickupX += PickupVel;
