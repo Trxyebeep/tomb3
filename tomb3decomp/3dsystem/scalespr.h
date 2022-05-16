@@ -1,4 +1,7 @@
 #pragma once
 #include "../global/vars.h"
 
-#define S_DrawScreenSprite2d	( (void(__cdecl*)(long, long, long, long, long, short, short, ushort)) 0x0040D1C0 )
+void inject_scalespr(bool replace);
+
+short* ins_room_sprite(short* objptr, long num);
+void S_DrawScreenSprite2d(long x, long y, long z, long scaleH, long scaleV, short sprnum, short shade, ushort flags);

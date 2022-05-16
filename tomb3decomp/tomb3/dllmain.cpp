@@ -18,6 +18,7 @@
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
+#include "../3dsystem/scalespr.h"
 
 #include "../specific/drawbars.h"
 #include "../specific/transform.h"
@@ -46,6 +47,7 @@ void inject_all(bool replace)
 	//3dsystem
 	inject_3dgen(replace);
 	inject_hwinsert(replace);
+	inject_scalespr(replace);
 
 	//game
 	inject_lara(replace);
