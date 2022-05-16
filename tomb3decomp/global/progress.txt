@@ -80,7 +80,7 @@ tomb3decomp progress.
 
 		3dsystem/scalespr.cpp
 
-0x0040CD20		S_DrawSprite
+0x0040CD20	+	S_DrawSprite
 0x0040D060	+	ins_room_sprite
 0x0040D1C0	+	S_DrawScreenSprite2d
 0x0040D320	+	S_DrawScreenSprite

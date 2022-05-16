@@ -152,6 +152,7 @@
 #define f_oneoznear	VAR_(0x00531710, float)
 #define nDrawnPoints	VAR_(0x00634000, long)
 #define outsideBackgroundTop	VAR_(0x006E2898, float)
+#define phd_viewdist	VAR_(0x005BAB04, long)
 /**/
 
 /*arrays*/
