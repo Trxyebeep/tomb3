@@ -550,7 +550,7 @@ tomb3decomp progress.
 
 		game/footprnt.cpp
 
-0x00431F00		AddFootprint
+0x00431F00	+	AddFootprint
 
 
 		game/fusebox.cpp

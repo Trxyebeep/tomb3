@@ -1224,4 +1224,13 @@ struct PHDSPRITESTRUCT
 	short x2;
 	short y2;
 };
+
+struct FOOTPRINT
+{
+	long x;
+	long y;
+	long z;
+	short YRot;
+	short Active;
+};
 #pragma pack(pop)

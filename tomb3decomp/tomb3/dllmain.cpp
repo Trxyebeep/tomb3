@@ -14,6 +14,7 @@
 #include "../game/fish.h"
 #include "../game/fusebox.h"
 #include "../game/traps.h"
+#include "../game/footprnt.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -61,6 +62,7 @@ void inject_all(bool replace)
 	inject_fish(replace);
 	inject_fusebox(replace);
 	inject_traps(replace);
+	inject_footprnt(replace);
 
 	//specific
 	inject_drawbars(replace);

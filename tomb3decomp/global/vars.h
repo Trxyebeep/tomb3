@@ -86,6 +86,9 @@
 #define nPolyType	VAR_(0x00634008, long)
 #define GammaOption	VAR_(0x004CD8F4, float)
 #define level_complete	VAR_(0x00633F54, long)
+#define FXType	VAR_(0x006E2FFA, short)
+#define OnObject	VAR_(0x006E2960, long)
+#define FootPrintNum	VAR_(0x006D79C0, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -177,6 +180,7 @@
 #define G_GouraudPalette	ARRAY_(0x00625450, uchar, [1024])
 #define sort3d_bufferbf	ARRAY_(0x004EB1B0, long, [12000])
 #define sort3d_bufferfb	ARRAY_(0x004D7920, long, [12000])
+#define FootPrint	ARRAY_(0x006D79E0, FOOTPRINT, [32])
 
 /*constants*/
 #define NO_HEIGHT -32512
