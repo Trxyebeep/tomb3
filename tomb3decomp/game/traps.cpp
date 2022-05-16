@@ -6,6 +6,9 @@
 #include "items.h"
 #include "kayak.h"
 #include "sound.h"
+#ifdef RANDO_STUFF
+#include "../specific/smain.h"
+#endif
 
 void LaraBurn()
 {
@@ -39,14 +42,22 @@ void LavaBurn(ITEM_INFO* item)
 		floor = GetFloor(item->pos.x_pos, 32000, item->pos.z_pos, &room_num);
 		h = GetHeight(floor, item->pos.x_pos, 32000, item->pos.z_pos);
 
+#ifdef RANDO_STUFF
+		if (rando.levels[RANDOLEVEL].original_id == LV_RAPIDS)
+#else
 		if (CurrentLevel == LV_RAPIDS)
+#endif
 			LaraRapidsDrown();
 		else
 		{
 			item->hit_status = 1;
 			item->hit_points = -1;
 
+#ifdef RANDO_STUFF
+			if (rando.levels[RANDOLEVEL].original_id == LV_AREA51 || rando.levels[RANDOLEVEL].original_id == LV_OFFICE)
+#else
 			if (CurrentLevel == LV_AREA51 || CurrentLevel == LV_OFFICE)
+#endif
 				lara.electric = 1;
 			else
 				LaraBurn();
@@ -60,11 +71,19 @@ void SpikeControl(short item_number)
 
 	item = &items[item_number];
 
+#ifdef RANDO_STUFF
+	if (TriggerActive(item) && (rando.levels[RANDOLEVEL].original_id == LV_SHORE || rando.levels[RANDOLEVEL].original_id == LV_RAPIDS))
+#else
 	if (TriggerActive(item) && (CurrentLevel == LV_SHORE || CurrentLevel == LV_RAPIDS))
+#endif
 	{
 		if (item->frame_number == anims[item->anim_number].frame_base)
 		{
+#ifdef RANDO_STUFF
+			if (rando.levels[RANDOLEVEL].original_id == LV_SHORE)
+#else
 			if (CurrentLevel == LV_SHORE)
+#endif
 				SoundEffect(259, &item->pos, 2);
 			else
 				SoundEffect(34, &item->pos, 2);

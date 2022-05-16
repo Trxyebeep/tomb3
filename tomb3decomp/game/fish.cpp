@@ -69,7 +69,7 @@ void SetupShoal(long shoal_number)
 	leader = &lead_info[shoal_number];
 
 #ifdef RANDO_STUFF
-	if (rando.levels[CurrentLevel].current_id == LV_JUNGLE)
+	if (rando.levels[RANDOLEVEL].original_id == LV_JUNGLE)
 #else
 	if (CurrentLevel == LV_JUNGLE)
 #endif
@@ -79,7 +79,7 @@ void SetupShoal(long shoal_number)
 		leader->Zrange = (jungle_fish_ranges[shoal_number][1] + 2) << 8;
 	}
 #ifdef RANDO_STUFF
-	else if (rando.levels[CurrentLevel].current_id == LV_TEMPLE)
+	else if (rando.levels[RANDOLEVEL].original_id == LV_TEMPLE)
 #else
 	else if (CurrentLevel == LV_TEMPLE)
 #endif
@@ -89,7 +89,7 @@ void SetupShoal(long shoal_number)
 		leader->Zrange = (temple_fish_ranges[shoal_number][1] + 2) << 8;
 	}
 #ifdef RANDO_STUFF
-	else if (rando.levels[CurrentLevel].current_id == LV_QUADBIKE)
+	else if (rando.levels[RANDOLEVEL].original_id == LV_QUADBIKE)
 #else
 	else if (CurrentLevel == LV_QUADBIKE)
 #endif
@@ -105,7 +105,7 @@ void SetupShoal(long shoal_number)
 		leader->Zrange = (house_fish_ranges[shoal_number][1] + 2) << 8;
 	}
 #ifdef RANDO_STUFF
-	else if (rando.levels[CurrentLevel].current_id == LV_SHORE)
+	else if (rando.levels[RANDOLEVEL].original_id == LV_SHORE)
 #else
 	else if (CurrentLevel == LV_SHORE)
 #endif
@@ -115,7 +115,7 @@ void SetupShoal(long shoal_number)
 		leader->Zrange = (shore_fish_ranges[shoal_number][1] + 2) << 8;
 	}
 #ifdef RANDO_STUFF
-	else if (rando.levels[CurrentLevel].current_id == LV_CRASH)
+	else if (rando.levels[RANDOLEVEL].original_id == LV_CRASH)
 #else
 	else if (CurrentLevel == LV_CRASH)
 #endif
@@ -125,7 +125,7 @@ void SetupShoal(long shoal_number)
 		leader->Zrange = (crash_fish_ranges[shoal_number][1] + 2) << 8;
 	}
 #ifdef RANDO_STUFF
-	else if (rando.levels[CurrentLevel].current_id == LV_RAPIDS)
+	else if (rando.levels[RANDOLEVEL].original_id == LV_RAPIDS)
 #else
 	else if (CurrentLevel == LV_RAPIDS)
 #endif
@@ -218,7 +218,12 @@ void ControlFish(short item_number)
 
 	if (item->object_number == PIRAHNAS)
 	{
+
+#ifdef RANDO_STUFF
+		if (rando.levels[RANDOLEVEL].original_id == LV_CRASH)
+#else
 		if (CurrentLevel == LV_CRASH)
+#endif
 		{
 			if (CarcassItem == NO_ITEM)
 				pirahna_attack = lara_item->room_number == item->room_number;

@@ -5,6 +5,7 @@
 #include "../specific/drawbars.h"
 #include "text.h"
 #include "../specific/specific.h"
+#include "gameflow.h"
 
 #ifndef TROYESTUFF
 DISPLAYPU pickups[1];
@@ -80,7 +81,7 @@ void DrawAssaultTimer()
 	long timer, x;
 	char buffer[8];
 
-	if (!CurrentLevel && assault_timer_display && !QuadbikeLapTimeDisplayTimer)
+	if (CurrentLevel == LV_GYM && assault_timer_display && !QuadbikeLapTimeDisplayTimer)
 	{
 		if (savegame.timer > 0x1A5DD)
 			savegame.timer = 0x1A5DD;
@@ -122,7 +123,7 @@ void DrawAssaultPenalties(long type)
 	long timer, x, y;
 	char buffer[12];
 
-	if (!CurrentLevel && assault_penalty_display_timer && assault_timer_display)
+	if (CurrentLevel == LV_GYM && assault_penalty_display_timer && assault_timer_display)
 	{
 		if (type)
 		{
@@ -195,7 +196,7 @@ void DrawQuadbikeLapTime()
 	short col;
 	char buffer[8];
 
-	if (!CurrentLevel && QuadbikeLapTimeDisplayTimer)
+	if (CurrentLevel == LV_GYM && QuadbikeLapTimeDisplayTimer)
 	{
 		for (int i = 0; i < 2; i++)
 		{

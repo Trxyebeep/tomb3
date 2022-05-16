@@ -5,6 +5,9 @@
 #include "effect2.h"
 #include "gameflow.h"
 #include "objects.h"
+#ifdef RANDO_STUFF
+#include "../specific/smain.h"
+#endif
 
 void ControlFusebox(short item_number)
 {
@@ -25,7 +28,11 @@ void ControlFusebox(short item_number)
 		TriggerExplosionSparks(x, item->pos.y_pos - 768, z, 2, 0, 0, item->room_number);
 		TriggerExplosionSmoke(x, item->pos.y_pos - 768, z, 0);
 
+#ifdef RANDO_STUFF
+		if (rando.levels[RANDOLEVEL].original_id == LV_OFFICE)
+#else
 		if (CurrentLevel == LV_OFFICE)
+#endif
 		{
 			room_num = item->room_number;
 			floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_num);

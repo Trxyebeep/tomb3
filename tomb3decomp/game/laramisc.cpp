@@ -14,6 +14,9 @@
 #include "../specific/specific.h"
 #include "../3dsystem/phd_math.h"
 #include "gameflow.h"
+#ifdef RANDO_STUFF
+#include "../specific/smain.h"
+#endif
 
 void(*extra_control_routines[13])(ITEM_INFO* item, COLL_INFO* coll) =
 {
@@ -647,7 +650,11 @@ void LaraControl(short item_number)
 
 		LaraAboveWater(lara_item, mycoll);
 
+#ifdef RANDO_STUFF
+		if (rando.levels[RANDOLEVEL].original_id == LV_ANTARC || rando.levels[RANDOLEVEL].original_id == LV_MINES)
+#else
 		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_MINES)
+#endif
 		{
 			if (lara.water_status == LARA_WADE)
 				ExposureMeter--;
@@ -677,7 +684,11 @@ void LaraControl(short item_number)
 
 		LaraUnderWater(lara_item, mycoll);
 
+#ifdef RANDO_STUFF
+		if (rando.levels[RANDOLEVEL].original_id == LV_ANTARC || rando.levels[RANDOLEVEL].original_id == LV_MINES)
+#else
 		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_MINES)
+#endif
 			ExposureMeter -= 2;
 
 		break;
@@ -694,7 +705,11 @@ void LaraControl(short item_number)
 
 		LaraSurface(lara_item, mycoll);
 
+#ifdef RANDO_STUFF
+		if (rando.levels[RANDOLEVEL].original_id == LV_ANTARC || rando.levels[RANDOLEVEL].original_id == LV_MINES)
+#else
 		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_MINES)
+#endif
 			ExposureMeter--;
 
 		break;

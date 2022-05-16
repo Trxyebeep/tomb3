@@ -19,4 +19,5 @@ struct rando_info
 };
 
 extern rando_info rando;
+#define RANDOLEVEL	(CurrentLevel - 1)
 #endif
