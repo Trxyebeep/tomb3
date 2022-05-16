@@ -16,6 +16,7 @@ void phd_PushMatrix();
 void phd_PushUnitMatrix();
 void SetZNear(long znear);
 void SetZFar(long zfar);
+void S_InsertRoom(short* objptr, long out);
 
 __inline void phd_PopMatrix()
 {

@@ -3,6 +3,7 @@
 #include "../specific/transform.h"
 #include "../specific/litesrc.h"
 #include "phd_math.h"
+#include "scalespr.h"
 
 void phd_PutPolygons(short* objptr, long clip)
 {
@@ -332,6 +333,20 @@ void SetZFar(long zfar)
 	f_a = 0.005F - z / f_znear;
 }
 
+void S_InsertRoom(short* objptr, long out)
+{
+	phd_leftfloat = (float)(phd_winxmin + phd_left);
+	phd_topfloat = (float)(phd_winymin + phd_top);
+	phd_rightfloat = float(phd_right + phd_winxmin + 1);
+	phd_bottomfloat = float(phd_bottom + phd_winymin + 1);
+	f_centerx = float(phd_winxmin + phd_centerx);
+	f_centery = float(phd_winymin + phd_centery);
+	objptr = calc_roomvert(objptr, out ? 0 : 16);
+	objptr = InsertObjectGT4(objptr + 1, objptr[0], FAR_SORT);
+	objptr = InsertObjectGT3(objptr + 1, objptr[0], FAR_SORT);
+	ins_room_sprite(objptr + 1, objptr[0]);
+}
+
 void inject_3dgen(bool replace)
 {
 	INJECT(0x00401AF0, phd_PutPolygons, replace);
@@ -348,4 +363,5 @@ void inject_3dgen(bool replace)
 //	INJECT(----------, phd_PopMatrix, replace);
 	INJECT(0x00402130, SetZNear, replace);
 	INJECT(0x00402180, SetZFar, replace);
+	INJECT(0x00401BF0, S_InsertRoom, replace);
 }

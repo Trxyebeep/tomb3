@@ -18,7 +18,7 @@ tomb3decomp progress.
 0x004019C0	+	phd_TranslateRel
 0x00401A70	+	phd_TranslateAbs
 0x00401AF0	+	phd_PutPolygons
-0x00401BF0		S_InsertRoom
+0x00401BF0	+	S_InsertRoom
 0x00401CE0		calc_back_light
 0x00401D20		S_InsertBackground
 0x00401EC0		phd_InitPolyList
