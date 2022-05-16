@@ -89,8 +89,24 @@ void S_DrawScreenSprite2d(long x, long y, long z, long scaleH, long scaleV, shor
 	}
 }
 
+void S_DrawScreenSprite(long x, long y, long z, long scaleH, long scaleV, short sprnum, short shade, ushort flags)
+{
+	PHDSPRITESTRUCT* sprite;
+	long x1, x2, y1, y2;
+
+	sprite = &phdspriteinfo[sprnum];
+	x1 = x + ((scaleH * (sprite->x1 >> 3)) >> 16);
+	x2 = x + ((scaleH * (sprite->x2 >> 3)) >> 16);
+	y1 = y + ((scaleV * (sprite->y1 >> 3)) >> 16);
+	y2 = y + ((scaleV * (sprite->y2 >> 3)) >> 16);
+
+	if (x2 >= 0 && y2 >= 0 && x1 < phd_winwidth && y1 < phd_winheight)
+		InsertSprite(z << 3, x1, y1, x2, y2, sprnum, shade, -1, 10, 0);
+}
+
 void inject_scalespr(bool replace)
 {
 	INJECT(0x0040D060, ins_room_sprite, replace);
 	INJECT(0x0040D1C0, S_DrawScreenSprite2d, replace);
+	INJECT(0x0040D320, S_DrawScreenSprite, replace);
 }
