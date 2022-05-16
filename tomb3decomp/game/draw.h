@@ -21,3 +21,4 @@ short* GetBoundsAccurate(ITEM_INFO* item);
 void SetRoomBounds(short* door, long rn, ROOM_INFO* actualRoom);
 void GetRoomBounds();
 void ClipRoom(ROOM_INFO* r);
+void PrintRooms(short current_room);

@@ -657,6 +657,36 @@ void ClipRoom(ROOM_INFO* r)
 	}
 }
 
+void PrintRooms(short current_room)
+{
+	ROOM_INFO* r;
+
+	CurrentRoom = current_room;
+	r = &room[current_room];
+
+	if (r->flags & ROOM_UNDERWATER)
+		S_SetupBelowWater(camera_underwater);
+	else
+		S_SetupAboveWater(camera_underwater);
+
+	phd_TranslateAbs(r->x, r->y, r->z);
+	phd_left = r->left;
+	phd_right = r->right;
+	phd_top = r->top;
+	phd_bottom = r->bottom;
+	S_LightRoom(r);
+
+	if (outside > 0 && !(r->flags & ROOM_INSIDE))
+		S_InsertRoom(r->data, 1);
+	else
+	{
+		if (outside >= 0)
+			ClipRoom(r);
+
+		S_InsertRoom(r->data, 0);
+	}
+}
+
 void inject_draw(bool replace)
 {
 	INJECT(0x00429390, phd_PopMatrix_I, replace);
@@ -679,4 +709,5 @@ void inject_draw(bool replace)
 	INJECT(0x00425590, SetRoomBounds, replace);
 	INJECT(0x004253C0, GetRoomBounds, replace);
 	INJECT(0x00425910, ClipRoom, replace);
+	INJECT(0x00424FE0, PrintRooms, replace);
 }
