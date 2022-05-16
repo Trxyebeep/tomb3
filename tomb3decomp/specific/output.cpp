@@ -278,10 +278,26 @@ void S_OutputPolyList()
 	HWR_EndScene();
 }
 
+void S_LightRoom(ROOM_INFO* r)
+{
+	short* ptr;
+	long level;
+
+	if (!r->lighting)
+		return;
+
+	level = light_level[r->lighting];
+	ptr = r->data;
+
+	for (int i = (long)*ptr++; i > 0; i++, ptr += 6)
+		((uchar*)ptr)[2] += uchar((level * (((uchar*)ptr)[3] & 0x1F)) >> 6);
+}
+
 void inject_output(bool replace)
 {
 	INJECT(0x0048A7B0, S_PrintShadow, replace);
 	INJECT(0x0048AB20, S_SetupAboveWater, replace);
 	INJECT(0x0048AAC0, S_SetupBelowWater, replace);
 	INJECT(0x0048A370, S_OutputPolyList, replace);
+	INJECT(0x0048A9B0, S_LightRoom, replace);
 }

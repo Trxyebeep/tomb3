@@ -181,6 +181,7 @@
 #define sort3d_bufferbf	ARRAY_(0x004EB1B0, long, [12000])
 #define sort3d_bufferfb	ARRAY_(0x004D7920, long, [12000])
 #define FootPrint	ARRAY_(0x006D79E0, FOOTPRINT, [32])
+#define light_level	ARRAY_(0x006A1828, long, [4])
 
 /*constants*/
 #define NO_HEIGHT -32512
