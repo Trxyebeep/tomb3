@@ -927,7 +927,7 @@ tomb3decomp progress.
 
 0x0044B940		DoFlareLight
 0x0044BAF0		DoFlareInHand
-0x0044BBD0		DrawFlareInAir
+0x0044BBD0	+	DrawFlareInAir
 0x0044BD90		CreateFlare
 0x0044BF80		set_flare_arm
 0x0044BFD0		draw_flare
