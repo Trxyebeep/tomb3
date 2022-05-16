@@ -703,7 +703,7 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 
 	if (outside && nPolyType != 1 &&
 		v0->zv == f_zfar && v1->zv == f_zfar && v2->zv == f_zfar &&
-		v0->ys > backgroundY && v1->ys > backgroundY && v2->ys > backgroundY)
+		v0->ys > outsideBackgroundTop && v1->ys > outsideBackgroundTop && v2->ys > outsideBackgroundTop)
 		return;
 
 	if ((v0->clip | v2->clip | v1->clip) < 0)
@@ -748,14 +748,14 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 
 			if (nPolyType == 1)
 			{
-				if (v0->ys > backgroundY)
-					backgroundY = v0->ys;
+				if (v0->ys > outsideBackgroundTop)
+					outsideBackgroundTop = v0->ys;
 
-				if (v1->ys > backgroundY)
-					backgroundY = v1->ys;
+				if (v1->ys > outsideBackgroundTop)
+					outsideBackgroundTop = v1->ys;
 
-				if (v2->ys > backgroundY)
-					backgroundY = v2->ys;
+				if (v2->ys > outsideBackgroundTop)
+					outsideBackgroundTop = v2->ys;
 			}
 
 			HWI_InsertClippedPoly_Textured(nPoints, zdepth, nDrawType, pTex->tpage);
@@ -794,14 +794,14 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 
 	if (nPolyType == 1)
 	{
-		if (v0->ys > backgroundY)
-			backgroundY = v0->ys;
+		if (v0->ys > outsideBackgroundTop)
+			outsideBackgroundTop = v0->ys;
 
-		if (v1->ys > backgroundY)
-			backgroundY = v1->ys;
+		if (v1->ys > outsideBackgroundTop)
+			outsideBackgroundTop = v1->ys;
 
-		if (v2->ys > backgroundY)
-			backgroundY = v2->ys;
+		if (v2->ys > outsideBackgroundTop)
+			outsideBackgroundTop = v2->ys;
 	}
 
 	if (!App.lpZBuffer || nDrawType == 14 || nDrawType == 10)
@@ -905,7 +905,7 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 
 	if (outside && nPolyType != 1 &&
 		v0->zv == f_zfar && v1->zv == f_zfar && v2->zv == f_zfar && v3->zv == f_zfar &&
-		v0->ys > backgroundY && v1->ys > backgroundY && v2->ys > backgroundY && v3->ys > backgroundY)
+		v0->ys > outsideBackgroundTop && v1->ys > outsideBackgroundTop && v2->ys > outsideBackgroundTop && v3->ys > outsideBackgroundTop)
 		return;
 
 	if (v0->clip & v1->clip & v2->clip & v3->clip)
@@ -976,17 +976,17 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 
 	if (nPolyType == 1)
 	{
-		if (v0->ys > backgroundY)
-			backgroundY = v0->ys;
+		if (v0->ys > outsideBackgroundTop)
+			outsideBackgroundTop = v0->ys;
 
-		if (v1->ys > backgroundY)
-			backgroundY = v1->ys;
+		if (v1->ys > outsideBackgroundTop)
+			outsideBackgroundTop = v1->ys;
 
-		if (v2->ys > backgroundY)
-			backgroundY = v2->ys;
+		if (v2->ys > outsideBackgroundTop)
+			outsideBackgroundTop = v2->ys;
 
-		if (v3->ys > backgroundY)
-			backgroundY = v3->ys;
+		if (v3->ys > outsideBackgroundTop)
+			outsideBackgroundTop = v3->ys;
 	}
 
 	if (!App.lpZBuffer || nDrawType == 14 || nDrawType == 10)
@@ -1727,7 +1727,7 @@ short* HWI_InsertObjectG3_Sorted(short* pFaceInfo, long nFaces, sort_type nSortT
 
 		if (outside && nPolyType != 1 &&
 			v0->zv == f_zfar && v1->zv == f_zfar && v2->zv == f_zfar &&
-			v0->ys > backgroundY && v1->ys > backgroundY && v2->ys > backgroundY)
+			v0->ys > outsideBackgroundTop && v1->ys > outsideBackgroundTop && v2->ys > outsideBackgroundTop)
 		{
 			pFaceInfo += 4;
 			nFaces--;
@@ -1870,7 +1870,7 @@ short* HWI_InsertObjectG4_Sorted(short* pFaceInfo, long nFaces, sort_type nSortT
 
 		if (outside && nPolyType != 1 &&
 			v0->zv == f_zfar && v1->zv == f_zfar && v2->zv == f_zfar && v3->zv == f_zfar &&
-			v0->ys > backgroundY && v1->ys > backgroundY && v2->ys > backgroundY && v3->ys > backgroundY)
+			v0->ys > outsideBackgroundTop && v1->ys > outsideBackgroundTop && v2->ys > outsideBackgroundTop && v3->ys > outsideBackgroundTop)
 		{
 			pFaceInfo += 5;
 			nFaces--;

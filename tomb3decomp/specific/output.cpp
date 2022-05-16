@@ -293,6 +293,11 @@ void S_LightRoom(ROOM_INFO* r)
 		((uchar*)ptr)[2] += uchar((level * (((uchar*)ptr)[3] & 0x1F)) >> 6);
 }
 
+void S_InsertBackPolygon(long xmin, long ymin, long xmax, long ymax, long col)
+{
+	InsertFlatRect(phd_winxmin + xmin, phd_winymin + ymin, phd_winxmin + xmax, phd_winymin + ymax, phd_zfar, inv_colours[0]);
+}
+
 void inject_output(bool replace)
 {
 	INJECT(0x0048A7B0, S_PrintShadow, replace);
@@ -300,4 +305,5 @@ void inject_output(bool replace)
 	INJECT(0x0048AAC0, S_SetupBelowWater, replace);
 	INJECT(0x0048A370, S_OutputPolyList, replace);
 	INJECT(0x0048A9B0, S_LightRoom, replace);
+	INJECT(0x0048A760, S_InsertBackPolygon, replace);
 }

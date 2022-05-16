@@ -1,6 +1,7 @@
 #include "../tomb3/pch.h"
 #include "draw.h"
 #include "../3dsystem/3d_gen.h"
+#include "../specific/output.h"
 
 void phd_PopMatrix_I()
 {
@@ -510,6 +511,152 @@ void GetRoomBounds()
 	}
 }
 
+void ClipRoom(ROOM_INFO* r)
+{
+	long xv[8];
+	long yv[8];
+	long zv[8];
+	long clip[8];
+	long clip_room, x, y, z, xmin, xmax, ymin, ymax, l1, l2, div;
+
+	xv[0] = 1024;
+	xv[1] = (r->y_size << 10) - 1024;
+	xv[2] = (r->y_size << 10) - 1024;
+	xv[3] = 1024;
+	xv[4] = 1024;
+	xv[5] = (r->y_size << 10) - 1024;
+	xv[6] = (r->y_size << 10) - 1024;
+	xv[7] = 1024;
+
+	yv[0] = r->maxceiling - r->y;
+	yv[1] = r->maxceiling - r->y;
+	yv[2] = r->maxceiling - r->y;
+	yv[3] = r->maxceiling - r->y;
+	yv[4] = r->minfloor - r->y;
+	yv[5] = r->minfloor - r->y;
+	yv[6] = r->minfloor - r->y;
+	yv[7] = r->minfloor - r->y;
+
+	zv[0] = 1024;
+	zv[1] = 1024;
+	zv[2] = (r->x_size << 10) - 1024;
+	zv[3] = (r->x_size << 10) - 1024;
+	zv[4] = 1024;
+	zv[5] = 1024;
+	zv[6] = (r->x_size << 10) - 1024;
+	zv[7] = (r->x_size << 10) - 1024;
+
+	clip_room = 0;
+
+	for (int i = 0; i < 8; i++)
+	{
+		x = xv[i];
+		y = yv[i];
+		z = zv[i];
+
+		xv[i] = x * phd_mxptr[M00] + y * phd_mxptr[M01] + z * phd_mxptr[M02] + phd_mxptr[M03];
+		yv[i] = x * phd_mxptr[M10] + y * phd_mxptr[M11] + z * phd_mxptr[M12] + phd_mxptr[M13];
+		zv[i] = x * phd_mxptr[M20] + y * phd_mxptr[M21] + z * phd_mxptr[M22] + phd_mxptr[M23];
+
+		if (zv[i] > phd_zfar)
+		{
+			clip_room = 1;
+			clip[i] = 1;
+		}
+		else
+			clip[i] = 0;
+	}
+
+	if (!clip_room)
+		return;
+
+	xmin = 0x10000000;
+	xmax = -0x10000000;
+	ymin = 0x10000000;
+	ymax = -0x10000000;
+
+	for (int i = 0; i < 12; i++)
+	{
+		l1 = box_lines[i][0];
+		l2 = box_lines[i][1];
+
+		if (clip[l1] != clip[l2])
+		{
+			div = (zv[l2] - zv[l1]) >> W2V_SHIFT;
+
+			if (div)
+			{
+				z = (phd_zfar - zv[l1]) >> W2V_SHIFT;
+				x = xv[l1] + ((z * ((xv[l2] - xv[l1]) >> 14) / div) << 14);
+				y = yv[l1] + ((z * ((yv[l2] - yv[l1]) >> 14) / div) << 14);
+
+				if (x < xmin)
+					xmin = x;
+
+				if (x > xmax)
+					xmax = x;
+
+				if (y < ymin)
+					ymin = y;
+
+				if (y > ymax)
+					ymax = y;
+			}
+			else
+			{
+				if (xv[l1] < xmin)
+					xmin = xv[l1];
+
+				if (xv[l2] < xmin)
+					xmin = xv[l2];
+
+				if (xv[l1] > xmax)
+					xmax = xv[l1];
+
+				if (xv[l2] > xmax)
+					xmax = xv[l2];
+
+				if (yv[l1] < ymin)
+					ymin = yv[l1];
+
+				if (yv[l2] < ymin)
+					ymin = yv[l2];
+
+				if (yv[l1] > ymax)
+					ymax = yv[l1];
+
+				if (yv[l2] > ymax)
+					ymax = yv[l2];
+			}
+		}
+	}
+
+	xmin = phd_centerx + xmin / (phd_zfar / phd_persp);
+	xmax = phd_centerx + xmax / (phd_zfar / phd_persp);
+	ymin = phd_centery + ymin / (phd_zfar / phd_persp);
+	ymax = phd_centery + ymax / (phd_zfar / phd_persp);
+
+	if (xmin <= phd_right && ymin <= phd_bottom && xmax >= phd_left && ymax >= phd_top)
+	{
+		if (xmin < phd_left)
+			xmin = phd_left;
+
+		if (ymin < phd_top)
+			ymin = phd_top;
+
+		if (xmax > phd_right)
+			xmax = phd_right;
+
+		if (ymax > phd_bottom)
+			ymax = phd_bottom;
+
+		if (outside)
+			S_InsertBackPolygon(xmin, (long)outsideBackgroundTop, xmax, ymax, 0x800000);
+		else
+			S_InsertBackPolygon(xmin, ymin, xmax, ymax, 0x800000);
+	}
+}
+
 void inject_draw(bool replace)
 {
 	INJECT(0x00429390, phd_PopMatrix_I, replace);
@@ -531,4 +678,5 @@ void inject_draw(bool replace)
 	INJECT(0x00429E50, GetBoundsAccurate, replace);
 	INJECT(0x00425590, SetRoomBounds, replace);
 	INJECT(0x004253C0, GetRoomBounds, replace);
+	INJECT(0x00425910, ClipRoom, replace);
 }

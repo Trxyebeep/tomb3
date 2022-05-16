@@ -148,7 +148,7 @@
 #define f_boo	VAR_(0x005316F0, float)
 #define f_oneoznear	VAR_(0x00531710, float)
 #define nDrawnPoints	VAR_(0x00634000, long)
-#define backgroundY	VAR_(0x006E2898, float)
+#define outsideBackgroundTop	VAR_(0x006E2898, float)
 /**/
 
 /*arrays*/
@@ -182,6 +182,8 @@
 #define sort3d_bufferfb	ARRAY_(0x004D7920, long, [12000])
 #define FootPrint	ARRAY_(0x006D79E0, FOOTPRINT, [32])
 #define light_level	ARRAY_(0x006A1828, long, [4])
+#define box_lines	ARRAY_(0x004C53F8, long, [12][2])
+#define inv_colours	ARRAY_(0x006D71E0, short, [17])
 
 /*constants*/
 #define NO_HEIGHT -32512

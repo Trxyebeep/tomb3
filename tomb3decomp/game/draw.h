@@ -20,3 +20,4 @@ short* GetBestFrame(ITEM_INFO* item);
 short* GetBoundsAccurate(ITEM_INFO* item);
 void SetRoomBounds(short* door, long rn, ROOM_INFO* actualRoom);
 void GetRoomBounds();
+void ClipRoom(ROOM_INFO* r);
