@@ -99,7 +99,7 @@ tomb3decomp progress.
 
 0x0040E350		InitialiseCivvy
 0x0040E3B0		CivvyControl
-0x0040ECA0		ControlElectricFence
+0x0040ECA0	+	ControlElectricFence
 0x0040F080	+	TriggerFenceSparks
 
 
