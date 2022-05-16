@@ -208,7 +208,7 @@ static void DrawPickup(short obj_num)
 	phd_mxptr[M13] = long(float(phd_winymax) / 256.0F * 108.0F) << W2V_SHIFT;
 	phd_mxptr[M23] = 1280  << W2V_SHIFT;
 	phd_RotYXZ(PickupY, rotx, rotz);
-	phd_PutPolygons(meshes[objects[obj_num].mesh_index], 1);
+	phd_PutPolygons(meshes[objects[obj_num].mesh_index], 1);							//todo: handle multiple meshes
 	phd_PopMatrix();
 }
 #endif

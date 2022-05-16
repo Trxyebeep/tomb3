@@ -42,25 +42,28 @@ void LavaBurn(ITEM_INFO* item)
 		floor = GetFloor(item->pos.x_pos, 32000, item->pos.z_pos, &room_num);
 		h = GetHeight(floor, item->pos.x_pos, 32000, item->pos.z_pos);
 
-#ifdef RANDO_STUFF
-		if (rando.levels[RANDOLEVEL].original_id == LV_RAPIDS)
-#else
-		if (CurrentLevel == LV_RAPIDS)
-#endif
-			LaraRapidsDrown();
-		else
+		if (item->floor == h)
 		{
-			item->hit_status = 1;
-			item->hit_points = -1;
+#ifdef RANDO_STUFF
+			if (rando.levels[RANDOLEVEL].original_id == LV_RAPIDS)
+#else
+			if (CurrentLevel == LV_RAPIDS)
+#endif
+				LaraRapidsDrown();
+			else
+			{
+				item->hit_status = 1;
+				item->hit_points = -1;
 
 #ifdef RANDO_STUFF
-			if (rando.levels[RANDOLEVEL].original_id == LV_AREA51 || rando.levels[RANDOLEVEL].original_id == LV_OFFICE)
+				if (rando.levels[RANDOLEVEL].original_id == LV_AREA51 || rando.levels[RANDOLEVEL].original_id == LV_OFFICE)
 #else
-			if (CurrentLevel == LV_AREA51 || CurrentLevel == LV_OFFICE)
+				if (CurrentLevel == LV_AREA51 || CurrentLevel == LV_OFFICE)
 #endif
-				lara.electric = 1;
-			else
-				LaraBurn();
+					lara.electric = 1;
+				else
+					LaraBurn();
+			}
 		}
 	}
 }
