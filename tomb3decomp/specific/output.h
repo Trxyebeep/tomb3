@@ -9,3 +9,4 @@ void S_SetupBelowWater(long underwater);
 void S_OutputPolyList();
 void S_LightRoom(ROOM_INFO* r);
 void S_InsertBackPolygon(long xmin, long ymin, long xmax, long ymax, long col);
+long S_GetObjectBounds(short* box);

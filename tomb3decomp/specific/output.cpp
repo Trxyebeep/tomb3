@@ -298,6 +298,102 @@ void S_InsertBackPolygon(long xmin, long ymin, long xmax, long ymax, long col)
 	InsertFlatRect(phd_winxmin + xmin, phd_winymin + ymin, phd_winxmin + xmax, phd_winymin + ymax, phd_zfar, inv_colours[0]);
 }
 
+long S_GetObjectBounds(short* box)
+{
+	long* v;
+	long vtx[8][3];
+	long xmin, xmax, ymin, ymax, zmin, zmax, nZ, x, y, z;
+
+	if (phd_mxptr[M23] >= phd_zfar && !outside)
+		return 0;
+
+	objbcnt++;
+	xmin = box[0];
+	xmax = box[1];
+	ymin = box[2];
+	ymax = box[3];
+	zmin = box[4];
+	zmax = box[5];
+
+	vtx[0][0] = xmin;
+	vtx[0][1] = ymin;
+	vtx[0][2] = zmin;
+
+	vtx[1][0] = xmax;
+	vtx[1][1] = ymin;
+	vtx[1][2] = zmin;
+
+	vtx[2][0] = xmax;
+	vtx[2][1] = ymax;
+	vtx[2][2] = zmin;
+
+	vtx[3][0] = xmin;
+	vtx[3][1] = ymax;
+	vtx[3][2] = zmin;
+
+	vtx[4][0] = xmin;
+	vtx[4][1] = ymin;
+	vtx[4][2] = zmax;
+
+	vtx[5][0] = xmax;
+	vtx[5][1] = ymin;
+	vtx[5][2] = zmax;
+
+	vtx[6][0] = xmax;
+	vtx[6][1] = ymax;
+	vtx[6][2] = zmax;
+
+	vtx[7][0] = xmin;
+	vtx[7][1] = ymax;
+	vtx[7][2] = zmax;
+	
+	xmin = 0x3FFFFFFF;
+	xmax = -0x3FFFFFFF;
+	ymin = 0x3FFFFFFF;
+	ymax = -0x3FFFFFFF;
+	v = &vtx[0][0];
+	nZ = 0;
+
+	for (int i = 0; i < 8; i++)
+	{
+		z = v[0] * phd_mxptr[M20] + v[1] * phd_mxptr[M21] + v[2] * phd_mxptr[M22] + phd_mxptr[M23];
+
+		if (z > phd_znear && z < phd_zfar)
+		{
+			nZ++;
+			z /= phd_persp;
+			x = (v[0] * phd_mxptr[M00] + v[1] * phd_mxptr[M01] + v[2] * phd_mxptr[M02] + phd_mxptr[M03]) / z;
+
+			if (x < xmin)
+				xmin = x;
+
+			if (x > xmax)
+				xmax = x;
+
+			y = (v[0] * phd_mxptr[M10] + v[1] * phd_mxptr[M11] + v[2] * phd_mxptr[M12] + phd_mxptr[M13]) / z;
+
+			if (y < ymin)
+				ymin = y;
+
+			if (y > ymax)
+				ymax = y;
+		}
+	}
+
+	xmin += phd_centerx;
+	xmax += phd_centerx;
+	ymin += phd_centery;
+	ymax += phd_centery;
+
+	if (nZ < 8 || xmin < 0 || ymin < 0 || xmax > phd_winxmax || ymax > phd_winymax)
+		return -1;
+
+	if (xmin > phd_right || ymin > phd_bottom || xmax < phd_left || ymax < phd_top)
+		return 0;
+
+	return 1;
+}
+
 void inject_output(bool replace)
 {
 	INJECT(0x0048A7B0, S_PrintShadow, replace);
@@ -306,4 +402,5 @@ void inject_output(bool replace)
 	INJECT(0x0048A370, S_OutputPolyList, replace);
 	INJECT(0x0048A9B0, S_LightRoom, replace);
 	INJECT(0x0048A760, S_InsertBackPolygon, replace);
+	INJECT(0x0048A4C0, S_GetObjectBounds, replace);
 }

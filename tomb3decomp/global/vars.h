@@ -91,6 +91,7 @@
 #define FXType	VAR_(0x006E2FFA, short)
 #define OnObject	VAR_(0x006E2960, long)
 #define FootPrintNum	VAR_(0x006D79C0, long)
+#define objbcnt	VAR_(0x006A1848, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
