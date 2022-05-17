@@ -368,7 +368,7 @@ tomb3decomp progress.
 0x00425910	+	ClipRoom
 0x00425D10	+	DrawEffect
 0x00425EA0		DrawAnimatingItem
-0x004265E0		DrawLara
+0x004265E0	+	DrawLara
 0x00427E20	+	DrawLaraInt
 0x00429350	+	InitInterpolate
 0x00429390	+	phd_PopMatrix_I

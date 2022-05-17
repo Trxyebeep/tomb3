@@ -27,6 +27,7 @@ void PrintRooms(short current_room);
 void DrawEffect(short fx_number);
 void PrintObjects(short room_number);
 void DrawLaraInt(ITEM_INFO* item, short* frame1, short* frame2, long frac, long rate);
+void DrawLara(ITEM_INFO* item);
 
 #define CalculateObjectLighting	( (void(__cdecl*)(ITEM_INFO*, short*)) 0x00429BA0 )
 #define CalculateObjectLightingLara	( (void(__cdecl*)()) 0x00429D00 )

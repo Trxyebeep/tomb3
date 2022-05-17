@@ -199,6 +199,7 @@
 #define inv_colours	ARRAY_(0x006D71E0, short, [17])
 #define static_objects	ARRAY_(0x006E2300, STATIC_INFO, [50])
 #define IsJointUnderwater	ARRAY_(0x006D6290, char, [15])
+#define GotJointPos	ARRAY_(0x006D6190, char, [15])
 
 /*constants*/
 #define NO_HEIGHT -32512
