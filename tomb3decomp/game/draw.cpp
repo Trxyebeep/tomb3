@@ -11,6 +11,8 @@
 #include "lara.h"
 #include "effect2.h"
 #include "laraanim.h"
+#include "control.h"
+#include "sphere.h"
 
 void phd_PopMatrix_I()
 {
@@ -1709,6 +1711,41 @@ void DrawGunFlash(long gun_type, long clip)
 	S_DrawSprite(SPR_SEMITRANS | SPR_SCALE | SPR_TINT | SPR_BLEND_ADD | SPR_RGB(63, 56, 8), 0, 0, 0, objects[GLOW].mesh_index, 0, 192);
 }
 
+void CalculateObjectLighting(ITEM_INFO* item, short* frame)
+{
+	PHD_VECTOR pos;
+	long x, y, z;
+	short room_number;
+
+	if (item->shade >= 0)
+		S_CalculateStaticMeshLight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->shade & 0x7FFF, item->shadeB, &room[item->room_number]);
+	else if (GnGameMode == 3)
+	{
+		pos.x = 0;
+		pos.y = 0;
+		pos.z = 0;
+		GetJointAbsPosition(item, &pos, 0);
+		room_number = item->room_number;
+		GetFloor(pos.x, pos.y, pos.z, &room_number);
+		S_CalculateLight(pos.x, pos.y, pos.z, room_number, &item->il);
+	}
+	else if (item->object_number == TRAIN)
+		S_CalculateLight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, &item->il);
+	else
+	{
+		phd_PushUnitMatrix();
+		phd_mxptr[M03] = 0;
+		phd_mxptr[M13] = 0;
+		phd_mxptr[M23] = 0;
+		phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+		x = (phd_mxptr[M03] >> W2V_SHIFT) + item->pos.x_pos;
+		y = (phd_mxptr[M13] >> W2V_SHIFT) + item->pos.y_pos;
+		z = (phd_mxptr[M23] >> W2V_SHIFT) + item->pos.z_pos;
+		phd_PopMatrix();
+		S_CalculateLight(x, y, z, item->room_number, &item->il);
+	}
+}
+
 void inject_draw(bool replace)
 {
 	INJECT(0x00429390, phd_PopMatrix_I, replace);
@@ -1737,4 +1774,5 @@ void inject_draw(bool replace)
 	INJECT(0x00427E20, DrawLaraInt, replace);
 	INJECT(0x004265E0, DrawLara, replace);
 	INJECT(0x00429A30, DrawGunFlash, replace);
+	INJECT(0x00429BA0, CalculateObjectLighting, replace);
 }

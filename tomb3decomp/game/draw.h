@@ -29,8 +29,8 @@ void PrintObjects(short room_number);
 void DrawLaraInt(ITEM_INFO* item, short* frame1, short* frame2, long frac, long rate);
 void DrawLara(ITEM_INFO* item);
 void DrawGunFlash(long gun_type, long clip);
+void CalculateObjectLighting(ITEM_INFO* item, short* frame);
 
-#define CalculateObjectLighting	( (void(__cdecl*)(ITEM_INFO*, short*)) 0x00429BA0 )
 #define CalculateObjectLightingLara	( (void(__cdecl*)()) 0x00429D00 )
 
 #define dummyDrawFunc	( (void(__cdecl*)(ITEM_INFO*)) 0x004837C0 )

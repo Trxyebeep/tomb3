@@ -385,7 +385,7 @@ tomb3decomp progress.
 0x004296C0	+	InterpolateMatrix
 0x00429930	+	InterpolateArmMatrix
 0x00429A30	+	DrawGunFlash
-0x00429BA0		CalculateObjectLighting
+0x00429BA0	+	CalculateObjectLighting
 0x00429D00		CalculateObjectLightingLara
 0x00429DB0	+	GetFrames
 0x00429E50	+	GetBoundsAccurate
