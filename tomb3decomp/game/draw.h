@@ -22,5 +22,6 @@ void SetRoomBounds(short* door, long rn, ROOM_INFO* actualRoom);
 void GetRoomBounds();
 void ClipRoom(ROOM_INFO* r);
 void PrintRooms(short current_room);
+void DrawEffect(short fx_number);
 
 #define CalculateObjectLighting	( (void(__cdecl*)(ITEM_INFO*, short*)) 0x00429BA0 )

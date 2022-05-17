@@ -2,6 +2,9 @@
 #include "draw.h"
 #include "../3dsystem/3d_gen.h"
 #include "../specific/output.h"
+#include "objects.h"
+#include "../3dsystem/scalespr.h"
+#include "../specific/litesrc.h"
 
 void phd_PopMatrix_I()
 {
@@ -687,6 +690,44 @@ void PrintRooms(short current_room)
 	}
 }
 
+void DrawEffect(short fx_number)
+{
+	FX_INFO* fx;
+	OBJECT_INFO* obj;
+
+	fx = &effects[fx_number];
+	obj = &objects[fx->object_number];
+
+//	if (obj->draw_routine == nullsub)
+//		return;
+
+	if (!obj->loaded)
+		return;
+
+	if (fx->object_number == GLOW)
+		S_DrawSprite((fx->pos.y_rot << 16) | (ushort)fx->pos.x_rot, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, obj->mesh_index, fx->shade, fx->frame_number);
+	else if (obj->nmeshes >= 0)
+	{
+		phd_PushMatrix();
+		phd_TranslateAbs(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
+
+		if (phd_mxptr[M23] > phd_znear && phd_mxptr[M23] < phd_zfar)
+		{
+			phd_RotYXZ(fx->pos.y_rot, fx->pos.x_rot, fx->pos.z_rot);
+			S_CalculateLight(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, fx->room_number, 0);
+
+			if (obj->nmeshes)
+				phd_PutPolygons(meshes[obj->mesh_index], -1);
+			else
+				phd_PutPolygons(meshes[fx->frame_number], -1);
+		}
+
+		phd_PopMatrix();
+	}
+	else
+		S_DrawSprite(obj->semi_transparent ? 0xB000000 : 0x9000000, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, obj->mesh_index - fx->frame_number, fx->shade, 0);
+}
+
 void inject_draw(bool replace)
 {
 	INJECT(0x00429390, phd_PopMatrix_I, replace);
@@ -710,4 +751,5 @@ void inject_draw(bool replace)
 	INJECT(0x004253C0, GetRoomBounds, replace);
 	INJECT(0x00425910, ClipRoom, replace);
 	INJECT(0x00424FE0, PrintRooms, replace);
+	INJECT(0x00425D10, DrawEffect, replace);
 }
