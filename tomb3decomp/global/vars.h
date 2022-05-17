@@ -93,6 +93,7 @@
 #define OnObject	VAR_(0x006E2960, long)
 #define FootPrintNum	VAR_(0x006D79C0, long)
 #define objbcnt	VAR_(0x006A1848, long)
+#define GnGameMode	VAR_(0x00633F5C, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -197,6 +198,7 @@
 #define box_lines	ARRAY_(0x004C53F8, long, [12][2])
 #define inv_colours	ARRAY_(0x006D71E0, short, [17])
 #define static_objects	ARRAY_(0x006E2300, STATIC_INFO, [50])
+#define IsJointUnderwater	ARRAY_(0x006D6290, char, [15])
 
 /*constants*/
 #define NO_HEIGHT -32512
