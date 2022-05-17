@@ -30,8 +30,7 @@ void DrawLaraInt(ITEM_INFO* item, short* frame1, short* frame2, long frac, long 
 void DrawLara(ITEM_INFO* item);
 void DrawGunFlash(long gun_type, long clip);
 void CalculateObjectLighting(ITEM_INFO* item, short* frame);
-
-#define CalculateObjectLightingLara	( (void(__cdecl*)()) 0x00429D00 )
+void CalculateObjectLightingLara();
 
 #define dummyDrawFunc	( (void(__cdecl*)(ITEM_INFO*)) 0x004837C0 )
 //because DrawEffect tests against an address. when ObjectObjects etc. are done, make an empty draw function and replace this with it.

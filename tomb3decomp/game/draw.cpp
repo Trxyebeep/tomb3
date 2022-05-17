@@ -1746,6 +1746,30 @@ void CalculateObjectLighting(ITEM_INFO* item, short* frame)
 	}
 }
 
+void CalculateObjectLightingLara()
+{
+	PHD_VECTOR pos;
+	short room_number;
+
+	pos.x = 0;
+	pos.y = 0;
+	pos.z = 0;
+
+	if (GnGameMode == 3)
+	{
+		GetJointAbsPosition(lara_item, &pos, TORSO);
+		room_number = lara_item->room_number;
+	}
+	else
+	{
+		GetLaraHandAbsPosition(&pos, LARA_TORSO);
+		room_number = lara_item->room_number;
+		GetFloor(pos.x, pos.y, pos.z, &room_number);
+	}
+
+	S_CalculateLight(pos.x, pos.y, pos.z, room_number, &lara_item->il);
+}
+
 void inject_draw(bool replace)
 {
 	INJECT(0x00429390, phd_PopMatrix_I, replace);
@@ -1775,4 +1799,5 @@ void inject_draw(bool replace)
 	INJECT(0x004265E0, DrawLara, replace);
 	INJECT(0x00429A30, DrawGunFlash, replace);
 	INJECT(0x00429BA0, CalculateObjectLighting, replace);
+	INJECT(0x00429D00, CalculateObjectLightingLara, replace);
 }
