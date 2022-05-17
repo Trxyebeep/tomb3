@@ -1455,11 +1455,139 @@ tomb3decomp progress.
 // SPECIFIC
 // ======================================
 
+		specific.init.cpp
+
+0x00485AB0		init_water_table
+0x00485CA0		GetRandom
+0x00485CE0		S_InitialiseSystem
+0x00485EA0		ShutdownGame
+0x00485F60		init_game_malloc
+0x00485F90		game_malloc
+0x00486010		game_free
+0x00486050		CalculateWibbleTable
+
+
+		specific/input.cpp
+
+0x00486140		Key
+0x00486260		S_UpdateInput
+
+
 		specific/litesrc.cpp
 
 0x004866E0	+	calc_vertice_light
 0x00486BA0		S_CalculateLight
 0x00487550	+	S_CalculateStaticLight
 0x00487590	+	S_CalculateStaticMeshLight
+
+
+		specific/option.cpp
+
+0x00487720		do_pickup_option
+0x00487750		do_inventory_options
+0x00487870		do_levelselect_option
+0x00487BE0		do_passport_option
+0x00488260		do_detail_option
+0x00488F30		do_sound_option
+0x004893D0		do_compass_option
+0x00489490		FlashConflicts
+0x00489510		DefaultConflict
+0x00489550		do_control_option
+0x00489C70		S_ShowControls
+0x0048A100		S_ChangeCtrlText
+0x0048A1A0		S_RemoveCtrlText
+0x0048A1F0		GetRenderHeight
+0x0048A200		GetRenderWidth
+
+
+		specific/output.cpp
+
+0x0048A210		S_InitialisePolyList
+0x0048A2A0		S_DumpCine
+0x0048A2D0		S_DumpScreen
+0x0048A320		S_ClearScreen
+0x0048A330		S_InitialiseScreen
+0x0048A370	+	S_OutputPolyList
+0x0048A4C0	+	S_GetObjectBounds
+0x0048A760	+	S_InsertBackPolygon
+0x0048A7B0	+	S_PrintShadow
+0x0048A9B0	+	S_LightRoom
+0x0048AA00		AnimateTextures
+0x0048AAC0	+	S_SetupBelowWater
+0x0048AB20	+	S_SetupAboveWater
+0x0048AB50		S_AnimateTextures
+0x0048AC00		ScreenPartialDump
+0x0048AC10		ScreenClear
+0x0048AC20		mCalcPoint
+0x0048ACC0		ProjectPCoord
+
+
+		specific/picture.cpp
+
+0x0048AD60		SetPictureToFade
+0x0048AD80		ForceFadeDown
+0x0048ADA0		DrawPictureAlpha
+0x0048AFD0		CrossFadePicture
+0x0048B0D0		LoadPicture
+0x0048B190		FreePictureTextures
+0x0048B270		MemBlt
+0x0048B300		ConvertSurfaceToTextures
+0x0048B370		ConvertSurfaceToTextures16Bit
+0x0048B7A0		DrawTile
+0x0048BA30		TRDrawPicture
+0x0048BC70		FadePictureUp
+0x0048BD10		FadePictureDown
+0x0048BE60		CreateMonoScreen
+0x0048BF40		S_FadeToBlack
+0x0048C010		DrawMonoScreen
+0x0048C030		RemoveMonoScreen
+0x0048C070		DoInventoryPicture
+0x0048C0A0		S_FadePicture
+
+
+		specific/smain.cpp
+
+0x0048C150		GameMain
+0x0048C410		TitleSequence
+0x0048C550		CheckCheatMode
+0x0048C8C0		S_SaveSettings
+0x0048CBF0	+	S_LoadSettings
+
+
+		specific/specific.cpp
+
+0x0048D0A0		CalcVolume
+0x0048D0D0		S_SoundPlaySample
+0x0048D120		CalcPan
+0x0048D150		S_SoundPlaySampleLooped
+0x0048D1A0		S_SoundSetPanAndVolume
+0x0048D1E0		S_SoundSetPitch
+0x0048D200		S_SoundSetMasterVolume
+0x0048D210		S_SoundStopSample
+0x0048D230		S_SoundStopAllSamples
+0x0048D240		S_SoundSampleIsPlaying
+0x0048D260		S_CDLoop
+0x0048D2E0		CD_Init
+0x0048D480		S_CDPlay
+0x0048D4A0		S_CDStop
+0x0048D4B0		S_StartSyncedAudio
+0x0048D4E0		S_CDGetLoc
+0x0048D4F0		S_CDVolume
+0x0048D500		SWR_FindNearestPaletteEntry	
+
+
+		specific/time.cpp
+
+0x0048D5D0		TIME_Reset
+0x0048D5E0		TIME_Init
+0x0048D630		Sync
+
+
+		specific/transform.cpp
+
+0x0048D6A0	+	InitZTable
+0x0048D6E0	+	calc_object_vertices
+0x0048D9B0		calc_roomvert
+0x0048E050	+	calc_object_verticesback
 
 //TBD
