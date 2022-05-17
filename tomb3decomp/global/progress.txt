@@ -362,7 +362,7 @@ tomb3decomp progress.
 0x00424C20		DrawPhaseGame
 0x00424C60		DrawRooms
 0x00424FE0	+	PrintRooms
-0x004250A0		PrintObjects
+0x004250A0	+	PrintObjects
 0x004253C0	+	GetRoomBounds
 0x00425590	+	SetRoomBounds
 0x00425910	+	ClipRoom

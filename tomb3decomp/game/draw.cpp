@@ -5,6 +5,8 @@
 #include "objects.h"
 #include "../3dsystem/scalespr.h"
 #include "../specific/litesrc.h"
+#include "../specific/function_stubs.h"
+#include "effects.h"
 
 void phd_PopMatrix_I()
 {
@@ -728,6 +730,104 @@ void DrawEffect(short fx_number)
 		S_DrawSprite(obj->semi_transparent ? 0xB000000 : 0x9000000, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, obj->mesh_index - fx->frame_number, fx->shade, 0);
 }
 
+void PrintObjects(short room_number)
+{
+	ROOM_INFO* r;
+	MESH_INFO* mesh;
+	ITEM_INFO* item;
+	long clip;
+	short item_num, obj_num;
+
+	CurrentRoom = room_number;
+	r = &room[room_number];
+
+	if (r->flags & ROOM_UNDERWATER)
+		S_SetupBelowWater(camera_underwater);
+	else
+		S_SetupAboveWater(camera_underwater);
+
+	r->bound_active = 0;
+	phd_PushMatrix();
+	phd_TranslateAbs(r->x, r->y, r->z);
+	phd_left = r->left;
+	phd_right = r->right;
+	phd_top = r->top;
+	phd_bottom = r->bottom;
+
+	for (int i = 0; i < r->num_meshes; i++)
+	{
+		mesh = &r->mesh[i];
+		CurrentMesh = mesh;
+		nPolyType = 4;
+
+		if (static_objects[mesh->static_number].flags & 2)
+		{
+			phd_PushMatrix();
+			phd_TranslateAbs(mesh->x, mesh->y, mesh->z);
+			phd_RotY(mesh->y_rot);
+			clip = S_GetObjectBounds(&static_objects[mesh->static_number].x_minp);
+
+			if (clip)
+			{
+				S_CalculateStaticMeshLight(mesh->x, mesh->y, mesh->z, mesh->shade, mesh->shadeB, r);
+
+				if (bObjectOn)
+					phd_PutPolygons(meshes[static_objects[mesh->static_number].mesh_number], clip);
+			}
+
+			phd_PopMatrix();
+		}
+	}
+
+	phd_left = 0;
+	phd_top = 0;
+	phd_right = phd_winxmax + 1;
+	phd_bottom = phd_winymax + 1;
+	nPolyType = 5;
+
+	for (item_num = r->item_number; item_num != NO_ITEM; item_num = item->next_item)
+	{
+		item = &items[item_num];
+
+		if (item->status != ITEM_INVISIBLE)
+		{
+			if (bAObjectOn)
+			{
+				obj_num = item->object_number;
+
+				if (objects[obj_num].intelligent)
+					nPolyType = 5;
+				else if ((obj_num < PLAYER_1 || obj_num > PLAYER_10) && (obj_num < VEHICLE_EXTRA || obj_num > QUADBIKE))
+					nPolyType = 4;
+				else
+					nPolyType = 5;
+
+				objects[obj_num].draw_routine(item);
+			}
+
+			if (item->after_death < 32 && item->after_death > 0)
+			{
+				item->after_death++;
+
+				if (item->after_death == 2 || item->after_death == 5 || item->after_death == 11 || item->after_death == 20 ||
+					item->after_death == 27 || item->after_death == 32 || !(GetRandomDraw() & 7))
+					DoLotsOfBloodD(item->pos.x_pos, item->pos.y_pos - 64, item->pos.z_pos, 0, short(GetRandomDraw() << 1), item->room_number, 1);
+			}
+		}
+	}
+
+	nPolyType = 6;
+
+	for (int i = r->fx_number; i != NO_ITEM; i = effects[i].next_fx)
+		DrawEffect(i);
+
+	phd_PopMatrix();
+	r->left = phd_winxmax;
+	r->top = phd_winymax;
+	r->bottom = 0;
+	r->right = 0;
+}
+
 void inject_draw(bool replace)
 {
 	INJECT(0x00429390, phd_PopMatrix_I, replace);
@@ -752,4 +852,5 @@ void inject_draw(bool replace)
 	INJECT(0x00425910, ClipRoom, replace);
 	INJECT(0x00424FE0, PrintRooms, replace);
 	INJECT(0x00425D10, DrawEffect, replace);
+	INJECT(0x004250A0, PrintObjects, replace);
 }

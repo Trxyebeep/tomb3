@@ -63,6 +63,7 @@
 #define SmokeWindZ	VAR_(0x006DB884, long)
 #define outside	VAR_(0x006E1438, long)
 #define CurrentRoom	VAR_(0x006E220C, long)
+#define CurrentMesh	VAR_(0x006E2888, MESH_INFO*)
 #define camera_underwater	VAR_(0x006E2894, long)
 #define bound_start	VAR_(0x00626188, long)
 #define bound_end	VAR_(0x0062618C, long)
@@ -154,6 +155,13 @@
 #define outsideBackgroundTop	VAR_(0x006E2898, float)
 #define phd_viewdist	VAR_(0x005BAB04, long)
 /**/
+/*debug bools*/
+#define bLaraOn	VAR_(0x004CDC88, long)
+#define bRoomOn	VAR_(0x004CDC8C, long)
+#define bObjectOn	VAR_(0x004CDC90, long)
+#define bAObjectOn	VAR_(0x004CDC94, long)
+#define bEffectOn	VAR_(0x004CDC98, long)
+/**/
 
 /*arrays*/
 #define objects	ARRAY_(0x006DCAC0, OBJECT_INFO, [376])
@@ -188,6 +196,7 @@
 #define light_level	ARRAY_(0x006A1828, long, [4])
 #define box_lines	ARRAY_(0x004C53F8, long, [12][2])
 #define inv_colours	ARRAY_(0x006D71E0, short, [17])
+#define static_objects	ARRAY_(0x006E2300, STATIC_INFO, [50])
 
 /*constants*/
 #define NO_HEIGHT -32512
