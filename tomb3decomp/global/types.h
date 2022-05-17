@@ -32,7 +32,15 @@ do \
 
 #define ABS(x) (((x)<0) ? (-(x)) : (x))
 #define SQUARE(x) ((x)*(x))
-
+//S_DrawSprite flags
+#define SPR_RGB(r, g, b)	((r) | ((g) << 8) | ((b) << 16))
+#define SPR_ABS				0x1000000
+#define SPR_SEMITRANS		0x2000000
+#define SPR_SCALE			0x4000000
+#define SPR_SHADE			0x8000000
+#define SPR_TINT			0x10000000
+#define SPR_BLEND_ADD		0x20000000
+#define SPR_BLEND_SUB		0x40000000
 
 
 /*enums*/

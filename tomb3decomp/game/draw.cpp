@@ -728,7 +728,8 @@ void DrawEffect(short fx_number)
 		phd_PopMatrix();
 	}
 	else
-		S_DrawSprite(obj->semi_transparent ? 0xB000000 : 0x9000000, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, obj->mesh_index - fx->frame_number, fx->shade, 0);
+		S_DrawSprite(SPR_ABS | SPR_SHADE | (obj->semi_transparent ? SPR_SEMITRANS : 0),
+			fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, obj->mesh_index - fx->frame_number, fx->shade, 0);
 }
 
 void PrintObjects(short room_number)
@@ -1667,6 +1668,47 @@ void DrawLara(ITEM_INFO* item)
 	}
 }
 
+void DrawGunFlash(long gun_type, long clip)
+{
+	long y, z;
+
+	switch (gun_type)
+	{
+	case LG_MAGNUMS:
+		y = 215;
+		z = 65;
+		break;
+
+	case LG_UZIS:
+		y = 150;
+		z = 50;
+		break;
+
+	case LG_SHOTGUN:
+	case LG_FLARE:
+		return;
+
+	case LG_M16:
+		phd_TranslateRel(0, 332, 96);
+		phd_RotYXZ(0, -15470, ((GetRandomDraw() << 1) & 0x4000) + (GetRandomDraw() & 0xFFF) + 6144);
+		S_CalculateStaticLight(600);
+		phd_PutPolygons(meshes[objects[M16_FLASH].mesh_index], clip);
+		S_DrawSprite(SPR_SEMITRANS | SPR_SCALE | SPR_TINT | SPR_BLEND_ADD | SPR_RGB(63, 48, 8), 0, 0, -65, objects[GLOW].mesh_index, 0, 192);
+		return;
+
+	default:
+		y = 150;
+		z = 40;
+		break;
+	}
+
+	phd_TranslateRel(0, y, z);
+	phd_RotYXZ(0, -16380, short(wibble << 8));
+	S_CalculateStaticLight(600);
+	phd_PutPolygons(meshes[objects[GUN_FLASH].mesh_index], clip);
+	S_DrawSprite(SPR_SEMITRANS | SPR_SCALE | SPR_TINT | SPR_BLEND_ADD | SPR_RGB(63, 56, 8), 0, 0, 0, objects[GLOW].mesh_index, 0, 192);
+}
+
 void inject_draw(bool replace)
 {
 	INJECT(0x00429390, phd_PopMatrix_I, replace);
@@ -1694,4 +1736,5 @@ void inject_draw(bool replace)
 	INJECT(0x004250A0, PrintObjects, replace);
 	INJECT(0x00427E20, DrawLaraInt, replace);
 	INJECT(0x004265E0, DrawLara, replace);
+	INJECT(0x00429A30, DrawGunFlash, replace);
 }
