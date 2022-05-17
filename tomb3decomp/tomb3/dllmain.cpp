@@ -16,6 +16,7 @@
 #include "../game/traps.h"
 #include "../game/footprnt.h"
 #include "../game/laraflar.h"
+#include "../game/draw.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -67,6 +68,7 @@ void inject_all(bool replace)
 	inject_traps(replace);
 	inject_footprnt(replace);
 	inject_laraflar(replace);
+	inject_draw(replace);
 
 	//specific
 	inject_drawbars(replace);
