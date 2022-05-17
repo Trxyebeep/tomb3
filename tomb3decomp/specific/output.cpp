@@ -378,6 +378,8 @@ long S_GetObjectBounds(short* box)
 			if (y > ymax)
 				ymax = y;
 		}
+
+		v += 3;
 	}
 
 	xmin += phd_centerx;
