@@ -831,6 +831,19 @@ void PrintObjects(short room_number)
 	r->right = 0;
 }
 
+static void PutPolyLara(ITEM_INFO* item, char mesh, long clip)
+{
+	if (item->mesh_bits & (1 << mesh))
+	{
+		if (IsJointUnderwater[0])
+			S_SetupBelowWater(camera_underwater);
+		else
+			S_SetupAboveWater(camera_underwater);
+
+		phd_PutPolygons(lara.mesh_ptrs[mesh], clip);
+	}
+}
+
 static void PutPolyLara_I(ITEM_INFO* item, char mesh, long clip)
 {
 	if (item->mesh_bits & (1 << mesh))
@@ -852,6 +865,8 @@ void DrawLaraInt(ITEM_INFO* item, short* frame1, short* frame2, long frac, long 
 	long* bgBone;
 	short* rot1;
 	short* rot2;
+	short* rot12;
+	short* rot22;
 	long mx[12];
 	long clip, flare_on, x, y, z;
 	short gun_type;
@@ -936,7 +951,9 @@ void DrawLaraInt(ITEM_INFO* item, short* frame1, short* frame2, long frac, long 
 
 	phd_PushMatrix_I();
 	phd_TranslateRel_I(bone[53], bone[54], bone[55]);
-	gar_RotYXZsuperpack_I(&rot1, &rot2, 6);
+	rot12 = rot1;
+	rot22 = rot2;
+	gar_RotYXZsuperpack_I(&rot12, &rot22, 6);
 	phd_RotYXZ_I(lara.head_y_rot, lara.head_x_rot, lara.head_z_rot);
 	PutPolyLara_I(item, HEAD, clip);
 
@@ -949,9 +966,9 @@ void DrawLaraInt(ITEM_INFO* item, short* frame1, short* frame2, long frac, long 
 		bgBone = &bones[objects[lara.back_gun].bone_index];
 		phd_PushMatrix_I();
 		phd_TranslateRel_I(bgBone[53], bgBone[54], bgBone[55]);
-		rot1 = objects[lara.back_gun].frame_base + 9;
-		rot2 = rot1;
-		gar_RotYXZsuperpack_I(&rot1, &rot2, 14);
+		rot12 = objects[lara.back_gun].frame_base + 9;
+		rot22 = rot12;
+		gar_RotYXZsuperpack_I(&rot12, &rot22, 14);
 		phd_PutPolygons_I(meshes[objects[lara.back_gun].mesh_index + HEAD], clip);
 		phd_PopMatrix_I();
 	}
@@ -1020,15 +1037,15 @@ void DrawLaraInt(ITEM_INFO* item, short* frame1, short* frame2, long frac, long 
 		rot1 = &lara.right_arm.frame_base[(anims[lara.right_arm.anim_number].interpolation >> 8) *
 			(lara.right_arm.frame_number - anims[lara.right_arm.anim_number].frame_base) + 9];
 		gar_RotYXZsuperpack(&rot1, 8);
-		PutPolyLara_I(item, UARM_R, clip);
+		PutPolyLara(item, UARM_R, clip);
 
 		phd_TranslateRel(bone[33], bone[34], bone[35]);
 		gar_RotYXZsuperpack(&rot1, 0);
-		PutPolyLara_I(item, LARM_R, clip);
+		PutPolyLara(item, LARM_R, clip);
 
 		phd_TranslateRel(bone[37], bone[38], bone[39]);
 		gar_RotYXZsuperpack(&rot1, 0);
-		PutPolyLara_I(item, HAND_R, clip);
+		PutPolyLara(item, HAND_R, clip);
 
 		if (lara.right_arm.flash_gun)
 			memcpy(mx, phd_mxptr, sizeof(mx));
@@ -1042,15 +1059,15 @@ void DrawLaraInt(ITEM_INFO* item, short* frame1, short* frame2, long frac, long 
 		rot1 = &lara.left_arm.frame_base[(anims[lara.left_arm.anim_number].interpolation >> 8) *
 			(lara.left_arm.frame_number - anims[lara.left_arm.anim_number].frame_base) + 9];
 		gar_RotYXZsuperpack(&rot1, 11);
-		PutPolyLara_I(item, UARM_L, clip);
+		PutPolyLara(item, UARM_L, clip);
 
 		phd_TranslateRel(bone[45], bone[46], bone[47]);
 		gar_RotYXZsuperpack(&rot1, 0);
-		PutPolyLara_I(item, LARM_L, clip);
+		PutPolyLara(item, LARM_L, clip);
 
 		phd_TranslateRel(bone[49], bone[50], bone[51]);
 		gar_RotYXZsuperpack(&rot1, 0);
-		PutPolyLara_I(item, HAND_L, clip);
+		PutPolyLara(item, HAND_L, clip);
 
 		if (lara.left_arm.flash_gun)
 			DrawGunFlash(gun_type, clip);
@@ -1071,15 +1088,15 @@ void DrawLaraInt(ITEM_INFO* item, short* frame1, short* frame2, long frac, long 
 		rot1 = &lara.right_arm.frame_base[(anims[lara.right_arm.anim_number].interpolation >> 8) *
 			(lara.right_arm.frame_number - anims[lara.right_arm.anim_number].frame_base) + 9];
 		gar_RotYXZsuperpack(&rot1, 8);
-		PutPolyLara_I(item, UARM_R, clip);
+		PutPolyLara(item, UARM_R, clip);
 
 		phd_TranslateRel(bone[33], bone[34], bone[35]);
 		gar_RotYXZsuperpack(&rot1, 0);
-		PutPolyLara_I(item, LARM_R, clip);
+		PutPolyLara(item, LARM_R, clip);
 
 		phd_TranslateRel(bone[37], bone[38], bone[39]);
 		gar_RotYXZsuperpack(&rot1, 0);
-		PutPolyLara_I(item, HAND_R, clip);
+		PutPolyLara(item, HAND_R, clip);
 
 		if (lara.right_arm.flash_gun)
 			memcpy(mx, phd_mxptr, sizeof(mx));
@@ -1093,15 +1110,15 @@ void DrawLaraInt(ITEM_INFO* item, short* frame1, short* frame2, long frac, long 
 		rot1 = &lara.left_arm.frame_base[(anims[lara.left_arm.anim_number].interpolation >> 8) *
 			(lara.left_arm.frame_number - anims[lara.left_arm.anim_number].frame_base) + 9];
 		gar_RotYXZsuperpack(&rot1, 11);
-		PutPolyLara_I(item, UARM_L, clip);
+		PutPolyLara(item, UARM_L, clip);
 
 		phd_TranslateRel(bone[45], bone[46], bone[47]);
 		gar_RotYXZsuperpack(&rot1, 0);
-		PutPolyLara_I(item, LARM_L, clip);
+		PutPolyLara(item, LARM_L, clip);
 
 		phd_TranslateRel(bone[49], bone[50], bone[51]);
 		gar_RotYXZsuperpack(&rot1, 0);
-		PutPolyLara_I(item, HAND_L, clip);
+		PutPolyLara(item, HAND_L, clip);
 
 		if (lara.left_arm.flash_gun)
 			DrawGunFlash(gun_type, clip);
