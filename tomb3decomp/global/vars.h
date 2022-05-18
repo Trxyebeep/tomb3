@@ -95,6 +95,8 @@
 #define objbcnt	VAR_(0x006A1848, long)
 #define GnGameMode	VAR_(0x00633F5C, long)
 #define dpPrimitiveType	VAR_(0x00634114, D3DPRIMITIVETYPE)
+#define BlackGouraudIndex	VAR_(0x004D38D4, long)
+#define bFixSkyColour	VAR_(0x004D38DC, bool)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
