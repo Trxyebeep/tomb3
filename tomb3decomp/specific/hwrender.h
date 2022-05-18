@@ -17,6 +17,7 @@ void HWR_EndScene();
 void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage);
 void HWR_DrawRoutinesStippledAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage);
 void HWR_DrawRoutinesNoAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage);
+void HWR_InitState();
 
 #define HWR_SetCurrentTexture	( (void(__cdecl*)(DXTEXTURE*)) 0x00484C30 )
 #define HWR_GetAllTextureHandles	( (void(__cdecl*)()) 0x00485A10 )
@@ -27,3 +28,4 @@ void HWR_DrawRoutinesNoAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long T
 #define DrawPrimitive	( *(HRESULT(__cdecl**)(D3DPRIMITIVETYPE, D3DVERTEXTYPE, LPVOID, ulong, ulong)) 0x006CA1C0 )
 #define BeginScene	( *(HRESULT(__cdecl**)()) 0x006CA1C8 )
 #define EndScene	( *(HRESULT(__cdecl**)()) 0x006CA1A0 )
+#define DrawRoutine	( *(void(__cdecl**)(long, D3DTLVERTEX*, long, long)) 0x00633F68 )

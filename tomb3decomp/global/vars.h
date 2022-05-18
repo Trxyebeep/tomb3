@@ -156,6 +156,7 @@
 #define nDrawnPoints	VAR_(0x00634000, long)
 #define outsideBackgroundTop	VAR_(0x006E2898, float)
 #define phd_viewdist	VAR_(0x005BAB04, long)
+#define HWConfig	VAR_(0x006CED68, HWCONFIG)
 /**/
 /*debug bools*/
 #define bLaraOn	VAR_(0x004CDC88, long)

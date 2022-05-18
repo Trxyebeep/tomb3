@@ -353,6 +353,77 @@ void HWR_DrawRoutinesNoAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long T
 	}
 }
 
+void HWR_InitState()
+{
+	DIRECT3DINFO* d3dinfo;
+	float gamma;
+	bool blendOne, stippledAlpha, blendAlpha;
+
+	gamma = 1.0F / (GammaOption / 10.0F * 4.0F);
+
+	for (int i = 0; i < 256; i++)
+		ColorTable[i] = uchar(pow((double)i / 256.0F, gamma) * 256.0F);
+
+	if (!SetRenderState)
+		return;
+
+	HWR_ResetZBuffer();
+	SetRenderState(D3DRENDERSTATE_FILLMODE, HWConfig.nFillMode);
+	SetRenderState(D3DRENDERSTATE_SHADEMODE, HWConfig.nShadeMode);
+	SetRenderState(D3DRENDERSTATE_TEXTUREMAG, HWConfig.nFilter);
+	SetRenderState(D3DRENDERSTATE_TEXTUREMIN, HWConfig.nFilter);
+	SetRenderState(D3DRENDERSTATE_DITHERENABLE, HWConfig.Dither);
+	HWR_EnablePerspCorrect(HWConfig.Perspective);
+	SetRenderState(D3DRENDERSTATE_TEXTUREADDRESS, D3DTADDRESS_CLAMP);
+	SetRenderState(D3DRENDERSTATE_TEXTUREMAPBLEND, D3DTBLEND_MODULATEALPHA);
+	SetRenderState(D3DRENDERSTATE_CULLMODE, D3DCULL_NONE);
+	SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
+	SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	SetRenderState(D3DRENDERSTATE_SPECULARENABLE, 0);
+	SetRenderState(D3DRENDERSTATE_STIPPLEDALPHA, 0);
+	SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, 0);
+	SetRenderState(D3DRENDERSTATE_COLORKEYENABLE, 0);
+	HWR_ResetCurrentTexture();
+	HWR_ResetColorKey();
+
+	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
+
+	if (!d3dinfo->bHardware)
+	{
+		GlobalAlpha = 0xFF000000;
+		DrawRoutine = HWR_DrawRoutines;
+		return;
+	}
+
+	if (d3dinfo->DeviceDesc.dpcTriCaps.dwAlphaCmpCaps & D3DPCMPCAPS_NOTEQUAL)
+	{
+		SetRenderState(D3DRENDERSTATE_ALPHAREF, 0);
+		SetRenderState(D3DRENDERSTATE_ALPHAFUNC, D3DCMP_NOTEQUAL);
+		bAlphaTesting = 1;
+	}
+	else
+		bAlphaTesting = 0;
+
+	blendOne = d3dinfo->DeviceDesc.dpcTriCaps.dwDestBlendCaps & D3DPBLENDCAPS_ONE;
+	stippledAlpha = d3dinfo->DeviceDesc.dpcTriCaps.dwShadeCaps & D3DPSHADECAPS_ALPHAFLATSTIPPLED;
+	blendAlpha = d3dinfo->DeviceDesc.dpcTriCaps.dwShadeCaps & D3DPSHADECAPS_ALPHAFLATBLEND;
+
+	GlobalAlpha = 0xFF000000;
+
+	if (stippledAlpha && !blendAlpha)
+	{
+		DrawRoutine = HWR_DrawRoutinesStippledAlpha;
+		GlobalAlpha = 0x80000000;
+	}
+	else if (blendOne)
+		DrawRoutine = HWR_DrawRoutines;
+	else
+	{
+		DrawRoutine = HWR_DrawRoutinesNoAlpha;
+		GlobalAlpha = 0x80000000;
+	}
+}
+
 void inject_hwrender(bool replace)
 {
 	INJECT(0x00484E20, HWR_EnableZBuffer, replace);
@@ -369,4 +440,5 @@ void inject_hwrender(bool replace)
 	INJECT(0x00484F10, HWR_DrawRoutines, replace);
 	INJECT(0x00485130, HWR_DrawRoutinesStippledAlpha, replace);
 	INJECT(0x00485350, HWR_DrawRoutinesNoAlpha, replace);
+	INJECT(0x00484740, HWR_InitState, replace);
 }

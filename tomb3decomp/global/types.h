@@ -1279,4 +1279,14 @@ struct STATIC_INFO
 	short z_minc;
 	short z_maxc;
 };
+
+struct HWCONFIG
+{
+	bool Perspective;
+	bool Dither;
+	int nFilter;
+	int nShadeMode;
+	int nFillMode;
+	bool TrueAlpha;
+};
 #pragma pack(pop)
