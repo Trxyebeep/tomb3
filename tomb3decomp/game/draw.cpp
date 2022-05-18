@@ -5,7 +5,7 @@
 #include "objects.h"
 #include "../3dsystem/scalespr.h"
 #include "../specific/litesrc.h"
-#include "../specific/function_stubs.h"
+#include "../specific/game.h"
 #include "effects.h"
 #include "hair.h"
 #include "lara.h"

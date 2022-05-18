@@ -10,7 +10,7 @@
 #include "draw.h"
 #include "../3dsystem/3d_gen.h"
 #include "effect2.h"
-#include "../specific/function_stubs.h"
+#include "../specific/game.h"
 #include "objects.h"
 #include "kayak.h"
 #include "quadbike.h"

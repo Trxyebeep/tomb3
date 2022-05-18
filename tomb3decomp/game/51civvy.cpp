@@ -1,7 +1,7 @@
 #include "../tomb3/pch.h"
 #include "51civvy.h"
 #include "effect2.h"
-#include "../specific/function_stubs.h"
+#include "../specific/game.h"
 #include "control.h"
 #include "gameflow.h"
 #ifdef RANDO_STUFF

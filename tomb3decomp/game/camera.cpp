@@ -1,7 +1,7 @@
 #include "../tomb3/pch.h"
 #include "camera.h"
 #include "../3dsystem/3d_gen.h"
-#include "../specific/function_stubs.h"
+#include "../specific/game.h"
 #include "control.h"
 #include "../3dsystem/phd_math.h"
 #include "lara.h"

@@ -5,7 +5,7 @@
 #include "laraanim.h"
 #include "../3dsystem/3d_gen.h"
 #include "control.h"
-#include "../specific/function_stubs.h"
+#include "../specific/game.h"
 #include "../3dsystem/phd_math.h"
 
 static PHD_3DPOS hair[7];

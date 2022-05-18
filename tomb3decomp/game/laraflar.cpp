@@ -5,7 +5,7 @@
 #include "../specific/output.h"
 #include "objects.h"
 #include "../specific/litesrc.h"
-#include "../specific/function_stubs.h"
+#include "../specific/game.h"
 #include "effect2.h"
 
 void DrawFlareInAir(ITEM_INFO* item)

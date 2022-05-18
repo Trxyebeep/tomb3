@@ -1,7 +1,7 @@
 #include "../tomb3/pch.h"
 #include "fish.h"
 #include "gameflow.h"
-#include "../specific/function_stubs.h"
+#include "../specific/game.h"
 #include "control.h"
 #include "objects.h"
 #include "effects.h"
