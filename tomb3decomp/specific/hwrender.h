@@ -15,6 +15,8 @@ void HWR_ResetCurrentTexture();
 void HWR_BeginScene();
 void HWR_EndScene();
 void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage);
+void HWR_DrawRoutinesStippledAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage);
+void HWR_DrawRoutinesNoAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage);
 
 #define HWR_SetCurrentTexture	( (void(__cdecl*)(DXTEXTURE*)) 0x00484C30 )
 #define HWR_GetAllTextureHandles	( (void(__cdecl*)()) 0x00485A10 )
