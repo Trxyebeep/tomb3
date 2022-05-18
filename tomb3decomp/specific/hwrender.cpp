@@ -180,6 +180,67 @@ void HWR_EndScene()
 	EndScene();
 }
 
+void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage)
+{
+	switch (nDrawType)
+	{
+	case DT_POLY_GT:
+		HWR_EnableAlphaBlend(0);
+		HWR_EnableColorKey(0);
+		HWR_SetCurrentTexture(TPages[TPage]);
+		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+		return;
+
+	case DT_POLY_WGT:
+		HWR_SetCurrentTexture(TPages[TPage]);
+		HWR_EnableZBuffer(1, 1);
+		HWR_EnableColorKey(1);
+		HWR_EnableAlphaBlend(1);
+		HWR_EnableColorAddition(0);
+		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+		HWR_EnableZBuffer(0, 1);
+		return;
+
+	case DT_POLY_G:
+		HWR_SetCurrentTexture(0);
+		HWR_EnableAlphaBlend(0);
+		HWR_EnableColorKey(0);
+		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+		return;
+
+	case DT_LINE_SOLID:
+		HWR_SetCurrentTexture(0);
+		HWR_EnableAlphaBlend(1);
+		HWR_EnableColorKey(0);
+		HWR_EnableColorAddition(0);
+		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+		return;
+
+	case DT_POLY_GA:
+		HWR_SetCurrentTexture(0);
+		HWR_EnableAlphaBlend(1);
+		HWR_EnableColorAddition(0);
+		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+		return;
+
+	case DT_POLY_WGTA:
+		HWR_EnableZBuffer(0, 1);
+		HWR_SetCurrentTexture(TPages[TPage]);
+		HWR_EnableColorAddition(1);
+		HWR_EnableAlphaBlend(1);
+		HWR_EnableColorKey(1);
+		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+		return;
+
+	case DT_POLY_GTA:
+		HWR_SetCurrentTexture(0);
+		HWR_EnableAlphaBlend(1);
+		HWR_EnableColorAddition(1);
+		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+		return;
+	}
+}
+
 void inject_hwrender(bool replace)
 {
 	INJECT(0x00484E20, HWR_EnableZBuffer, replace);
@@ -193,4 +254,5 @@ void inject_hwrender(bool replace)
 	INJECT(0x00484A10, HWR_ResetCurrentTexture, replace);
 	INJECT(0x00484EB0, HWR_BeginScene, replace);
 	INJECT(0x00484F00, HWR_EndScene, replace);
+	INJECT(0x00484F10, HWR_DrawRoutines, replace);
 }

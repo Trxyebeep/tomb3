@@ -16,7 +16,7 @@
 		sort3dptrbf += 3;\
 		info3dptrbf += 5;\
 	}\
-	else if (pass || nDrawType == 14 || nDrawType == 13 || nDrawType == 12 || nDrawType == 16)\
+	else if (pass || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_GA || nDrawType == DT_LINE_SOLID || nDrawType == DT_POLY_GTA)\
 	{\
 		sort = sort3dptrfb;\
 		info = info3dptrfb;\
@@ -586,7 +586,7 @@ void HWI_InsertClippedPoly_Textured(long nPoints, float zdepth, long nDrawType, 
 
 	vtxbuf = v_buffer;
 
-	if (App.lpZBuffer && nDrawType != 14 && nDrawType != 10)
+	if (App.lpZBuffer && nDrawType != DT_POLY_WGTA && nDrawType != DT_POLY_WGT)
 	{
 		nBucket = FindBucket(TPages[nTPage]);
 
@@ -742,9 +742,9 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 				zdepth = 1000000000;
 
 			if (pTex->drawtype > 1)
-				nDrawType = 14;
+				nDrawType = DT_POLY_WGTA;
 			else
-				nDrawType = pTex->drawtype + 9;
+				nDrawType = pTex->drawtype + DT_POLY_GT;
 
 			if (nPolyType == 1)
 			{
@@ -788,9 +788,9 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 	}
 
 	if (pTex->drawtype > 1)
-		nDrawType = 14;
+		nDrawType = DT_POLY_WGTA;
 	else
-		nDrawType = pTex->drawtype + 9;
+		nDrawType = pTex->drawtype + DT_POLY_GT;
 
 	if (nPolyType == 1)
 	{
@@ -804,7 +804,7 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 			outsideBackgroundTop = v2->ys;
 	}
 
-	if (!App.lpZBuffer || nDrawType == 14 || nDrawType == 10)
+	if (!App.lpZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT)
 	{
 		if (nSortType == MID_SORT)
 			zdepth = (v0->zv + v1->zv + v2->zv) * 0.33333334F;
@@ -970,9 +970,9 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 	}
 
 	if (pTex->drawtype > 1)
-		nDrawType = 14;
+		nDrawType = DT_POLY_WGTA;
 	else
-		nDrawType = pTex->drawtype + 9;
+		nDrawType = pTex->drawtype + DT_POLY_GT;
 
 	if (nPolyType == 1)
 	{
@@ -989,7 +989,7 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 			outsideBackgroundTop = v3->ys;
 	}
 
-	if (!App.lpZBuffer || nDrawType == 14 || nDrawType == 10)
+	if (!App.lpZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT)
 	{
 		if (nSortType == MID_SORT)
 			zdepth = (v0->zv + v1->zv + v2->zv + v3->zv) * 0.25F;
@@ -1161,9 +1161,9 @@ void HWI_InsertPoly_Gouraud(long nPoints, float zdepth, long r, long g, long b, 
 	long nBucket;
 
 	vtx = v_buffer;
-	maxCol = nDrawType != 13 ? 0xFFFFFFFF : 0x80FFFFFF;
+	maxCol = nDrawType != DT_POLY_GA ? 0xFFFFFFFF : 0x80FFFFFF;
 
-	if (App.lpZBuffer && nDrawType != 13)
+	if (App.lpZBuffer && nDrawType != DT_POLY_GA)
 	{
 		nBucket = FindBucket(0);
 
@@ -1268,10 +1268,10 @@ void HWI_InsertPoly_GouraudRGB(long nPoints, float zdepth, long nDrawType)
 	ulong maxCol;
 	long nBucket;
 
-	maxCol = (nDrawType == 13 || nDrawType == 16) ? 0x80FFFFFF : 0xFFFFFFFF;
+	maxCol = (nDrawType == DT_POLY_GA || nDrawType == DT_POLY_GTA) ? 0x80FFFFFF : 0xFFFFFFFF;
 	vtx = v_buffer;
 
-	if (App.lpZBuffer && nDrawType != 13 && nDrawType != 16)
+	if (App.lpZBuffer && nDrawType != DT_POLY_GA && nDrawType != DT_POLY_GTA)
 	{
 		nBucket = FindBucket(0);
 
@@ -1830,11 +1830,11 @@ short* HWI_InsertObjectGT3_Sorted(short* pFaceInfo, long nFaces, sort_type nSort
 		double_sided = (pFaceInfo[3] >> 0xF) & 1;
 
 		if (pTex->drawtype > 1)
-			nDrawType = 14;
+			nDrawType = DT_POLY_WGTA;
 		else
-			nDrawType = pTex->drawtype + 9;
+			nDrawType = pTex->drawtype + DT_POLY_GT;
 
-		if (nDrawType == 10 || nDrawType == 14)
+		if (nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_WGTA)
 			HWI_InsertGT3_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]],
 				pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
 		else if (vbuf[pFaceInfo[0]].g || vbuf[pFaceInfo[1]].g || vbuf[pFaceInfo[2]].g)
@@ -1977,11 +1977,11 @@ short* HWI_InsertObjectGT4_Sorted(short* pFaceInfo, long nFaces, sort_type nSort
 		double_sided = (pFaceInfo[4] >> 0xF) & 1;
 
 		if (pTex->drawtype > 1)
-			nDrawType = 14;
+			nDrawType = DT_POLY_WGTA;
 		else
-			nDrawType = pTex->drawtype + 9;
+			nDrawType = pTex->drawtype + DT_POLY_GT;
 
-		if (nDrawType == 10 || nDrawType == 14)
+		if (nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_WGTA)
 			HWI_InsertGT4_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]], &vbuf[pFaceInfo[3]], pTex, nSortType, double_sided);
 		else if (vbuf[pFaceInfo[0]].g || vbuf[pFaceInfo[1]].g || vbuf[pFaceInfo[2]].g || vbuf[pFaceInfo[3]].g)
 			HWI_InsertGT4_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]], &vbuf[pFaceInfo[3]], pTex, nSortType, double_sided);

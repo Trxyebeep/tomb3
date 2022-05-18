@@ -44,6 +44,18 @@ do \
 
 
 /*enums*/
+enum draw_types
+{
+	DT_POLY_GT = 9,				//Gouraud + Textured
+	DT_POLY_WGT = 10,			//Gouraud + Textured + Color key
+	DT_POLY_G = 11,				//Gouraud
+	DT_LINE_SOLID = 12,			//Solid Line
+	DT_POLY_GA = 13,			//Gouraud + Alpha
+	DT_POLY_WGTA = 14,			//Gouraud + Textured + Color key + Alpha
+	DT_UNUSED = 15,				//Unused
+	DT_POLY_GTA = 16			//Gouraud + Textured + Alpha
+};
+
 enum mood_type
 {
 	BORED_MOOD,
