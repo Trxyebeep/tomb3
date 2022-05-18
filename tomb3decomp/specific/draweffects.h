@@ -7,3 +7,4 @@
 #define DoSnow	( (void(__cdecl*)()) 0x0047AA80 )
 #define DoRain	( (void(__cdecl*)()) 0x0047A4B0 )
 #define LaraElectricDeath	( (void(__cdecl*)(long, ITEM_INFO*)) 0x00478600 )
+#define S_DrawLaserBeam	( (void(__cdecl*)(GAME_VECTOR*, GAME_VECTOR*, uchar, uchar, uchar)) 0x00479810 )

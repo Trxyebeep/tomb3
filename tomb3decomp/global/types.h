@@ -1300,4 +1300,12 @@ struct HWCONFIG
 	int nFillMode;
 	bool TrueAlpha;
 };
+
+struct BITE_INFO
+{
+	long x;
+	long y;
+	long z;
+	long mesh_num;
+};
 #pragma pack(pop)

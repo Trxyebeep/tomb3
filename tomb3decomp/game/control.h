@@ -8,3 +8,4 @@
 #define TestTriggers	( (void(__cdecl*)(short*, long)) 0x00421460 )
 #define AnimateItem	( (void(__cdecl*)(ITEM_INFO*)) 0x00420590 )
 #define TriggerActive	( (long(__cdecl*)(ITEM_INFO*)) 0x00421D80 )
+#define LOS	( (long(__cdecl*)(GAME_VECTOR*, GAME_VECTOR*)) 0x00422370 )
