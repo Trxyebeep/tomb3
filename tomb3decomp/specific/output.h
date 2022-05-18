@@ -10,3 +10,7 @@ void S_OutputPolyList();
 void S_LightRoom(ROOM_INFO* r);
 void S_InsertBackPolygon(long xmin, long ymin, long xmax, long ymax, long col);
 long S_GetObjectBounds(short* box);
+
+#define S_InitialisePolyList	( (void(__cdecl*)(long)) 0x0048A210 )
+#define S_DumpScreen	( (long(__cdecl*)()) 0x0048A2D0 )
+#define S_AnimateTextures	( (void(__cdecl*)(long)) 0x0048AB50 )

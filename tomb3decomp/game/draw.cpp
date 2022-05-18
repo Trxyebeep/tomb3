@@ -13,6 +13,10 @@
 #include "laraanim.h"
 #include "control.h"
 #include "sphere.h"
+#include "../specific/draweffects.h"
+#include "gameflow.h"
+#include "laraelec.h"
+#include "health.h"
 
 void phd_PopMatrix_I()
 {
@@ -1770,6 +1774,146 @@ void CalculateObjectLightingLara()
 	S_CalculateLight(pos.x, pos.y, pos.z, room_number, &lara_item->il);
 }
 
+void DrawRooms(short current_room)
+{
+	ROOM_INFO* r;
+	OBJECT_INFO* obj;
+	short* rot;
+
+	CurrentRoom = current_room;
+	r = &room[current_room];
+	r->test_left = 0;
+	r->test_top = 0;
+	r->test_right = phd_winxmax;
+	r->test_bottom = phd_winymax;
+	phd_left = 0;
+	phd_top = 0;
+	phd_right = phd_winxmax;
+	phd_bottom = phd_winymax;
+	outside = r->flags & ROOM_OUTSIDE;
+	camera_underwater = r->flags & 1;
+	r->bound_active = 2;
+	bound_list[0] = current_room;
+	bound_start = 0;
+	bound_end = 1;
+	number_draw_rooms = 0;
+
+	if (outside)
+	{
+		outside_top = 0;
+		outside_left = 0;
+		outside_right = phd_winxmax;
+		outside_bottom = phd_winymax;
+	}
+	else
+	{
+		outside_left = phd_winxmax;
+		outside_top = phd_winymax;
+		outside_bottom = 0;
+		outside_right = 0;
+	}
+
+	GetRoomBounds();
+	mid_sort = 0;
+
+	if (outside)
+	{
+		phd_top = outside_top;
+		phd_left = outside_left;
+		phd_right = outside_right;
+		phd_bottom = outside_bottom;
+		obj = &objects[HORIZON];
+
+		if (obj->loaded)
+		{
+			S_SetupAboveWater(camera_underwater);
+			phd_PushMatrix();
+			phd_mxptr[M03] = 0;
+			phd_mxptr[M13] = 0;
+			phd_mxptr[M23] = 0;
+			rot = anims[obj->anim_index].frame_ptr + 9;
+			gar_RotYXZsuperpack(&rot, 0);
+			S_InitialisePolyList(0);
+			S_InsertBackground(meshes[obj->mesh_index]);
+			phd_PopMatrix();
+		}
+		else
+		{
+			S_InitialisePolyList(1);
+			outside = -1;
+		}
+	}
+	else
+		S_InitialisePolyList(0);
+
+	obj = &objects[LARA];
+
+	if (obj->loaded && !(lara_item->flags & IFL_INVISIBLE))
+	{
+		if (room[lara_item->room_number].flags & ROOM_UNDERWATER)
+			S_SetupBelowWater(camera_underwater);
+		else
+			S_SetupAboveWater(camera_underwater);
+
+		mid_sort = room[lara_item->room_number].bound_active >> 8;
+
+		if (mid_sort)
+			mid_sort--;
+
+		nPolyType = 2;
+
+		if (bLaraOn)
+			DrawLara(lara_item);
+	}
+
+	if (bRoomOn)
+	{
+		nPolyType = 3;
+
+		for (int i = 0; i < number_draw_rooms; i++)
+			PrintRooms(draw_rooms[i]);
+	}
+
+	for (int i = 0; i < number_draw_rooms; i++)
+		PrintObjects(draw_rooms[i]);
+
+	if (bEffectOn)
+	{
+		nPolyType = 6;
+		S_DrawSparks();
+		S_DrawSplashes();
+		S_DrawBat();
+
+		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_CHAMBER)
+			DoSnow();
+
+		if (CurrentLevel == LV_JUNGLE || CurrentLevel == LV_ROOFTOPS)
+			DoRain();
+
+	//	S_DrawFootPrints here
+	}
+
+	if (lara.electric)
+	{
+		if (lara.electric < 16)
+			lara.electric++;
+
+		UpdateElectricityPoints();
+		LaraElectricDeath(0, lara_item);
+		LaraElectricDeath(1, lara_item);
+	}
+}
+
+long DrawPhaseGame()
+{
+	DrawRooms(camera.pos.room_number);
+	DrawGameInfo(1);
+	S_OutputPolyList();
+	camera.number_frames = S_DumpScreen();
+	S_AnimateTextures(camera.number_frames);
+	return camera.number_frames;
+}
+
 void inject_draw(bool replace)
 {
 	INJECT(0x00429390, phd_PopMatrix_I, replace);
@@ -1800,4 +1944,6 @@ void inject_draw(bool replace)
 	INJECT(0x00429A30, DrawGunFlash, replace);
 	INJECT(0x00429BA0, CalculateObjectLighting, replace);
 	INJECT(0x00429D00, CalculateObjectLightingLara, replace);
+	INJECT(0x00424C60, DrawRooms, replace);
+	INJECT(0x00424C20, DrawPhaseGame, replace);
 }

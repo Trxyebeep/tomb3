@@ -359,8 +359,8 @@ tomb3decomp progress.
 
 		game/draw.cpp
 
-0x00424C20		DrawPhaseGame
-0x00424C60		DrawRooms
+0x00424C20	+	DrawPhaseGame
+0x00424C60	+	DrawRooms
 0x00424FE0	+	PrintRooms
 0x004250A0	+	PrintObjects
 0x004253C0	+	GetRoomBounds
