@@ -424,6 +424,13 @@ void HWR_InitState()
 	}
 }
 
+bool HWR_Init()
+{
+	VertexBuffer = 0;
+	HWR_InitState();
+	return 1;
+}
+
 void inject_hwrender(bool replace)
 {
 	INJECT(0x00484E20, HWR_EnableZBuffer, replace);
@@ -441,4 +448,5 @@ void inject_hwrender(bool replace)
 	INJECT(0x00485130, HWR_DrawRoutinesStippledAlpha, replace);
 	INJECT(0x00485350, HWR_DrawRoutinesNoAlpha, replace);
 	INJECT(0x00484740, HWR_InitState, replace);
+	INJECT(0x00485A90, HWR_Init, replace);
 }

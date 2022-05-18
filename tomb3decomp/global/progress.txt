@@ -1455,7 +1455,33 @@ tomb3decomp progress.
 // SPECIFIC
 // ======================================
 
-		specific.init.cpp
+		specific/hwrender.cpp
+
+0x00484740	+	HWR_InitState
+0x00484A10	+	HWR_ResetCurrentTexture
+0x00484A20	+	HWR_ResetColorKey
+0x00484A40	+	HWR_ResetZBuffer
+0x00484A80	+	HWR_EnableColorAddition
+0x00484AE0	+	HWR_EnablePerspCorrect
+0x00484B70	+	HWR_EnableFilter
+0x00484BF0	+	HWR_EnableAlphaBlend
+0x00484C30		HWR_SetCurrentTexture
+0x00484DE0	+	HWR_EnableColorKey
+0x00484E20	+	HWR_EnableZBuffer
+0x00484EB0	+	HWR_BeginScene
+0x00484F00	+	HWR_EndScene
+0x00484F10	+	HWR_DrawRoutines
+0x00485130	+	HWR_DrawRoutinesStippledAlpha
+0x00485350	+	HWR_DrawRoutinesNoAlpha
+0x004854C0		HWR_DrawPolyList
+0x004855C0		HWR_DrawPolyListBF
+0x00485900		HWR_LoadTexturePages
+0x004859C0		HWR_FreeTexturePages
+0x00485A10		HWR_GetAllTextureHandles
+0x00485A90	+	HWR_Init
+
+
+		specific/init.cpp
 
 0x00485AB0		init_water_table
 0x00485CA0		GetRandom
