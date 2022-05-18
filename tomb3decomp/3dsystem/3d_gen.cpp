@@ -4,6 +4,8 @@
 #include "../specific/litesrc.h"
 #include "phd_math.h"
 #include "scalespr.h"
+#include "../game/gameflow.h"
+#include "../specific/output.h"
 
 void phd_PutPolygons(short* objptr, long clip)
 {
@@ -347,6 +349,75 @@ void S_InsertRoom(short* objptr, long out)
 	ins_room_sprite(objptr + 1, objptr[0]);
 }
 
+short* calc_back_light(short* objptr)
+{
+	long nNormals;
+
+	nNormals = *objptr;
+	objptr++;
+
+	if (nNormals > 0)
+		objptr += 3 * nNormals;
+	else if (nNormals < 0)
+	{
+		nNormals = -nNormals;
+		objptr += nNormals;
+	}
+
+	for (int i = 0; i < nNormals; i++)
+		vbuf[i].g = 0x4210;
+
+	return objptr;
+}
+
+void S_InsertBackground(short* objptr)
+{
+	short* triPtr;
+	long nTris;
+
+	nPolyType = 1;
+	phd_leftfloat = float(phd_winxmin + phd_left);
+	phd_topfloat = float(phd_winymin + phd_top);
+	phd_rightfloat = float(phd_right + phd_winxmin + 1);
+	phd_bottomfloat = float(phd_bottom + phd_winymin + 1);
+	f_centerx = float(phd_winxmin + phd_centerx);
+	f_centery = float(phd_winymin + phd_centery);
+	objptr += 4;
+	objptr = calc_object_verticesback(objptr);
+	outsideBackgroundTop = 0;
+
+	if (objptr)
+	{
+		objptr = calc_back_light(objptr);
+		objptr = InsertObjectGT4(objptr + 1, objptr[0], BACK_SORT);
+		objptr = InsertObjectGT3(objptr + 1, objptr[0], BACK_SORT);
+		objptr = InsertObjectG4(objptr + 1, objptr[0], BACK_SORT);
+
+		if (bFixSkyColour)
+		{
+			if (CurrentLevel == LV_CHAMBER)
+				triPtr = objptr + 4;
+			else
+				triPtr = objptr + 68;
+
+			nTris = *objptr - 16;
+
+			for (; nTris; nTris--)
+			{
+				triPtr[0] = short(BlackGouraudIndex << 8);
+				triPtr += 4;
+			}
+
+			bFixSkyColour = 0;
+		}
+
+		objptr = InsertObjectG3(objptr + 1, objptr[0], BACK_SORT);
+	}
+
+	if (CurrentLevel == LV_GYM)
+		S_InsertBackPolygon(0, (long)outsideBackgroundTop, phd_right + phd_winxmin, phd_winymax, 0x800000);
+}
+
 void inject_3dgen(bool replace)
 {
 	INJECT(0x00401AF0, phd_PutPolygons, replace);
@@ -364,4 +435,6 @@ void inject_3dgen(bool replace)
 	INJECT(0x00402130, SetZNear, replace);
 	INJECT(0x00402180, SetZFar, replace);
 	INJECT(0x00401BF0, S_InsertRoom, replace);
+	INJECT(0x00401CE0, calc_back_light, replace);
+	INJECT(0x00401D20, S_InsertBackground, replace);
 }
