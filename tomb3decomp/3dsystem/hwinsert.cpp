@@ -331,7 +331,7 @@ void HWI_InsertTransQuad_Sorted(long x, long y, long w, long h, long z)
 	SetBufferPtrs(sort, info, 0, 1);
 	sort[0] = (long)info;
 	sort[1] = z;
-	info[0] = 13;
+	info[0] = DT_POLY_GA;
 	info[1] = 0;
 	info[2] = 4;
 
@@ -870,7 +870,7 @@ void HWI_InsertLine_Sorted(long x1, long y1, long x2, long y2, long z, long col)
 	SetBufferPtrs(sort, info, 0, 1);
 	sort[0] = (long)info;
 	sort[1] = z;
-	info[0] = 12;
+	info[0] = DT_LINE_SOLID;
 	info[1] = 0;
 	info[2] = 2;
 	v = CurrentTLVertex;
@@ -1446,7 +1446,7 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 		SetBufferPtrs(sort, info, 0, 0);
 		sort[0] = (long)info;
 		sort[1] = zdepth;
-		info[0] = 11;
+		info[0] = DT_POLY_G;
 		info[1] = 0;
 		info[2] = 4;
 		v = CurrentTLVertex;
@@ -1808,7 +1808,7 @@ short* HWI_InsertObjectG3_Sorted(short* pFaceInfo, long nFaces, sort_type nSortT
 			else
 				zdepth = 1000000000;
 
-			HWI_InsertPoly_Gouraud(nPoints, zdepth, pC[0], pC[1], pC[2], 11);
+			HWI_InsertPoly_Gouraud(nPoints, zdepth, pC[0], pC[1], pC[2], DT_POLY_G);
 		}
 
 		pFaceInfo += 4;
@@ -1955,7 +1955,7 @@ short* HWI_InsertObjectG4_Sorted(short* pFaceInfo, long nFaces, sort_type nSortT
 			else
 				zdepth = 1000000000;
 
-			HWI_InsertPoly_Gouraud(nPoints, zdepth, *pC, pC[1], pC[2], 11);
+			HWI_InsertPoly_Gouraud(nPoints, zdepth, *pC, pC[1], pC[2], DT_POLY_G);
 		}
 
 		pFaceInfo += 5;
