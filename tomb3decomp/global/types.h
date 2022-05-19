@@ -240,7 +240,7 @@ enum trigobj_types
 	TO_BODYBAG
 };
 
-enum lara_meshes
+enum LARA_MESHES
 {
 	HIPS,
 	THIGH_L,

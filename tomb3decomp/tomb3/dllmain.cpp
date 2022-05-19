@@ -31,6 +31,7 @@
 #include "../specific/hwrender.h"
 #include "../specific/game.h"
 #include "../specific/file.h"
+#include "../specific/draweffects.h"
 
 HINSTANCE hinstance = 0;
 
@@ -83,6 +84,7 @@ void inject_all(bool replace)
 	inject_hwrender(replace);
 	inject_sgame(replace);
 	inject_file(replace);
+	inject_draweffects(replace);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
