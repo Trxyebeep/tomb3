@@ -1,4 +1,6 @@
 #pragma once
 #include "../global/vars.h"
 
-#define UpdateElectricityPoints	( (void(__cdecl*)()) 0x00449A30 )
+void inject_laraelec(bool replace);
+
+void UpdateElectricityPoints();

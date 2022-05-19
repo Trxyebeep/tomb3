@@ -904,7 +904,7 @@ tomb3decomp progress.
 
 		game/laraelec.cpp
 
-0x00449A30		UpdateElectricityPoints
+0x00449A30	+	UpdateElectricityPoints
 
 
 		game/larafire.cpp

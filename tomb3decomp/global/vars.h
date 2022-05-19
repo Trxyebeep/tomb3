@@ -210,6 +210,7 @@
 #define BColorTable	ARRAY_(0x0067CB28, long, [33][33][33])
 #define WaterTable	ARRAY_(0x00634148, WATERTAB, [22][64])
 #define wibble_table	ARRAY_(0x005D7A60, float, [32])
+#define electricity_points	ARRAY_(0x006E2080, short, [32][6])
 
 /*constants*/
 #define NO_HEIGHT -32512
