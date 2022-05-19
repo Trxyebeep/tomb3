@@ -1308,4 +1308,12 @@ struct BITE_INFO
 	long z;
 	long mesh_num;
 };
+
+struct WATERTAB
+{
+	char shimmer;
+	char choppy;
+	uchar random;
+	uchar abs;
+};
 #pragma pack(pop)

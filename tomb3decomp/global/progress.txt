@@ -1685,7 +1685,7 @@ tomb3decomp progress.
 
 0x0048D6A0	+	InitZTable
 0x0048D6E0	+	calc_object_vertices
-0x0048D9B0		calc_roomvert
+0x0048D9B0	+	calc_roomvert
 0x0048E050	+	calc_object_verticesback
 
 //TBD

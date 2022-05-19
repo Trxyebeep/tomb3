@@ -82,6 +82,7 @@
 #define SmokeWeapon	VAR_(0x006DCA60, long)
 #define App	VAR_(0x006CED80, WINAPP)
 #define distanceFogValue	VAR_(0x006CED7C, long)
+#define farz	VAR_(0x006CF250, long)
 #define CarcassItem	VAR_(0x006E2FFC, short)
 #define PirahnaHitWait	VAR_(0x006261D8, long)
 #define level_items	VAR_(0x006266B4, long)
@@ -204,6 +205,11 @@
 #define static_objects	ARRAY_(0x006E2300, STATIC_INFO, [50])
 #define IsJointUnderwater	ARRAY_(0x006D6290, char, [15])
 #define GotJointPos	ARRAY_(0x006D6190, char, [15])
+#define RColorTable	ARRAY_(0x00635748, long, [33][33][33])
+#define GColorTable	ARRAY_(0x006598E0, long, [33][33][33])
+#define BColorTable	ARRAY_(0x0067CB28, long, [33][33][33])
+#define WaterTable	ARRAY_(0x00634148, WATERTAB, [22][64])
+#define wibble_table	ARRAY_(0x005D7A60, float, [32])
 
 /*constants*/
 #define NO_HEIGHT -32512
