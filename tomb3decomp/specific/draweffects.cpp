@@ -466,8 +466,84 @@ void DrawExplosionRings()
 	}
 }
 
+bool ClipLine(long& x1, long& y1, long& x2, long& y2, long w, long h)
+{
+	float clip;
+	long xMax, xMin, yMax, yMin;
+
+	xMax = phd_winxmin + phd_winxmax;
+	xMin = phd_winxmin;
+	yMax = phd_winymin + phd_winymax;
+	yMin = phd_winymin;
+
+	if (x1 < xMin && x2 < xMin || y1 < yMin && y2 < yMin)
+		return 0;
+
+	if (x1 > xMax && x2 > xMax || y1 > yMax && y2 > yMax)
+		return 0;
+
+	if (x1 > xMax)
+	{
+		clip = ((float)xMax - x2) / float(x1 - x2);
+		x1 = xMax;
+		y1 = long((y1 - y2) * clip + y2);
+	}
+
+	if (x2 > xMax)
+	{
+		clip = ((float)xMax - x1) / float(x2 - x1);
+		x2 = xMax;
+		y2 = long((y2 - y1) * clip + y1);
+	}
+
+	if (x1 < xMin)
+	{
+		clip = ((float)xMin - x1) / float(x2 - x1);
+		x1 = xMin;
+		y1 = long((y2 - y1) * clip + y1);
+	}
+
+	if (x2 < xMin)
+	{
+		clip = ((float)xMin - x2) / float(x1 - x2);
+		x2 = xMin;
+		y2 = long((y1 - y2) * clip + y2);
+	}
+
+	if (y1 > yMax)
+	{
+		clip = ((float)yMax - y2) / float(y1 - y2);
+		y1 = yMax;
+		x1 = long((x1 - x2) * clip + x2);
+	}
+
+	if (y2 > yMax)
+	{
+		clip = ((float)yMax - y1) / float(y2 - y1);
+		y2 = yMax;
+		x2 = long((x2 - x1) * clip + x1);
+	}
+
+	if (y1 < yMin)
+	{
+		clip = ((float)yMin - y1) / float(y2 - y1);
+		y1 = yMin;
+		x1 = long((x2 - x1) * clip + x1);
+	}
+
+	if (y2 < yMin)
+	{
+		clip = ((float)yMin - y2) / float(y1 - y2);
+		y2 = yMin;
+		x2 = long((x1 - x2) * clip + x2);
+	}
+
+	return 1;
+}
+
 void inject_draweffects(bool replace)
 {
 	INJECT(0x00478600, LaraElectricDeath, replace);
 	INJECT(0x00476CA0, DrawExplosionRings, replace);
+	INJECT(0x00479510, ClipLine, replace);
 }
