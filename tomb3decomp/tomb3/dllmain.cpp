@@ -18,6 +18,7 @@
 #include "../game/laraflar.h"
 #include "../game/draw.h"
 #include "../game/laraelec.h"
+#include "../game/effect2.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -74,6 +75,7 @@ void inject_all(bool replace)
 	inject_laraflar(replace);
 	inject_draw(replace);
 	inject_laraelec(replace);
+	inject_effect2(replace);
 
 	//specific
 	inject_drawbars(replace);

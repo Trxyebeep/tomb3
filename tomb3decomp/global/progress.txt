@@ -431,7 +431,7 @@ tomb3decomp progress.
 0x0042DAB0		TriggerBubble
 0x0042DBA0		TriggerExplosionBubble
 0x0042DCF0		TriggerBreath
-0x0042DE00		TriggerDynamic
+0x0042DE00	+	TriggerDynamic
 0x0042DE60		ClearDynamics
 0x0042DE80		ControlSmokeEmitter
 0x0042E0C0		ControlColouredLights
@@ -1455,7 +1455,7 @@ tomb3decomp progress.
 // SPECIFIC
 // ======================================
 
-		specific/draweffect.cpp
+		specific/draweffects.cpp
 
 0x00476420		S_DrawBat
 0x00476A30		S_DrawDarts
