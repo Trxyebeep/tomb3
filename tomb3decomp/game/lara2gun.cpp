@@ -96,7 +96,7 @@ void draw_pistols(long weapon_type)
 	else if (ani == p->Draw2Anim)
 	{
 		draw_pistol_meshes(weapon_type);
-		SoundEffect(6, &lara_item->pos, SFX_DEFAULT);
+		SoundEffect(SFX_LARA_DRAW, &lara_item->pos, SFX_DEFAULT);
 	}
 	else if (ani == p->RecoilAnim - 1)
 	{
@@ -138,7 +138,7 @@ void undraw_pistols(long weapon_type)
 		if (anil == p->Draw2Anim - 1)
 		{
 			undraw_pistol_mesh_left(weapon_type);
-			SoundEffect(7, &lara_item->pos, SFX_DEFAULT);
+			SoundEffect(SFX_LARA_HOLSTER, &lara_item->pos, SFX_DEFAULT);
 		}
 	}
 
@@ -167,7 +167,7 @@ void undraw_pistols(long weapon_type)
 		if (anir == p->Draw2Anim - 1)
 		{
 			undraw_pistol_mesh_right(weapon_type);
-			SoundEffect(7, &lara_item->pos, SFX_DEFAULT);
+			SoundEffect(SFX_LARA_HOLSTER, &lara_item->pos, SFX_DEFAULT);
 		}
 	}
 
@@ -280,7 +280,7 @@ void AnimatePistols(long weapon_type)
 						SmokeWeapon = weapon_type;
 						TriggerGunShell(RIGHT_HAND, GUNSHELL, weapon_type);
 						lara.right_arm.flash_gun = weapons[weapon_type].flash_time;
-						SoundEffect(105, &lara_item->pos, 0x2000000 | SFX_SETPITCH);
+						SoundEffect(SFX_EXPLOSION1, &lara_item->pos, 0x2000000 | SFX_SETPITCH);
 						SoundEffect(weapons[weapon_type].sample_num, &lara_item->pos, SFX_DEFAULT);
 						sound_already = 1;
 
@@ -358,7 +358,7 @@ void AnimatePistols(long weapon_type)
 
 					if (!sound_already)
 					{
-						SoundEffect(105, &lara_item->pos, 0x2000000 | SFX_SETPITCH);
+						SoundEffect(SFX_EXPLOSION1, &lara_item->pos, 0x2000000 | SFX_SETPITCH);
 						SoundEffect(winfo->sample_num, &lara_item->pos, SFX_DEFAULT);
 					}
 

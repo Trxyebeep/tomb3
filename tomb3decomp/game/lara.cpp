@@ -366,7 +366,7 @@ void lara_slide_slope(ITEM_INFO* item, COLL_INFO* coll)
 		if ((ABS(coll->tilt_x)) <= 2 && (ABS(coll->tilt_z)) <= 2)
 		{
 			item->goal_anim_state = AS_STOP;
-			StopSoundEffect(3);
+			StopSoundEffect(SFX_LARA_SLIPPING);
 		}
 	}
 	else
@@ -386,7 +386,7 @@ void lara_slide_slope(ITEM_INFO* item, COLL_INFO* coll)
 			item->goal_anim_state = AS_FALLBACK;
 		}
 
-		StopSoundEffect(3);
+		StopSoundEffect(SFX_LARA_SLIPPING);
 		item->gravity_status = 1;
 		item->fallspeed = 0;
 	}
@@ -1844,7 +1844,7 @@ void lara_as_stop(ITEM_INFO* item, COLL_INFO* coll)
 	}
 
 	if (item->anim_number != 226 && item->anim_number != 228)
-		StopSoundEffect(3);
+		StopSoundEffect(SFX_LARA_SLIPPING);
 
 	if (input & IN_ROLL && lara.water_status != LARA_WADE)
 	{
@@ -2392,7 +2392,7 @@ void lara_as_fastfall(ITEM_INFO* item, COLL_INFO* coll)
 	item->speed = 95 * item->speed / 100;
 
 	if (item->fallspeed == 154)
-		SoundEffect(30, &item->pos, SFX_DEFAULT);
+		SoundEffect(SFX_LARA_FALL, &item->pos, SFX_DEFAULT);
 }
 
 void lara_as_hang(ITEM_INFO* item, COLL_INFO* coll)
@@ -3209,7 +3209,7 @@ void lara_col_turn_l(ITEM_INFO* item, COLL_INFO* coll)
 
 void lara_col_death(ITEM_INFO* item, COLL_INFO* coll)
 {
-	StopSoundEffect(30);
+	StopSoundEffect(SFX_LARA_FALL);
 	lara.move_angle = item->pos.y_rot;
 	coll->bad_pos = 384;
 	coll->bad_neg = -384;
@@ -3243,7 +3243,7 @@ void lara_col_fastfall(ITEM_INFO* item, COLL_INFO* coll)
 			item->goal_anim_state = AS_STOP;
 		}
 
-		StopSoundEffect(30);
+		StopSoundEffect(SFX_LARA_FALL);
 		item->pos.y_pos += coll->mid_floor;
 		item->gravity_status = 0;
 		item->fallspeed = 0;

@@ -141,13 +141,13 @@ void DoFlareInHand(long flare_age)
 
 		if (room[lara_item->room_number].flags & ROOM_UNDERWATER)
 		{
-			SoundEffect(12, &lara_item->pos, SFX_WATER);
+			SoundEffect(SFX_LARA_FLARE_BURN, &lara_item->pos, SFX_WATER);
 
 			if (GetRandomControl() < 0x4000)
 				CreateBubble();
 		}
 		else
-			SoundEffect(12, &lara_item->pos, 0x2000000 | SFX_SETPITCH);
+			SoundEffect(SFX_LARA_FLARE_BURN, &lara_item->pos, 0x2000000 | SFX_SETPITCH);
 	}
 	else if (lara.gun_status == LG_UNARMED)
 		lara.gun_status = LG_UNDRAW;

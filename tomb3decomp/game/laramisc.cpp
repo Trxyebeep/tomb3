@@ -407,7 +407,7 @@ void LaraControl(short item_number)
 						lara_item->gravity_status = 0;
 						lara_item->pos.y_pos += 100;
 						UpdateLaraRoom(lara_item, 0);
-						StopSoundEffect(30);
+						StopSoundEffect(SFX_LARA_FALL);
 
 						if (lara_item->current_anim_state == AS_SWANDIVE)
 						{
@@ -481,7 +481,7 @@ void LaraControl(short item_number)
 						lara.head_y_rot = 0;
 						lara.head_x_rot = 0;
 						UpdateLaraRoom(lara_item, -381);
-						SoundEffect(36, &lara_item->pos, SFX_ALWAYS);
+						SoundEffect(SFX_LARA_BREATH, &lara_item->pos, SFX_ALWAYS);
 					}
 					else
 					{

@@ -87,9 +87,9 @@ void SpikeControl(short item_number)
 #else
 			if (CurrentLevel == LV_SHORE)
 #endif
-				SoundEffect(259, &item->pos, SFX_ALWAYS);
+				SoundEffect(SFX_SHIVA_SWORD_2, &item->pos, SFX_ALWAYS);
 			else
-				SoundEffect(34, &item->pos, SFX_ALWAYS);
+				SoundEffect(SFX_LARA_GETOUT, &item->pos, SFX_ALWAYS);
 
 		}
 
