@@ -12,3 +12,4 @@ void TriggerDynamic(long x, long y, long z, long falloff, long r, long g, long b
 #define TriggerExplosionSmoke	( (void(__cdecl*)(long, long, long, long)) 0x0042B130 )
 #define GetFreeSpark	( (long(__cdecl*)()) 0x00429FE0 )
 #define TriggerFlareSparks	( (void(__cdecl*)(long, long, long, long, long, long, long, long)) 0x0042A8B0 )
+#define CreateBubble	( (void(__cdecl*)()) 0x0042E4F0 )

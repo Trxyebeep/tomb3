@@ -26,7 +26,7 @@ void AddFootprint(ITEM_INFO* item)
 	floor = GetFloor(pos.x, pos.y, pos.z, &room_num);
 
 	if (floor->fx != 6 && floor->fx != 5 && floor->fx != 11)
-		SoundEffect(footsounds[floor->fx] + 288, &lara_item->pos, 0);
+		SoundEffect(footsounds[floor->fx] + 288, &lara_item->pos, SFX_DEFAULT);
 
 	if (floor->fx < 3 && !OnObject)
 	{

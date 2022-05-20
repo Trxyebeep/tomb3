@@ -2392,7 +2392,7 @@ void lara_as_fastfall(ITEM_INFO* item, COLL_INFO* coll)
 	item->speed = 95 * item->speed / 100;
 
 	if (item->fallspeed == 154)
-		SoundEffect(30, &item->pos, 0);
+		SoundEffect(30, &item->pos, SFX_DEFAULT);
 }
 
 void lara_as_hang(ITEM_INFO* item, COLL_INFO* coll)

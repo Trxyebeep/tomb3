@@ -7,6 +7,8 @@
 #include "../specific/litesrc.h"
 #include "../specific/game.h"
 #include "effect2.h"
+#include "lara.h"
+#include "sound.h"
 
 void DrawFlareInAir(ITEM_INFO* item)
 {
@@ -123,8 +125,37 @@ long DoFlareLight(PHD_VECTOR* pos, long flare_age)
 	return 1;
 }
 
+void DoFlareInHand(long flare_age)
+{
+	PHD_VECTOR pos;
+
+	pos.x = 11;
+	pos.y = 32;
+	pos.z = 41;
+	GetLaraHandAbsPosition(&pos, LEFT_HAND);
+	lara.left_arm.flash_gun = (short)DoFlareLight(&pos, flare_age);
+
+	if (lara.flare_age < 900)
+	{
+		lara.flare_age++;
+
+		if (room[lara_item->room_number].flags & ROOM_UNDERWATER)
+		{
+			SoundEffect(12, &lara_item->pos, SFX_WATER);
+
+			if (GetRandomControl() < 0x4000)
+				CreateBubble();
+		}
+		else
+			SoundEffect(12, &lara_item->pos, 0x2000000 | SFX_SETPITCH);
+	}
+	else if (lara.gun_status == LG_UNARMED)
+		lara.gun_status = LG_UNDRAW;
+}
+
 void inject_laraflar(bool replace)
 {
 	INJECT(0x0044BBD0, DrawFlareInAir, replace);
 	INJECT(0x0044B940, DoFlareLight, replace);
+	INJECT(0x0044BAF0, DoFlareInHand, replace);
 }

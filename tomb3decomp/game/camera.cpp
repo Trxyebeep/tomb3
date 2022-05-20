@@ -1016,7 +1016,7 @@ void CalculateCamera()
 
 	if (room[camera.pos.room_number].flags & ROOM_UNDERWATER)
 	{
-		SoundEffect(60, 0, 2);
+		SoundEffect(60, 0, SFX_ALWAYS);
 
 		if (!camera.underwater)
 		{

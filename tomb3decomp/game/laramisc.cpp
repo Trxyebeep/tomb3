@@ -481,7 +481,7 @@ void LaraControl(short item_number)
 						lara.head_y_rot = 0;
 						lara.head_x_rot = 0;
 						UpdateLaraRoom(lara_item, -381);
-						SoundEffect(36, &lara_item->pos, 2);
+						SoundEffect(36, &lara_item->pos, SFX_ALWAYS);
 					}
 					else
 					{

@@ -305,6 +305,14 @@ enum item_flags
 	IFL_CLEARBODY = 0x8000
 };
 
+enum sfx_options
+{
+	SFX_DEFAULT = 0,
+	SFX_WATER = 1,
+	SFX_ALWAYS = 2,
+	SFX_SETPITCH = 4
+};
+
 /*structs*/
 struct PHD_VECTOR
 {
