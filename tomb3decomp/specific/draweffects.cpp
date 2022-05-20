@@ -3,6 +3,8 @@
 #include "../3dsystem/3d_gen.h"
 #include "../game/sphere.h"
 #include "../3dsystem/hwinsert.h"
+#include "game.h"
+#include "../game/objects.h"
 
 void LaraElectricDeath(long lr, ITEM_INFO* item)
 {
@@ -197,7 +199,275 @@ void LaraElectricDeath(long lr, ITEM_INFO* item)
 	phd_PopMatrix();
 }
 
+void DrawExplosionRings()
+{
+	DISPLAYMODE* dm;
+	EXPLOSION_RING* ring;
+	EXPLOSION_VERTS* vtx;
+	EXPLOSION_VERTS* vtx2;
+	PHDSPRITESTRUCT* sprite;
+	PHD_VBUF v[4];
+	PHD_VECTOR pos;
+	PHDTEXTURESTRUCT tex;
+	long* pZ;
+	short* pXY;
+	long* pZ2;
+	short* pXY2;
+	float zv;
+	long w, h, rad, ang, r, g, b, x, y, z;
+	long x1, x2, x3, x4, y1, y2, y3, y4, z1, z2, z3, z4, col1, col2, col3, col4;
+	long Z[16];
+	short XY[32];
+	ushort u1, u2, v1, v2;
+	char clipFlag;
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w - 1;
+	h = dm->h - 1;
+
+	for (int i = 0; i < 6; i++)
+	{
+		ring = &ExpRings[i];
+
+		if (!ring->on)
+		{
+			ring++;
+			continue;
+		}
+
+		ring->life--;
+
+		if (!ring->life)
+		{
+			ring->on = 0;
+			ring++;
+			continue;
+		}
+
+		phd_PushMatrix();
+		phd_TranslateAbs(ring->x, ring->y, ring->z);
+		phd_RotZ(ring->zrot << 4);
+		phd_RotX(ring->xrot << 4);
+		ring->radius += ring->speed;
+		rad = ring->radius;
+		vtx = ring->verts;
+		pXY = XY;
+		pZ = Z;
+
+		for (int j = 0; j < 2; j++)
+		{
+			ang = (wibble & 0x3F) << 3;
+
+			for (int k = 0; k < 8; k++)
+			{
+				vtx->x = short((rad * rcossin_tbl[ang << 1]) >> (W2V_SHIFT - 2));
+				vtx->z = short((rad * rcossin_tbl[(ang << 1) + 1]) >> (W2V_SHIFT - 2));
+
+				r = GetRandomDraw() & 0x1F;
+				g = (GetRandomDraw() & 0x3F) + 224;
+				b = (g >> 2) + (GetRandomDraw() & 0x3F);
+				r = (r * ring->life) >> 5;
+				g = (g * ring->life) >> 5;
+				b = (b * ring->life) >> 5;
+				vtx->rgb = r | (g << 8) | (b << 16);
+
+				ang = (ang + 512) & 0xFFF;
+
+				x = vtx->x;
+				y = 0;
+				z = vtx->z;
+
+				pos.x = phd_mxptr[M00] * x + phd_mxptr[M01] * y + phd_mxptr[M02] * z + phd_mxptr[M03];
+				pos.y = phd_mxptr[M10] * x + phd_mxptr[M11] * y + phd_mxptr[M12] * z + phd_mxptr[M13];
+				pos.z = phd_mxptr[M20] * x + phd_mxptr[M21] * y + phd_mxptr[M22] * z + phd_mxptr[M23];
+
+				zv = f_persp / (float)pos.z;
+				pos.x = short(float(pos.x * zv + f_centerx));
+				pos.y = short(float(pos.y * zv + f_centery));
+
+				pXY[0] = (short)pos.x;
+				pXY[1] = (short)pos.y;
+				pZ[0] = pos.z;
+
+				vtx++;
+				pXY += 2;
+				pZ++;
+			}
+
+			rad >>= 1;
+		}
+
+		vtx = ring->verts;
+		vtx2 = &ring->verts[8];
+		pXY = XY;
+		pZ = Z;
+		pXY2 = &XY[16];
+		pZ2 = &Z[8];
+
+		x1 = *pXY++;
+		y1 = *pXY++;
+		z1 = *pZ++;
+		x3 = *pXY2++;
+		y3 = *pXY2++;
+		z3 = *pZ2++;
+		col1 = vtx->rgb;
+		col3 = vtx2->rgb;
+		sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 4 + ((wibble >> 4) & 3)];
+		u1 = (sprite->offset << 8) & 0xFF00;
+		v1 = sprite->offset & 0xFF00;
+		u2 = ushort(u1 + sprite->width - App.nUVAdd);
+		v2 = ushort(v1 + sprite->height - App.nUVAdd);
+		u1 += (ushort)App.nUVAdd;
+		v1 += (ushort)App.nUVAdd;
+
+		for (int j = 0; j < 8; j++)
+		{
+			if (j == 7)
+			{
+				x2 = pXY[-16];
+				y2 = pXY[-15];
+				z2 = pZ[-8];
+				x4 = pXY2[-16];
+				y4 = pXY2[-15];
+				z4 = pZ2[-8];
+				col2 = vtx[-8].rgb;
+				col4 = vtx->rgb;
+			}
+			else
+			{
+				x2 = *pXY++;
+				y2 = *pXY++;
+				z2 = *pZ++;
+				x4 = *pXY2++;
+				y4 = *pXY2++;
+				z4 = *pZ2++;
+				col2 = vtx->rgb;
+				col4 = vtx2->rgb;
+				vtx++;
+				vtx2++;
+			}
+
+			if (((z1 + z2 + z3 + z4) >> 2) > phd_znear && (col1 || col2 || col3 || col4) &&
+				x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
+				y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
+			{
+				clipFlag = 0;
+
+				if (x1 < phd_winxmin)
+					clipFlag++;
+				else if (x1 > phd_winxmax)
+					clipFlag += 2;
+
+				if (y1 < phd_winymin)
+					clipFlag += 4;
+				else if (y1 > phd_winxmax)
+					clipFlag += 8;
+
+				v[0].clip = clipFlag;
+				v[0].xs = (float)x1;
+				v[0].ys = (float)y1;
+				v[0].zv = (float)z1;
+				v[0].ooz = f_persp / (float)z1 * f_oneopersp;
+				r = (col1 >> 3) & 0x1F;
+				g = (col1 >> 11) & 0x1F;
+				b = (col1 >> 19) & 0x1F;
+				v[0].g = short(r << 10 | g << 5 | b);
+
+				clipFlag = 0;
+
+				if (x2 < phd_winxmin)
+					clipFlag++;
+				else if (x2 > phd_winxmax)
+					clipFlag += 2;
+
+				if (y2 < phd_winymin)
+					clipFlag += 4;
+				else if (y2 > phd_winxmax)
+					clipFlag += 8;
+
+				v[1].clip = clipFlag;
+				v[1].xs = (float)x2;
+				v[1].ys = (float)y2;
+				v[1].zv = (float)z2;
+				v[1].ooz = f_persp / (float)z2 * f_oneopersp;
+				r = (col2 >> 3) & 0x1F;
+				g = (col2 >> 11) & 0x1F;
+				b = (col2 >> 19) & 0x1F;
+				v[1].g = short(r << 10 | g << 5 | b);
+
+				clipFlag = 0;
+
+				if (x3 < phd_winxmin)
+					clipFlag++;
+				else if (x3 > phd_winxmax)
+					clipFlag += 2;
+
+				if (y3 < phd_winymin)
+					clipFlag += 4;
+				else if (y3 > phd_winxmax)
+					clipFlag += 8;
+
+				v[3].clip = clipFlag;
+				v[3].xs = (float)x3;
+				v[3].ys = (float)y3;
+				v[3].zv = (float)z3;
+				v[3].ooz = f_persp / (float)z3 * f_oneopersp;
+				r = (col3 >> 3) & 0x1F;
+				g = (col3 >> 11) & 0x1F;
+				b = (col3 >> 19) & 0x1F;
+				v[3].g = short(r << 10 | g << 5 | b);
+
+				clipFlag = 0;
+
+				if (x4 < phd_winxmin)
+					clipFlag++;
+				else if (x4 > phd_winxmax)
+					clipFlag += 2;
+
+				if (y4 < phd_winymin)
+					clipFlag += 4;
+				else if (y4 > phd_winxmax)
+					clipFlag += 8;
+
+				v[2].clip = clipFlag;
+				v[2].xs = (float)x4;
+				v[2].ys = (float)y4;
+				v[2].zv = (float)z4;
+				v[2].ooz = f_persp / (float)z4 * f_oneopersp;
+			//	r = (col4 >> 3) & 0x1F;
+			//	g = (col4 >> 11) & 0x1F;
+			//	b = (col4 >> 19) & 0x1F;
+			//	v[2].g = short(r << 10 | g << 5 | b);
+
+				tex.u1 = u1;
+				tex.u2 = u2;
+				tex.u3 = u1;
+				tex.u4 = u2;
+				tex.v1 = v1;
+				tex.v2 = v1;
+				tex.v3 = v2;
+				tex.v4 = v2;
+				tex.tpage = sprite->tpage;
+				tex.drawtype = 2;
+				HWI_InsertGT4_Sorted(&v[0], &v[1], &v[2], &v[3], &tex, MID_SORT, 1);
+			}
+
+			x1 = x2;
+			y1 = y2;
+			z1 = z2;
+			x3 = x4;
+			y3 = y4;
+			z3 = z4;
+			col1 = col2;
+			col3 = col4;
+		}
+
+		phd_PopMatrix();
+	}
+}
+
 void inject_draweffects(bool replace)
 {
 	INJECT(0x00478600, LaraElectricDeath, replace);
+	INJECT(0x00476CA0, DrawExplosionRings, replace);
 }

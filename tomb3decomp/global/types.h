@@ -1316,4 +1316,25 @@ struct WATERTAB
 	uchar random;
 	uchar abs;
 };
+
+struct EXPLOSION_VERTS
+{
+	short x;
+	short z;
+	long rgb;
+};
+
+struct EXPLOSION_RING
+{
+	short on;
+	short life;
+	short speed;
+	short radius;
+	short xrot;
+	short zrot;
+	long x;
+	long y;
+	long z;
+	EXPLOSION_VERTS verts[16];
+};
 #pragma pack(pop)

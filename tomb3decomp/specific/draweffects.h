@@ -4,6 +4,7 @@
 void inject_draweffects(bool replace);
 
 void LaraElectricDeath(long lr, ITEM_INFO* item);
+void DrawExplosionRings();
 
 #define S_DrawSparks	( (void(__cdecl*)()) 0x0047B2C0 )
 #define S_DrawSplashes	( (void(__cdecl*)()) 0x0047BAA0 )

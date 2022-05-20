@@ -214,6 +214,7 @@
 #define lara_meshes	ARRAY_(0x004C52B0, uchar, [28])
 #define lara_last_points	ARRAY_(0x004C52D0, uchar, [14])
 #define lara_line_counts	ARRAY_(0x004C52E0, uchar, [6])
+#define ExpRings	ARRAY_(0x006D5D20, EXPLOSION_RING, [6])
 
 /*constants*/
 #define NO_HEIGHT -32512
