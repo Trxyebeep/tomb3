@@ -396,6 +396,38 @@ long S_GetObjectBounds(short* box)
 	return 1;
 }
 
+void mCalcPoint(long x, long y, long z, long* result)
+{
+	x -= w2v_matrix[M03];
+	y -= w2v_matrix[M13];
+	z -= w2v_matrix[M23];
+	result[0] = (w2v_matrix[M00] * x + w2v_matrix[M01] * y + w2v_matrix[M02] * z) >> 14;
+	result[1] = (w2v_matrix[M10] * x + w2v_matrix[M11] * y + w2v_matrix[M12] * z) >> 14;
+	result[2] = (w2v_matrix[M20] * x + w2v_matrix[M21] * y + w2v_matrix[M22] * z) >> 14;
+}
+
+void ProjectPCoord(long x, long y, long z, long* result, long cx, long cy, long fov)
+{
+	if (z > 0)
+	{
+		result[0] = cx + x * fov / z;
+		result[1] = cy + y * fov / z;
+		result[2] = z;
+	}
+	else if (z < 0)
+	{
+		result[0] = cx - x * fov / z;
+		result[1] = cy - y * fov / z;
+		result[2] = z;
+	}
+	else
+	{
+		result[0] = cx + x * fov;
+		result[1] = cy + y * fov;
+		result[2] = z;
+	}
+}
+
 void inject_output(bool replace)
 {
 	INJECT(0x0048A7B0, S_PrintShadow, replace);
@@ -405,4 +437,6 @@ void inject_output(bool replace)
 	INJECT(0x0048A9B0, S_LightRoom, replace);
 	INJECT(0x0048A760, S_InsertBackPolygon, replace);
 	INJECT(0x0048A4C0, S_GetObjectBounds, replace);
+	INJECT(0x0048AC20, mCalcPoint, replace);
+	INJECT(0x0048ACC0, ProjectPCoord, replace);
 }
