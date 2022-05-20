@@ -925,7 +925,7 @@ tomb3decomp progress.
 
 		game/laraflar.cpp
 
-0x0044B940		DoFlareLight
+0x0044B940	+	DoFlareLight
 0x0044BAF0		DoFlareInHand
 0x0044BBD0	+	DrawFlareInAir
 0x0044BD90		CreateFlare

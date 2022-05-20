@@ -52,7 +52,79 @@ void DrawFlareInAir(ITEM_INFO* item)
 	phd_PopMatrix();
 }
 
+long DoFlareLight(PHD_VECTOR* pos, long flare_age)
+{
+	long rnd, x, y, z, r, g, b, falloff;
+
+	if (flare_age >= 900)
+		return 0;
+
+	rnd = GetRandomControl();
+	x = pos->x + 8 * (rnd & 0xF);
+	y = pos->y + ((rnd >> 1) & 0x78);
+	z = pos->z + ((rnd >> 5) & 0x78);
+
+	if (flare_age < 4)
+	{
+		r = (rnd & 3) + (flare_age << 1) + 20;
+		g = ((rnd >> 4) & 3) + flare_age + 4;
+		b = ((rnd >> 8) & 3) + (flare_age << 1);
+		falloff = (rnd & 3) + (flare_age << 2) + 4;
+
+		if (falloff > 16)
+			falloff -= (rnd >> 12) & 3;
+
+		TriggerDynamic(x, y, z, falloff, r, g, b);
+	}
+	else if (flare_age < 16)
+	{
+		r = (rnd & 7) + (flare_age >> 1) + 16;
+		g = ((rnd >> 4) & 3) + (flare_age >> 1) + 8;
+		b = ((rnd >> 8) & 3) + (flare_age >> 1) + 2;
+		falloff = (rnd & 1) + flare_age + 2;
+		TriggerDynamic(x, y, z, falloff, r, g, b);
+	}
+	else if (flare_age < 810)
+	{
+		r = (rnd & 7) + 24;
+		g = ((rnd >> 4) & 3) + 16;
+		b = ((rnd >> 8) & 4) + (((rnd >> 6) & 0x10) >> 2);
+		TriggerDynamic(x, y, z, 16, r, g, b);
+	}
+	else if (flare_age < 876)
+	{
+		if (rnd > 0x2000)
+		{
+			r = (rnd & 7) + 24;
+			g = ((rnd >> 4) & 3) + 16;
+			b = ((rnd >> 8) & 4) + (((rnd >> 6) & 0x10) >> 2);
+			TriggerDynamic(x, y, z, 16, r, g, b);
+		}
+		else
+		{
+			r = (GetRandomControl() & 7) + 24;
+			g = (GetRandomControl() & 7) + 8;
+			b = GetRandomControl() & 0xF;
+			falloff = (GetRandomControl() & 6) + 8;
+			TriggerDynamic(x, y, z, falloff, r, g, b);
+			return 0;
+		}
+	}
+	else
+	{
+		r = (GetRandomControl() & 7) + 24;
+		g = (GetRandomControl() & 7) + 8;
+		b = GetRandomControl() & 3;
+		falloff = 16 - ((flare_age - 876) >> 1);
+		TriggerDynamic(x, y, z, falloff, r, g, b);
+		return rnd & 1;
+	}
+
+	return 1;
+}
+
 void inject_laraflar(bool replace)
 {
 	INJECT(0x0044BBD0, DrawFlareInAir, replace);
+	INJECT(0x0044B940, DoFlareLight, replace);
 }
