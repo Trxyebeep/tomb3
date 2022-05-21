@@ -932,9 +932,9 @@ tomb3decomp progress.
 0x0044BF80	+	set_flare_arm
 0x0044BFD0		draw_flare
 0x0044C150		undraw_flare
-0x0044C3C0		draw_flare_meshes
-0x0044C3E0		undraw_flare_meshes
-0x0044C400		ready_flare
+0x0044C3C0	+	draw_flare_meshes
+0x0044C3E0	+	undraw_flare_meshes
+0x0044C400	+	ready_flare
 0x0044C440		FlareControl
 
 

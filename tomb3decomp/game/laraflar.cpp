@@ -243,6 +243,30 @@ void set_flare_arm(long frame)
 	lara.left_arm.frame_base = anims[anim].frame_ptr;
 }
 
+void draw_flare_meshes()
+{
+	lara.mesh_ptrs[HAND_L] = meshes[objects[FLARE].mesh_index + HAND_L];
+}
+
+void undraw_flare_meshes()
+{
+	lara.mesh_ptrs[HAND_L] = meshes[objects[LARA].mesh_index + HAND_L];
+}
+
+void ready_flare()
+{
+	lara.gun_status = LG_ARMLESS;
+	lara.left_arm.x_rot = 0;
+	lara.left_arm.y_rot = 0;
+	lara.left_arm.z_rot = 0;
+	lara.right_arm.x_rot = 0;
+	lara.right_arm.y_rot = 0;
+	lara.right_arm.z_rot = 0;
+	lara.right_arm.lock = 0;
+	lara.left_arm.lock = 0;
+	lara.target = 0;
+}
+
 void inject_laraflar(bool replace)
 {
 	INJECT(0x0044BBD0, DrawFlareInAir, replace);
@@ -250,4 +274,7 @@ void inject_laraflar(bool replace)
 	INJECT(0x0044BAF0, DoFlareInHand, replace);
 	INJECT(0x0044BD90, CreateFlare, replace);
 	INJECT(0x0044BF80, set_flare_arm, replace);
+	INJECT(0x0044C3C0, draw_flare_meshes, replace);
+	INJECT(0x0044C3E0, undraw_flare_meshes, replace);
+	INJECT(0x0044C400, ready_flare, replace);
 }
