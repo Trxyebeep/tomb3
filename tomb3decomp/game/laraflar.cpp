@@ -11,6 +11,9 @@
 #include "sound.h"
 #include "items.h"
 #include "control.h"
+#include "laraanim.h"
+#include "invfunc.h"
+#include "larafire.h"
 
 void DrawFlareInAir(ITEM_INFO* item)
 {
@@ -267,6 +270,151 @@ void ready_flare()
 	lara.target = 0;
 }
 
+void draw_flare()
+{
+	short ani;
+
+	if (lara_item->current_anim_state == AS_FLAREPICKUP || lara_item->current_anim_state == AS_PICKUP)
+	{
+		DoFlareInHand(lara.flare_age);
+		lara.flare_control_left = 0;
+		lara.left_arm.frame_number = 93;
+		set_flare_arm(93);
+		return;
+	}
+
+	lara.flare_control_left = 1;
+	ani = lara.left_arm.frame_number + 1;
+
+	if (ani < 33 || ani > 94)
+		ani = 33;
+	else if (ani == 46)
+	{
+		draw_flare_meshes();
+
+		if (!savegame.bonus_flag)
+			Inv_RemoveItem(FLAREBOX_ITEM);
+	}
+	else if (ani >= 72 && ani <= 93)
+	{
+		if (ani == 72)
+		{
+			if (room[lara_item->room_number].flags & ROOM_UNDERWATER)
+				SoundEffect(SFX_LARA_FLARE_IGNITE, &lara_item->pos, SFX_WATER);
+			else
+				SoundEffect(SFX_LARA_FLARE_IGNITE, &lara_item->pos, SFX_DEFAULT);
+
+			lara.flare_age = 0;
+		}
+
+		DoFlareInHand(lara.flare_age);
+	}
+	else if (ani == 94)
+	{
+		ready_flare();
+		ani = 0;
+		DoFlareInHand(lara.flare_age);
+	}
+
+	lara.left_arm.frame_number = ani;
+	set_flare_arm(lara.left_arm.frame_number);
+}
+
+void undraw_flare()
+{
+	short ani, ani2;
+
+	lara.flare_control_left = 1;
+	ani = lara.left_arm.frame_number;
+	ani2 = lara.flare_frame;
+
+	if (lara_item->goal_anim_state == AS_STOP && lara.skidoo == NO_ITEM)
+	{
+		if (lara_item->anim_number == ANIM_BREATH)
+		{
+			lara_item->anim_number = ANIM_THROWFLARE;
+			ani2 = ani + anims[ANIM_THROWFLARE].frame_base;
+			lara.flare_frame = ani2;
+			lara_item->frame_number = ani2;
+		}
+
+		if (lara_item->anim_number == ANIM_THROWFLARE)
+		{
+			lara.flare_control_left = 0;
+
+			if (ani2 >= anims[ANIM_THROWFLARE].frame_base + 31)
+			{
+				lara.request_gun_type = lara.last_gun_type;
+				lara.gun_type = lara.last_gun_type;
+				lara.gun_status = LG_ARMLESS;
+				InitialiseNewWeapon();
+				lara.target = 0;
+				lara.right_arm.lock = 0;
+				lara.left_arm.lock = 0;
+				lara_item->anim_number = ANIM_STOP;
+				lara.flare_frame = anims[ANIM_STOP].frame_base;
+				lara_item->frame_number = lara.flare_frame;
+				lara_item->current_anim_state = AS_STOP;
+				lara_item->goal_anim_state = AS_STOP;
+				return;
+			}
+
+			lara.flare_frame = ani2 + 1;
+		}
+	}
+	else if (lara_item->current_anim_state == AS_STOP && lara.skidoo == NO_ITEM)
+	{
+		lara_item->anim_number = ANIM_STOP;
+		lara_item->frame_number = anims[ANIM_STOP].frame_base;
+	}
+
+	if (!ani)
+		ani = 1;
+	else if (ani >= 72 && ani < 95)
+	{
+		ani++;
+
+		if (ani == 94)
+			ani = 1;
+	}
+	else if (ani >= 1 && ani < 33)
+	{
+		ani++;
+
+		if (ani == 21)
+		{
+			CreateFlare(1);
+			undraw_flare_meshes();
+		}
+		else if (ani == 33)
+		{
+			ani = 0;
+			lara.request_gun_type = lara.last_gun_type;
+			lara.gun_type = lara.last_gun_type;
+			lara.gun_status = LG_ARMLESS;
+			InitialiseNewWeapon();
+			lara.flare_control_left = 0;
+			lara.target = 0;
+			lara.right_arm.lock = 0;
+			lara.left_arm.lock = 0;
+			lara.flare_frame = 0;
+		}
+	}
+	else if (ani >= 95 && ani < 110)
+	{
+		ani++;
+
+		if (ani == 109)
+			ani = 1;
+	}
+
+	if (ani >= 1 && ani < 21)
+		DoFlareInHand(lara.flare_age);
+
+	lara.left_arm.frame_number = ani;
+	set_flare_arm(ani);
+}
+
 void inject_laraflar(bool replace)
 {
 	INJECT(0x0044BBD0, DrawFlareInAir, replace);
@@ -277,4 +425,6 @@ void inject_laraflar(bool replace)
 	INJECT(0x0044C3C0, draw_flare_meshes, replace);
 	INJECT(0x0044C3E0, undraw_flare_meshes, replace);
 	INJECT(0x0044C400, ready_flare, replace);
+	INJECT(0x0044BFD0, draw_flare, replace);
+	INJECT(0x0044C150, undraw_flare, replace);
 }

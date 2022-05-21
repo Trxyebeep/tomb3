@@ -11,3 +11,5 @@ void set_flare_arm(long frame);
 void draw_flare_meshes();
 void undraw_flare_meshes();
 void ready_flare();
+void draw_flare();
+void undraw_flare();
