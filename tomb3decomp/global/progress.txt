@@ -1455,6 +1455,53 @@ tomb3decomp progress.
 // SPECIFIC
 // ======================================
 
+		specific/audio.cpp
+
+0x004742A0		ACMEnumCallBack
+0x00474330		ACMInit
+0x00474760		ACMClose
+0x004748B0		ACMOpenFile
+0x004748E0		ACMCloseFile
+0x00474900		ACMEmulateCDPlay
+0x00474B30		ThreadACMEmulateCDPlay
+0x00474D50		ACMEmulateCDStop
+0x00474D70		ACMHandleNotifications
+0x00475160		ACMSetupNotifications
+0x00475240		ACMGetTrackLocation
+0x00475280		ACMSetVolume
+
+
+		specific/DI.cpp
+
+0x00475400		DI_Create
+0x00475450		DI_ReadKeyboard
+0x004754B0		DI_ReadJoystick
+0x004755B0		DI_StartKeyboard
+0x00475680		DI_FinishKeyboard
+0x004756B0		DI_StartJoystick
+0x004756C0		DI_Start
+0x004756F0		DI_Finish
+
+
+		specific/display.cpp
+
+0x00475720		IncreaseScreenSize
+0x00475790		DecreaseScreenSize
+0x00475800		setup_screen_size
+0x00475910		TempVideoAdjust
+0x00475950		TempVideoRemove
+0x00475990		S_FadeInInventory
+0x004759D0		S_FadeOutInventory
+
+
+		specific/drawbars.cpp
+
+0x00475A00	+	S_DrawDashBar
+0x00475C70	+	S_DrawHealthBar
+0x00475F60	+	S_DrawAirBar
+0x004761C0	+	S_DrawColdBar
+
+
 		specific/draweffects.cpp
 
 0x00476420		S_DrawBat
@@ -1713,4 +1760,12 @@ tomb3decomp progress.
 0x0048D9B0	+	calc_roomvert
 0x0048E050	+	calc_object_verticesback
 
-//TBD
+		
+		specific/utils.cpp
+
+0x0048E3E0		UT_InitAccurateTimer
+0x0048E440		UT_GetAccurateTimer
+0x0048E490		UT_CenterWindow
+0x0048E500		UT_FindArg
+0x0048E530		UT_OKCancelBox
+0x0048E570		UT_OKCB_DlgProc
