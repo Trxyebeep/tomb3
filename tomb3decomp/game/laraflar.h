@@ -13,3 +13,4 @@ void undraw_flare_meshes();
 void ready_flare();
 void draw_flare();
 void undraw_flare();
+void FlareControl(short item_number);

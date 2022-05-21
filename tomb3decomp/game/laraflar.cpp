@@ -14,6 +14,7 @@
 #include "laraanim.h"
 #include "invfunc.h"
 #include "larafire.h"
+#include "../3dsystem/phd_math.h"
 
 void DrawFlareInAir(ITEM_INFO* item)
 {
@@ -149,7 +150,7 @@ void DoFlareInHand(long flare_age)
 			SoundEffect(SFX_LARA_FLARE_BURN, &lara_item->pos, SFX_WATER);
 
 			if (GetRandomControl() < 0x4000)
-				CreateBubble();
+				CreateBubble((PHD_3DPOS*)&pos, lara_item->room_number, 8, 8);
 		}
 		else
 			SoundEffect(SFX_LARA_FLARE_BURN, &lara_item->pos, 0x2000000 | SFX_SETPITCH);
@@ -415,6 +416,76 @@ void undraw_flare()
 	set_flare_arm(ani);
 }
 
+void FlareControl(short item_number)
+{
+	ITEM_INFO* item;
+	long x, y, z, xv, zv, age;
+
+	item = &items[item_number];
+
+	if (room[item->room_number].flags & ROOM_SWAMP)
+	{
+		KillItem(item_number);
+		return;
+	}
+
+	if (item->fallspeed)
+	{
+		item->pos.x_rot += 546;
+		item->pos.z_rot += 910;
+	}
+	else
+	{
+		item->pos.x_rot = 0;
+		item->pos.z_rot = 0;
+	}
+
+	x = item->pos.x_pos;
+	y = item->pos.y_pos;
+	z = item->pos.z_pos;
+	xv = (item->speed * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+	zv = (item->speed * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+	item->pos.x_pos += xv;
+	item->pos.z_pos += zv;
+
+	if (room[item->room_number].flags & ROOM_UNDERWATER)
+	{
+		item->fallspeed += (5 - item->fallspeed) >> 1;
+		item->speed += (5 - item->speed) >> 1;
+	}
+	else
+		item->fallspeed += 6;
+
+	item->pos.y_pos += item->fallspeed;
+	DoProperDetection(item_number, x, y, z, xv, item->fallspeed, zv);
+	age = (long)item->data & 0x7FFF;
+
+	if (age < 900)
+		age++;
+	else if (!item->fallspeed && !item->speed)
+	{
+		KillItem(item_number);
+		return;
+	}
+
+	if (DoFlareLight((PHD_VECTOR*)&item->pos, age))
+	{
+		age |= 0x8000;
+
+		if (room[item->room_number].flags & ROOM_UNDERWATER)
+		{
+			SoundEffect(SFX_FLARE_BURN_W, &item->pos, SFX_WATER);
+
+			if (GetRandomControl() < 0x4000)
+				CreateBubble(&item->pos, item->room_number, 8, 8);
+		}
+		else
+			SoundEffect(SFX_FLARE_BURN_W, &item->pos, 0x2000000 | SFX_SETPITCH);
+	}
+
+	item->data = (void*)age;
+}
+
 void inject_laraflar(bool replace)
 {
 	INJECT(0x0044BBD0, DrawFlareInAir, replace);
@@ -427,4 +498,5 @@ void inject_laraflar(bool replace)
 	INJECT(0x0044C400, ready_flare, replace);
 	INJECT(0x0044BFD0, draw_flare, replace);
 	INJECT(0x0044C150, undraw_flare, replace);
+	INJECT(0x0044C440, FlareControl, replace);
 }
