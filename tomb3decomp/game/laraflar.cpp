@@ -9,6 +9,8 @@
 #include "effect2.h"
 #include "lara.h"
 #include "sound.h"
+#include "items.h"
+#include "control.h"
 
 void DrawFlareInAir(ITEM_INFO* item)
 {
@@ -153,9 +155,79 @@ void DoFlareInHand(long flare_age)
 		lara.gun_status = LG_UNDRAW;
 }
 
+void CreateFlare(long thrown)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	PHD_VECTOR pos;
+	long h;
+	short item_num;
+
+	item_num = CreateItem();
+
+	if (item_num == NO_ITEM)
+		return;
+
+	item = &items[item_num];
+	item->object_number = FLARE_ITEM;
+	item->room_number = lara_item->room_number;
+	pos.x = -16;
+	pos.y = 32;
+	pos.z = 42;
+	GetLaraHandAbsPosition(&pos, LEFT_HAND);
+
+	floor = GetFloor(pos.x, pos.y, pos.z, &item->room_number);
+	h = GetHeight(floor, pos.x, pos.y, pos.z);
+
+	if (h < pos.y)
+	{
+		item->pos.x_pos = lara_item->pos.x_pos;
+		item->pos.y_pos = pos.y;
+		item->pos.z_pos = lara_item->pos.z_pos;
+		item->pos.y_rot = lara_item->pos.y_rot;
+		item->room_number = lara_item->room_number;
+	}
+	else
+	{
+		item->pos.x_pos = pos.x;
+		item->pos.y_pos = pos.y;
+		item->pos.z_pos = pos.z;
+
+		if (thrown)
+			item->pos.y_rot = lara_item->pos.y_rot;
+		else
+			item->pos.y_rot = lara_item->pos.y_rot - 0x2000;
+	}
+
+	InitialiseItem(item_num);
+	item->pos.x_rot = 0;
+	item->pos.z_rot = 0;
+	item->shade = -1;
+
+	if (thrown)
+	{
+		item->speed = lara_item->speed + 50;
+		item->fallspeed = lara_item->fallspeed - 50;
+	}
+	else
+	{
+		item->speed = lara_item->speed + 10;
+		item->fallspeed = lara_item->fallspeed + 50;
+	}
+
+	if (DoFlareLight((PHD_VECTOR*)&item->pos, lara.flare_age))
+		item->data = (void*)(lara.flare_age | 0x8000);
+	else
+		item->data = (void*)(lara.flare_age & 0x7FFF);
+
+	AddActiveItem(item_num);
+	item->status = ITEM_ACTIVE;
+}
+
 void inject_laraflar(bool replace)
 {
 	INJECT(0x0044BBD0, DrawFlareInAir, replace);
 	INJECT(0x0044B940, DoFlareLight, replace);
 	INJECT(0x0044BAF0, DoFlareInHand, replace);
+	INJECT(0x0044BD90, CreateFlare, replace);
 }
