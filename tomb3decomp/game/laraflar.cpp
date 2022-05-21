@@ -224,10 +224,30 @@ void CreateFlare(long thrown)
 	item->status = ITEM_ACTIVE;
 }
 
+void set_flare_arm(long frame)
+{
+	short anim;
+
+	if (frame < 1)
+		anim = objects[FLARE].anim_index;
+	else if (frame < 33)
+		anim = objects[FLARE].anim_index + 1;
+	else if (frame < 72)
+		anim = objects[FLARE].anim_index + 2;
+	else if (frame < 95)
+		anim = objects[FLARE].anim_index + 3;
+	else
+		anim = objects[FLARE].anim_index + 4;
+
+	lara.left_arm.anim_number = anim;
+	lara.left_arm.frame_base = anims[anim].frame_ptr;
+}
+
 void inject_laraflar(bool replace)
 {
 	INJECT(0x0044BBD0, DrawFlareInAir, replace);
 	INJECT(0x0044B940, DoFlareLight, replace);
 	INJECT(0x0044BAF0, DoFlareInHand, replace);
 	INJECT(0x0044BD90, CreateFlare, replace);
+	INJECT(0x0044BF80, set_flare_arm, replace);
 }

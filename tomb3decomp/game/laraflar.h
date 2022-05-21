@@ -7,3 +7,4 @@ void DrawFlareInAir(ITEM_INFO* item);
 long DoFlareLight(PHD_VECTOR* pos, long flare_age);
 void DoFlareInHand(long flare_age);
 void CreateFlare(long thrown);
+void set_flare_arm(long frame);
