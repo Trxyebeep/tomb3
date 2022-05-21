@@ -313,7 +313,7 @@ short* GetBoundsAccurate(ITEM_INFO* item)
 	bptr = interpolated_bounds;
 
 	for (int i = 0; i < 6; i++, bptr++, frmptr[0]++, frmptr[1]++)
-		*bptr = short(*frmptr[0] + (frac + (*frmptr[1] - *frmptr[0]) / rate));
+		*bptr = short(*frmptr[0] + (frac * (*frmptr[1] - *frmptr[0]) / rate));
 
 	return interpolated_bounds;
 }
