@@ -10,12 +10,15 @@ struct rando_level
 {
 	uchar original_id;
 	uchar current_id;
+	bool hasRain;
+	bool hasSnow;
+	bool freezingWater;
 };
 
 struct rando_info
 {
 	uchar nLevels;
-	rando_level levels[20];
+	rando_level levels[21];
 };
 
 extern rando_info rando;

@@ -266,6 +266,7 @@
     <ClInclude Include="tomb3decomp\specific\file.h" />
     <ClInclude Include="tomb3decomp\specific\game.h" />
     <ClInclude Include="tomb3decomp\specific\hwrender.h" />
+    <ClInclude Include="tomb3decomp\specific\init.h" />
     <ClInclude Include="tomb3decomp\specific\litesrc.h" />
     <ClInclude Include="tomb3decomp\specific\output.h" />
     <ClInclude Include="tomb3decomp\specific\picture.h" />
@@ -381,6 +382,7 @@
     <ClCompile Include="tomb3decomp\specific\file.cpp" />
     <ClCompile Include="tomb3decomp\specific\game.cpp" />
     <ClCompile Include="tomb3decomp\specific\hwrender.cpp" />
+    <ClCompile Include="tomb3decomp\specific\init.cpp" />
     <ClCompile Include="tomb3decomp\specific\litesrc.cpp" />
     <ClCompile Include="tomb3decomp\specific\output.cpp" />
     <ClCompile Include="tomb3decomp\specific\picture.cpp" />

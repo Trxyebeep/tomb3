@@ -2,23 +2,46 @@
 #include "smain.h"
 #include "specific.h"
 
+
 #ifdef RANDO_STUFF
+#include "init.h"
+
 rando_info rando;
 
 void LoadRandoInfo()
 {
 	FILE* file;
+	rando_level* buf;
 
 	file = fopen("levelinfo.dat", "rb");
 
 	if (file)
 	{
-		fread(&rando, sizeof(rando_info), 1, file);
-		fclose(file);
-		return;
+		fread(&rando.nLevels, sizeof(uchar), 1, file);
+		buf = (rando_level*)malloc(sizeof(rando_level) * 21);
+		memset(rando.levels, 0, sizeof(rando.levels));
+
+		if (!rando.nLevels)
+		{
+			ShowCursor(1);
+			MessageBox(0, "Number of levels is 0.", "TR Rando", MB_OK);
+			ShowCursor(0);
+			return;
+		}
+
+		if (buf)
+		{
+			fread(buf, sizeof(rando_level), rando.nLevels, file);
+			memcpy(rando.levels, buf, sizeof(rando_level) * 21);
+			fclose(file);
+			free(buf);
+			return;
+		}
 	}
 
+	ShowCursor(1);
 	MessageBox(0, "Unable to load rando settings. Crashes may occur.", "TR Rando", MB_OK);
+	ShowCursor(0);
 }
 #endif
 

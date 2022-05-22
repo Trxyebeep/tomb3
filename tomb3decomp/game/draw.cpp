@@ -18,6 +18,9 @@
 #include "laraelec.h"
 #include "health.h"
 #include "items.h"
+#ifdef RANDO_STUFF
+#include "../specific/smain.h"
+#endif
 
 short null_rotations[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 static uchar EnemyWeapon[16] = { 0, 1, 129, 0, 1, 1,  1 };
@@ -1899,10 +1902,18 @@ void DrawRooms(short current_room)
 		S_DrawSplashes();
 		S_DrawBat();
 
+#ifdef RANDO_STUFF
+		if (rando.levels[RANDOLEVEL].hasSnow)
+#else
 		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_CHAMBER)
+#endif
 			DoSnow();
 
+#ifdef RANDO_STUFF
+		if (rando.levels[RANDOLEVEL].hasRain)
+#else
 		if (CurrentLevel == LV_JUNGLE || CurrentLevel == LV_ROOFTOPS)
+#endif
 			DoRain();
 
 	//	S_DrawFootPrints here

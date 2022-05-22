@@ -6,6 +6,9 @@
 #include "scalespr.h"
 #include "../game/gameflow.h"
 #include "../specific/output.h"
+#ifdef RANDO_STUFF
+#include "../specific/smain.h"
+#endif
 
 void phd_PutPolygons(short* objptr, long clip)
 {
@@ -395,7 +398,11 @@ void S_InsertBackground(short* objptr)
 
 		if (bFixSkyColour)
 		{
+#ifdef RANDO_STUFF
+			if (rando.levels[RANDOLEVEL].original_id == LV_CHAMBER)
+#else
 			if (CurrentLevel == LV_CHAMBER)
+#endif
 				triPtr = objptr + 4;
 			else
 				triPtr = objptr + 68;
