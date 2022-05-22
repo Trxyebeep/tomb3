@@ -1,7 +1,12 @@
 #include "../tomb3/pch.h"
 #include "smain.h"
 #include "specific.h"
-
+#include "../game/gameflow.h"
+#include "../game/laraanim.h"
+#include "../game/invfunc.h"
+#include "../game/objects.h"
+#include "../game/sound.h"
+#include "../game/missile.h"
 
 #ifdef RANDO_STUFF
 #include "init.h"
@@ -174,7 +179,173 @@ bool S_LoadSettings()
 	return 1;
 }
 
+void CheckCheatMode()
+{
+	static long mode, gun, turn;
+	static short as, angle;
+
+	if (CurrentLevel == LV_GYM || CurrentLevel == gameflow.num_levels - gameflow.num_demos - 1)
+		return;
+
+	as = lara_item->current_anim_state;
+
+	switch (mode)
+	{
+	case 0:
+
+		if (as == AS_WALK)
+			mode = 1;
+
+		break;
+
+	case 1:
+		gun = lara.gun_type == LG_PISTOLS;
+
+		if (as != AS_WALK)
+		{
+			if (as == AS_STOP)
+				mode = 2;
+			else
+				mode = 0;
+		}
+
+		break;
+
+	case 2:
+
+		if (as != AS_STOP)
+		{
+			if (as == AS_DUCK)
+				mode = 3;
+			else
+				mode = 0;
+		}
+
+		break;
+
+	case 3:
+
+		if (as != AS_DUCK)
+		{
+			if (as == AS_STOP)
+				mode = 4;
+			else
+				mode = 0;
+		}
+
+		break;
+
+	case 4:
+
+		if (as != AS_STOP)
+		{
+			angle = lara_item->pos.y_rot;
+			turn = 0;
+
+			if (as == AS_TURN_L)
+				mode = 5;
+			else if (as == AS_TURN_R)
+				mode = 6;
+			else
+				mode = 0;
+		}
+
+		break;
+
+	case 5:
+
+		if (as == AS_TURN_L || as == AS_FASTTURN)
+		{
+			turn += short(lara_item->pos.y_rot - angle);
+			angle = lara_item->pos.y_rot;
+		}
+		else if (turn < -0x17000)
+			mode = 7;
+		else
+			mode = 0;
+
+		break;
+
+	case 6:
+
+		if (as == AS_TURN_R || as == AS_FASTTURN)
+		{
+			turn += short(lara_item->pos.y_rot - angle);
+			angle = lara_item->pos.y_rot;
+		}
+		else if (turn > 0x17000)
+			mode = 7;
+		else
+			mode = 0;
+
+		break;
+
+	case 7:
+
+		if (as != AS_STOP)
+		{
+			if (as == AS_COMPRESS)
+				mode = 8;
+			else
+				mode = 0;
+		}
+
+		break;
+
+	case 8:
+
+		if (lara_item->fallspeed <= 0)
+			break;
+
+		if (gun)
+			gun = lara.gun_type == LG_PISTOLS;
+
+		if (gun)
+		{
+			if (as == AS_FORWARDJUMP)
+				FinishLevelCheat = 1;
+			else if (as == AS_BACKJUMP)
+			{
+				Inv_AddItem(M16_ITEM);
+				Inv_AddItem(SHOTGUN_ITEM);
+				Inv_AddItem(UZI_ITEM);
+				Inv_AddItem(MAGNUM_ITEM);
+				Inv_AddItem(GUN_ITEM);
+				Inv_AddItem(ROCKET_GUN_ITEM);
+				Inv_AddItem(GRENADE_GUN_ITEM);
+				Inv_AddItem(HARPOON_ITEM);
+				lara.magnums.ammo = 1000;
+				lara.uzis.ammo = 1000;
+				lara.shotgun.ammo = 1000;
+				lara.harpoon.ammo = 1000;
+				lara.rocket.ammo = 1000;
+				lara.grenade.ammo = 1000;
+				lara.m16.ammo = 1000;
+
+				for (int i = 0; i < 50; i++)
+				{
+					Inv_AddItem(MEDI_ITEM);
+					Inv_AddItem(BIGMEDI_ITEM);
+					Inv_AddItem(FLARE_ITEM);
+				}
+
+				SoundEffect(SFX_LARA_HOLSTER, 0, SFX_ALWAYS);
+			}
+		}
+		else if (as == AS_FORWARDJUMP || as == AS_BACKJUMP)
+		{
+			ExplodingDeath(lara.item_number, -1, 1);
+			lara_item->hit_points = 0;
+			lara_item->flags |= IFL_INVISIBLE;
+		}
+																	//no break on purpose
+	default:
+		mode = 0;
+	}
+}
+
 void inject_smain(bool replace)
 {
 	INJECT(0x0048CBF0, S_LoadSettings, replace);
+	INJECT(0x0048C550, CheckCheatMode, replace);
 }

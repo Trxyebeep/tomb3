@@ -98,6 +98,7 @@
 #define dpPrimitiveType	VAR_(0x00634114, D3DPRIMITIVETYPE)
 #define BlackGouraudIndex	VAR_(0x004D38D4, long)
 #define bFixSkyColour	VAR_(0x004D38DC, bool)
+#define FinishLevelCheat	VAR_(0x006A1BD0, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)

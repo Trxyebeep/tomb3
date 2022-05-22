@@ -1719,7 +1719,7 @@ tomb3decomp progress.
 
 0x0048C150		GameMain
 0x0048C410		TitleSequence
-0x0048C550		CheckCheatMode
+0x0048C550	+	CheckCheatMode
 0x0048C8C0		S_SaveSettings
 0x0048CBF0	+	S_LoadSettings
 

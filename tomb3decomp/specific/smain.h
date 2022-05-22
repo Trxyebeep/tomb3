@@ -4,6 +4,7 @@
 void inject_smain(bool replace);
 
 bool S_LoadSettings();
+void CheckCheatMode();
 
 #ifdef RANDO_STUFF
 struct rando_level
