@@ -272,6 +272,7 @@
     <ClInclude Include="tomb3decomp\specific\picture.h" />
     <ClInclude Include="tomb3decomp\specific\smain.h" />
     <ClInclude Include="tomb3decomp\specific\specific.h" />
+    <ClInclude Include="tomb3decomp\specific\time.h" />
     <ClInclude Include="tomb3decomp\specific\transform.h" />
     <ClInclude Include="tomb3decomp\tomb3\framework.h" />
     <ClInclude Include="tomb3decomp\tomb3\pch.h" />
@@ -388,6 +389,7 @@
     <ClCompile Include="tomb3decomp\specific\picture.cpp" />
     <ClCompile Include="tomb3decomp\specific\smain.cpp" />
     <ClCompile Include="tomb3decomp\specific\specific.cpp" />
+    <ClCompile Include="tomb3decomp\specific\time.cpp" />
     <ClCompile Include="tomb3decomp\specific\transform.cpp" />
     <ClCompile Include="tomb3decomp\tomb3\dllmain.cpp" />
     <ClCompile Include="tomb3decomp\tomb3\pch.cpp">

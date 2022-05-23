@@ -99,6 +99,8 @@
 #define BlackGouraudIndex	VAR_(0x004D38D4, long)
 #define bFixSkyColour	VAR_(0x004D38DC, bool)
 #define FinishLevelCheat	VAR_(0x006A1BD0, long)
+#define dontFadePicture	VAR_(0x006A1B78, bool)
+#define pictureFading	VAR_(0x006A1B7C, bool)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -217,6 +219,8 @@
 #define lara_last_points	ARRAY_(0x004C52D0, uchar, [14])
 #define lara_line_counts	ARRAY_(0x004C52E0, uchar, [6])
 #define ExpRings	ARRAY_(0x006D5D20, EXPLOSION_RING, [6])
+#define OldPicTexIndices	ARRAY_(0x006A1B80, long, [5])
+#define CurPicTexIndices	ARRAY_(0x006A1B98, long, [5])
 
 /*constants*/
 #define NO_HEIGHT -32512
