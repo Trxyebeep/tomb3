@@ -13,6 +13,7 @@
 #include "sound.h"
 #include "effect2.h"
 #include "../specific/game.h"
+#include "control.h"
 
 void BigGunInitialise(short item_number)
 {
@@ -217,6 +218,139 @@ static void FireBigGun(ITEM_INFO* item)
 	phd_PopMatrix();
 }
 
+long BigGunControl(COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+	BIGGUNINFO* gun;
+	static long GunRotYAdd = 0;
+
+	item = &items[lara.skidoo];
+	gun = (BIGGUNINFO*)item->data;
+
+	if (gun->Flags & 1)
+	{
+		if (lara_item->hit_points <= 0 || input & IN_ROLL)
+			gun->Flags = 2;
+		else if (input & IN_ACTION && !gun->FireCount)
+		{
+			FireBigGun(item);
+			gun->FireCount = 26;
+		}
+		else
+		{
+			if (input & IN_LEFT)
+			{
+				if (GunRotYAdd > 0)
+					GunRotYAdd >>= 1;
+
+				GunRotYAdd -= 8;
+
+				if (GunRotYAdd < -64)
+					GunRotYAdd = -64;
+
+				if (!(wibble & 7) && ABS(gun->RotY) < 544)
+					SoundEffect(SFX_LARA_UZI_STOP, &item->pos, SFX_DEFAULT);
+			}
+			else if (input & IN_RIGHT)
+			{
+				if (GunRotYAdd < 0)
+					GunRotYAdd >>= 1;
+
+				GunRotYAdd += 8;
+
+				if (GunRotYAdd > 64)
+					GunRotYAdd = 64;
+
+				if (!(wibble & 7) && ABS(gun->RotY) < 544)
+					SoundEffect(SFX_LARA_UZI_STOP, &item->pos, SFX_DEFAULT);
+			}
+			else
+			{
+				GunRotYAdd -= GunRotYAdd >> 2;
+
+				if (ABS(GunRotYAdd) < 8)
+					GunRotYAdd = 0;
+			}
+
+			gun->RotY += short(GunRotYAdd >> 2);
+
+			if (gun->RotY < -544)
+			{
+				gun->RotY = -544;
+				GunRotYAdd = 0;
+			}
+			else	if (gun->RotY > 544)
+			{
+				gun->RotY = 544;
+				GunRotYAdd = 0;
+			}
+
+
+			if (input & IN_FORWARD && gun->RotX < 59)
+				gun->RotX++;
+			else if (input & IN_BACK && gun->RotX)
+				gun->RotX--;
+		}
+	}
+
+	if (gun->Flags & 2)
+	{
+		if (gun->RotX < 30)
+			gun->RotX++;
+		else if (gun->RotX > 30)
+			gun->RotX--;
+		else
+		{
+			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 1;
+			lara_item->frame_number = anims[objects[BIGGUN].anim_index + 1].frame_base;
+			lara_item->current_anim_state = 1;
+			lara_item->goal_anim_state = 1;
+			gun->Flags = 4;
+		}
+	}
+
+	switch (lara_item->current_anim_state)
+	{
+	case 0:
+	case 1:
+		AnimateItem(lara_item);
+		item->anim_number = lara_item->anim_number + objects[BIGGUN].anim_index - objects[VEHICLE_ANIM].anim_index;
+		item->frame_number = lara_item->frame_number + anims[item->anim_number].frame_base - anims[lara_item->anim_number].frame_base;
+
+		if (gun->Flags & 4 && lara_item->frame_number == anims[lara_item->anim_number].frame_end)
+		{
+			lara_item->anim_number = ANIM_STOP;
+			lara_item->frame_number = anims[ANIM_STOP].frame_base;
+			lara_item->current_anim_state = AS_STOP;
+			lara_item->goal_anim_state = AS_STOP;
+			lara.skidoo = NO_ITEM;
+			lara.gun_status = LG_UNARMED;
+		}
+
+		break;
+
+	case 2:
+		lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 2;
+		lara_item->frame_number = gun->RotX + anims[objects[BIGGUN].anim_index + 2].frame_base;
+		item->anim_number = lara_item->anim_number + objects[BIGGUN].anim_index - objects[VEHICLE_ANIM].anim_index;
+		item->frame_number = lara_item->frame_number + anims[item->anim_number].frame_base - anims[lara_item->anim_number].frame_base;
+
+		if (gun->FireCount)
+			gun->FireCount--;
+
+		gun->Flags = 1;
+		break;
+	}
+
+	item->pos.y_rot = gun->StartRotY + 45 * gun->RotY;
+	lara_item->pos.y_rot = item->pos.y_rot;
+	coll->enable_spaz = 0;
+	coll->enable_baddie_push = 0;
+	LaraBaddieCollision(lara_item, coll);
+	camera.target_elevation = -2730;
+	return 1;
+}
+
 void inject_biggun(bool replace)
 {
 	INJECT(0x00410D00, BigGunInitialise, replace);
@@ -224,4 +358,5 @@ void inject_biggun(bool replace)
 	INJECT(0x00410D50, BigGunCollision, replace);
 	INJECT(0x00410EC0, BigGunDraw, replace);
 	INJECT(0x00410AF0, FireBigGun, replace);
+	INJECT(0x00411100, BigGunControl, replace);
 }
