@@ -490,6 +490,151 @@ void HWR_DrawPolyList(long num, long* pSort)
 	}
 }
 
+void HWR_DrawPolyListBF(long num, long* pSort)
+{
+	D3DTLVERTEX* vtx;
+	D3DTLVERTEX* URvtx;
+	D3DTLVERTEX* fanStart;
+	short* pInfo;
+	short nVtx, nURVtx, nDrawType1, TPage1, nDrawType2, TPage2;
+
+	dpPrimitiveType = D3DPT_TRIANGLELIST;
+
+	if (!num)
+		return;
+
+	nURVtx = 0;
+	pInfo = (short*)pSort[0];
+	nDrawType1 = pInfo[0];
+	TPage1 = pInfo[1];
+
+	for (int i = 0; i < num; i++)
+	{
+		pInfo = (short*)pSort[0];
+		nDrawType2 = pInfo[0];
+		TPage2 = pInfo[1];
+		nVtx = pInfo[2];
+		vtx = *((D3DTLVERTEX**)(pInfo + 3));
+
+		if (nDrawType1 != nDrawType2 || TPage1 != TPage2 || nURVtx > 256)
+		{
+			DrawRoutine(nURVtx, UnRollBuffer, nDrawType1, TPage1);
+			nDrawType1 = nDrawType2;
+			TPage1 = TPage2;
+			nURVtx = 0;
+		}
+
+		if (nDrawType1 == DT_LINE_SOLID)
+		{
+			URvtx = &UnRollBuffer[nURVtx];
+			URvtx->sx = vtx->sx;
+			URvtx->sy = vtx->sy;
+			URvtx->sz = vtx->sz;
+			URvtx->rhw = vtx->rhw;
+			URvtx->tu = vtx->tu;
+			URvtx->tv = vtx->tv;
+			URvtx->color = vtx->color;
+			URvtx->specular = vtx->specular;
+			nURVtx++;
+			vtx++;
+
+			URvtx = &UnRollBuffer[nURVtx];
+			URvtx->sx = vtx->sx;
+			URvtx->sy = vtx->sy;
+			URvtx->sz = vtx->sz;
+			URvtx->rhw = vtx->rhw;
+			URvtx->tu = vtx->tu;
+			URvtx->tv = vtx->tv;
+			URvtx->color = vtx->color;
+			URvtx->specular = vtx->specular;
+			nURVtx++;
+		}
+		else
+		{
+			fanStart = vtx;
+
+			URvtx = &UnRollBuffer[nURVtx];
+			URvtx->sx = vtx->sx;
+			URvtx->sy = vtx->sy;
+			URvtx->sz = vtx->sz;
+			URvtx->rhw = vtx->rhw;
+			URvtx->tu = vtx->tu;
+			URvtx->tv = vtx->tv;
+			URvtx->color = vtx->color;
+			URvtx->specular = vtx->specular;
+			nURVtx++;
+			vtx++;
+
+			URvtx = &UnRollBuffer[nURVtx];
+			URvtx->sx = vtx->sx;
+			URvtx->sy = vtx->sy;
+			URvtx->sz = vtx->sz;
+			URvtx->rhw = vtx->rhw;
+			URvtx->tu = vtx->tu;
+			URvtx->tv = vtx->tv;
+			URvtx->color = vtx->color;
+			URvtx->specular = vtx->specular;
+			nURVtx++;
+			vtx++;
+
+			URvtx = &UnRollBuffer[nURVtx];
+			URvtx->sx = vtx->sx;
+			URvtx->sy = vtx->sy;
+			URvtx->sz = vtx->sz;
+			URvtx->rhw = vtx->rhw;
+			URvtx->tu = vtx->tu;
+			URvtx->tv = vtx->tv;
+			URvtx->color = vtx->color;
+			URvtx->specular = vtx->specular;
+			nURVtx++;
+
+			nVtx -= 3;
+
+			for (int i = 0; i < nVtx; i++)
+			{
+				URvtx = &UnRollBuffer[nURVtx];
+				URvtx->sx = fanStart->sx;
+				URvtx->sy = fanStart->sy;
+				URvtx->sz = fanStart->sz;
+				URvtx->rhw = fanStart->rhw;
+				URvtx->tu = fanStart->tu;
+				URvtx->tv = fanStart->tv;
+				URvtx->color = fanStart->color;
+				URvtx->specular = fanStart->specular;
+				nURVtx++;
+
+				URvtx = &UnRollBuffer[nURVtx];
+				URvtx->sx = vtx->sx;
+				URvtx->sy = vtx->sy;
+				URvtx->sz = vtx->sz;
+				URvtx->rhw = vtx->rhw;
+				URvtx->tu = vtx->tu;
+				URvtx->tv = vtx->tv;
+				URvtx->color = vtx->color;
+				URvtx->specular = vtx->specular;
+				nURVtx++;
+				vtx++;
+
+				URvtx = &UnRollBuffer[nURVtx];
+				URvtx->sx = vtx->sx;
+				URvtx->sy = vtx->sy;
+				URvtx->sz = vtx->sz;
+				URvtx->rhw = vtx->rhw;
+				URvtx->tu = vtx->tu;
+				URvtx->tv = vtx->tv;
+				URvtx->color = vtx->color;
+				URvtx->specular = vtx->specular;
+				nURVtx++;
+			}
+		}
+
+		pSort += 3;
+	}
+
+	if (nURVtx > 0)
+		DrawRoutine(nURVtx, UnRollBuffer, nDrawType1, TPage1);
+}
+
 void inject_hwrender(bool replace)
 {
 	INJECT(0x00484E20, HWR_EnableZBuffer, replace);
@@ -509,4 +654,5 @@ void inject_hwrender(bool replace)
 	INJECT(0x00484740, HWR_InitState, replace);
 	INJECT(0x00485A90, HWR_Init, replace);
 	INJECT(0x004854C0, HWR_DrawPolyList, replace);
+	INJECT(0x004855C0, HWR_DrawPolyListBF, replace);
 }
