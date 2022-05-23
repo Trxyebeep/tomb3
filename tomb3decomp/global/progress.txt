@@ -133,7 +133,7 @@ tomb3decomp progress.
 		game/biggun.pp
 
 0x00410AF0		FireBigGun
-0x00410D00		BigGunInitialise
+0x00410D00	+	BigGunInitialise
 0x00410D50		BigGunCollision
 0x00410E60		CanUseGun
 0x00410EC0		BigGunDraw

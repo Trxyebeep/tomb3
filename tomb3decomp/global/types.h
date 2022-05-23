@@ -1345,4 +1345,13 @@ struct EXPLOSION_RING
 	long z;
 	EXPLOSION_VERTS verts[16];
 };
+
+struct BIGGUNINFO
+{
+	short RotX;
+	short RotY;
+	short StartRotY;
+	char Flags;
+	char FireCount;
+};
 #pragma pack(pop)
