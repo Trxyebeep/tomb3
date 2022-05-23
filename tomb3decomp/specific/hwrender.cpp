@@ -431,6 +431,65 @@ bool HWR_Init()
 	return 1;
 }
 
+void HWR_DrawPolyList(long num, long* pSort)
+{
+	D3DTLVERTEX* vtx;
+	short* pInfo;
+	long polyType;
+	short nVtx, nDrawType, TPage;
+
+	dpPrimitiveType = D3DPT_TRIANGLEFAN;
+
+	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+	{
+		for (int i = 0; i < num; i++)
+		{
+			pInfo = (short*)pSort[0];
+			nDrawType = pInfo[0];
+			TPage = pInfo[1];
+			nVtx = pInfo[2];
+			vtx = *((D3DTLVERTEX**)(pInfo + 3));
+			DrawRoutine(nVtx, vtx, nDrawType, TPage);
+			pSort += 3;
+		}
+	}
+	else
+	{
+		for (int i = 0; i < num; i++)
+		{
+			pInfo = (short*)pSort[0];
+			polyType = pSort[2];
+			nDrawType = pInfo[0];
+			TPage = pInfo[1];
+			nVtx = pInfo[2];
+			vtx = *((D3DTLVERTEX**)(pInfo + 3));
+
+			switch (polyType)
+			{
+			case 1:
+			case 2:
+			case 5:
+				HWR_EnablePerspCorrect(0);
+				HWR_EnableFilter(0);
+				break;
+
+			case 3:
+				HWR_EnablePerspCorrect(1);
+				HWR_EnableFilter(1);
+				break;
+
+			default:
+				HWR_EnablePerspCorrect(1);
+				HWR_EnableFilter(0);
+				break;
+			}
+
+			DrawRoutine(nVtx, vtx, nDrawType, TPage);
+			pSort += 3;
+		}
+	}
+}
+
 void inject_hwrender(bool replace)
 {
 	INJECT(0x00484E20, HWR_EnableZBuffer, replace);
@@ -449,4 +508,5 @@ void inject_hwrender(bool replace)
 	INJECT(0x00485350, HWR_DrawRoutinesNoAlpha, replace);
 	INJECT(0x00484740, HWR_InitState, replace);
 	INJECT(0x00485A90, HWR_Init, replace);
+	INJECT(0x004854C0, HWR_DrawPolyList, replace);
 }

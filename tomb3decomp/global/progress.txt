@@ -1617,7 +1617,7 @@ tomb3decomp progress.
 0x00484F10	+	HWR_DrawRoutines
 0x00485130	+	HWR_DrawRoutinesStippledAlpha
 0x00485350	+	HWR_DrawRoutinesNoAlpha
-0x004854C0		HWR_DrawPolyList
+0x004854C0	+	HWR_DrawPolyList
 0x004855C0		HWR_DrawPolyListBF
 0x00485900		HWR_LoadTexturePages
 0x004859C0		HWR_FreeTexturePages
