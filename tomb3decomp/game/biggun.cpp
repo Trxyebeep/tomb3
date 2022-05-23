@@ -8,6 +8,11 @@
 #include "draw.h"
 #include "../3dsystem/3d_gen.h"
 #include "../specific/output.h"
+#include "items.h"
+#include "sphere.h"
+#include "sound.h"
+#include "effect2.h"
+#include "../specific/game.h"
 
 void BigGunInitialise(short item_number)
 {
@@ -141,10 +146,82 @@ void BigGunDraw(ITEM_INFO* item)
 	phd_PopMatrix();
 }
 
+static void FireBigGun(ITEM_INFO* item)
+{
+	ITEM_INFO* rocket;
+	BIGGUNINFO* gun;
+	PHD_VECTOR pos;
+	long x, y, z, xv, yv, zv;
+	short item_number;
+
+	item_number = CreateItem();
+
+	if (item_number == NO_ITEM)
+		return;
+
+	gun = (BIGGUNINFO*)item->data;
+	rocket = &items[item_number];
+	rocket->object_number = ROCKET;
+	rocket->room_number = lara_item->room_number;
+
+	pos.x = 0;
+	pos.y = 0;
+	pos.z = 256;
+	GetJointAbsPosition(item, &pos, 2);
+
+	rocket->pos.x_pos = pos.x;
+	rocket->pos.y_pos = pos.y;
+	rocket->pos.z_pos = pos.z;
+
+	InitialiseItem(item_number);
+	rocket->pos.x_rot = 182 * (32 - gun->RotX);
+	rocket->pos.y_rot = item->pos.y_rot;
+	rocket->pos.z_rot = 0;
+	rocket->speed = 16;
+	rocket->item_flags[0] = 1;
+
+	AddActiveItem(item_number);
+	SoundEffect(SFX_BAZOOKA_FIRE, &rocket->pos, SFX_DEFAULT);
+	SoundEffect(SFX_EXPLOSION1, &rocket->pos, 0x2000000 | SFX_SETPITCH);
+	SmokeCountL = 32;
+	SmokeWeapon = LG_ROCKET;
+
+	for (int i = 0; i < 5; i++)
+		TriggerGunSmoke(pos.x, pos.y, pos.z, 0, 0, 0, 1, SmokeWeapon, SmokeCountL);
+
+	phd_PushUnitMatrix();
+	phd_mxptr[M03] = 0;
+	phd_mxptr[M13] = 0;
+	phd_mxptr[M23] = 0;
+	phd_RotYXZ(rocket->pos.y_rot, rocket->pos.x_rot, rocket->pos.z_rot);
+
+	phd_PushMatrix();
+	phd_TranslateRel(0, 0, -128);
+	x = phd_mxptr[M03] >> 14;
+	y = phd_mxptr[M13] >> 14;
+	z = phd_mxptr[M23] >> 14;
+	phd_PopMatrix();
+
+	for (int i = 0; i < 8; i++)
+	{
+		phd_PushMatrix();
+		phd_TranslateRel(0, 0, -(GetRandomControl() & 0x7FF));
+		xv = phd_mxptr[M03] >> W2V_SHIFT;
+		yv = phd_mxptr[M13] >> W2V_SHIFT;
+		zv = phd_mxptr[M23] >> W2V_SHIFT;
+		phd_PopMatrix();
+
+		TriggerRocketFlame(x, y, z, xv - x, yv - y, zv - z, item_number);
+	}
+
+	phd_PopMatrix();
+}
+
 void inject_biggun(bool replace)
 {
 	INJECT(0x00410D00, BigGunInitialise, replace);
 	INJECT(0x00410E60, CanUseGun, replace);
 	INJECT(0x00410D50, BigGunCollision, replace);
 	INJECT(0x00410EC0, BigGunDraw, replace);
+	INJECT(0x00410AF0, FireBigGun, replace);
 }
