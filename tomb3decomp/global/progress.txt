@@ -430,7 +430,7 @@ tomb3decomp progress.
 0x0042D9A0	+	KillEverything
 0x0042DAB0		TriggerBubble
 0x0042DBA0		TriggerExplosionBubble
-0x0042DCF0		TriggerBreath
+0x0042DCF0	+	TriggerBreath
 0x0042DE00	+	TriggerDynamic
 0x0042DE60	+	ClearDynamics
 0x0042DE80		ControlSmokeEmitter
@@ -448,7 +448,7 @@ tomb3decomp progress.
 0x0042E460		DoLotsOfBloodD
 0x0042E4F0		CreateBubble
 0x0042E5C0		LaraBubbles
-0x0042E630		LaraBreath
+0x0042E630	+	LaraBreath
 0x0042E750		ControlBubble1
 0x0042E8C0		Splash
 0x0042E9F0		WadeSplash
