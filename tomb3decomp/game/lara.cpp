@@ -196,6 +196,8 @@ long TestLaraSlide(ITEM_INFO* item, COLL_INFO* coll)
 			item->goal_anim_state = AS_SLIDE;
 			item->current_anim_state = AS_SLIDE;
 			item->pos.y_rot = ang;
+			lara.move_angle = ang;
+			old_ang = ang;
 		}
 	}
 	else
@@ -207,11 +209,11 @@ long TestLaraSlide(ITEM_INFO* item, COLL_INFO* coll)
 			item->goal_anim_state = AS_SLIDEBACK;
 			item->current_anim_state = AS_SLIDEBACK;
 			item->pos.y_rot = ang - 32768;
+			lara.move_angle = ang;
+			old_ang = ang;
 		}
 	}
 
-	lara.move_angle = ang;
-	old_ang = ang;
 	return 1;
 }
 
