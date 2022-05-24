@@ -205,7 +205,7 @@ tomb3decomp progress.
 0x004166D0		CreatureVault
 0x00416840		CreatureKill
 0x004169C0		AlertAllGuards
-0x00416A30		AlertNearbyGuards
+0x00416A30	+	AlertNearbyGuards
 0x00416AC0		AIGuard
 0x00416B60		GetAITarget
 0x00417110		SameZone

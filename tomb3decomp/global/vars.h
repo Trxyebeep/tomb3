@@ -106,6 +106,7 @@
 #define next_item_active	VAR_(0x006D62AA, short)
 #define next_fx_active	VAR_(0x006D8768, short)
 #define KillEverythingFlag	VAR_(0x006261AC, long)
+#define baddie_slots	VAR_(0x006D58B0, CREATURE_INFO*)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
