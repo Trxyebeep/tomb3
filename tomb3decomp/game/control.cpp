@@ -542,6 +542,90 @@ FLOOR_INFO* GetFloor(long x, long y, long z, short* room_number)
 	return floor;
 }
 
+long GetWaterHeight(long x, long y, long z, short room_number)
+{
+	ROOM_INFO* r;
+	FLOOR_INFO* floor;
+	long x_floor, y_floor;
+	short data;
+
+	r = &room[room_number];
+
+	do
+	{
+		x_floor = (z - r->z) >> WALL_SHIFT;
+		y_floor = (x - r->x) >> WALL_SHIFT;
+
+		if (x_floor <= 0)
+		{
+			x_floor = 0;
+
+			if (y_floor < 1)
+				y_floor = 1;
+			else if (y_floor > r->y_size - 2)
+				y_floor = r->y_size - 2;
+		}
+		else if (x_floor >= r->x_size - 1)
+		{
+			x_floor = r->x_size - 1;
+
+			if (y_floor < 1)
+				y_floor = 1;
+			else if (y_floor > r->y_size - 2)
+				y_floor = r->y_size - 2;
+		}
+		else if (y_floor < 0)
+			y_floor = 0;
+		else if (y_floor >= r->y_size)
+			y_floor = r->y_size - 1;
+
+		floor = &r->floor[x_floor + y_floor * r->x_size];
+		data = GetDoor(floor);
+
+		if (data != NO_ROOM)
+		{
+			room_number = data;
+			r = &room[data];
+		}
+
+	} while (data != NO_ROOM);
+
+	if (r->flags & (ROOM_UNDERWATER | ROOM_SWAMP))
+	{
+		while (floor->sky_room != NO_ROOM)
+		{
+			if (CheckNoColCeilingTriangle(floor, x, z) == 1)
+				break;
+
+			r = &room[floor->sky_room];
+
+			if (!(r->flags & (ROOM_UNDERWATER | ROOM_SWAMP)))
+				return r->minfloor;
+
+			floor = &r->floor[((z - r->z) >> WALL_SHIFT) + r->x_size * ((x - r->x) >> WALL_SHIFT)];
+		}
+
+		return r->maxceiling;
+	}
+	else
+	{
+		while (floor->pit_room != NO_ROOM)
+		{
+			if (CheckNoColFloorTriangle(floor, x, z) == 1)
+				break;
+
+			r = &room[floor->pit_room];
+
+			if (r->flags & (ROOM_UNDERWATER | ROOM_SWAMP))
+				return r->maxceiling;
+
+			floor = &r->floor[((z - r->z) >> WALL_SHIFT) + r->x_size * ((x - r->x) >> WALL_SHIFT)];
+		}
+	}
+
+	return NO_HEIGHT;
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, replace);
@@ -549,4 +633,5 @@ void inject_control(bool replace)
 	INJECT(0x00420970, GetChange, replace);
 	INJECT(0x00420A20, TranslateItem, replace);
 	INJECT(0x00420A80, GetFloor, replace);
+	INJECT(0x00420C70, GetWaterHeight, replace);
 }
