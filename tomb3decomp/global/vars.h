@@ -103,6 +103,9 @@
 #define pictureFading	VAR_(0x006A1B7C, bool)
 #define democount	VAR_(0x006E28C4, long)
 #define demoptr	VAR_(0x006E28C0, ulong*)
+#define next_item_active	VAR_(0x006D62AA, short)
+#define next_fx_active	VAR_(0x006D8768, short)
+#define KillEverythingFlag	VAR_(0x006261AC, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)

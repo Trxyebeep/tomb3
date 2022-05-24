@@ -427,12 +427,12 @@ tomb3decomp progress.
 0x0042D640		TriggerStaticFlame
 0x0042D750		TriggerDartSmoke
 0x0042D990		KillAllCurrentItems
-0x0042D9A0		KillEverything
+0x0042D9A0	+	KillEverything
 0x0042DAB0		TriggerBubble
 0x0042DBA0		TriggerExplosionBubble
 0x0042DCF0		TriggerBreath
 0x0042DE00	+	TriggerDynamic
-0x0042DE60		ClearDynamics
+0x0042DE60	+	ClearDynamics
 0x0042DE80		ControlSmokeEmitter
 0x0042E0C0		ControlColouredLights
 

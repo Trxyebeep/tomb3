@@ -4,6 +4,8 @@
 void inject_effect2(bool replace);
 
 void TriggerDynamic(long x, long y, long z, long falloff, long r, long g, long b);
+void ClearDynamics();
+void KillEverything();
 
 #define TriggerWaterfallMist	( (void(__cdecl*)(long, long, long, long)) 0x0042D1F0 )
 #define TriggerGunSmoke	( (void(__cdecl*)(long, long, long, long, long, long, long, long, long)) 0x0042B4F0 )
