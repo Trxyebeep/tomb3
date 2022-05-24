@@ -64,6 +64,41 @@ enum mood_type
 	STALK_MOOD,
 };
 
+enum title_options
+{
+	STARTGAME = 0,
+	STARTSAVEDGAME = 0x100,
+	STARTCINE = 0x200,
+	STARTFMV = 0x300,
+	STARTDEMO = 0x400,
+	EXIT_TO_TITLE = 0x500,
+	LEVELCOMPLETE = 0x600,
+	EXITGAME = 0x700,
+	EXIT_TO_OPTION = 0x800,
+	TITLE_DESELECT = 0x900,
+	DOSTORYSOFAR = 0xA00,
+	DOLEVELSELECT = 0xB00
+};
+
+enum game_mode
+{
+	GAMEMODE_NOT_IN_GAME,
+	GAMEMODE_IN_GAME,
+	GAMEMODE_IN_DEMO,
+	GAMEMODE_IN_CUTSCENE
+};
+
+enum command_types
+{
+	COMMAND_NULL,
+	COMMAND_MOVE_ORIGIN,
+	COMMAND_JUMP_VELOCITY,
+	COMMAND_ATTACK_READY,
+	COMMAND_DEACTIVATE,
+	COMMAND_SOUND_FX,
+	COMMAND_EFFECT
+};
+
 enum input_buttons
 {
 	IN_NONE = 0x0,
@@ -311,6 +346,13 @@ enum sfx_options
 	SFX_WATER = 1,
 	SFX_ALWAYS = 2,
 	SFX_SETPITCH = 4
+};
+
+enum sfx_types
+{
+	SFX_LANDANDWATER,
+	SFX_LANDONLY = 0x4000,
+	SFX_WATERONLY = 0x8000
 };
 
 /*structs*/
@@ -1353,5 +1395,20 @@ struct BIGGUNINFO
 	short StartRotY;
 	char Flags;
 	char FireCount;
+};
+
+struct CHANGE_STRUCT
+{
+	short goal_anim_state;
+	short number_ranges;
+	short range_index;
+};
+
+struct RANGE_STRUCT
+{
+	short start_frame;
+	short end_frame;
+	short link_anim_num;
+	short link_frame_num;
 };
 #pragma pack(pop)

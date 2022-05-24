@@ -16,6 +16,7 @@
 #include "sound.h"
 #include "camera.h"
 #include "effects.h"
+#include "../3dsystem/phd_math.h"
 
 long ControlPhase(long nframes, long demo_mode)
 {
@@ -42,7 +43,7 @@ long ControlPhase(long nframes, long demo_mode)
 		S_UpdateInput();
 
 		if (reset_flag)
-			return 0x500;
+			return EXIT_TO_TITLE;
 
 		if (demo_mode)
 		{
@@ -66,7 +67,7 @@ long ControlPhase(long nframes, long demo_mode)
 				noinput_count++;
 
 				if (noinput_count > gameflow.noinput_time)
-					return 0x400;
+					return STARTDEMO;
 			}
 		}
 
@@ -76,7 +77,7 @@ long ControlPhase(long nframes, long demo_mode)
 				return gameflow.ondeath_demo_mode;
 
 			if (CurrentLevel == LV_GYM)
-				return 0x500;
+				return EXIT_TO_TITLE;
 
 			if (gameflow.ondeath_ingame)
 				return  gameflow.ondeath_ingame;
@@ -255,7 +256,208 @@ long ControlPhase(long nframes, long demo_mode)
 	return 0;
 }
 
+void AnimateItem(ITEM_INFO* item)
+{
+	ANIM_STRUCT* anim;
+	short* command;
+	long speed;
+	ushort type, num;
+
+	anim = &anims[item->anim_number];
+	item->touch_bits = 0;
+	item->hit_status = 0;
+	item->frame_number++;
+
+	if (anim->number_changes > 0 && GetChange(item, anim))
+	{
+		anim = &anims[item->anim_number];
+		item->current_anim_state = anim->current_anim_state;
+
+		if (item->required_anim_state == item->current_anim_state)
+			item->required_anim_state = 0;
+	}
+
+	if (item->frame_number > anim->frame_end)
+	{
+		if (anim->number_commands > 0)
+		{
+			command = &commands[anim->command_index];
+
+			for (int i = 0; i < anim->number_commands; i++)
+			{
+				switch (*command++)
+				{
+				case COMMAND_MOVE_ORIGIN:
+					TranslateItem(item, *command, command[1], command[2]);
+					command += 3;
+					break;
+
+				case COMMAND_JUMP_VELOCITY:
+					item->fallspeed = *command++;
+					item->speed = *command++;
+					item->gravity_status = 1;
+					break;
+
+				case COMMAND_DEACTIVATE:
+
+					if (objects[item->object_number].intelligent)
+						item->after_death = 1;
+					else
+						item->after_death = 64;
+
+					item->status = ITEM_DEACTIVATED;
+					break;
+
+				case COMMAND_SOUND_FX:
+				case COMMAND_EFFECT:
+					command += 2;
+					break;
+				}
+			}
+		}
+
+		item->anim_number = anim->jump_anim_num;
+		item->frame_number = anim->jump_frame_num;
+		anim = &anims[item->anim_number];
+
+		if (item->current_anim_state != anim->current_anim_state)
+		{
+			item->current_anim_state = anim->current_anim_state;
+			item->goal_anim_state = anim->current_anim_state;
+		}
+
+		if (item->required_anim_state == item->current_anim_state)
+			item->required_anim_state = 0;
+	}
+
+	if (anim->number_commands > 0)
+	{
+		command = &commands[anim->command_index];
+
+		for (int i = 0; i < anim->number_commands; i++)
+		{
+			switch (*command++)
+			{
+			case COMMAND_MOVE_ORIGIN:
+				command += 3;
+				break;
+
+			case COMMAND_JUMP_VELOCITY:
+				command += 2;
+				break;
+
+			case COMMAND_SOUND_FX:
+
+				if (item->frame_number == *command)
+				{
+					num = command[1] & 0x3FFF;
+					type = command[1] & 0xC000;
+
+					if (objects[item->object_number].water_creature)
+						SoundEffect(num, &item->pos, SFX_WATER);
+					else if (item->room_number == NO_ROOM)
+					{
+						item->pos.x_pos = lara_item->pos.x_pos;
+						item->pos.y_pos = lara_item->pos.y_pos - 762;
+						item->pos.z_pos = lara_item->pos.z_pos;
+
+						if (item->object_number == HARPOON_GUN)
+							SoundEffect(num, &item->pos, SFX_ALWAYS);
+						else
+							SoundEffect(num, &item->pos, SFX_DEFAULT);
+					}
+					else if (room[item->room_number].flags & ROOM_UNDERWATER)
+					{
+						if (type == SFX_LANDANDWATER || type == SFX_WATERONLY)
+							SoundEffect(num, &item->pos, SFX_DEFAULT);
+					}
+					else if (type == SFX_LANDANDWATER || type == SFX_LANDONLY)
+						SoundEffect(num, &item->pos, SFX_DEFAULT);
+				}
+
+				command += 2;
+				break;
+
+			case COMMAND_EFFECT:
+
+				if (item->frame_number == *command)
+				{
+					FXType = command[1] & 0xC000;
+					num = command[1] & 0x3FFF;
+					effect_routines[num](item);
+				}
+				
+				command += 2;
+				break;
+			}
+		}
+	}
+
+	if (item->gravity_status)
+	{
+		item->fallspeed += item->fallspeed >= 128 ? 1 : 6;
+		item->pos.y_pos += item->fallspeed;
+	}
+	else
+	{
+		speed = anim->velocity;
+
+		if (anim->acceleration)
+			speed += anim->acceleration * (item->frame_number - anim->frame_base);
+
+		item->speed = short(speed >> 16);
+	}
+
+	item->pos.x_pos += (item->speed * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+	item->pos.z_pos += (item->speed * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+}
+
+long GetChange(ITEM_INFO* item, ANIM_STRUCT* anim)
+{
+	CHANGE_STRUCT* change;
+	RANGE_STRUCT* range;
+
+	if (item->current_anim_state == item->goal_anim_state)
+		return 0;
+
+	change = &changes[anim->change_index];
+
+	for (int i = 0; i < anim->number_changes; i++, change++)
+	{
+		if (change->goal_anim_state == item->goal_anim_state && change->number_ranges > 0)
+		{
+			range = &ranges[change->range_index];
+
+			for (int j = 0; j < change->number_ranges; j++, range++)
+			{
+				if (item->frame_number >= range->start_frame && item->frame_number <= range->end_frame)
+				{
+					item->anim_number = range->link_anim_num;
+					item->frame_number = range->link_frame_num;
+					return 1;
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+void TranslateItem(ITEM_INFO* item, long x, long y, long z)
+{
+	long c, s;
+
+	c = phd_cos(item->pos.y_rot);
+	s = phd_sin(item->pos.y_rot);
+	item->pos.x_pos += (z * s + x * c) >> W2V_SHIFT;
+	item->pos.y_pos += y;
+	item->pos.z_pos += (z * c - x * s) >> W2V_SHIFT;
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, replace);
+	INJECT(0x00420590, AnimateItem, replace);
+	INJECT(0x00420970, GetChange, replace);
+	INJECT(0x00420A20, TranslateItem, replace);
 }

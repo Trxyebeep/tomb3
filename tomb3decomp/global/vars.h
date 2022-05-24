@@ -11,6 +11,9 @@
 #define trigger_index	VAR_(0x006E29A8, short*)
 #define lara	VAR_(0x006D61A0, LARA_INFO)
 #define anims	VAR_(0x006E2074, ANIM_STRUCT*)
+#define commands	VAR_(0x006E2208, short*)
+#define changes	VAR_(0x006E287C, CHANGE_STRUCT*)
+#define ranges	VAR_(0x006E2204, RANGE_STRUCT*)
 #define input	VAR_(0x0069FDF0, long)
 #define room	VAR_(0x006E2890, ROOM_INFO*)
 #define camera	VAR_(0x006E3040, CAMERA_INFO)
@@ -240,3 +243,4 @@
 #define NO_ITEM	-1
 #define W2V_SHIFT	14
 #define MAX_TLVERTICES	0x2400
+#define NO_ROOM	255

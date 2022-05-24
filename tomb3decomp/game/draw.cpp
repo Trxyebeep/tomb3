@@ -909,7 +909,7 @@ void DrawLaraInt(ITEM_INFO* item, short* frame1, short* frame2, long frac, long 
 
 	if (!clip)
 	{
-		if (GnGameMode == 3)
+		if (GnGameMode == GAMEMODE_IN_CUTSCENE)
 		{
 			phd_PopMatrix();
 			return;
@@ -1334,7 +1334,7 @@ void DrawLara(ITEM_INFO* item)
 
 	if (!clip)
 	{
-		if (GnGameMode == 3)
+		if (GnGameMode == GAMEMODE_IN_CUTSCENE)
 		{
 			phd_PopMatrix();
 			return;
@@ -1437,7 +1437,7 @@ void DrawLara(ITEM_INFO* item)
 		gar_RotYXZsuperpack(&rot, 0);
 		PutPolyLara(item, HAND_R, clip);
 
-		if (GnGameMode == 3 && lara.right_arm.flash_gun)
+		if (GnGameMode == GAMEMODE_IN_CUTSCENE && lara.right_arm.flash_gun)
 			memcpy(mx, phd_mxptr, sizeof(mx));
 
 		phd_PopMatrix();
@@ -1470,7 +1470,7 @@ void DrawLara(ITEM_INFO* item)
 			DrawGunFlash(LG_FLARE, clip);
 		}
 
-		if (GnGameMode == 3)
+		if (GnGameMode == GAMEMODE_IN_CUTSCENE)
 		{
 			if (lara.left_arm.flash_gun)
 				DrawGunFlash(LG_PISTOLS, clip);
@@ -1741,7 +1741,7 @@ void CalculateObjectLighting(ITEM_INFO* item, short* frame)
 
 	if (item->shade >= 0)
 		S_CalculateStaticMeshLight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->shade & 0x7FFF, item->shadeB, &room[item->room_number]);
-	else if (GnGameMode == 3)
+	else if (GnGameMode == GAMEMODE_IN_CUTSCENE)
 	{
 		pos.x = 0;
 		pos.y = 0;
@@ -1777,7 +1777,7 @@ void CalculateObjectLightingLara()
 	pos.y = 0;
 	pos.z = 0;
 
-	if (GnGameMode == 3)
+	if (GnGameMode == GAMEMODE_IN_CUTSCENE)
 	{
 		GetJointAbsPosition(lara_item, &pos, TORSO);
 		room_number = lara_item->room_number;
