@@ -873,6 +873,49 @@ long GetHeight(FLOOR_INFO* floor, long x, long y, long z)
 	return h;
 }
 
+void RefreshCamera(short type, short* data)
+{
+	short trigger, value, target_ok;
+
+	target_ok = 2;
+
+	do
+	{
+		trigger = *data++;
+		value = trigger & 0x3FF;
+
+		if (((trigger >> 10) & 0xF) == TO_CAMERA)
+		{
+			data++;
+
+			if (value == camera.last)
+			{
+				camera.number = trigger & 0x3FF;
+
+				if (camera.timer >= 0 && (camera.type != LOOK_CAMERA && camera.type != COMBAT_CAMERA))
+				{
+					camera.type = FIXED_CAMERA;
+					target_ok = 1;
+					continue;
+				}
+
+				camera.timer = -1;
+			}
+
+			target_ok = 0;
+		}
+		else if (((trigger >> 10) & 0xF) == TO_TARGET && camera.type != LOOK_CAMERA && camera.type != COMBAT_CAMERA)
+			camera.item = &items[value];
+
+	} while (!(trigger & 0x8000));
+
+	if (camera.item && (!target_ok || (target_ok == 2 && camera.item->looked_at && camera.item != camera.last_item)))
+		camera.item = 0;
+
+	if (camera.number == -1 && camera.timer > 0)
+		camera.timer = -1;
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, replace);
@@ -882,4 +925,5 @@ void inject_control(bool replace)
 	INJECT(0x00420A80, GetFloor, replace);
 	INJECT(0x00420C70, GetWaterHeight, replace);
 	INJECT(0x00420E10, GetHeight, replace);
+	INJECT(0x00421370, RefreshCamera, replace);
 }
