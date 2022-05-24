@@ -300,7 +300,7 @@ tomb3decomp progress.
 0x00420590	+	AnimateItem
 0x00420970	+	GetChange
 0x00420A20	+	TranslateItem
-0x00420A80		GetFloor
+0x00420A80	+	GetFloor
 0x00420C70		GetWaterHeight
 0x00420E10		GetHeight
 0x00421370		RefreshCamera

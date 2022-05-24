@@ -244,3 +244,4 @@
 #define W2V_SHIFT	14
 #define MAX_TLVERTICES	0x2400
 #define NO_ROOM	255
+#define WALL_SHIFT	10

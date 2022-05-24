@@ -454,10 +454,99 @@ void TranslateItem(ITEM_INFO* item, long x, long y, long z)
 	item->pos.z_pos += (z * c - x * s) >> W2V_SHIFT;
 }
 
+FLOOR_INFO* GetFloor(long x, long y, long z, short* room_number)
+{
+	ROOM_INFO* r;
+	FLOOR_INFO* floor;
+	long x_floor, y_floor, retval;
+	short data;
+
+	r = &room[*room_number];
+
+	do
+	{
+		x_floor = (z - r->z) >> WALL_SHIFT;
+		y_floor = (x - r->x) >> WALL_SHIFT;
+
+		if (x_floor <= 0)
+		{
+			x_floor = 0;
+
+			if (y_floor < 1)
+				y_floor = 1;
+			else if (y_floor > r->y_size - 2)
+				y_floor = r->y_size - 2;
+		}
+		else if (x_floor >= r->x_size - 1)
+		{
+			x_floor = r->x_size - 1;
+
+			if (y_floor < 1)
+				y_floor = 1;
+			else if (y_floor > r->y_size - 2)
+				y_floor = r->y_size - 2;
+		}
+		else if (y_floor < 0)
+			y_floor = 0;
+		else if (y_floor >= r->y_size)
+			y_floor = r->y_size - 1;
+
+		floor = &r->floor[x_floor + y_floor * r->x_size];
+		data = GetDoor(floor);
+
+		if (data != NO_ROOM)
+		{
+			*room_number = data;
+			r = &room[data];
+		}
+
+	} while (data != NO_ROOM);
+
+	if (y >= floor->floor << 8)
+	{
+		do
+		{
+			if (floor->pit_room == NO_ROOM)
+				return floor;
+
+			retval = CheckNoColFloorTriangle(floor, x, z);
+
+			if(retval == 1 || retval == -1 && y < r->minfloor)
+				break;
+
+			*room_number = floor->pit_room;
+			r = &room[floor->pit_room];
+			floor = &r->floor[((z - r->z) >> WALL_SHIFT) + r->x_size * ((x - r->x) >> WALL_SHIFT)];
+
+		} while (y >= floor->floor << 8);
+	}
+	else if (y < floor->ceiling << 8)
+	{
+		do
+		{
+			if (floor->sky_room == NO_ROOM)
+				return floor;
+
+			retval = CheckNoColCeilingTriangle(floor, x, z);
+
+			if (retval == 1 || retval == -1 && y >= r->maxceiling)
+				break;
+
+			*room_number = floor->sky_room;
+			r = &room[floor->sky_room];
+			floor = &r->floor[((z - r->z) >> WALL_SHIFT) + r->x_size * ((x - r->x) >> WALL_SHIFT)];
+
+		} while (y < floor->ceiling << 8);
+	}
+
+	return floor;
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, replace);
 	INJECT(0x00420590, AnimateItem, replace);
 	INJECT(0x00420970, GetChange, replace);
 	INJECT(0x00420A20, TranslateItem, replace);
+	INJECT(0x00420A80, GetFloor, replace);
 }
