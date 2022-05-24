@@ -29,6 +29,7 @@
 #define assault_timer_display	VAR_(0x006261BC, long)
 #define QuadbikeLapTimeDisplayTimer	VAR_(0x006261D4, long)
 #define assault_penalty_display_timer	VAR_(0x006261C8, long)
+#define assault_timer_active	VAR_(0x006261C0, long)
 #define assault_target_penalties	VAR_(0x006D8760, long)
 #define assault_penalties	VAR_(0x006261C4, long)
 #define QuadbikeLapTime	VAR_(0x006261D0, long)
@@ -107,6 +108,11 @@
 #define next_fx_active	VAR_(0x006D8768, short)
 #define KillEverythingFlag	VAR_(0x006261AC, long)
 #define baddie_slots	VAR_(0x006D58B0, CREATURE_INFO*)
+#define cdtrack	VAR_(0x004C51F8, short)
+#define reset_flag	VAR_(0x00625F64, long)
+#define noinput_count	VAR_(0x00625F60, long)
+#define item_after_projectile	VAR_(0x006E2FF8, short)
+#define SplashCount	VAR_(0x006261B4, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -227,6 +233,7 @@
 #define ExpRings	ARRAY_(0x006D5D20, EXPLOSION_RING, [6])
 #define OldPicTexIndices	ARRAY_(0x006A1B80, long, [5])
 #define CurPicTexIndices	ARRAY_(0x006A1B98, long, [5])
+#define Inventory_ExtraData	ARRAY_(0x00626458, long, [8])
 
 /*constants*/
 #define NO_HEIGHT -32512

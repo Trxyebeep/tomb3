@@ -296,7 +296,7 @@ tomb3decomp progress.
 
 		game/control.cpp
 
-0x0041FFA0		ControlPhase
+0x0041FFA0	+	ControlPhase
 0x00420590		AnimateItem
 0x00420970		GetChange
 0x00420A20		TranslateItem

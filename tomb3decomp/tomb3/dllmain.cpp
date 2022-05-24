@@ -23,6 +23,7 @@
 #include "../game/demo.h"
 #include "../game/box.h"
 #include "../game/effects.h"
+#include "../game/control.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -85,6 +86,7 @@ void inject_all(bool replace)
 	inject_demo(replace);
 	inject_box(replace);
 	inject_effects(replace);
+	inject_control(replace);
 
 	//specific
 	inject_drawbars(replace);

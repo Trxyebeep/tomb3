@@ -9,3 +9,4 @@ long GetRandomDraw();
 void SeedRandomDraw(long seed);
 
 #define mGetAngle	( (ulong(__cdecl*)(long, long, long, long)) 0x00483860)
+#define S_SaveGame	( (void(__cdecl*)(void*, long, long)) 0x00484580 )

@@ -1,6 +1,10 @@
 #pragma once
 #include "../global/vars.h"
 
+void inject_control(bool replace);
+
+long ControlPhase(long nframes, long demo_mode);
+
 #define GetFloor	( (FLOOR_INFO*(__cdecl*)(long, long, long, short*)) 0x00420A80 )
 #define GetHeight	( (long(__cdecl*)(FLOOR_INFO*, long, long, long)) 0x00420E10 )
 #define GetCeiling	( (long(__cdecl*)(FLOOR_INFO*, long, long, long)) 0x00421DE0 )

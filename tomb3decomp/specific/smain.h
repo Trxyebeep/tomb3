@@ -6,6 +6,8 @@ void inject_smain(bool replace);
 bool S_LoadSettings();
 void CheckCheatMode();
 
+#define S_SaveSettings	( (void(__cdecl*)()) 0x0048C8C0 )
+
 #ifdef RANDO_STUFF
 struct rando_level
 {

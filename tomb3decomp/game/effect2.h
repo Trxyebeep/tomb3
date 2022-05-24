@@ -17,3 +17,6 @@ void TriggerBreath(long x, long y, long z, long xv, long yv, long zv);
 #define TriggerFlareSparks	( (void(__cdecl*)(long, long, long, long, long, long, long, long)) 0x0042A8B0 )
 #define CreateBubble	( (void(__cdecl*)(PHD_3DPOS*, short, long, long)) 0x0042E4F0 )
 #define TriggerRocketFlame	( (void(__cdecl*)(long, long, long, long, long, long, long)) 0x0042C510 )
+#define UpdateSparks	( (void(__cdecl*)()) 0x0042A0D0 )
+#define UpdateSplashes	( (void(__cdecl*)()) 0x0042CED0 )
+#define UpdateBats	( (void(__cdecl*)()) 0x0042D3D0 )

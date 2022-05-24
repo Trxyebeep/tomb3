@@ -9,3 +9,4 @@ void LaraBreath(ITEM_INFO* item);
 #define Splash	( (void(__cdecl*)(ITEM_INFO*)) 0x0042E8C0 )
 #define DoBloodSplat	( (void(__cdecl*)(long, long, long, short, short, short)) 0x0042E2C0 )
 #define DoLotsOfBloodD	( (void(__cdecl*)(long, long, long, short, short, short, long)) 0x0042E460 )
+#define SoundEffects	( (void(__cdecl*)()) 0x0042E200 )
