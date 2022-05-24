@@ -333,7 +333,7 @@ tomb3decomp progress.
 0x004236B0		DoDemoSequence
 0x00423710		StartDemo
 0x004238A0		LoadLaraDemoPos
-0x00423970		GetDemoInput
+0x00423970	+	GetDemoInput
 
 
 		game/diver.cpp

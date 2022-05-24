@@ -101,6 +101,8 @@
 #define FinishLevelCheat	VAR_(0x006A1BD0, long)
 #define dontFadePicture	VAR_(0x006A1B78, bool)
 #define pictureFading	VAR_(0x006A1B7C, bool)
+#define democount	VAR_(0x006E28C4, long)
+#define demoptr	VAR_(0x006E28C0, ulong*)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)

@@ -20,6 +20,7 @@
 #include "../game/laraelec.h"
 #include "../game/effect2.h"
 #include "../game/biggun.h"
+#include "../game/demo.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -79,6 +80,7 @@ void inject_all(bool replace)
 	inject_laraelec(replace);
 	inject_effect2(replace);
 	inject_biggun(replace);
+	inject_demo(replace);
 
 	//specific
 	inject_drawbars(replace);
