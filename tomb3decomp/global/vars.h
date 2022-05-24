@@ -116,6 +116,9 @@
 #define noinput_count	VAR_(0x00625F60, long)
 #define item_after_projectile	VAR_(0x006E2FF8, short)
 #define SplashCount	VAR_(0x006261B4, long)
+#define floor_data	VAR_(0x00633E24, short*)
+#define tiltxoff	VAR_(0x006E2964, long)
+#define tiltyoff	VAR_(0x006E2968, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -245,3 +248,4 @@
 #define MAX_TLVERTICES	0x2400
 #define NO_ROOM	255
 #define WALL_SHIFT	10
+#define WALL_SIZE	(1 << WALL_SHIFT)

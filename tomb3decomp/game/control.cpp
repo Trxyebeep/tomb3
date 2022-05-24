@@ -17,6 +17,7 @@
 #include "camera.h"
 #include "effects.h"
 #include "../3dsystem/phd_math.h"
+#include "../specific/workstubs.h"
 
 long ControlPhase(long nframes, long demo_mode)
 {
@@ -626,6 +627,252 @@ long GetWaterHeight(long x, long y, long z, short room_number)
 	return NO_HEIGHT;
 }
 
+long GetHeight(FLOOR_INFO* floor, long x, long y, long z)
+{
+	ROOM_INFO* r;
+	ITEM_INFO* item;
+	short* data;
+	long h, h2, xoff, yoff, ch1, ch2;
+	short type, trigger, tilts, t0, t1, t2, t3, dx, dz, hadj;
+
+	OnObject = 0;
+	height_type = WALL;
+
+	while (floor->pit_room != NO_ROOM)
+	{
+		if (CheckNoColFloorTriangle(floor, x, z) == 1)
+			break;
+
+		r = &room[floor->pit_room];
+		floor = &r->floor[((z - r->z) >> WALL_SHIFT) + r->x_size * ((x - r->x) >> WALL_SHIFT)];
+	}
+
+	h = floor->floor << 8;
+
+	if (h == NO_HEIGHT)
+		return h;
+
+	if (GF_NoFloor && GF_NoFloor == h)
+		h = 0x4000;
+
+	h2 = h;
+	trigger_index = 0;
+
+	if (!floor->index)
+		return h;
+
+	tiltxoff = 0;
+	tiltyoff = 0;
+	data = &floor_data[floor->index];
+
+	do
+	{
+		type = *data++;
+
+		switch (type & 0x1F)
+		{
+		case DOOR_TYPE:
+		case ROOF_TYPE:
+		case SPLIT3:
+		case SPLIT4:
+		case NOCOLC1T:
+		case NOCOLC1B:
+		case NOCOLC2T:
+		case NOCOLC2B:
+			data++;
+			break;
+
+		case TILT_TYPE:
+			xoff = *data >> 8;
+			yoff = (char)*data;
+			tiltxoff = xoff;
+			tiltyoff = yoff;
+
+			if (!chunky_flag || (ABS(xoff) <= 2 && ABS(yoff) <= 2))
+			{
+				if (ABS(xoff) > 2 || ABS(yoff) > 2)
+					height_type = BIG_SLOPE;
+				else
+					height_type = SMALL_SLOPE;
+
+				if (xoff < 0)
+					h -= xoff * (z & (WALL_SIZE - 1)) >> 2;
+				else
+					h += xoff * ((-1 - (ushort)z) & (WALL_SIZE - 1)) >> 2;
+
+				if (yoff < 0)
+					h -= (yoff * (x & (WALL_SIZE - 1))) >> 2;
+				else
+					h += (yoff * ((-1 - (ushort)x) & (WALL_SIZE - 1))) >> 2;
+			}
+
+			data++;
+			break;
+
+		case TRIGGER_TYPE:
+
+			if (!trigger_index)
+				trigger_index = data - 1;
+
+			data++;
+
+			do
+			{
+				trigger = *data++;
+
+				if (((trigger & 0x3C00) != (TO_OBJECT << 1)) && ((trigger & 0x3C00) == (TO_CAMERA << 10)))
+				{
+					trigger = *data++;
+					continue;
+				}
+
+				item = &items[trigger & 0x3FF];
+
+				if (objects[item->object_number].floor)
+					objects[item->object_number].floor(item, x, y, z, &h);
+
+			} while (!(trigger & 0x8000));
+
+			break;
+
+		case LAVA_TYPE:
+			trigger_index = data - 1;
+			break;
+
+		case CLIMB_TYPE:
+		case MONKEY_TYPE:
+		case MINEL_TYPE:
+		case MINER_TYPE:
+
+			if (!trigger_index)
+				trigger_index = data - 1;
+
+			break;
+
+		case SPLIT1:
+		case SPLIT2:
+		case NOCOLF1T:
+		case NOCOLF1B:
+		case NOCOLF2T:
+		case NOCOLF2B:
+			tilts = *data;
+			t0 = tilts & 15;
+			t1 = (tilts >> 4) & 15;
+			t2 = (tilts >> 8) & 15;
+			t3 = (tilts >> 12) & 15;
+			dx = x & (WALL_SIZE - 1);
+			dz = z & (WALL_SIZE - 1);
+			xoff = 0;
+			yoff = 0;
+			height_type = SPLIT_TRI;
+
+			if ((type & 0x1F) != SPLIT1 && (type & 0x1F) != NOCOLF1T && (type & 0x1F) != NOCOLF1B)
+			{
+				if (dx <= dz)
+				{
+					hadj = (type >> 10) & 0x1F;
+
+					if (hadj & 0x10)
+						hadj |= 0xFFF0;
+
+					h += hadj << 8;
+					xoff = t2 - t1;
+					yoff = t3 - t2;
+				}
+				else
+				{
+					hadj = (type >> 5) & 0x1F;
+
+					if (hadj & 0x10)
+						hadj |= 0xFFF0;
+
+					h += hadj << 8;
+					xoff = t3 - t0;
+					yoff = t0 - t1;
+				}
+			}
+			else
+			{
+				if (dx <= (WALL_SIZE - dz))
+				{
+					hadj = (type >> 10) & 0x1F;
+
+					if (hadj & 0x10)
+						hadj |= 0xFFF0;
+
+					h += hadj << 8;
+					xoff = t2 - t1;
+					yoff = t0 - t1;
+				}
+				else
+				{
+					hadj = (type >> 5) & 0x1F;
+
+					if (hadj & 0x10)
+						hadj |= 0xFFF0;
+
+					h += hadj << 8;
+					xoff = t3 - t0;
+					yoff = t3 - t2;
+				}
+			}
+
+			tiltxoff = xoff;
+			tiltyoff = yoff;
+
+			if (chunky_flag)
+			{
+				hadj = (hadj >> 10) & 0x1F;
+
+				if (hadj & 0x10)
+					hadj |= 0xFFF0;
+
+				ch1 = h2;
+				ch2 = ch1;
+				ch1 += hadj << 8;
+
+				hadj = (hadj >> 5) & 0x1F;
+
+				if (hadj & 0x10)
+					hadj |= 0xFFF0;
+
+				ch2 += hadj << 8;
+
+				if (ch1 < ch2)
+					h = ch1;
+				else
+					h = ch2;
+			}
+			else
+			{
+				if (ABS(xoff) > 2 || ABS(yoff) > 2)
+					height_type = DIAGONAL;
+				else if (height_type != SPLIT_TRI)
+					height_type = SMALL_SLOPE;
+
+				if (xoff < 0)
+					h -= xoff * (z & (WALL_SIZE - 1)) >> 2;
+				else
+					h += xoff * ((-1 - (ushort)z) & (WALL_SIZE - 1)) >> 2;
+
+				if (yoff < 0)
+					h -= yoff * (x & (WALL_SIZE - 1)) >> 2;
+				else
+					h += yoff * ((-1 - (ushort)x) & (WALL_SIZE - 1)) >> 2;
+			}
+
+			data++;
+			break;
+
+		default:
+			S_ExitSystem("GetHeight(): Unknown type");
+		}
+
+	} while (!(type & 0x8000));
+
+	return h;
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, replace);
@@ -634,4 +881,5 @@ void inject_control(bool replace)
 	INJECT(0x00420A20, TranslateItem, replace);
 	INJECT(0x00420A80, GetFloor, replace);
 	INJECT(0x00420C70, GetWaterHeight, replace);
+	INJECT(0x00420E10, GetHeight, replace);
 }
