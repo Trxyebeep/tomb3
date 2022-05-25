@@ -183,12 +183,13 @@
 #define phd_viewdist	VAR_(0x005BAB04, long)
 #define HWConfig	VAR_(0x006CED68, HWCONFIG)
 /**/
-/*debug bools*/
+/*debug stuff*/
 #define bLaraOn	VAR_(0x004CDC88, long)
 #define bRoomOn	VAR_(0x004CDC8C, long)
 #define bObjectOn	VAR_(0x004CDC90, long)
 #define bAObjectOn	VAR_(0x004CDC94, long)
 #define bEffectOn	VAR_(0x004CDC98, long)
+#define framedump	VAR_(0x006CF248, long)
 /**/
 
 /*arrays*/

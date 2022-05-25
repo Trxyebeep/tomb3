@@ -10,6 +10,7 @@
 #include "dx.h"
 #include "../game/objects.h"
 #endif
+#include "workstubs.h"
 
 static short shadow[6 + (3 * 8)] =
 {
@@ -428,6 +429,20 @@ void ProjectPCoord(long x, long y, long z, long* result, long cx, long cy, long 
 	}
 }
 
+long S_DumpCine()
+{
+	static long frames = 0;
+
+	if (framedump)
+	{
+		frames++;
+		SaveDDBuffer(App.lpFrontBuffer);
+		return 1;
+	}
+
+	return 0;
+}
+
 void inject_output(bool replace)
 {
 	INJECT(0x0048A7B0, S_PrintShadow, replace);
@@ -439,4 +454,5 @@ void inject_output(bool replace)
 	INJECT(0x0048A4C0, S_GetObjectBounds, replace);
 	INJECT(0x0048AC20, mCalcPoint, replace);
 	INJECT(0x0048ACC0, ProjectPCoord, replace);
+	INJECT(0x0048A2A0, S_DumpCine, replace);
 }

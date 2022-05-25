@@ -12,6 +12,7 @@ void S_InsertBackPolygon(long xmin, long ymin, long xmax, long ymax, long col);
 long S_GetObjectBounds(short* box);
 void mCalcPoint(long x, long y, long z, long* result);
 void ProjectPCoord(long x, long y, long z, long* result, long cx, long cy, long fov);
+long S_DumpCine();
 
 #define S_InitialisePolyList	( (void(__cdecl*)(long)) 0x0048A210 )
 #define S_DumpScreen	( (long(__cdecl*)()) 0x0048A2D0 )
