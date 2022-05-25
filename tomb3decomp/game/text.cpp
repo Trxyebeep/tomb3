@@ -261,6 +261,56 @@ void T_ChangeText(TEXTSTRING* string, char* pStr)
 	memcpy(string->string, pStr, 64);
 }
 
+TEXTSTRING* T_Print(long x, long y, long z, char* pStr)
+{
+	TEXTSTRING* string;
+	long num, length;
+
+	if (!pStr || T_numStrings >= 64)
+		return 0;
+
+	string = T_textStrings;
+	num = 0;
+
+	for (num = 0; num < 64; num++)
+	{
+		if (!(string->flags & T_ACTIVE))
+			break;
+
+		string++;
+	}
+
+	if (num >= 64)
+		return 0;
+
+	length = T_GetStringLen(pStr);
+
+	if (length >= 64)
+		length = 63;
+
+	string->xpos = (short)x;
+	string->ypos = (short)y;
+	string->zpos = 0;
+	string->Colour = (short)z;
+	string->scaleV = 0x10000;
+	string->scaleH = 0x10000;
+	string->letterSpacing = 0;
+	string->string = &T_theStrings[64 * num];
+	string->wordSpacing = 6;
+	memcpy(string->string, pStr, length + 1);
+	T_numStrings++;
+	string->textflags = 0;
+	string->outlflags = 0;
+	string->bgndflags = 0;
+	string->bgndSizeX = 0;
+	string->bgndSizeY = 0;
+	string->bgndOffX = 0;
+	string->bgndOffY = 0;
+	string->bgndOffZ = 0;
+	string->flags = T_ACTIVE;
+	return string;
+}
+
 void inject_text(bool replace)
 {
 	INJECT(0x0046B0C0, T_GetStringLen, replace);
@@ -279,4 +329,5 @@ void inject_text(bool replace)
 	INJECT(0x0046AF60, T_GetTextWidth, replace);
 	INJECT(0x0046ADD0, T_FlashText, replace);
 	INJECT(0x0046AD90, T_ChangeText, replace);
+	INJECT(0x0046ACA0, T_Print, replace);
 }
