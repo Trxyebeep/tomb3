@@ -41,6 +41,7 @@
 #include "../specific/file.h"
 #include "../specific/draweffects.h"
 #include "../specific/picture.h"
+#include "../specific/option.h"
 
 HINSTANCE hinstance = 0;
 
@@ -103,6 +104,7 @@ void inject_all(bool replace)
 	inject_file(replace);
 	inject_draweffects(replace);
 	inject_picture(replace);
+	inject_option(replace);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)

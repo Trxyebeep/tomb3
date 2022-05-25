@@ -1,5 +1,6 @@
 #include "../tomb3/pch.h"
 #include "text.h"
+#include "../specific/option.h"
 
 short T_GetStringLen(char* string)
 {
@@ -28,8 +29,134 @@ long T_RemovePrint(TEXTSTRING* string)
 	return 1;
 }
 
+void T_BottomAlign(TEXTSTRING* string, short flag)
+{
+	if (!string)
+		return;
+
+	if (flag)
+		string->flags |= T_BOTTOMALIGN;
+	else
+		string->flags &= ~T_BOTTOMALIGN;
+}
+
+void T_RightAlign(TEXTSTRING* string, short flag)
+{
+	if (!string)
+		return;
+
+	if (flag)
+		string->flags |= T_RIGHTALIGN;
+	else
+		string->flags &= ~T_RIGHTALIGN;
+}
+
+void T_CentreV(TEXTSTRING* string, short flag)
+{
+	if (!string)
+		return;
+
+	if (flag)
+		string->flags |= T_CENTRE_V;
+	else
+		string->flags &= ~T_CENTRE_V;
+}
+
+void T_CentreH(TEXTSTRING* string, short flag)
+{
+	if (!string)
+		return;
+
+	if (flag)
+		string->flags |= T_CENTRE_H;
+	else
+		string->flags &= ~T_CENTRE_H;
+}
+
+void T_RemoveOutline(TEXTSTRING* string)
+{
+	if (!string)
+		return;
+
+	string->flags &= ~T_ADDOUTLINE;
+}
+
+void T_AddOutline(TEXTSTRING* string, short unused, short colour, ushort* gourptr, ushort flags)
+{
+	if (!string)
+		return;
+
+	string->flags |= T_ADDOUTLINE;
+	string->outlColour = colour;
+	string->outlGour = gourptr;
+	string->outlflags = flags;
+}
+
+void T_RemoveBackground(TEXTSTRING* string)
+{
+	if (!string)
+		return;
+
+	string->flags &= ~T_ADDBACKGROUND;
+}
+
+void T_AddBackground(TEXTSTRING* string, short xsize, short ysize, short x, short y, short z, short color, ushort* gourptr, ushort flags)
+{
+	ulong h, v;
+
+	h = GetTextScaleH(string->scaleH);
+	v = GetTextScaleV(string->scaleV);
+
+	if (string)
+	{
+		string->flags |= T_ADDBACKGROUND;
+		string->bgndSizeX = (xsize * h) >> 16;
+		string->bgndSizeY = (ysize * v) >> 16;
+		string->bgndOffZ = z;
+		string->bgndGour = gourptr;
+		string->bgndOffY = (y * v) >> 16;
+		string->bgndOffX = (x * h) >> 16;
+		string->bgndColour = color;
+		string->bgndflags = flags;
+	}
+}
+
+ulong GetTextScaleH(ulong h)
+{
+	long w;
+
+	w = GetRenderWidth();
+
+	if (w < 640)
+		w = 640;
+
+	return (h >> 8) * (((w << 16) / w) >> 8);
+}
+
+ulong GetTextScaleV(ulong v)
+{
+	long h;
+
+	h = GetRenderHeight();
+
+	if (h < 480)
+		h = 480;
+
+	return (v >> 8) * (((h << 16) / h) >> 8);
+}
+
 void inject_text(bool replace)
 {
 	INJECT(0x0046B0C0, T_GetStringLen, replace);
 	INJECT(0x0046B090, T_RemovePrint, replace);
+	INJECT(0x0046AF40, T_BottomAlign, replace);
+	INJECT(0x0046AF20, T_RightAlign, replace);
+	INJECT(0x0046AF00, T_CentreV, replace);
+	INJECT(0x0046AEE0, T_CentreH, replace);
+	INJECT(0x0046AED0, T_RemoveOutline, replace);
+	INJECT(0x0046AEA0, T_AddOutline, replace);
+	INJECT(0x0046AE90, T_RemoveBackground, replace);
+	INJECT(0x0046AE00, T_AddBackground, replace);
+	INJECT(0x0046B6F0, GetTextScaleH, replace);
+	INJECT(0x0046B720, GetTextScaleV, replace);
 }
