@@ -1332,7 +1332,7 @@ tomb3decomp progress.
 0x0046B0C0	+	T_GetStringLen
 0x0046B0F0		T_DrawText
 0x0046B120	+	draw_border
-0x0046B340		T_DrawThisText
+0x0046B340	+	T_DrawThisText
 0x0046B6F0	+	GetTextScaleH
 0x0046B720	+	GetTextScaleV
 

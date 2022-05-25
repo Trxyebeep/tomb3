@@ -2,6 +2,9 @@
 #include "text.h"
 #include "../specific/option.h"
 #include "../3dsystem/3d_gen.h"
+#include "../3dsystem/scalespr.h"
+#include "objects.h"
+#include "../specific/frontend.h"
 
 short T_GetStringLen(char* string)
 {
@@ -326,6 +329,135 @@ void T_InitPrint()
 	T_numStrings = 0;
 }
 
+void T_DrawThisText(TEXTSTRING* string)
+{
+	ushort* bgndGour;
+	char* pStr;
+	ulong h, v, letter;
+	long x, y, z, w, bX, bY, bW, bH, sprite;
+
+	h = GetTextScaleH(string->scaleH);
+	v = GetTextScaleV(string->scaleV);
+	bW = 0;
+	bH = 0;
+	
+	if (string->flags & T_FLASH)
+	{
+		string->flashCount -= (short)camera.number_frames;
+
+		if (string->flashCount <= -string->flashRate)
+			string->flashCount = string->flashRate;
+		else if (string->flashCount < 0)
+			return;
+	}
+
+	x = string->xpos;
+	y = string->ypos;
+	z = string->zpos;
+	pStr = string->string;
+	w = T_GetTextWidth(string);
+
+	if (string->flags & T_CENTRE_H)
+		x += (GetRenderWidth() - w) / 2;
+	else if (string->flags & T_RIGHTALIGN)
+		x += GetRenderWidth() - w;
+	else if (string->flags & T_RIGHTJUSTIFY)
+		x -= w;
+
+	if (string->flags & T_CENTRE_V)
+		y += GetRenderHeight() / 2;
+	else if (string->flags & T_BOTTOMALIGN)
+		y += GetRenderHeight();
+
+	bX = x + string->bgndOffX - ((2 * h) >> 16);
+	bY = y + string->bgndOffY - ((4 * v) >> 16) - ((11 * v) >> 16);
+	letter = 0;
+
+	while (*pStr)
+	{
+		letter = *pStr++;
+
+		if (letter > '\x12' && letter < ' ')
+			continue;
+
+		if (letter == ' ')
+		{
+			x += (h * string->wordSpacing) >> 16;
+			continue;
+		}
+
+		if (letter >= '\x7F')
+		{
+			if (letter <= '\x81')
+				x += (16 * h) >> 16;
+
+			continue;
+		}
+
+		if (letter < '\v')
+			sprite = letter + 81;
+		else if (letter <= '\x12')
+			sprite = letter + 91;
+		else
+			sprite = T_remapASCII[letter - 32];
+
+		if (letter >= '0' && letter <= '9')
+			x += (h * ((12 - T_textSpacing[sprite]) / 2)) >> 16;
+
+		if (x > 0 && x < GetRenderWidth() && y > 0 && y < GetRenderHeight())
+			S_DrawScreenSprite2d(x, y, z, h, v, short(objects[ALPHABET].mesh_index + sprite), string->Colour, string->textflags);
+
+		if (letter == '(' || letter == ')' || letter == '$' || letter == '~')
+			continue;
+
+		if (letter >= '0' && letter <= '9')
+		{
+			x += (h * (12 - (12 - T_textSpacing[sprite]) / 2)) >> 16;
+			continue;
+		}
+
+		if (h == 0x10000)
+		{
+			if (sprite == 108 || sprite == 109)
+				x += 14;
+			else
+				x += string->letterSpacing + T_textSpacing[sprite];
+		}
+		else
+			x += h * (string->letterSpacing + T_textSpacing[sprite]);
+	}
+
+	if (string->flags & T_ADDBACKGROUND || string->flags & T_ADDOUTLINE)
+	{
+		if (string->bgndSizeX)
+		{
+			bX += w / 2;
+			w = string->bgndSizeX;
+			bX -= w / 2;
+		}
+
+		bW = w + 4;
+
+		if (string->bgndSizeY)
+			bH = string->bgndSizeY - 2;
+		else
+			bH = (16 * v) >> 16;
+	}
+
+	if (string->flags & T_ADDBACKGROUND)
+	{
+		if (string->bgndGour)
+			bgndGour = string->bgndGour;
+		else
+			bgndGour = 0;
+
+		S_DrawScreenFBox(bX, bY, string->bgndOffZ + z + 2, bW, bH, string->bgndColour, bgndGour, string->bgndflags);
+	}
+
+	if (string->flags & T_ADDOUTLINE)
+		draw_border(bX, bY, 0, bW, bH);
+}
+
 void inject_text(bool replace)
 {
 	INJECT(0x0046B0C0, T_GetStringLen, replace);
@@ -346,4 +478,5 @@ void inject_text(bool replace)
 	INJECT(0x0046AD90, T_ChangeText, replace);
 	INJECT(0x0046ACA0, T_Print, replace);
 	INJECT(0x0046AC70, T_InitPrint, replace);
+	INJECT(0x0046B340, T_DrawThisText, replace);
 }

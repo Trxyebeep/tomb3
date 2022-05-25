@@ -264,6 +264,7 @@
     <ClInclude Include="tomb3decomp\specific\draweffects.h" />
     <ClInclude Include="tomb3decomp\specific\dx.h" />
     <ClInclude Include="tomb3decomp\specific\file.h" />
+    <ClInclude Include="tomb3decomp\specific\frontend.h" />
     <ClInclude Include="tomb3decomp\specific\game.h" />
     <ClInclude Include="tomb3decomp\specific\hwrender.h" />
     <ClInclude Include="tomb3decomp\specific\init.h" />
@@ -384,6 +385,7 @@
     <ClCompile Include="tomb3decomp\specific\draweffects.cpp" />
     <ClCompile Include="tomb3decomp\specific\dx.cpp" />
     <ClCompile Include="tomb3decomp\specific\file.cpp" />
+    <ClCompile Include="tomb3decomp\specific\frontend.cpp" />
     <ClCompile Include="tomb3decomp\specific\game.cpp" />
     <ClCompile Include="tomb3decomp\specific\hwrender.cpp" />
     <ClCompile Include="tomb3decomp\specific\init.cpp" />

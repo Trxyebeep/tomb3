@@ -21,5 +21,6 @@ void T_FlashText(TEXTSTRING* string, short flash, short rate);
 void T_ChangeText(TEXTSTRING* string, char* pStr);
 TEXTSTRING* T_Print(long x, long y, long z, char* pStr);
 void T_InitPrint();
+void T_DrawThisText(TEXTSTRING* string);
 
 #define T_DrawText	( (void(__cdecl*)()) 0x0046B0F0 )
