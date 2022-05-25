@@ -1327,7 +1327,7 @@ tomb3decomp progress.
 0x0046AF00	+	T_CentreV
 0x0046AF20	+	T_RightAlign
 0x0046AF40	+	T_BottomAlign
-0x0046AF60		T_GetTextWidth
+0x0046AF60	+	T_GetTextWidth
 0x0046B090	+	T_RemovePrint
 0x0046B0C0	+	T_GetStringLen
 0x0046B0F0		T_DrawText

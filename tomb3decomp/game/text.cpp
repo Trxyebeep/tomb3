@@ -172,6 +172,69 @@ void draw_border(long x, long y, long z, long w, long h)
 	InsertLine(x, y + h + 1, x + w + 2, y + h + 1, z, c1, c1);
 }
 
+long T_GetTextWidth(TEXTSTRING* string)
+{
+	char* pStr;
+	ulong h, v, letter, width;
+
+	h = GetTextScaleH(string->scaleH);
+	v = GetTextScaleV(string->scaleV);
+	pStr = string->string;
+	letter = 0;
+	width = 0;
+
+	while (*pStr)
+	{
+		letter = *pStr++;
+
+		if (letter == '\x11' || letter == '\x12')
+		{
+			width += 14;
+			continue;
+		}
+
+		if (letter > '\x81' || letter > '\n' && letter < ' ' || letter == '(' || letter == ')' || letter == '$' || letter == '~')
+			continue;
+
+		if (letter == ' ')
+		{
+			if (h == 0x10000)
+				width += string->wordSpacing;
+			else
+				width += width += (h * string->wordSpacing) >> 16;
+
+			continue;
+		}
+
+		if (letter >= '\x7F')
+		{
+			if (h == 0x10000)
+				width += 16;
+			else
+				width += (16 * h) >> 16;
+
+			continue;
+		}
+
+		if (letter >= '\v')
+			letter = T_remapASCII[letter - 32];
+		else
+			letter += 81;
+
+		if (letter < '0' || letter > '9')
+		{
+			if (h == 0x10000)
+				width += string->letterSpacing + T_textSpacing[letter];
+			else
+				width += (h * string->letterSpacing + T_textSpacing[letter]) >> 16;
+		}
+		else
+			width += (12 * h) >> 16;
+	}
+
+	return (width - string->letterSpacing) & 0xFFFE;
+}
+
 void inject_text(bool replace)
 {
 	INJECT(0x0046B0C0, T_GetStringLen, replace);
@@ -187,4 +250,5 @@ void inject_text(bool replace)
 	INJECT(0x0046B6F0, GetTextScaleH, replace);
 	INJECT(0x0046B720, GetTextScaleV, replace);
 	INJECT(0x0046B120, draw_border, replace);
+	INJECT(0x0046AF60, T_GetTextWidth, replace);
 }

@@ -243,6 +243,8 @@
 #define OldPicTexIndices	ARRAY_(0x006A1B80, long, [5])
 #define CurPicTexIndices	ARRAY_(0x006A1B98, long, [5])
 #define Inventory_ExtraData	ARRAY_(0x00626458, long, [8])
+#define T_remapASCII	ARRAY_(0x004C7CE8, char, [95])
+#define T_textSpacing	ARRAY_(0x004C7C78, char, [110])
 
 /*constants*/
 #define NO_HEIGHT -32512
