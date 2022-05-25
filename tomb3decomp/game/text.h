@@ -15,6 +15,7 @@ void T_RemoveBackground(TEXTSTRING* string);
 void T_AddBackground(TEXTSTRING* string, short xsize, short ysize, short x, short y, short z, short color, ushort* gourptr, ushort flags);
 ulong GetTextScaleH(ulong h);
 ulong GetTextScaleV(ulong v);
+void draw_border(long x, long y, long z, long w, long h);
 
 #define T_Print	( (TEXTSTRING*(__cdecl*)(long, long, long, char*)) 0x0046ACA0 )
 #define T_DrawText	( (void(__cdecl*)()) 0x0046B0F0 )

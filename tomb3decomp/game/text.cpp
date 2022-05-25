@@ -1,6 +1,7 @@
 #include "../tomb3/pch.h"
 #include "text.h"
 #include "../specific/option.h"
+#include "../3dsystem/3d_gen.h"
 
 short T_GetStringLen(char* string)
 {
@@ -145,6 +146,32 @@ ulong GetTextScaleV(ulong v)
 	return (v >> 8) * (((h << 16) / h) >> 8);
 }
 
+void draw_border(long x, long y, long z, long w, long h)
+{
+	long c1, c2;
+
+	c1 = 0x1040;
+	c2 = 0x4080C0;
+	z = phd_znear + 0xC000;
+	x -= 2;
+	y -= 2;
+	w += 4;
+	h += 4;
+
+	InsertLine(x - 1, y - 1, x + 2 + w, y - 1, z, c1, c1);	//todo: explain this
+	InsertLine(x, y, x + w, y, z, c2, c2);
+	InsertLine(x + 1, y + 1, x + w, y - 1, z, c1, c1);
+	InsertLine(x - 1, y, x - 1, y + 2 + h, z, c1, c1);
+	InsertLine(x, y, x, y + h, z, c2, c2);
+	InsertLine(x + 1, y, x + 1, y + h - 1, z, c1, c1);
+	InsertLine(x + w - 1, y, x + w - 1, y + h, z, c1, c1);
+	InsertLine(x + w, y, x + w, y + h + 1, z, c2, c2);
+	InsertLine(x + w + 1, y, x + w + 1, y + 2 + h, z, c1, c1);
+	InsertLine(x - 1, y + h - 1, x + w + 1, y + h - 1, z, c1, c1);
+	InsertLine(x, y + h, x + w + 1, y + h, z, c2, c2);
+	InsertLine(x, y + h + 1, x + w + 2, y + h + 1, z, c1, c1);
+}
+
 void inject_text(bool replace)
 {
 	INJECT(0x0046B0C0, T_GetStringLen, replace);
@@ -159,4 +186,5 @@ void inject_text(bool replace)
 	INJECT(0x0046AE00, T_AddBackground, replace);
 	INJECT(0x0046B6F0, GetTextScaleH, replace);
 	INJECT(0x0046B720, GetTextScaleV, replace);
+	INJECT(0x0046B120, draw_border, replace);
 }
