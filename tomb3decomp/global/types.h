@@ -56,6 +56,23 @@ enum draw_types
 	DT_POLY_GTA = 16			//Gouraud + Textured + Alpha
 };
 
+enum T_flags
+{
+	T_TOPALIGN,
+	T_LEFTALIGN = 0,
+	T_ACTIVE = 1 << 0,
+	T_FLASH = 1 << 1,
+	T_ROTATE_H = 1 << 2,
+	T_ROTATE_V = 1 << 3,
+	T_CENTRE_H = 1 << 4,
+	T_CENTRE_V = 1 << 5,
+	T_RIGHTALIGN = 1 << 7,
+	T_BOTTOMALIGN = 1 << 8,
+	T_ADDBACKGROUND = 1 << 9,
+	T_ADDOUTLINE = 1 << 10,
+	T_RIGHTJUSTIFY = 1 << 11
+};
+
 enum mood_type
 {
 	BORED_MOOD,

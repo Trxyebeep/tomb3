@@ -25,6 +25,7 @@
 #include "../game/effects.h"
 #include "../game/control.h"
 #include "../game/cinema.h"
+#include "../game/text.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -89,6 +90,7 @@ void inject_all(bool replace)
 	inject_effects(replace);
 	inject_control(replace);
 	inject_cinema(replace);
+	inject_text(replace);
 
 	//specific
 	inject_drawbars(replace);

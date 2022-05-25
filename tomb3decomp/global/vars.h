@@ -120,6 +120,7 @@
 #define tiltxoff	VAR_(0x006E2964, long)
 #define tiltyoff	VAR_(0x006E2968, long)
 #define nLoadedPictures	VAR_(0x006A1BAC, long)
+#define T_numStrings	VAR_(0x006D0F00, short)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
