@@ -4,6 +4,7 @@
 #include "../specific/draweffects.h"
 #include "../specific/picture.h"
 #include "../specific/output.h"
+#include "items.h"
 
 long DrawPhaseCinematic()
 {
@@ -21,7 +22,18 @@ long DrawPhaseCinematic()
 	return camera.number_frames;
 }
 
+void InitialiseGenPlayer(short item_number)
+{
+	ITEM_INFO* item;
+
+	AddActiveItem(item_number);
+	item = &items[item_number];
+	item->pos.y_rot = 0;
+	item->dynamic_light = 0;
+}
+
 void inject_cinema(bool replace)
 {
 	INJECT(0x0041A890, DrawPhaseCinematic, replace);
+	INJECT(0x0041A8F0, InitialiseGenPlayer, replace);
 }

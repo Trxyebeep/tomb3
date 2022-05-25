@@ -228,7 +228,7 @@ tomb3decomp progress.
 		game/cinema.cpp
 
 0x0041A890	+	DrawPhaseCinematic
-0x0041A8F0		InitialiseGenPlayer
+0x0041A8F0	+	InitialiseGenPlayer
 0x0041A930		StartCinematic
 0x0041AA40		InitCinematicRooms
 0x0041AAD0		InitialisePlayer1
