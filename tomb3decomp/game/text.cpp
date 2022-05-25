@@ -458,6 +458,21 @@ void T_DrawThisText(TEXTSTRING* string)
 		draw_border(bX, bY, 0, bW, bH);
 }
 
+void T_DrawText()
+{
+	TEXTSTRING* string;
+
+	string = T_textStrings;
+
+	for (int i = 0; i < 64; i++)
+	{
+		if (string && string->flags & T_ACTIVE)
+			T_DrawThisText(string);
+
+		string++;
+	}
+}
+
 void inject_text(bool replace)
 {
 	INJECT(0x0046B0C0, T_GetStringLen, replace);
@@ -479,4 +494,5 @@ void inject_text(bool replace)
 	INJECT(0x0046ACA0, T_Print, replace);
 	INJECT(0x0046AC70, T_InitPrint, replace);
 	INJECT(0x0046B340, T_DrawThisText, replace);
+	INJECT(0x0046B0F0, T_DrawText, replace);
 }
