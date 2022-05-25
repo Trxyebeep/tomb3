@@ -2,7 +2,7 @@
 #include "scalespr.h"
 #include "3d_gen.h"
 
-ulong TextLight[8] =
+ulong TextLight[12] =
 {
 	0xFFFFFF,
 	0x00B0B0,
@@ -11,10 +11,14 @@ ulong TextLight[8] =
 	0xFF8080,
 	0x4080C0,
 	0x64D1B6,
-	0xC0FFC0
+	0xC0FFC0,
+	0xFFFFFF,
+	0xFF00FF,
+	0xFF00FF,
+	0xFF00FF
 };
 
-ulong TextDark[8] =
+ulong TextDark[12] =
 {
 	0x808080,
 	0x005050,
@@ -23,7 +27,11 @@ ulong TextDark[8] =
 	0x180000,
 	0x001040,
 	0x1320B6,
-	0xC0FFC0
+	0xC0FFC0,
+	0xFFFFFF,
+	0x3F003F,
+	0x3F003F,
+	0x3F003F
 };
 
 short* ins_room_sprite(short* objptr, long num)
