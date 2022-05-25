@@ -311,6 +311,21 @@ TEXTSTRING* T_Print(long x, long y, long z, char* pStr)
 	return string;
 }
 
+void T_InitPrint()
+{
+	TEXTSTRING* string;
+
+	string = T_textStrings;
+
+	for (int i = 0; i < 64; i++)
+	{
+		string->flags = 0;
+		string++;
+	}
+
+	T_numStrings = 0;
+}
+
 void inject_text(bool replace)
 {
 	INJECT(0x0046B0C0, T_GetStringLen, replace);
@@ -330,4 +345,5 @@ void inject_text(bool replace)
 	INJECT(0x0046ADD0, T_FlashText, replace);
 	INJECT(0x0046AD90, T_ChangeText, replace);
 	INJECT(0x0046ACA0, T_Print, replace);
+	INJECT(0x0046AC70, T_InitPrint, replace);
 }

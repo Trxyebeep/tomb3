@@ -1315,7 +1315,7 @@ tomb3decomp progress.
 
 		game/text.cpp
 
-0x0046AC70		T_InitPrint
+0x0046AC70	+	T_InitPrint
 0x0046ACA0	+	T_Print
 0x0046AD90	+	T_ChangeText
 0x0046ADD0	+	T_FlashText
