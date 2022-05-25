@@ -250,6 +250,17 @@ void T_FlashText(TEXTSTRING* string, short flash, short rate)
 		string->flags &= ~T_FLASH;
 }
 
+void T_ChangeText(TEXTSTRING* string, char* pStr)
+{
+	if (!pStr || !string || !(string->flags & T_ACTIVE))
+		return;
+
+	if (T_GetStringLen(pStr) > 64)
+		pStr[63] = 0;
+
+	memcpy(string->string, pStr, 64);
+}
+
 void inject_text(bool replace)
 {
 	INJECT(0x0046B0C0, T_GetStringLen, replace);
@@ -267,4 +278,5 @@ void inject_text(bool replace)
 	INJECT(0x0046B120, draw_border, replace);
 	INJECT(0x0046AF60, T_GetTextWidth, replace);
 	INJECT(0x0046ADD0, T_FlashText, replace);
+	INJECT(0x0046AD90, T_ChangeText, replace);
 }

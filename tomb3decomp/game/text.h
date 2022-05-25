@@ -18,7 +18,7 @@ ulong GetTextScaleV(ulong v);
 void draw_border(long x, long y, long z, long w, long h);
 long T_GetTextWidth(TEXTSTRING* string);
 void T_FlashText(TEXTSTRING* string, short flash, short rate);
+void T_ChangeText(TEXTSTRING* string, char* pStr);
 
 #define T_Print	( (TEXTSTRING*(__cdecl*)(long, long, long, char*)) 0x0046ACA0 )
 #define T_DrawText	( (void(__cdecl*)()) 0x0046B0F0 )
-#define T_ChangeText	( (void(__cdecl*)(TEXTSTRING*, char*)) 0x0046AD90 )
