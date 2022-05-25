@@ -37,7 +37,33 @@ void CrossFadePicture()
 	TIME_Init();
 }
 
+void S_FadePicture()
+{
+	static long pos, max = 64;
+	long nframes;
+
+	if (!pictureFading || dontFadePicture)
+		return;
+
+	nframes = camera.number_frames;
+
+	if (nframes > 10)
+		nframes = 2;
+
+	DrawPictureAlpha(256 - 256 / max * (max - pos), CurPicTexIndices);
+	pos += nframes;
+
+	if (pos >= max)
+	{
+		pos = 0;
+		pictureFading = 0;
+		nLoadedPictures = 0;
+		FreePictureTextures(CurPicTexIndices);
+	}
+}
+
 void inject_picture(bool replace)
 {
 	INJECT(0x0048AFD0, CrossFadePicture, replace);
+	INJECT(0x0048C0A0, S_FadePicture, replace);
 }
