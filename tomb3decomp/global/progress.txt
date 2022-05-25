@@ -1318,7 +1318,7 @@ tomb3decomp progress.
 0x0046AC70		T_InitPrint
 0x0046ACA0		T_Print
 0x0046AD90		T_ChangeText
-0x0046ADD0		T_FlashText
+0x0046ADD0	+	T_FlashText
 0x0046AE00	+	T_AddBackground
 0x0046AE90	+	T_RemoveBackground
 0x0046AEA0	+	T_AddOutline

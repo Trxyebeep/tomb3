@@ -235,6 +235,21 @@ long T_GetTextWidth(TEXTSTRING* string)
 	return (width - string->letterSpacing) & 0xFFFE;
 }
 
+void T_FlashText(TEXTSTRING* string, short flash, short rate)
+{
+	if (!string)
+		return;
+
+	if (flash)
+	{
+		string->flags |= T_FLASH;
+		string->flashRate = rate;
+		string->flashCount = rate;
+	}
+	else
+		string->flags &= ~T_FLASH;
+}
+
 void inject_text(bool replace)
 {
 	INJECT(0x0046B0C0, T_GetStringLen, replace);
@@ -251,4 +266,5 @@ void inject_text(bool replace)
 	INJECT(0x0046B720, GetTextScaleV, replace);
 	INJECT(0x0046B120, draw_border, replace);
 	INJECT(0x0046AF60, T_GetTextWidth, replace);
+	INJECT(0x0046ADD0, T_FlashText, replace);
 }
