@@ -122,6 +122,9 @@
 #define nLoadedPictures	VAR_(0x006A1BAC, long)
 #define T_numStrings	VAR_(0x006D0F00, short)
 #define joy_fire	VAR_(0x0069FDF8, long)
+#define joy_x	VAR_(0x0069FDFC, long)
+#define joy_y	VAR_(0x0069FE00, long)
+#define GtWindowClosed	VAR_(0x006CF268, bool)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)

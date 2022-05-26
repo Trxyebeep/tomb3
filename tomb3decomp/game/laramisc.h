@@ -14,3 +14,4 @@ extern void (*lara_control_routines[89])(ITEM_INFO* item, COLL_INFO* coll);
 extern void (*lara_collision_routines[89])(ITEM_INFO* item, COLL_INFO* coll);
 
 #define AnimateLara	( (void(__cdecl*)(ITEM_INFO*)) 0x0044D2A0 )
+#define UseItem	( (void(__cdecl*)(short)) 0x0044D690 )

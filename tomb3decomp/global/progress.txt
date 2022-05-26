@@ -1640,7 +1640,7 @@ tomb3decomp progress.
 		specific/input.cpp
 
 0x00486140	+	Key
-0x00486260		S_UpdateInput
+0x00486260	+	S_UpdateInput
 
 
 		specific/litesrc.cpp
