@@ -16,7 +16,7 @@ void LaraElectricDeath(long lr, ITEM_INFO* item)
 	short* points;
 	float zv;
 	long w, h, nDs, mesh1, mesh2, x, y, z, xStep, yStep, zStep, pX, pY, pZ;
-	long x1, y1, x2, y2, col;
+	long x1, y1, x2, y2, c0, c1;
 	long coords[600];
 	short distances[200];
 
@@ -166,29 +166,42 @@ void LaraElectricDeath(long lr, ITEM_INFO* item)
 			z = coords[3 * nDs + 2];
 			x2 = coords[3 * nDs + 3];
 			y2 = coords[3 * nDs + 4];
-			col = distances[nDs];
+			c0 = distances[nDs];
+			c1 = distances[nDs + 1];
 			nDs++;
 
 			if (z < 32)
 				continue;
 
-			if (col > 255)
+			if (c0 > 255)
 			{
-				col = 511 - col;
+				c0 = 511 - c0;
 
-				if (col < 0)
-					col = 0;
+				if (c0 < 0)
+					c0 = 0;
+			}
+
+			if (c1 > 255)
+			{
+				c1 = 511 - c1;
+
+				if (c1 < 0)
+					c1 = 0;
 			}
 
 			if (lr)
-				col >>= 1;
+			{
+				c0 >>= 1;
+				c1 >>= 1;
+			}
 
 			if (ClipLine(x1, y1, x2, y2, w, h) &&
 				x1 >= 0 && x1 <= w && y1 >= 0 && y1 <= h && x2 >= 0 && x2 <= w && y2 >= 0 && y2 <= h)
 			{
 				xStep = GlobalAlpha;
 				GlobalAlpha = 0x70000000;
-				HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z << W2V_SHIFT, col | (col << 8));
+				z <<= W2V_SHIFT;
+				HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, c0 | (c0 << 8), c1 | (c1 << 8));
 				GlobalAlpha = xStep;
 			}
 		}
