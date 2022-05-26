@@ -858,7 +858,7 @@ static void PutPolyLara(ITEM_INFO* item, char mesh, long clip)
 {
 	if (item->mesh_bits & (1 << mesh))
 	{
-		if (IsJointUnderwater[0])
+		if (IsJointUnderwater[mesh])
 			S_SetupBelowWater(camera_underwater);
 		else
 			S_SetupAboveWater(camera_underwater);
@@ -871,7 +871,7 @@ static void PutPolyLara_I(ITEM_INFO* item, char mesh, long clip)
 {
 	if (item->mesh_bits & (1 << mesh))
 	{
-		if (IsJointUnderwater[0])
+		if (IsJointUnderwater[mesh])
 			S_SetupBelowWater(camera_underwater);
 		else
 			S_SetupAboveWater(camera_underwater);
