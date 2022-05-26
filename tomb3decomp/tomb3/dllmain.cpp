@@ -42,6 +42,7 @@
 #include "../specific/draweffects.h"
 #include "../specific/picture.h"
 #include "../specific/option.h"
+#include "../specific/input.h"
 
 HINSTANCE hinstance = 0;
 
@@ -105,6 +106,7 @@ void inject_all(bool replace)
 	inject_draweffects(replace);
 	inject_picture(replace);
 	inject_option(replace);
+	inject_input(replace);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)

@@ -158,7 +158,6 @@ bool S_LoadSettings()
 
 	fscanf(file, "%s", &s);
 	fscanf(file, "%hd %hd %hd %hd %hd %hd %hd %hd %hd %hd %hd %hd %hd %hd\n",
-		&layout[0][14],
 		&layout[1][0],
 		&layout[1][1],
 		&layout[1][2],
@@ -171,7 +170,8 @@ bool S_LoadSettings()
 		&layout[1][9],
 		&layout[1][10],
 		&layout[1][11],
-		&layout[1][12]);
+		&layout[1][12],
+		&layout[1][13]);
 
 	S_CDVolume(25 * Option_Music_Volume + 5);
 	S_SoundSetMasterVolume(6 * Option_SFX_Volume + 4);

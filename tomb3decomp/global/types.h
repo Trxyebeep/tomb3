@@ -32,6 +32,8 @@ do \
 
 #define ABS(x) (((x)<0) ? (-(x)) : (x))
 #define SQUARE(x) ((x)*(x))
+#define key_pressed(x) (keymap[x] & 0x80)
+
 //S_DrawSprite flags
 #define SPR_RGB(r, g, b)	((r) | ((g) << 8) | ((b) << 16))
 #define SPR_ABS				0x1000000

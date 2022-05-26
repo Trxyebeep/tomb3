@@ -121,6 +121,7 @@
 #define tiltyoff	VAR_(0x006E2968, long)
 #define nLoadedPictures	VAR_(0x006A1BAC, long)
 #define T_numStrings	VAR_(0x006D0F00, short)
+#define joy_fire	VAR_(0x0069FDF8, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -213,7 +214,9 @@
 #define LightCol	ARRAY_(0x0069FE28, long, [12])
 #define lead_info	ARRAY_(0x006D86E0, LEADER_INFO, [8])
 #define fish	ARRAY_(0x006D7BE0, FISH_INFO, [200])
-#define layout	ARRAY_(0x004CDCA0, short, [2][15])
+#define layout	ARRAY_(0x004CDCA0, short, [2][14])
+#define conflict	ARRAY_(0x0069FCB0, long, [15])
+#define keymap	ARRAY_(0x0069FCF0, uchar, [256])
 #define sparks	ARRAY_(0x006D8880, SPARKS, [192])
 #define Buckets	ARRAY_(0x005D7B00, TEXTUREBUCKET, [6])
 #define TPages	ARRAY_(0x00633F70, DXTEXTURE*, [32])
