@@ -3,6 +3,7 @@
 #include "objects.h"
 #include "control.h"
 #include "../specific/init.h"
+#include "../3dsystem/phd_math.h"
 
 void LaraRapidsDrown()
 {
@@ -44,8 +45,53 @@ void KayakInitialise(short item_number)
 	}
 }
 
+static long GetInKayak(short item_number, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	long dx, dz, dist, h;
+	ushort tempang;
+	short room_number, ang;
+
+	if (input & IN_ACTION && lara.gun_status == LG_UNARMED && !lara_item->gravity_status)
+	{
+
+		item = &items[item_number];
+		dx = lara_item->pos.x_pos - item->pos.x_pos;
+		dz = lara_item->pos.z_pos - item->pos.z_pos;
+		dist = SQUARE(dx) + SQUARE(dz);
+
+		if (dist <= 130000)
+		{
+			room_number = item->room_number;
+			floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+			h = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+			if (h > -32000)
+			{
+				ang = (short)phd_atan(item->pos.z_pos - lara_item->pos.z_pos, item->pos.x_pos - lara_item->pos.x_pos) - item->pos.y_rot;
+				tempang = lara_item->pos.y_rot - item->pos.y_rot;
+
+				if (ang > -8190 && ang < 24570)
+				{
+					if (tempang > 8190 && tempang < 24570)
+						return -1;
+				}
+				else
+				{
+					if (tempang > 40950 && tempang < 57330)
+						return 1;
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
 void inject_kayak(bool replace)
 {
 	INJECT(0x0043B390, LaraRapidsDrown, replace);
 	INJECT(0x0043B410, KayakInitialise, replace);
+	INJECT(0x0043B620, GetInKayak, replace);
 }
