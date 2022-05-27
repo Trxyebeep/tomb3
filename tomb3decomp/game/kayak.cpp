@@ -4,6 +4,9 @@
 #include "control.h"
 #include "../specific/init.h"
 #include "../3dsystem/phd_math.h"
+#include "collide.h"
+#include "laraflar.h"
+#include "items.h"
 
 void LaraRapidsDrown()
 {
@@ -89,9 +92,67 @@ static long GetInKayak(short item_number, COLL_INFO* coll)
 	return 0;
 }
 
+void KayakCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+	KAYAKINFO* kayak;
+	long lr;
+
+	if (l->hit_points < 0 || lara.skidoo != NO_ITEM)
+		return;
+
+	lr = GetInKayak(item_number, coll);
+
+	if (!lr)
+	{
+		coll->enable_baddie_push = 1;
+		ObjectCollision(item_number, l, coll);
+		return;
+	}
+
+	lara.skidoo = item_number;
+	item = &items[item_number];
+
+	if (lara.gun_type == LG_FLARE)
+	{
+		CreateFlare(0);
+		undraw_flare_meshes();
+		lara.flare_control_left = 0;
+		lara.gun_type = LG_UNARMED;
+		lara.request_gun_type = LG_UNARMED;
+	}
+
+	if (lr > 0)
+		l->anim_number = objects[VEHICLE_ANIM].anim_index + 3;
+	else
+		l->anim_number = objects[VEHICLE_ANIM].anim_index + 28;
+
+	l->frame_number = anims[l->anim_number].frame_base;
+	l->current_anim_state = 4;
+	l->goal_anim_state = 4;
+	lara.water_status = LARA_ABOVEWATER;
+	l->pos.x_pos = item->pos.x_pos;
+	l->pos.y_pos = item->pos.y_pos;
+	l->pos.z_pos = item->pos.z_pos;
+	l->pos.x_rot = 0;
+	l->pos.y_rot = item->pos.y_rot;
+	l->pos.z_rot = 0;
+	l->gravity_status = 0;
+	l->speed = 0;
+	l->fallspeed = 0;
+
+	if (l->room_number != item->room_number)
+		ItemNewRoom(lara.item_number, item->room_number);
+
+	kayak = (KAYAKINFO*)item->data;
+	kayak->Water = item->pos.y_pos;
+	kayak->Flags = 0;
+}
+
 void inject_kayak(bool replace)
 {
 	INJECT(0x0043B390, LaraRapidsDrown, replace);
 	INJECT(0x0043B410, KayakInitialise, replace);
 	INJECT(0x0043B620, GetInKayak, replace);
+	INJECT(0x0043B4C0, KayakCollision, replace);
 }
