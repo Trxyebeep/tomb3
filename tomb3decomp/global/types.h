@@ -1445,4 +1445,15 @@ struct KAYAKINFO
 	char TrueWater;
 	char Flags;
 };
+
+struct RIPPLE_STRUCT
+{
+	long x;
+	long y;
+	long z;
+	char flags;
+	uchar life;
+	uchar size;
+	uchar init;
+};
 #pragma pack(pop)
