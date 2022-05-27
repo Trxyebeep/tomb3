@@ -253,6 +253,7 @@
 #define T_textSpacing	ARRAY_(0x004C7C78, char, [110])
 #define T_textStrings	ARRAY_(0x006D0000, TEXTSTRING, [64])
 #define T_theStrings	ARRAY_(0x006D0F20, char, [4096])
+#define WakePts	ARRAY_(0x006E31A0, WAKE_PTS, [32][2])
 
 /*constants*/
 #define NO_HEIGHT -32512

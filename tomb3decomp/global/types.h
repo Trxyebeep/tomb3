@@ -1430,4 +1430,19 @@ struct RANGE_STRUCT
 	short link_anim_num;
 	short link_frame_num;
 };
+
+struct KAYAKINFO
+{
+	long Vel;
+	long Rot;
+	long FallSpeedF;
+	long FallSpeedL;
+	long FallSpeedR;
+	long Water;
+	PHD_3DPOS OldPos;
+	char Turn;
+	char Forward;
+	char TrueWater;
+	char Flags;
+};
 #pragma pack(pop)
