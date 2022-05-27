@@ -690,11 +690,11 @@ tomb3decomp progress.
 0x0043C5C0		GetCollisionAnim
 0x0043C650		DoDynamics
 0x0043C6B0		DoCurrent
-0x0043C840		TestHeight
+0x0043C840	+	TestHeight
 0x0043C960		DoShift
-0x0043CC00		KayakUserInput
+0x0043CC00	+	KayakUserInput
 0x0043D4A0	+	DoRipple
-0x0043D550		CanGetOut
+0x0043D550	+	CanGetOut
 0x0043D5A0		KayakToBaddieCollision
 
 

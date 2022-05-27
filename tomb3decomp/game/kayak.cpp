@@ -9,6 +9,8 @@
 #include "items.h"
 #include "../specific/game.h"
 #include "effect2.h"
+#include "lara.h"
+#include "laraanim.h"
 
 void LaraRapidsDrown()
 {
@@ -172,6 +174,459 @@ static void DoRipple(ITEM_INFO* item, short xoffset, short zoffset)
 	ripple->init = 0;
 }
 
+static long TestHeight(ITEM_INFO* item, long x, long z, PHD_VECTOR* pos)
+{
+	FLOOR_INFO* floor;
+	long s, c, xs, zs, h;
+	short room_number;
+
+	s = phd_sin(item->pos.y_rot);
+	c = phd_cos(item->pos.y_rot);
+	zs = phd_sin(item->pos.z_rot);
+	xs = phd_sin(item->pos.x_rot);
+
+	pos->x = item->pos.x_pos + ((x * c + z * s) >> W2V_SHIFT);
+	pos->y = (item->pos.y_pos + ((x * zs) >> W2V_SHIFT)) - ((z * xs) >> W2V_SHIFT);
+	pos->z = item->pos.z_pos + ((z * c - x * s) >> W2V_SHIFT);
+
+	room_number = item->room_number;
+	GetFloor(pos->x, pos->y, pos->z, &room_number);
+	h = GetWaterHeight(pos->x, pos->y, pos->z, room_number);
+
+	if (h == NO_HEIGHT)
+	{
+		room_number = item->room_number;
+		floor = GetFloor(pos->x, pos->y, pos->z, &room_number);
+		h = GetHeight(floor, pos->x, pos->y, pos->z);
+
+		if (h == NO_HEIGHT)
+			return h;
+	}
+
+	return h - 5;
+}
+
+static long CanGetOut(ITEM_INFO* item, long lr)
+{
+	PHD_VECTOR pos;
+
+	return item->pos.y_pos - TestHeight(item, lr >= 0 ? 768 : -768, 0, &pos) <= 0;
+}
+
+static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
+{
+	PHD_VECTOR pos;
+	short* tmpMesh;
+	short frame;
+	static char lr;
+
+	if (l->hit_points <= 0 && l->current_anim_state != 5)
+	{
+		l->anim_number = objects[VEHICLE_ANIM].anim_index + 5;
+		l->frame_number = anims[l->anim_number].frame_base;
+		l->current_anim_state = 5;
+		l->goal_anim_state = 5;
+	}
+
+	frame = l->frame_number - anims[l->anim_number].frame_base;
+
+	switch (l->current_anim_state)
+	{
+	case 0:
+
+		if (!(input & IN_BACK))
+			l->goal_anim_state = 1;
+
+		if (l->anim_number - objects[VEHICLE_ANIM].anim_index == 2)
+		{
+			if (frame == 8)
+			{
+				kayak->Rot += 0x800000;
+				kayak->Vel -= 0x180000;
+			}
+
+			if (frame == 31)
+			{
+				kayak->Rot -= 0x800000;
+				kayak->Vel -= 0x180000;
+			}
+
+			if (frame < 15 && (frame & 1) != 0)
+				DoRipple(item, 384, -128);
+			else if (frame >= 20 && frame <= 34 && frame & 1)
+				DoRipple(item, -384, -128);
+		}
+
+		break;
+
+	case 1:
+
+		if (input & IN_ROLL && !lara.current_active && !lara.current_xvel && !lara.current_zvel)
+		{
+			if (input & IN_LEFT && CanGetOut(item, -1))
+			{
+				l->goal_anim_state = 9;
+				l->required_anim_state = 13;
+			}
+			else if (input & IN_RIGHT && CanGetOut(item, 1))
+			{
+				l->goal_anim_state = 9;
+				l->required_anim_state = 14;
+			}
+		}
+		else if (input & IN_FORWARD)
+		{
+			l->goal_anim_state = 3;
+			kayak->Turn = 0;
+			kayak->Forward = 1;
+		}
+		else if (input & IN_BACK)
+			l->goal_anim_state = 0;
+		else if (input & IN_LEFT)
+		{
+			l->goal_anim_state = 2;
+
+			if (kayak->Vel)
+				kayak->Turn = 0;
+			else
+				kayak->Turn = 1;
+
+			kayak->Forward = 0;
+		}
+		else if (input & IN_RIGHT)
+		{
+			l->goal_anim_state = 3;
+
+			if (kayak->Vel)
+				kayak->Turn = 0;
+			else
+				kayak->Turn = 1;
+
+			kayak->Forward = 0;
+		}
+		else if (input & IN_LSTEP && (kayak->Vel || lara.current_xvel || lara.current_zvel))
+			l->goal_anim_state = 10;
+		else if (input & IN_RSTEP && (kayak->Vel || lara.current_xvel || lara.current_zvel))
+			l->goal_anim_state = 11;
+
+		break;
+
+	case 2:
+
+		if (!kayak->Forward)
+		{
+			if (!(input & IN_LEFT))
+				l->goal_anim_state = 1;
+		}
+		else
+		{
+			if (!frame)
+				lr = 0;
+
+			if (frame == 2 && !(lr & 0x80))
+				lr++;
+			else if (frame > 2)
+				lr &= ~0x80;
+
+			if (input & IN_FORWARD)
+			{
+				if (input & IN_LEFT)
+				{
+					if ((lr & ~0x80) >= 2)
+						l->goal_anim_state = 3;
+				}
+				else
+					l->goal_anim_state = 3;
+			}
+			else
+				l->goal_anim_state = 1;
+		}
+
+		if (frame == 7)
+		{
+			if (kayak->Forward)
+			{
+				kayak->Rot -= 0x800000;
+
+				if (kayak->Rot < -0x1000000)
+					kayak->Rot = -0x1000000;
+				
+				kayak->Vel =+ 0x180000;
+			}
+			else if (kayak->Turn)
+			{
+				kayak->Rot -= 0x1000000;
+
+				if (kayak->Rot < -0x1000000)
+					kayak->Rot = -0x1000000;
+			}
+			else
+			{
+				kayak->Rot -= 0xC00000;
+
+				if (kayak->Rot < -0xC00000)
+					kayak->Rot = -0xC00000;
+
+				kayak->Vel += 0x100000;
+			}
+		}
+
+		if (frame > 6 && frame < 24 && frame & 1)
+			DoRipple(item, -384, -64);
+
+		break;
+
+	case 3:
+
+		if (!kayak->Forward)
+		{
+			if (!(input & IN_RIGHT))
+				l->goal_anim_state = 1;
+		}
+		else
+		{
+			if (!frame)
+				lr = 0;
+
+			if (frame == 2 && !(lr & 0x80))
+				lr++;
+			else if (frame > 2)
+				lr &= ~0x80;
+
+			if (input & IN_FORWARD)
+			{
+				if (input & IN_RIGHT)
+				{
+					if ((lr & ~0x80) >= 2)
+						l->goal_anim_state = 2;
+				}
+				else
+					l->goal_anim_state = 2;
+			}
+			else
+				l->goal_anim_state = 1;
+		}
+
+		if (frame == 7)
+		{
+			if (kayak->Forward)
+			{
+				kayak->Rot += 0x800000;
+
+				if (kayak->Rot > 0x1000000)
+					kayak->Rot = 0x1000000;
+
+				kayak->Vel += 0x180000;
+			}
+			else if (kayak->Turn)
+			{
+				kayak->Rot += 0x1000000;
+
+				if (kayak->Rot > 0x1000000)
+					kayak->Rot = 0x1000000;
+			}
+			else
+			{
+				kayak->Rot += 0xC00000;
+
+				if (kayak->Rot > 0xC00000)
+					kayak->Rot = 0xC00000;
+
+				kayak->Vel += 0x100000;
+			}
+		}
+
+		if (frame > 6 && frame < 24 && frame & 1)
+			DoRipple(item, 384, -64);
+
+		break;
+
+	case 4:
+
+		if (l->anim_number == objects[VEHICLE_ANIM].anim_index + 4 && frame == 24 && !(kayak->Flags & 0x80))
+		{
+			tmpMesh = lara.mesh_ptrs[HAND_R];
+			lara.mesh_ptrs[HAND_R] = meshes[objects[VEHICLE_ANIM].mesh_index + HAND_R];
+			meshes[objects[VEHICLE_ANIM].mesh_index + HAND_R] = tmpMesh;
+			l->mesh_bits &= ~0x7F;
+			kayak->Flags |= 0x80;
+		}
+
+		break;
+
+	case 9:
+
+		if (l->anim_number == objects[VEHICLE_ANIM].anim_index + 14 && frame == 27 && kayak->Flags & 0x80)
+		{
+			tmpMesh = lara.mesh_ptrs[HAND_R];
+			lara.mesh_ptrs[HAND_R] = meshes[objects[VEHICLE_ANIM].mesh_index + HAND_R];
+			meshes[objects[VEHICLE_ANIM].mesh_index + HAND_R] = tmpMesh;
+			l->mesh_bits |= 0x7F;
+			kayak->Flags &= ~0x80;
+		}
+
+		l->goal_anim_state = l->required_anim_state;
+		break;
+
+	case 10:
+
+		if (!(input & IN_LSTEP) || (!kayak->Vel && !lara.current_xvel && !lara.current_zvel))
+			l->goal_anim_state = 1;
+		else if (l->anim_number - objects[VEHICLE_ANIM].anim_index == 26)
+		{
+			if (kayak->Vel >= 0)
+			{
+				kayak->Rot -= 0x200000;
+
+				if (kayak->Rot < -0x1000000)
+					kayak->Rot = -0x1000000;
+
+				kayak->Vel -= 0x8000;
+
+				if (kayak->Vel < 0)
+					kayak->Vel = 0;
+			}
+
+			if (kayak->Vel < 0)
+			{
+				kayak->Vel += 0x8000;
+				kayak->Rot += 0x200000;
+
+				if (kayak->Vel > 0)
+					kayak->Vel = 0;
+			}
+
+			if (!(wibble & 3))
+				DoRipple(item, -256, -256);
+		}
+
+		break;
+
+	case 11:
+
+		if (!(input & IN_RSTEP) || (!kayak->Vel && !lara.current_xvel && !lara.current_zvel))
+			l->goal_anim_state = 1;
+		else if (l->anim_number - objects[VEHICLE_ANIM].anim_index == 27)
+		{
+			if (kayak->Vel >= 0)
+			{
+				kayak->Rot += 0x200000;
+
+				if (kayak->Rot > 0x1000000)
+					kayak->Rot = 0x1000000;
+
+				kayak->Vel -= 0x8000;
+
+				if (kayak->Vel < 0)
+					kayak->Vel = 0;
+			}
+
+			if (kayak->Vel < 0)
+			{
+				kayak->Vel += 0x8000;
+				kayak->Rot -= 0x200000;
+
+				if (kayak->Vel > 0)
+					kayak->Vel = 0;
+			}
+
+			if (!(wibble & 3))
+				DoRipple(item, 256, -256);
+		}
+
+		break;
+
+	case 13:
+
+		if (l->anim_number == objects[VEHICLE_ANIM].anim_index + 24 && frame == 83)
+		{
+			pos.x = 0;
+			pos.y = 350;
+			pos.z = 500;
+			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			l->pos.x_pos = pos.x;
+			l->pos.y_pos = pos.y;
+			l->pos.z_pos = pos.z;
+			l->pos.x_rot = 0;
+			l->pos.y_rot = item->pos.y_rot - 0x4000;
+			l->pos.z_rot = 0;
+			l->anim_number = ANIM_FASTFALL;
+			l->frame_number = anims[ANIM_FASTFALL].frame_base;
+			l->current_anim_state = 9;
+			l->goal_anim_state = 9;
+			l->gravity_status = 1;
+			l->fallspeed = 0;
+			lara.gun_status = 0;
+			lara.skidoo = NO_ITEM;
+		}
+
+		break;
+
+	case 14:
+
+		if (l->anim_number == objects[VEHICLE_ANIM].anim_index + 32 && frame == 83)
+		{
+			pos.x = 0;
+			pos.y = 350;
+			pos.z = 500;
+			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			l->pos.x_pos = pos.x;
+			l->pos.y_pos = pos.y;
+			l->pos.z_pos = pos.z;
+			l->pos.x_rot = 0;
+			l->pos.y_rot = item->pos.y_rot + 0x4000;
+			l->pos.z_rot = 0;
+			l->anim_number = ANIM_FASTFALL;
+			l->frame_number = anims[ANIM_FASTFALL].frame_base;
+			l->current_anim_state = 9;
+			l->goal_anim_state = 9;
+			l->gravity_status = 1;
+			l->fallspeed = 0;
+			lara.gun_status = 0;
+			lara.skidoo = NO_ITEM;
+		}
+
+		break;
+	}
+
+	if (kayak->Vel > 0)
+	{
+		kayak->Vel -= 0x8000;
+
+		if (kayak->Vel < 0)
+			kayak->Vel = 0;
+	}
+	else if (kayak->Vel < 0)
+	{
+		kayak->Vel += 0x8000;
+
+		if (kayak->Vel > 0)
+			kayak->Vel = 0;
+	}
+
+	if (kayak->Vel > 0x380000)
+		kayak->Vel = 0x380000;
+	else if (kayak->Vel < -0x380000)
+		kayak->Vel = -0x380000;
+
+	item->speed = kayak->Vel >> 16;
+
+	if (kayak->Rot < 0)
+	{
+		kayak->Rot += 0x50000;
+
+		if (kayak->Rot > 0)
+			kayak->Rot = 0;
+	}
+	else
+	{
+		kayak->Rot -= 0x50000;
+
+		if (kayak->Rot < 0)
+			kayak->Rot = 0;
+	}
+}
+
 void inject_kayak(bool replace)
 {
 	INJECT(0x0043B390, LaraRapidsDrown, replace);
@@ -179,4 +634,7 @@ void inject_kayak(bool replace)
 	INJECT(0x0043B620, GetInKayak, replace);
 	INJECT(0x0043B4C0, KayakCollision, replace);
 	INJECT(0x0043D4A0, DoRipple, replace);
+	INJECT(0x0043C840, TestHeight, replace);
+	INJECT(0x0043D550, CanGetOut, replace);
+	INJECT(0x0043CC00, KayakUserInput, replace);
 }
