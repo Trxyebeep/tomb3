@@ -14,6 +14,8 @@
 #include "camera.h"
 #include "effects.h"
 #include "../3dsystem/3d_gen.h"
+#include "draw.h"
+#include "../specific/draweffects.h"
 
 void LaraRapidsDrown()
 {
@@ -1347,6 +1349,14 @@ long KayakControl()
 		return 1;
 }
 
+void KayakDraw(ITEM_INFO* item)
+{
+	item->pos.y_pos += 32;
+	DrawAnimatingItem(item);
+	item->pos.y_pos -= 32;
+	S_DrawWakeFX(item);
+}
+
 void inject_kayak(bool replace)
 {
 	INJECT(0x0043B390, LaraRapidsDrown, replace);
@@ -1368,4 +1378,5 @@ void inject_kayak(bool replace)
 	INJECT(0x0043BCA0, UpdateWakeFX, replace);
 	INJECT(0x0043D5A0, KayakToBaddieCollision, replace);
 	INJECT(0x0043B730, KayakControl, replace);
+	INJECT(0x0043B490, KayakDraw, replace);
 }

@@ -678,7 +678,7 @@ tomb3decomp progress.
 
 0x0043B390	+	LaraRapidsDrown
 0x0043B410	+	KayakInitialise
-0x0043B490		KayakDraw
+0x0043B490	+	KayakDraw
 0x0043B4C0	+	KayakCollision
 0x0043B620	+	GetInKayak
 0x0043B730	+	KayakControl
