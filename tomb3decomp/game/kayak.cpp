@@ -1092,6 +1092,58 @@ static void DoWake(ITEM_INFO* item, long xoff, long zoff, short rotate)
 		CurrentStartWake = (CurrentStartWake + 1) & 0x1F;
 }
 
+static void TriggerRapidsMist(long x, long y, long z)
+{
+	SPARKS* sptr;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 128;
+	sptr->sG = 128;
+	sptr->sB = 128;
+	sptr->dR = 192;
+	sptr->dG = 192;
+	sptr->dB = 192;
+	sptr->ColFadeSpeed = 2;
+	sptr->FadeToBlack = 4;
+	sptr->TransType = 2;
+	sptr->extras = 0;
+	sptr->Life = (GetRandomControl() & 3) + 6;
+	sptr->sLife = sptr->Life;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 0xF) + x - 8;
+	sptr->y = (GetRandomControl() & 0xF) + y - 8;
+	sptr->z = (GetRandomControl() & 0xF) + z - 8;
+	sptr->Xvel = (GetRandomControl() & 0xFF) - 128;
+	sptr->Yvel = (GetRandomControl() & 0xFF) - 128;
+	sptr->Zvel = (GetRandomControl() & 0xFF) - 128;
+	sptr->Friction = 3;
+
+	if (GetRandomControl() & 1)
+	{
+		sptr->Flags = 538;
+		sptr->RotAng = GetRandomControl() & 0xFFF;
+
+		if (GetRandomControl() & 1)
+			sptr->RotAdd = -16 - (GetRandomControl() & 0xF);
+		else
+			sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
+	}
+	else
+		sptr->Flags = 522;
+
+	sptr->Scalar = 4;
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+	sptr->Gravity = 0;
+	sptr->MaxYvel = 0;
+	sptr->dWidth = (GetRandomControl() & 7) + 16;
+	sptr->sWidth = sptr->dWidth >> 1;
+	sptr->Width = sptr->sWidth;
+	sptr->sHeight = sptr->sWidth;
+	sptr->Height = sptr->sWidth;
+	sptr->dHeight = sptr->dWidth;
+}
+
 void inject_kayak(bool replace)
 {
 	INJECT(0x0043B390, LaraRapidsDrown, replace);
@@ -1109,4 +1161,5 @@ void inject_kayak(bool replace)
 	INJECT(0x0043BF40, KayakToBackground, replace);
 	INJECT(0x0043BD00, KayakSplash, replace);
 	INJECT(0x0043BAC0, DoWake, replace);
+	INJECT(0x0043BDF0, TriggerRapidsMist, replace);
 }
