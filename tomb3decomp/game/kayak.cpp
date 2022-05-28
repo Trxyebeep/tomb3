@@ -352,7 +352,7 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 				if (kayak->Rot < -0x1000000)
 					kayak->Rot = -0x1000000;
 				
-				kayak->Vel =+ 0x180000;
+				kayak->Vel += 0x180000;
 			}
 			else if (kayak->Turn)
 			{
