@@ -706,6 +706,15 @@ struct WAKE_PTS
 	uchar pad[3];
 };
 
+struct SUB_WAKE_PTS
+{
+	long x[2];
+	long y[2];
+	long z[2];
+	uchar life;
+	uchar pad[3];
+};
+
 struct SUNLIGHT
 {
 	short nx;
@@ -1480,5 +1489,15 @@ struct SPLASH_SETUP
 	short OuterXZsize;
 	short OuterXZvel;
 	short OuterFriction;
+};
+
+struct SUBINFO
+{
+	long Vel;
+	long Rot;
+	long RotX;
+	short FanRot;
+	char Flags;
+	char WeaponTimer;
 };
 #pragma pack(pop)

@@ -127,6 +127,7 @@
 #define GtWindowClosed	VAR_(0x006CF268, bool)
 #define splash_setup	VAR_(0x006DCA80, SPLASH_SETUP)
 #define CurrentStartWake	VAR_(0x006266BC, uchar)
+#define SubCurrentStartWake	VAR_(0x006270E4, uchar)
 #define WakeShade	VAR_(0x006266C0, uchar)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
@@ -257,6 +258,7 @@
 #define T_textStrings	ARRAY_(0x006D0000, TEXTSTRING, [64])
 #define T_theStrings	ARRAY_(0x006D0F20, char, [4096])
 #define WakePts	ARRAY_(0x006E31A0, WAKE_PTS, [32][2])
+#define SubWakePts	ARRAY_(0x006269E0, SUB_WAKE_PTS, [32][2])
 
 /*constants*/
 #define NO_HEIGHT -32512

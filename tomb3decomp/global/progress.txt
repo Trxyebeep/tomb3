@@ -1285,7 +1285,7 @@ tomb3decomp progress.
 
 		game/sub.cpp
 
-0x004685C0		SubInitialise
+0x004685C0	+	SubInitialise
 0x00468610		SubCollision
 0x00468780		GetOnSub
 0x00468850		SubDraw

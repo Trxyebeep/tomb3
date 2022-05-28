@@ -27,6 +27,7 @@
 #include "../game/cinema.h"
 #include "../game/text.h"
 #include "../game/kayak.h"
+#include "../game/sub.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -95,6 +96,7 @@ void inject_all(bool replace)
 	inject_cinema(replace);
 	inject_text(replace);
 	inject_kayak(replace);
+	inject_sub(replace);
 
 	//specific
 	inject_drawbars(replace);
