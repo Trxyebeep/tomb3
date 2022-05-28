@@ -13,6 +13,7 @@
 #include "laraanim.h"
 #include "camera.h"
 #include "effects.h"
+#include "../3dsystem/3d_gen.h"
 
 void LaraRapidsDrown()
 {
@@ -1222,6 +1223,130 @@ static void KayakToBaddieCollision(ITEM_INFO* kayak)
 	}
 }
 
+long KayakControl()
+{
+	ITEM_INFO* item;
+	KAYAKINFO* kayak;
+	FLOOR_INFO* floor;
+	long ofs, h, wh, damage, x, y, z;
+	short room_number;
+	static short MistXPos[10] = { 32, 96, 170, 220, 300, 400, 400, 300,  200, 64 };
+	static short MistZPos[10] = { 900, 750, 600, 450, 300, 150, 0, -150, -300, -450 };
+	static char cnt = 0;
+
+	item = &items[lara.skidoo];
+	kayak = (KAYAKINFO*)item->data;
+
+	if (input & IN_LOOK)
+		LookUpDown();
+
+	ofs = item->fallspeed;
+	KayakUserInput(item, lara_item, kayak);
+	KayakToBackground(item, kayak);
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	h = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+	TestTriggers(trigger_index, 0);
+	wh = GetWaterHeight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, room_number);
+	kayak->Water = wh;
+
+	if (wh == NO_HEIGHT)
+	{
+		wh = h;
+		kayak->Water = h;
+		kayak->TrueWater = 0;
+	}
+	else
+	{
+		kayak->TrueWater = 1;
+		kayak->Water = wh - 5;
+	}
+
+	damage = ofs - item->fallspeed;
+
+	if (damage > 128 && !item->fallspeed && wh != NO_HEIGHT)
+	{
+		if (damage > 160)
+			lara_item->hit_points -= short((damage - 160) << 3);
+
+		KayakSplash(item, ofs - item->fallspeed, wh);
+	}
+	
+	if (lara.skidoo != NO_ITEM)
+	{
+		if (item->room_number != room_number)
+		{
+			ItemNewRoom(lara.skidoo, room_number);
+			ItemNewRoom(lara.item_number, room_number);
+		}
+
+		lara_item->pos.x_pos = item->pos.x_pos;
+		lara_item->pos.y_pos = item->pos.y_pos + 32;
+		lara_item->pos.z_pos = item->pos.z_pos;
+		lara_item->pos.x_rot = item->pos.x_rot;
+		lara_item->pos.y_rot = item->pos.y_rot;
+		lara_item->pos.z_rot = item->pos.z_rot >> 1;
+		AnimateItem(lara_item);
+		item->anim_number = lara_item->anim_number + objects[KAYAK].anim_index - objects[VEHICLE_ANIM].anim_index;
+		item->frame_number = lara_item->frame_number + anims[item->anim_number].frame_base - anims[lara_item->anim_number].frame_base;
+		camera.target_elevation = -5460;
+		camera.target_distance = 2048;
+	}
+
+	if (!(wibble & 0xF) && kayak->TrueWater)
+	{
+		DoWake(item, -128, 0, 0);
+		DoWake(item, 128, 0, 1);
+	}
+
+	if (wibble & 7 && !kayak->TrueWater && item->fallspeed < 20)
+	{
+		cnt ^= 1;
+
+		for (int i = cnt; i < 10; i += 2)
+		{
+			if (GetRandomControl() & 1)
+				x = MistXPos[i] >> 1;
+			else
+				x = -(MistXPos[i] >> 1);
+
+			y = 50;
+			z = MistZPos[i];
+
+			phd_PushUnitMatrix();
+			phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+#ifdef TROYESTUFF
+			x = (phd_mxptr[M00] * x + phd_mxptr[M01] * y + phd_mxptr[M02] * z) >> W2V_SHIFT;	//fixes mist being all over the place
+			y = (phd_mxptr[M10] * x + phd_mxptr[M11] * y + phd_mxptr[M12] * z) >> W2V_SHIFT;
+			z = (phd_mxptr[M20] * x + phd_mxptr[M21] * y + phd_mxptr[M22] * z) >> W2V_SHIFT;
+			TriggerRapidsMist(item->pos.x_pos + x, item->pos.y_pos + y, item->pos.z_pos + z);
+#else
+			x = item->pos.x_pos + ((phd_mxptr[M00] * x + phd_mxptr[M01] * y + phd_mxptr[M02] * z) >> W2V_SHIFT);
+			y = item->pos.y_pos + ((phd_mxptr[M10] * x + phd_mxptr[M11] * y + phd_mxptr[M12] * z) >> W2V_SHIFT);
+			z = item->pos.z_pos + ((phd_mxptr[M20] * x + phd_mxptr[M21] * y + phd_mxptr[M22] * z) >> W2V_SHIFT);
+			TriggerRapidsMist(x, y, z);
+#endif
+			phd_PopMatrix();
+		}
+	}
+
+	if (item->speed || lara.current_xvel || lara.current_zvel)
+	{
+		if (WakeShade < 16)
+			WakeShade++;
+	}
+	else if (WakeShade)
+		WakeShade--;
+
+	UpdateWakeFX();
+	KayakToBaddieCollision(item);
+
+	if (lara.skidoo == NO_ITEM)
+		return 0;
+	else
+		return 1;
+}
+
 void inject_kayak(bool replace)
 {
 	INJECT(0x0043B390, LaraRapidsDrown, replace);
@@ -1242,4 +1367,5 @@ void inject_kayak(bool replace)
 	INJECT(0x0043BDF0, TriggerRapidsMist, replace);
 	INJECT(0x0043BCA0, UpdateWakeFX, replace);
 	INJECT(0x0043D5A0, KayakToBaddieCollision, replace);
+	INJECT(0x0043B730, KayakControl, replace);
 }

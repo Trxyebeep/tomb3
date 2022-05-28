@@ -127,6 +127,7 @@
 #define GtWindowClosed	VAR_(0x006CF268, bool)
 #define splash_setup	VAR_(0x006DCA80, SPLASH_SETUP)
 #define CurrentStartWake	VAR_(0x006266BC, uchar)
+#define WakeShade	VAR_(0x006266C0, uchar)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
