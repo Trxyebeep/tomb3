@@ -474,13 +474,13 @@ void FlareControl(short item_number)
 
 		if (room[item->room_number].flags & ROOM_UNDERWATER)
 		{
-			SoundEffect(SFX_FLARE_BURN_W, &item->pos, SFX_WATER);
+			SoundEffect(SFX_LARA_FLARE_BURN, &item->pos, SFX_WATER);
 
 			if (GetRandomControl() < 0x4000)
 				CreateBubble(&item->pos, item->room_number, 8, 8);
 		}
 		else
-			SoundEffect(SFX_FLARE_BURN_W, &item->pos, 0x2000000 | SFX_SETPITCH);
+			SoundEffect(SFX_LARA_FLARE_BURN, &item->pos, 0x2000000 | SFX_SETPITCH);
 	}
 
 	item->data = (void*)age;
