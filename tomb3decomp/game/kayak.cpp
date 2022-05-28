@@ -819,6 +819,37 @@ static long DoShift(ITEM_INFO* item, PHD_VECTOR* newPos, PHD_VECTOR* oldPos)
 	return 0;
 }
 
+static long GetCollisionAnim(ITEM_INFO* item, long x, long z)
+{
+	long s, c, front, side;
+
+	x = item->pos.x_pos - x;
+	z = item->pos.z_pos - z;
+
+	if (!x && !z)
+		return 0;
+
+	s = phd_sin(item->pos.y_rot);
+	c = phd_cos(item->pos.y_rot);
+	front = (x * s + z * c) >> W2V_SHIFT;
+	side = (x * c - z * s) >> W2V_SHIFT;
+
+	if (ABS(front) <= ABS(side))
+	{
+		if (side > 0)
+			return 3;
+		else
+			return 4;
+	}
+	else
+	{
+		if (front > 0)
+			return 1;
+		else
+			return 2;
+	}
+}
+
 void inject_kayak(bool replace)
 {
 	INJECT(0x0043B390, LaraRapidsDrown, replace);
@@ -832,4 +863,5 @@ void inject_kayak(bool replace)
 	INJECT(0x0043C6B0, DoCurrent, replace);
 	INJECT(0x0043C650, DoDynamics, replace);
 	INJECT(0x0043C960, DoShift, replace);
+	INJECT(0x0043C5C0, GetCollisionAnim, replace);
 }
