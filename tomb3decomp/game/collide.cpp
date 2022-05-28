@@ -1,5 +1,6 @@
 #include "../tomb3/pch.h"
 #include "collide.h"
+#include "sphere.h"
 
 void ShiftItem(ITEM_INFO* item, COLL_INFO* coll)
 {
@@ -11,7 +12,29 @@ void ShiftItem(ITEM_INFO* item, COLL_INFO* coll)
 	coll->shift.x = 0;
 }
 
+void ObjectCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_num];
+
+	if (TestBoundsCollide(item, l, coll->radius) && TestCollision(item, l) && coll->enable_baddie_push)
+		ItemPushLara(item, l, coll, 0, 1);
+}
+
+void ObjectCollisionSub(short item_num, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_num];
+
+	if (TestBoundsCollide(item, l, coll->radius) && TestCollision(item, l))
+		ItemPushLara(item, l, coll, 0, 0);
+}
+
 void inject_collide(bool replace)
 {
 	INJECT(0x0041E690, ShiftItem, replace);
+	INJECT(0x0041EBD0, ObjectCollision, replace);
+	INJECT(0x0041EC30, ObjectCollisionSub, replace);
 }
