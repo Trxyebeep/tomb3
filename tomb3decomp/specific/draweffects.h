@@ -6,6 +6,7 @@ void inject_draweffects(bool replace);
 void LaraElectricDeath(long lr, ITEM_INFO* item);
 void DrawExplosionRings();
 bool ClipLine(long& x1, long& y1, long& x2, long& y2, long w, long h);
+void S_DrawWakeFX(ITEM_INFO* item);
 
 #define S_DrawSparks	( (void(__cdecl*)()) 0x0047B2C0 )
 #define S_DrawSplashes	( (void(__cdecl*)()) 0x0047BAA0 )
@@ -13,4 +14,3 @@ bool ClipLine(long& x1, long& y1, long& x2, long& y2, long w, long h);
 #define DoSnow	( (void(__cdecl*)()) 0x0047AA80 )
 #define DoRain	( (void(__cdecl*)()) 0x0047A4B0 )
 #define S_DrawLaserBeam	( (void(__cdecl*)(GAME_VECTOR*, GAME_VECTOR*, uchar, uchar, uchar)) 0x00479810 )
-#define S_DrawWakeFX	( (void(__cdecl*)(ITEM_INFO*)) 0x0047F4C0 )
