@@ -681,6 +681,35 @@ static void DoCurrent(ITEM_INFO* item)
 	lara.current_active = 0;
 }
 
+static long DoDynamics(long h, long fallspeed, long* y)
+{
+	long kick;
+
+	if (h <= *y)
+	{
+		kick = (h - *y) << 2;
+
+		if (kick < -80)
+			kick = -80;
+
+		fallspeed += (kick - fallspeed) >> 3;
+
+		if (*y > h)
+			*y = h;
+	}
+	else
+	{
+		*y += fallspeed;
+
+		if (*y <= h)
+			fallspeed += 6;
+		else
+			fallspeed = 0;
+	}
+
+	return fallspeed;
+}
+
 void inject_kayak(bool replace)
 {
 	INJECT(0x0043B390, LaraRapidsDrown, replace);
@@ -692,4 +721,5 @@ void inject_kayak(bool replace)
 	INJECT(0x0043D550, CanGetOut, replace);
 	INJECT(0x0043CC00, KayakUserInput, replace);
 	INJECT(0x0043C6B0, DoCurrent, replace);
+	INJECT(0x0043C650, DoDynamics, replace);
 }

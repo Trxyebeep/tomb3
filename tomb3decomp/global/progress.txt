@@ -688,7 +688,7 @@ tomb3decomp progress.
 0x0043BDF0		TriggerRapidsMist
 0x0043BF40		KayakToBackground
 0x0043C5C0		GetCollisionAnim
-0x0043C650		DoDynamics
+0x0043C650	+	DoDynamics
 0x0043C6B0	+	DoCurrent
 0x0043C840	+	TestHeight
 0x0043C960		DoShift
