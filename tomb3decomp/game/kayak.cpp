@@ -11,6 +11,7 @@
 #include "effect2.h"
 #include "lara.h"
 #include "laraanim.h"
+#include "camera.h"
 
 void LaraRapidsDrown()
 {
@@ -850,6 +851,153 @@ static long GetCollisionAnim(ITEM_INFO* item, long x, long z)
 	}
 }
 
+static void KayakToBackground(ITEM_INFO* item, KAYAKINFO* kayak)
+{
+	FLOOR_INFO* floor;
+	PHD_VECTOR oldpos[9];
+	PHD_VECTOR fPos;
+	PHD_VECTOR lPos;
+	PHD_VECTOR rPos;
+	PHD_VECTOR pos;
+	GAME_VECTOR kPos;
+	long heights[8];
+	long rot, front, left, right, diff, oX, oZ, h;
+	long dx, dz, s, c, speed;
+	short xRot, zRot, room_number;
+
+	rot = 0;
+	kayak->OldPos = item->pos;
+	heights[0] = TestHeight(item, 0, 1024, oldpos);
+	heights[1] = TestHeight(item, -96, 512, &oldpos[1]);
+	heights[2] = TestHeight(item, 96, 512, &oldpos[2]);
+	heights[3] = TestHeight(item, -128, 128, &oldpos[3]);
+	heights[4] = TestHeight(item, 128, 128, &oldpos[4]);
+	heights[5] = TestHeight(item, -128, -320, &oldpos[5]);
+	heights[6] = TestHeight(item, 128, -320, &oldpos[6]);
+	heights[7] = TestHeight(item, 0, -640, &oldpos[7]);
+
+	for (int i = 0; i < 8; i++)
+	{
+		if (oldpos[i].y > heights[i])
+			oldpos[i].y = heights[i];
+	}
+
+	oldpos[8].x = item->pos.x_pos;
+	oldpos[8].y = item->pos.y_pos;
+	oldpos[8].z = item->pos.z_pos;
+
+	front = TestHeight(item, 0, 1024, &fPos);
+	left = TestHeight(item, -128, 128, &lPos);
+	right = TestHeight(item, 128, 128, &rPos);
+
+	item->pos.y_rot += kayak->Rot >> 16;
+	item->pos.x_pos += (item->speed * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+	item->pos.z_pos += (item->speed * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+
+	DoCurrent(item);
+	kayak->FallSpeedL = DoDynamics(left, kayak->FallSpeedL, &lPos.y);
+	kayak->FallSpeedR = DoDynamics(right, kayak->FallSpeedR, &rPos.y);
+	kayak->FallSpeedF = DoDynamics(front, kayak->FallSpeedF, &fPos.y);
+	item->fallspeed = (short)DoDynamics(kayak->Water, item->fallspeed, &item->pos.y_pos);
+
+	diff = (rPos.y + lPos.y) >> 1;
+	xRot = (short)phd_atan(1024, item->pos.y_pos - fPos.y);
+	zRot = (short)phd_atan(128, diff - lPos.y);
+	item->pos.x_rot = xRot;
+	item->pos.z_rot = zRot;
+	oX = item->pos.x_pos;
+	oZ = item->pos.z_pos;
+	
+	h = TestHeight(item, 0, -640, &pos);
+
+	if (h < oldpos[7].y - 64)
+		rot = DoShift(item, &pos, &oldpos[7]);
+
+	h = TestHeight(item, 128, -320, &pos);
+
+	if (h < oldpos[6].y - 64)
+		rot += DoShift(item, &pos, &oldpos[6]);
+
+	h = TestHeight(item, -128, -320, &pos);
+
+	if (h < oldpos[5].y - 64)
+		rot += DoShift(item, &pos, &oldpos[5]);
+
+	h = TestHeight(item, 128, 128, &pos);
+
+	if (h < oldpos[4].y - 64)
+		rot += DoShift(item, &pos, &oldpos[4]);
+
+	h = TestHeight(item, -128, 128, &pos);
+
+	if (h < oldpos[3].y - 64)
+		rot += DoShift(item, &pos, &oldpos[3]);
+
+	h = TestHeight(item, 96, 512, &pos);
+
+	if (h < oldpos[2].y - 64)
+		rot += DoShift(item, &pos, &oldpos[2]);
+
+	h = TestHeight(item, -96, 512, &pos);
+
+	if (h < oldpos[1].y - 64)
+		rot += DoShift(item, &pos, &oldpos[1]);
+
+	h = TestHeight(item, 0, 1024, &pos);
+
+	if (h < oldpos[0].y - 64)
+		rot += DoShift(item, &pos, &oldpos[0]);
+
+	item->pos.y_rot += (short)rot;
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	h = GetWaterHeight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, room_number);
+
+	if (h == NO_HEIGHT)
+		h = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (h < item->pos.y_pos - 64)
+		h = DoShift(item, (PHD_VECTOR*)&item->pos, &oldpos[8]);
+
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	h = GetWaterHeight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, room_number);
+
+	if (h == NO_HEIGHT)
+	{
+		h = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+		if (h == NO_HEIGHT)
+		{
+			kPos.x = kayak->OldPos.x_pos;
+			kPos.y = kayak->OldPos.y_pos;
+			kPos.z = kayak->OldPos.z_pos;
+			kPos.room_number = item->room_number;
+			CameraCollisionBounds(&kPos, 256, 0);
+			item->pos.x_pos = kPos.x;
+			item->pos.y_pos = kPos.y;
+			item->pos.z_pos = kPos.z;
+			item->room_number = kPos.room_number;
+		}
+	}
+
+	if (GetCollisionAnim(item, oX, oZ))
+	{
+		s = phd_sin(item->pos.y_rot);
+		c = phd_cos(item->pos.y_rot);
+		dx = item->pos.x_pos - oldpos[8].x;
+		dz = item->pos.z_pos - oldpos[8].z;
+		speed = (dx * s + dz * c) >> W2V_SHIFT;
+		speed <<= 8;
+
+		if ((kayak->Vel > 0 && speed < kayak->Vel) || (kayak->Vel < 0 && speed > kayak->Vel))
+			kayak->Vel = speed;
+
+		if (kayak->Vel < -0x380000)
+			kayak->Vel = -0x380000;
+	}
+}
+
 void inject_kayak(bool replace)
 {
 	INJECT(0x0043B390, LaraRapidsDrown, replace);
@@ -864,4 +1012,5 @@ void inject_kayak(bool replace)
 	INJECT(0x0043C650, DoDynamics, replace);
 	INJECT(0x0043C960, DoShift, replace);
 	INJECT(0x0043C5C0, GetCollisionAnim, replace);
+	INJECT(0x0043BF40, KayakToBackground, replace);
 }
