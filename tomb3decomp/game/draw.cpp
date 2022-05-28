@@ -52,7 +52,8 @@ void phd_PushMatrix_I()
 void phd_RotY_I(short angle)
 {
 	long* mx;
-
+	
+	phd_RotY(angle);
 	mx = phd_mxptr;
 	phd_mxptr = IMptr;
 	phd_RotY(angle);
@@ -63,6 +64,7 @@ void phd_RotX_I(short angle)
 {
 	long* mx;
 
+	phd_RotX(angle);
 	mx = phd_mxptr;
 	phd_mxptr = IMptr;
 	phd_RotX(angle);
@@ -73,6 +75,7 @@ void phd_RotZ_I(short angle)
 {
 	long* mx;
 
+	phd_RotZ(angle);
 	mx = phd_mxptr;
 	phd_mxptr = IMptr;
 	phd_RotZ(angle);
