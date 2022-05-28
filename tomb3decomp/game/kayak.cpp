@@ -1025,6 +1025,73 @@ static void KayakSplash(ITEM_INFO* item, long fallspeed, long water)
 	SplashCount = 16;
 }
 
+static void DoWake(ITEM_INFO* item, long xoff, long zoff, short rotate)
+{
+	long s, c, x, z, wh;
+	long xv[2];
+	long zv[2];
+	short room_number, angle1, angle2;
+
+	if (WakePts[CurrentStartWake][rotate].life)
+		return;
+
+	s = phd_sin(item->pos.y_rot);
+	c = phd_cos(item->pos.y_rot);
+	x = item->pos.x_pos + ((zoff * s + xoff * c) >> W2V_SHIFT);
+	z = item->pos.z_pos + ((zoff * c - xoff * s) >> W2V_SHIFT);
+	room_number = item->room_number;
+	GetFloor(x, item->pos.y_pos, z, &room_number);
+	wh = GetWaterHeight(x, item->pos.y_pos, z, room_number);
+
+	if (wh == NO_HEIGHT)
+		return;
+
+	if (item->speed >= 0)
+	{
+		if (rotate)
+		{
+			angle1 = item->pos.y_rot + 30940;
+			angle2 = item->pos.y_rot + 27300;
+		}
+		else
+		{
+			angle1 = item->pos.y_rot - 30940;
+			angle2 = item->pos.y_rot - 27300;
+		}
+	}
+	else
+	{
+		if (rotate)
+		{
+			angle1 = item->pos.y_rot + 1820;
+			angle2 = item->pos.y_rot + 5460;
+		}
+		else
+		{
+			angle1 = item->pos.y_rot - 1820;
+			angle2 = item->pos.y_rot - 5460;
+		}
+	}
+
+	xv[0] = (4 * phd_sin(angle1)) >> W2V_SHIFT;
+	xv[1] = (6 * phd_sin(angle2)) >> W2V_SHIFT;
+	zv[0] = (4 * phd_cos(angle1)) >> W2V_SHIFT;
+	zv[1] = (6 * phd_cos(angle2)) >> W2V_SHIFT;
+	WakePts[CurrentStartWake][rotate].y = item->pos.y_pos + 32;
+	WakePts[CurrentStartWake][rotate].life = 64;
+
+	for (int i = 0; i < 2; i++)
+	{
+		WakePts[CurrentStartWake][rotate].x[i] = x;
+		WakePts[CurrentStartWake][rotate].z[i] = z;
+		WakePts[CurrentStartWake][rotate].xvel[i] = (short)xv[i];
+		WakePts[CurrentStartWake][rotate].zvel[i] = (short)zv[i];
+	}
+
+	if (rotate == 1)
+		CurrentStartWake = (CurrentStartWake + 1) & 0x1F;
+}
+
 void inject_kayak(bool replace)
 {
 	INJECT(0x0043B390, LaraRapidsDrown, replace);
@@ -1041,4 +1108,5 @@ void inject_kayak(bool replace)
 	INJECT(0x0043C5C0, GetCollisionAnim, replace);
 	INJECT(0x0043BF40, KayakToBackground, replace);
 	INJECT(0x0043BD00, KayakSplash, replace);
+	INJECT(0x0043BAC0, DoWake, replace);
 }
