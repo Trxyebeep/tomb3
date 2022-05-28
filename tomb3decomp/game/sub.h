@@ -4,5 +4,6 @@
 void inject_sub(bool replace);
 
 void SubInitialise(short item_number);
+void SubCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
 
 #define SubControl	( (long(__cdecl*)()) 0x00468C10 )
