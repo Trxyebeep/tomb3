@@ -6,6 +6,10 @@
 #include "laraflar.h"
 #include "objects.h"
 #include "laraanim.h"
+#include "draw.h"
+#include "../specific/output.h"
+#include "../3dsystem/3d_gen.h"
+#include "../specific/draweffects.h"
 
 void SubInitialise(short item_number)
 {
@@ -113,9 +117,107 @@ void SubCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	}
 }
 
+void SubDraw(ITEM_INFO* item)
+{
+	OBJECT_INFO* obj;
+	SUBINFO* sub;
+	short** meshpp;
+	long* bone;
+	short* frm[2];
+	short* rot1;
+	short* rot2;
+	long frac, rate, clip;
+
+	frac = GetFrames(item, frm, &rate);
+	obj = &objects[item->object_number];
+	S_PrintShadow(256, frm[0], item);
+
+	phd_PushMatrix();
+	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos + 128, item->pos.z_pos);
+	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+
+	clip = S_GetObjectBounds(frm[0]);
+
+	if (clip)
+	{
+		sub = (SUBINFO*)item->data;
+		CalculateObjectLighting(item, frm[0]);
+		meshpp = &meshes[obj->mesh_index];
+		bone = &bones[obj->bone_index];
+
+		if (frac)
+		{
+			InitInterpolate(frac, rate);
+			rot1 = frm[0] + 9;
+			rot2 = frm[1] + 9;
+			phd_TranslateRel_ID(frm[0][6], frm[0][7], frm[0][8], frm[1][6], frm[1][7], frm[1][8]);
+
+			gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
+			phd_PutPolygons_I(*meshpp++, clip);
+
+			phd_PushMatrix_I();
+			phd_TranslateRel_I(bone[1], bone[2], bone[3]);
+			gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
+			phd_RotX_I(short(item->pos.z_rot + (sub->RotX >> 13)));
+			InterpolateMatrix();
+			phd_PutPolygons_I(*meshpp++, clip);
+			phd_PopMatrix_I();
+
+			phd_PushMatrix_I();
+			phd_TranslateRel_I(bone[5], bone[6], bone[7]);
+			gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
+			phd_RotX_I(short((sub->RotX >> 13) - item->pos.z_rot));
+			phd_PutPolygons_I(*meshpp++, clip);
+			phd_PopMatrix_I();
+
+			phd_PushMatrix_I();
+			phd_TranslateRel_I(bone[9], bone[10], bone[11]);
+			gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
+			phd_RotZ_I(sub->FanRot);
+			phd_PutPolygons_I(*meshpp++, clip);
+			phd_PopMatrix_I();
+		}
+		else
+		{
+			phd_TranslateRel(frm[0][6], frm[0][7], frm[0][8]);
+			rot1 = frm[0] + 9;
+
+			gar_RotYXZsuperpack(&rot1, 0);
+			phd_PutPolygons(*meshpp++, clip);
+
+			phd_PushMatrix();
+			phd_TranslateRel(bone[1], bone[2], bone[3]);
+			gar_RotYXZsuperpack(&rot1, 0);
+			phd_RotX(short(item->pos.z_rot + (sub->RotX >> 13)));
+			phd_PutPolygons(*meshpp++, clip);
+			phd_PopMatrix();
+
+			phd_PushMatrix();
+			phd_TranslateRel(bone[5], bone[6], bone[7]);
+			gar_RotYXZsuperpack(&rot1, 0);
+			phd_RotX(short((sub->RotX >> 13) - item->pos.z_rot));
+			phd_PutPolygons(*meshpp++, clip);
+			phd_PopMatrix();
+
+			phd_PushMatrix();
+			phd_TranslateRel(bone[9], bone[10], bone[11]);
+			gar_RotYXZsuperpack(&rot1, 0);
+			phd_RotZ(sub->FanRot);
+			phd_PutPolygons(*meshpp++, clip);
+			phd_PopMatrix();
+		}
+	}
+
+	phd_PopMatrix();
+
+	if (TriggerActive(item))
+		S_DrawWakeFX(item);
+}
+
 void inject_sub(bool replace)
 {
 	INJECT(0x004685C0, SubInitialise, replace);
 	INJECT(0x00468780, GetOnSub, replace);
 	INJECT(0x00468610, SubCollision, replace);
+	INJECT(0x00468850, SubDraw, replace);
 }
