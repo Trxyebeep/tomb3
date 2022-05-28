@@ -12,6 +12,7 @@
 #include "lara.h"
 #include "laraanim.h"
 #include "camera.h"
+#include "effects.h"
 
 void LaraRapidsDrown()
 {
@@ -1162,6 +1163,65 @@ static void UpdateWakeFX()
 	}
 }
 
+static void KayakToBaddieCollision(ITEM_INFO* kayak)
+{
+	ITEM_INFO* item;
+	OBJECT_INFO* obj;
+	short* door;
+	long dx, dy, dz;
+	short numroom, item_num, obj_num;
+	short roomies[20];
+
+	numroom = 1;
+	roomies[0] = kayak->room_number;
+	door = room[kayak->room_number].door;
+
+	if (door)
+	{
+		for (int i = *door++; i > 0; i--, door += 16)
+		{
+			roomies[numroom] = *door;
+			numroom++;
+		}
+	}
+
+	for (int i = 0; i < numroom; i++)
+	{
+		for (item_num = room[roomies[i]].item_number; item_num != NO_ITEM; item_num = item->next_item)
+		{
+			item = &items[item_num];
+
+			if (item->collidable && item->status != ITEM_INVISIBLE)
+			{
+				obj_num = item->object_number;
+				obj = &objects[obj_num];
+
+				if (obj->collision)
+				{
+					if (obj_num == SPIKES || obj_num == DARTS || obj_num == TEETH_TRAP ||
+						obj_num == BLADE && item->current_anim_state != 1 ||
+						obj_num == ICICLES && item->current_anim_state != 3)
+					{
+						dx = kayak->pos.x_pos - item->pos.x_pos;
+						dy = kayak->pos.y_pos - item->pos.y_pos;
+						dz = kayak->pos.z_pos - item->pos.z_pos;
+
+						if (dx > -2048 && dx < 2048 && dz > -2048 && dz < 2048 && dy > -2048 && dy < 2048)
+						{
+							if (TestBoundsCollide(item, kayak, 256))
+							{
+								DoLotsOfBlood(lara_item->pos.x_pos, lara_item->pos.y_pos - 256, lara_item->pos.z_pos,
+									kayak->speed, kayak->pos.y_rot, lara_item->room_number, 3);
+								lara_item->hit_points -= 5;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 void inject_kayak(bool replace)
 {
 	INJECT(0x0043B390, LaraRapidsDrown, replace);
@@ -1181,4 +1241,5 @@ void inject_kayak(bool replace)
 	INJECT(0x0043BAC0, DoWake, replace);
 	INJECT(0x0043BDF0, TriggerRapidsMist, replace);
 	INJECT(0x0043BCA0, UpdateWakeFX, replace);
+	INJECT(0x0043D5A0, KayakToBaddieCollision, replace);
 }

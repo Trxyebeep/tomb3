@@ -695,7 +695,7 @@ tomb3decomp progress.
 0x0043CC00	+	KayakUserInput
 0x0043D4A0	+	DoRipple
 0x0043D550	+	CanGetOut
-0x0043D5A0		KayakToBaddieCollision
+0x0043D5A0	+	KayakToBaddieCollision
 
 
 		game.lara.cpp
