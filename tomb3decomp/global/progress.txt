@@ -683,7 +683,7 @@ tomb3decomp progress.
 0x0043B620	+	GetInKayak
 0x0043B730		KayakControl
 0x0043BAC0	+	DoWake
-0x0043BCA0		UpdateWakeFX
+0x0043BCA0	+	UpdateWakeFX
 0x0043BD00	+	KayakSplash
 0x0043BDF0	+	TriggerRapidsMist
 0x0043BF40	+	KayakToBackground

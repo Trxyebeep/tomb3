@@ -1144,6 +1144,24 @@ static void TriggerRapidsMist(long x, long y, long z)
 	sptr->dHeight = sptr->dWidth;
 }
 
+static void UpdateWakeFX()
+{
+	for (int i = 0; i < 2; i++)
+	{
+		for (int j = 0; j < 32; j++)
+		{
+			if (WakePts[j][i].life)
+			{
+				WakePts[j][i].life--;
+				WakePts[j][i].x[0] += WakePts[j][i].xvel[0];
+				WakePts[j][i].z[0] += WakePts[j][i].zvel[0];
+				WakePts[j][i].x[1] += WakePts[j][i].xvel[1];
+				WakePts[j][i].z[1] += WakePts[j][i].zvel[1];
+			}
+		}
+	}
+}
+
 void inject_kayak(bool replace)
 {
 	INJECT(0x0043B390, LaraRapidsDrown, replace);
@@ -1162,4 +1180,5 @@ void inject_kayak(bool replace)
 	INJECT(0x0043BD00, KayakSplash, replace);
 	INJECT(0x0043BAC0, DoWake, replace);
 	INJECT(0x0043BDF0, TriggerRapidsMist, replace);
+	INJECT(0x0043BCA0, UpdateWakeFX, replace);
 }
