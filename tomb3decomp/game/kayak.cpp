@@ -709,7 +709,10 @@ static long DoDynamics(long h, long fallspeed, long* y)
 		if (*y <= h)
 			fallspeed += 6;
 		else
+		{
+			*y = h;
 			fallspeed = 0;
+		}
 	}
 
 	return fallspeed;
