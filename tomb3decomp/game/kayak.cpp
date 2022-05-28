@@ -998,6 +998,33 @@ static void KayakToBackground(ITEM_INFO* item, KAYAKINFO* kayak)
 	}
 }
 
+static void KayakSplash(ITEM_INFO* item, long fallspeed, long water)
+{
+	splash_setup.x = item->pos.x_pos;
+	splash_setup.y = item->pos.y_pos;
+	splash_setup.z = item->pos.z_pos;
+	splash_setup.InnerXZoff = 128;
+	splash_setup.InnerXZsize = 48;
+	splash_setup.InnerYsize = -384;
+	splash_setup.InnerXZvel = 160;
+	splash_setup.InnerYvel = short(-fallspeed << 5);
+	splash_setup.InnerGravity = 128;
+	splash_setup.InnerFriction = 7;
+	splash_setup.MiddleXZoff = 192;
+	splash_setup.MiddleXZsize = 96;
+	splash_setup.MiddleYsize = -256;
+	splash_setup.MiddleXZvel = 224;
+	splash_setup.MiddleYvel = short(-fallspeed << 4);
+	splash_setup.MiddleGravity = 72;
+	splash_setup.MiddleFriction = 8;
+	splash_setup.OuterXZoff = 256;
+	splash_setup.OuterXZsize = 128;
+	splash_setup.OuterXZvel = 272;
+	splash_setup.OuterFriction = -9;
+	SetupSplash(&splash_setup);
+	SplashCount = 16;
+}
+
 void inject_kayak(bool replace)
 {
 	INJECT(0x0043B390, LaraRapidsDrown, replace);
@@ -1013,4 +1040,5 @@ void inject_kayak(bool replace)
 	INJECT(0x0043C960, DoShift, replace);
 	INJECT(0x0043C5C0, GetCollisionAnim, replace);
 	INJECT(0x0043BF40, KayakToBackground, replace);
+	INJECT(0x0043BD00, KayakSplash, replace);
 }

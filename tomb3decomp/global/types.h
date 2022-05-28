@@ -1456,4 +1456,29 @@ struct RIPPLE_STRUCT
 	uchar size;
 	uchar init;
 };
+
+struct SPLASH_SETUP
+{
+	int x;
+	int y;
+	int z;
+	short InnerXZoff;
+	short InnerXZsize;
+	short InnerYsize;
+	short InnerXZvel;
+	short InnerYvel;
+	short InnerGravity;
+	short InnerFriction;
+	short MiddleXZoff;
+	short MiddleXZsize;
+	short MiddleYsize;
+	short MiddleXZvel;
+	short MiddleYvel;
+	short MiddleGravity;
+	short MiddleFriction;
+	short OuterXZoff;
+	short OuterXZsize;
+	short OuterXZvel;
+	short OuterFriction;
+};
 #pragma pack(pop)
