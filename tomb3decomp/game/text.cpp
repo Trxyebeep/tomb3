@@ -5,6 +5,7 @@
 #include "../3dsystem/scalespr.h"
 #include "objects.h"
 #include "../specific/frontend.h"
+#include "health.h"
 
 short T_GetStringLen(char* string)
 {
@@ -318,6 +319,7 @@ void T_InitPrint()
 {
 	TEXTSTRING* string;
 
+	DisplayModeInfo(0);
 	string = T_textStrings;
 
 	for (int i = 0; i < 64; i++)
