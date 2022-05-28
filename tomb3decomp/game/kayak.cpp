@@ -627,6 +627,60 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 	}
 }
 
+static void DoCurrent(ITEM_INFO* item)
+{
+	long sinkval, angle, speed, xvel, zvel, shifter, absvel;
+
+	if (lara.current_active)
+	{
+		sinkval = lara.current_active - 1;
+		angle = mGetAngle(camera.fixed[sinkval].x, camera.fixed[sinkval].z, lara_item->pos.x_pos, lara_item->pos.z_pos);
+		angle = ((angle - 0x4000) >> 4) & 0xFFF;
+		speed = camera.fixed[sinkval].data;
+		xvel = (speed * rcossin_tbl[angle << 1]) >> 2;
+		zvel = (speed * rcossin_tbl[(angle << 1) + 1]) >> 2;
+		lara.current_xvel += short((xvel - lara.current_xvel) >> 4);
+		lara.current_zvel += short((zvel - lara.current_zvel) >> 4);
+	}
+	else
+	{
+		absvel = ABS(lara.current_xvel);
+
+		if (absvel > 16)
+			shifter = 4;
+		else if (absvel > 8)
+			shifter = 3;
+		else
+			shifter = 2;
+
+		lara.current_xvel -= lara.current_xvel >> shifter;
+
+		if (ABS(lara.current_xvel) < 4)
+			lara.current_xvel = 0;
+
+		absvel = ABS(lara.current_zvel);
+
+		if (absvel > 16)
+			shifter = 4;
+		else if (absvel > 8)
+			shifter = 3;
+		else
+			shifter = 2;
+
+		lara.current_zvel -= lara.current_zvel >> shifter;
+
+		if (ABS(lara.current_zvel) < 4)
+			lara.current_zvel = 0;
+
+		if (!lara.current_xvel && !lara.current_zvel)
+			return;
+	}
+
+	item->pos.x_pos += lara.current_xvel >> 8;
+	item->pos.z_pos += lara.current_zvel >> 8;
+	lara.current_active = 0;
+}
+
 void inject_kayak(bool replace)
 {
 	INJECT(0x0043B390, LaraRapidsDrown, replace);
@@ -637,4 +691,5 @@ void inject_kayak(bool replace)
 	INJECT(0x0043C840, TestHeight, replace);
 	INJECT(0x0043D550, CanGetOut, replace);
 	INJECT(0x0043CC00, KayakUserInput, replace);
+	INJECT(0x0043C6B0, DoCurrent, replace);
 }
