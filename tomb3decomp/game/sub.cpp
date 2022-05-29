@@ -980,6 +980,94 @@ static void UpdateWakeFX()
 	}
 }
 
+void SubEffects(short item_number)
+{
+	ITEM_INFO* item;
+	SUBINFO* sub;
+	PHD_VECTOR pos;
+	PHD_3DPOS bPos;
+	GAME_VECTOR s, t;
+	long rgb;
+	short room_number;
+
+	item = &items[item_number];
+	sub = (SUBINFO*)item->data;
+
+	if (lara.skidoo == item_number)
+	{
+		if (sub->Vel)
+		{
+			sub->FanRot += short(sub->Vel >> 12);
+			pos.x = sub_bites[0].x;
+			pos.y = sub_bites[0].y;
+			pos.z = sub_bites[0].z;
+			GetJointAbsPosition(item, &pos, sub_bites[0].mesh_num);
+			TriggerSubMist(pos.x, pos.y + 128, pos.z, ABS(sub->Vel) >> 16, item->pos.y_rot + 0x8000);
+
+			if (!(GetRandomControl() & 1))
+			{
+				bPos.x_pos = (GetRandomControl() & 0x3F) + pos.x - 32;
+				bPos.y_pos = pos.y + 128;
+				bPos.z_pos = (GetRandomControl() & 0x3F) + pos.z - 32;
+				room_number = item->room_number;
+				GetFloor(bPos.x_pos, bPos.y_pos, bPos.z_pos, &room_number);
+				CreateBubble(&bPos, room_number, 4, 8);
+			}
+		}
+		else
+			sub->FanRot += 364;
+	}
+
+	for (int i = 0; i < 2; i++)
+	{
+		pos.x = sub_bites[1].x;
+		pos.y = sub_bites[1].y;
+		pos.z = sub_bites[1].z << (6 * i);
+		GetJointAbsPosition(item, &pos, sub_bites[1].mesh_num);
+		rgb = 31 - (GetRandomControl() & 3);
+
+		if (i == 1)
+		{
+			t.x = pos.x;
+			t.y = pos.y;
+			t.z = pos.z;
+			t.room_number = item->room_number;
+			LOS(&s, &t);
+			pos.x = t.x;
+			pos.y = t.y;
+			pos.z = t.z;
+		}
+		else
+		{
+			s.x = pos.x;
+			s.y = pos.y;
+			s.z = pos.z;
+			s.room_number = item->room_number;
+		}
+
+		TriggerDynamic(pos.x, pos.y, pos.z, 8 * i + 16, rgb, rgb, rgb);
+	}
+
+	if (!(wibble & 0xF) && sub->Vel)
+	{
+		DoWake(item, 0);
+		DoWake(item, 1);
+	}
+
+	if (!sub->Vel)
+	{
+		if (SubWakeShade)
+			SubWakeShade--;
+	}
+	else if (SubWakeShade < 16)
+		SubWakeShade++;
+
+	if (sub->WeaponTimer)
+		sub->WeaponTimer--;
+
+	UpdateWakeFX();
+}
+
 void inject_sub(bool replace)
 {
 	INJECT(0x004685C0, SubInitialise, replace);
@@ -995,4 +1083,5 @@ void inject_sub(bool replace)
 	INJECT(0x00469E10, TriggerSubMist, replace);
 	INJECT(0x00469CF0, DoWake, replace);
 	INJECT(0x00469DE0, UpdateWakeFX, replace);
+	INJECT(0x00469A80, SubEffects, replace);
 }
