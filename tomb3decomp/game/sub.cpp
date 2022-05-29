@@ -10,6 +10,7 @@
 #include "../specific/output.h"
 #include "../3dsystem/3d_gen.h"
 #include "../specific/draweffects.h"
+#include "../3dsystem/phd_math.h"
 
 void SubInitialise(short item_number)
 {
@@ -214,10 +215,43 @@ void SubDraw(ITEM_INFO* item)
 		S_DrawWakeFX(item);
 }
 
+static long CanGetOff(ITEM_INFO* item)
+{
+	SUBINFO* sub;
+	FLOOR_INFO* floor;
+	long rad, x, y, z, h, c;
+	short room_number;
+
+	sub = (SUBINFO*)item->data;
+
+	if (lara.current_xvel || lara.current_zvel || sub->Vel)
+		return 0;
+
+	rad = WALL_SIZE * phd_cos(item->pos.x_rot) >> W2V_SHIFT;
+	x = item->pos.x_pos + ((rad * phd_sin(item->pos.y_rot + 0x8000)) >> W2V_SHIFT);
+	y = item->pos.y_pos - ((WALL_SIZE * phd_sin(item->pos.x_rot)) >> W2V_SHIFT);
+	z = item->pos.z_pos + ((rad * phd_cos(item->pos.y_rot + 0x8000)) >> W2V_SHIFT);
+
+	room_number = item->room_number;
+	floor = GetFloor(x, y, z, &room_number);
+	h = GetHeight(floor, x, y, z);
+
+	if (h == NO_HEIGHT || y > h)
+		return 0;
+
+	c = GetCeiling(floor, x, y, z);
+
+	if (h - c < 256 || y < c || c == NO_HEIGHT)
+		return 0;
+
+	return 1;
+}
+
 void inject_sub(bool replace)
 {
 	INJECT(0x004685C0, SubInitialise, replace);
 	INJECT(0x00468780, GetOnSub, replace);
 	INJECT(0x00468610, SubCollision, replace);
 	INJECT(0x00468850, SubDraw, replace);
+	INJECT(0x00469980, CanGetOff, replace);
 }
