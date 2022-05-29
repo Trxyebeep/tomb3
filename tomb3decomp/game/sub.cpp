@@ -11,6 +11,10 @@
 #include "../3dsystem/3d_gen.h"
 #include "../specific/draweffects.h"
 #include "../3dsystem/phd_math.h"
+#include "lara.h"
+#include "laraswim.h"
+#include "sound.h"
+#include "camera.h"
 
 void SubInitialise(short item_number)
 {
@@ -247,6 +251,303 @@ static long CanGetOff(ITEM_INFO* item)
 	return 1;
 }
 
+static void UserInput(ITEM_INFO* item, ITEM_INFO* l, SUBINFO* sub)
+{
+	PHD_VECTOR pos;
+	GAME_VECTOR s;
+	GAME_VECTOR t;
+	long wh, wsd;
+	short anim, frame;
+
+	CanGetOff(item);
+	anim = l->anim_number - objects[VEHICLE_ANIM].anim_index;
+	frame = l->frame_number - anims[l->anim_number].frame_base;
+
+	switch (l->current_anim_state)
+	{
+	case 0:
+
+		if (anim == 0 && (frame == 16 || frame == 17))
+		{
+			pos.x = 0;
+			pos.y = 0;
+			pos.z = 0;
+			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			l->pos.x_pos = pos.x;
+			l->pos.y_pos = pos.y;
+			l->pos.z_pos = pos.z;
+			l->anim_number = ANIM_UWDEATH;
+			l->frame_number = anims[ANIM_UWDEATH].frame_base;
+			l->current_anim_state = AS_UWDEATH;
+			l->goal_anim_state = AS_UWDEATH;
+			l->fallspeed = 0;
+			l->gravity_status = 0;
+			l->pos.x_rot = 0;
+			l->pos.z_rot = 0;
+			sub->Flags |= 8;
+		}
+
+		item->speed = 0;
+		break;
+
+	case 2:
+
+		if (anim == 9 && frame == 51)
+		{
+			pos.x = 0;
+			pos.y = 0;
+			pos.z = 0;
+			GetWaterDepth(l->pos.x_pos, l->pos.y_pos, l->pos.z_pos, l->room_number);
+			wh = GetWaterHeight(l->pos.x_pos, l->pos.y_pos, l->pos.z_pos, l->room_number);
+
+			if (wh == NO_HEIGHT)
+				wsd = NO_HEIGHT;
+			else
+				wsd = l->pos.y_pos - wh;
+
+			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			l->pos.x_pos = pos.x;
+			l->pos.y_pos = pos.y;
+			l->pos.z_pos = pos.z;
+			l->anim_number = ANIM_SURFTREAD;
+			l->frame_number = anims[ANIM_SURFTREAD].frame_base;
+			l->current_anim_state = AS_SURFTREAD;
+			l->goal_anim_state = AS_SURFTREAD;
+			l->fallspeed = 0;
+			l->gravity_status = 0;
+			l->pos.x_rot = 0;
+			l->pos.z_rot = 0;
+			UpdateLaraRoom(l, -381);
+			lara.water_status = LARA_SURFACE;
+			lara.water_surface_dist = -wsd;
+			lara.dive_count = 11;
+			lara.torso_x_rot = 0;
+			lara.torso_y_rot = 0;
+			lara.head_x_rot = 0;
+			lara.head_y_rot = 0;
+			lara.gun_status = 0;
+			lara.skidoo = -1;
+			item->hit_points = 0;
+		}
+
+		break;
+
+	case 4:
+
+		if (l->hit_points <= 0)
+		{
+			l->goal_anim_state = 0;
+			break;
+		}
+
+		if (input & IN_LEFT)
+			sub->Rot -= 0x400000;
+		else if (input & IN_RIGHT)
+			sub->Rot += 0x400000;
+
+		if (sub->Flags & 2)
+		{
+			if (item->pos.x_rot > 9100)
+				item->pos.x_rot -= 182;
+			else if (item->pos.x_rot < 9100)
+				item->pos.x_rot += 182;
+		}
+		else if (input & IN_FORWARD)
+			sub->RotX -= 0x16C0000;
+		else if (input & IN_BACK)
+			sub->RotX += 0x16C0000;
+
+		if (input & IN_JUMP)
+		{
+			if (sub->Flags & 2 && input & IN_FORWARD && item->pos.x_rot > -2730)
+				sub->Flags |= 4;
+
+			sub->Vel += 0x40000;
+		}
+		else
+			l->goal_anim_state = 5;
+
+		break;
+
+	case 5:
+
+		if (l->hit_points <= 0)
+		{
+			l->goal_anim_state = 0;
+			break;
+		}
+
+		if (input & IN_LEFT)
+			sub->Rot -= 0x200000;
+		else if (input & IN_RIGHT)
+			sub->Rot += 0x200000;
+
+		if (sub->Flags & 2)
+		{
+			if (item->pos.x_rot > 9100)
+				item->pos.x_rot -= 182;
+			else if (item->pos.x_rot < 9100)
+				item->pos.x_rot += 182;
+		}
+		else if (input & IN_FORWARD)
+			sub->RotX -= 0x16C0000;
+		else if (input & IN_BACK)
+			sub->RotX += 0x16C0000;
+
+		if (input & IN_ROLL && CanGetOff(item))
+		{
+			if (sub->Flags & 2)
+				l->goal_anim_state = 2;
+			else
+				l->goal_anim_state = 9;
+
+			sub->Flags &= ~1;
+			StopSoundEffect(SFX_LITTLE_SUB_LOOP);
+			SoundEffect(SFX_LITTLE_SUB_STOP, &item->pos, SFX_ALWAYS);
+		}
+		else if (input & IN_JUMP)
+		{
+			if (sub->Flags & 2 && input & IN_FORWARD && item->pos.x_rot > -2730)
+				sub->Flags |= 4;
+
+			l->goal_anim_state = 4;
+		}
+
+		break;
+
+	case 8:
+
+		if (anim == 11)
+		{
+			item->pos.x_rot += 182;
+			item->pos.y_pos += 4;
+
+			if (frame == 30)
+				SoundEffect(SFX_LITTLE_SUB_START, &item->pos, 2);
+
+			if (frame == 50)
+				sub->Flags |= 1;
+		}
+		else if (anim == 13)
+		{
+			if (frame == 30)
+				SoundEffect(SFX_LITTLE_SUB_START, &item->pos, 2);
+
+			if (frame == 42)
+				sub->Flags |= 1;
+		}
+
+		break;
+
+	case 9:
+
+		if (anim == 12 && frame == 42)
+		{
+			pos.x = 0;
+			pos.y = 0;
+			pos.z = 0;
+			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+
+			s.x = item->pos.x_pos;
+			s.y = item->pos.y_pos;
+			s.z = item->pos.z_pos;
+			s.room_number = item->room_number;
+			t.x = pos.x;
+			t.z = pos.y;
+			t.y = pos.z;
+			t.room_number = item->room_number;
+			mgLOS(&s, &t, 0);
+
+			l->pos.x_pos = t.x;
+			l->pos.y_pos = t.y;
+			l->pos.z_pos = t.z;
+			l->anim_number = ANIM_TREAD;
+			l->frame_number = anims[ANIM_TREAD].frame_base;
+			l->current_anim_state = AS_TREAD;
+			l->fallspeed = 0;
+			l->gravity_status = 0;
+			l->pos.x_rot = 0;
+			l->pos.z_rot = 0;
+			UpdateLaraRoom(l, 0);
+			lara.water_status = LARA_UNDERWATER;
+			lara.gun_status = LG_ARMLESS;
+			lara.skidoo = NO_ITEM;
+			item->hit_points = 0;
+		}
+
+		break;
+	}
+
+	if (sub->Flags & 4)
+	{
+		if (item->pos.x_rot > -2730)
+			item->pos.x_rot -= 910;
+		else
+			sub->Flags &= ~4;
+	}
+
+	if (sub->Vel > 0)
+	{
+		sub->Vel -= 0x18000;
+
+		if (sub->Vel < 0)
+			sub->Vel = 0;
+
+	}
+	else if (sub->Vel < 0)
+	{
+		sub->Vel += 0x18000;
+
+		if (sub->Vel > 0)
+			sub->Vel = 0;
+	}
+
+	if (sub->Vel > 0x400000)
+		sub->Vel = 0x400000;
+	else if (sub->Vel < -0x400000)
+		sub->Vel = -0x400000;
+
+	if (sub->Rot > 0)
+	{
+		sub->Rot -= 0x100000;
+
+		if (sub->Rot < 0)
+			sub->Rot = 0;
+	}
+	else if (sub->Rot < 0)
+	{
+		sub->Rot += 0x100000;
+
+		if (sub->Rot > 0)
+			sub->Rot = 0;
+	}
+
+	if (sub->RotX > 0)
+	{
+		sub->RotX -= 0xB60000;
+
+		if (sub->RotX < 0)
+			sub->RotX = 0;
+	}
+	else if (sub->RotX < 0)
+	{
+		sub->RotX += 0xB60000;
+
+		if (sub->RotX > 0)
+			sub->RotX = 0;
+	}
+
+	if (sub->Rot > 0x1C00000)
+		sub->Rot = 0x1C00000;
+	else if (sub->Rot < -0x1C00000)
+		sub->Rot = -0x1C00000;
+
+	if (sub->RotX > 0x16C0000)
+		sub->RotX = 0x16C0000;
+	else if (sub->RotX < -0x16C0000)
+		sub->RotX = -0x16C0000;
+}
+
 void inject_sub(bool replace)
 {
 	INJECT(0x004685C0, SubInitialise, replace);
@@ -254,4 +555,5 @@ void inject_sub(bool replace)
 	INJECT(0x00468610, SubCollision, replace);
 	INJECT(0x00468850, SubDraw, replace);
 	INJECT(0x00469980, CanGetOff, replace);
+	INJECT(0x00469320, UserInput, replace);
 }
