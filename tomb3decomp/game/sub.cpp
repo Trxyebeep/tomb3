@@ -733,6 +733,152 @@ static void BackgroundCollision(ITEM_INFO* item, ITEM_INFO* l, SUBINFO* sub)
 	}
 }
 
+long SubControl()
+{
+	ITEM_INFO* item;
+	SUBINFO* sub;
+	FLOOR_INFO* floor;
+	long wh;
+	short room_number;
+
+	item = &items[lara.skidoo];
+	sub = (SUBINFO*)item->data;
+
+	if (!(sub->Flags & 8))
+	{
+		UserInput(item, lara_item, sub);
+		item->speed = sub->Vel >> 16;
+		item->pos.x_rot += sub->RotX >> 16;
+		item->pos.y_rot += sub->Rot >> 16;
+		item->pos.z_rot = short(sub->Rot >> 12);
+
+		if (item->pos.x_rot > 14560)
+			item->pos.x_rot = 14560;
+		else if (item->pos.x_rot < -14560)
+			item->pos.x_rot = -14560;
+
+		item->pos.x_pos += (phd_cos(item->pos.x_rot) * ((item->speed * phd_sin(item->pos.y_rot)) >> W2V_SHIFT)) >> W2V_SHIFT;
+		item->pos.y_pos -= (item->speed * phd_sin(item->pos.x_rot)) >> W2V_SHIFT;
+		item->pos.z_pos += (phd_cos(item->pos.x_rot) * ((item->speed * phd_cos(item->pos.y_rot)) >> W2V_SHIFT)) >> W2V_SHIFT;
+	}
+
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	item->floor = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (sub->Flags & 1 && !(sub->Flags & 8))
+	{
+		wh = GetWaterHeight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, room_number);
+
+		if (wh != NO_HEIGHT && !(room[item->room_number].flags & ROOM_UNDERWATER))
+		{
+			if (wh - item->pos.y_pos >= -210)
+				item->pos.y_pos = wh + 210;
+
+			if (!(sub->Flags & 2))
+			{
+				SoundEffect(SFX_LARA_BREATH, &lara_item->pos, SFX_ALWAYS);
+				sub->Flags &= ~4;
+			}
+
+			sub->Flags |= 2;
+		}
+		else if (wh != NO_HEIGHT && wh - item->pos.y_pos >= -210)
+		{
+			item->pos.y_pos = wh + 210;
+
+			if (!(sub->Flags & 2))
+			{
+				SoundEffect(SFX_LARA_BREATH, &lara_item->pos, SFX_ALWAYS);
+				sub->Flags &= ~4;
+			}
+
+			sub->Flags |= 2;
+		}
+		else
+			sub->Flags &= ~2;
+
+		if (sub->Flags & 2)
+		{
+			if (lara_item->hit_points >= 0)
+			{
+				lara.air += 10;
+
+				if (lara.air > 1800)
+					lara.air = 1800;
+			}
+		}
+		else if (lara_item->hit_points >= 0)
+		{
+			lara.air--;
+
+			if (lara.air < 0)
+			{
+				lara.air = -1;
+				lara_item->hit_points -= 5;
+			}
+		}
+	}
+
+	TestTriggers(trigger_index, 0);
+
+	if (lara.skidoo == NO_ITEM)
+	{
+		if (sub->Flags & 8)
+			return 0;
+	}
+	else if (!(sub->Flags & 8))
+	{
+		DoCurrent(item);
+
+		if (input & IN_ACTION && sub->Flags & 1 && !sub->WeaponTimer)
+		{
+			FireSubHarpoon(item);
+			sub->WeaponTimer = 15;
+		}
+
+		if (room_number != item->room_number)
+		{
+			ItemNewRoom(lara.skidoo, room_number);
+			ItemNewRoom(lara.item_number, room_number);
+		}
+
+		lara_item->pos.x_pos = item->pos.x_pos;
+		lara_item->pos.y_pos = item->pos.y_pos + 128;
+		lara_item->pos.z_pos = item->pos.z_pos;
+		lara_item->pos.x_rot = item->pos.x_rot;
+		lara_item->pos.y_rot = item->pos.y_rot;
+		lara_item->pos.z_rot = item->pos.z_rot;
+		AnimateItem(lara_item);
+		BackgroundCollision(item, lara_item, sub);
+
+		if (sub->Flags & 1)
+			SoundEffect(SFX_LITTLE_SUB_LOOP, &item->pos, (item->speed << 16) | 0x1000000 | SFX_SETPITCH | SFX_ALWAYS);
+
+		item->anim_number = lara_item->anim_number + objects[UPV].anim_index - objects[VEHICLE_ANIM].anim_index;
+		item->frame_number = lara_item->frame_number + anims[item->anim_number].frame_base - anims[lara_item->anim_number].frame_base;
+		camera.target_elevation = sub->Flags & 2 ? -10920 : 0;
+		return 1;
+	}
+
+	AnimateItem(lara_item);
+
+	if (room_number != item->room_number)
+		ItemNewRoom(lara.skidoo, room_number);
+
+	BackgroundCollision(item, lara_item, sub);
+	sub->RotX = 0;
+	item->anim_number = 5;
+	item->frame_number = anims[objects[UPV].anim_index + 5].frame_base;
+	item->current_anim_state = 5;
+	item->goal_anim_state = 5;
+	item->fallspeed = 0;
+	item->gravity_status = 1;
+	item->speed = 0;
+	AnimateItem(item);
+	return 1;
+}
+
 void inject_sub(bool replace)
 {
 	INJECT(0x004685C0, SubInitialise, replace);
@@ -744,4 +890,5 @@ void inject_sub(bool replace)
 	//DoCurrent is the kayak one, but I copied it to here
 	INJECT(0x00469010, FireSubHarpoon, replace);
 	INJECT(0x00469150, BackgroundCollision, replace);
+	INJECT(0x00468C10, SubControl, replace);
 }
