@@ -1297,7 +1297,7 @@ tomb3decomp progress.
 0x00469A80		SubEffects
 0x00469CF0		DoWake
 0x00469DE0		UpdateWakeFX
-0x00469E10		TriggerSubMist
+0x00469E10	+	TriggerSubMist
 
 
 		game/swat.cpp

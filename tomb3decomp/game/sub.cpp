@@ -18,6 +18,7 @@
 #include "../specific/game.h"
 #include "items.h"
 #include "sphere.h"
+#include "effect2.h"
 
 void SubInitialise(short item_number)
 {
@@ -879,6 +880,58 @@ long SubControl()
 	return 1;
 }
 
+static void TriggerSubMist(long x, long y, long z, long speed, short angle)
+{
+	SPARKS* sptr;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 0;
+	sptr->sG = 0;
+	sptr->sB = 0;
+	sptr->dR = 64;
+	sptr->dG = 64;
+	sptr->dB = 64;
+	sptr->FadeToBlack = 12;
+	sptr->ColFadeSpeed = (GetRandomControl() & 3) + 4;
+	sptr->TransType = 2;
+	sptr->extras = 0;
+	sptr->Life = (GetRandomControl() & 3) + 20;
+	sptr->sLife = sptr->Life;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 0xF) + x - 8;
+	sptr->y = (GetRandomControl() & 0xF) + y - 8;
+	sptr->z = (GetRandomControl() & 0xF) + z - 8;
+	sptr->Xvel = (GetRandomControl() & 0x7F) + ((speed * phd_sin(angle)) >> (W2V_SHIFT + 2)) - 64;
+	sptr->Yvel = 0;
+	sptr->Zvel = (GetRandomControl() & 0x7F) + ((speed * phd_cos(angle)) >> (W2V_SHIFT + 2)) - 64;
+	sptr->Friction = 3;
+
+	if (GetRandomControl() & 1)
+	{
+		sptr->Flags = 538;
+		sptr->RotAng = GetRandomControl() & 0xFFF;
+
+		if (GetRandomControl() & 1)
+			sptr->RotAdd = -16 - (GetRandomControl() & 0xF);
+		else
+			sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
+	}
+	else
+		sptr->Flags = 522;
+
+	sptr->Scalar = 3;
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+	sptr->MaxYvel = 0;
+	sptr->Gravity = 0;
+	sptr->dWidth = uchar((GetRandomControl() & 7) + (speed >> 1) + 16);
+	sptr->sWidth = sptr->dWidth >> 2;
+	sptr->Width = sptr->sWidth;
+	sptr->sHeight = sptr->sWidth;
+	sptr->Height = sptr->sWidth;
+	sptr->dHeight = sptr->dWidth;
+}
+
 void inject_sub(bool replace)
 {
 	INJECT(0x004685C0, SubInitialise, replace);
@@ -891,4 +944,5 @@ void inject_sub(bool replace)
 	INJECT(0x00469010, FireSubHarpoon, replace);
 	INJECT(0x00469150, BackgroundCollision, replace);
 	INJECT(0x00468C10, SubControl, replace);
+	INJECT(0x00469E10, TriggerSubMist, replace);
 }
