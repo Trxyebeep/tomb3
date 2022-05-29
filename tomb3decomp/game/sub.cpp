@@ -15,6 +15,9 @@
 #include "laraswim.h"
 #include "sound.h"
 #include "camera.h"
+#include "../specific/game.h"
+#include "items.h"
+#include "sphere.h"
 
 void SubInitialise(short item_number)
 {
@@ -326,7 +329,7 @@ static void UserInput(ITEM_INFO* item, ITEM_INFO* l, SUBINFO* sub)
 			lara.head_x_rot = 0;
 			lara.head_y_rot = 0;
 			lara.gun_status = 0;
-			lara.skidoo = -1;
+			lara.skidoo = NO_ITEM;
 			item->hit_points = 0;
 		}
 
@@ -548,6 +551,104 @@ static void UserInput(ITEM_INFO* item, ITEM_INFO* l, SUBINFO* sub)
 		sub->RotX = -0x16C0000;
 }
 
+static void DoCurrent(ITEM_INFO* item)
+{
+	long sinkval, angle, speed, xvel, zvel, shifter, absvel;
+
+	if (lara.current_active)
+	{
+		sinkval = lara.current_active - 1;
+		angle = mGetAngle(camera.fixed[sinkval].x, camera.fixed[sinkval].z, lara_item->pos.x_pos, lara_item->pos.z_pos);
+		angle = ((angle - 0x4000) >> 4) & 0xFFF;
+		speed = camera.fixed[sinkval].data;
+		xvel = (speed * rcossin_tbl[angle << 1]) >> 2;
+		zvel = (speed * rcossin_tbl[(angle << 1) + 1]) >> 2;
+		lara.current_xvel += short((xvel - lara.current_xvel) >> 4);
+		lara.current_zvel += short((zvel - lara.current_zvel) >> 4);
+	}
+	else
+	{
+		absvel = ABS(lara.current_xvel);
+
+		if (absvel > 16)
+			shifter = 4;
+		else if (absvel > 8)
+			shifter = 3;
+		else
+			shifter = 2;
+
+		lara.current_xvel -= lara.current_xvel >> shifter;
+
+		if (ABS(lara.current_xvel) < 4)
+			lara.current_xvel = 0;
+
+		absvel = ABS(lara.current_zvel);
+
+		if (absvel > 16)
+			shifter = 4;
+		else if (absvel > 8)
+			shifter = 3;
+		else
+			shifter = 2;
+
+		lara.current_zvel -= lara.current_zvel >> shifter;
+
+		if (ABS(lara.current_zvel) < 4)
+			lara.current_zvel = 0;
+
+		if (!lara.current_xvel && !lara.current_zvel)
+			return;
+	}
+
+	item->pos.x_pos += lara.current_xvel >> 8;
+	item->pos.z_pos += lara.current_zvel >> 8;
+	lara.current_active = 0;
+}
+
+static void FireSubHarpoon(ITEM_INFO* item)
+{
+	ITEM_INFO* bolt;
+	PHD_VECTOR pos;
+	short item_number;
+	static char lr = 0;
+
+	if (lara.harpoon.ammo <= 0)
+		return;
+
+	item_number = CreateItem();
+
+	if (item_number == NO_ITEM)
+		return;
+
+	bolt = &items[item_number];
+	bolt->object_number = HARPOON_BOLT;
+	bolt->shade = -0x3DF0;
+	bolt->room_number = item->room_number;
+	pos.x = lr != 0 ? 22 : -22;
+	pos.y = 24;
+	pos.z = 230;
+	GetJointAbsPosition(item, &pos, 3);
+	bolt->pos.x_pos = pos.x;
+	bolt->pos.y_pos = pos.y;
+	bolt->pos.z_pos = pos.z;
+	InitialiseItem(item_number);
+	bolt->pos.x_rot = item->pos.x_rot;
+	bolt->pos.y_rot = item->pos.y_rot;
+	bolt->pos.z_rot = 0;
+	bolt->fallspeed = short((-256 * phd_sin(bolt->pos.x_rot)) >> W2V_SHIFT);
+	bolt->speed = short((256 * phd_cos(bolt->pos.x_rot)) >> W2V_SHIFT);
+	bolt->hit_points = 256;
+	bolt->item_flags[0] = 1;
+	AddActiveItem(item_number);
+	SoundEffect(SFX_LARA_HARPOON_FIRE_WATER, &lara_item->pos, SFX_ALWAYS);
+
+	if (!savegame.bonus_flag)
+		lara.harpoon.ammo--;
+
+	savegame.ammo_used++;
+	lr ^= 1;
+}
+
 void inject_sub(bool replace)
 {
 	INJECT(0x004685C0, SubInitialise, replace);
@@ -556,4 +657,6 @@ void inject_sub(bool replace)
 	INJECT(0x00468850, SubDraw, replace);
 	INJECT(0x00469980, CanGetOff, replace);
 	INJECT(0x00469320, UserInput, replace);
+	//DoCurrent is the kayak one, but I copied it to here
+	INJECT(0x00469010, FireSubHarpoon, replace);
 }
