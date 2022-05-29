@@ -20,6 +20,16 @@
 #include "sphere.h"
 #include "effect2.h"
 
+BITE_INFO sub_bites[6] =
+{
+	{ 0, 0, 0, 3 },
+	{ 0, 96, 256, 0 },
+	{ -128, 0, -64, 1 },
+	{ 0, 0, -64, 1 },
+	{ 128, 0, -64, 2 },
+	{ 0, 0, -64, 2 }
+};
+
 void SubInitialise(short item_number)
 {
 	ITEM_INFO* item;
@@ -932,6 +942,44 @@ static void TriggerSubMist(long x, long y, long z, long speed, short angle)
 	sptr->dHeight = sptr->dWidth;
 }
 
+static void DoWake(ITEM_INFO* item, short lr)
+{
+	BITE_INFO* bite;
+	PHD_VECTOR pos;
+
+	if (TriggerActive(item) && !SubWakePts[SubCurrentStartWake][lr].life)
+	{
+		SubWakePts[SubCurrentStartWake][lr].life = 32;
+
+		for (int i = 0; i < 2; i++)
+		{
+			bite = &sub_bites[(lr << 1) + 2 + i];
+			pos.x = bite->x;
+			pos.y = bite->y;
+			pos.z = bite->z;
+			GetJointAbsPosition(item, &pos, bite->mesh_num);
+			SubWakePts[SubCurrentStartWake][lr].x[i] = pos.x;
+			SubWakePts[SubCurrentStartWake][lr].y[i] = pos.y + 128;
+			SubWakePts[SubCurrentStartWake][lr].z[i] = pos.z;
+		}
+
+		if (lr == 1)
+			SubCurrentStartWake = (SubCurrentStartWake + 1) & 0x1F;
+	}
+}
+
+static void UpdateWakeFX()
+{
+	for (int i = 0; i < 2; i++)
+	{
+		for (int j = 0; j < 32; j++)
+		{
+			if (SubWakePts[j][i].life)
+				SubWakePts[j][i].life--;
+		}
+	}
+}
+
 void inject_sub(bool replace)
 {
 	INJECT(0x004685C0, SubInitialise, replace);
@@ -945,4 +993,6 @@ void inject_sub(bool replace)
 	INJECT(0x00469150, BackgroundCollision, replace);
 	INJECT(0x00468C10, SubControl, replace);
 	INJECT(0x00469E10, TriggerSubMist, replace);
+	INJECT(0x00469CF0, DoWake, replace);
+	INJECT(0x00469DE0, UpdateWakeFX, replace);
 }
