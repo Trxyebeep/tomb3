@@ -1291,7 +1291,7 @@ tomb3decomp progress.
 0x00468850	+	SubDraw
 0x00468C10		SubControl
 0x00469010	+	FireSubHarpoon
-0x00469150		BackgroundCollision
+0x00469150	+	BackgroundCollision
 0x00469320	+	UserInput
 0x00469980	+	CanGetOff
 0x00469A80		SubEffects

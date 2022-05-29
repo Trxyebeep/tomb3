@@ -649,6 +649,90 @@ static void FireSubHarpoon(ITEM_INFO* item)
 	lr ^= 1;
 }
 
+static void BackgroundCollision(ITEM_INFO* item, ITEM_INFO* l, SUBINFO* sub)
+{
+	COLL_INFO coll;
+	long h;
+
+	coll.bad_pos = -NO_HEIGHT;
+	coll.bad_neg = -400;
+	coll.bad_ceiling = 400;
+	coll.old.x = item->pos.x_pos;
+	coll.old.y = item->pos.y_pos;
+	coll.old.z = item->pos.z_pos;
+	coll.radius = 300;
+	coll.trigger = 0;
+	coll.slopes_are_walls = 0;
+	coll.slopes_are_pits = 0;
+	coll.lava_is_pit = 0;
+	coll.enable_spaz = 0;
+	coll.enable_baddie_push = 1;
+
+	if (item->pos.x_rot < -0x4000 || item->pos.x_rot > 0x4000)
+		lara.move_angle = item->pos.y_rot + 0x8000;
+	else
+		lara.move_angle = item->pos.y_rot;
+
+	coll.facing = lara.move_angle;
+	h = (WALL_SIZE * phd_sin(item->pos.x_rot)) >> W2V_SHIFT;
+
+	if (h < 0)
+		h = -h;
+
+	if (h < 200)
+		h = 200;
+
+	coll.bad_neg = -h;
+	GetCollisionInfo(&coll, item->pos.x_pos, item->pos.y_pos + h / 2, item->pos.z_pos, item->room_number, h);
+	ShiftItem(item, &coll);
+
+	switch (coll.coll_type)
+	{
+	case CT_FRONT:
+
+		if (sub->RotX > 0x1FFE0000)
+			sub->RotX += 0x16C0000;
+		else if (sub->RotX < -0x1FFE0000)
+			sub->RotX -= 0x16C0000;
+		else
+			sub->Vel = 0;
+
+		break;
+
+	case CT_TOP:
+
+		if (sub->RotX >= -0x1FFE0000)
+			sub->RotX -= 0x16C0000;
+
+		break;
+
+	case CT_TOP_FRONT:
+		sub->Vel = 0;
+		break;
+
+	case CT_LEFT:
+		item->pos.y_rot += 910;
+		break;
+
+	case CT_RIGHT:
+		item->pos.y_rot -= 910;
+		break;
+
+	case CT_CLAMP:
+		item->pos.x_pos = coll.old.x;
+		item->pos.y_pos = coll.old.y;
+		item->pos.z_pos = coll.old.z;
+		sub->Vel = 0;
+		return;
+	}
+
+	if (coll.mid_floor < 0)
+	{
+		item->pos.y_pos += coll.mid_floor;
+		sub->RotX += 0x16C0000;
+	}
+}
+
 void inject_sub(bool replace)
 {
 	INJECT(0x004685C0, SubInitialise, replace);
@@ -659,4 +743,5 @@ void inject_sub(bool replace)
 	INJECT(0x00469320, UserInput, replace);
 	//DoCurrent is the kayak one, but I copied it to here
 	INJECT(0x00469010, FireSubHarpoon, replace);
+	INJECT(0x00469150, BackgroundCollision, replace);
 }
