@@ -9,6 +9,8 @@
 #ifdef RANDO_STUFF
 #include "../specific/smain.h"
 #endif
+#include "effects.h"
+#include "../specific/game.h"
 
 void LaraBurn()
 {
@@ -97,9 +99,71 @@ void SpikeControl(short item_number)
 	}
 }
 
+void PropellerControl(short item_number)
+{
+	ITEM_INFO * item;
+
+	item = &items[item_number];
+
+	if (!TriggerActive(item) || item->flags & IFL_INVISIBLE)
+	{
+		if (item->goal_anim_state != 1)
+		{
+			if (item->object_number == FAN)
+				SoundEffect(SFX_UNDERWATER_FAN_STOP, &item->pos, SFX_WATER);
+
+			item->goal_anim_state = 1;
+		}
+	}
+	else
+	{
+		item->goal_anim_state = 0;
+
+		if (item->touch_bits & 6)
+		{
+#ifdef RANDO_STUFF
+			if (rando.levels[RANDOLEVEL].original_id == LV_ROOFTOPS)
+#else
+			if (CurrentLevel == LV_ROOFTOPS)
+#endif
+			{
+				lara_item->hit_points = -1;
+				DoLotsOfBlood(lara_item->pos.x_pos, lara_item->pos.y_pos - 512, lara_item->pos.z_pos,
+					GetRandomControl() >> 10, item->pos.y_rot + 0x4000, lara_item->room_number, 5);
+			}
+			else
+				lara_item->hit_points -= 200;
+
+			lara_item->hit_status = 1;
+			DoLotsOfBlood(lara_item->pos.x_pos, lara_item->pos.y_pos - 512, lara_item->pos.z_pos,
+				GetRandomControl() >> 10, item->pos.y_rot + 0x4000, lara_item->room_number, 3);
+
+			if (item->object_number == SAW)
+				SoundEffect(SFX_VERY_SMALL_WINCH, &item->pos, 0);
+		}
+		else if (item->object_number == SAW)
+			SoundEffect(SFX_DRILL_BIT_1, &item->pos, SFX_DEFAULT);
+		else if (item->object_number == FAN)
+			SoundEffect(SFX_UNDERWATER_FAN_ON, &item->pos, SFX_WATER);
+		else
+			SoundEffect(SFX_SMALL_FAN_ON, &item->pos, SFX_DEFAULT);
+	}
+
+	AnimateItem(item);
+
+	if (item->status == ITEM_DEACTIVATED)
+	{
+		RemoveActiveItem(item_number);
+
+		if (item->object_number != SAW)
+			item->collidable = 0;
+	}
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
 	INJECT(0x0046FB30, LavaBurn, replace);
 	INJECT(0x0046E340, SpikeControl, replace);
+	INJECT(0x0046D340, PropellerControl, replace);
 }
