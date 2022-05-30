@@ -651,7 +651,7 @@ void LaraControl(short item_number)
 		LaraAboveWater(lara_item, mycoll);
 
 #ifdef RANDO_STUFF
-		if (rando.levels[RANDOLEVEL].original_id == LV_ANTARC || rando.levels[RANDOLEVEL].original_id == LV_MINES)
+		if (rando.levels[RANDOLEVEL].freezingWater)
 #else
 		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_MINES)
 #endif
@@ -685,7 +685,7 @@ void LaraControl(short item_number)
 		LaraUnderWater(lara_item, mycoll);
 
 #ifdef RANDO_STUFF
-		if (rando.levels[RANDOLEVEL].original_id == LV_ANTARC || rando.levels[RANDOLEVEL].original_id == LV_MINES)
+		if (rando.levels[RANDOLEVEL].freezingWater)
 #else
 		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_MINES)
 #endif
@@ -706,7 +706,7 @@ void LaraControl(short item_number)
 		LaraSurface(lara_item, mycoll);
 
 #ifdef RANDO_STUFF
-		if (rando.levels[RANDOLEVEL].original_id == LV_ANTARC || rando.levels[RANDOLEVEL].original_id == LV_MINES)
+		if (rando.levels[RANDOLEVEL].freezingWater)
 #else
 		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_MINES)
 #endif

@@ -235,7 +235,11 @@ long ControlPhase(long nframes, long demo_mode)
 		CalculateCamera();
 		wibble = (wibble + 4) & 0xFC;
 
+#ifdef RANDO_STUFF
+		if (rando.levels[RANDOLEVEL].freezingWater)
+#else
 		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_MINES)
+#endif
 			LaraBreath(lara_item);
 
 		UpdateSparks();
