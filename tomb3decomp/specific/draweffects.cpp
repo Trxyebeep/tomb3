@@ -565,7 +565,7 @@ void S_DrawWakeFX(ITEM_INFO* item)
 	uchar* pRGBs;
 	float zv;
 	long w, h, s, c, current, nw, s1, s2, s3, s4;
-	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c12, c34;
+	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c12, c34, cval;
 	long offsets[2][2];
 	long Z[64];
 	short XY[128];
@@ -690,10 +690,18 @@ void S_DrawWakeFX(ITEM_INFO* item)
 				y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 &&
 				y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
 			{
-				s1 = (c12 >> 2) | (8 * (c12 & -4 | (32 * (c12 & -4))));
-				s2 = (c12 >> 1) | (16 * (c12 & -2 | (32 * (c12 & -2))));
-				s3 = (c34 >> 1) | (16 * (c34 & -2 | (32 * (c34 & -2))));
-				s4 = (c34 >> 2) | (8 * (c34 & -4 | (32 * (c34 & -4))));
+				cval = c12 >> 2;
+				s1 = cval << 10 | cval << 5 | cval;
+
+				cval = c12 >> 1;
+				s2 = cval << 10 | cval << 5 | cval;
+
+				cval = c34 >> 1;
+				s3 = cval << 10 | cval << 5 | cval;
+
+				cval = c34 >> 2;
+				s4 = cval << 10 | cval << 5 | cval;
+
 				HWI_InsertAlphaSprite_Sorted(x1, y1, z1, s1, x2, y2, z2, s2, x3, y3, z3, s3, x4, y4, z4, s4, -1, 16, 1);
 			}
 
