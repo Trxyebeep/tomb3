@@ -1500,4 +1500,16 @@ struct SUBINFO
 	char Flags;
 	char WeaponTimer;
 };
+
+struct SHIELD_POINTS
+{
+	short x;
+	short y;
+	short z;
+	uchar rsub;
+	uchar gsub;
+	uchar bsub;
+	uchar pad[3];
+	long rgb;
+};
 #pragma pack(pop)

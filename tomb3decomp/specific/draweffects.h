@@ -7,6 +7,7 @@ void LaraElectricDeath(long lr, ITEM_INFO* item);
 void DrawExplosionRings();
 bool ClipLine(long& x1, long& y1, long& x2, long& y2, long w, long h);
 void S_DrawWakeFX(ITEM_INFO* item);
+void DrawTonyBossShield(ITEM_INFO* item);
 
 #define S_DrawSparks	( (void(__cdecl*)()) 0x0047B2C0 )
 #define S_DrawSplashes	( (void(__cdecl*)()) 0x0047BAA0 )
