@@ -129,14 +129,14 @@ void PropellerControl(short item_number)
 			{
 				lara_item->hit_points = -1;
 				DoLotsOfBlood(lara_item->pos.x_pos, lara_item->pos.y_pos - 512, lara_item->pos.z_pos,
-					GetRandomControl() >> 10, item->pos.y_rot + 0x4000, lara_item->room_number, 5);
+					short(GetRandomControl() >> 10), item->pos.y_rot + 0x4000, lara_item->room_number, 5);
 			}
 			else
 				lara_item->hit_points -= 200;
 
 			lara_item->hit_status = 1;
 			DoLotsOfBlood(lara_item->pos.x_pos, lara_item->pos.y_pos - 512, lara_item->pos.z_pos,
-				GetRandomControl() >> 10, item->pos.y_rot + 0x4000, lara_item->room_number, 3);
+				short(GetRandomControl() >> 10), item->pos.y_rot + 0x4000, lara_item->room_number, 3);
 
 			if (item->object_number == SAW)
 				SoundEffect(SFX_VERY_SMALL_WINCH, &item->pos, 0);

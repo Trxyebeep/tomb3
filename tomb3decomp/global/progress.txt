@@ -537,10 +537,10 @@ tomb3decomp progress.
 
 		game/flamer.cpp
 
-0x00430DB0		FlamerControl
-0x00431650		TriggerFlameThrower
-0x00431890		TriggerFlamethrowerFlame
-0x00431A80		TriggerPilotFlame
+0x00430DB0	+	FlamerControl
+0x00431650	+	TriggerFlameThrower
+0x00431890	+	TriggerFlamethrowerFlame
+0x00431A80	+	TriggerPilotFlame
 
 
 		game/flymaker.cpp

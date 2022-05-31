@@ -1512,4 +1512,16 @@ struct SHIELD_POINTS
 	uchar pad[3];
 	long rgb;
 };
+
+struct AI_INFO
+{
+	short zone_number;
+	short enemy_zone;
+	long distance;
+	long ahead;
+	long bite;
+	short angle;
+	short x_angle;
+	short enemy_facing;
+};
 #pragma pack(pop)
