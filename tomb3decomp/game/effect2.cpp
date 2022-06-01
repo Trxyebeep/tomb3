@@ -3,6 +3,7 @@
 #include "objects.h"
 #include "items.h"
 #include "../specific/game.h"
+#include "control.h"
 
 void TriggerDynamic(long x, long y, long z, long falloff, long r, long g, long b)
 {
@@ -115,10 +116,29 @@ void TriggerBreath(long x, long y, long z, long xv, long yv, long zv)
 	sptr->dHeight = sptr->dWidth;
 }
 
+void TriggerAlertLight(long x, long y, long z, long r, long g, long b, short angle, short rn)
+{
+	GAME_VECTOR s;
+	GAME_VECTOR t;
+
+	s.x = x;
+	s.y = y;
+	s.z = z;
+	GetFloor(x, y, z, &rn);
+	s.room_number = rn;
+	t.x = x + (rcossin_tbl[angle << 1] << 1);
+	t.y = y;
+	t.z = z + (rcossin_tbl[(angle << 1) + 1] << 1);
+
+	if (!LOS(&s, &t))
+		TriggerDynamic(t.x, t.y, t.z, 8, r, g, b);
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
 	INJECT(0x0042DE60, ClearDynamics, replace);
 	INJECT(0x0042D9A0, KillEverything, replace);
 	INJECT(0x0042DCF0, TriggerBreath, replace);
+	INJECT(0x0042BDA0, TriggerAlertLight, replace);
 }

@@ -407,7 +407,7 @@ tomb3decomp progress.
 0x0042B4F0		TriggerGunSmoke
 0x0042B780		TriggerFireFlame
 0x0042BBC0		TriggerSideFlame
-0x0042BDA0		TriggerAlertLight
+0x0042BDA0	+	TriggerAlertLight
 0x0042BE50		TriggerGunShell
 0x0042C1A0		ControlGunShell
 0x0042C400		TriggerShotgunSparks
@@ -1126,7 +1126,7 @@ tomb3decomp progress.
 
 		game/objlight.cpp
 
-0x00459B00		ControlStrobeLight
+0x00459B00	+	ControlStrobeLight
 0x00459C00		ControlPulseLight
 0x00459C90		ControlOnOffLight
 0x00459CE0		ControlElectricalLight

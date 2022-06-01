@@ -29,6 +29,7 @@
 #include "../game/kayak.h"
 #include "../game/sub.h"
 #include "../game/flamer.h"
+#include "../game/objlight.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -99,6 +100,7 @@ void inject_all(bool replace)
 	inject_kayak(replace);
 	inject_sub(replace);
 	inject_flamer(replace);
+	inject_objlight(replace);
 
 	//specific
 	inject_drawbars(replace);
