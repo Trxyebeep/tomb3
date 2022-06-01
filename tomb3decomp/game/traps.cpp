@@ -11,6 +11,7 @@
 #endif
 #include "effects.h"
 #include "../specific/game.h"
+#include "draw.h"
 
 void LaraBurn()
 {
@@ -160,10 +161,87 @@ void PropellerControl(short item_number)
 	}
 }
 
+void SideFlameDetection(FX_INFO* fx, long length)
+{
+	short* bounds;
+	long dx, dz, x, z, xs, xe, zs, ze;
+
+	dx = lara_item->pos.x_pos - fx->pos.x_pos;
+	dz = lara_item->pos.z_pos - fx->pos.z_pos;
+
+	if (dx < -20480 || dx > 20480 || dz < -20480 || dz > 20480)
+		return;
+
+	switch (fx->pos.y_rot)
+	{
+	case 0:
+		x = fx->pos.x_pos;
+		z = fx->pos.z_pos + 512;
+		xs = -256;
+		xe = 256;
+		zs = -length;
+		ze = 0;
+		break;
+
+	case 0x4000:
+		x = fx->pos.x_pos + 512;
+		z = fx->pos.z_pos;
+		xs = -length;
+		xe = 0;
+		zs = -256;
+		ze = 256;
+		break;
+
+	case -0x4000:
+		x = fx->pos.x_pos - 512;
+		z = fx->pos.z_pos;
+		xs = 0;
+		xe = length;
+		zs = -256;
+		ze = 256;
+		break;
+
+	case -0x8000:
+		x = fx->pos.x_pos;
+		z = fx->pos.z_pos - 512;
+		xs = -256;
+		xe = 256;
+		zs = 0;
+		ze = length;
+		break;
+
+	default:
+		x = 0;
+		z = 0;
+		xs = 0;
+		xe = 0;
+		zs = 0;
+		ze = 0;
+		break;
+	}
+
+	bounds = GetBoundsAccurate(lara_item);
+
+	if (lara_item->pos.x_pos >= x + xs && lara_item->pos.x_pos <= x + xe &&
+		lara_item->pos.z_pos >= z + zs && lara_item->pos.z_pos <= z + ze &&
+		lara_item->pos.y_pos + bounds[2] <= fx->pos.y_pos + 128 &&
+		lara_item->pos.y_pos + bounds[3] >= fx->pos.y_pos - 384)
+	{
+		if (fx->flag1 >= 18)
+			LaraBurn();
+		else
+		{
+			lara_item->hit_points -= 5;
+			lara_item->hit_status = 1;
+		}
+	}
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
 	INJECT(0x0046FB30, LavaBurn, replace);
 	INJECT(0x0046E340, SpikeControl, replace);
 	INJECT(0x0046D340, PropellerControl, replace);
+	INJECT(0x0046F1E0, SideFlameDetection, replace);
 }

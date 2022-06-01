@@ -1395,7 +1395,7 @@ tomb3decomp progress.
 0x0046EFF0		FlameEmitterControl
 0x0046F090		FlameEmitter2Control
 0x0046F130		FlameEmitter3Control
-0x0046F1E0		SideFlameDetection
+0x0046F1E0	+	SideFlameDetection
 0x0046F370		FlameControl
 0x0046FAE0	+	LaraBurn
 0x0046FB30	+	LavaBurn
