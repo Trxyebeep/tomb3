@@ -324,6 +324,87 @@ void TriggerFireFlame(long x, long y, long z, long body_part, long type)
 	}
 }
 
+void TriggerFireSmoke(long x, long y, long z, long body_part, long type)
+{
+	SPARKS* sptr;
+	long dx, dz;
+
+	dx = lara_item->pos.x_pos - x;
+	dz = lara_item->pos.z_pos - z;
+
+	if (dx < -0x4000 || dx > 0x4000 || dz < -0x4000 || dz > 0x4000)
+		return;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 0;
+	sptr->sG = 0;
+	sptr->sB = 0;
+	sptr->dR = 32;
+	sptr->dG = 32;
+	sptr->dB = 32;
+
+	if (body_part == -1)
+	{
+		if (type == 255)
+		{
+			sptr->FadeToBlack = 8;
+			sptr->ColFadeSpeed = (GetRandomControl() & 3) + 16;
+			sptr->Life = (GetRandomControl() & 7) + 28;
+			sptr->sLife = sptr->Life;
+		}
+		else
+		{
+			sptr->FadeToBlack = 16;
+			sptr->ColFadeSpeed = (GetRandomControl() & 7) + 32;
+			sptr->Life = (GetRandomControl() & 0xF) + 57;
+			sptr->sLife = sptr->Life;
+		}
+	}
+	else
+	{
+		sptr->FadeToBlack = 12;
+		sptr->ColFadeSpeed = (GetRandomControl() & 3) + 4;
+		sptr->Life = (GetRandomControl() & 3) + 20;
+		sptr->sLife = sptr->Life;
+	}
+
+	sptr->TransType = 2;
+	sptr->extras = 0;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 0xF) + x - 8;
+	sptr->y = y - (GetRandomControl() & 0x7F) - 256;
+	sptr->z = (GetRandomControl() & 0xF) + z - 8;
+	sptr->Xvel = (GetRandomControl() & 0xFF) - 128;
+	sptr->Yvel = -16 - (GetRandomControl() & 0xF);
+	sptr->Zvel = (GetRandomControl() & 0xFF) - 128;
+	sptr->Friction = 4;
+
+	if (GetRandomControl() & 1)
+	{
+		sptr->Flags = 538;
+		sptr->RotAng = GetRandomControl() & 0xFFF;
+
+		if (GetRandomControl() & 1)
+			sptr->RotAdd = -16 - (GetRandomControl() & 0xF);
+		else
+			sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
+	}
+	else
+		sptr->Flags = 522;
+
+	sptr->Scalar = 3;
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+	sptr->Gravity = -16 - (GetRandomControl() & 0xF);
+	sptr->MaxYvel = -8 - (GetRandomControl() & 7);
+	sptr->dWidth = (GetRandomControl() & 0x3F) + 64;
+	sptr->sWidth = sptr->dWidth >> 2;
+	sptr->Width = sptr->sWidth;
+	sptr->sHeight = sptr->sWidth;
+	sptr->Height = sptr->sWidth;
+	sptr->dHeight = sptr->dWidth;
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -332,4 +413,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042DCF0, TriggerBreath, replace);
 	INJECT(0x0042BDA0, TriggerAlertLight, replace);
 	INJECT(0x0042B780, TriggerFireFlame, replace);
+	INJECT(0x0042B2F0, TriggerFireSmoke, replace);
 }
