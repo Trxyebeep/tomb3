@@ -321,7 +321,13 @@ void FlameControl(short fx_number)
 			wh = GetWaterHeight(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, fx->room_number);
 
 			if (wh == NO_HEIGHT || fx->pos.y_pos <= wh || (room[fx->room_number].flags & ROOM_SWAMP &&
+#ifdef RANDO_STUFF
+				(rando.levels[RANDOLEVEL].original_id == LV_CITY ||
+				rando.levels[RANDOLEVEL].original_id == LV_INDIABOSS ||
+				rando.levels[RANDOLEVEL].original_id == LV_CHAMBER)))
+#else
 				(CurrentLevel == LV_CITY || CurrentLevel == LV_INDIABOSS || CurrentLevel == LV_CHAMBER)))
+#endif
 			{
 				SoundEffect(SFX_LOOP_FOR_SMALL_FIRES, &fx->pos, SFX_DEFAULT);
 				lara_item->hit_points -= 7;
@@ -398,7 +404,11 @@ void FlameControl(short fx_number)
 			{
 				fx->flag1 = 128;
 
+#ifdef RANDO_STUFF
+				if (rando.levels[RANDOLEVEL].original_id == LV_RAPIDS)
+#else
 				if (CurrentLevel == LV_RAPIDS)
+#endif
 					fx->flag2 = 120;
 				else
 					fx->flag2 = 60;
