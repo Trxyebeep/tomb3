@@ -453,6 +453,66 @@ void TriggerStaticFlame(long x, long y, long z, long size)
 	sptr->dHeight = s;
 }
 
+void TriggerSideFlame(long x, long y, long z, long angle, long speed, long pilot)
+{
+	SPARKS* sptr;
+	long dx, dz, rad, s, c;
+	uchar size;
+
+	dx = lara_item->pos.x_pos - x;
+	dz = lara_item->pos.z_pos - z;
+
+	if (dx < -0x4000 || dx > 0x4000 || dz < -0x4000 || dz > 0x4000)
+		return;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = (GetRandomControl() & 0x1F) + 48;
+	sptr->sG = sptr->sR;
+	sptr->sB = (GetRandomControl() & 0x3F) - 64;
+	sptr->dR = (GetRandomControl() & 0x3F) - 64;
+	sptr->dG = (GetRandomControl() & 0x3F) + 0x80;
+	sptr->dB = 32;
+	sptr->FadeToBlack = 8;
+	sptr->ColFadeSpeed = (GetRandomControl() & 3) + 12;
+	sptr->TransType = 2;
+	sptr->extras = 0;
+	sptr->Life = (GetRandomControl() & 7) + 28;
+	sptr->sLife = sptr->Life;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 0x1F) + x - 16;
+	sptr->y = (GetRandomControl() & 0x1F) + y - 16;
+	sptr->z = (GetRandomControl() & 0x1F) + z - 16;
+
+	if (pilot)
+		rad = (speed << 7) + (GetRandomControl() & 0x1F);
+	else
+		rad = (speed << 8) + (GetRandomControl() & 0x1FF);
+
+	s = (rad * rcossin_tbl[angle]) >> (W2V_SHIFT - 3);
+	c = (rad * rcossin_tbl[angle + 1]) >> (W2V_SHIFT - 3);
+	sptr->Xvel = short((GetRandomControl() & 0x7F) + s - 64);
+	sptr->Yvel = -6 - (GetRandomControl() & 7);
+	sptr->Zvel = short((GetRandomControl() & 0x7F) + c - 64);
+	sptr->Friction = 4;
+	sptr->Flags = 522;
+	sptr->Gravity = -8 - (GetRandomControl() & 0xF);
+	sptr->MaxYvel = -8 - (GetRandomControl() & 7);
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+	sptr->Scalar = 3;
+	size = (GetRandomControl() & 0x1F) + 128;
+
+	if (pilot)
+		size >>= 2;
+
+	sptr->dWidth = size;
+	sptr->sWidth = size >> 1;
+	sptr->Width = size >> 1;
+	sptr->sHeight = size >> 1;
+	sptr->Height = size >> 1;
+	sptr->dHeight = size;
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -463,4 +523,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042B780, TriggerFireFlame, replace);
 	INJECT(0x0042B2F0, TriggerFireSmoke, replace);
 	INJECT(0x0042D640, TriggerStaticFlame, replace);
+	INJECT(0x0042BBC0, TriggerSideFlame, replace);
 }

@@ -406,7 +406,7 @@ tomb3decomp progress.
 0x0042B2F0	+	TriggerFireSmoke
 0x0042B4F0		TriggerGunSmoke
 0x0042B780	+	TriggerFireFlame
-0x0042BBC0		TriggerSideFlame
+0x0042BBC0	+	TriggerSideFlame
 0x0042BDA0	+	TriggerAlertLight
 0x0042BE50		TriggerGunShell
 0x0042C1A0		ControlGunShell
@@ -1396,7 +1396,7 @@ tomb3decomp progress.
 0x0046F090		FlameEmitter2Control
 0x0046F130		FlameEmitter3Control
 0x0046F1E0	+	SideFlameDetection
-0x0046F370		FlameControl
+0x0046F370	+	FlameControl
 0x0046FAE0	+	LaraBurn
 0x0046FB30	+	LavaBurn
 0x0046FBD0		TriggerPendulumFlame

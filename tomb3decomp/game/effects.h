@@ -13,3 +13,4 @@ void LaraBreath(ITEM_INFO* item);
 #define DoLotsOfBlood	( (void(__cdecl*)(long, long, long, short, short, short, long)) 0x0042E3B0 )
 #define DoLotsOfBloodD	( (void(__cdecl*)(long, long, long, short, short, short, long)) 0x0042E460 )
 #define SoundEffects	( (void(__cdecl*)()) 0x0042E200 )
+#define ItemNearLara	( (long(__cdecl*)(PHD_3DPOS*, long)) 0x0042E170 )

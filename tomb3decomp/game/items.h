@@ -8,4 +8,5 @@
 #define InitialiseItem	( (void(__cdecl*)(short)) 0x0043AC30 )
 #define AddActiveItem	( (void(__cdecl*)(short)) 0x0043AF60 )
 #define ItemNewRoom	( (void(__cdecl*)(short, short)) 0x0043AFD0 )
+#define EffectNewRoom	( (void(__cdecl*)(short, short)) 0x0043B290 )
 #define RemoveActiveItem	( (void(__cdecl*)(short)) 0x0043AE40 )

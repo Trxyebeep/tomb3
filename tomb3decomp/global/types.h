@@ -46,6 +46,14 @@ do \
 
 
 /*enums*/
+enum fire_types
+{
+	BIG_FIRE,
+	SMALL_FIRE,
+	JET_FIRE,
+	SIDE_FIRE
+};
+
 enum draw_types
 {
 	DT_POLY_GT = 9,				//Gouraud + Textured
@@ -310,7 +318,8 @@ enum LARA_MESHES
 	UARM_L,
 	LARM_L,
 	HAND_L,
-	HEAD
+	HEAD,
+	NUM_LARA_MESHES
 };
 
 enum lara_get_meshes

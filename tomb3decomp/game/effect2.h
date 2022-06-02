@@ -11,6 +11,7 @@ void TriggerAlertLight(long x, long y, long z, long r, long g, long b, short ang
 void TriggerFireFlame(long x, long y, long z, long body_part, long type);
 void TriggerFireSmoke(long x, long y, long z, long body_part, long type);
 void TriggerStaticFlame(long x, long y, long z, long size);
+void TriggerSideFlame(long x, long y, long z, long angle, long speed, long pilot);
 
 #define TriggerWaterfallMist	( (void(__cdecl*)(long, long, long, long)) 0x0042D1F0 )
 #define TriggerGunSmoke	( (void(__cdecl*)(long, long, long, long, long, long, long, long, long)) 0x0042B4F0 )
