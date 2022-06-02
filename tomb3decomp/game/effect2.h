@@ -8,6 +8,7 @@ void ClearDynamics();
 void KillEverything();
 void TriggerBreath(long x, long y, long z, long xv, long yv, long zv);
 void TriggerAlertLight(long x, long y, long z, long r, long g, long b, short angle, short rn);
+void TriggerFireFlame(long x, long y, long z, long body_part, long type);
 
 #define TriggerWaterfallMist	( (void(__cdecl*)(long, long, long, long)) 0x0042D1F0 )
 #define TriggerGunSmoke	( (void(__cdecl*)(long, long, long, long, long, long, long, long, long)) 0x0042B4F0 )
