@@ -405,6 +405,54 @@ void TriggerFireSmoke(long x, long y, long z, long body_part, long type)
 	sptr->dHeight = sptr->dWidth;
 }
 
+void TriggerStaticFlame(long x, long y, long z, long size)
+{
+	SPARKS* sptr;
+	long dx, dz;
+	uchar s;
+
+	dx = lara_item->pos.x_pos - x;
+	dz = lara_item->pos.z_pos - z;
+
+	if (dx < -0x4000 || dx > 0x4000 || dz < -0x4000 || dz > 0x4000)
+		return;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = (GetRandomControl() & 0x3F) - 64;
+	sptr->sG = (GetRandomControl() & 0x3F) + 128;
+	sptr->sB = 64;
+	sptr->dR = sptr->sR;
+	sptr->dG = sptr->sG;
+	sptr->dB = 64;
+	sptr->ColFadeSpeed = 1;
+	sptr->FadeToBlack = 0;
+	sptr->Life = 2;
+	sptr->sLife = 2;
+	sptr->TransType = 2;
+	sptr->extras = 0;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 7) + x - 4;
+	sptr->y = y;
+	sptr->z = (GetRandomControl() & 7) + z - 4;
+	sptr->MaxYvel = 0;
+	sptr->Gravity = 0;
+	sptr->Friction = 0;
+	sptr->Zvel = 0;
+	sptr->Yvel = 0;
+	sptr->Xvel = 0;
+	sptr->Flags = 522;
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+	sptr->Scalar = 2;
+	s = (uchar)size;
+	sptr->sWidth = s;
+	sptr->Width = s;
+	sptr->dWidth = s;
+	sptr->sHeight = s;
+	sptr->Height = s;
+	sptr->dHeight = s;
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -414,4 +462,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042BDA0, TriggerAlertLight, replace);
 	INJECT(0x0042B780, TriggerFireFlame, replace);
 	INJECT(0x0042B2F0, TriggerFireSmoke, replace);
+	INJECT(0x0042D640, TriggerStaticFlame, replace);
 }
