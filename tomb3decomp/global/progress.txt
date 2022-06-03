@@ -427,7 +427,7 @@ tomb3decomp progress.
 0x0042C1A0		ControlGunShell
 0x0042C400		TriggerShotgunSparks
 0x0042C510		TriggerRocketFlame
-0x0042C670		TriggerRocketSmoke
+0x0042C670	+	TriggerRocketSmoke
 0x0042C7E0		TriggerBlood
 0x0042C950		TriggerBloodD
 0x0042CAC0		SetupSplash

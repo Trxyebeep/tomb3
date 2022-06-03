@@ -513,6 +513,60 @@ void TriggerSideFlame(long x, long y, long z, long angle, long speed, long pilot
 	sptr->dHeight = size;
 }
 
+void TriggerRocketSmoke(long x, long y, long z, long c)
+{
+	SPARKS* sptr;
+	uchar size;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 0;
+	sptr->sG = 0;
+	sptr->sB = 0;
+	sptr->dR = uchar(c + 64);
+	sptr->dG = uchar(c + 64);
+	sptr->dB = uchar(c + 64);
+	sptr->FadeToBlack = 12;
+	sptr->ColFadeSpeed = (GetRandomControl() & 3) + 4;
+	sptr->TransType = 2;
+	sptr->extras = 0;
+	sptr->Life = (GetRandomControl() & 3) + 20;
+	sptr->sLife = sptr->Life;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 0xF) + x - 8;
+	sptr->y = (GetRandomControl() & 0xF) + y - 8;
+	sptr->z = (GetRandomControl() & 0xF) + z - 8;
+	sptr->Xvel = (GetRandomControl() & 0xFF) - 128;
+	sptr->Yvel = -4 - (GetRandomControl() & 3);
+	sptr->Zvel = (GetRandomControl() & 0xFF) - 128;
+	sptr->Friction = 4;
+
+	if (GetRandomControl() & 1)
+	{
+		sptr->Flags = 538;
+		sptr->RotAng = GetRandomControl() & 0xFFF;
+
+		if (GetRandomControl() & 1)
+			sptr->RotAdd = -16 - (GetRandomControl() & 0xF);
+		else
+			sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
+	}
+	else
+		sptr->Flags = 522;
+
+	sptr->Scalar = 3;
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+	sptr->Gravity = -4 - (GetRandomControl() & 3);
+	sptr->MaxYvel = -4 - (GetRandomControl() & 3);
+	size = (GetRandomControl() & 7) + 32;
+	sptr->dWidth = size;
+	sptr->sWidth = size >> 2;
+	sptr->Width = size >> 2;
+	sptr->sHeight = size >> 2;
+	sptr->Height = size >> 2;
+	sptr->dHeight = size;
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -524,4 +578,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042B2F0, TriggerFireSmoke, replace);
 	INJECT(0x0042D640, TriggerStaticFlame, replace);
 	INJECT(0x0042BBC0, TriggerSideFlame, replace);
+	INJECT(0x0042C670, TriggerRocketSmoke, replace);
 }
