@@ -16,3 +16,4 @@ void AlertNearbyGuards(ITEM_INFO* item);
 #define CreatureTurn	( (short(__cdecl*)(ITEM_INFO*, short)) 0x00416400 )
 #define AlertAllGuards	( (void(__cdecl*)(short)) 0x004169C0 )
 #define AIGuard	( (short(__cdecl*)(CREATURE_INFO*)) 0x00416AC0 )
+#define InitialiseCreature	( (void(__cdecl*)(short)) 0x004142E0 )

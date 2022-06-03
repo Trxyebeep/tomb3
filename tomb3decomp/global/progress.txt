@@ -1198,9 +1198,9 @@ tomb3decomp progress.
 
 		game/punk.cpp
 
-0x0045DBD0		InitialisePunk
+0x0045DBD0	+	InitialisePunk
 0x0045DC30		PunkControl
-0x0045E5E0		TriggerPunkFlame
+0x0045E5E0	+	TriggerPunkFlame
 
 
 		game/quadbike.cpp
