@@ -10,6 +10,9 @@
 #include "health.h"
 #include "invfunc.h"
 #include "gameflow.h"
+#ifdef RANDO_STUFF
+#include "../specific/smain.h"
+#endif
 
 static short PickUpBounds[12] = { -256, 256, -100, 100, -256, 256, -1820, 1820, 0, 0, 0, 0 };
 static short PickUpBoundsUW[12] = { -512, 512, -512, 512, -512, 512, -8190, 8190, -8190, 8190, -8190, 8190 };
@@ -53,7 +56,11 @@ void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
 					if (item->object_number == ICON_PICKUP1_ITEM || item->object_number == ICON_PICKUP2_ITEM ||
 						item->object_number == ICON_PICKUP3_ITEM || item->object_number == ICON_PICKUP4_ITEM)
 					{
+#ifdef RANDO_STUFF
+						if (rando.levels[RANDOLEVEL].original_id == LV_CHAMBER)
+#else
 						if (CurrentLevel == LV_CHAMBER)
+#endif
 							KillItem(item_num);
 						else
 							level_complete = 1;
