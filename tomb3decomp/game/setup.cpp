@@ -3,6 +3,9 @@
 #include "objects.h"
 #include "gameflow.h"
 #include "items.h"
+#ifdef RANDO_STUFF
+#include "../specific/smain.h"
+#endif
 
 void GetAIPickups()
 {
@@ -27,7 +30,11 @@ void GetAIPickups()
 					item->item_flags[3] = ai_item->pos.y_rot;
 
 					if (!(ai_item->object_number == AI_PATROL1 &&
+#ifdef RANDO_STUFF
+						(rando.levels[RANDOLEVEL].original_id == LV_AREA51 || rando.levels[RANDOLEVEL].original_id == LV_COMPOUND)))
+#else
 						(CurrentLevel == LV_AREA51 || CurrentLevel == LV_COMPOUND)))
+#endif
 					{
 						KillItem(ai_item_number);
 						ai_item->room_number = NO_ROOM;
