@@ -11,6 +11,9 @@
 #include "sound.h"
 #include "effects.h"
 #include "traps.h"
+#ifdef RANDO_STUFF
+#include "../specific/smain.h"
+#endif
 
 static BITE_INFO punk_hit = { 16, 48, 320, 13 };
 
@@ -170,7 +173,11 @@ void PunkControl(short item_number)
 		punk->enemy = lara_item;
 
 		if (item->hit_status || (lara_info.distance < 0x100000 || TargetVisible(item, &lara_info)) &&
+#ifdef RANDO_STUFF
+			ABS(lara_item->pos.y_pos - item->pos.y_pos) < 1280 && rando.levels[RANDOLEVEL].original_id != LV_TOWER && !(item->ai_bits & 0x10))
+#else
 			ABS(lara_item->pos.y_pos - item->pos.y_pos) < 1280 && CurrentLevel != LV_TOWER && !(item->ai_bits & 0x10))
+#endif
 		{
 			if (!punk->alerted)
 				SoundEffect(SFX_ENGLISH_HOY, &item->pos, SFX_DEFAULT);
