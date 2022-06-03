@@ -32,7 +32,22 @@ tomb3decomp progress.
 0x004B429E	+	phd_PushUnitMatrix
 ---------	+	phd_PopMatrix		//in h file
 
-0x00402360 to 0x00405216 is unknown
+
+		3dsystem/3d_scraps.cpp
+
+0x00402360		draw_poly_line
+0x00402500		draw_poly_flat
+0x00402540		draw_poly_trans
+0x00402580		draw_poly_gouraud
+0x004025C0		draw_poly_gtmap
+0x00402600		draw_poly_wgtmap
+0x00402640		xgen_x
+0x00402720		xgen_xg
+0x00402870		xgen_xguv
+0x00402A90		xgen_xguvpersp_fp
+0x00402D20		gtmap_persp32_fp
+0x00403CD0		wgtmap_persp16_fp
+
 
 		3dsystem/hwinsert.cpp
 
@@ -1253,7 +1268,7 @@ tomb3decomp progress.
 0x00465240		TrapObjects
 0x00465820		ObjectObjects
 0x004664B0		GetCarriedItems
-0x00466590		GetAIPickups
+0x00466590	+	GetAIPickups
 0x004666C0		BuildOutsideTable
 
 
