@@ -724,9 +724,11 @@ long GetHeight(FLOOR_INFO* floor, long x, long y, long z)
 			{
 				trigger = *data++;
 
-				if (((trigger & 0x3C00) != (TO_OBJECT << 1)) && ((trigger & 0x3C00) == (TO_CAMERA << 10)))
+				if (((trigger & 0x3C00) != (TO_OBJECT << 10)))
 				{
-					trigger = *data++;
+					if (((trigger & 0x3C00) == (TO_CAMERA << 10)))
+						trigger = *data++;
+
 					continue;
 				}
 
