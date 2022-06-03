@@ -31,6 +31,7 @@
 #include "../game/flamer.h"
 #include "../game/objlight.h"
 #include "../game/setup.h"
+#include "../game/pickup.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -103,6 +104,7 @@ void inject_all(bool replace)
 	inject_flamer(replace);
 	inject_objlight(replace);
 	inject_setup(replace);
+	inject_pickup(replace);
 
 	//specific
 	inject_drawbars(replace);

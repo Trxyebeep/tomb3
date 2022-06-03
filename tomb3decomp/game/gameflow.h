@@ -1,6 +1,8 @@
 #pragma once
 #include "../global/vars.h"
 
+#define GF_ModifyInventory	( (void(__cdecl*)(long, long)) 0x004328D0 )
+
 enum game_levels
 {
 	LV_GYM,

@@ -10,3 +10,4 @@
 #define ItemNewRoom	( (void(__cdecl*)(short, short)) 0x0043AFD0 )
 #define EffectNewRoom	( (void(__cdecl*)(short, short)) 0x0043B290 )
 #define RemoveActiveItem	( (void(__cdecl*)(short)) 0x0043AE40 )
+#define RemoveDrawnItem	( (void(__cdecl*)(short)) 0x0043AEE0 )
