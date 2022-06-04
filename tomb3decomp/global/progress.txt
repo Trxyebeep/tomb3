@@ -88,8 +88,8 @@ tomb3decomp progress.
 		3dsystem/phd_math.cpp
 
 0x004B4C10	+	phd_atan
-0x004B4C58		phd_cos
-0x004B4C5E		phd_sin
+0x004B4C58	+	phd_cos
+0x004B4C5E	+	phd_sin
 0x004B4C93	+	phd_sqrt
 
 
