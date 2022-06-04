@@ -94,6 +94,11 @@ void ControlHarpoonBolt(short item_number)
 				{
 					if (TribeBossShieldOn)
 						FindClosestShieldPoint(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, target);
+					else
+					{
+						HitTarget(target, 0, weapons[LG_HARPOON].damage << item->item_flags[0]);
+						savegame.ammo_hit++;
+					}
 				}
 				else
 				{
