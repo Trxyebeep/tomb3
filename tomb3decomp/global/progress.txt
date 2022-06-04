@@ -877,7 +877,7 @@ tomb3decomp progress.
 0x00445F50		FireRocket
 0x004461E0	+	ControlRocket
 0x00446BA0		FireGrenade
-0x00446DD0		ControlGrenade
+0x00446DD0	+	ControlGrenade
 0x004475D0		draw_shotgun
 0x00447770		undraw_shotgun
 0x00447880		AnimateShotgun
