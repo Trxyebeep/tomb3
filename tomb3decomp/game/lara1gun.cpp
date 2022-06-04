@@ -598,7 +598,11 @@ void ControlGrenade(short item_number)
 				nn1 + rad < bounds[4] && on1 + rad < bounds[4] || nn1 - rad > bounds[5] && on1 - rad > bounds[5])
 				continue;
 
+#ifdef RANDO_STUFF
+			if (obj_num == SMASH_OBJECT1 && rando.levels[RANDOLEVEL].original_id != LV_CRASH)
+#else
 			if (obj_num == SMASH_OBJECT1 && CurrentLevel != LV_CRASH)
+#endif
 				SmashWindow(target_num);
 			else if (obj_num == SMASH_WINDOW || obj_num == SMASH_OBJECT2 || obj_num == SMASH_OBJECT3)
 				SmashWindow(target_num);
