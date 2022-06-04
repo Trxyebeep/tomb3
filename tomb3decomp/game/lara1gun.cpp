@@ -78,7 +78,7 @@ void ControlHarpoonBolt(short item_number)
 #endif
 			obj_num == SMASH_WINDOW || obj_num == SMASH_OBJECT2 || obj_num == SMASH_OBJECT3)
 			SmashWindow(target_num);
-		else if (target->object_number == CARCASS || target->object_number == EXTRAFX6)
+		else if (obj_num == CARCASS || obj_num == EXTRAFX6)
 		{
 			if (item->status != ITEM_ACTIVE)	//original bug: this doesn't work, need to check target instead of item
 			{
@@ -86,18 +86,18 @@ void ControlHarpoonBolt(short item_number)
 				AddActiveItem(target_num);
 			}
 		}
-		else if (target->object_number != SMASH_OBJECT1)
+		else if (obj_num != SMASH_OBJECT1)
 		{
-			if (objects[target->object_number].intelligent)
+			if (objects[obj_num].intelligent)
 			{
-				if (target->object_number == TRIBEBOSS)
+				if (obj_num == TRIBEBOSS)
 				{
 					if (TribeBossShieldOn)
 						FindClosestShieldPoint(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, target);
 				}
 				else
 				{
-					if (target->object_number != LON_BOSS)
+					if (obj_num != LON_BOSS)
 						DoLotsOfBlood(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 0, 0, item->room_number, 3);
 
 					HitTarget(target, 0, weapons[LG_HARPOON].damage << item->item_flags[0]);
