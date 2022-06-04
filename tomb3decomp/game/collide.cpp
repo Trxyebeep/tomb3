@@ -1,6 +1,7 @@
 #include "../tomb3/pch.h"
 #include "collide.h"
 #include "sphere.h"
+#include "control.h"
 
 void ShiftItem(ITEM_INFO* item, COLL_INFO* coll)
 {
@@ -32,9 +33,44 @@ void ObjectCollisionSub(short item_num, ITEM_INFO* l, COLL_INFO* coll)
 		ItemPushLara(item, l, coll, 0, 0);
 }
 
+void GetNewRoom(long x, long y, long z, short room_number)
+{
+	long r;
+
+	GetFloor(x, y, z, &room_number);
+
+	for (r = 0; r < number_draw_rooms; r++)
+	{
+		if (draw_rooms[r] == room_number)
+			break;
+	}
+
+	if (r == number_draw_rooms)
+	{
+		draw_rooms[number_draw_rooms] = room_number;
+		number_draw_rooms++;
+	}
+}
+
+void GetNearByRooms(long x, long y, long z, long r, long h, short room_number)
+{
+	draw_rooms[0] = room_number;
+	number_draw_rooms = 1;
+	GetNewRoom(r + x, y, r + z, room_number);
+	GetNewRoom(x - r, y, r + z, room_number);
+	GetNewRoom(r + x, y, z - r, room_number);
+	GetNewRoom(x - r, y, z - r, room_number);
+	GetNewRoom(r + x, y - h, r + z, room_number);
+	GetNewRoom(x - r, y - h, r + z, room_number);
+	GetNewRoom(r + x, y - h, z - r, room_number);
+	GetNewRoom(x - r, y - h, z - r, room_number);
+}
+
 void inject_collide(bool replace)
 {
 	INJECT(0x0041E690, ShiftItem, replace);
 	INJECT(0x0041EBD0, ObjectCollision, replace);
 	INJECT(0x0041EC30, ObjectCollisionSub, replace);
+	INJECT(0x0041E630, GetNewRoom, replace);
+	INJECT(0x0041E560, GetNearByRooms, replace);
 }
