@@ -1,6 +1,8 @@
 #pragma once
 #include "../global/vars.h"
 
+#define SmashWindow	( (void(__cdecl*)(short)) 0x00458C20 )
+
 enum object_types
 {
 	LARA, PISTOLS, HAIR, SHOTGUN, MAGNUM, UZI, M16, ROCKET_GUN, GRENADE_GUN, HARPOON_GUN, FLARE,

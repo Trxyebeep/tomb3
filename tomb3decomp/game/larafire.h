@@ -9,3 +9,4 @@ long WeaponObject(long weapon_type);
 #define FireWeapon	( (long(__cdecl*)(long, ITEM_INFO*, ITEM_INFO*, short*)) 0x0044A890 )
 #define InitialiseNewWeapon	( (void(__cdecl*)()) 0x0044A1E0 )
 #define DoProperDetection	( (void(__cdecl*)(short, long, long, long, long, long, long)) 0x0044AFB0 )
+#define HitTarget	( (void(__cdecl*)(ITEM_INFO*, GAME_VECTOR*, long)) 0x0044AE20 )

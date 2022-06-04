@@ -130,6 +130,7 @@
 #define SubCurrentStartWake	VAR_(0x006270E4, uchar)
 #define WakeShade	VAR_(0x006266C0, uchar)
 #define SubWakeShade	VAR_(0x006270E4, uchar)
+#define TribeBossShieldOn	VAR_(0x006D2260, char)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)

@@ -33,6 +33,7 @@
 #include "../game/setup.h"
 #include "../game/pickup.h"
 #include "../game/punk.h"
+#include "../game/lara1gun.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -109,6 +110,7 @@ void inject_all(bool replace)
 	inject_setup(replace);
 	inject_pickup(replace);
 	inject_punk(replace);
+	inject_lara1gun(replace);
 
 	//specific
 	inject_drawbars(replace);
