@@ -13,6 +13,11 @@
 #ifdef RANDO_STUFF
 #include "../specific/smain.h"
 #endif
+#include "../3dsystem/3d_gen.h"
+#include "../specific/game.h"
+#include "collide.h"
+#include "box.h"
+#include "sound.h"
 
 void ControlHarpoonBolt(short item_number)
 {
@@ -172,7 +177,265 @@ void ControlHarpoonBolt(short item_number)
 		ItemNewRoom(item_number, room_number);
 }
 
+void ControlRocket(short item_number)
+{
+	ITEM_INFO* item;
+	ITEM_INFO* target;
+	FLOOR_INFO* floor;
+	PHD_VECTOR oldPos;
+	PHD_VECTOR pos;
+	PHD_VECTOR vel;
+	PHD_3DPOS bPos;
+	short* bounds;
+	long abovewater, speed, c, rad, exploded, r, s, nx, nz, nn, ox, oz, on, nn1, on1;
+	short oldRoom, room_number, target_num, obj_num;
+
+	item = &items[item_number];
+	oldPos.x = item->pos.x_pos;
+	oldPos.y = item->pos.y_pos;
+	oldPos.z = item->pos.z_pos;
+	oldRoom = item->room_number;
+
+	if (room[item->room_number].flags & ROOM_UNDERWATER)
+	{
+		if (item->speed <= 128)
+		{
+			item->speed += (item->speed >> 2) + 4;
+
+			if (item->speed > 128)
+				item->speed = 128;
+		}
+		else
+			item->speed -= item->speed >> 2;
+
+		abovewater = 0;
+		item->pos.z_rot += 182 * ((item->speed >> 3) + 3);
+	}
+	else
+	{
+		if (item->speed < 512)
+			item->speed += (item->speed >> 2) + 4;
+
+		abovewater = 1;
+		item->pos.z_rot += 182 * ((item->speed >> 2) + 7);
+	}
+
+	item->shade = -0x3DF0;
+
+	phd_PushUnitMatrix();
+	phd_mxptr[M03] = 0;
+	phd_mxptr[M13] = 0;
+	phd_mxptr[M23] = 0;
+	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+
+	phd_PushMatrix();
+	phd_TranslateRel(0, 0, -128);
+	pos.x = phd_mxptr[M03] >> W2V_SHIFT;
+	pos.y = phd_mxptr[M13] >> W2V_SHIFT;
+	pos.z = phd_mxptr[M23] >> W2V_SHIFT;
+	phd_PopMatrix();
+
+	phd_TranslateRel(0, 0, -1536 - (GetRandomControl() & 0x1FF));
+	vel.x = phd_mxptr[M03] >> W2V_SHIFT;
+	vel.y = phd_mxptr[M13] >> W2V_SHIFT;
+	vel.z = phd_mxptr[M23] >> W2V_SHIFT;
+	phd_PopMatrix();
+
+	if (wibble & 4)
+		TriggerRocketFlame(pos.x, pos.y, pos.z, vel.x - pos.x, vel.y - pos.y, vel.z - pos.z, item_number);
+
+	TriggerRocketSmoke(item->pos.x_pos + pos.x, item->pos.y_pos + pos.y, item->pos.z_pos + pos.z, -1);
+
+	if (room[item->room_number].flags & ROOM_UNDERWATER)
+	{
+		bPos.x_pos = item->pos.x_pos + pos.x;
+		bPos.y_pos = item->pos.y_pos + pos.y;
+		bPos.z_pos = item->pos.z_pos + pos.z;
+		CreateBubble(&bPos, item->room_number, 4, 8);
+	}
+
+	vel.x = pos.x + (GetRandomControl() & 0xF) + item->pos.x_pos - 8;
+	vel.y = pos.y + (GetRandomControl() & 0xF) + item->pos.y_pos - 8;
+	vel.z = pos.z + (GetRandomControl() & 0xF) + item->pos.z_pos - 8;
+	TriggerDynamic(vel.x, vel.y, vel.z, 14, (GetRandomControl() & 3) + 28, (GetRandomControl() & 7) + 16, GetRandomControl() & 7);
+
+	speed = (item->speed * phd_cos(item->pos.x_rot)) >> W2V_SHIFT;
+	item->pos.x_pos += (speed * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+	item->pos.y_pos -= (item->speed * phd_sin(item->pos.x_rot)) >> W2V_SHIFT;
+	item->pos.z_pos += (speed * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+	
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	item->floor = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+
+	c = GetCeiling(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (item->pos.y_pos >= item->floor || item->pos.y_pos <= c)
+	{
+		exploded = 1;
+		rad = WALL_SIZE << item->item_flags[0];	//blast radius is 1 square
+	}
+	else
+	{
+		exploded = 0;
+		rad = 0;
+	}
+
+	if (room[item->room_number].flags & ROOM_UNDERWATER && abovewater)
+	{
+		splash_setup.x = item->pos.x_pos;
+		splash_setup.y = room[item->room_number].maxceiling;
+		splash_setup.z = item->pos.z_pos;
+		splash_setup.InnerXZoff = 16;
+		splash_setup.InnerXZsize = 12;
+		splash_setup.InnerYsize = -96;
+		splash_setup.InnerXZvel = 160;
+		splash_setup.InnerYvel = -0x4000;
+		splash_setup.InnerGravity = 128;
+		splash_setup.InnerFriction = 7;
+		splash_setup.MiddleXZoff = 24;
+		splash_setup.MiddleXZsize = 24;
+		splash_setup.MiddleYsize = -64;
+		splash_setup.MiddleXZvel = 224;
+		splash_setup.MiddleYvel = -0x2000;
+		splash_setup.MiddleGravity = 72;
+		splash_setup.MiddleFriction = 8;
+		splash_setup.OuterXZoff = 32;
+		splash_setup.OuterXZsize = 32;
+		splash_setup.OuterXZvel = 272;
+		splash_setup.OuterFriction = 9;
+		SetupSplash(&splash_setup);
+	}
+
+	GetNearByRooms(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, rad << 2, rad << 2, item->room_number);
+
+	for (r = 0; r < number_draw_rooms; r++)
+	{
+		for (target_num = room[draw_rooms[r]].item_number; target_num != NO_ITEM; target_num = target->next_item)
+		{
+			target = &items[target_num];
+			obj_num = target->object_number;
+
+			if (target == lara_item || !target->collidable)
+				continue;
+
+			if (obj_num != SMASH_WINDOW && obj_num != SMASH_OBJECT1 && obj_num != SMASH_OBJECT2 &&
+				obj_num != SMASH_OBJECT3 && obj_num != CARCASS && obj_num != EXTRAFX6 && obj_num != FLYING_MUTANT_EMITTER &&
+				(!objects[obj_num].intelligent || target->status == ITEM_INVISIBLE || !objects[obj_num].collision))
+				continue;
+
+			bounds = GetBoundsAccurate(target);
+
+			if (item->pos.y_pos + rad < target->pos.y_pos + bounds[2] || item->pos.y_pos - rad > target->pos.y_pos + bounds[3])
+				continue;
+
+			s = phd_sin(target->pos.y_rot);
+			c = phd_cos(target->pos.y_rot);
+			
+			nx = item->pos.x_pos - target->pos.x_pos;
+			nz = item->pos.z_pos - target->pos.z_pos;
+			nn = (c * nx - s * nz) >> W2V_SHIFT;
+
+			ox = oldPos.x - target->pos.x_pos;
+			oz = oldPos.z - target->pos.z_pos;
+			on = (c * ox - s * oz) >> W2V_SHIFT;
+
+			nn1 = (s * nx + c * nz) >> W2V_SHIFT;
+			on1 = (s * ox + c * oz) >> W2V_SHIFT;
+
+			if (nn + rad < bounds[0] && ox + rad < bounds[0] || nn - rad > bounds[1] && ox - rad > bounds[1] ||
+				nn1 + rad < bounds[4] && on1 + rad < bounds[4] || nn1 - rad > bounds[5] && on1 - rad > bounds[5])
+				continue;
+
+			if (obj_num == SMASH_OBJECT1 && CurrentLevel == LV_CRASH)
+			{
+				if (item->item_flags[0] == 1)
+					SmashWindow(target_num);
+
+				if (!exploded)
+				{
+					exploded = 1;
+					rad = WALL_SIZE << item->item_flags[0];
+					r = -1;
+					break;
+				}
+			}
+			else if (obj_num == SMASH_OBJECT1 && CurrentLevel != LV_CRASH ||
+				obj_num == SMASH_WINDOW || obj_num == SMASH_OBJECT2 || obj_num == SMASH_OBJECT3)
+				SmashWindow(target_num);
+			else if (obj_num == CARCASS || obj_num == EXTRAFX6)
+			{
+				if (item->status != ITEM_ACTIVE)	//original bug: this doesn't work, need to check target instead of item
+				{
+					item->status = ITEM_ACTIVE;		//same here
+					AddActiveItem(target_num);
+				}
+			}
+			else if (target->object_number != SMASH_OBJECT1)
+			{
+				if (obj_num == TRIBEBOSS && TribeBossShieldOn)
+					FindClosestShieldPoint(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, target);
+				else
+					HitTarget(target, 0, 30 << item->item_flags[0]);
+
+				savegame.ammo_hit++;
+
+				if (target->hit_points <= 0)
+				{
+					savegame.kills++;
+
+					if (obj_num != TRIBEBOSS && obj_num != WILLARD_BOSS && obj_num != TONY && obj_num != LON_BOSS &&
+						obj_num != ELECTRIC_CLEANER && obj_num != WHALE && obj_num != FLYING_MUTANT_EMITTER)
+					{
+						if (obj_num == LIZARD_MAN && lizard_man_active)
+							lizard_man_active = 0;
+
+						item_after_projectile = target->next_active;
+						CreatureDie(target_num, 1);
+					}
+				}
+
+				if (!exploded)
+				{
+					exploded = 1;
+					rad = WALL_SIZE << item->item_flags[0];
+					r = -1;
+					break;
+				}
+			}
+		}
+	}
+
+	if (exploded)
+	{
+		if (room[oldRoom].flags & ROOM_UNDERWATER)
+		{
+			item->pos.x_pos = oldPos.x;
+			item->pos.y_pos = oldPos.y;
+			item->pos.z_pos = oldPos.z;
+			ItemNewRoom(item_number, oldRoom);
+			TriggerUnderwaterExplosion(item);
+		}
+		else
+		{
+			TriggerExplosionSparks(oldPos.x, oldPos.y, oldPos.z, 3, -2, 0, item->room_number);
+
+			for (int i = 0; i < 2; i++)
+				TriggerExplosionSparks(oldPos.x, oldPos.y, oldPos.z, 3, -1, 0, item->room_number);
+		}
+
+		AlertNearbyGuards(item);
+		SoundEffect(SFX_EXPLOSION1, &item->pos, 0x1800000 | SFX_SETPITCH);
+		SoundEffect(SFX_EXPLOSION2, &item->pos, SFX_DEFAULT);
+		KillItem(item_number);
+	}
+}
+
 void inject_lara1gun(bool replace)
 {
 	INJECT(0x004459B0, ControlHarpoonBolt, replace);
+	INJECT(0x004461E0, ControlRocket, replace);
 }
