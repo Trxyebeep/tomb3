@@ -90,7 +90,7 @@ tomb3decomp progress.
 0x004B4C10		phd_atan
 0x004B4C58		phd_cos
 0x004B4C5E		phd_sin
-0x004B4C93		phd_sqrt
+0x004B4C93	+	phd_sqrt
 
 
 		3dsystem/scalespr.cpp

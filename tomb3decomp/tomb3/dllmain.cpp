@@ -37,6 +37,7 @@
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
 #include "../3dsystem/scalespr.h"
+#include "../3dsystem/phd_math.h"
 
 #include "../specific/drawbars.h"
 #include "../specific/transform.h"
@@ -72,6 +73,7 @@ void inject_all(bool replace)
 	inject_3dgen(replace);
 	inject_hwinsert(replace);
 	inject_scalespr(replace);
+	inject_phdmath(replace);
 
 	//game
 	inject_lara(replace);
