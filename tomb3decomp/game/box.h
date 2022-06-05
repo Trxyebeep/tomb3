@@ -18,5 +18,5 @@ void AlertNearbyGuards(ITEM_INFO* item);
 #define AIGuard	( (short(__cdecl*)(CREATURE_INFO*)) 0x00416AC0 )
 #define InitialiseCreature	( (void(__cdecl*)(short)) 0x004142E0 )
 #define CreatureVault	( (long(__cdecl*)(short, short, long, long)) 0x004166D0 )
-#define CreatureEffect	( (void(__cdecl*)(ITEM_INFO*, BITE_INFO*, void(__cdecl*)(long, long, long, short, short, short))) 0x00416670 )
+#define CreatureEffect	( (void(__cdecl*)(ITEM_INFO*, BITE_INFO*, short(__cdecl*)(long, long, long, short, short, short))) 0x00416670 )
 #define CreatureDie	( (void(__cdecl*)(short, long)) 0x00415820 )

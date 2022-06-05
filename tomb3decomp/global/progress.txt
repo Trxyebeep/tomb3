@@ -1168,10 +1168,10 @@ tomb3decomp progress.
 
 0x0045B540		TargetVisible
 0x0045B610		Targetable
-0x0045B6F0		GunShot
-0x0045B700		GunHit
-0x0045B7C0		GunMiss
-0x0045B870		ShotLara
+0x0045B6F0	+	GunShot
+0x0045B700	+	GunHit
+0x0045B7C0	+	GunMiss
+0x0045B870	+	ShotLara
 
 
 		game/pickup.cpp
