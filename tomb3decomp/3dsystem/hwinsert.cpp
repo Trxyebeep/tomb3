@@ -64,16 +64,23 @@
 void HWI_InsertTrans8_Sorted(PHD_VBUF* buf, short shade)
 {
 	float z;
-	long nPoints;
-	char clip;
+	long nPoints, nVtx;
+	char clipO, clipA;
 
-	clip = buf[0].clip | buf[1].clip | buf[2].clip | buf[3].clip | buf[4].clip | buf[5].clip | buf[6].clip | buf[7].clip;
+	nVtx = 8;
+	clipO = 0;
+	clipA = -1;
 
-	if (clip < 0 || (buf[0].clip & buf[1].clip & buf[2].clip & buf[3].clip & buf[4].clip & buf[5].clip & buf[6].clip & buf[7].clip) ||
-		(buf[2].xs - buf[1].xs) * (buf->ys - buf[1].ys) - (buf[2].ys - buf[1].ys) * (buf->xs - buf[1].xs) < 0)
+	for (int i = 0; i < nVtx; i++)
+	{
+		clipO |= buf[i].clip;
+		clipA &= buf[i].clip;
+	}
+
+	if (clipO < 0 || clipA || (buf[2].xs - buf[1].xs) * (buf->ys - buf[1].ys) - (buf[2].ys - buf[1].ys) * (buf->xs - buf[1].xs) < 0)
 		return;
 
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < nVtx; i++)
 	{
 		v_buffer[i].x = buf[i].xs;
 		v_buffer[i].y = buf[i].ys;
@@ -83,9 +90,9 @@ void HWI_InsertTrans8_Sorted(PHD_VBUF* buf, short shade)
 		v_buffer[i].vb = 0;
 	}
 
-	nPoints = 8;
+	nPoints = nVtx;
 
-	if (clip)
+	if (clipO)
 	{
 		phd_leftfloat = (float)phd_winxmin;
 		phd_topfloat = (float)phd_winymin;
@@ -96,8 +103,13 @@ void HWI_InsertTrans8_Sorted(PHD_VBUF* buf, short shade)
 
 	if (nPoints)
 	{
-		z = (buf[0].zv + buf[1].zv + buf[2].zv + buf[3].zv + buf[4].zv + buf[5].zv + buf[6].zv + buf[7].zv) * 0.125F - 131072;
-		HWI_InsertPoly_Gouraud(nPoints, z, 0, 0, 0, 13);
+		z = 0;
+
+		for (int i = 0; i < nVtx; i++)
+			z += buf[i].zv;
+
+		z = z * 0.125F - 131072;
+		HWI_InsertPoly_Gouraud(nPoints, z, 0, 0, 0, DT_POLY_GA);
 	}
 }
 
