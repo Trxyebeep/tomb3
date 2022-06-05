@@ -28,3 +28,4 @@ void TriggerRocketSmoke(long x, long y, long z, long c);
 #define UpdateBats	( (void(__cdecl*)()) 0x0042D3D0 )
 #define SetupRipple	( (RIPPLE_STRUCT*(__cdecl*)(long, long, long, long, long)) 0x0042D080 )
 #define SetupSplash	( (void(__cdecl*)(SPLASH_SETUP*)) 0x0042CAC0 )
+#define TriggerRicochetSpark	( (void(__cdecl*)(GAME_VECTOR*, short)) 0x0042A680 )

@@ -29,6 +29,7 @@ __inline void phd_PopMatrix()
 #define phd_SortPolyList	( (void(__cdecl*)(long, long*)) 0x00401F20 )
 #define phd_InitPolyList	( (void(__cdecl*)()) 0x00401EC0 )
 #define phd_GetVectorAngles	( (void(__cdecl*)(long, long, long, short*)) 0x004012D0 )
+#define phd_GenerateW2V	( (void(__cdecl*)(PHD_3DPOS*)) 0x00401000 )
 
 #define InsertLine	( *(void(__cdecl**)(long x1, long y1, long x2, long y2, long z, long c0, long c1)) 0x005A6AF8 )
 #define InsertObjectGT4	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005A6A34 )

@@ -19,3 +19,4 @@ void RefreshCamera(short type, short* data);
 #define LOS	( (long(__cdecl*)(GAME_VECTOR*, GAME_VECTOR*)) 0x00422370 )
 #define CheckNoColFloorTriangle	( (long(__cdecl*)(FLOOR_INFO*, long, long)) 0x004231F0 )
 #define CheckNoColCeilingTriangle	( (long(__cdecl*)(FLOOR_INFO*, long, long)) 0x004232B0 )
+#define ObjectOnLOS	( (long(__cdecl*)(GAME_VECTOR*, GAME_VECTOR*)) 0x00422C30 )
