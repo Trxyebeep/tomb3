@@ -11,6 +11,9 @@
 #include "effect2.h"
 #include "sound.h"
 #include "../3dsystem/phd_math.h"
+#ifdef RANDO_STUFF
+#include "../specific/smain.h"
+#endif
 
 long WeaponObject(long weapon_type)
 {
@@ -145,7 +148,11 @@ long FireWeapon(long weapon_type, ITEM_INFO* target, ITEM_INFO* source, short* a
 			if (!los)
 				Richochet(&dest);
 		}
+#ifdef RANDO_STUFF
+		else if (items[objLos].object_number == SMASH_OBJECT1 && rando.levels[RANDOLEVEL].original_id == LV_CRASH)
+#else
 		else if (items[objLos].object_number == SMASH_OBJECT1 && CurrentLevel == LV_CRASH)
+#endif
 			Richochet(&dest);
 		else
 			SmashItem((short)objLos, weapon_type);
@@ -159,7 +166,11 @@ long FireWeapon(long weapon_type, ITEM_INFO* target, ITEM_INFO* source, short* a
 	dest.z = start.z + ((bestdist * phd_mxptr[M22]) >> W2V_SHIFT);
 	objLos = ObjectOnLOS(&start, &dest);
 
+#ifdef RANDO_STUFF
+	if (objLos != NO_ITEM && (items[objLos].object_number != SMASH_OBJECT1 || rando.levels[RANDOLEVEL].original_id != LV_CRASH))
+#else
 	if (objLos != NO_ITEM && (items[objLos].object_number != SMASH_OBJECT1 || CurrentLevel != LV_CRASH))
+#endif
 		SmashItem((short)objLos, weapon_type);
 
 	obj_num = target->object_number;
