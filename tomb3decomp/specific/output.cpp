@@ -244,23 +244,23 @@ void S_OutputPolyList()
 		}
 
 #ifdef TROYESTUFF
-		for (int i = 0; i < 6; i++)
-		{
-			Buckets[i].TPage = (DXTEXTURE*)-1;
-			Buckets[i].nVtx = 0;
-		}
-
-		DX_ClearBuffers(8, 0);
-		HWR_EnableColorKey(0);
-		HWR_EnableAlphaBlend(0);
-		HWR_EnableColorAddition(0);
-		HWR_EnableZBuffer(1, 1);
-
-		if (level_complete)
-			InitialisePickUpDisplay();
-
 		if (pickups[CurrentPickup].duration != -1)
 		{
+			for (int i = 0; i < 6; i++)
+			{
+				Buckets[i].TPage = (DXTEXTURE*)-1;
+				Buckets[i].nVtx = 0;
+			}
+
+			DX_ClearBuffers(8, 0);
+			HWR_EnableColorKey(0);
+			HWR_EnableAlphaBlend(0);
+			HWR_EnableColorAddition(0);
+			HWR_EnableZBuffer(1, 1);
+
+			if (level_complete)
+				InitialisePickUpDisplay();
+
 			bBlueEffect = 0;
 			DrawPickup(pickups[CurrentPickup].sprnum);
 			DrawBuckets();
