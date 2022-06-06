@@ -723,7 +723,7 @@ tomb3decomp progress.
 0x0043DE40	+	LaraDeflectEdgeJump
 0x0043DFC0	+	LaraSlideEdgeJump
 0x0043E0B0	+	LaraTestHangOnClimbWall
-0x0043E1C0		LaraHangTest
+0x0043E1C0	+	LaraHangTest
 0x0043E4E0	+	LaraTestHangJump
 0x0043E730	+	TestHangSwingIn
 0x0043E800	+	LaraAboveWater

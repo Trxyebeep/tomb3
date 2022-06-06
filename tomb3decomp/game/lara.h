@@ -142,10 +142,10 @@ void lara_col_roll2(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_swandive(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_fastdive(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_wade(ITEM_INFO* item, COLL_INFO* coll);
+void LaraHangTest(ITEM_INFO* item, COLL_INFO* coll);
 
 #define LookUpDown	( (void(__cdecl*)()) 0x004446E0 )
 #define LookLeftRight	( (void(__cdecl*)()) 0x00444770 )
 #define ResetLook	( (void(__cdecl*)()) 0x00444800 )
 #define GetStaticObjects	( (long(__cdecl*)(ITEM_INFO*, short, long, long, long)) 0x00445020 )
-#define LaraHangTest	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x0043E1C0 )
 #define GetLaraHandAbsPosition	( (void(__cdecl*)(PHD_VECTOR*, long)) 0x00443360 )
