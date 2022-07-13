@@ -748,7 +748,7 @@ struct LIGHT_INFO
 	uchar b;
 	uchar type;
 
-	union l
+	union
 	{
 		SUNLIGHT sun;
 		SPOTLIGHT spot;
