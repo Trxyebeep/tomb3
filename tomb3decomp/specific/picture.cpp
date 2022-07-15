@@ -31,7 +31,7 @@ void CrossFadePicture()
 		pictureFading = 1;
 
 	HWR_BeginScene();
-	TRDrawPicture(0, CurPicTexIndices);
+	TRDrawPicture(0, CurPicTexIndices, f_znear);
 	HWR_EndScene();
 	DX_UpdateFrame(1, 0);
 	TIME_Init();
