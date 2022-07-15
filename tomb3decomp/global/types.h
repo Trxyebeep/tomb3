@@ -1323,6 +1323,18 @@ struct TEXTUREBUCKET
 	D3DTLVERTEX vtx[288];
 };
 
+struct TEXTURESHIT	//WIP
+{
+	DXTEXTURE* tex;
+	IDirectDrawSurface3* surf;
+	IDirectDrawPalette* palette;
+	LPDIRECT3DTEXTURE2 d3dtex;
+	LPD3DTEXTUREHANDLE handle;
+	int unk1;
+	int unk2;
+	IDirectDrawSurface3* surf2;
+};
+
 struct POINT_INFO
 {
 	float xv;
@@ -1382,9 +1394,9 @@ struct HWCONFIG
 {
 	bool Perspective;
 	bool Dither;
-	int nFilter;
-	int nShadeMode;
-	int nFillMode;
+	long nFilter;
+	long nShadeMode;
+	long nFillMode;
 	bool TrueAlpha;
 };
 

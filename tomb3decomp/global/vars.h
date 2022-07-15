@@ -263,6 +263,7 @@
 #define WakePts	ARRAY_(0x006E31A0, WAKE_PTS, [32][2])
 #define SubWakePts	ARRAY_(0x006269E0, SUB_WAKE_PTS, [32][2])
 #define TonyBossShield	ARRAY_(0x006CFD80, SHIELD_POINTS, [40])
+#define PictureTextures	ARRAY_(0x006CE958, TEXTURESHIT, [32])
 
 /*constants*/
 #define NO_HEIGHT -32512
