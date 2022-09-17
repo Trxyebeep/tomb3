@@ -473,6 +473,22 @@ void phd_InitWindow(long x, long y, long w, long h, long znear, long zfar, long 
 	}
 }
 
+void phd_InitPolyList()
+{
+	/*
+	dword_5D7AE8 = (int)&unk_4E34B0;	//seemingly unused, no problems so far
+	dword_5D7AE4 = 0;
+	dword_5A6AF0 = (int)&unk_4F6D60;
+	*/
+	surfacenumbf = 0;
+	surfacenumfb = 0;
+	info3dptrbf = info3d_bufferbf;
+	sort3dptrbf = sort3d_bufferbf;
+	info3dptrfb = info3d_bufferfb;
+	sort3dptrfb = sort3d_bufferfb;
+	CurrentTLVertex = VertexBuffer;
+}
+
 void inject_3dgen(bool replace)
 {
 	INJECT(0x00401AF0, phd_PutPolygons, replace);
@@ -493,4 +509,5 @@ void inject_3dgen(bool replace)
 	INJECT(0x00401CE0, calc_back_light, replace);
 	INJECT(0x00401D20, S_InsertBackground, replace);
 	INJECT(0x004021A0, phd_InitWindow, replace);
+	INJECT(0x00401EC0, phd_InitPolyList, replace);
 }
