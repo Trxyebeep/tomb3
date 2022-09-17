@@ -165,6 +165,9 @@
 #define phd_left	VAR_(0x004F6D58, long)
 #define phd_bottom	VAR_(0x004F6D4C, long)
 #define phd_top	VAR_(0x004D58E8, long)
+#define phd_scrwidth	VAR_(0x005BD3D8, long)
+#define phd_scrheight	VAR_(0x00531700, long)
+#define phd_WindowRect	VAR_(0x006A1838, RECT)
 #define m00	VAR_(0x006CA088, float)
 #define m01	VAR_(0x006CA08C, float)
 #define m02	VAR_(0x006CA090, float)
@@ -208,6 +211,7 @@
 /*arrays*/
 #define objects	ARRAY_(0x006DCAC0, OBJECT_INFO, [376])
 #define w2v_matrix	ARRAY_(0x005A6AC0, long, [indices_count])
+#define matrix_stack	ARRAY_(0x005BAB58, long, [40 * indices_count])
 #define ZTable	ARRAY_(0x006A2088, float, [40960])
 #define UVTable	ARRAY_(0x005E5450, float, [65536])
 #define ColorTable	ARRAY_(0x00634010, uchar, [256])

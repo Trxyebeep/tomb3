@@ -6,6 +6,7 @@
 #include "scalespr.h"
 #include "../game/gameflow.h"
 #include "../specific/output.h"
+#include "hwinsert.h"
 #ifdef RANDO_STUFF
 #include "../specific/smain.h"
 #endif
@@ -425,6 +426,53 @@ void S_InsertBackground(short* objptr)
 		S_InsertBackPolygon(0, (long)outsideBackgroundTop, phd_right + phd_winxmin, phd_winymax, 0x800000);
 }
 
+void phd_InitWindow(long x, long y, long w, long h, long znear, long zfar, long fov, long sw, long sh)
+{
+	phd_winxmin = (short)x;
+	phd_winxmax = short(w - 1);
+	phd_winymin = (short)y;
+	phd_winymax = short(h - 1);
+	phd_winwidth = w;
+	phd_winheight = h;
+	phd_scrwidth = sw;
+	phd_scrheight = sh;
+	phd_centerx = w / 2;
+	phd_centery = h / 2;
+	phd_viewdist = zfar;
+	phd_znear = znear << 14;
+	phd_zfar = zfar << 14;
+	f_centerx = float(w / 2);
+	f_centery = float(h / 2);
+	AlterFOV(short(182 * fov));
+	SetZNear(phd_znear);
+	SetZFar(phd_zfar);
+	InitZTable();
+	phd_right = phd_winxmax;
+	phd_bottom = phd_winymax;
+	phd_left = 0;
+	phd_top = 0;
+	phd_mxptr = matrix_stack;
+	phd_WindowRect.left = phd_winxmin;
+	phd_WindowRect.bottom = phd_winymin + phd_winheight;
+	phd_WindowRect.top = phd_winymin;
+	phd_WindowRect.right = phd_winxmin + phd_winwidth;
+
+	if (!App.nRenderMode || App.nRenderMode == 1)
+	{
+		InsertObjectGT3 = HWI_InsertObjectGT3_Sorted;
+		InsertObjectGT4 = HWI_InsertObjectGT4_Sorted;
+		InsertObjectG3 = HWI_InsertObjectG3_Sorted;
+		InsertObjectG4 = HWI_InsertObjectG4_Sorted;
+		InsertFlatRect = HWI_InsertFlatRect_Sorted;
+		InsertLine = HWI_InsertLine_Sorted;
+		RoomInsertObjectGT3 = HWI_InsertObjectGT3_Sorted;
+		RoomInsertObjectGT4 = HWI_InsertObjectGT4_Sorted;
+		InsertSprite = HWI_InsertSprite_Sorted;
+		InsertTrans8 = HWI_InsertTrans8_Sorted;
+		InsertTransQuad = HWI_InsertTransQuad_Sorted;
+	}
+}
+
 void inject_3dgen(bool replace)
 {
 	INJECT(0x00401AF0, phd_PutPolygons, replace);
@@ -444,4 +492,5 @@ void inject_3dgen(bool replace)
 	INJECT(0x00401BF0, S_InsertRoom, replace);
 	INJECT(0x00401CE0, calc_back_light, replace);
 	INJECT(0x00401D20, S_InsertBackground, replace);
+	INJECT(0x004021A0, phd_InitWindow, replace);
 }

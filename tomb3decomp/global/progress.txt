@@ -27,7 +27,7 @@ tomb3decomp progress.
 0x00402030	+	AlterFOV
 0x00402130	+	SetZNear
 0x00402180	+	SetZFar
-0x004021A0		phd_InitWindow
+0x004021A0	+	phd_InitWindow
 0x004B4280	+	phd_PushMatrix
 0x004B429E	+	phd_PushUnitMatrix
 ---------	+	phd_PopMatrix		//in h file

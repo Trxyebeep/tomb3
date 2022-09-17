@@ -19,6 +19,7 @@ void SetZFar(long zfar);
 void S_InsertRoom(short* objptr, long out);
 short* calc_back_light(short* objptr);
 void S_InsertBackground(short* objptr);
+void phd_InitWindow(long x, long y, long w, long h, long znear, long zfar, long fov, long sw, long sh);
 
 __inline void phd_PopMatrix()
 {
@@ -36,6 +37,9 @@ __inline void phd_PopMatrix()
 #define InsertObjectGT3	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005A6A30 )
 #define InsertObjectG4	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005BAB0C )
 #define InsertObjectG3	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005BAB50 )
-#define InsertFlatRect	( *(short*(__cdecl**)(long, long, long, long, long, long)) 0x004F6D5C )
+#define RoomInsertObjectGT3	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005CBE44 )
+#define RoomInsertObjectGT4	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005CBE40 )
+#define InsertFlatRect	( *(void(__cdecl**)(long, long, long, long, long, long)) 0x004F6D5C )
 #define InsertTrans8	( *(void(__cdecl**)(PHD_VBUF*, short)) 0x004E34A4 )
 #define InsertSprite	( *(void(__cdecl**)(long, long, long, long, long, long, long, long, long, long)) 0x00531718 )
+#define InsertTransQuad	( *(void(__cdecl**)(long, long, long, long, long)) 0x004D7908 )
