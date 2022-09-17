@@ -23,6 +23,7 @@ void phd_InitWindow(long x, long y, long w, long h, long znear, long zfar, long 
 void phd_InitPolyList();
 void do_quickysorty(long left, long right, long* list);
 void phd_SortPolyList(long count, long* list);
+void phd_NormaliseVector(long x, long y, long z, long* dest);
 
 __inline void phd_PopMatrix()
 {

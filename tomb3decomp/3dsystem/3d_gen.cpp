@@ -556,6 +556,32 @@ void phd_SortPolyList(long count, long* list)
 	do_quickysorty(0, count - 1, list);
 }
 
+void phd_NormaliseVector(long x, long y, long z, long* dest)
+{
+	long s;
+
+	if (x || y || z)
+	{
+		while ((short)x != x || (short)y != y || (short)z != z)
+		{
+			x >>= 2;
+			y >>= 2;
+			z >>= 2;
+		}
+
+		s = phd_sqrt(SQUARE(x) + SQUARE(y) + SQUARE(z));
+		dest[0] = (x << W2V_SHIFT) / s;
+		dest[1] = (y << W2V_SHIFT) / s;
+		dest[2] = (z << W2V_SHIFT) / s;
+	}
+	else
+	{
+		dest[0] = 0;
+		dest[1] = 0;
+		dest[2] = 0;
+	}
+}
+
 void inject_3dgen(bool replace)
 {
 	INJECT(0x00401AF0, phd_PutPolygons, replace);
@@ -579,4 +605,5 @@ void inject_3dgen(bool replace)
 	INJECT(0x00401EC0, phd_InitPolyList, replace);
 	INJECT(0x00401F60, do_quickysorty, replace);
 	INJECT(0x00401F20, phd_SortPolyList, replace);
+	INJECT(0x00401350, phd_NormaliseVector, replace);
 }
