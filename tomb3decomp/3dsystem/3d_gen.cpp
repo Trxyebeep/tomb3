@@ -582,6 +582,27 @@ void phd_NormaliseVector(long x, long y, long z, long* dest)
 	}
 }
 
+void phd_GetVectorAngles(long x, long y, long z, short* angles)
+{
+	short atan;
+
+	angles[0] = (short)phd_atan(z, x);
+
+	while ((short)x != x || (short)y != y || (short)z != z)
+	{
+		x >>= 2;
+		y >>= 2;
+		z >>= 2;
+	}
+
+	atan = (short)phd_atan(phd_sqrt(SQUARE(x) + SQUARE(z)), y);
+
+	if ((y > 0 && atan > 0) || (y < 0 && atan < 0))
+		atan = -atan;
+
+	angles[1] = atan;
+}
+
 void inject_3dgen(bool replace)
 {
 	INJECT(0x00401AF0, phd_PutPolygons, replace);
@@ -606,4 +627,5 @@ void inject_3dgen(bool replace)
 	INJECT(0x00401F60, do_quickysorty, replace);
 	INJECT(0x00401F20, phd_SortPolyList, replace);
 	INJECT(0x00401350, phd_NormaliseVector, replace);
+	INJECT(0x004012D0, phd_GetVectorAngles, replace);
 }

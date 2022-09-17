@@ -24,6 +24,7 @@ void phd_InitPolyList();
 void do_quickysorty(long left, long right, long* list);
 void phd_SortPolyList(long count, long* list);
 void phd_NormaliseVector(long x, long y, long z, long* dest);
+void phd_GetVectorAngles(long x, long y, long z, short* angles);
 
 __inline void phd_PopMatrix()
 {
@@ -31,7 +32,6 @@ __inline void phd_PopMatrix()
 }
 
 #define phd_LookAt	( (void(__cdecl*)(long, long, long, long, long, long, short)) 0x004011D0 )
-#define phd_GetVectorAngles	( (void(__cdecl*)(long, long, long, short*)) 0x004012D0 )
 #define phd_GenerateW2V	( (void(__cdecl*)(PHD_3DPOS*)) 0x00401000 )
 
 #define InsertLine	( *(void(__cdecl**)(long x1, long y1, long x2, long y2, long z, long c0, long c1)) 0x005A6AF8 )
