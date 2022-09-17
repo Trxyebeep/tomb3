@@ -1,5 +1,21 @@
 #include "../tomb3/pch.h"
 #include "file.h"
+#include "dd.h"
+
+long MyReadFile(HANDLE hFile, LPVOID lpBuffer, ulong nNumberOfBytesToRead, ulong* lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped)
+{
+	static ulong nBytesRead;
+
+	nBytesRead += nNumberOfBytesToRead;
+
+	if (nBytesRead > 0x4000)
+	{
+		nBytesRead = 0;
+		DD_SpinMessageLoop(0);
+	}
+
+	return ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
+}
 
 bool LoadPalette(HANDLE file)
 {
@@ -33,5 +49,6 @@ bool LoadPalette(HANDLE file)
 
 void inject_file(bool replace)
 {
+	INJECT(0x00480D50, MyReadFile, replace);
 	INJECT(0x00481CA0, LoadPalette, replace);
 }

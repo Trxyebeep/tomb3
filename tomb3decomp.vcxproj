@@ -260,6 +260,7 @@
     <ClInclude Include="tomb3decomp\global\math_tbls.h" />
     <ClInclude Include="tomb3decomp\global\types.h" />
     <ClInclude Include="tomb3decomp\global\vars.h" />
+    <ClInclude Include="tomb3decomp\specific\dd.h" />
     <ClInclude Include="tomb3decomp\specific\di.h" />
     <ClInclude Include="tomb3decomp\specific\display.h" />
     <ClInclude Include="tomb3decomp\specific\drawbars.h" />
@@ -383,6 +384,7 @@
     <ClCompile Include="tomb3decomp\game\willboss.cpp" />
     <ClCompile Include="tomb3decomp\game\wingmute.cpp" />
     <ClCompile Include="tomb3decomp\game\winston.cpp" />
+    <ClCompile Include="tomb3decomp\specific\dd.cpp" />
     <ClCompile Include="tomb3decomp\specific\di.cpp" />
     <ClCompile Include="tomb3decomp\specific\display.cpp" />
     <ClCompile Include="tomb3decomp\specific\drawbars.cpp" />

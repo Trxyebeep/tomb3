@@ -3,6 +3,5 @@
 
 void inject_file(bool replace);
 
+long MyReadFile(HANDLE hFile, LPVOID lpBuffer, ulong nNumberOfBytesToRead, ulong* lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped);
 bool LoadPalette(HANDLE file);
-
-#define MyReadFile	( (void(__cdecl*)(HANDLE, void*, ulong, ulong*, OVERLAPPED*)) 0x00480D50 )

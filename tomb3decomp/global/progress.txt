@@ -1486,6 +1486,16 @@ tomb3decomp progress.
 0x00475280		ACMSetVolume
 
 
+		specific/DD.cpp
+
+0x004B3830		DD_SpinMessageLoop
+0x004B3900		DD_LockSurface
+0x004B3930		DD_UnlockSurface
+0x004B3950		DD_CreateSurface
+0x004B39A0		DD_EnsureSurfaceAvailable
+0x004B39F0		DD_ClearSurface
+
+
 		specific/DI.cpp
 
 0x00475400		DI_Create
@@ -1544,7 +1554,7 @@ tomb3decomp progress.
 
 		specific/file.cpp
 
-0x00480D50		MyReadFile
+0x00480D50	+	MyReadFile
 0x00480DA0		LoadTexturePages
 0x00480F70		LoadRooms
 0x00481360		AdjustTextureUVs
