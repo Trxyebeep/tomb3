@@ -198,6 +198,8 @@
 #define outsideBackgroundTop	VAR_(0x006E2898, float)
 #define phd_viewdist	VAR_(0x005BAB04, long)
 #define HWConfig	VAR_(0x006CED68, HWCONFIG)
+#define CamPos	VAR_(0x006CF800, PHD_VECTOR)
+#define CamRot	VAR_(0x006CF810, PHD_VECTOR)
 /**/
 /*debug stuff*/
 #define bLaraOn	VAR_(0x004CDC88, long)

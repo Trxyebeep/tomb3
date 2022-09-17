@@ -26,13 +26,12 @@ void phd_SortPolyList(long count, long* list);
 void phd_NormaliseVector(long x, long y, long z, long* dest);
 void phd_GetVectorAngles(long x, long y, long z, short* angles);
 void phd_GenerateW2V(PHD_3DPOS* viewPos);
+void phd_LookAt(long sx, long sy, long sz, long tx, long ty, long tz, short roll);
 
 __inline void phd_PopMatrix()
 {
 	phd_mxptr -= indices_count;
 }
-
-#define phd_LookAt	( (void(__cdecl*)(long, long, long, long, long, long, short)) 0x004011D0 )
 
 #define InsertLine	( *(void(__cdecl**)(long x1, long y1, long x2, long y2, long z, long c0, long c1)) 0x005A6AF8 )
 #define InsertObjectGT4	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005A6A34 )

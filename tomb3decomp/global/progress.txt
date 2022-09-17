@@ -7,7 +7,7 @@ tomb3decomp progress.
 		3dsystem/3d_gen.cpp
 
 0x00401000	+	phd_GenerateW2V
-0x004011D0		phd_LookAt
+0x004011D0	+	phd_LookAt
 0x004012D0	+	phd_GetVectorAngles
 0x00401350	+	phd_NormaliseVector
 0x004013E0	+	phd_RotX

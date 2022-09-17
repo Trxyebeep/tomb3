@@ -7,6 +7,7 @@
 #include "../game/gameflow.h"
 #include "../specific/output.h"
 #include "hwinsert.h"
+#include "../specific/game.h"
 #ifdef RANDO_STUFF
 #include "../specific/smain.h"
 #endif
@@ -651,6 +652,32 @@ void phd_GenerateW2V(PHD_3DPOS* viewPos)
 	phd_mxptr[M12] = w2v_matrix[M12];
 }
 
+void phd_LookAt(long sx, long sy, long sz, long tx, long ty, long tz, short roll)
+{
+	PHD_3DPOS viewPos;
+	long dx, dy, dz, val;
+	short angles[2];
+
+	phd_GetVectorAngles(tx - sx, ty - sy, tz - sz, angles);
+	viewPos.x_pos = sx;
+	viewPos.y_pos = sy;
+	viewPos.z_pos = sz;
+	viewPos.x_rot = angles[1];
+	viewPos.y_rot = angles[0];
+	viewPos.z_rot = roll;
+	dx = sx - tx;
+	dy = sy - ty;
+	dz = sz - tz;
+	val = (long)sqrtl(SQUARE(dx) + SQUARE(dz));
+	CamRot.x = (mGetAngle(0, 0, val, dy) >> 4) & 0xFFF;
+	CamRot.y = (mGetAngle(sz, sx, tz, tx) >> 4) & 0xFFF;
+	CamRot.z = 0;
+	CamPos.x = sx;
+	CamPos.y = sy;
+	CamPos.z = sz;
+	phd_GenerateW2V(&viewPos);
+}
+
 void inject_3dgen(bool replace)
 {
 	INJECT(0x00401AF0, phd_PutPolygons, replace);
@@ -677,4 +704,5 @@ void inject_3dgen(bool replace)
 	INJECT(0x00401350, phd_NormaliseVector, replace);
 	INJECT(0x004012D0, phd_GetVectorAngles, replace);
 	INJECT(0x00401000, phd_GenerateW2V, replace);
+	INJECT(0x004011D0, phd_LookAt, replace);
 }
