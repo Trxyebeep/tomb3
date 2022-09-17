@@ -21,6 +21,7 @@ short* calc_back_light(short* objptr);
 void S_InsertBackground(short* objptr);
 void phd_InitWindow(long x, long y, long w, long h, long znear, long zfar, long fov, long sw, long sh);
 void phd_InitPolyList();
+void do_quickysorty(long left, long right, long* list);
 
 __inline void phd_PopMatrix()
 {

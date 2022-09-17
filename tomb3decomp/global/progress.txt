@@ -23,7 +23,7 @@ tomb3decomp progress.
 0x00401D20	+	S_InsertBackground
 0x00401EC0	+	phd_InitPolyList
 0x00401F20		phd_SortPolyList
-0x00401F60		do_quickysorty
+0x00401F60	+	do_quickysorty
 0x00402030	+	AlterFOV
 0x00402130	+	SetZNear
 0x00402180	+	SetZFar

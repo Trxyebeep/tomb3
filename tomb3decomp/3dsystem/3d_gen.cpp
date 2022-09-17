@@ -489,6 +489,55 @@ void phd_InitPolyList()
 	CurrentTLVertex = VertexBuffer;
 }
 
+void do_quickysorty(long left, long right, long* list)
+{
+	long* lList;
+	long* rList;
+	long swp[3];
+	long l, r, z;
+
+	l = left;
+	r = right;
+	z = list[3 * ((right + l) / 2) + 1];
+
+	do
+	{
+		while (l < right && list[3 * l + 1] > z)
+			l++;
+
+		while (r > left && list[3 * r + 1] < z)
+			r--;
+
+		if (l <= r)
+		{
+			lList = &list[3 * l];
+			rList = &list[3 * r];
+
+			swp[0] = lList[0];
+			swp[1] = lList[1];
+			swp[2] = lList[2];
+
+			lList[0] = rList[0];
+			lList[1] = rList[1];
+			lList[2] = rList[2];
+
+			rList[0] = swp[0];
+			rList[1] = swp[1];
+			rList[2] = swp[2];
+
+			l++;
+			r--;
+		}
+
+	} while (l <= r);
+
+	if (r > left)
+		do_quickysorty(left, r, list);
+
+	if (l < right)
+		do_quickysorty(l, right, list);
+}
+
 void inject_3dgen(bool replace)
 {
 	INJECT(0x00401AF0, phd_PutPolygons, replace);
@@ -510,4 +559,5 @@ void inject_3dgen(bool replace)
 	INJECT(0x00401D20, S_InsertBackground, replace);
 	INJECT(0x004021A0, phd_InitWindow, replace);
 	INJECT(0x00401EC0, phd_InitPolyList, replace);
+	INJECT(0x00401F60, do_quickysorty, replace);
 }
