@@ -603,6 +603,54 @@ void phd_GetVectorAngles(long x, long y, long z, short* angles)
 	angles[1] = atan;
 }
 
+void phd_GenerateW2V(PHD_3DPOS* viewPos)
+{
+	long sx, cx, sy, cy, sz, cz;
+
+	phd_mxptr = matrix_stack;
+	sx = phd_sin(viewPos->x_rot);
+	cx = phd_cos(viewPos->x_rot);
+	sy = phd_sin(viewPos->y_rot);
+	cy = phd_cos(viewPos->y_rot);
+	sz = phd_sin(viewPos->z_rot);
+	cz = phd_cos(viewPos->z_rot);
+
+	w2v_matrix[M00] = TRIGMULT3(sx, sy, sz) + TRIGMULT2(cy, cz);
+	w2v_matrix[M01] = TRIGMULT2(cx, sz);
+	w2v_matrix[M02] = TRIGMULT3(sx, cy, sz) - TRIGMULT2(sy, cz);
+	phd_mxptr[M00] = w2v_matrix[M00];
+	phd_mxptr[M01] = w2v_matrix[M01];
+	phd_mxptr[M02] = w2v_matrix[M02];
+
+	w2v_matrix[M10] = TRIGMULT3(sx, sy, cz) - TRIGMULT2(cy, sz);
+	w2v_matrix[M11] = TRIGMULT2(cx, cz);
+	w2v_matrix[M12] = TRIGMULT3(sx, cy, cz) + TRIGMULT2(sy, sz);
+	phd_mxptr[M10] = w2v_matrix[M10];
+	phd_mxptr[M11] = w2v_matrix[M11];
+	phd_mxptr[M12] = w2v_matrix[M12];
+
+	w2v_matrix[M20] = TRIGMULT2(cx, sy);
+	w2v_matrix[M21] = -sx;
+	w2v_matrix[M22] = TRIGMULT2(cx, cy);
+	phd_mxptr[M20] = w2v_matrix[M20];
+	phd_mxptr[M21] = w2v_matrix[M21];
+	phd_mxptr[M22] = w2v_matrix[M22];
+
+	w2v_matrix[M03] = viewPos->x_pos;;
+	w2v_matrix[M13] = viewPos->y_pos;
+	w2v_matrix[M23] = viewPos->z_pos;
+	phd_mxptr[M03] = w2v_matrix[M03];
+	phd_mxptr[M13] = w2v_matrix[M13];
+	phd_mxptr[M23] = w2v_matrix[M23];
+
+	w2v_matrix[M10] = long(LfAspectCorrection * float(phd_mxptr[M10]));
+	w2v_matrix[M11] = long(LfAspectCorrection * float(phd_mxptr[M11]));
+	w2v_matrix[M12] = long(LfAspectCorrection * float(phd_mxptr[M12]));
+	phd_mxptr[M10] = w2v_matrix[M10];
+	phd_mxptr[M11] = w2v_matrix[M11];
+	phd_mxptr[M12] = w2v_matrix[M12];
+}
+
 void inject_3dgen(bool replace)
 {
 	INJECT(0x00401AF0, phd_PutPolygons, replace);
@@ -628,4 +676,5 @@ void inject_3dgen(bool replace)
 	INJECT(0x00401F20, phd_SortPolyList, replace);
 	INJECT(0x00401350, phd_NormaliseVector, replace);
 	INJECT(0x004012D0, phd_GetVectorAngles, replace);
+	INJECT(0x00401000, phd_GenerateW2V, replace);
 }
