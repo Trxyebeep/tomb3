@@ -538,6 +538,24 @@ void do_quickysorty(long left, long right, long* list)
 		do_quickysorty(l, right, list);
 }
 
+void phd_SortPolyList(long count, long* list)
+{
+	long* l;
+
+	if (!count)
+		return;
+
+	l = list;
+
+	for (int i = 0; i < count; i++)
+	{
+		l[1] += i;
+		l += 3;
+	}
+
+	do_quickysorty(0, count - 1, list);
+}
+
 void inject_3dgen(bool replace)
 {
 	INJECT(0x00401AF0, phd_PutPolygons, replace);
@@ -560,4 +578,5 @@ void inject_3dgen(bool replace)
 	INJECT(0x004021A0, phd_InitWindow, replace);
 	INJECT(0x00401EC0, phd_InitPolyList, replace);
 	INJECT(0x00401F60, do_quickysorty, replace);
+	INJECT(0x00401F20, phd_SortPolyList, replace);
 }
