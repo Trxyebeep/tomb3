@@ -1510,8 +1510,8 @@ tomb3decomp progress.
 
 		specific/display.cpp
 
-0x00475720		IncreaseScreenSize
-0x00475790		DecreaseScreenSize
+0x00475720	+	IncreaseScreenSize
+0x00475790	+	DecreaseScreenSize
 0x00475800	+	setup_screen_size
 0x00475910		TempVideoAdjust
 0x00475950		TempVideoRemove

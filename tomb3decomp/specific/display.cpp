@@ -31,7 +31,37 @@ void setup_screen_size()
 		BarsWidth = 100;
 }
 
+void IncreaseScreenSize()
+{
+	if (screen_sizer != 1)
+	{
+		screen_sizer += 0.08F;
+
+		if (screen_sizer > 1)
+			screen_sizer = 1;
+
+		game_sizer = screen_sizer;
+		setup_screen_size();
+	}
+}
+
+void DecreaseScreenSize()
+{
+	if (screen_sizer != 0.44F)
+	{
+		screen_sizer -= 0.08F;
+
+		if (screen_sizer < 0.44F)
+			screen_sizer = 0.44F;
+
+		game_sizer = screen_sizer;
+		setup_screen_size();
+	}
+}
+
 void inject_display(bool replace)
 {
 	INJECT(0x00475800, setup_screen_size, replace);
+	INJECT(0x00475720, IncreaseScreenSize, replace);
+	INJECT(0x00475790, DecreaseScreenSize, replace);
 }

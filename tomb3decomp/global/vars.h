@@ -47,6 +47,7 @@
 #define DumpWidth	VAR_(0x004CD900, short)
 #define DumpHeight	VAR_(0x004CD902, short)
 #define screen_sizer	VAR_(0x004C8040, double)
+#define game_sizer	VAR_(0x004C8048, double)
 #define GtFullScreenClearNeeded	VAR_(0x006A1B58, char)
 #define health_bar_timer	VAR_(0x006266C8, long)
 #define PoisonFlag	VAR_(0x006D77A0, char)
