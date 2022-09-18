@@ -1555,7 +1555,7 @@ tomb3decomp progress.
 		specific/file.cpp
 
 0x00480D50	+	MyReadFile
-0x00480DA0		LoadTexturePages
+0x00480DA0	+	LoadTexturePages
 0x00480F70		LoadRooms
 0x00481360		AdjustTextureUVs
 0x004813D0		LoadObjects

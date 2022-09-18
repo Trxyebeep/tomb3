@@ -1,6 +1,8 @@
 #include "../tomb3/pch.h"
 #include "file.h"
 #include "dd.h"
+#include "init.h"
+#include "hwrender.h"
 
 long MyReadFile(HANDLE hFile, LPVOID lpBuffer, ulong nNumberOfBytesToRead, ulong* lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped)
 {
@@ -47,8 +49,61 @@ bool LoadPalette(HANDLE file)
 	return 1;
 }
 
+long LoadTexturePages(HANDLE file)
+{
+	char* p;
+	ulong read;
+	long nPages, size;
+	bool _16bit;
+
+	MyReadFile(file, &nPages, sizeof(long), &read, 0);
+
+	if (!App.nRenderMode)
+	{
+		for (int i = 0; i < nPages; i++)
+		{
+			if (!texture_page_ptrs[i])
+				texture_page_ptrs[i] = (char*)game_malloc(0x10000, 1);
+
+			MyReadFile(file, texture_page_ptrs[i], 0x10000, &read, 0);
+		}
+
+		SetFilePointer(file, nPages << 17, 0, FILE_CURRENT);
+		return 1;
+	}
+
+	_16bit = !App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bPalette;
+	size = _16bit ? 0x20000 : 0x10000;
+	p = (char*)GlobalAlloc(GMEM_FIXED, nPages * size);
+
+	if (!p)
+		return 0;
+
+	if (_16bit)
+	{
+		SetFilePointer(file, nPages << 16, 0, FILE_CURRENT);
+
+		for (int i = 0; i < nPages; i++)
+			MyReadFile(file, p + (size * i), size, &read, 0);
+
+		HWR_LoadTexturePages(nPages, p, 0);
+	}
+	else
+	{
+		for (int i = 0; i < nPages; i++)
+			MyReadFile(file, p + (size * i), size, &read, 0);
+
+		SetFilePointer(file, nPages << 17, 0, FILE_CURRENT);
+		HWR_LoadTexturePages(nPages, p, game_palette);
+	}
+
+	GlobalFree(p);
+	return 1;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
 	INJECT(0x00481CA0, LoadPalette, replace);
+	INJECT(0x00480DA0, LoadTexturePages, replace);
 }
