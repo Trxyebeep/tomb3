@@ -2,6 +2,8 @@
 #include "display.h"
 #include "../3dsystem/3d_gen.h"
 
+static long mode_lock;
+
 void setup_screen_size()
 {
 	DISPLAYMODE* dm;
@@ -59,9 +61,33 @@ void DecreaseScreenSize()
 	}
 }
 
+void TempVideoAdjust(long a, double sizer)
+{
+	mode_lock = 1;
+
+	if (sizer != screen_sizer)
+	{
+		screen_sizer = sizer;
+		setup_screen_size();
+	}
+}
+
+void TempVideoRemove()
+{
+	mode_lock = 0;
+
+	if (screen_sizer != game_sizer)
+	{
+		screen_sizer = game_sizer;
+		setup_screen_size();
+	}
+}
+
 void inject_display(bool replace)
 {
 	INJECT(0x00475800, setup_screen_size, replace);
 	INJECT(0x00475720, IncreaseScreenSize, replace);
 	INJECT(0x00475790, DecreaseScreenSize, replace);
+	INJECT(0x00475910, TempVideoAdjust, replace);
+	INJECT(0x00475950, TempVideoRemove, replace);
 }
