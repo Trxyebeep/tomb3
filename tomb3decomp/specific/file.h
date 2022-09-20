@@ -7,3 +7,4 @@ long MyReadFile(HANDLE hFile, LPVOID lpBuffer, ulong nNumberOfBytesToRead, ulong
 bool LoadPalette(HANDLE file);
 long LoadTexturePages(HANDLE file);
 long LoadRooms(HANDLE file);
+long LoadObjects(HANDLE file);

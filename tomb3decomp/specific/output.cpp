@@ -431,11 +431,11 @@ void ProjectPCoord(long x, long y, long z, long* result, long cx, long cy, long 
 
 long S_DumpCine()
 {
-	static long frames = 0;
+	static long nf = 0;
 
 	if (framedump)
 	{
-		frames++;
+		nf++;
 		SaveDDBuffer(App.lpFrontBuffer);
 		return 1;
 	}

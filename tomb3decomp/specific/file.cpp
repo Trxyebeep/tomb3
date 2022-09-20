@@ -205,10 +205,92 @@ long LoadRooms(HANDLE file)
 	return 1;
 }
 
+long LoadObjects(HANDLE file)
+{
+	OBJECT_INFO* obj;
+	STATIC_INFO* sinfo;
+	ulong read;
+	long num, nAnims, slot, off;
+
+	MyReadFile(file, &num, sizeof(long), &read, 0);
+	mesh_base = (short*)game_malloc(sizeof(short) * num, 3);
+	MyReadFile(file, mesh_base, sizeof(short) * num, &read, 0);
+
+	MyReadFile(file, &num, sizeof(long), &read, 0);
+	meshes = (short**)game_malloc(sizeof(short*) * num, 2);
+	MyReadFile(file, meshes, sizeof(short*) * num, &read, 0);
+	
+	for (int i = 0; i < num; i++)
+		meshes[i] = mesh_base + (long)meshes[i] / 2;
+
+	MyReadFile(file, &nAnims, sizeof(long), &read, 0);
+	anims = (ANIM_STRUCT*)game_malloc(sizeof(ANIM_STRUCT) * nAnims, 4);
+	MyReadFile(file, anims, sizeof(ANIM_STRUCT) * nAnims, &read, 0);
+
+	MyReadFile(file, &num, sizeof(long), &read, 0);
+	changes = (CHANGE_STRUCT*)game_malloc(sizeof(CHANGE_STRUCT) * num, 5);
+	MyReadFile(file, changes, sizeof(CHANGE_STRUCT) * num, &read, 0);
+
+	MyReadFile(file, &num, sizeof(long), &read, 0);
+	ranges = (RANGE_STRUCT*)game_malloc(sizeof(RANGE_STRUCT) * num, 6);
+	MyReadFile(file, ranges, sizeof(RANGE_STRUCT) * num, &read, 0);
+
+	MyReadFile(file, &num, sizeof(long), &read, 0);
+	commands = (short*)game_malloc(sizeof(short) * num, 7);
+	MyReadFile(file, commands, sizeof(short) * num, &read, 0);
+
+	MyReadFile(file, &num, sizeof(long), &read, 0);
+	bones = (long*)game_malloc(sizeof(long) * num, 8);
+	MyReadFile(file, bones, sizeof(long) * num, &read, 0);
+
+	MyReadFile(file, &num, sizeof(long), &read, 0);
+	frames = (short*)game_malloc(sizeof(short) * num, 9);
+	MyReadFile(file, frames, sizeof(short) * num, &read, 0);
+
+	for (int i = 0; i < nAnims; i++)
+		anims[i].frame_ptr = (short*)((long)anims[i].frame_ptr + (long)frames);
+
+	MyReadFile(file, &num, sizeof(long), &read, 0);
+
+	for (int i = 0; i < num; i++)
+	{
+		MyReadFile(file, &slot, sizeof(long), &read, 0);
+		obj = &objects[slot];
+
+		MyReadFile(file, &obj->nmeshes, sizeof(short), &read, 0);
+		MyReadFile(file, &obj->mesh_index, sizeof(short), &read, 0);
+		MyReadFile(file, &obj->bone_index, sizeof(long), &read, 0);
+
+		MyReadFile(file, &off, sizeof(long), &read, 0);
+		obj->frame_base = (short*)((long)frames + off);
+
+		MyReadFile(file, &obj->anim_index, sizeof(short), &read, 0);
+		obj->loaded = 1;
+	}
+
+	InitialiseObjects();
+
+	MyReadFile(file, &num, sizeof(long), &read, 0);
+
+	for (int i = 0; i < num; i++)
+	{
+		MyReadFile(file, &slot, sizeof(long), &read, 0);
+		sinfo = &static_objects[slot];
+
+		MyReadFile(file, &sinfo->mesh_number, sizeof(short), &read, 0);
+		MyReadFile(file, &sinfo->x_minp, sizeof(short) * 6, &read, 0);
+		MyReadFile(file, &sinfo->x_minc, sizeof(short) * 6, &read, 0);
+		MyReadFile(file, &sinfo->flags, sizeof(short), &read, 0);
+	}
+
+	return 1;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
 	INJECT(0x00481CA0, LoadPalette, replace);
 	INJECT(0x00480DA0, LoadTexturePages, replace);
 	INJECT(0x00480F70, LoadRooms, replace);
+	INJECT(0x004813D0, LoadObjects, replace);
 }

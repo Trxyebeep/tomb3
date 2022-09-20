@@ -140,6 +140,8 @@
 #define lizard_man_active	VAR_(0x006267D4, char)
 #define CurrentAtmosphere	VAR_(0x006E2970, char)
 #define number_rooms	VAR_(0x006E2880, short)
+#define mesh_base	VAR_(0x00633E20, short*)
+#define frames	VAR_(0x006E1430, short*)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
