@@ -1556,7 +1556,7 @@ tomb3decomp progress.
 
 0x00480D50	+	MyReadFile
 0x00480DA0	+	LoadTexturePages
-0x00480F70		LoadRooms
+0x00480F70	+	LoadRooms
 0x00481360		AdjustTextureUVs
 0x004813D0		LoadObjects
 0x00481890		LoadSprites

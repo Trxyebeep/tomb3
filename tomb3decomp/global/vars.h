@@ -138,6 +138,8 @@
 #define SubWakeShade	VAR_(0x006270E4, uchar)
 #define TribeBossShieldOn	VAR_(0x006D2260, char)
 #define lizard_man_active	VAR_(0x006267D4, char)
+#define CurrentAtmosphere	VAR_(0x006E2970, char)
+#define number_rooms	VAR_(0x006E2880, short)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -243,6 +245,7 @@
 #define Buckets	ARRAY_(0x005D7B00, TEXTUREBUCKET, [6])
 #define TPages	ARRAY_(0x00633F70, DXTEXTURE*, [32])
 #define game_palette	ARRAY_(0x006A1858, uchar, [768])
+#define exit_message	ARRAY_(0x006A1BD8, char, [128])
 #define phdspriteinfo	ARRAY_(0x004D58F0, PHDSPRITESTRUCT, [512])
 #define phdtextinfo	ARRAY_(0x005A6B00, PHDTEXTURESTRUCT, [4096])
 #define G_GouraudPalette	ARRAY_(0x00625450, uchar, [1024])

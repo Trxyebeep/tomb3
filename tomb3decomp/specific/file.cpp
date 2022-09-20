@@ -3,6 +3,8 @@
 #include "dd.h"
 #include "init.h"
 #include "hwrender.h"
+#include "game.h"
+#include "../game/setup.h"
 
 long MyReadFile(HANDLE hFile, LPVOID lpBuffer, ulong nNumberOfBytesToRead, ulong* lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped)
 {
@@ -101,9 +103,112 @@ long LoadTexturePages(HANDLE file)
 	return 1;
 }
 
+long LoadRooms(HANDLE file)
+{
+	ROOM_INFO* r;
+	ulong read;
+	long num;
+	short nDoors;
+
+	SeedRandomDraw(0xD371F947);
+	SeedRandomControl(0xD371F947);
+	wibble = 0;
+	CurrentAtmosphere = 0;
+	init_water_table();
+	CalculateWibbleTable();
+	MyReadFile(file, &number_rooms, sizeof(short), &read, 0);
+
+	if (number_rooms < 0 || number_rooms > 1024)
+	{
+		lstrcpy(exit_message, "LoadRoom(): Too many rooms");
+		return 0;
+	}
+
+	room = (ROOM_INFO*)game_malloc(sizeof(ROOM_INFO) * number_rooms, 11);
+
+	if (!room)
+	{
+		lstrcpy(exit_message, "LoadRoom(): Could not allocate memory for rooms");
+		return 0;
+	}
+
+	for (int i = 0; i < number_rooms; i++)
+	{
+		r = &room[i];
+
+		MyReadFile(file, &r->x, sizeof(long), &read, 0);
+		r->y = 0;
+		MyReadFile(file, &r->z, sizeof(long), &read, 0);
+		MyReadFile(file, &r->minfloor, sizeof(long), &read, 0);
+		MyReadFile(file, &r->maxceiling, sizeof(long), &read, 0);
+
+		MyReadFile(file, &num, sizeof(long), &read, 0);
+		r->data = (short*)game_malloc(sizeof(short)* num, 12);
+		MyReadFile(file, r->data, sizeof(short) * num, &read, 0);
+
+		MyReadFile(file, &nDoors, sizeof(short), &read, 0);
+
+		if (!nDoors)
+			r->door = 0;
+		else
+		{
+			r->door = (short*)game_malloc((16 * nDoors + 1) * sizeof(short), 13);
+			r->door[0] = (short)nDoors;
+			MyReadFile(file, r->door + 1, 16 * nDoors * sizeof(short), &read, 0);
+		}
+
+		MyReadFile(file, &r->x_size, sizeof(short), &read, 0);
+		MyReadFile(file, &r->y_size, sizeof(short), &read, 0);
+		num = r->x_size * r->y_size;
+		r->floor = (FLOOR_INFO*)game_malloc(sizeof(FLOOR_INFO) * num, 14);
+		MyReadFile(file, r->floor, sizeof(FLOOR_INFO) * num, &read, 0);
+
+		MyReadFile(file, &r->ambient, sizeof(short), &read, 0);
+		MyReadFile(file, &r->lighting, sizeof(short), &read, 0);
+		MyReadFile(file, &r->num_lights, sizeof(short), &read, 0);
+
+		if (!r->num_lights)
+			r->light = 0;
+		else
+		{
+			r->light = (LIGHT_INFO*)game_malloc(sizeof(LIGHT_INFO) * r->num_lights, 15);
+			MyReadFile(file, r->light, sizeof(LIGHT_INFO) * r->num_lights, &read, 0);
+		}
+
+		MyReadFile(file, &r->num_meshes, sizeof(short), &read, 0);
+
+		if (!r->num_meshes)
+			r->mesh = 0;
+		else
+		{
+			r->mesh = (MESH_INFO*)game_malloc(sizeof(MESH_INFO) * r->num_meshes, 16);
+			MyReadFile(file, r->mesh, sizeof(MESH_INFO) * r->num_meshes, &read, 0);
+		}
+
+		MyReadFile(file, &r->flipped_room, sizeof(short), &read, 0);
+		MyReadFile(file, &r->flags, sizeof(ushort), &read, 0);
+		MyReadFile(file, &r->MeshEffect, sizeof(char), &read, 0);
+		MyReadFile(file, &r->ReverbType, sizeof(short), &read, 0);
+		r->bound_active = 0;
+		r->left = phd_winxmax;
+		r->top = phd_winymax;
+		r->bottom = 0;
+		r->right = 0;
+		r->item_number = NO_ITEM;
+		r->fx_number = NO_ITEM;
+	}
+
+	BuildOutsideTable();
+	MyReadFile(file, &num, sizeof(long), &read, 0);
+	floor_data = (short*)game_malloc(sizeof(short) * num, 17);
+	MyReadFile(file, floor_data, sizeof(short) * num, &read, 0);
+	return 1;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
 	INJECT(0x00481CA0, LoadPalette, replace);
 	INJECT(0x00480DA0, LoadTexturePages, replace);
+	INJECT(0x00480F70, LoadRooms, replace);
 }
