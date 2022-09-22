@@ -6,6 +6,7 @@
 #include "game.h"
 #include "../game/setup.h"
 #include "../game/objects.h"
+#include "../game/items.h"
 
 long MyReadFile(HANDLE hFile, LPVOID lpBuffer, ulong nNumberOfBytesToRead, ulong* lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped)
 {
@@ -461,6 +462,62 @@ long LoadAnimatedTextures(HANDLE file)
 	return 1;
 }
 
+long LoadItems(HANDLE file)
+{
+	ITEM_INFO* item;
+	ulong read;
+	long num;
+
+	MyReadFile(file, &num, sizeof(long), &read, 0);
+
+	if (!num)
+		return 1;
+
+	if (num > 256)
+	{
+		lstrcpy(exit_message, "LoadItems(): Too Many Items being Loaded!!");
+		return 0;
+	}
+
+	items = (ITEM_INFO*)game_malloc(sizeof(ITEM_INFO) * 256, 18);
+
+	if (!items)
+	{
+		lstrcpy(exit_message, "LoadItems(): Unable to allocate memory for 'items'");
+		return 0;
+	}
+
+	level_items = num;
+	InitialiseItemArray(256);
+
+	for (int i = 0; i < level_items; i++)
+	{
+		item = &items[i];
+
+		MyReadFile(file, &item->object_number, sizeof(short), &read, 0);
+		MyReadFile(file, &item->room_number, sizeof(short), &read, 0);
+
+		MyReadFile(file, &item->pos.x_pos, sizeof(long), &read, 0);
+		MyReadFile(file, &item->pos.y_pos, sizeof(long), &read, 0);
+		MyReadFile(file, &item->pos.z_pos, sizeof(long), &read, 0);
+		MyReadFile(file, &item->pos.y_rot, sizeof(short), &read, 0);
+
+		MyReadFile(file, &item->shade, sizeof(short), &read, 0);
+		MyReadFile(file, &item->shadeB, sizeof(short), &read, 0);
+		MyReadFile(file, &item->flags, sizeof(short), &read, 0);
+
+		if (item->object_number < 0 || item->object_number>NUMBER_OBJECTS)
+		{
+			wsprintf(exit_message, "LoadItems(): Bad Object number (%d) on Item %d", item->object_number, i);
+			return 0;
+		}
+
+		InitialiseItem(i);
+	}
+
+	return 1;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
@@ -473,4 +530,5 @@ void inject_file(bool replace)
 	INJECT(0x00481DB0, LoadSoundEffects, replace);
 	INJECT(0x00481E10, LoadBoxes, replace);
 	INJECT(0x00482020, LoadAnimatedTextures, replace);
+	INJECT(0x004819D0, LoadItems, replace);
 }
