@@ -339,6 +339,25 @@ long LoadCameras(HANDLE file)
 	return 1;
 }
 
+long LoadSoundEffects(HANDLE file)
+{
+	ulong read;
+
+	MyReadFile(file, &number_sound_effects, sizeof(long), &read, 0);
+
+	if (number_sound_effects)
+	{
+		sound_effects = (OBJECT_VECTOR*)game_malloc(sizeof(OBJECT_VECTOR) * number_sound_effects, 20);
+
+		if (!sound_effects)
+			return 0;
+
+		MyReadFile(file, sound_effects, sizeof(OBJECT_VECTOR) * number_sound_effects, &read, 0);
+	}
+
+	return 1;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
@@ -348,4 +367,5 @@ void inject_file(bool replace)
 	INJECT(0x004813D0, LoadObjects, replace);
 	INJECT(0x00481890, LoadSprites, replace);
 	INJECT(0x00481D50, LoadCameras, replace);
+	INJECT(0x00481DB0, LoadSoundEffects, replace);
 }
