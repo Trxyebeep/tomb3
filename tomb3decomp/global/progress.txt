@@ -1721,7 +1721,7 @@ tomb3decomp progress.
 
 0x0048AD60		SetPictureToFade
 0x0048AD80		ForceFadeDown
-0x0048ADA0		DrawPictureAlpha
+0x0048ADA0	+	DrawPictureAlpha
 0x0048AFD0	+	CrossFadePicture
 0x0048B0D0		LoadPicture
 0x0048B190		FreePictureTextures
