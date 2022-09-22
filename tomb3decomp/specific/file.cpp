@@ -5,6 +5,7 @@
 #include "hwrender.h"
 #include "game.h"
 #include "../game/setup.h"
+#include "../game/objects.h"
 
 long MyReadFile(HANDLE hFile, LPVOID lpBuffer, ulong nNumberOfBytesToRead, ulong* lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped)
 {
@@ -286,6 +287,39 @@ long LoadObjects(HANDLE file)
 	return 1;
 }
 
+long LoadSprites(HANDLE file)
+{
+	OBJECT_INFO* obj;
+	ulong read;
+	long num, slot;
+
+	MyReadFile(file, &num, sizeof(long), &read, 0);
+	MyReadFile(file, phdspriteinfo, sizeof(PHDSPRITESTRUCT) * num, &read, 0);
+
+	MyReadFile(file, &num, sizeof(long), &read, 0);
+
+	for (int i = 0; i < num; i++)
+	{
+		MyReadFile(file, &slot, sizeof(long), &read, 0);
+
+		if (slot >= NUMBER_OBJECTS)
+		{
+			slot -= NUMBER_OBJECTS;
+			SetFilePointer(file, sizeof(short), 0, FILE_CURRENT);
+			MyReadFile(file, &static_objects[slot].mesh_number, sizeof(short), &read, 0);
+		}
+		else
+		{
+			obj = &objects[slot];
+			MyReadFile(file, &obj->nmeshes, sizeof(short), &read, 0);
+			MyReadFile(file, &obj->mesh_index, sizeof(short), &read, 0);
+			obj->loaded = 1;
+		}
+	}
+
+	return 1;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
@@ -293,4 +327,5 @@ void inject_file(bool replace)
 	INJECT(0x00480DA0, LoadTexturePages, replace);
 	INJECT(0x00480F70, LoadRooms, replace);
 	INJECT(0x004813D0, LoadObjects, replace);
+	INJECT(0x00481890, LoadSprites, replace);
 }

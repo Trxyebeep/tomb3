@@ -8,3 +8,4 @@ bool LoadPalette(HANDLE file);
 long LoadTexturePages(HANDLE file);
 long LoadRooms(HANDLE file);
 long LoadObjects(HANDLE file);
+long LoadSprites(HANDLE file);
