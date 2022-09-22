@@ -142,6 +142,7 @@
 #define number_rooms	VAR_(0x006E2880, short)
 #define mesh_base	VAR_(0x00633E20, short*)
 #define frames	VAR_(0x006E1430, short*)
+#define number_cameras	VAR_(0x006267D0, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)

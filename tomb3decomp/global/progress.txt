@@ -1563,7 +1563,7 @@ tomb3decomp progress.
 0x004819D0		LoadItems
 0x00481BC0		LoadDepthQ
 0x00481CA0	+	LoadPalette
-0x00481D50		LoadCameras
+0x00481D50	+	LoadCameras
 0x00481DB0		LoadSoundEffects
 0x00481E10		LoadBoxes
 0x00482020		LoadAnimatedTextures

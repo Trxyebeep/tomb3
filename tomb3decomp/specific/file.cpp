@@ -320,6 +320,25 @@ long LoadSprites(HANDLE file)
 	return 1;
 }
 
+long LoadCameras(HANDLE file)
+{
+	ulong read;
+
+	MyReadFile(file, &number_cameras, sizeof(long), &read, 0);
+
+	if (number_cameras)
+	{
+		camera.fixed = (OBJECT_VECTOR*)game_malloc(sizeof(OBJECT_VECTOR) * number_cameras, 19);
+
+		if (!camera.fixed)
+			return 0;
+
+		MyReadFile(file, camera.fixed, sizeof(OBJECT_VECTOR) * number_cameras, &read, 0);
+	}
+
+	return 1;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
@@ -328,4 +347,5 @@ void inject_file(bool replace)
 	INJECT(0x00480F70, LoadRooms, replace);
 	INJECT(0x004813D0, LoadObjects, replace);
 	INJECT(0x00481890, LoadSprites, replace);
+	INJECT(0x00481D50, LoadCameras, replace);
 }

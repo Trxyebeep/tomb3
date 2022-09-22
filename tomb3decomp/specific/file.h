@@ -9,3 +9,4 @@ long LoadTexturePages(HANDLE file);
 long LoadRooms(HANDLE file);
 long LoadObjects(HANDLE file);
 long LoadSprites(HANDLE file);
+long LoadCameras(HANDLE file);
