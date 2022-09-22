@@ -416,6 +416,51 @@ long LoadBoxes(HANDLE file)
 	return 1;
 }
 
+long LoadAnimatedTextures(HANDLE file)
+{
+	short* uv;
+	ulong read;
+	long num;
+	uchar flag;
+
+	MyReadFile(file, &num, sizeof(long), &read, 0);
+	aranges = (short*)game_malloc(sizeof(short) * num, 25);
+	MyReadFile(file, aranges, sizeof(short) * num, &read, 0);
+
+	MyReadFile(file, &num, sizeof(long), &read, 0);
+
+	if (num > 4096)
+	{
+		lstrcpy(exit_message, "Too many Textures in level");
+		return 0;
+	}
+
+	MyReadFile(file, phdtextinfo, sizeof(PHDTEXTURESTRUCT) * num, &read, 0);
+	nTInfos = num;
+
+	for (int i = 0; i < num; i++)
+	{
+		uv = (short*)&phdtextinfo[i].u1;
+		flag = 0;
+
+		for (int j = 0; j < 8; j++)
+		{
+			if (uv[j] & 0x80)
+			{
+				uv[j] |= 0xFF;
+				flag |= 1 << j;
+			}
+			else
+				uv[j] &= 0xFF00;
+		}
+
+		TexturesUVFlag[i] = flag;
+	}
+
+	AdjustTextureUVs(1);
+	return 1;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
@@ -427,4 +472,5 @@ void inject_file(bool replace)
 	INJECT(0x00481D50, LoadCameras, replace);
 	INJECT(0x00481DB0, LoadSoundEffects, replace);
 	INJECT(0x00481E10, LoadBoxes, replace);
+	INJECT(0x00482020, LoadAnimatedTextures, replace);
 }
