@@ -1547,4 +1547,14 @@ struct AI_INFO
 	short x_angle;
 	short enemy_facing;
 };
+
+struct BOX_INFO
+{
+	uchar left;
+	uchar right;
+	uchar top;
+	uchar bottom;
+	short height;
+	short overlap_index;
+};
 #pragma pack(pop)

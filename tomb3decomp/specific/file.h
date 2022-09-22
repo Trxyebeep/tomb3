@@ -11,3 +11,4 @@ long LoadObjects(HANDLE file);
 long LoadSprites(HANDLE file);
 long LoadCameras(HANDLE file);
 long LoadSoundEffects(HANDLE file);
+long LoadBoxes(HANDLE file);

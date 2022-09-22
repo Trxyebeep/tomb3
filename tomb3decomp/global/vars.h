@@ -145,6 +145,9 @@
 #define number_cameras	VAR_(0x006267D0, long)
 #define number_sound_effects	VAR_(0x006D8754, long)
 #define sound_effects	VAR_(0x006D8764, OBJECT_VECTOR*)
+#define number_boxes	VAR_(0x006E3190, long)
+#define boxes	VAR_(0x006E318C, BOX_INFO*)
+#define overlap	VAR_(0x006E3188, short*)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -287,6 +290,8 @@
 #define TonyBossShield	ARRAY_(0x006CFD80, SHIELD_POINTS, [40])
 #define PictureTextures	ARRAY_(0x006CE958, TEXTURESHIT, [32])
 #define texture_page_ptrs	ARRAY_(0x005D79C8, char*, [32])
+#define ground_zone	ARRAY_(0x006E3160, short*, [4][2])
+#define fly_zone	ARRAY_(0x006E3180, short*, [2])
 
 /*constants*/
 #define NO_HEIGHT -32512
