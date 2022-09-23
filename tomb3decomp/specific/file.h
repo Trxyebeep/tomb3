@@ -14,5 +14,6 @@ long LoadSoundEffects(HANDLE file);
 long LoadBoxes(HANDLE file);
 long LoadAnimatedTextures(HANDLE file);
 long LoadItems(HANDLE file);
+long LoadDepthQ(HANDLE file);
 
 #define AdjustTextureUVs	( (void(__cdecl*)(bool)) 0x00481360 )

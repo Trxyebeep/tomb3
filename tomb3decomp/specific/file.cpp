@@ -518,6 +518,35 @@ long LoadItems(HANDLE file)
 	return 1;
 }
 
+long LoadDepthQ(HANDLE file)
+{
+	ulong read;
+
+	MyReadFile(file, depthq_table, 0x2000, &read, 0);
+
+	for (int i = 0; i < 33; i++)
+		depthq_table[i][0] = 0;
+
+	memcpy(depthq_table[32], depthq_table[24], 256);
+
+	for (int i = 0; i < 32; i++)
+	{
+		for (int j = 0; j < 256; j++)
+			gouraud_table[j][i] = depthq_table[i][j];
+	}
+
+	wet = 0;
+
+	for (int i = 0; i < 768; i += 3)
+	{
+		water_palette[i] = 2 * game_palette[i] / 3;
+		water_palette[i + 1] = 2 * game_palette[i + 1] / 3;
+		water_palette[i + 2] = game_palette[i + 2];
+	}
+
+	return 1;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
@@ -531,4 +560,5 @@ void inject_file(bool replace)
 	INJECT(0x00481E10, LoadBoxes, replace);
 	INJECT(0x00482020, LoadAnimatedTextures, replace);
 	INJECT(0x004819D0, LoadItems, replace);
+	INJECT(0x00481BC0, LoadDepthQ, replace);
 }
