@@ -1567,8 +1567,8 @@ tomb3decomp progress.
 0x00481DB0	+	LoadSoundEffects
 0x00481E10	+	LoadBoxes
 0x00482020	+	LoadAnimatedTextures
-0x00482140		LoadCinematic
-0x004821C0		LoadDemo
+0x00482140	+	LoadCinematic
+0x004821C0	+	LoadDemo
 0x00482250		LoadDemFile
 0x004822F0		LoadSamples
 0x00482560		build_ext

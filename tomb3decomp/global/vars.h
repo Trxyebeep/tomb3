@@ -150,6 +150,10 @@
 #define overlap	VAR_(0x006E3188, short*)
 #define aranges	VAR_(0x006A1850, short*)
 #define nTInfos	VAR_(0x00633F28, long)
+#define cine	VAR_(0x006E300C, short*)
+#define num_cine_frames	VAR_(0x006E300A, short)
+#define cine_loaded	VAR_(0x006E3008, short)
+#define demo_loaded	VAR_(0x00625F7C, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)

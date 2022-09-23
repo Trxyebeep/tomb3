@@ -547,6 +547,44 @@ long LoadDepthQ(HANDLE file)
 	return 1;
 }
 
+long LoadCinematic(HANDLE file)
+{
+	ulong read;
+
+	MyReadFile(file, &num_cine_frames, sizeof(short), &read, 0);
+
+	if (num_cine_frames)
+	{
+		cine = (short*)game_malloc(16 * num_cine_frames, 26);
+		MyReadFile(file, cine, 16 * num_cine_frames, &read, 0);
+		cine_loaded = 1;
+	}
+	else
+		cine_loaded = 0;
+
+	return 1;
+}
+
+long LoadDemo(HANDLE file)
+{
+	ulong read;
+	short size;
+
+	democount = 0;
+	demoptr = (ulong*)game_malloc(3608 * sizeof(ulong), 27);
+	MyReadFile(file, &size, sizeof(short), &read, 0);
+
+	if (size)
+	{
+		MyReadFile(file, demoptr, size, &read, 0);
+		demo_loaded = 1;
+	}
+	else
+		demo_loaded = 0;
+
+	return 1;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
@@ -561,4 +599,6 @@ void inject_file(bool replace)
 	INJECT(0x00482020, LoadAnimatedTextures, replace);
 	INJECT(0x004819D0, LoadItems, replace);
 	INJECT(0x00481BC0, LoadDepthQ, replace);
+	INJECT(0x00482140, LoadCinematic, replace);
+	INJECT(0x004821C0, LoadDemo, replace);
 }
