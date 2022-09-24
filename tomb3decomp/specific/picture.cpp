@@ -152,10 +152,43 @@ void DrawPictureAlpha(long col, long* indices, float z)
 	HWR_EnablePerspCorrect(1);
 }
 
+void TRDrawPicture(long col, long* indices, float z)
+{
+	long x[4];
+	long y[4];
+	static long screenX[4] = { 0, 256, 512, 640 };
+	static long screenY[3] = { 0, 256, 480 };
+
+	col = 255 - col;
+	col = RGBA(col, col, col, 0xFF);
+
+	for (int i = 0; i < 3; i++)
+	{
+		x[i] = phd_winxmin + phd_winwidth * screenX[i] / 640;
+		y[i] = phd_winymin + phd_winheight * screenY[i] / 480;
+	}
+
+	x[3] = phd_winxmin + phd_winwidth * screenX[3] / 640;
+
+	HWR_EnableAlphaBlend(0);
+	HWR_EnablePerspCorrect(0);
+	HWR_EnableColorAddition(0);
+
+	DrawTile(x[0], y[0], x[1] - x[0], y[1] - y[0], indices[0], 0, 0, 256, 256, col, col, col, col, z);
+	DrawTile(x[1], y[0], x[2] - x[1], y[1] - y[0], indices[1], 0, 0, 256, 256, col, col, col, col, z);
+	DrawTile(x[2], y[0], x[3] - x[2], y[1] - y[0], indices[2], 0, 0, 128, 256, col, col, col, col, z);
+	DrawTile(x[0], y[1], x[1] - x[0], y[2] - y[1], indices[3], 0, 0, 256, 224, col, col, col, col, z);
+	DrawTile(x[1], y[1], x[2] - x[1], y[2] - y[1], indices[4], 0, 0, 256, 224, col, col, col, col, z);
+	DrawTile(x[2], y[1], x[3] - x[2], y[2] - y[1], indices[2], 128, 0, 128, 224, col, col, col, col, z);
+
+	HWR_EnablePerspCorrect(1);
+}
+
 void inject_picture(bool replace)
 {
 	INJECT(0x0048AFD0, CrossFadePicture, replace);
 	INJECT(0x0048C0A0, S_FadePicture, replace);
 	INJECT(0x0048B7A0, DrawTile, replace);
 	INJECT(0x0048ADA0, DrawPictureAlpha, replace);
+	INJECT(0x0048BA30, TRDrawPicture, replace);
 }

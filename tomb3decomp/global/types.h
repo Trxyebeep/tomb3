@@ -35,6 +35,7 @@ do \
 #define	TRIGMULT2(a, b)	(((a) * (b)) >> W2V_SHIFT)
 #define	TRIGMULT3(a, b, c)	(TRIGMULT2((TRIGMULT2(a, b)), c))
 #define key_pressed(x) (keymap[x] & 0x80)
+#define RGBA(r, g, b, a)	((a << 24) | (r << 16) | (g << 8) | (b))
 
 //S_DrawSprite flags
 #define SPR_RGB(r, g, b)	((r) | ((g) << 8) | ((b) << 16))

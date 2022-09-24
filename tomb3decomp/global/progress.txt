@@ -1729,7 +1729,7 @@ tomb3decomp progress.
 0x0048B300		ConvertSurfaceToTextures
 0x0048B370		ConvertSurfaceToTextures16Bit
 0x0048B7A0	+	DrawTile
-0x0048BA30		TRDrawPicture
+0x0048BA30	+	TRDrawPicture
 0x0048BC70		FadePictureUp
 0x0048BD10		FadePictureDown
 0x0048BE60		CreateMonoScreen
