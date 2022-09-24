@@ -822,6 +822,18 @@ long FindCDDrive()
 	return 0;
 }
 
+const char* GetFullPath(const char* name)
+{
+	static char path[128];
+
+#if 0
+	wsprintf(path, "%c:\\%s", cd_drive, name);	//original code
+#else
+	wsprintfA(path, "%s", name);				//Steam no cd
+#endif
+	return path;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
@@ -844,4 +856,5 @@ void inject_file(bool replace)
 	INJECT(0x00482990, S_UnloadLevelFile, replace);
 	INJECT(0x00482910, S_LoadLevelFile, replace);
 	INJECT(0x004825D0, FindCDDrive, replace);
+	INJECT(0x004825A0, GetFullPath, replace);
 }

@@ -1572,7 +1572,7 @@ tomb3decomp progress.
 0x00482250	+	LoadDemFile
 0x004822F0	+	LoadSamples
 0x00482560		build_ext
-0x004825A0		GetFullPath
+0x004825A0	+	GetFullPath
 0x004825D0	+	FindCDDrive
 0x004826C0	+	LoadLevel
 0x00482910	+	S_LoadLevelFile
