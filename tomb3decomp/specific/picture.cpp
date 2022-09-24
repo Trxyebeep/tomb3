@@ -278,6 +278,17 @@ void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACE3 surf)
 	free(dest);
 }
 
+void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACE3 surf)
+{
+	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bPalette)
+	{
+		DXFreeTPages();
+		DXCreateMaxTPages(1);
+	}
+
+	ConvertSurfaceToTextures16Bit(surf);
+}
+
 void inject_picture(bool replace)
 {
 	INJECT(0x0048AFD0, CrossFadePicture, replace);
@@ -287,4 +298,5 @@ void inject_picture(bool replace)
 	INJECT(0x0048BA30, TRDrawPicture, replace);
 	INJECT(0x0048B270, MemBlt, replace);
 	INJECT(0x0048B370, ConvertSurfaceToTextures16Bit, replace);
+	INJECT(0x0048B300, ConvertSurfaceToTextures, replace);
 }
