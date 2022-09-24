@@ -160,6 +160,7 @@
 #define GF_picfilenames	VAR_(0x006D7880, char**)
 #define GF_LoadingPic	VAR_(0x004C561C, short)
 #define GF_Playing_Story	VAR_(0x00626204, char)
+#define cd_drive	VAR_(0x00633F38, char)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
