@@ -850,6 +850,36 @@ void build_ext(char* name, const char* ext)
 	*p = 0;
 }
 
+void AdjustTextureUVs(bool reset)
+{
+	short* uv;
+	long num;
+	uchar flag;
+
+	if (reset)
+		App.nUVAdd = 0;
+
+	num = 256 - App.nUVAdd;
+
+	for (int i = 0; i < nTInfos; i++)
+	{
+		uv = (short*)&phdtextinfo[i].u1;
+		flag = TexturesUVFlag[i];
+
+		for (int j = 0; j < 8; j++)
+		{
+			if (flag & 1)
+				uv[j] -= (short)num;
+			else
+				uv[j] += (short)num;
+
+			flag >>= 1;
+		}
+	}
+
+	App.nUVAdd += num;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
@@ -874,4 +904,5 @@ void inject_file(bool replace)
 	INJECT(0x004825D0, FindCDDrive, replace);
 	INJECT(0x004825A0, GetFullPath, replace);
 	INJECT(0x00482560, build_ext, replace);
+	INJECT(0x00481360, AdjustTextureUVs, replace);
 }

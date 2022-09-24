@@ -25,5 +25,4 @@ long S_LoadLevelFile(char* name, long number, long type);
 long FindCDDrive();
 const char* GetFullPath(const char* name);
 void build_ext(char* name, const char* ext);
-
-#define AdjustTextureUVs	( (void(__cdecl*)(bool)) 0x00481360 )
+void AdjustTextureUVs(bool reset);
