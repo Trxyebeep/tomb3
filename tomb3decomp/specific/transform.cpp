@@ -283,9 +283,10 @@ short* calc_roomvert(short* objptr, long far_clip)
 
 						if (dist < falloff)
 						{
-							cR += RColorTable[falloff][dist][dl->r];
-							cG += GColorTable[falloff][dist][dl->g];
-							cB += BColorTable[falloff][dist][dl->b];
+							dist += (falloff << 5) + falloff + 1;
+							cR += RColorTable[0][dist][dl->r];
+							cG += GColorTable[0][dist][dl->g];
+							cB += BColorTable[0][dist][dl->b];
 						}
 					}
 				}
