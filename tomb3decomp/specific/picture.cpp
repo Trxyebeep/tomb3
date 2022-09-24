@@ -184,6 +184,25 @@ void TRDrawPicture(long col, long* indices, float z)
 	HWR_EnablePerspCorrect(1);
 }
 
+void MemBlt(ushort* dest, long x, long y, long w, long h, long sz, ushort* source, long x2, long y2, DDSURFACEDESC desc)
+{
+	char* pS;
+	char* pD;
+	ulong stride;
+
+	stride = desc.ddpfPixelFormat.dwRGBBitCount >> 3;
+	pD = (char*)dest + stride * (x + y * sz);
+	pS = (char*)source + y2 * desc.lPitch + stride * x2;
+
+	while (h)
+	{
+		memcpy(pD, pS, stride * w);
+		pD += stride * sz;
+		pS += desc.lPitch;
+		h--;
+	}
+}
+
 void inject_picture(bool replace)
 {
 	INJECT(0x0048AFD0, CrossFadePicture, replace);
@@ -191,4 +210,5 @@ void inject_picture(bool replace)
 	INJECT(0x0048B7A0, DrawTile, replace);
 	INJECT(0x0048ADA0, DrawPictureAlpha, replace);
 	INJECT(0x0048BA30, TRDrawPicture, replace);
+	INJECT(0x0048B270, MemBlt, replace);
 }
