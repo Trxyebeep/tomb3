@@ -834,6 +834,22 @@ const char* GetFullPath(const char* name)
 	return path;
 }
 
+void build_ext(char* name, const char* ext)
+{
+	char* p;
+
+	p = name;
+
+	while (*p && *p != '.')
+		p++;
+
+	*p++ = '.';
+	*p++ = ext[0];
+	*p++ = ext[1];
+	*p++ = ext[2];
+	*p = 0;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
@@ -857,4 +873,5 @@ void inject_file(bool replace)
 	INJECT(0x00482910, S_LoadLevelFile, replace);
 	INJECT(0x004825D0, FindCDDrive, replace);
 	INJECT(0x004825A0, GetFullPath, replace);
+	INJECT(0x00482560, build_ext, replace);
 }
