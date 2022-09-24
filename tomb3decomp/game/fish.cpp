@@ -140,6 +140,17 @@ void SetupShoal(long shoal_number)
 		leader->Zrange = 256;
 		leader->Yrange = 256;
 	}
+
+#ifdef RANDO_STUFF
+	if (!leader->Xrange)
+		leader->Xrange = 256;
+
+	if (!leader->Yrange)
+		leader->Yrange = 256;
+
+	if (!leader->Zrange)
+		leader->Zrange = 256;
+#endif
 }
 
 void SetupFish(long leader, ITEM_INFO* item)
@@ -150,6 +161,18 @@ void SetupFish(long leader, ITEM_INFO* item)
 
 	pLeader = &lead_info[leader];
 	pFish = &fish[leader];
+
+#ifdef RANDO_STUFF
+	if (!pLeader->Xrange)
+		pLeader->Xrange = 256;
+
+	if (!pLeader->Yrange)
+		pLeader->Yrange = 256;
+
+	if (!pLeader->Zrange)
+		pLeader->Zrange = 256;
+#endif
+
 	x = pLeader->Xrange;
 	y = pLeader->Yrange;
 	z = pLeader->Zrange;
@@ -537,7 +560,7 @@ void ControlFish(short item_number)
 void inject_fish(bool replace)
 {
 	INJECT(0x00430050, SetupShoal, inject_rando ? 1 : replace);
-	INJECT(0x004302B0, SetupFish, replace);
+	INJECT(0x004302B0, SetupFish, inject_rando ? 1 : replace);
 	INJECT(0x00430D30, FishNearLara, replace);
 	INJECT(0x004303E0, ControlFish, inject_rando ? 1 : replace);
 }
