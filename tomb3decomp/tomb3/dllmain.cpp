@@ -73,6 +73,10 @@ long dummyz()
 
 void inject_all(bool replace)
 {
+#ifdef RANDO_STUFF
+	replace = 0;
+#endif
+
 	//3dsystem
 	inject_3dgen(replace);
 	inject_hwinsert(replace);

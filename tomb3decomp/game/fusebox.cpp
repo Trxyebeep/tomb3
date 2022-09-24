@@ -57,5 +57,5 @@ void ControlFusebox(short item_number)
 
 void inject_fusebox(bool replace)
 {
-	INJECT(0x0048EA30, ControlFusebox, replace);
+	INJECT(0x0048EA30, ControlFusebox, inject_rando ? 1 : replace);
 }

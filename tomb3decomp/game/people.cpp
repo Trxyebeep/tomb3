@@ -171,5 +171,5 @@ void inject_people(bool replace)
 	INJECT(0x0045B6F0, GunShot, replace);
 	INJECT(0x0045B700, GunHit, replace);
 	INJECT(0x0045B7C0, GunMiss, replace);
-	INJECT(0x0045B870, ShotLara, replace);
+	INJECT(0x0045B870, ShotLara, inject_rando ? 1 : replace);
 }

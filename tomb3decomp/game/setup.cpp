@@ -53,5 +53,5 @@ void GetAIPickups()
 
 void inject_setup(bool replace)
 {
-	INJECT(0x00466590, GetAIPickups, replace);
+	INJECT(0x00466590, GetAIPickups, inject_rando ? 1 : replace);
 }

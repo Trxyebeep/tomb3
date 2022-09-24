@@ -924,7 +924,7 @@ void RefreshCamera(short type, short* data)
 
 void inject_control(bool replace)
 {
-	INJECT(0x0041FFA0, ControlPhase, replace);
+	INJECT(0x0041FFA0, ControlPhase, inject_rando ? 1 : replace);
 	INJECT(0x00420590, AnimateItem, replace);
 	INJECT(0x00420970, GetChange, replace);
 	INJECT(0x00420A20, TranslateItem, replace);

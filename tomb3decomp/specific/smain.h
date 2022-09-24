@@ -25,5 +25,6 @@ struct rando_info
 };
 
 extern rando_info rando;
+extern bool inject_rando;
 #define RANDOLEVEL	(CurrentLevel - 1)
 #endif

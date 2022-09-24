@@ -475,9 +475,9 @@ void FlameControl(short fx_number)
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
-	INJECT(0x0046FB30, LavaBurn, replace);
-	INJECT(0x0046E340, SpikeControl, replace);
-	INJECT(0x0046D340, PropellerControl, replace);
+	INJECT(0x0046FB30, LavaBurn, inject_rando ? 1 : replace);
+	INJECT(0x0046E340, SpikeControl, inject_rando ? 1 : replace);
+	INJECT(0x0046D340, PropellerControl, inject_rando ? 1 : replace);
 	INJECT(0x0046F1E0, SideFlameDetection, replace);
-	INJECT(0x0046F370, FlameControl, replace);
+	INJECT(0x0046F370, FlameControl, inject_rando ? 1 : replace);
 }

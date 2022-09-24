@@ -536,8 +536,8 @@ void ControlFish(short item_number)
 
 void inject_fish(bool replace)
 {
-	INJECT(0x00430050, SetupShoal, replace);
+	INJECT(0x00430050, SetupShoal, inject_rando ? 1 : replace);
 	INJECT(0x004302B0, SetupFish, replace);
 	INJECT(0x00430D30, FishNearLara, replace);
-	INJECT(0x004303E0, ControlFish, replace);
+	INJECT(0x004303E0, ControlFish, inject_rando ? 1 : replace);
 }

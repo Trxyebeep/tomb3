@@ -209,5 +209,5 @@ long FireWeapon(long weapon_type, ITEM_INFO* target, ITEM_INFO* source, short* a
 void inject_larafire(bool replace)
 {
 	INJECT(0x0044AF50, WeaponObject, replace);
-	INJECT(0x0044A890, FireWeapon, replace);
+	INJECT(0x0044A890, FireWeapon, inject_rando ? 1 : replace);
 }

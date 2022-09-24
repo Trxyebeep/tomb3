@@ -15,5 +15,5 @@
 #include <mmreg.h>
 #include <mmeapi.h>
 
-//#define RANDO_STUFF	1
+#define RANDO_STUFF	1
 #define TROYESTUFF	1

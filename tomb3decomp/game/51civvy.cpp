@@ -195,5 +195,5 @@ void ControlElectricFence(short item_number)
 void inject_civvy(bool replace)
 {
 	INJECT(0x0040F080, TriggerFenceSparks, replace);
-	INJECT(0x0040ECA0, ControlElectricFence, replace);
+	INJECT(0x0040ECA0, ControlElectricFence, inject_rando ? 1 : replace);
 }

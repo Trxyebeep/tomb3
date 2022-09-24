@@ -553,5 +553,5 @@ void inject_flamer(bool replace)
 	INJECT(0x00431A80, TriggerPilotFlame, replace);
 	INJECT(0x00431890, TriggerFlamethrowerFlame, replace);
 	INJECT(0x00431650, TriggerFlameThrower, replace);
-	INJECT(0x00430DB0, FlamerControl, replace);
+	INJECT(0x00430DB0, FlamerControl, inject_rando ? 1 : replace);
 }

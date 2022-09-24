@@ -668,7 +668,7 @@ void ControlGrenade(short item_number)
 
 void inject_lara1gun(bool replace)
 {
-	INJECT(0x004459B0, ControlHarpoonBolt, replace);
-	INJECT(0x004461E0, ControlRocket, replace);
-	INJECT(0x00446DD0, ControlGrenade, replace);
+	INJECT(0x004459B0, ControlHarpoonBolt, inject_rando ? 1 : replace);
+	INJECT(0x004461E0, ControlRocket, inject_rando ? 1 : replace);
+	INJECT(0x00446DD0, ControlGrenade, inject_rando ? 1 : replace);
 }

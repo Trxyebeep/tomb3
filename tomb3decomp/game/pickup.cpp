@@ -191,5 +191,5 @@ void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
 
 void inject_pickup(bool replace)
 {
-	INJECT(0x0045BC00, PickUpCollision, replace);
+	INJECT(0x0045BC00, PickUpCollision, inject_rando ? 1 : replace);
 }

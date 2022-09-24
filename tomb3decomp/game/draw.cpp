@@ -2174,7 +2174,7 @@ void inject_draw(bool replace)
 	INJECT(0x00429A30, DrawGunFlash, replace);
 	INJECT(0x00429BA0, CalculateObjectLighting, replace);
 	INJECT(0x00429D00, CalculateObjectLightingLara, replace);
-	INJECT(0x00424C60, DrawRooms, replace);
+	INJECT(0x00424C60, DrawRooms, inject_rando ? 1 : replace);
 	INJECT(0x00424C20, DrawPhaseGame, replace);
 	INJECT(0x00425EA0, DrawAnimatingItem, replace);
 }

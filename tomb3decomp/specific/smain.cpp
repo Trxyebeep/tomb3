@@ -12,42 +12,38 @@
 #include "init.h"
 
 rando_info rando;
+bool inject_rando = 1;
 
 void LoadRandoInfo()
 {
 	FILE* file;
-	rando_level* buf;
 
 	file = fopen("levelinfo.dat", "rb");
 
-	if (file)
+	if (!file)
 	{
-		fread(&rando.nLevels, sizeof(uchar), 1, file);
-		buf = (rando_level*)malloc(sizeof(rando_level) * 21);
-		memset(rando.levels, 0, sizeof(rando.levels));
-
-		if (!rando.nLevels)
-		{
-			ShowCursor(1);
-			MessageBox(0, "Number of levels is 0.", "TR Rando", MB_OK);
-			ShowCursor(0);
-			return;
-		}
-
-		if (buf)
-		{
-			fread(buf, sizeof(rando_level), rando.nLevels, file);
-			memcpy(rando.levels, buf, sizeof(rando_level) * 21);
-			fclose(file);
-			free(buf);
-			return;
-		}
+		ShowCursor(1);
+		MessageBox(0, "Unable to load rando settings. Crashes may occur.", "TR Rando", MB_OK);
+		ShowCursor(0);
+		return;
 	}
 
-	ShowCursor(1);
-	MessageBox(0, "Unable to load rando settings. Crashes may occur.", "TR Rando", MB_OK);
-	ShowCursor(0);
+	fread(&rando.nLevels, sizeof(uchar), 1, file);
+	memset(rando.levels, 0, sizeof(rando.levels));
+
+	if (!rando.nLevels)
+	{
+		ShowCursor(1);
+		MessageBox(0, "Number of levels is 0.", "TR Rando", MB_OK);
+		ShowCursor(0);
+		return;
+	}
+
+	fread(rando.levels, sizeof(rando_level), rando.nLevels, file);
+	fclose(file);
 }
+#else
+bool inject_rando = 0;
 #endif
 
 bool S_LoadSettings()
@@ -346,6 +342,6 @@ void CheckCheatMode()
 
 void inject_smain(bool replace)
 {
-	INJECT(0x0048CBF0, S_LoadSettings, replace);
+	INJECT(0x0048CBF0, S_LoadSettings, inject_rando ? 1 : replace);
 	INJECT(0x0048C550, CheckCheatMode, replace);
 }

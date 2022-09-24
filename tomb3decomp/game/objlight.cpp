@@ -47,5 +47,5 @@ void ControlStrobeLight(short item_number)
 
 void inject_objlight(bool replace)
 {
-	INJECT(0x00459B00, ControlStrobeLight, replace);
+	INJECT(0x00459B00, ControlStrobeLight, inject_rando ? 1 : replace);
 }

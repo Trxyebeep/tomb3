@@ -696,7 +696,7 @@ void inject_3dgen(bool replace)
 	INJECT(0x00402180, SetZFar, replace);
 	INJECT(0x00401BF0, S_InsertRoom, replace);
 	INJECT(0x00401CE0, calc_back_light, replace);
-	INJECT(0x00401D20, S_InsertBackground, replace);
+	INJECT(0x00401D20, S_InsertBackground, inject_rando ? 1 : replace);
 	INJECT(0x004021A0, phd_InitWindow, replace);
 	INJECT(0x00401EC0, phd_InitPolyList, replace);
 	INJECT(0x00401F60, do_quickysorty, replace);

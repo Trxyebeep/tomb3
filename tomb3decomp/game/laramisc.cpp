@@ -740,5 +740,5 @@ void inject_laramisc(bool replace)
 	INJECT(0x0044D1A0, LaraCheatyBits, replace);
 	INJECT(0x0044CFC0, LaraCheat, replace);
 	INJECT(0x0044D060, LaraInitialiseMeshes, replace);
-	INJECT(0x0044C6F0, LaraControl, replace);
+	INJECT(0x0044C6F0, LaraControl, inject_rando ? 1 : replace);
 }
