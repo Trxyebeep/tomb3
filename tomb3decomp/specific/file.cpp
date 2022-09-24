@@ -675,6 +675,79 @@ void LoadDemFile(const char* name)
 	}
 }
 
+long LoadLevel(const char* name, long number)
+{
+	HANDLE file;
+	const char* path;
+	ulong read;
+	long version, level_num;
+	char dem[80];
+
+	path = GetFullPath(name);
+	strcpy(LastLoadedLevelPath, path);
+	init_game_malloc();
+
+	file = CreateFile(path, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, 0);
+
+	if (file == INVALID_HANDLE_VALUE)
+	{
+		wsprintf(exit_message, "LoadLevel(): Could not open %s (level %d)", path, number);
+		return 0;
+	}
+
+	MyReadFile(file, &version, sizeof(long), &read, 0);
+
+	if (!LoadPalette(file))
+		return 0;
+
+	if (!LoadTexturePages(file))
+		return 0;
+
+	MyReadFile(file, &level_num, sizeof(long), &read, 0);
+
+	if (!LoadRooms(file))
+		return 0;
+
+	if (!LoadObjects(file))
+		return 0;
+
+	if (!LoadSprites(file))
+		return 0;
+
+	if (!LoadCameras(file))
+		return 0;
+
+	if (!LoadSoundEffects(file))
+		return 0;
+
+	if (!LoadBoxes(file))
+		return 0;
+
+	if (!LoadAnimatedTextures(file))
+		return 0;
+
+	if (!LoadItems(file))
+		return 0;
+
+	if (!LoadDepthQ(file))
+		return 0;
+
+	if (!LoadCinematic(file))
+		return 0;
+
+	if (!LoadDemo(file))
+		return 0;
+
+	strcpy(dem, path);
+
+	if (!LoadSamples(file))
+		return 0;
+
+	LoadDemFile(dem);
+	CloseHandle(file);
+	return 1;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
@@ -693,4 +766,5 @@ void inject_file(bool replace)
 	INJECT(0x004821C0, LoadDemo, replace);
 	INJECT(0x004822F0, LoadSamples, replace);
 	INJECT(0x00482250, LoadDemFile, replace);
+	INJECT(0x004826C0, LoadLevel, replace);
 }

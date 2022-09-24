@@ -306,6 +306,7 @@
 #define fly_zone	ARRAY_(0x006E3180, short*, [2])
 #define TexturesUVFlag	ARRAY_(0x00632C00, uchar, [4096])
 #define sample_lut	ARRAY_(0x006D1F40, short, [370])
+#define LastLoadedLevelPath	ARRAY_(0x00633E28, char, [256])
 
 /*constants*/
 #define NO_HEIGHT -32512
