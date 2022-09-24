@@ -11,6 +11,14 @@
 #include "specific.h"
 #include "picture.h"
 
+//gameflow loading checks
+#define LOAD_GF(main, allocSize, buffer, readSize)\
+{\
+main = (char**)GlobalAlloc(GMEM_FIXED, allocSize);\
+if (!main) return 0;\
+if (!Read_Strings(readSize, main, &buffer, &read, file)) return 0;\
+}
+
 long MyReadFile(HANDLE hFile, LPVOID lpBuffer, ulong nNumberOfBytesToRead, ulong* lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped)
 {
 	static ulong nBytesRead;
@@ -880,8 +888,6 @@ void AdjustTextureUVs(bool reset)
 	App.nUVAdd += num;
 }
 
-#define GF_Offsets	ARRAY_(0x00633C90, short, [200])
-
 long Read_Strings(long num, char** strings, char** buffer, ulong* read, HANDLE file)
 {
 	short size;
@@ -907,6 +913,79 @@ long Read_Strings(long num, char** strings, char** buffer, ulong* read, HANDLE f
 	for (int i = 0; i < num; i++)
 		strings[i] = *buffer + GF_Offsets[i];
 
+	return 1;
+}
+
+long S_LoadGameFlow(const char* name)
+{
+	HANDLE file;
+	ulong read;
+	short num;
+
+	name = GetFullPath(name);
+	file = CreateFile(name, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (file == INVALID_HANDLE_VALUE)
+		return 0;
+
+	MyReadFile(file, &GF_ScriptVersion, sizeof(long), &read, 0);
+
+	if (GF_ScriptVersion != 3)
+		return 0;
+
+	MyReadFile(file, GF_Description, 256, &read, 0);
+	MyReadFile(file, &num, sizeof(short), &read, 0);
+
+	if (num != sizeof(GAMEFLOW_INFO))
+		return 0;
+
+	MyReadFile(file, &gameflow, sizeof(GAMEFLOW_INFO), &read, 0);
+
+	LOAD_GF(GF_Level_Names, sizeof(char*) * gameflow.num_levels, GF_levelnames_buffer, gameflow.num_levels)
+	LOAD_GF(GF_picfilenames, sizeof(char*) * gameflow.num_picfiles, GF_picfilenames_buffer, gameflow.num_picfiles)
+	LOAD_GF(GF_titlefilenames, sizeof(char*) * gameflow.num_titlefiles, GF_titlefilenames_buffer, gameflow.num_titlefiles)
+	LOAD_GF(GF_fmvfilenames, sizeof(char*) * gameflow.num_fmvfiles, GF_fmvfilenames_buffer, gameflow.num_fmvfiles)
+	LOAD_GF(GF_levelfilenames, sizeof(char*) * gameflow.num_levels, GF_levelfilenames_buffer, gameflow.num_levels)
+	LOAD_GF(GF_cutscenefilenames, sizeof(char*) * gameflow.num_cutfiles, GF_cutscenefilenames_buffer, gameflow.num_cutfiles)
+
+	MyReadFile(file, GF_Offsets, sizeof(short) * (gameflow.num_levels + 1), &read, 0);
+	MyReadFile(file, &num, sizeof(short), &read, 0);
+	GF_sequence_buffer = (short*)GlobalAlloc(GMEM_FIXED, num);
+
+	if (!GF_sequence_buffer)
+		return 0;
+
+	MyReadFile(file, GF_sequence_buffer, num, &read, 0);
+	GF_frontendSequence = GF_sequence_buffer;
+
+	for (int i = 0; i < gameflow.num_levels; i++)
+		GF_level_sequence_list[i] = GF_sequence_buffer + (GF_Offsets[i + 1] / 2);
+
+	if (gameflow.num_demos)
+		MyReadFile(file, GF_valid_demos, sizeof(short) * gameflow.num_demos, &read, 0);
+
+	MyReadFile(file, &num, sizeof(short), &read, 0);
+
+	if (num != 92)
+		return 0;
+
+	LOAD_GF(GF_GameStrings, sizeof(char*) * 92, GF_GameStrings_buffer, 92)
+	LOAD_GF(GF_PCStrings, sizeof(char*) * 41, GF_PCStrings_buffer, 41)
+
+	LOAD_GF(GF_Puzzle1Strings, sizeof(char*) * gameflow.num_levels, GF_Puzzle1Strings_buffer, gameflow.num_levels)
+	LOAD_GF(GF_Puzzle2Strings, sizeof(char*) * gameflow.num_levels, GF_Puzzle2Strings_buffer, gameflow.num_levels)
+	LOAD_GF(GF_Puzzle3Strings, sizeof(char*) * gameflow.num_levels, GF_Puzzle3Strings_buffer, gameflow.num_levels)
+	LOAD_GF(GF_Puzzle4Strings, sizeof(char*) * gameflow.num_levels, GF_Puzzle4Strings_buffer, gameflow.num_levels)
+
+	LOAD_GF(GF_Pickup1Strings, sizeof(char*) * gameflow.num_levels, GF_Pickup1Strings_buffer, gameflow.num_levels)
+	LOAD_GF(GF_Pickup2Strings, sizeof(char*) * gameflow.num_levels, GF_Pickup2Strings_buffer, gameflow.num_levels)
+
+	LOAD_GF(GF_Key1Strings, sizeof(char*) * gameflow.num_levels, GF_Key1Strings_buffer, gameflow.num_levels)
+	LOAD_GF(GF_Key2Strings, sizeof(char*) * gameflow.num_levels, GF_Key2Strings_buffer, gameflow.num_levels)
+	LOAD_GF(GF_Key3Strings, sizeof(char*) * gameflow.num_levels, GF_Key3Strings_buffer, gameflow.num_levels)
+	LOAD_GF(GF_Key4Strings, sizeof(char*) * gameflow.num_levels, GF_Key4Strings_buffer, gameflow.num_levels)
+
+	CloseHandle(file);
 	return 1;
 }
 
@@ -936,4 +1015,5 @@ void inject_file(bool replace)
 	INJECT(0x00482560, build_ext, replace);
 	INJECT(0x00481360, AdjustTextureUVs, replace);
 	INJECT(0x004829C0, Read_Strings, replace);
+	INJECT(0x00482A90, S_LoadGameFlow, replace);
 }

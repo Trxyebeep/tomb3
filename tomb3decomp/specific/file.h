@@ -27,3 +27,4 @@ const char* GetFullPath(const char* name);
 void build_ext(char* name, const char* ext);
 void AdjustTextureUVs(bool reset);
 long Read_Strings(long num, char** strings, char** buffer, ulong* read, HANDLE file);
+long S_LoadGameFlow(const char* name);
