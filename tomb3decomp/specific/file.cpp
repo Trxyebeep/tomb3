@@ -8,6 +8,8 @@
 #include "../game/objects.h"
 #include "../game/items.h"
 #include "ds.h"
+#include "specific.h"
+#include "picture.h"
 
 long MyReadFile(HANDLE hFile, LPVOID lpBuffer, ulong nNumberOfBytesToRead, ulong* lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped)
 {
@@ -748,6 +750,40 @@ long LoadLevel(const char* name, long number)
 	return 1;
 }
 
+void S_UnloadLevelFile()
+{
+	if (App.nRenderMode == 1)
+		HWR_FreeTexturePages();
+
+	LastLoadedLevelPath[0] = 0;
+	memset(texture_page_ptrs, 0, sizeof(texture_page_ptrs));
+	nTInfos = 0;
+}
+
+long S_LoadLevelFile(char* name, long number, long type)
+{
+	long loaded;
+	bool fade;
+
+	S_UnloadLevelFile();
+	S_CDStop();
+	fade = 0;
+
+	if (type && type != 6 && (type != 4 || GF_Playing_Story))
+	{
+		LoadPicture(GF_picfilenames[GF_LoadingPic], App.lpPictureBuffer, 1);
+		FadePictureUp(32);
+		fade = 1;
+	}
+
+	loaded = LoadLevel(name, number);
+
+	if (fade)
+		FadePictureDown(32);
+
+	return loaded;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
@@ -767,4 +803,6 @@ void inject_file(bool replace)
 	INJECT(0x004822F0, LoadSamples, replace);
 	INJECT(0x00482250, LoadDemFile, replace);
 	INJECT(0x004826C0, LoadLevel, replace);
+	INJECT(0x00482990, S_UnloadLevelFile, replace);
+	INJECT(0x00482910, S_LoadLevelFile, replace);
 }

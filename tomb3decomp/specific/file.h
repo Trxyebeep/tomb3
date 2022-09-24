@@ -20,6 +20,8 @@ long LoadDemo(HANDLE file);
 long LoadSamples(HANDLE file);
 void LoadDemFile(const char* name);
 long LoadLevel(const char* name, long number);
+void S_UnloadLevelFile();
+long S_LoadLevelFile(char* name, long number, long type);
 
 #define AdjustTextureUVs	( (void(__cdecl*)(bool)) 0x00481360 )
 #define GetFullPath	( (const char*(__cdecl*)(const char*)) 0x004825A0 )

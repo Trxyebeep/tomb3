@@ -10,3 +10,6 @@ void DrawPictureAlpha(long col, long* indices, float z);
 
 #define FreePictureTextures	( (void(__cdecl*)(long*)) 0x0048B190 )
 #define TRDrawPicture	( (void(__cdecl*)(long, long*, float)) 0x0048BA30 )
+#define LoadPicture	( (bool(__cdecl*)(char*, LPDIRECTDRAWSURFACE3, long)) 0x0048B0D0 )
+#define FadePictureUp	( (void(__cdecl*)(long)) 0x0048BC70 )
+#define FadePictureDown	( (void(__cdecl*)(long)) 0x0048BD10 )
