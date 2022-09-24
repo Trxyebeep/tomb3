@@ -880,6 +880,36 @@ void AdjustTextureUVs(bool reset)
 	App.nUVAdd += num;
 }
 
+#define GF_Offsets	ARRAY_(0x00633C90, short, [200])
+
+long Read_Strings(long num, char** strings, char** buffer, ulong* read, HANDLE file)
+{
+	short size;
+	char* p;
+
+	MyReadFile(file, GF_Offsets, sizeof(short) * num, read, 0);
+	MyReadFile(file, &size, sizeof(short), read, 0);
+	*buffer = (char*)GlobalAlloc(GMEM_FIXED, size);
+
+	if (!*buffer)
+		return 0;
+
+	MyReadFile(file, *buffer, size, read, 0);
+
+	if (gameflow.cyphered_strings)
+	{
+		p = *buffer;
+
+		for (int i = 0; i < size; i++)
+			p[i] ^= gameflow.cypher_code;
+	}
+
+	for (int i = 0; i < num; i++)
+		strings[i] = *buffer + GF_Offsets[i];
+
+	return 1;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
@@ -905,4 +935,5 @@ void inject_file(bool replace)
 	INJECT(0x004825A0, GetFullPath, replace);
 	INJECT(0x00482560, build_ext, replace);
 	INJECT(0x00481360, AdjustTextureUVs, replace);
+	INJECT(0x004829C0, Read_Strings, replace);
 }
