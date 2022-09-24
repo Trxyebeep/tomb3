@@ -154,6 +154,9 @@
 #define num_cine_frames	VAR_(0x006E300A, short)
 #define cine_loaded	VAR_(0x006E3008, short)
 #define demo_loaded	VAR_(0x00625F7C, long)
+#define sound_active	VAR_(0x006D1F24, long)
+#define num_sample_infos	VAR_(0x006D1F20, long)
+#define sample_infos	VAR_(0x006D2224, SAMPLE_INFO*)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -302,6 +305,7 @@
 #define ground_zone	ARRAY_(0x006E3160, short*, [4][2])
 #define fly_zone	ARRAY_(0x006E3180, short*, [2])
 #define TexturesUVFlag	ARRAY_(0x00632C00, uchar, [4096])
+#define sample_lut	ARRAY_(0x006D1F40, short, [370])
 
 /*constants*/
 #define NO_HEIGHT -32512

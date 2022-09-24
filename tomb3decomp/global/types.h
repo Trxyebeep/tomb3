@@ -1557,4 +1557,14 @@ struct BOX_INFO
 	short height;
 	short overlap_index;
 };
+
+struct SAMPLE_INFO
+{
+	short number;
+	uchar volume;
+	char radius;
+	char randomness;
+	char pitch;
+	short flags;
+};
 #pragma pack(pop)

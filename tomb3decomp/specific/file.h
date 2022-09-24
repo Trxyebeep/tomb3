@@ -17,5 +17,7 @@ long LoadItems(HANDLE file);
 long LoadDepthQ(HANDLE file);
 long LoadCinematic(HANDLE file);
 long LoadDemo(HANDLE file);
+long LoadSamples(HANDLE file);
 
 #define AdjustTextureUVs	( (void(__cdecl*)(bool)) 0x00481360 )
+#define GetFullPath	( (const char*(__cdecl*)(const char*)) 0x004825A0 )

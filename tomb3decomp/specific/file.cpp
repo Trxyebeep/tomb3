@@ -7,6 +7,7 @@
 #include "../game/setup.h"
 #include "../game/objects.h"
 #include "../game/items.h"
+#include "ds.h"
 
 long MyReadFile(HANDLE hFile, LPVOID lpBuffer, ulong nNumberOfBytesToRead, ulong* lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped)
 {
@@ -585,6 +586,77 @@ long LoadDemo(HANDLE file)
 	return 1;
 }
 
+long LoadSamples(HANDLE file)
+{
+	LPWAVEFORMATEX fmt;
+	HANDLE sfxFile;
+	char* data;
+	ulong read;
+	long nSamples, size, fSize;
+	long used_samples[500];	//the samples the level actually needs to load from main.sfx
+	long header[11];	//sample file header
+
+	sound_active = 0;
+
+	if (!DS_IsSoundEnabled())
+		return 1;
+
+	DS_FreeAllSamples();
+	MyReadFile(file, sample_lut, sizeof(short) * 370, &read, 0);
+	MyReadFile(file, &num_sample_infos, sizeof(long), &read, 0);
+
+	if (!num_sample_infos)
+		return 0;
+
+	sample_infos = (SAMPLE_INFO*)game_malloc(sizeof(SAMPLE_INFO) * num_sample_infos, 35);
+	MyReadFile(file, sample_infos, sizeof(SAMPLE_INFO) * num_sample_infos, &read, 0);
+	MyReadFile(file, &nSamples, sizeof(long), &read, 0);
+
+	if (!nSamples)
+		return 0;
+
+	MyReadFile(file, used_samples, sizeof(long) * nSamples, &read, 0);
+
+	sfxFile = CreateFile(GetFullPath("data\\main.sfx"), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (sfxFile == INVALID_HANDLE_VALUE)
+	{
+		wsprintf(exit_message, "Could not open MAIN.SFX file");
+		return 0;
+	}
+
+	for (int i = 0, n = 0; n < nSamples; i++)
+	{
+		MyReadFile(sfxFile, header, sizeof(long) * 11, &read, 0);
+
+		if (header[0] != 'FFIR' || header[2] != 'EVAW' || header[9] != 'atad')	//RIFF, WAVE, data. todo: make this look better
+			return 0;
+
+		fmt = (LPWAVEFORMATEX)&header[5];
+		size = header[10];
+		fSize = (size + 1) & ~1;
+		fmt->cbSize = 0;
+
+		if (used_samples[n] == i)
+		{
+			data = (char*)game_malloc(fSize, 36);
+			MyReadFile(sfxFile, data, fSize, &read, 0);
+
+			if (!DS_MakeSample(n, fmt, data, size))
+				return 0;
+
+			game_free(fSize, 36);
+			n++;
+		}
+		else
+			SetFilePointer(sfxFile, fSize, 0, FILE_CURRENT);
+	}
+
+	CloseHandle(sfxFile);
+	sound_active = 1;
+	return 1;
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
@@ -601,4 +673,5 @@ void inject_file(bool replace)
 	INJECT(0x00481BC0, LoadDepthQ, replace);
 	INJECT(0x00482140, LoadCinematic, replace);
 	INJECT(0x004821C0, LoadDemo, replace);
+	INJECT(0x004822F0, LoadSamples, replace);
 }

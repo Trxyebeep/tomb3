@@ -12,6 +12,8 @@
 #include <process.h>
 #define DIRECTINPUT_VERSION 0x0500
 #include <dinput.h>
+#include <mmreg.h>
+#include <mmeapi.h>
 
 //#define RANDO_STUFF	1
 #define TROYESTUFF	1
