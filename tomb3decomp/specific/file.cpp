@@ -657,6 +657,24 @@ long LoadSamples(HANDLE file)
 	return 1;
 }
 
+void LoadDemFile(const char* name)
+{
+	HANDLE file;
+	ulong read;
+	char buf[80];
+
+	strcpy(buf, name);
+	build_ext(buf, "DEM");
+	file = CreateFile(buf, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (file != INVALID_HANDLE_VALUE)
+	{
+		MyReadFile(file, demoptr, 3608 * sizeof(ulong), &read, 0);
+		demo_loaded = read != 0;
+		CloseHandle(file);
+	}
+}
+
 void inject_file(bool replace)
 {
 	INJECT(0x00480D50, MyReadFile, replace);
@@ -674,4 +692,5 @@ void inject_file(bool replace)
 	INJECT(0x00482140, LoadCinematic, replace);
 	INJECT(0x004821C0, LoadDemo, replace);
 	INJECT(0x004822F0, LoadSamples, replace);
+	INJECT(0x00482250, LoadDemFile, replace);
 }
