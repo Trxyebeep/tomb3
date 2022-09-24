@@ -1727,7 +1727,7 @@ tomb3decomp progress.
 0x0048B190		FreePictureTextures
 0x0048B270	+	MemBlt
 0x0048B300		ConvertSurfaceToTextures
-0x0048B370		ConvertSurfaceToTextures16Bit
+0x0048B370	+	ConvertSurfaceToTextures16Bit
 0x0048B7A0	+	DrawTile
 0x0048BA30	+	TRDrawPicture
 0x0048BC70		FadePictureUp

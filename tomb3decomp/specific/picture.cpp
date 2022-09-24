@@ -3,6 +3,8 @@
 #include "hwrender.h"
 #include "dx.h"
 #include "time.h"
+#include "dxshell.h"
+#include "texture.h"
 
 void CrossFadePicture()
 {
@@ -184,23 +186,96 @@ void TRDrawPicture(long col, long* indices, float z)
 	HWR_EnablePerspCorrect(1);
 }
 
-void MemBlt(ushort* dest, long x, long y, long w, long h, long sz, ushort* source, long x2, long y2, DDSURFACEDESC desc)
+void MemBlt(char* dest, long x, long y, long w, long h, long sz, char* source, long x2, long y2, DDSURFACEDESC desc)
 {
-	char* pS;
-	char* pD;
 	ulong stride;
 
 	stride = desc.ddpfPixelFormat.dwRGBBitCount >> 3;
-	pD = (char*)dest + stride * (x + y * sz);
-	pS = (char*)source + y2 * desc.lPitch + stride * x2;
+	dest += stride * (x + y * sz);
+	source += y2 * desc.lPitch + stride * x2;
 
 	while (h)
 	{
-		memcpy(pD, pS, stride * w);
-		pD += stride * sz;
-		pS += desc.lPitch;
+		memcpy(dest, source, stride * w);
+		dest += stride * sz;
+		source += desc.lPitch;
 		h--;
 	}
+}
+
+void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACE3 surf)
+{
+	DDSURFACEDESC desc;
+	DDSURFACEDESC desc2;
+	long* pIndices;
+	char* source;
+	char* dest;
+	long bitcnt;
+	uchar rshift, gshift, bshift, rcount, gcount, bcount;
+
+	if (nLoadedPictures)
+		pIndices = OldPicTexIndices;
+	else
+		pIndices = CurPicTexIndices;
+
+	memset(&desc, 0, sizeof(DDSURFACEDESC));
+	desc.dwSize = sizeof(DDSURFACEDESC);
+	surf->Lock(0, &desc, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, 0);
+	source = (char*)desc.lpSurface;
+	dest = (char*)malloc(desc.ddpfPixelFormat.dwRGBBitCount >> 3 << 16);	//fix me
+	DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwRBitMask, &rshift, &rcount);
+	DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwGBitMask, &gshift, &gcount);
+	DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwBBitMask, &bshift, &bcount);
+
+	if (desc.ddpfPixelFormat.dwRGBBitCount == 32)
+		bitcnt = 8888;
+	else
+		bitcnt = bcount + 10 * (gcount + 10 * rcount);
+
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESC));
+	MemBlt(dest, 0, 0, 256, 256, 256, source, 0, 0, desc2);
+	surf->Unlock(0);
+	pIndices[0] = DXTextureAdd(256, 256, (ushort*)dest, PictureTextures, bitcnt, 16);
+
+	memset(&desc, 0, sizeof(DDSURFACEDESC));
+	desc.dwSize = sizeof(DDSURFACEDESC);
+	surf->Lock(0, &desc, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, 0);
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESC));
+	source = (char*)desc.lpSurface;
+	MemBlt(dest, 0, 0, 256, 256, 256, source, 256, 0, desc2);
+	surf->Unlock(0);
+	pIndices[1] = DXTextureAdd(256, 256, (ushort*)dest, PictureTextures, bitcnt, 16);
+
+	memset(&desc, 0, sizeof(DDSURFACEDESC));
+	desc.dwSize = sizeof(DDSURFACEDESC);
+	surf->Lock(0, &desc, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, 0);
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESC));
+//	source = (char*)desc.lpSurface;
+	MemBlt(dest, 0, 0, 128, 256, 256, source, 512, 0, desc2);
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESC));
+	MemBlt(dest, 128, 0, 128, 224, 256, source, 512, 256, desc2);
+	surf->Unlock(0);
+	pIndices[2] = DXTextureAdd(256, 256, (ushort*)dest, PictureTextures, bitcnt, 16);
+
+	memset(&desc, 0, sizeof(DDSURFACEDESC));
+	desc.dwSize = sizeof(DDSURFACEDESC);
+	surf->Lock(0, &desc, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, 0);
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESC));
+	source = (char*)desc.lpSurface;
+	MemBlt(dest, 0, 0, 256, 224, 256, source, 0, 256, desc2);
+	surf->Unlock(0);
+	pIndices[3] = DXTextureAdd(256, 256, (ushort*)dest, PictureTextures, bitcnt, 16);
+
+	memset(&desc, 0, sizeof(DDSURFACEDESC));
+	desc.dwSize = sizeof(DDSURFACEDESC);
+	surf->Lock(0, &desc, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, 0);
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESC));
+	source = (char*)desc.lpSurface;
+	MemBlt(dest, 0, 0, 256, 224, 256, source, 256, 256, desc2);
+	surf->Unlock(0);
+	pIndices[4] = DXTextureAdd(256, 256, (ushort*)dest, PictureTextures, bitcnt, 16);
+
+	free(dest);
 }
 
 void inject_picture(bool replace)
@@ -211,4 +286,5 @@ void inject_picture(bool replace)
 	INJECT(0x0048ADA0, DrawPictureAlpha, replace);
 	INJECT(0x0048BA30, TRDrawPicture, replace);
 	INJECT(0x0048B270, MemBlt, replace);
+	INJECT(0x0048B370, ConvertSurfaceToTextures16Bit, replace);
 }
