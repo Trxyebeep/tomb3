@@ -866,8 +866,8 @@ tomb3decomp progress.
 
 		game/lara1gun.cpp
 
-0x00445250		draw_shotgun_meshes
-0x00445290		undraw_shotgun_meshes
+0x00445250	+	draw_shotgun_meshes
+0x00445290	+	undraw_shotgun_meshes
 0x004452C0		ready_shotgun
 0x00445340		RifleHandler
 0x00445560		FireShotgun

@@ -664,9 +664,23 @@ void ControlGrenade(short item_number)
 	}
 }
 
+void draw_shotgun_meshes(long weapon_type)
+{
+	lara.back_gun = 0;
+	lara.mesh_ptrs[HAND_R] = meshes[objects[WeaponObject(weapon_type)].mesh_index + HAND_R];
+}
+
+void undraw_shotgun_meshes(long weapon_type)
+{
+	lara.back_gun = WeaponObject(weapon_type);
+	lara.mesh_ptrs[HAND_R] = meshes[objects[LARA].mesh_index + HAND_R];
+}
+
 void inject_lara1gun(bool replace)
 {
 	INJECT(0x004459B0, ControlHarpoonBolt, inject_rando ? 1 : replace);
 	INJECT(0x004461E0, ControlRocket, inject_rando ? 1 : replace);
 	INJECT(0x00446DD0, ControlGrenade, inject_rando ? 1 : replace);
+	INJECT(0x00445250, draw_shotgun_meshes, replace);
+	INJECT(0x00445290, undraw_shotgun_meshes, replace);
 }
