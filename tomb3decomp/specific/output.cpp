@@ -98,6 +98,17 @@ void S_SetupBelowWater(long underwater)
 }
 
 #ifdef TROYESTUFF
+long GetRenderScale(long unit)
+{
+	long w, h, x, y;
+
+	w = 640;
+	h = 480;
+	x = (phd_winwidth > w) ? MulDiv(phd_winwidth, unit, w) : unit;
+	y = (phd_winheight > h) ? MulDiv(phd_winheight, unit, h) : unit;
+	return x < y ? x : y;
+}
+
 struct display_rots
 {
 	short obj_num;

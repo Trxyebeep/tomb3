@@ -6,6 +6,7 @@
 #include "objects.h"
 #include "../specific/frontend.h"
 #include "health.h"
+#include "../specific/output.h"
 
 short T_GetStringLen(char* string)
 {
@@ -55,6 +56,19 @@ void T_RightAlign(TEXTSTRING* string, short flag)
 	else
 		string->flags &= ~T_RIGHTALIGN;
 }
+
+#ifdef TROYESTUFF
+void T_TopAlign(TEXTSTRING* string, short flag)
+{
+	if (!string)
+		return;
+
+	if (flag)
+		string->flags |= T_TOPALIGN;
+	else
+		string->flags &= ~T_TOPALIGN;
+}
+#endif
 
 void T_CentreV(TEXTSTRING* string, short flag)
 {
@@ -370,6 +384,10 @@ void T_DrawThisText(TEXTSTRING* string)
 		y += GetRenderHeight() / 2;
 	else if (string->flags & T_BOTTOMALIGN)
 		y += GetRenderHeight();
+#ifdef TROYESTUFF
+	else if (string->flags & T_TOPALIGN)
+		y += GetRenderScale(y);
+#endif
 
 	bX = x + string->bgndOffX - ((2 * h) >> 16);
 	bY = y + string->bgndOffY - ((4 * v) >> 16) - ((11 * v) >> 16);

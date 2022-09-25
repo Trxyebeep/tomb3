@@ -7,6 +7,9 @@ short T_GetStringLen(char* string);
 long T_RemovePrint(TEXTSTRING* textstring);
 void T_BottomAlign(TEXTSTRING* string, short flag);
 void T_RightAlign(TEXTSTRING* string, short flag);
+#ifdef TROYESTUFF
+void T_TopAlign(TEXTSTRING* string, short flag);
+#endif
 void T_CentreV(TEXTSTRING* string, short flag);
 void T_CentreH(TEXTSTRING* string, short flag);
 void T_RemoveOutline(TEXTSTRING* string);

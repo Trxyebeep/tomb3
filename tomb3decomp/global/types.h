@@ -71,7 +71,9 @@ enum draw_types
 
 enum T_flags
 {
+#ifndef TROYESTUFF
 	T_TOPALIGN,
+#endif
 	T_LEFTALIGN = 0,
 	T_ACTIVE = 1 << 0,
 	T_FLASH = 1 << 1,
@@ -83,7 +85,10 @@ enum T_flags
 	T_BOTTOMALIGN = 1 << 8,
 	T_ADDBACKGROUND = 1 << 9,
 	T_ADDOUTLINE = 1 << 10,
-	T_RIGHTJUSTIFY = 1 << 11
+	T_RIGHTJUSTIFY = 1 << 11,
+#ifdef TROYESTUFF
+	T_TOPALIGN = 1 << 12
+#endif
 };
 
 enum mood_type

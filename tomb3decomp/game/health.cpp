@@ -358,7 +358,14 @@ void DrawAmmoInfo()
 	}
 
 	RemoveAmmoText();
+
+#ifdef TROYESTUFF
+	ammotext = T_Print(-10, 30, 0, txt);
+	T_TopAlign(ammotext, 1);
+#else
 	ammotext = T_Print(-10, 50, 0, txt);
+#endif
+
 	T_RightAlign(ammotext, 1);
 }
 
