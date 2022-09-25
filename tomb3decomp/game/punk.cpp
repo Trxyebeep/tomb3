@@ -11,9 +11,7 @@
 #include "sound.h"
 #include "effects.h"
 #include "traps.h"
-#ifdef RANDO_STUFF
 #include "../specific/smain.h"
-#endif
 
 static BITE_INFO punk_hit = { 16, 48, 320, 13 };
 

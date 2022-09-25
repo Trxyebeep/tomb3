@@ -8,9 +8,7 @@
 #include "../specific/output.h"
 #include "hwinsert.h"
 #include "../specific/game.h"
-#ifdef RANDO_STUFF
 #include "../specific/smain.h"
-#endif
 
 void phd_PutPolygons(short* objptr, long clip)
 {

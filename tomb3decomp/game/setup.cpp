@@ -3,9 +3,7 @@
 #include "objects.h"
 #include "gameflow.h"
 #include "items.h"
-#ifdef RANDO_STUFF
 #include "../specific/smain.h"
-#endif
 
 void GetAIPickups()
 {

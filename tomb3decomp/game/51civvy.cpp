@@ -4,9 +4,7 @@
 #include "../specific/game.h"
 #include "control.h"
 #include "gameflow.h"
-#ifdef RANDO_STUFF
 #include "../specific/smain.h"
-#endif
 
 static void TriggerFenceSparks(long x, long y, long z, long kill)
 {

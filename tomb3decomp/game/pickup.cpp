@@ -10,9 +10,7 @@
 #include "health.h"
 #include "invfunc.h"
 #include "gameflow.h"
-#ifdef RANDO_STUFF
 #include "../specific/smain.h"
-#endif
 
 static short PickUpBounds[12] = { -256, 256, -100, 100, -256, 256, -1820, 1820, 0, 0, 0, 0 };
 static short PickUpBoundsUW[12] = { -512, 512, -512, 512, -512, 512, -8190, 8190, -8190, 8190, -8190, 8190 };

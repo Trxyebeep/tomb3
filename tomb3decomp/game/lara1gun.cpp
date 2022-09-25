@@ -10,9 +10,7 @@
 #include "triboss.h"
 #include "effects.h"
 #include "larafire.h"
-#ifdef RANDO_STUFF
 #include "../specific/smain.h"
-#endif
 #include "../3dsystem/3d_gen.h"
 #include "../specific/game.h"
 #include "collide.h"

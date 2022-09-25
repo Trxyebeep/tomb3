@@ -6,9 +6,7 @@
 #include "items.h"
 #include "kayak.h"
 #include "sound.h"
-#ifdef RANDO_STUFF
 #include "../specific/smain.h"
-#endif
 #include "effects.h"
 #include "../specific/game.h"
 #include "draw.h"

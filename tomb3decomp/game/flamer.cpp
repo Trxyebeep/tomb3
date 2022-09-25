@@ -11,9 +11,7 @@
 #include "gameflow.h"
 #include "people.h"
 #include "sound.h"
-#ifdef RANDO_STUFF
 #include "../specific/smain.h"
-#endif
 
 static BITE_INFO flamer_gun = { 0, 340, 64, 7 };
 

@@ -8,6 +8,8 @@ void CheckCheatMode();
 
 #define S_SaveSettings	( (void(__cdecl*)()) 0x0048C8C0 )
 
+extern bool inject_rando;
+
 #ifdef RANDO_STUFF
 struct rando_level
 {
@@ -25,6 +27,5 @@ struct rando_info
 };
 
 extern rando_info rando;
-extern bool inject_rando;
 #define RANDOLEVEL	CurrentLevel
 #endif

@@ -14,9 +14,7 @@
 #include "../specific/specific.h"
 #include "../3dsystem/phd_math.h"
 #include "gameflow.h"
-#ifdef RANDO_STUFF
 #include "../specific/smain.h"
-#endif
 
 void(*extra_control_routines[13])(ITEM_INFO* item, COLL_INFO* coll) =
 {

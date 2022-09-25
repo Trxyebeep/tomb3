@@ -5,9 +5,7 @@
 #include "effect2.h"
 #include "gameflow.h"
 #include "objects.h"
-#ifdef RANDO_STUFF
 #include "../specific/smain.h"
-#endif
 
 void ControlFusebox(short item_number)
 {

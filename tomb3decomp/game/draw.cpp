@@ -18,9 +18,7 @@
 #include "laraelec.h"
 #include "health.h"
 #include "items.h"
-#ifdef RANDO_STUFF
 #include "../specific/smain.h"
-#endif
 
 short null_rotations[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 static uchar EnemyWeapon[16] = { 0, 1, 129, 0, 1, 1,  1 };

@@ -1552,6 +1552,27 @@ tomb3decomp progress.
 0x0047FC30		DrawWillBossShield
 
 
+		specific/ds.cpp
+
+0x00480600		DS_FreeAllSamples
+0x00480630		DS_MakeSample
+0x00480740		DS_IsChannelPlaying	
+0x00480790		DS_StartSample
+0x004808B0		DS_GetFreeChannel
+0x004808F0		DS_AdjustVolumeAndPan
+0x00480920		DS_AdjustPitch
+0x00480960		DS_StopSample
+0x004809C0		DS_Init
+0x004809D0		DS_MakeAdapterList
+0x00480A70		DS_EnumerateDevices
+0x00480A90		DS_EnumCallback
+0x00480B80		DS_Start
+0x00480C20		DS_Create
+0x00480C40		DS_SetOutputFormat
+0x00480D10		DS_Finish
+0x00480D40		DS_IsSoundEnabled
+
+
 		specific/file.cpp
 
 0x00480D50	+	MyReadFile

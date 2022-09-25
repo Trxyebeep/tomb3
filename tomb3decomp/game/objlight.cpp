@@ -4,9 +4,7 @@
 #include "gameflow.h"
 #include "effect2.h"
 #include "sound.h"
-#ifdef RANDO_STUFF
 #include "../specific/smain.h"
-#endif
 
 void ControlStrobeLight(short item_number)
 {

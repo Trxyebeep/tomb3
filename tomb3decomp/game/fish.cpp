@@ -5,9 +5,7 @@
 #include "control.h"
 #include "objects.h"
 #include "effects.h"
-#ifdef RANDO_STUFF
 #include "../specific/smain.h"
-#endif
 
 uchar jungle_fish_ranges[1][3] =
 {

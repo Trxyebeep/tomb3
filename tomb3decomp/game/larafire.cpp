@@ -11,9 +11,7 @@
 #include "effect2.h"
 #include "sound.h"
 #include "../3dsystem/phd_math.h"
-#ifdef RANDO_STUFF
 #include "../specific/smain.h"
-#endif
 
 long WeaponObject(long weapon_type)
 {

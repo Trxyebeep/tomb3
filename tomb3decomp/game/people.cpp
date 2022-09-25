@@ -12,9 +12,7 @@
 #include "effects.h"
 #include "sound.h"
 #include "box.h"
-#ifdef RANDO_STUFF
 #include "../specific/smain.h"
-#endif
 
 short GunShot(long x, long y, long z, short speed, short yrot, short room_number)
 {
