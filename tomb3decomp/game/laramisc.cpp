@@ -243,6 +243,24 @@ void LaraCheatGetStuff()
 	if (objects[GRENADE_GUN_ITEM].loaded)
 		Inv_AddItem(GRENADE_GUN_ITEM);
 
+	for (int i = KEY_ITEM1; i <= KEY_ITEM4; i++)
+	{
+		if (objects[i].loaded && !Inv_RequestItem(i))
+			Inv_AddItem(i);
+	}
+
+	for (int i = PUZZLE_ITEM1; i <= PUZZLE_ITEM4; i++)
+	{
+		if (objects[i].loaded && !Inv_RequestItem(i))
+			Inv_AddItem(i);
+	}
+
+	for (int i = PICKUP_ITEM1; i <= PICKUP_ITEM2; i++)
+	{
+		if (objects[i].loaded && !Inv_RequestItem(i))
+			Inv_AddItem(i);
+	}
+
 	for (int i = 0; i < 1; i++)
 	{
 		if (objects[FLAREBOX_ITEM].loaded)
@@ -300,10 +318,10 @@ void LaraCheatyBits()
 			lara_item->frame_number = anims[ANIM_SWIMCHEAT].frame_base;
 			lara_item->current_anim_state = AS_SWIM;
 			lara_item->goal_anim_state = AS_SWIM;
-			lara.water_status = LARA_CHEAT;
 			lara_item->gravity_status = 0;
-			lara_item->pos.x_rot = 5460;
+			lara_item->pos.x_rot = 0;
 			lara_item->fallspeed = 0;
+			lara.water_status = LARA_CHEAT;
 			lara.air = 1800;
 			lara.death_count = 0;
 			lara.torso_x_rot = 0;

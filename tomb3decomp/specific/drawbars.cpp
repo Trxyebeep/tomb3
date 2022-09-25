@@ -2,19 +2,7 @@
 #include "drawbars.h"
 #include "hwrender.h"
 #include "../3dsystem/3d_gen.h"
-
-#ifdef TROYESTUFF
-static long GetRenderScale(long unit)
-{
-	long w, h, x, y;
-
-	w = 640;
-	h = 480;
-	x = (phd_winwidth > w) ? MulDiv(phd_winwidth, unit, w) : unit;
-	y = (phd_winheight > h) ? MulDiv(phd_winheight, unit, h) : unit;
-	return x < y ? x : y;
-}
-#endif
+#include "output.h"
 
 void S_DrawHealthBar(long percent)
 {
