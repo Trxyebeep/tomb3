@@ -36,6 +36,7 @@
 #include "../game/lara1gun.h"
 #include "../game/people.h"
 #include "../game/51civvy.h"
+#include "../game/invfunc.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -122,6 +123,7 @@ void inject_all(bool replace)
 	inject_lara1gun(replace);
 	inject_people(replace);
 	inject_civvy(replace);
+	inject_invfunc(replace);
 
 	//specific
 	inject_drawbars(replace);
