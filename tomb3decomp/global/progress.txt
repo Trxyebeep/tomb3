@@ -1612,7 +1612,7 @@ tomb3decomp progress.
 
 		specific/frontend.cpp
 
-0x004835E0		S_COLOUR
+0x004835E0	+	S_COLOUR
 0x00483610		S_DrawScreenLine
 0x00483650		S_DrawScreenBox
 0x00483770		S_DrawScreenFBox
