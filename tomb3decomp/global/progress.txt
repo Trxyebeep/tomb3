@@ -1789,7 +1789,7 @@ tomb3decomp progress.
 0x0048D4B0		S_StartSyncedAudio
 0x0048D4E0		S_CDGetLoc
 0x0048D4F0		S_CDVolume
-0x0048D500		SWR_FindNearestPaletteEntry	
+0x0048D500	+	SWR_FindNearestPaletteEntry	
 
 
 		specific/time.cpp

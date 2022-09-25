@@ -55,6 +55,7 @@
 #include "../specific/option.h"
 #include "../specific/input.h"
 #include "../specific/display.h"
+#include "../specific/specific.h"
 
 HINSTANCE hinstance = 0;
 
@@ -135,6 +136,7 @@ void inject_all(bool replace)
 	inject_option(replace);
 	inject_input(replace);
 	inject_display(replace);
+	inject_specific(replace);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
