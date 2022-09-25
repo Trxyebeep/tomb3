@@ -296,7 +296,11 @@ void S_LightRoom(ROOM_INFO* r)
 
 void S_InsertBackPolygon(long xmin, long ymin, long xmax, long ymax, long col)
 {
+#ifdef TROYESTUFF
+	InsertFlatRect(phd_winxmin + xmin, phd_winymin + ymin, phd_winxmin + xmax, phd_winymin + ymax, phd_zfar, 0);
+#else
 	InsertFlatRect(phd_winxmin + xmin, phd_winymin + ymin, phd_winxmin + xmax, phd_winymin + ymax, phd_zfar, inv_colours[0]);
+#endif
 }
 
 long S_GetObjectBounds(short* box)

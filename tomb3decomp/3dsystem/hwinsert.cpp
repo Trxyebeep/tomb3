@@ -1407,7 +1407,11 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 		v->sy = (float)y1;
 		v->rhw = z;
 		v->sz = f_a - v->rhw * f_boo;
+#ifdef TROYESTUFF
+		v->color = col;
+#else
 		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+#endif
 		v->specular = 0;
 
 		v = &bucket->vtx[bucket->nVtx + 1];
@@ -1415,7 +1419,11 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 		v->sy = (float)y1;
 		v->rhw = z;
 		v->sz = f_a - v->rhw * f_boo;
+#ifdef TROYESTUFF
+		v->color = col;
+#else
 		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+#endif
 		v->specular = 0;
 
 		v = &bucket->vtx[bucket->nVtx + 2];
@@ -1423,7 +1431,11 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 		v->sy = (float)y2;
 		v->rhw = z;
 		v->sz = f_a - v->rhw * f_boo;
+#ifdef TROYESTUFF
+		v->color = col;
+#else
 		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+#endif
 		v->specular = 0;
 
 		v = &bucket->vtx[bucket->nVtx + 3];
@@ -1431,7 +1443,11 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 		v->sy = (float)y1;
 		v->rhw = z;
 		v->sz = f_a - v->rhw * f_boo;
+#ifdef TROYESTUFF
+		v->color = col;
+#else
 		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+#endif
 		v->specular = 0;
 
 		v = &bucket->vtx[bucket->nVtx + 4];
@@ -1439,7 +1455,11 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 		v->sy = (float)y2;
 		v->rhw = z;
 		v->sz = f_a - v->rhw * f_boo;
+#ifdef TROYESTUFF
+		v->color = col;
+#else
 		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+#endif
 		v->specular = 0;
 
 		v = &bucket->vtx[bucket->nVtx + 5];
@@ -1447,7 +1467,11 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 		v->sy = (float)y2;
 		v->rhw = z;
 		v->sz = f_a - v->rhw * f_boo;
+#ifdef TROYESTUFF
+		v->color = col;
+#else
 		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+#endif
 		v->specular = 0;
 
 		bucket->nVtx += 6;
@@ -1468,28 +1492,45 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 		v[0].sy = (float)y1;
 		v[0].rhw = z;
 		v[0].sz = f_a - v[0].rhw * f_boo;
+
+#ifdef TROYESTUFF
+		v[0].color = col;
+#else
 		v[0].color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+#endif
 		v[0].specular = 0;
 
 		v[1].sx = (float)x2;
 		v[1].sy = (float)y1;
 		v[1].rhw = z;
 		v[1].sz = f_a - v[1].rhw * f_boo;
+#ifdef TROYESTUFF
+		v[1].color = col;
+#else
 		v[1].color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+#endif
 		v[1].specular = 0;
 
 		v[2].sx = (float)x2;
 		v[2].sy = (float)y2;
 		v[2].rhw = z;
 		v[2].sz = f_a - v[2].rhw * f_boo;
+#ifdef TROYESTUFF
+		v[2].color = col;
+#else
 		v[2].color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+#endif
 		v[2].specular = 0;
 
 		v[3].sx = (float)x1;
 		v[3].sy = (float)y2;
 		v[3].rhw = z;
 		v[3].sz = f_a - v[3].rhw * f_boo;
+#ifdef TROYESTUFF
+		v[3].color = col;
+#else
 		v[3].color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
+#endif
 		v[3].specular = 0;
 
 		CurrentTLVertex = v + 4;

@@ -3,8 +3,55 @@
 #include "hwrender.h"
 #include "../3dsystem/3d_gen.h"
 
+#ifdef TROYESTUFF
+static long GetRenderScale(long unit)
+{
+	long w, h, x, y;
+
+	w = 640;
+	h = 480;
+	x = (phd_winwidth > w) ? MulDiv(phd_winwidth, unit, w) : unit;
+	y = (phd_winheight > h) ? MulDiv(phd_winheight, unit, h) : unit;
+	return x < y ? x : y;
+}
+#endif
+
 void S_DrawHealthBar(long percent)
 {
+#ifdef TROYESTUFF
+	long w, h, xs, ys, p, x0, y0, x1, y1, bar;
+
+	w = GetRenderScale(100);
+	h = GetRenderScale(5);
+	xs = GetRenderScale(8);
+	ys = GetRenderScale(8);
+	p = GetRenderScale(1);
+
+	x0 = phd_winxmin + xs;
+	x1 = x0 + w;
+	y0 = phd_winymin + ys;
+	y1 = y0 + h;
+
+	bar = w * percent / 100;
+
+	InsertFlatRect(x0 - p * 2, y0 - p * 2, x1 + p * 2, y1 + p * 2, phd_znear + 50, 0xFFFFFFFF);
+	InsertFlatRect(x0 - p, y0 - p, x1 + p * 2, y1 + p * 2, phd_znear + 40, 0xFF404040);
+	InsertFlatRect(x0 - p, y0 - p, x1 + p, y1 + p, phd_znear + 30, 0);
+	
+	if (bar > 0)
+	{
+		if (lara.poisoned)
+		{
+			InsertFlatRect(x0, y0, x0 + bar, y0 + h, phd_znear + 20, 0xFFC0C000);
+			InsertFlatRect(x0, y0 + p, x0 + bar, y0 + p * 2, phd_znear + 10, 0xFFA0A000);
+		}
+		else
+		{
+			InsertFlatRect(x0, y0, x0 + bar, y0 + h, phd_znear + 20, 0xFFFF0000);
+			InsertFlatRect(x0, y0 + p, x0 + bar, y0 + p * 2, phd_znear + 10, 0xFFFF8000);
+		}
+	}
+#else
 	long oldAlpha, z, w;
 
 	oldAlpha = GlobalAlpha;
@@ -57,10 +104,37 @@ void S_DrawHealthBar(long percent)
 	}
 
 	GlobalAlpha = oldAlpha;
+#endif
 }
 
 void S_DrawDashBar(long percent)
 {
+#ifdef TROYESTUFF
+	long w, h, xs, ys, p, x0, y0, x1, y1, bar;
+
+	w = GetRenderScale(100);
+	h = GetRenderScale(5);
+	xs = GetRenderScale(8);
+	ys = GetRenderScale(25);
+	p = GetRenderScale(1);
+
+	x1 = phd_winxmin + DumpWidth - xs;
+	x0 = x1 - w;
+	y0 = phd_winymin + ys;
+	y1 = y0 + h;
+
+	bar = w * percent / 100;
+
+	InsertFlatRect(x0 - p * 2, y0 - p * 2, x1 + p * 2, y1 + p * 2, phd_znear + 50, 0xFFFFFFFF);
+	InsertFlatRect(x0 - p, y0 - p, x1 + p * 2, y1 + p * 2, phd_znear + 40, 0xFF404040);
+	InsertFlatRect(x0 - p, y0 - p, x1 + p, y1 + p, phd_znear + 30, 0);
+
+	if (bar > 0)
+	{
+		InsertFlatRect(x0, y0, x0 + bar, y0 + h, phd_znear + 20, 0xFF00C000);
+		InsertFlatRect(x0, y0 + p, x0 + bar, y0 + p * 2, phd_znear + 10, 0xFF00A000);
+	}
+#else
 	long oldAlpha, w, x, z;
 
 	oldAlpha = GlobalAlpha;
@@ -101,10 +175,37 @@ void S_DrawDashBar(long percent)
 	}
 
 	GlobalAlpha = oldAlpha;
+#endif
 }
 
 void S_DrawAirBar(long percent)
 {
+#ifdef TROYESTUFF
+	long w, h, xs, ys, p, x0, y0, x1, y1, bar;
+
+	w = GetRenderScale(100);
+	h = GetRenderScale(5);
+	xs = GetRenderScale(8);
+	ys = GetRenderScale(8);
+	p = GetRenderScale(1);
+
+	x1 = phd_winxmin + DumpWidth - xs;
+	x0 = x1 - w;
+	y0 = phd_winymin + ys;
+	y1 = y0 + h;
+
+	bar = w * percent / 100;
+
+	InsertFlatRect(x0 - p * 2, y0 - p * 2, x1 + p * 2, y1 + p * 2, phd_znear + 50, 0xFFFFFFFF);
+	InsertFlatRect(x0 - p, y0 - p, x1 + p * 2, y1 + p * 2, phd_znear + 40, 0xFF404040);
+	InsertFlatRect(x0 - p, y0 - p, x1 + p, y1 + p, phd_znear + 30, 0);
+
+	if (bar > 0)
+	{
+		InsertFlatRect(x0, y0, x0 + bar, y0 + h, phd_znear + 20, 0xFF0000FF);
+		InsertFlatRect(x0, y0 + p, x0 + bar, y0 + p * 2, phd_znear + 10, 0xFFFFFFFF);
+	}
+#else
 	long oldAlpha, w, x, z;
 
 	oldAlpha = GlobalAlpha;
@@ -145,10 +246,37 @@ void S_DrawAirBar(long percent)
 	}
 
 	GlobalAlpha = oldAlpha;
+#endif
 }
 
 void S_DrawColdBar(long percent)
 {
+#ifdef TROYESTUFF
+	long w, h, xs, ys, p, x0, y0, x1, y1, bar;
+
+	w = GetRenderScale(100);
+	h = GetRenderScale(5);
+	xs = GetRenderScale(8);
+	ys = GetRenderScale(25);
+	p = GetRenderScale(1);
+
+	x0 = phd_winxmin + xs;
+	x1 = x0 + w;
+	y0 = phd_winymin + ys;
+	y1 = y0 + h;
+
+	bar = w * percent / 100;
+
+	InsertFlatRect(x0 - p * 2, y0 - p * 2, x1 + p * 2, y1 + p * 2, phd_znear + 50, 0xFFFFFFFF);
+	InsertFlatRect(x0 - p, y0 - p, x1 + p * 2, y1 + p * 2, phd_znear + 40, 0xFF404040);
+	InsertFlatRect(x0 - p, y0 - p, x1 + p, y1 + p, phd_znear + 30, 0);
+
+	if (bar > 0)
+	{
+		InsertFlatRect(x0, y0, x0 + bar, y0 + h, phd_znear + 20, 0xFF00C0C0);
+		InsertFlatRect(x0, y0 + p, x0 + bar, y0 + p * 2, phd_znear + 10, 0xFF00A0A0);
+	}
+#else
 	long oldAlpha, w, z;
 
 	oldAlpha = GlobalAlpha;
@@ -189,6 +317,7 @@ void S_DrawColdBar(long percent)
 	}
 
 	GlobalAlpha = oldAlpha;
+#endif
 }
 
 void inject_drawbars(bool replace)
