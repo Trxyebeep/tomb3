@@ -672,7 +672,7 @@ void draw_shotgun_meshes(long weapon_type)
 
 void undraw_shotgun_meshes(long weapon_type)
 {
-	lara.back_gun = WeaponObject(weapon_type);
+	lara.back_gun = (short)WeaponObject(weapon_type);
 	lara.mesh_ptrs[HAND_R] = meshes[objects[LARA].mesh_index + HAND_R];
 }
 

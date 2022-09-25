@@ -221,6 +221,46 @@ void(*lara_collision_routines[89])(ITEM_INFO* item, COLL_INFO* coll) =
 
 void LaraCheatGetStuff()
 {
+#ifdef TROYESTUFF
+	if (objects[M16_ITEM].loaded)
+		Inv_AddItem(M16_ITEM);
+
+	if (objects[SHOTGUN_ITEM].loaded)
+		Inv_AddItem(SHOTGUN_ITEM);
+
+	if (objects[UZI_ITEM].loaded)
+		Inv_AddItem(UZI_ITEM);
+
+	if (objects[MAGNUM_ITEM].loaded)
+		Inv_AddItem(MAGNUM_ITEM);
+
+	if (objects[GUN_ITEM].loaded)
+		Inv_AddItem(GUN_ITEM);
+
+	if (objects[ROCKET_GUN_ITEM].loaded)
+		Inv_AddItem(ROCKET_GUN_ITEM);
+
+	if (objects[GRENADE_GUN_ITEM].loaded)
+		Inv_AddItem(GRENADE_GUN_ITEM);
+
+	for (int i = 0; i < 1; i++)
+	{
+		if (objects[FLAREBOX_ITEM].loaded)
+			Inv_AddItem(FLAREBOX_ITEM);
+
+		if (objects[MEDI_ITEM].loaded)
+			Inv_AddItem(MEDI_ITEM);
+
+		if (objects[BIGMEDI_ITEM].loaded)
+			Inv_AddItem(BIGMEDI_ITEM);
+	}
+
+	lara.magnums.ammo = 1000;
+	lara.uzis.ammo = 1000;
+	lara.shotgun.ammo = 1000 * 6;
+	lara.m16.ammo = 1000;
+	lara.grenade.ammo = 1000;
+#else
 	Inv_AddItem(M16_ITEM);
 	Inv_AddItem(SHOTGUN_ITEM);
 	Inv_AddItem(UZI_ITEM);
@@ -241,10 +281,41 @@ void LaraCheatGetStuff()
 	lara.shotgun.ammo = 300;
 	lara.m16.ammo = 300;
 	lara.grenade.ammo = 1000;
+#endif
 }
 
 void LaraCheatyBits()
 {
+#ifdef TROYESTUFF
+	if (key_pressed(DIK_F1))
+		LaraCheatGetStuff();
+
+	if (key_pressed(DIK_F2))
+	{
+		lara_item->pos.y_pos -= 128;
+
+		if (lara.water_status != LARA_CHEAT)
+		{
+			lara_item->anim_number = ANIM_SWIMCHEAT;
+			lara_item->frame_number = anims[ANIM_SWIMCHEAT].frame_base;
+			lara_item->current_anim_state = AS_SWIM;
+			lara_item->goal_anim_state = AS_SWIM;
+			lara.water_status = LARA_CHEAT;
+			lara_item->gravity_status = 0;
+			lara_item->pos.x_rot = 5460;
+			lara_item->fallspeed = 0;
+			lara.air = 1800;
+			lara.death_count = 0;
+			lara.torso_x_rot = 0;
+			lara.torso_y_rot = 0;
+			lara.head_x_rot = 0;
+			lara.head_y_rot = 0;
+		}
+	}
+
+	if (key_pressed(DIK_F3))
+		FinishLevelCheat = 1;
+#else
 	if (!gameflow.cheat_enable && !gameflow.dozy_cheat_enabled)
 		return;
 
@@ -277,6 +348,7 @@ void LaraCheatyBits()
 			cheat_hit_points = lara_item->hit_points;
 		}
 	}
+#endif
 }
 
 void LaraCheat(ITEM_INFO* item, COLL_INFO* coll)
@@ -296,9 +368,11 @@ void LaraCheat(ITEM_INFO* item, COLL_INFO* coll)
 		lara.head_x_rot = 0;
 		lara.head_y_rot = 0;
 		lara.gun_status = LG_ARMLESS;
+#ifndef TROYESTUFF
 		LaraInitialiseMeshes(1);
 		lara.mesh_effects = 0;
 		lara_item->hit_points = cheat_hit_points;
+#endif
 	}
 }
 
@@ -357,7 +431,9 @@ void LaraControl(short item_number)
 {
 	long room_water_state, wd, wh, hfw, dx, dy, dz;
 
+#ifndef TROYESTUFF
 	if (gameflow.cheat_enable || gameflow.dozy_cheat_enabled)
+#endif
 		LaraCheatyBits();
 
 	lara.last_pos.x = lara_item->pos.x_pos;
