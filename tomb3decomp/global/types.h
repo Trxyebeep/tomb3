@@ -1573,4 +1573,42 @@ struct SAMPLE_INFO
 	char pitch;
 	short flags;
 };
+
+struct REQUEST_INFO
+{
+	ushort noselector : 1;
+	ushort item;
+	ushort selected;
+	ushort vis_lines;
+	ushort line_offset;
+	ushort line_oldoffset;
+	ushort pixwidth;
+	ushort line_height;
+	short xpos;
+	short ypos;
+	short zpos;
+	short itemtextlen;
+	char* itemtexts1;
+	char* itemtexts2;
+	ulong* itemtexts1_flags;
+	ulong* itemtexts2_flags;
+	ulong heading1_flags;
+	ulong heading2_flags;
+	ulong background_flags;
+	ulong moreup_flags;
+	ulong moredown_flags;
+	ulong texts1_flags[24];
+	ulong texts2_flags[24];
+	TEXTSTRING* heading1text;
+	TEXTSTRING* heading2text;
+	TEXTSTRING* backgroundtext;
+	TEXTSTRING* moreuptext;
+	TEXTSTRING* moredowntext;
+	TEXTSTRING* texts1[24];
+	TEXTSTRING* texts2[24];
+	char heading1_str[32];
+	char heading2_str[32];
+	long original_render_width;
+	long original_render_height;
+};
 #pragma pack(pop)

@@ -653,7 +653,7 @@ tomb3decomp progress.
 0x00439060		Inv_RingMotionCameraPitch
 0x00439080		Inv_RingMotionItemSelect
 0x004390E0		Inv_RingMotionItemDeselect
-0x00439150		Init_Requester
+0x00439150	+	Init_Requester
 0x004391E0		Remove_Requester
 0x00439290		ReqItemCentreAlign
 0x004392B0		ReqItemLeftalign
