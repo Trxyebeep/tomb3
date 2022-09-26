@@ -41,6 +41,11 @@ void LoadRandoInfo()
 
 	fread(rando.levels, sizeof(rando_level), rando.nLevels, file);
 	fclose(file);
+
+	memset(LevelSecrets, 0, sizeof(LevelSecrets));
+
+	for (int i = 0; i < rando.nLevels; i++)
+		LevelSecrets[i] = rando.levels[i].nSecrets;
 }
 #else
 bool inject_rando = 0;

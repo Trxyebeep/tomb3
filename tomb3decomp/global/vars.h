@@ -353,6 +353,7 @@
 #define GF_Description	ARRAY_(0x00626210, char, [256])
 #define GF_level_sequence_list	ARRAY_(0x006D78C0, short*, [24])
 #define GF_valid_demos	ARRAY_(0x006D7940, short, [24])
+#define LevelSecrets	ARRAY_(0x004C70B8, short, [21])
 
 /*constants*/
 #define NO_HEIGHT -32512

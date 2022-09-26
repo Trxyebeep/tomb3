@@ -18,6 +18,7 @@ struct rando_level
 	bool hasRain;
 	bool hasSnow;
 	bool freezingWater;
+	char nSecrets;
 };
 
 struct rando_info
