@@ -2,6 +2,7 @@
 #include "invfunc.h"
 #include "../specific/frontend.h"
 #include "../specific/option.h"
+#include "text.h"
 
 void InitColours()
 {
@@ -48,8 +49,36 @@ void Init_Requester(REQUEST_INFO* req)
 	req->original_render_height = GetRenderHeight();
 }
 
+void Remove_Requester(REQUEST_INFO* req)
+{
+	T_RemovePrint(req->heading1text);
+	req->heading1text = 0;
+
+	T_RemovePrint(req->heading2text);
+	req->heading2text = 0;
+
+	T_RemovePrint(req->backgroundtext);
+	req->backgroundtext = 0;
+
+	T_RemovePrint(req->moreuptext);
+	req->moreuptext = 0;
+
+	T_RemovePrint(req->moredowntext);
+	req->moredowntext = 0;
+
+	for (int i = 0; i < 24; i++)
+	{
+		T_RemovePrint(req->texts1[i]);
+		req->texts1[i] = 0;
+
+		T_RemovePrint(req->texts2[i]);
+		req->texts2[i] = 0;
+	}
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
 	INJECT(0x00439150, Init_Requester, replace);
+	INJECT(0x004391E0, Remove_Requester, replace);
 }
