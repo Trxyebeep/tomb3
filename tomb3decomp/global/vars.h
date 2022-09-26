@@ -158,6 +158,7 @@
 #define num_sample_infos	VAR_(0x006D1F20, long)
 #define sample_infos	VAR_(0x006D2224, SAMPLE_INFO*)
 #define cd_drive	VAR_(0x00633F38, char)
+#define Inventory_Mode	VAR_(0x004C70A4, long)
 #define GF_picfilenames	VAR_(0x006D7880, char**)
 #define GF_LoadingPic	VAR_(0x004C561C, short)
 #define GF_Playing_Story	VAR_(0x00626204, char)

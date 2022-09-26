@@ -2,6 +2,7 @@
 #include "frontend.h"
 #include "specific.h"
 #include "../3dsystem/3d_gen.h"
+#include "display.h"
 
 ushort S_COLOUR(long r, long g, long b)
 {
@@ -30,10 +31,17 @@ void S_DrawScreenFBox(long x, long y, long z, long w, long h, long c, ushort* gr
 	InsertTransQuad(phd_winxmin + x, phd_winymin + y, w + 1, h + 1, phd_znear + 0x50000);
 }
 
+void S_FinishInventory()
+{
+	if (Inventory_Mode != 1)
+		TempVideoRemove();
+}
+
 void inject_frontend(bool replace)
 {
 	INJECT(0x004835E0, S_COLOUR, replace);
 	INJECT(0x00483610, S_DrawScreenLine, replace);
 	INJECT(0x00483650, S_DrawScreenBox, replace);
 	INJECT(0x00483770, S_DrawScreenFBox, replace);
+	INJECT(0x004837B0, S_FinishInventory, replace);
 }
