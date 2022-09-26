@@ -8,3 +8,4 @@ void S_DrawScreenLine(long x, long y, long z, long w, long h, long c, ushort* gr
 void S_DrawScreenBox(long x, long y, long z, long w, long h, long sprnum, ushort* grdptr, ushort f);
 void S_DrawScreenFBox(long x, long y, long z, long w, long h, long c, ushort* grdptr, ushort f);
 void S_FinishInventory();
+void S_Wait(long nFrames, long skip);

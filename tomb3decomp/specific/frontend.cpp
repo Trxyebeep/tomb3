@@ -3,6 +3,8 @@
 #include "specific.h"
 #include "../3dsystem/3d_gen.h"
 #include "display.h"
+#include "input.h"
+#include "time.h"
 
 ushort S_COLOUR(long r, long g, long b)
 {
@@ -37,6 +39,38 @@ void S_FinishInventory()
 		TempVideoRemove();
 }
 
+void S_Wait(long nFrames, long skip)
+{
+	long s;
+
+	if (skip)
+	{
+		while (nFrames > 0)
+		{
+			if (!input)
+				break;
+
+			S_UpdateInput();
+
+			do { s = Sync(); } while (!s);
+
+			nFrames -= s;
+		}
+	}
+
+	while (nFrames > 0)
+	{
+		S_UpdateInput();
+
+		if (skip && input)
+			break;
+
+		do { s = Sync(); } while (!s);
+
+		nFrames -= s;
+	}
+}
+
 void inject_frontend(bool replace)
 {
 	INJECT(0x004835E0, S_COLOUR, replace);
@@ -44,4 +78,5 @@ void inject_frontend(bool replace)
 	INJECT(0x00483650, S_DrawScreenBox, replace);
 	INJECT(0x00483770, S_DrawScreenFBox, replace);
 	INJECT(0x004837B0, S_FinishInventory, replace);
+	INJECT(0x004837D0, S_Wait, replace);
 }
