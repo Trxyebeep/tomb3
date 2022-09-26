@@ -655,9 +655,9 @@ tomb3decomp progress.
 0x004390E0		Inv_RingMotionItemDeselect
 0x00439150	+	Init_Requester
 0x004391E0	+	Remove_Requester
-0x00439290		ReqItemCentreAlign
-0x004392B0		ReqItemLeftalign
-0x00439310		ReqItemRightalign
+0x00439290	+	ReqItemCentreAlign
+0x004392B0	+	ReqItemLeftalign
+0x00439310	+	ReqItemRightalign
 0x00439370		Display_Requester
 0x00439B80		SetRequesterHeading
 0x00439C30		RemoveAllReqItems

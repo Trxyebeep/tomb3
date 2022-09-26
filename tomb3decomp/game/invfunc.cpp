@@ -76,9 +76,47 @@ void Remove_Requester(REQUEST_INFO* req)
 	}
 }
 
+void ReqItemCentreAlign(REQUEST_INFO* req, TEXTSTRING* txt)
+{
+	if (txt)
+	{
+		txt->bgndOffX = 0;
+		txt->xpos = req->xpos;
+	}
+}
+
+void ReqItemLeftalign(REQUEST_INFO* req, TEXTSTRING* txt)
+{
+	ulong h;
+
+	h = GetTextScaleH(txt->scaleH);
+
+	if (txt)
+	{
+		txt->bgndOffX = short(((h * req->pixwidth) >> 17) - ((8 * h) >> 16) - T_GetTextWidth(txt) / 2);
+		txt->xpos = req->xpos - txt->bgndOffX;
+	}
+}
+
+void ReqItemRightalign(REQUEST_INFO* req, TEXTSTRING* txt)
+{
+	ulong h;
+
+	h = GetTextScaleH(txt->scaleH);
+
+	if (txt)
+	{
+		txt->bgndOffX = -short(((h * req->pixwidth) >> 17) - ((8 * h) >> 16) - T_GetTextWidth(txt) / 2);
+		txt->xpos = req->xpos - txt->bgndOffX;
+	}
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
 	INJECT(0x00439150, Init_Requester, replace);
 	INJECT(0x004391E0, Remove_Requester, replace);
+	INJECT(0x00439290, ReqItemCentreAlign, replace);
+	INJECT(0x004392B0, ReqItemLeftalign, replace);
+	INJECT(0x00439310, ReqItemRightalign, replace);
 }
