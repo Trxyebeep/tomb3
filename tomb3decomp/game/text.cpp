@@ -8,7 +8,7 @@
 #include "health.h"
 #include "../specific/output.h"
 
-short T_GetStringLen(char* string)
+short T_GetStringLen(const char* string)
 {
 	short len;
 
@@ -279,7 +279,7 @@ void T_ChangeText(TEXTSTRING* string, char* pStr)
 	memcpy(string->string, pStr, 64);
 }
 
-TEXTSTRING* T_Print(long x, long y, long z, char* pStr)
+TEXTSTRING* T_Print(long x, long y, long z, const char* pStr)
 {
 	TEXTSTRING* string;
 	long num, length;

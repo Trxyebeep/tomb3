@@ -658,7 +658,7 @@ tomb3decomp progress.
 0x00439290	+	ReqItemCentreAlign
 0x004392B0	+	ReqItemLeftalign
 0x00439310	+	ReqItemRightalign
-0x00439370		Display_Requester
+0x00439370	+	Display_Requester
 0x00439B80		SetRequesterHeading
 0x00439C30		RemoveAllReqItems
 0x00439C50		ChangeRequesterItem

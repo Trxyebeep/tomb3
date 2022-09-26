@@ -91,6 +91,18 @@ enum T_flags
 #endif
 };
 
+enum R_flags	//requester flags
+{
+	R_CENTRE = 0,
+	R_USE = 1 << 0,
+	R_LEFTALIGN = 1 << 1,
+	R_RIGHTALIGN = 1 << 2,
+	R_HEADING = 1 << 3,
+	R_BEST_TIME = 1 << 4,
+	R_NORMAL_TIME = 1 << 5,
+	R_NO_TIME = 1 << 6
+};
+
 enum mood_type
 {
 	BORED_MOOD,

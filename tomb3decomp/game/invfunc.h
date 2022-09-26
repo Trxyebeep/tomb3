@@ -9,6 +9,7 @@ void Remove_Requester(REQUEST_INFO* req);
 void ReqItemCentreAlign(REQUEST_INFO* req, TEXTSTRING* txt);
 void ReqItemLeftalign(REQUEST_INFO* req, TEXTSTRING* txt);
 void ReqItemRightalign(REQUEST_INFO* req, TEXTSTRING* txt);
+long Display_Requester(REQUEST_INFO* req, long des, long backgrounds);
 
 #define Inv_AddItem	( (long(__cdecl*)(long)) 0x004378B0 )
 #define Inv_RemoveItem	( (long(__cdecl*)(long)) 0x00438420 )
