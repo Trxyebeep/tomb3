@@ -25,9 +25,15 @@ void S_DrawScreenBox(long x, long y, long z, long w, long h, long sprnum, ushort
 	S_DrawScreenLine(x - 1, h + y + 1, z, w + 1, 0, 31, 0, f);
 }
 
+void S_DrawScreenFBox(long x, long y, long z, long w, long h, long c, ushort* grdptr, ushort f)
+{
+	InsertTransQuad(phd_winxmin + x, phd_winymin + y, w + 1, h + 1, phd_znear + 0x50000);
+}
+
 void inject_frontend(bool replace)
 {
 	INJECT(0x004835E0, S_COLOUR, replace);
 	INJECT(0x00483610, S_DrawScreenLine, replace);
 	INJECT(0x00483650, S_DrawScreenBox, replace);
+	INJECT(0x00483770, S_DrawScreenFBox, replace);
 }
