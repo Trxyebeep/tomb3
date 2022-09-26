@@ -1548,6 +1548,11 @@ void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, lo
 	if (x2 <= x1 || y2 <= y1 || x2 <= 0 || y2 <= 0 || x1 >= phd_winxmax || y1 >= phd_winymax)
 		return;
 
+#ifdef TROYESTUFF
+	blueEffect = bBlueEffect;	//moving this here fixes the blue text shit
+	bBlueEffect = 0;
+#endif
+
 	x1 += phd_winxmin;
 	y1 += phd_winymin;
 	x2 += phd_winxmin;
@@ -1623,11 +1628,19 @@ void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, lo
 
 	if (nPoints)
 	{
+#ifdef TROYESTUFF
+		HWI_InsertClippedPoly_Textured(nPoints, (float)zdepth, nDrawType, sprite->tpage);
+#else
 		blueEffect = bBlueEffect;
 		bBlueEffect = 0;
 		HWI_InsertClippedPoly_Textured(nPoints, (float)zdepth, nDrawType, sprite->tpage);
 		bBlueEffect = blueEffect;
+#endif
 	}
+
+#ifdef TROYESTUFF
+	bBlueEffect = blueEffect;
+#endif
 }
 
 void HWI_InsertAlphaSprite_Sorted(long x1, long y1, long z1, long shade1, long x2, long y2, long z2, long shade2,
