@@ -276,8 +276,10 @@ void LaraCheatGetStuff()
 	lara.magnums.ammo = 1000;
 	lara.uzis.ammo = 1000;
 	lara.shotgun.ammo = 1000 * 6;
-	lara.m16.ammo = 1000;
+	lara.harpoon.ammo = 1000;
+	lara.rocket.ammo = 1000;
 	lara.grenade.ammo = 1000;
+	lara.m16.ammo = 1000;
 #else
 	Inv_AddItem(M16_ITEM);
 	Inv_AddItem(SHOTGUN_ITEM);
