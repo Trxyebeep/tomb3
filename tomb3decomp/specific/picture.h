@@ -13,6 +13,6 @@ void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACE3 surf);
 void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACE3 surf);
 
 #define FreePictureTextures	( (void(__cdecl*)(long*)) 0x0048B190 )
-#define LoadPicture	( (bool(__cdecl*)(char*, LPDIRECTDRAWSURFACE3, long)) 0x0048B0D0 )
+#define LoadPicture	( (bool(__cdecl*)(const char*, LPDIRECTDRAWSURFACE3, long)) 0x0048B0D0 )
 #define FadePictureUp	( (void(__cdecl*)(long)) 0x0048BC70 )
 #define FadePictureDown	( (void(__cdecl*)(long)) 0x0048BD10 )

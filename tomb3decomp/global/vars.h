@@ -15,6 +15,7 @@
 #define changes	VAR_(0x006E287C, CHANGE_STRUCT*)
 #define ranges	VAR_(0x006E2204, RANGE_STRUCT*)
 #define input	VAR_(0x0069FDF0, long)
+#define inputDB	VAR_(0x00626444, long)
 #define room	VAR_(0x006E2890, ROOM_INFO*)
 #define camera	VAR_(0x006E3040, CAMERA_INFO)
 #define height_type	VAR_(0x006E2A24, long)
@@ -199,6 +200,7 @@
 #define GF_Key2Strings_buffer	VAR_(0x006D7864, char*)
 #define GF_Key3Strings_buffer	VAR_(0x006D797C, char*)
 #define GF_Key4Strings_buffer	VAR_(0x006D785C, char*)
+#define GF_BonusLevelEnabled	VAR_(0x00626208, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
