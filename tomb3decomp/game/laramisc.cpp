@@ -307,6 +307,8 @@ void LaraCheatGetStuff()
 void LaraCheatyBits()
 {
 #ifdef TROYESTUFF
+	uchar s;
+
 	if (key_pressed(DIK_F1))
 	{
 		LaraCheatGetStuff();
@@ -338,6 +340,20 @@ void LaraCheatyBits()
 
 	if (key_pressed(DIK_F3))
 		FinishLevelCheat = 1;
+
+	if (key_pressed(DIK_F4))
+	{
+		s = 0;
+
+		for (int i = 0; i < LevelSecrets[CurrentLevel]; i++)	//assume no secret triggers have bigger IDs than the total
+			s |= 1 << i;
+
+		if (savegame.secrets != s)
+		{
+			S_CDPlay(122, 0);
+			savegame.secrets = s;
+		}
+	}
 #else
 	if (!gameflow.cheat_enable && !gameflow.dozy_cheat_enabled)
 		return;
