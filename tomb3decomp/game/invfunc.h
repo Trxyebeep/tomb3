@@ -4,6 +4,7 @@
 void inject_invfunc(bool replace);
 
 void InitColours();
+
 void Init_Requester(REQUEST_INFO* req);
 void Remove_Requester(REQUEST_INFO* req);
 void ReqItemCentreAlign(REQUEST_INFO* req, TEXTSTRING* txt);
@@ -20,6 +21,8 @@ long AddQuadbikeTime(ulong time);
 void ShowGymStatsText(const char* time, long type);
 void ShowStatsText(const char* time, long type);
 void ShowEndStatsText();
+
+void Inv_RingMotionInit(RING_INFO* ring, short count, short status, short status_target);
 
 #define Inv_AddItem	( (long(__cdecl*)(long)) 0x004378B0 )
 #define Inv_RemoveItem	( (long(__cdecl*)(long)) 0x00438420 )

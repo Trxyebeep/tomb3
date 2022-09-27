@@ -887,9 +887,39 @@ void ShowEndStatsText()
 	mode = 1;
 }
 
+/************Ring Motion stuff************/
+
+void Inv_RingMotionInit(RING_INFO* ring, short count, short status, short status_target)
+{
+	IMOTION_INFO* imo;
+
+	imo = ring->imo;
+	imo->count = count;
+	imo->status_target = status_target;
+	imo->status = status;
+	imo->radius_target = 0;
+	imo->radius_rate = 0;
+	imo->camera_ytarget = 0;
+	imo->camera_yrate = 0;
+	imo->camera_pitch_target = 0;
+	imo->camera_pitch_rate = 0;
+	imo->rotate_target = 0;
+	imo->rotate_rate = 0;
+	imo->item_ptxrot_target = 0;
+	imo->item_ptxrot_rate = 0;
+	imo->item_xrot_target = 0;
+	imo->item_xrot_rate = 0;
+	imo->item_ytrans_target = 0;
+	imo->item_ytrans_rate = 0;
+	imo->item_ztrans_target = 0;
+	imo->item_ztrans_rate = 0;
+	imo->misc = 0;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
+
 	INJECT(0x00439150, Init_Requester, replace);
 	INJECT(0x004391E0, Remove_Requester, replace);
 	INJECT(0x00439290, ReqItemCentreAlign, replace);
@@ -906,4 +936,6 @@ void inject_invfunc(bool replace)
 	INJECT(0x00439EC0, ShowGymStatsText, replace);
 	INJECT(0x0043A220, ShowStatsText, replace);
 	INJECT(0x0043A5B0, ShowEndStatsText, inject_rando ? 1 : replace);
+
+	INJECT(0x00438F30, Inv_RingMotionInit, replace);
 }

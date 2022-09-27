@@ -1623,4 +1623,90 @@ struct REQUEST_INFO
 	long original_render_width;
 	long original_render_height;
 };
+
+struct IMOTION_INFO
+{
+	short count;
+	short status;
+	short status_target;
+	short radius_target;
+	short radius_rate;
+	short camera_ytarget;
+	short camera_yrate;
+	short camera_pitch_target;
+	short camera_pitch_rate;
+	short rotate_target;
+	short rotate_rate;
+	short item_ptxrot_target;
+	short item_ptxrot_rate;
+	short item_xrot_target;
+	short item_xrot_rate;
+	long item_ytrans_target;
+	long item_ytrans_rate;
+	long item_ztrans_target;
+	long item_ztrans_rate;
+	long misc;
+};
+
+struct INVENTORY_SPRITE
+{
+	short shape;
+	short x;
+	short y;
+	short z;
+	long param1;
+	long param2;
+	ushort* grdptr;
+	short sprnum;
+};
+
+struct INVENTORY_ITEM
+{
+	char* itemText;
+	short object_number;
+	short frames_total;
+	short current_frame;
+	short goal_frame;
+	short open_frame;
+	short anim_direction;
+	short anim_speed;
+	short anim_count;
+	short pt_xrot_sel;
+	short pt_xrot;
+	short x_rot_sel;
+	short x_rot_nosel;
+	short x_rot;
+	short y_rot_sel;
+	short y_rot;
+	long ytrans_sel;
+	long ytrans;
+	long ztrans_sel;
+	long ztrans;
+	ulong which_meshes;
+	ulong drawn_meshes;
+	short inv_pos;
+	INVENTORY_SPRITE** sprlist;
+	long misc_data[4];
+};
+
+struct RING_INFO
+{
+	INVENTORY_ITEM** list;
+	short type;
+	short radius;
+	short camera_pitch;
+	short rotating;
+	short rot_count;
+	short current_object;
+	short target_object;
+	short number_of_objects;
+	short angle_adder;
+	short rot_adder;
+	short rot_adderL;
+	short rot_adderR;
+	PHD_3DPOS ringpos;
+	PHD_3DPOS camera;
+	PHD_VECTOR light;
+	IMOTION_INFO* imo;
+};
 #pragma pack(pop)
