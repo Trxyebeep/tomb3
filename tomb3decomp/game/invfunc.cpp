@@ -937,6 +937,15 @@ void Inv_RingMotionRadius(RING_INFO* ring, short target)
 	imo->radius_rate = (target - ring->radius) / imo->count;
 }
 
+void Inv_RingMotionRotation(RING_INFO* ring, short rotation, short target)
+{
+	IMOTION_INFO* imo;
+
+	imo = ring->imo;
+	imo->rotate_target = target;
+	imo->rotate_rate = rotation / imo->count;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -961,4 +970,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00438F30, Inv_RingMotionInit, replace);
 	INJECT(0x00438FA0, Inv_RingMotionSetup, replace);
 	INJECT(0x00438FD0, Inv_RingMotionRadius, replace);
+	INJECT(0x00439000, Inv_RingMotionRotation, replace);
 }
