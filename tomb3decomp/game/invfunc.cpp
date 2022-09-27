@@ -418,6 +418,37 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 	return 0;
 }
 
+void SetRequesterHeading(REQUEST_INFO* req, const char* text1, ulong flags1, const char* text2, ulong flags2)
+{
+	T_RemovePrint(req->heading1text);
+	req->heading1text = 0;
+
+	T_RemovePrint(req->heading2text);
+	req->heading2text = 0;
+
+	if (text1)
+	{
+		sprintf(req->heading1_str, text1);
+		req->heading1_flags = flags1 | R_USE;
+	}
+	else
+	{
+		sprintf(req->heading1_str, "u");
+		req->heading1_flags = 0;
+	}
+
+	if (text2)
+	{
+		sprintf(req->heading2_str, text2);
+		req->heading2_flags = flags2 | R_USE;
+	}
+	else
+	{
+		sprintf(req->heading2_str, "u");
+		req->heading2_flags = 0;
+	}
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -427,4 +458,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x004392B0, ReqItemLeftalign, replace);
 	INJECT(0x00439310, ReqItemRightalign, replace);
 	INJECT(0x00439370, Display_Requester, replace);
+	INJECT(0x00439B80, SetRequesterHeading, replace);
 }
