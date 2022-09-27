@@ -449,6 +449,13 @@ void SetRequesterHeading(REQUEST_INFO* req, const char* text1, ulong flags1, con
 	}
 }
 
+void RemoveAllReqItems(REQUEST_INFO* req)
+{
+	req->item = 0;
+	req->line_offset = 0;
+	req->selected = 0;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -459,4 +466,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00439310, ReqItemRightalign, replace);
 	INJECT(0x00439370, Display_Requester, replace);
 	INJECT(0x00439B80, SetRequesterHeading, replace);
+	INJECT(0x00439C30, RemoveAllReqItems, replace);
 }
