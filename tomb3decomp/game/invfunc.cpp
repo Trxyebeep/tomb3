@@ -456,6 +456,31 @@ void RemoveAllReqItems(REQUEST_INFO* req)
 	req->selected = 0;
 }
 
+void ChangeRequesterItem(REQUEST_INFO* req, long item, const char* text1, ulong flags1, const char* text2, ulong flags2)
+{
+	T_RemovePrint(req->texts1[item]);
+	req->texts1[item] = 0;
+
+	T_RemovePrint(req->texts2[item]);
+	req->texts2[item] = 0;
+
+	if (text1)
+	{
+		sprintf(&req->itemtexts1[item * req->itemtextlen], text1);
+		req->itemtexts1_flags[item] = flags1 | R_USE;
+	}
+	else
+		req->itemtexts1_flags[item] = 0;
+
+	if (text2)
+	{
+		sprintf(&req->itemtexts2[item * req->itemtextlen], text2);
+		req->itemtexts2_flags[item] = flags2 | R_USE;
+	}
+	else
+		req->itemtexts2_flags[item] = 0;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -467,4 +492,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00439370, Display_Requester, replace);
 	INJECT(0x00439B80, SetRequesterHeading, replace);
 	INJECT(0x00439C30, RemoveAllReqItems, replace);
+	INJECT(0x00439C50, ChangeRequesterItem, replace);
 }
