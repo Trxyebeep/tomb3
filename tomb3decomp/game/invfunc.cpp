@@ -916,6 +916,18 @@ void Inv_RingMotionInit(RING_INFO* ring, short count, short status, short status
 	imo->misc = 0;
 }
 
+void Inv_RingMotionSetup(RING_INFO* ring, short status, short status_target, short count)
+{
+	IMOTION_INFO* imo;
+
+	imo = ring->imo;
+	imo->count = count;
+	imo->status_target = status_target;
+	imo->status = status;
+	imo->radius_rate = 0;
+	imo->camera_yrate = 0;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -938,4 +950,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x0043A5B0, ShowEndStatsText, inject_rando ? 1 : replace);
 
 	INJECT(0x00438F30, Inv_RingMotionInit, replace);
+	INJECT(0x00438FA0, Inv_RingMotionSetup, replace);
 }
