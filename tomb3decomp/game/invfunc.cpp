@@ -697,6 +697,88 @@ void ShowGymStatsText(const char* time, long type)
 	mode = 1;
 }
 
+void ShowStatsText(const char* time, long type)
+{
+	static long mode;
+	long s;
+	char txt[32];
+
+	if (mode == 1)
+	{
+		ChangeRequesterItem(&Stats_Requester, 0, GF_GameStrings[GT_STAT_TIME], R_LEFTALIGN, time, R_RIGHTALIGN);
+
+		if (Display_Requester(&Stats_Requester, type, 1))
+			mode = 0;
+		else
+		{
+			inputDB = 0;
+			input = 0;
+		}
+
+		return;
+	}
+
+	Stats_Requester.noselector = 1;
+	SetPCRequesterSize(&Stats_Requester, 7, -32);
+	Stats_Requester.line_height = 18;
+	Stats_Requester.item = 0;
+	Stats_Requester.selected = 0;
+	Stats_Requester.line_offset = 0;
+	Stats_Requester.line_oldoffset = 0;
+	Stats_Requester.pixwidth = 304;
+	Stats_Requester.xpos = 0;
+	Stats_Requester.zpos = 0;
+	Stats_Requester.itemtexts1 = &Valid_Level_Strings[0][0];
+	Stats_Requester.itemtexts2 = &Valid_Level_Strings2[0][0];
+	Stats_Requester.itemtextlen = 50;
+	Init_Requester(&Stats_Requester);
+	SetRequesterHeading(&Stats_Requester, GF_Level_Names[CurrentLevel], 0, 0, 0);
+	AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_STAT_TIME], R_LEFTALIGN, time, R_RIGHTALIGN);
+
+	if (LevelSecrets[CurrentLevel])
+	{
+		s = savegame.secrets & 1;
+		s += (savegame.secrets >> 1) & 1;
+		s += (savegame.secrets >> 2) & 1;
+		s += (savegame.secrets >> 3) & 1;
+		s += (savegame.secrets >> 4) & 1;
+		s += (savegame.secrets >> 5) & 1;
+		s += (savegame.secrets >> 6) & 1;
+		s += (savegame.secrets >> 7) & 1;
+		sprintf(txt, "%d %s %d", s, GF_GameStrings[GT_OF], LevelSecrets[CurrentLevel]);
+	}
+	else
+		sprintf(txt, "%s", GF_GameStrings[GT_NONE]);
+
+	AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_STAT_SECRETS], R_LEFTALIGN, txt, R_RIGHTALIGN);
+
+	sprintf(txt, "%d", savegame.kills);
+	AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_STAT_KILLS], R_LEFTALIGN, txt, R_RIGHTALIGN);
+
+	sprintf(txt, "%d", savegame.ammo_used);
+	AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_STAT_AMMO], R_LEFTALIGN, txt, R_RIGHTALIGN);
+
+	sprintf(txt, "%d", savegame.ammo_hit);
+	AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_STAT_RATIO], R_LEFTALIGN, txt, R_RIGHTALIGN);
+
+	if (savegame.health_used & 1)
+		sprintf(txt, "%d.5", savegame.health_used >> 1);
+	else
+		sprintf(txt, "%d.0", savegame.health_used >> 1);
+
+	AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_STAT_HEALTH], R_LEFTALIGN, txt, R_RIGHTALIGN);
+
+	s = savegame.distance_travelled / 445;
+
+	if (s < 1000)
+		sprintf(txt, "%dm", s);
+	else
+		sprintf(txt, "%d.%02dkm", s / 1000, s % 100);
+
+	AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_STAT_DISTANCE], R_LEFTALIGN, txt, R_RIGHTALIGN);
+	mode = 1;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -714,4 +796,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00439E00, AddAssaultTime, replace);
 	INJECT(0x00439E60, AddQuadbikeTime, replace);
 	INJECT(0x00439EC0, ShowGymStatsText, replace);
+	INJECT(0x0043A220, ShowStatsText, replace);
 }
