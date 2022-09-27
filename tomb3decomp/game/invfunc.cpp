@@ -481,6 +481,30 @@ void ChangeRequesterItem(REQUEST_INFO* req, long item, const char* text1, ulong 
 		req->itemtexts2_flags[item] = 0;
 }
 
+void AddRequesterItem(REQUEST_INFO* req, const char* text1, ulong flags1, const char* text2, ulong flags2)
+{
+	req->itemtexts1_flags = RequesterFlags1;
+	req->itemtexts2_flags = RequesterFlags2;
+
+	if (text1)
+	{
+		sprintf(&req->itemtexts1[req->item * req->itemtextlen], text1);
+		req->itemtexts1_flags[req->item] = flags1 | R_USE;
+	}
+	else
+		RequesterFlags1[req->item] = 0;
+
+	if (text2)
+	{
+		sprintf(&req->itemtexts2[req->item * req->itemtextlen], text2);
+		req->itemtexts2_flags[req->item] = flags2 | R_USE;
+	}
+	else
+		req->itemtexts2_flags[req->item] = 0;
+
+	req->item++;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -493,4 +517,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00439B80, SetRequesterHeading, replace);
 	INJECT(0x00439C30, RemoveAllReqItems, replace);
 	INJECT(0x00439C50, ChangeRequesterItem, replace);
+	INJECT(0x00439D10, AddRequesterItem, replace);
 }
