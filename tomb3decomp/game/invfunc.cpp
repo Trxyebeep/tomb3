@@ -568,6 +568,135 @@ long AddQuadbikeTime(ulong time)	//same as above for quad times
 	return 0;
 }
 
+#define Stats_Requester	VAR_(0x00626490, REQUEST_INFO)
+#define Valid_Level_Strings	ARRAY_(0x006D62E0, char, [24][50])
+#define Valid_Level_Strings2	ARRAY_(0x006D7220, char, [24][50])
+
+void ShowGymStatsText(const char* time, long type)
+{
+	ulong t;
+	static long mode;
+	long n;
+	char txt[32];
+
+	if (mode == 1)
+	{
+		if (Display_Requester(&Stats_Requester, 1, 1))
+			mode = 0;
+		else
+		{
+			inputDB = 0;
+			input = 0;
+		}
+
+		return;
+	}
+
+	Stats_Requester.noselector = 1;
+	SetPCRequesterSize(&Stats_Requester, 7, -32);
+	Stats_Requester.line_height = 18;
+	Stats_Requester.item = 0;
+	Stats_Requester.selected = 0;
+	Stats_Requester.line_offset = 0;
+	Stats_Requester.line_oldoffset = 0;
+	Stats_Requester.pixwidth = 296;
+	Stats_Requester.xpos = 0;
+	Stats_Requester.zpos = 0;
+	Stats_Requester.itemtexts1 = &Valid_Level_Strings[0][0];
+	Stats_Requester.itemtexts2 = &Valid_Level_Strings2[0][0];
+	Stats_Requester.itemtextlen = 50;
+	Init_Requester(&Stats_Requester);
+	SetRequesterHeading(&Stats_Requester, GF_GameStrings[GT_BESTTIMES], 0, 0, 0);
+
+	for (n = -1; n < 10; n++)	//-1 to add the heading
+	{
+		if (n == -1)
+		{
+			switch (gameflow.language)
+			{
+			case 1:
+				AddRequesterItem(&Stats_Requester, "Entra(inement", R_HEADING, 0, 0);
+				break;
+
+			case 2:
+				AddRequesterItem(&Stats_Requester, "Hinderniskurs", R_HEADING, 0, 0);
+				break;
+
+			case 5:
+				AddRequesterItem(&Stats_Requester, "Circuito d'addestramento", R_HEADING, 0, 0);
+				break;
+
+			case 6:
+				AddRequesterItem(&Stats_Requester, "Asaltar Carrera", R_HEADING, 0, 0);
+				break;
+
+			default:
+				AddRequesterItem(&Stats_Requester, "Assault Course", R_HEADING, 0, 0);
+				break;
+			}
+
+			continue;
+		}
+
+		t = savegame.best_assault_times[n];
+
+		if (!t)
+			break;
+
+		sprintf(txt, "%d:%2.2d.%02d", (t / 30) / 60, (t / 30) % 60, 334 * (t % 30) / 100);
+		AddRequesterItem(&Stats_Requester, txt, n == 0 ? R_BEST_TIME : R_NORMAL_TIME, 0, 0);
+	}
+
+	if (!n)
+		AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_NOTIMES], R_NO_TIME, 0, 0);
+
+	if (savegame.QuadbikeKeyFlag)
+	{
+		AddRequesterItem(&Stats_Requester, " ", 0, 0, 0);
+
+		for (n = -1; n < 10; n++)	//-1 to add the heading
+		{
+			if (n == -1)
+			{
+				switch (gameflow.language)
+				{
+				case 1:
+					AddRequesterItem(&Stats_Requester, "Course de moto", R_HEADING, 0, 0);
+					break;
+
+				case 2:
+					AddRequesterItem(&Stats_Requester, "Quadbike Teststrecke", R_HEADING, 0, 0);
+					break;
+
+				case 5:
+					AddRequesterItem(&Stats_Requester, "Circuito per moto", R_HEADING, 0, 0);
+					break;
+
+				case 6:
+					AddRequesterItem(&Stats_Requester, "Circuito Moto Quad", R_HEADING, 0, 0);
+					break;
+
+				default:
+					AddRequesterItem(&Stats_Requester, "Quadbike Track", R_HEADING, 0, 0);
+					break;
+				}
+
+				continue;
+			}
+
+			t = savegame.best_quadbike_times[n];
+
+			if (!t)
+				break;
+
+			sprintf(txt, "%d:%2.2d.%02d", (t / 30) / 60, (t / 30) % 60, 334 * (t % 30) / 100);
+			AddRequesterItem(&Stats_Requester, txt, n == 0 ? R_BEST_TIME : R_NORMAL_TIME, 0, 0);
+		}
+	}
+
+	mode = 1;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -584,4 +713,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00439DC0, SetPCRequesterSize, replace);
 	INJECT(0x00439E00, AddAssaultTime, replace);
 	INJECT(0x00439E60, AddQuadbikeTime, replace);
+	INJECT(0x00439EC0, ShowGymStatsText, replace);
 }

@@ -17,6 +17,7 @@ void AddRequesterItem(REQUEST_INFO* req, const char* text1, ulong flags1, const 
 void SetPCRequesterSize(REQUEST_INFO* req, long nLines, long y);
 long AddAssaultTime(ulong time);
 long AddQuadbikeTime(ulong time);
+void ShowGymStatsText(const char* time, long type);
 
 #define Inv_AddItem	( (long(__cdecl*)(long)) 0x004378B0 )
 #define Inv_RemoveItem	( (long(__cdecl*)(long)) 0x00438420 )
