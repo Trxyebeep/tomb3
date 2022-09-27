@@ -827,12 +827,20 @@ void ShowEndStatsText()
 	numsecrets = 0;
 	pS = &savegame.start[0].secrets_found;
 
+#ifdef RANDO_STUFF	//No bonus level secrets please
+	totallevels--;
+#endif
+
 	for (num = 0, i = 0; i < totallevels; i++, pS += sizeof(START_INFO))
 	{
 		numsecrets += (*pS & 1) + ((*pS >> 1) & 1) + ((*pS >> 2) & 1) + ((*pS >> 3) & 1) +
 			((*pS >> 4) & 1) + ((*pS >> 5) & 1) + ((*pS >> 6) & 1) + ((*pS >> 7) & 1);
 		num += LevelSecrets[i];
 	}
+
+#ifdef RANDO_STUFF
+	totallevels++;
+#endif
 
 	sprintf(txt, "%d %s %d", numsecrets, GF_GameStrings[GT_OF], num);
 	AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_STAT_SECRETS], R_LEFTALIGN, txt, R_RIGHTALIGN);
