@@ -668,7 +668,7 @@ tomb3decomp progress.
 0x00439E60	+	AddQuadbikeTime
 0x00439EC0	+	ShowGymStatsText
 0x0043A220	+	ShowStatsText
-0x0043A5B0		ShowEndStatsText
+0x0043A5B0	+	ShowEndStatsText
 
 
 		game/items.cpp

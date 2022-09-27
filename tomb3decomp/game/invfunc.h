@@ -19,8 +19,8 @@ long AddAssaultTime(ulong time);
 long AddQuadbikeTime(ulong time);
 void ShowGymStatsText(const char* time, long type);
 void ShowStatsText(const char* time, long type);
+void ShowEndStatsText();
 
 #define Inv_AddItem	( (long(__cdecl*)(long)) 0x004378B0 )
 #define Inv_RemoveItem	( (long(__cdecl*)(long)) 0x00438420 )
 #define Inv_RequestItem	( (long(__cdecl*)(long)) 0x00438380 )
-#define ShowEndStatsText	( (void(__cdecl*)()) 0x0043A5B0 )

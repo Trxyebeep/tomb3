@@ -5,6 +5,7 @@
 #include "text.h"
 #include "sound.h"
 #include "gameflow.h"
+#include "../specific/smain.h"
 
 static ushort req_bgnd_gour1[16] =
 {
@@ -779,6 +780,105 @@ void ShowStatsText(const char* time, long type)
 	mode = 1;
 }
 
+void ShowEndStatsText()
+{
+	uchar* pS;
+	static long mode;
+	long totallevels, i, num, numsecrets;
+	char txt[32];
+
+	if (mode == 1)
+	{
+		if (Display_Requester(&Stats_Requester, 0, 1))
+			mode = 0;
+		else
+		{
+			inputDB = 0;
+			input = 0;
+		}
+
+		return;
+	}
+
+	Stats_Requester.noselector = 1;
+	SetPCRequesterSize(&Stats_Requester, 7, -32);
+	Stats_Requester.line_height = 18;
+	Stats_Requester.item = 0;
+	Stats_Requester.selected = 0;
+	Stats_Requester.line_offset = 0;
+	Stats_Requester.line_oldoffset = 0;
+	Stats_Requester.pixwidth = 304;
+	Stats_Requester.xpos = 0;
+	Stats_Requester.zpos = 0;
+	Stats_Requester.itemtexts1 = &Valid_Level_Strings[0][0];
+	Stats_Requester.itemtexts2 = &Valid_Level_Strings2[0][0];
+	Stats_Requester.itemtextlen = 50;
+	Init_Requester(&Stats_Requester);
+	SetRequesterHeading(&Stats_Requester, GF_GameStrings[GT_GAMESTATS], 0, 0, 0);
+
+	totallevels = gameflow.num_levels - gameflow.num_demos;
+
+	for (num = 0, i = 1; i < totallevels; i++)	//start at 1 because we don't need Gym
+		num += savegame.start[i].timer;
+
+	sprintf(txt, "%02d:%02d:%02d", num / 30 / 3600, num / 30 / 60 % 60, num / 30 % 60);
+	AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_STAT_TIME], R_LEFTALIGN, txt, R_RIGHTALIGN);
+
+	numsecrets = 0;
+	pS = &savegame.start[0].secrets_found;
+
+	for (num = 0, i = 0; i < totallevels; i++, pS += sizeof(START_INFO))
+	{
+		numsecrets += (*pS & 1) + ((*pS >> 1) & 1) + ((*pS >> 2) & 1) + ((*pS >> 3) & 1) +
+			((*pS >> 4) & 1) + ((*pS >> 5) & 1) + ((*pS >> 6) & 1) + ((*pS >> 7) & 1);
+		num += LevelSecrets[i];
+	}
+
+	sprintf(txt, "%d %s %d", numsecrets, GF_GameStrings[GT_OF], num);
+	AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_STAT_SECRETS], R_LEFTALIGN, txt, R_RIGHTALIGN);
+
+	for (num = 0, i = 1; i < totallevels; i++)
+		num += savegame.start[i].kills;
+
+	sprintf(txt, "%d", num);
+	AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_STAT_KILLS], R_LEFTALIGN, txt, R_RIGHTALIGN);
+
+	for (num = 0, i = 1; i < totallevels; i++)
+		num += savegame.start[i].ammo_used;
+
+	sprintf(txt, "%d", num);
+	AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_STAT_AMMO], R_LEFTALIGN, txt, R_RIGHTALIGN);
+
+	for (num = 0, i = 1; i < totallevels; i++)
+		num += savegame.start[i].ammo_hit;
+
+	sprintf(txt, "%d", num);
+	AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_STAT_RATIO], R_LEFTALIGN, txt, R_RIGHTALIGN);
+
+	for (num = 0, i = 1; i < totallevels; i++)
+		num += savegame.start[i].health_used;
+
+	if (num & 1)
+		sprintf(txt, "%d.5", num >> 1);
+	else
+		sprintf(txt, "%d.0", num >> 1);
+
+	AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_STAT_HEALTH], R_LEFTALIGN, txt, R_RIGHTALIGN);
+
+	for (num = 0, i = 1; i < totallevels; i++)
+		num += savegame.start[i].distance_travelled;
+
+	num /= 445;
+
+	if (num < 1000)
+		sprintf(txt, "%dm", num);
+	else
+		sprintf(txt, "%d.%02dkm", num / 1000, num % 100);
+
+	AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_STAT_DISTANCE], R_LEFTALIGN, txt, R_RIGHTALIGN);
+	mode = 1;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -797,4 +897,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00439E60, AddQuadbikeTime, replace);
 	INJECT(0x00439EC0, ShowGymStatsText, replace);
 	INJECT(0x0043A220, ShowStatsText, replace);
+	INJECT(0x0043A5B0, ShowEndStatsText, inject_rando ? 1 : replace);
 }
