@@ -964,6 +964,25 @@ void Inv_RingMotionCameraPitch(RING_INFO* ring, short target)
 	imo->camera_pitch_rate = target / imo->count;
 }
 
+void Inv_RingMotionItemSelect(RING_INFO* ring, INVENTORY_ITEM* inv_item)
+{
+	IMOTION_INFO* imo;
+
+	imo = ring->imo;
+
+	imo->item_ptxrot_target = inv_item->pt_xrot_sel;
+	imo->item_ptxrot_rate = inv_item->pt_xrot_sel / imo->count;
+
+	imo->item_xrot_target = inv_item->x_rot_sel;
+	imo->item_xrot_rate = (inv_item->x_rot_sel - inv_item->x_rot_nosel) / imo->count;
+
+	imo->item_ytrans_target = inv_item->ytrans_sel;
+	imo->item_ytrans_rate = inv_item->ytrans_sel / imo->count;
+
+	imo->item_ztrans_target = inv_item->ztrans_sel;
+	imo->item_ztrans_rate = inv_item->ztrans_sel / imo->count;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -991,4 +1010,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00439000, Inv_RingMotionRotation, replace);
 	INJECT(0x00439030, Inv_RingMotionCameraPos, replace);
 	INJECT(0x00439060, Inv_RingMotionCameraPitch, replace);
+	INJECT(0x00439080, Inv_RingMotionItemSelect, replace);
 }

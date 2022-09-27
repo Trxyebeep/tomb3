@@ -28,6 +28,7 @@ void Inv_RingMotionRadius(RING_INFO* ring, short target);
 void Inv_RingMotionRotation(RING_INFO* ring, short rotation, short target);
 void Inv_RingMotionCameraPos(RING_INFO* ring, short target);
 void Inv_RingMotionCameraPitch(RING_INFO* ring, short target);
+void Inv_RingMotionItemSelect(RING_INFO* ring, INVENTORY_ITEM* inv_item);
 
 #define Inv_AddItem	( (long(__cdecl*)(long)) 0x004378B0 )
 #define Inv_RemoveItem	( (long(__cdecl*)(long)) 0x00438420 )
