@@ -505,6 +505,19 @@ void AddRequesterItem(REQUEST_INFO* req, const char* text1, ulong flags1, const 
 	req->item++;
 }
 
+void SetPCRequesterSize(REQUEST_INFO* req, long nLines, long y)
+{
+	long h;
+
+	h = GetRenderHeight() / 2 / 18;	//HMMMM
+
+	if (h > nLines)
+		h = nLines;
+
+	req->ypos = (short)y;
+	req->vis_lines = (ushort)h;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -518,4 +531,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00439C30, RemoveAllReqItems, replace);
 	INJECT(0x00439C50, ChangeRequesterItem, replace);
 	INJECT(0x00439D10, AddRequesterItem, replace);
+	INJECT(0x00439DC0, SetPCRequesterSize, replace);
 }

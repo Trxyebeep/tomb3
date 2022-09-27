@@ -663,7 +663,7 @@ tomb3decomp progress.
 0x00439C30	+	RemoveAllReqItems
 0x00439C50	+	ChangeRequesterItem
 0x00439D10	+	AddRequesterItem
-0x00439DC0		SetPCRequesterSize
+0x00439DC0	+	SetPCRequesterSize
 0x00439E00		AddAssaultTime
 0x00439E60		AddQuadbikeTime
 0x00439EC0		ShowGymStatsText

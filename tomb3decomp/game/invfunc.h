@@ -14,6 +14,7 @@ void SetRequesterHeading(REQUEST_INFO* req, const char* text1, ulong flags1, con
 void RemoveAllReqItems(REQUEST_INFO* req);
 void ChangeRequesterItem(REQUEST_INFO* req, long item, const char* text1, ulong flags1, const char* text2, ulong flags2);
 void AddRequesterItem(REQUEST_INFO* req, const char* text1, ulong flags1, const char* text2, ulong flags2);
+void SetPCRequesterSize(REQUEST_INFO* req, long nLines, long y);
 
 #define Inv_AddItem	( (long(__cdecl*)(long)) 0x004378B0 )
 #define Inv_RemoveItem	( (long(__cdecl*)(long)) 0x00438420 )
