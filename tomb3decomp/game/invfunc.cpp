@@ -518,6 +518,31 @@ void SetPCRequesterSize(REQUEST_INFO* req, long nLines, long y)
 	req->vis_lines = (ushort)h;
 }
 
+long AddAssaultTime(ulong time)
+{
+	long n, add;
+
+	for (n = 0, add = 0; n < 10; n++)
+	{
+		if (!savegame.best_assault_times[n] || time < savegame.best_assault_times[n])	//we have an open slot or we got a better time
+		{
+			add = 1;
+			break;
+		}
+	}
+
+	if (add)
+	{
+		for (int i = 9; i > n; i--)
+			savegame.best_assault_times[i] = savegame.best_assault_times[i - 1];	//move all slower times back 1
+
+		savegame.best_assault_times[n] = time;
+		return 1;
+	}
+
+	return 0;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -532,4 +557,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00439C50, ChangeRequesterItem, replace);
 	INJECT(0x00439D10, AddRequesterItem, replace);
 	INJECT(0x00439DC0, SetPCRequesterSize, replace);
+	INJECT(0x00439E00, AddAssaultTime, replace);
 }
