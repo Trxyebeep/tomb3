@@ -1705,7 +1705,7 @@ struct RING_INFO
 	short rot_adderL;
 	short rot_adderR;
 	PHD_3DPOS ringpos;
-	PHD_3DPOS camera;
+	PHD_3DPOS camerapos;
 	PHD_VECTOR light;
 	IMOTION_INFO* imo;
 };

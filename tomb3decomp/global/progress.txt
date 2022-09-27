@@ -649,7 +649,7 @@ tomb3decomp progress.
 0x00438FA0	+	Inv_RingMotionSetup
 0x00438FD0	+	Inv_RingMotionRadius
 0x00439000	+	Inv_RingMotionRotation
-0x00439030		Inv_RingMotionCameraPos
+0x00439030	+	Inv_RingMotionCameraPos
 0x00439060		Inv_RingMotionCameraPitch
 0x00439080		Inv_RingMotionItemSelect
 0x004390E0		Inv_RingMotionItemDeselect
