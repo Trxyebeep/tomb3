@@ -1150,6 +1150,48 @@ void Inv_RingGetView(RING_INFO* ring, PHD_3DPOS* viewer)
 	viewer->z_rot = 0;
 }
 
+void Inv_RingLight(RING_INFO* ring, short object_number)
+{
+	long x, y, z;
+
+	LightCol[M00] = 3312;
+	LightCol[M01] = 3312;
+	LightCol[M02] = 0;
+
+	LightCol[M10] = 1664;
+	LightCol[M11] = 3312;
+	LightCol[M12] = 0;
+
+	LightCol[M20] = 0;
+	LightCol[M21] = 3312;
+	LightCol[M22] = 3072;
+
+	smcr = 32;
+	smcg = 32;
+	smcb = 32;
+
+	x = 0x4000;
+	y = -0x4000;
+	z = 0x3000;
+	LPos[0].x = (x * w2v_matrix[M00] + y * w2v_matrix[M01] + z * w2v_matrix[M02]) >> W2V_SHIFT;
+	LPos[0].y = (x * w2v_matrix[M10] + y * w2v_matrix[M11] + z * w2v_matrix[M12]) >> W2V_SHIFT;
+	LPos[0].z = (x * w2v_matrix[M20] + y * w2v_matrix[M21] + z * w2v_matrix[M22]) >> W2V_SHIFT;
+
+	x = -0x4000;
+	y = -0x4000;
+	z = 0x3000;
+	LPos[1].x = (x * w2v_matrix[M00] + y * w2v_matrix[M01] + z * w2v_matrix[M02]) >> W2V_SHIFT;
+	LPos[1].y = (x * w2v_matrix[M10] + y * w2v_matrix[M11] + z * w2v_matrix[M12]) >> W2V_SHIFT;
+	LPos[1].z = (x * w2v_matrix[M20] + y * w2v_matrix[M21] + z * w2v_matrix[M22]) >> W2V_SHIFT;
+
+	x = 0;
+	y = 0x2000;
+	z = 0x3000;
+	LPos[2].x = (x * w2v_matrix[M00] + y * w2v_matrix[M01] + z * w2v_matrix[M02]) >> W2V_SHIFT;
+	LPos[2].y = (x * w2v_matrix[M10] + y * w2v_matrix[M11] + z * w2v_matrix[M12]) >> W2V_SHIFT;
+	LPos[2].z = (x * w2v_matrix[M20] + y * w2v_matrix[M21] + z * w2v_matrix[M22]) >> W2V_SHIFT;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -1183,4 +1225,5 @@ void inject_invfunc(bool replace)
 
 	INJECT(0x004387A0, Inv_RingInit, replace);
 	INJECT(0x004388B0, Inv_RingGetView, replace);
+	INJECT(0x00438910, Inv_RingLight, replace);
 }
