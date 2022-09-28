@@ -638,7 +638,7 @@ tomb3decomp progress.
 0x00438530		Inv_GetItemOption
 0x00438770		RemoveInventoryText
 0x004387A0	+	Inv_RingInit
-0x004388B0		Inv_RingGetView
+0x004388B0	+	Inv_RingGetView
 0x00438910		Inv_RingLight
 0x00438AB0		Inv_GlobeLight
 0x00438D60		Inv_RingCalcAdders

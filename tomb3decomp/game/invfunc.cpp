@@ -6,6 +6,7 @@
 #include "sound.h"
 #include "gameflow.h"
 #include "../specific/smain.h"
+#include "../3dsystem/3d_gen.h"
 
 static ushort req_bgnd_gour1[16] =
 {
@@ -1136,6 +1137,19 @@ void Inv_RingInit(RING_INFO* ring, short type, INVENTORY_ITEM** list, short qty,
 	ring->light.z = 1024;
 }
 
+void Inv_RingGetView(RING_INFO* ring, PHD_3DPOS* viewer)
+{
+	short angles[2];
+
+	phd_GetVectorAngles(-ring->camerapos.x_pos, -96 - ring->camerapos.y_pos, ring->radius - ring->camerapos.z_pos, angles);
+	viewer->x_pos = ring->camerapos.x_pos;
+	viewer->y_pos = ring->camerapos.y_pos;
+	viewer->z_pos = ring->camerapos.z_pos;
+	viewer->x_rot = angles[1] + ring->camera_pitch;
+	viewer->y_rot = angles[0];
+	viewer->z_rot = 0;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -1168,4 +1182,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00438D90, Inv_RingDoMotions, replace);
 
 	INJECT(0x004387A0, Inv_RingInit, replace);
+	INJECT(0x004388B0, Inv_RingGetView, replace);
 }
