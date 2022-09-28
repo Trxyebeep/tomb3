@@ -37,6 +37,8 @@ void Inv_RingGetView(RING_INFO* ring, PHD_3DPOS* viewer);
 void Inv_RingLight(RING_INFO* ring, short object_number);
 void Inv_GlobeLight(short mesh_number);
 void Inv_RingCalcAdders(RING_INFO* ring, short duration);
+void Inv_RingRotateLeft(RING_INFO* ring);
+void Inv_RingRotateRight(RING_INFO* ring);
 
 #define Inv_AddItem	( (long(__cdecl*)(long)) 0x004378B0 )
 #define Inv_RemoveItem	( (long(__cdecl*)(long)) 0x00438420 )

@@ -1294,6 +1294,30 @@ void Inv_RingCalcAdders(RING_INFO* ring, short duration)
 	ring->rot_adderR = -(ring->angle_adder / duration);
 }
 
+void Inv_RingRotateLeft(RING_INFO* ring)
+{
+	ring->rotating = 1;
+	ring->target_object = ring->current_object - 1;
+
+	if (ring->target_object < 0)
+		ring->target_object = ring->number_of_objects - 1;
+
+	ring->rot_count = 24;
+	ring->rot_adder = ring->rot_adderL;
+}
+
+void Inv_RingRotateRight(RING_INFO* ring)
+{
+	ring->rotating = 1;
+	ring->target_object = ring->current_object + 1;
+
+	if (ring->target_object >= ring->number_of_objects)
+		ring->target_object = 0;
+
+	ring->rot_count = 24;
+	ring->rot_adder = ring->rot_adderR;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -1330,4 +1354,6 @@ void inject_invfunc(bool replace)
 	INJECT(0x00438910, Inv_RingLight, replace);
 	INJECT(0x00438AB0, Inv_GlobeLight, replace);
 	INJECT(0x00438D60, Inv_RingCalcAdders, replace);
+	INJECT(0x00438ED0, Inv_RingRotateLeft, replace);
+	INJECT(0x00438F00, Inv_RingRotateRight, replace);
 }
