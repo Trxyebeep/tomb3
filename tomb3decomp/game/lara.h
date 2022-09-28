@@ -143,6 +143,10 @@ void lara_col_swandive(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_fastdive(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_wade(ITEM_INFO* item, COLL_INFO* coll);
 void LaraHangTest(ITEM_INFO* item, COLL_INFO* coll);
+#ifdef TROYESTUFF
+void lara_as_duckroll(ITEM_INFO* item, COLL_INFO* coll);
+void lara_col_duckroll(ITEM_INFO* item, COLL_INFO* coll);
+#endif
 
 #define LookUpDown	( (void(__cdecl*)()) 0x004446E0 )
 #define LookLeftRight	( (void(__cdecl*)()) 0x00444770 )

@@ -107,7 +107,11 @@ void(*lara_control_routines[89])(ITEM_INFO* item, COLL_INFO* coll) =
 	lara_void_func,
 	lara_as_deathslide,
 	lara_as_duck,
+#ifdef TROYESTUFF
+	lara_as_duckroll,
+#else
 	lara_as_duck,
+#endif
 	lara_as_dash,
 	lara_as_dashdive,
 	lara_as_hang2,
@@ -200,7 +204,11 @@ void(*lara_collision_routines[89])(ITEM_INFO* item, COLL_INFO* coll) =
 	lara_void_func,
 	lara_void_func,
 	lara_col_duck,
+#ifdef TROYESTUFF
+	lara_col_duckroll,
+#else
 	lara_col_duck,
+#endif
 	lara_col_dash,
 	lara_col_dashdive,
 	lara_col_hang2,

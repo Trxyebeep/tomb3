@@ -367,7 +367,13 @@ void lara_slide_slope(ITEM_INFO* item, COLL_INFO* coll)
 
 		if ((ABS(coll->tilt_x)) <= 2 && (ABS(coll->tilt_z)) <= 2)
 		{
-			item->goal_anim_state = AS_STOP;
+#ifdef TROYESTUFF
+			if (input & IN_FORWARD && item->anim_number == ANIM_SLIDE)
+				item->goal_anim_state = AS_RUN;
+			else
+#endif
+				item->goal_anim_state = AS_STOP;
+
 			StopSoundEffect(SFX_LARA_SLIPPING);
 		}
 	}
@@ -622,6 +628,30 @@ void lara_as_duck(ITEM_INFO* item, COLL_INFO* coll)
 		lara.torso_y_rot = 0;
 		item->goal_anim_state = AS_ALL4S;
 	}
+
+#ifdef TROYESTUFF
+	if (input & IN_SPRINT && !(input & IN_DRAW))
+	{
+		if (LaraFloorFront(item, item->pos.y_rot, 512) < 384 && LaraFloorFront(item, item->pos.y_rot, 256) >= -384)
+		{
+			if ((input & IN_DUCK || lara.keep_ducked && lara.water_status != LARA_WADE) && lara.gun_status == LG_ARMLESS)
+			{
+				if (lara_item->anim_number == ANIM_DUCKBREATHE || lara_item->anim_number == 245)
+				{
+					if (lara.gun_type != LG_FLARE || lara.flare_age && lara.flare_age < 900)
+					{
+						item->anim_number = 218;
+						item->frame_number = anims[218].frame_base;
+						item->current_anim_state = AS_DUCKROLL;
+						item->goal_anim_state = AS_DUCKROLL;
+						lara.torso_x_rot = 0;
+						lara.torso_y_rot = 0;
+					}
+				}
+			}
+		}
+	}
+#endif
 }
 
 void lara_col_duck(ITEM_INFO* item, COLL_INFO* coll)
@@ -1309,7 +1339,11 @@ void lara_as_dash(ITEM_INFO* item, COLL_INFO* coll)
 
 	if (input & IN_DUCK)
 	{
+#ifdef TROYESTUFF
+		item->goal_anim_state = AS_DUCK;
+#else
 		item->goal_anim_state = AS_STOP;
+#endif
 		return;
 	}
 
@@ -2235,7 +2269,11 @@ void lara_as_run(ITEM_INFO* item, COLL_INFO* coll)
 		return;
 	}
 
+#ifdef TROYESTUFF
+	if (input & IN_SPRINT && DashTimer)
+#else
 	if (input & IN_SPRINT && DashTimer == 120)
+#endif
 	{
 		item->goal_anim_state = AS_DASH;
 		return;
@@ -2243,7 +2281,11 @@ void lara_as_run(ITEM_INFO* item, COLL_INFO* coll)
 
 	if (input & IN_DUCK && lara.water_status != LARA_WADE)
 	{
+#ifdef TROYESTUFF
+		item->goal_anim_state = AS_DUCK;
+#else
 		item->goal_anim_state = AS_STOP;
+#endif
 		return;
 	}
 
@@ -3930,6 +3972,51 @@ void LaraHangTest(ITEM_INFO* item, COLL_INFO* coll)
 		}
 	}
 }
+
+#ifdef TROYESTUFF
+void lara_as_duckroll(ITEM_INFO* item, COLL_INFO* coll)
+{
+	camera.target_elevation = -3640;
+	item->goal_anim_state = AS_DUCK;
+}
+
+void lara_col_duckroll(ITEM_INFO* item, COLL_INFO* coll)
+{
+	item->gravity_status = 0;
+	item->fallspeed = 0;
+	lara.move_angle = item->pos.y_rot;
+	coll->bad_pos = 384;
+	coll->facing = item->pos.y_rot;
+	coll->bad_neg = -384;
+	coll->bad_ceiling = 0;
+	coll->slopes_are_walls = 1;
+	coll->radius = 200;
+	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
+
+	if (LaraFallen(item, coll))
+		lara.gun_status = LG_ARMLESS;
+	else if (!TestLaraSlide(item, coll))
+	{
+		if (coll->mid_ceiling >= -362)
+			lara.keep_ducked = 1;
+		else
+			lara.keep_ducked = 0;
+
+		if (coll->mid_floor < coll->bad_neg || coll->front_floor > coll->bad_pos)
+		{
+			item->pos.x_pos = coll->old.x;
+			item->pos.y_pos = coll->old.y;
+			item->pos.z_pos = coll->old.z;
+			return;
+		}
+
+		ShiftItem(item, coll);
+
+		if (!LaraHitCeiling(item, coll))
+			item->pos.y_pos += coll->mid_floor;
+	}
+}
+#endif
 
 void inject_lara(bool replace)
 {
