@@ -1092,6 +1092,50 @@ void Inv_RingDoMotions(RING_INFO* ring)
 	}
 }
 
+/************Ring stuff************/
+
+void Inv_RingInit(RING_INFO* ring, short type, INVENTORY_ITEM** list, short qty, short current, IMOTION_INFO* imo)
+{
+	ring->type = type;
+	ring->list = list;
+	ring->number_of_objects = qty;
+	ring->current_object = current;
+	ring->radius = 0;
+	ring->angle_adder = 0x10000 / qty;
+
+	if (Inventory_Mode == 1)
+		ring->camera_pitch = 1024;
+	else
+		ring->camera_pitch = 0;
+
+	ring->rotating = 0;
+	ring->rot_count = 0;
+	ring->target_object = 0;
+	ring->rot_adder = 0;
+	ring->rot_adderL = 0;
+	ring->rot_adderR = 0;
+	ring->imo = imo;
+	ring->camerapos.x_pos = 0;
+	ring->camerapos.y_pos = -1536;
+	ring->camerapos.z_pos = 896;
+	ring->camerapos.x_rot = 0;
+	ring->camerapos.y_rot = 0;
+	ring->camerapos.z_rot = 0;
+	Inv_RingMotionInit(ring, 32, 0, 1);
+	Inv_RingMotionRadius(ring, 688);
+	Inv_RingMotionCameraPos(ring, -256);
+	Inv_RingMotionRotation(ring, -0x8000, -0x4000 - ring->current_object * ring->angle_adder);
+	ring->ringpos.x_pos = 0;
+	ring->ringpos.y_pos = 0;
+	ring->ringpos.z_pos = 0;
+	ring->ringpos.x_rot = 0;
+	ring->ringpos.y_rot = imo->rotate_target + 0x8000;
+	ring->ringpos.z_rot = 0;
+	ring->light.x = -1536;
+	ring->light.y = 256;
+	ring->light.z = 1024;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -1122,4 +1166,6 @@ void inject_invfunc(bool replace)
 	INJECT(0x00439080, Inv_RingMotionItemSelect, replace);
 	INJECT(0x004390E0, Inv_RingMotionItemDeselect, replace);
 	INJECT(0x00438D90, Inv_RingDoMotions, replace);
+
+	INJECT(0x004387A0, Inv_RingInit, replace);
 }

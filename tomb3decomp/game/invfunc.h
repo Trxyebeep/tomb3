@@ -32,6 +32,8 @@ void Inv_RingMotionItemSelect(RING_INFO* ring, INVENTORY_ITEM* inv_item);
 void Inv_RingMotionItemDeselect(RING_INFO* ring, INVENTORY_ITEM* inv_item);
 void Inv_RingDoMotions(RING_INFO* ring);
 
+void Inv_RingInit(RING_INFO* ring, short type, INVENTORY_ITEM** list, short qty, short current, IMOTION_INFO* imo);
+
 #define Inv_AddItem	( (long(__cdecl*)(long)) 0x004378B0 )
 #define Inv_RemoveItem	( (long(__cdecl*)(long)) 0x00438420 )
 #define Inv_RequestItem	( (long(__cdecl*)(long)) 0x00438380 )
