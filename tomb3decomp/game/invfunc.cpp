@@ -1192,6 +1192,101 @@ void Inv_RingLight(RING_INFO* ring, short object_number)
 	LPos[2].z = (x * w2v_matrix[M20] + y * w2v_matrix[M21] + z * w2v_matrix[M22]) >> W2V_SHIFT;
 }
 
+void Inv_GlobeLight(short mesh_number)
+{
+	long x, y, z;
+
+	if (mesh_number == 1)
+	{
+		LightCol[M00] = 0;
+		LightCol[M01] = 0;
+		LightCol[M02] = 0;
+
+		LightCol[M10] = 256;
+		LightCol[M11] = 256;
+		LightCol[M12] = 256;
+
+		LightCol[M20] = 3840;
+		LightCol[M21] = 3840;
+		LightCol[M22] = 3840;
+	}
+	else if (mesh_number & 0x7E)	//the location "dots"
+	{
+		if (mesh_number == 2 && savegame.LondonComplete ||		//London
+			mesh_number == 4 && savegame.IndiaComplete ||		//India
+			mesh_number == 8 && savegame.PeruComplete ||		//ok
+			mesh_number == 16 && savegame.NevadaComplete ||		//Nevada
+			mesh_number == 32 && savegame.SPacificComplete ||	//South Pacific
+			mesh_number == 64 && savegame.AntarcticaComplete)	//Antarctica
+		{
+			LightCol[M00] = rcossin_tbl[GlobePointLight << 5];
+			LightCol[M01] = rcossin_tbl[GlobePointLight << 5];
+			LightCol[M02] = rcossin_tbl[GlobePointLight << 5];
+
+			LightCol[M10] = 0;
+			LightCol[M11] = 0;
+			LightCol[M12] = 0;
+
+			LightCol[M20] = 0;
+			LightCol[M21] = 0;
+			LightCol[M22] = 0;
+		}
+		else
+		{
+			LightCol[M00] = 0;
+			LightCol[M01] = 0;
+			LightCol[M02] = 0;
+
+			LightCol[M10] = rcossin_tbl[GlobePointLight << 5];
+			LightCol[M11] = rcossin_tbl[GlobePointLight << 5];
+			LightCol[M12] = rcossin_tbl[GlobePointLight << 5];
+
+			LightCol[M20] = 0;
+			LightCol[M21] = 0;
+			LightCol[M22] = 0;
+		}
+	}
+	else
+	{
+		LightCol[M00] = 256;
+		LightCol[M01] = 256;
+		LightCol[M02] = 256;
+
+		LightCol[M10] = 1024;
+		LightCol[M11] = 1024;
+		LightCol[M12] = 1024;
+
+		LightCol[M20] = 256;
+		LightCol[M21] = 256;
+		LightCol[M22] = 256;
+	}
+
+	smcr = 32;
+	smcg = 32;
+	smcb = 32;
+
+	x = 0x1000;
+	y = -0x1000;
+	z = 0xC00;
+	LPos[0].x = (x * w2v_matrix[M00] + y * w2v_matrix[M01] + z * w2v_matrix[M02]) >> W2V_SHIFT;
+	LPos[0].y = (x * w2v_matrix[M10] + y * w2v_matrix[M11] + z * w2v_matrix[M12]) >> W2V_SHIFT;
+	LPos[0].z = (x * w2v_matrix[M20] + y * w2v_matrix[M21] + z * w2v_matrix[M22]) >> W2V_SHIFT;
+
+	x = -0x1000;
+	y = -0x1000;
+	z = 0xC00;
+	LPos[1].x = (x * w2v_matrix[M00] + y * w2v_matrix[M01] + z * w2v_matrix[M02]) >> W2V_SHIFT;
+	LPos[1].y = (x * w2v_matrix[M10] + y * w2v_matrix[M11] + z * w2v_matrix[M12]) >> W2V_SHIFT;
+	LPos[1].z = (x * w2v_matrix[M20] + y * w2v_matrix[M21] + z * w2v_matrix[M22]) >> W2V_SHIFT;
+
+	x = 0;
+	y = 0x800;
+	z = 0xC00;
+	LPos[2].x = (x * w2v_matrix[M00] + y * w2v_matrix[M01] + z * w2v_matrix[M02]) >> W2V_SHIFT;
+	LPos[2].y = (x * w2v_matrix[M10] + y * w2v_matrix[M11] + z * w2v_matrix[M12]) >> W2V_SHIFT;
+	LPos[2].z = (x * w2v_matrix[M20] + y * w2v_matrix[M21] + z * w2v_matrix[M22]) >> W2V_SHIFT;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -1226,4 +1321,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x004387A0, Inv_RingInit, replace);
 	INJECT(0x004388B0, Inv_RingGetView, replace);
 	INJECT(0x00438910, Inv_RingLight, replace);
+	INJECT(0x00438AB0, Inv_GlobeLight, replace);
 }

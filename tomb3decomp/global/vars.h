@@ -203,6 +203,7 @@
 #define GF_Key3Strings_buffer	VAR_(0x006D797C, char*)
 #define GF_Key4Strings_buffer	VAR_(0x006D785C, char*)
 #define GF_BonusLevelEnabled	VAR_(0x00626208, long)
+#define GlobePointLight	VAR_(0x006D62B4, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
