@@ -1439,7 +1439,7 @@ tomb3decomp progress.
 0x00471A30		TriggerLizardMan
 0x00471BD0		ExplodeTribeBoss
 0x00471E30		TriggerSummonSmoke
-0x00471FB0		FindLizardManItemNumber
+0x00471FB0	+	FindLizardManItemNumber
 
 
 		game/willboss.cpp
