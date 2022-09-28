@@ -641,7 +641,7 @@ tomb3decomp progress.
 0x004388B0	+	Inv_RingGetView
 0x00438910	+	Inv_RingLight
 0x00438AB0	+	Inv_GlobeLight
-0x00438D60		Inv_RingCalcAdders
+0x00438D60	+	Inv_RingCalcAdders
 0x00438D90	+	Inv_RingDoMotions
 0x00438ED0		Inv_RingRotateLeft
 0x00438F00		Inv_RingRotateRight

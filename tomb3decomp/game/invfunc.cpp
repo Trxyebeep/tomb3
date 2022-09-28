@@ -1287,6 +1287,13 @@ void Inv_GlobeLight(short mesh_number)
 	LPos[2].z = (x * w2v_matrix[M20] + y * w2v_matrix[M21] + z * w2v_matrix[M22]) >> W2V_SHIFT;
 }
 
+void Inv_RingCalcAdders(RING_INFO* ring, short duration)
+{
+	ring->angle_adder = 0x10000 / ring->number_of_objects;
+	ring->rot_adderL = ring->angle_adder / duration;
+	ring->rot_adderR = -(ring->angle_adder / duration);
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -1322,4 +1329,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x004388B0, Inv_RingGetView, replace);
 	INJECT(0x00438910, Inv_RingLight, replace);
 	INJECT(0x00438AB0, Inv_GlobeLight, replace);
+	INJECT(0x00438D60, Inv_RingCalcAdders, replace);
 }
