@@ -522,9 +522,10 @@ long LoadItems(HANDLE file)
 			wsprintf(exit_message, "LoadItems(): Bad Object number (%d) on Item %d", item->object_number, i);
 			return 0;
 		}
-
-		InitialiseItem(i);
 	}
+
+	for (int i = 0; i < level_items; i++)
+		InitialiseItem(i);
 
 	return 1;
 }
