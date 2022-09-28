@@ -1709,4 +1709,22 @@ struct RING_INFO
 	PHD_VECTOR light;
 	IMOTION_INFO* imo;
 };
+
+struct BOSS_STRUCT
+{
+	short attack_count;
+	short death_count;
+	uchar attack_flag;
+	uchar attack_type;
+	uchar attack_head_count;
+	uchar ring_count;
+	short explode_count;
+	short LizmanItem;
+	short LizmanRoom;
+	short hp_counter;
+	short dropped_icon;
+	uchar charged;
+	uchar dead;
+	PHD_VECTOR BeamTarget;
+};
 #pragma pack(pop)

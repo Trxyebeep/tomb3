@@ -204,6 +204,8 @@
 #define GF_Key4Strings_buffer	VAR_(0x006D785C, char*)
 #define GF_BonusLevelEnabled	VAR_(0x00626208, long)
 #define GlobePointLight	VAR_(0x006D62B4, long)
+#define bossdata	VAR_(0x006D2240, BOSS_STRUCT)
+#define shield_active	VAR_(0x006CFAA0, char)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -361,6 +363,8 @@
 #define LevelSecrets	ARRAY_(0x004C70B8, short, [21])
 #define RequesterFlags1	ARRAY_(0x006D6800, ulong, [24])
 #define RequesterFlags2	ARRAY_(0x006D67A0, ulong, [24])
+#define TrigDynamics	ARRAY_(0x006CFAC0, PHD_VECTOR, [3])
+#define TribeBossShield	ARRAY_(0x006CFB00, SHIELD_POINTS, [40])
 
 
 /*constants*/
