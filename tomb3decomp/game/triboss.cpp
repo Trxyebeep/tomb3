@@ -6,9 +6,15 @@
 #include "box.h"
 #include "effect2.h"
 #include "../specific/game.h"
+#include "sound.h"
 
 static long radii[5] = { 200, 400, 500, 500, 475 };
 static long heights[5] = { -1536, -1280, -832, -384, 0 };
+static long dradii[5] = { 1600, 5600, 6400, 5600, 1600 };
+static long dheights1[5] = { -7680, -4224, -768, 2688, 6144 };
+static long dheights2[5] = { -1536, -1152, -768, -384, 0 };
+static long death_radii[5];
+static long death_heights[5];
 
 static short FindLizardManItemNumber(short room_number)
 {
@@ -148,10 +154,77 @@ void TriggerSummonSmoke(long x, long y, long z)
 	sptr->Height = sptr->dHeight >> 1;
 }
 
+static void ExplodeTribeBoss(ITEM_INFO* item)
+{
+	SHIELD_POINTS* p;
+	long x, y, z, rad, angle, r, g, b, m;
+
+	TribeBossShieldOn = 0;
+
+	if (bossdata.explode_count == 1 || bossdata.explode_count == 15 || bossdata.explode_count == 25 ||
+		bossdata.explode_count == 35 || bossdata.explode_count == 45 || bossdata.explode_count == 55)
+	{
+		x = (GetRandomDraw() & 0x3FF) + item->pos.x_pos - 512;
+		y = item->pos.y_pos - (GetRandomDraw() & 0x3FF) - 256;
+		z = (GetRandomDraw() & 0x3FF) + item->pos.z_pos - 512;
+		ExpRings[bossdata.ring_count].x = x;
+		ExpRings[bossdata.ring_count].y = y;
+		ExpRings[bossdata.ring_count].z = z;
+		ExpRings[bossdata.ring_count].on = 1;
+		bossdata.ring_count++;
+		TriggerExplosionSparks(x, y, z, 3, -2, 2, 0);
+
+		for (int i = 0; i < 2; i++)
+			TriggerExplosionSparks(x, y, z, 3, -1, 2, 0);
+
+		SoundEffect(SFX_BLAST_CIRCLE, &item->pos, 0x800000 | SFX_SETPITCH);
+	}
+
+	for (int i = 0; i < 5; i++)
+	{
+		if (bossdata.explode_count < 128)
+		{
+			death_radii[i] = (dradii[i] >> 4) + ((bossdata.explode_count * dradii[i]) >> 7);
+			death_heights[i] = dheights2[i] + ((bossdata.explode_count * (dheights1[i] - dheights2[i])) >> 7);
+		}
+	}
+
+	p = TribeBossShield;
+
+	for (int i = 0; i < 5; i++)
+	{
+		y = death_heights[i];
+		rad = death_radii[i];
+		angle = (wibble & 0x3F) << 3;
+
+		for (int j = 0; j < 8; j++, p++)
+		{
+			p->x = short((rad * rcossin_tbl[angle << 1]) >> 11);
+			p->y = (short)y;
+			p->z = short((rad * rcossin_tbl[(angle << 1) + 1]) >> 11);
+
+			if (!i || i == 16 || bossdata.explode_count >= 64)
+				p->rgb = 0;
+			else
+			{
+				m = 64 - bossdata.explode_count;
+				r = (m * (GetRandomDraw() & 0x1F)) >> 6;
+				b = (GetRandomDraw() & 0x3F) + 224;
+				g = (m * ((b >> 2) + (GetRandomDraw() & 0x3F))) >> 6;
+				b = (m * b) >> 6;
+				p->rgb = (b << 16) | (g << 8) | r;	//bgr
+			}
+
+			angle = (angle + 512) & 0xFFF;
+		}
+	}
+}
+
 void inject_triboss(bool replace)
 {
 	INJECT(0x00471FB0, FindLizardManItemNumber, replace);
 	INJECT(0x00471570, InitialiseTribeBoss, replace);
 	INJECT(0x00471960, RotateHeadXAngle, replace);
 	INJECT(0x00471E30, TriggerSummonSmoke, replace);
+	INJECT(0x00471BD0, ExplodeTribeBoss, replace);
 }
