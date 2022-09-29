@@ -285,6 +285,79 @@ void TriggerLizardMan()
 	r->item_number = bossdata.LizmanItem;
 }
 
+void TriggerElectricSparks(GAME_VECTOR* pos, long shield)
+{
+	SPARKS* sptr;
+	long dx, dz;
+
+	dx = lara_item->pos.x_pos - pos->x;
+	dz = lara_item->pos.z_pos - pos->z;
+
+	if (dx < -0x5000 || dx > 0x5000 || dz < -0x5000 || dz > 0x5000)
+		return;
+
+	TrigDynamics[1].x = pos->x;
+	TrigDynamics[1].y = pos->y;
+	TrigDynamics[1].z = pos->z;
+	
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 255;
+	sptr->sG = 255;
+	sptr->sB = 255;
+
+	if (shield)
+	{
+		sptr->dR = 255;
+		sptr->dG = (GetRandomControl() & 0x7F) + 64;
+		sptr->dB = 0;
+	}
+	else if (bossdata.attack_type)
+	{
+		sptr->dR = 0;
+		sptr->dB = (GetRandomControl() & 0x7F) + 64;
+		sptr->dG = (sptr->dB >> 1) + 128;
+	}
+	else
+	{
+		sptr->dR = 0;
+		sptr->dG = (GetRandomControl() & 0x7F) + 64;
+		sptr->dB = (sptr->dG >> 1) + 128;
+	}
+
+	sptr->ColFadeSpeed = 3;
+	sptr->FadeToBlack = 8;
+	sptr->Life = 16;
+	sptr->sLife = 16;
+	sptr->TransType = 2;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 0x1F) + pos->x - 16;
+	sptr->y = (GetRandomControl() & 0x1F) + pos->y - 16;
+	sptr->z = (GetRandomControl() & 0x1F) + pos->z - 16;
+	sptr->Xvel = 4 * (GetRandomControl() & 0x1FF) - 1024;
+	sptr->Yvel = 2 * (GetRandomControl() & 0x1FF) - 512;
+	sptr->Zvel = 4 * (GetRandomControl() & 0x1FF) - 1024;
+
+	if (shield)
+	{
+		sptr->Xvel >>= 1;
+		sptr->Yvel >>= 1;
+		sptr->Zvel >>= 1;
+	}
+
+	sptr->Friction = 4;
+	sptr->Flags = 2;
+	sptr->Scalar = 3;
+	sptr->Width = (GetRandomControl() & 1) + 1;
+	sptr->sWidth = sptr->Width;
+	sptr->dWidth = (GetRandomControl() & 3) + 4;
+	sptr->Height = (GetRandomControl() & 1) + 1;
+	sptr->sHeight = sptr->Height;
+	sptr->dHeight = (GetRandomControl() & 3) + 4;
+	sptr->Gravity = 15;
+	sptr->MaxYvel = 0;
+}
+
 void inject_triboss(bool replace)
 {
 	INJECT(0x00471FB0, FindLizardManItemNumber, replace);
@@ -294,4 +367,5 @@ void inject_triboss(bool replace)
 	INJECT(0x00471BD0, ExplodeTribeBoss, replace);
 	INJECT(0x00471520, TribeBossDie, replace);
 	INJECT(0x00471A30, TriggerLizardMan, replace);
+	INJECT(0x00471350, TriggerElectricSparks, replace);
 }
