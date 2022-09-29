@@ -7,6 +7,8 @@
 #include "effect2.h"
 #include "../specific/game.h"
 #include "sound.h"
+#include "items.h"
+#include "lot.h"
 
 static long radii[5] = { 200, 400, 500, 500, 475 };
 static long heights[5] = { -1536, -1280, -832, -384, 0 };
@@ -220,6 +222,18 @@ static void ExplodeTribeBoss(ITEM_INFO* item)
 	}
 }
 
+static void TribeBossDie(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+	item->collidable = 0;
+	item->hit_points = NO_TARGET;
+	KillItem(item_number);
+	DisableBaddieAI(item_number);
+	item->flags |= IFL_INVISIBLE;
+}
+
 void inject_triboss(bool replace)
 {
 	INJECT(0x00471FB0, FindLizardManItemNumber, replace);
@@ -227,4 +241,5 @@ void inject_triboss(bool replace)
 	INJECT(0x00471960, RotateHeadXAngle, replace);
 	INJECT(0x00471E30, TriggerSummonSmoke, replace);
 	INJECT(0x00471BD0, ExplodeTribeBoss, replace);
+	INJECT(0x00471520, TribeBossDie, replace);
 }

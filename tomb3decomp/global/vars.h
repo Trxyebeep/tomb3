@@ -369,6 +369,7 @@
 
 /*constants*/
 #define NO_HEIGHT -32512
+#define NO_TARGET	-16384
 #define NO_ITEM	-1
 #define W2V_SHIFT	14
 #define MAX_TLVERTICES	0x2400
