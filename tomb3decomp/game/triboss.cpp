@@ -358,6 +358,173 @@ void TriggerElectricSparks(GAME_VECTOR* pos, long shield)
 	sptr->MaxYvel = 0;
 }
 
+void FindClosestShieldPoint(long x, long y, long z, ITEM_INFO* item)
+{
+	SHIELD_POINTS* p;
+	GAME_VECTOR pos;
+	long affected[5];
+	long point, dist, bestdist, dx, dy, dz, c, n;
+	long r, g, b;
+
+	affected[0] = 0;
+	affected[1] = -1;
+	affected[2] = 1;
+	affected[3] = -8;
+	affected[4] = 8;
+
+	bestdist = 0x7FFFFFFF;
+	point = 0;
+
+	for (int i = 0; i < 40; i++)
+	{
+		p = &TribeBossShield[i];
+
+		if (i >= 16 && i <= 23)
+		{
+			dx = p->x + item->pos.x_pos - x;
+			dy = p->y + item->pos.y_pos - y;
+			dz = p->z + item->pos.z_pos - z;
+			dist = SQUARE(dx) + SQUARE(dy) + SQUARE(dz);
+
+			if (dist < bestdist)
+			{
+				bestdist = dist;
+				point = i;
+			}
+		}
+	}
+
+	switch (lara.gun_type)
+	{
+	case LG_PISTOLS:
+	case LG_UZIS:
+		c = 144;
+		break;
+
+	case LG_MAGNUMS:
+	case LG_HARPOON:
+		c = 200;
+		break;
+
+	case LG_SHOTGUN:
+	case LG_M16:
+		c = 192;
+		break;
+
+	case LG_ROCKET:
+	case LG_GRENADE:
+		c = 224;
+		break;
+
+	default:
+		c = 0;
+		break;
+	}
+
+	for (int i = 0; i < 5; i++)
+	{
+		n = point + affected[i];
+
+		if ((n & 7) == 7 && affected[i] == -1)
+			n += 8;
+
+		if (!(n & 7) && affected[i] == 1)
+			n -= 8;
+
+		p = &TribeBossShield[n];
+
+		r = p->rgb & 0xFF;
+		g = (p->rgb >> 8) & 0xFF;
+		b = (p->rgb >> 16) & 0xFF;
+
+		if (i)
+		{
+			if (c < 200)
+			{
+				r += c >> 3;
+
+				if (r > c >> 1)
+					r = c >> 1;
+			}
+			else
+				r = c >> 1;
+		}
+		else if (c < 200)
+		{
+			r += c >> 2;
+
+			if (r > c)
+				r = c;
+		}
+		else
+			r = c;
+
+		if (i)
+		{
+			if (c < 200)
+			{
+				g += c >> 3;
+
+				if (g > c >> 1)
+					g = c >> 1;
+			}
+			else
+				g = c >> 1;
+		}
+		else if (c < 200)
+		{
+			g += c >> 2;
+
+			if (g > c)
+				g = c;
+		}
+		else
+			g = c;
+
+		if (i)
+		{
+			if (c < 200)
+			{
+				b += c >> 3;
+
+				if (b > c >> 1)
+					b = c >> 1;
+			}
+			else
+				b = c >> 1;
+		}
+		else if (c < 200)
+		{
+			b += c >> 2;
+
+			if (b > c)
+				b = c;
+		}
+		else
+			b = c;
+
+		p->rsub = (GetRandomControl() & 7) + 8;
+		p->gsub = (GetRandomControl() & 7) + 8;
+		p->bsub = (GetRandomControl() & 7) + 8;
+
+		if (lara.gun_type == LG_ROCKET || lara.gun_type == LG_GRENADE)
+		{
+			p->rsub >>= 1;
+			p->gsub >>= 1;
+			p->bsub >>= 1;
+		}
+
+		p->rgb = (b << 16) | (g << 8) | r;
+	}
+
+	pos.x = x;
+	pos.y = y;
+	pos.z = z;
+
+	for (int i = 0; i < 7; i++)
+		TriggerElectricSparks(&pos, 1);
+}
+
 void inject_triboss(bool replace)
 {
 	INJECT(0x00471FB0, FindLizardManItemNumber, replace);
@@ -368,4 +535,5 @@ void inject_triboss(bool replace)
 	INJECT(0x00471520, TribeBossDie, replace);
 	INJECT(0x00471A30, TriggerLizardMan, replace);
 	INJECT(0x00471350, TriggerElectricSparks, replace);
+	INJECT(0x00471680, FindClosestShieldPoint, replace);
 }
