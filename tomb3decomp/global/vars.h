@@ -365,6 +365,7 @@
 #define RequesterFlags2	ARRAY_(0x006D67A0, ulong, [24])
 #define TrigDynamics	ARRAY_(0x006CFAC0, PHD_VECTOR, [3])
 #define TribeBossShield	ARRAY_(0x006CFB00, SHIELD_POINTS, [40])
+#define lizman_summon_coords	ARRAY_(0x004C7EF0, long, [2][4])
 
 
 /*constants*/
