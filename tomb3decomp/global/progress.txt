@@ -1435,7 +1435,7 @@ tomb3decomp progress.
 0x00471520		TribeBossDie
 0x00471570	+	InitialiseTribeBoss
 0x00471680		FindClosestShieldPoint
-0x00471960		RotateHeadXAngle
+0x00471960	+	RotateHeadXAngle
 0x00471A30		TriggerLizardMan
 0x00471BD0		ExplodeTribeBoss
 0x00471E30		TriggerSummonSmoke
