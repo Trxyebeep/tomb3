@@ -6,6 +6,9 @@
 #include "game.h"
 #include "../game/objects.h"
 #include "../3dsystem/phd_math.h"
+#include "../game/control.h"
+#include "../game/lasers.h"
+#include "../game/triboss.h"
 
 void LaraElectricDeath(long lr, ITEM_INFO* item)
 {
@@ -966,6 +969,295 @@ void DrawTonyBossShield(ITEM_INFO* item)
 	phd_PopMatrix();
 }
 
+void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy)
+{
+	DISPLAYMODE* dm;
+	GAME_VECTOR target;
+	PHD_VECTOR pos;
+	long* pZ;
+	short* pXY;
+	short* points;	//electricity
+	float zv;
+	long w, h, x, y, z, dx, dy, dz, longest, nSegments, xOff, zOff, yOff1, yOff2;
+	long xs, ys, zs, tx, ty, tz;
+	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c1, c2, c3, c4, r, g, b;
+	long Z[120];
+	short XY[120];
+	short angle;
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w - 1;
+	h = dm->h - 1;
+
+	angle = (item->pos.y_rot >> 4) & 0xFFF;
+	src->room_number = item->room_number;
+	dx = bossdata.BeamTarget.x - src->x;
+	dy = bossdata.BeamTarget.y - src->y;
+	dz = bossdata.BeamTarget.z - src->z;
+
+	longest = abs(dx);
+
+	if (abs(dy) > longest)
+		longest = abs(dy);
+
+	if (abs(dz) > longest)
+		longest = abs(dz);
+
+	if (longest < 20480)
+	{
+		longest = 20480 / longest + 1;
+		dx *= longest;
+		dy *= longest;
+		dz *= longest;
+	}
+
+	target.x = src->x + dx;
+	target.y = src->y + dy;
+	target.z = src->z + dz;
+	LOS(src, &target);
+
+	if (!lara.electric && !copy && !bossdata.attack_type && LaraOnLOS(src, &target))
+	{
+		lara_item->hit_points = 0;
+		lara.electric = 1;
+	}
+
+	TriggerElectricSparks(&target, 0);
+	dx = abs(target.x - src->x);
+	dz = abs(target.x - src->z);
+
+	if (dx >= dz)
+		nSegments = dx >> 8;
+	else
+		nSegments = dz >> 8;
+
+	if (nSegments < 8)
+		nSegments = 8;
+	else if (nSegments > 24)
+		nSegments = 24;
+
+	dx = (target.x - src->x) / nSegments;
+	dy = (target.y - src->y) / nSegments;
+	dz = (target.z - src->z) / nSegments;
+	x = src->x - item->pos.x_pos;
+	y = src->y - item->pos.y_pos;
+	z = src->z - item->pos.z_pos;
+	angle = (angle + 1024) & 0xFFF;
+
+	if (bossdata.attack_type == 1 || bossdata.attack_type == 2)
+	{
+		xOff = rcossin_tbl[angle << 1] >> 8;
+		zOff = rcossin_tbl[(angle << 1) + 1] >> 8;
+	}
+	else
+	{
+		xOff = rcossin_tbl[angle << 1] >> 7;
+		zOff = rcossin_tbl[(angle << 1) + 1] >> 7;
+	}
+
+	yOff1 = 0;
+	yOff2 = 0;
+	pXY = XY;
+	pZ = Z;
+
+	pos.x = x * phd_mxptr[M00] + y * phd_mxptr[M01] + z * phd_mxptr[M02] + phd_mxptr[M03];
+	pos.y = x * phd_mxptr[M10] + y * phd_mxptr[M11] + z * phd_mxptr[M12] + phd_mxptr[M13];
+	pos.z = x * phd_mxptr[M20] + y * phd_mxptr[M21] + z * phd_mxptr[M22] + phd_mxptr[M23];
+	zv = f_persp / (float)pos.z;
+	pos.x = short(float(pos.x * zv + f_centerx));
+	pos.y = short(float(pos.y * zv + f_centery));
+	pXY[0] = (short)pos.x;
+	pXY[1] = (short)pos.y;
+	pXY[2] = (short)pos.x;
+	pXY[3] = (short)pos.y;
+	pZ[0] = pos.z;
+	pZ[1] = pos.z;
+	pXY += 4;
+	pZ += 2;
+	points = &electricity_points[copy * 4][0];
+
+	for (int i = 0; i < nSegments - 1; i++)
+	{
+		if (copy)
+		{
+			xs = -*points++;
+			ys = -*points++ >> 1;
+			zs = -*points++;
+		}
+		else
+		{
+			xs = *points++;
+			ys = *points++ >> 1;
+			zs = *points++;
+		}
+
+		points += 3;
+		x += dx;
+		y += dy;
+		z += dz;
+		yOff1 += (GetRandomControl() & 0x1F) - 16;
+		yOff2 += (GetRandomControl() & 0x1F) - 16;
+
+		if (yOff1 < -256)
+			yOff1 = -192;
+		else if (yOff1 > 256)
+			yOff1 = 192;
+
+		if (yOff2 < -256)
+			yOff2 = -192;
+		else if (yOff2 > 256)
+			yOff2 = 192;
+
+		tx = x + xs + xOff;
+		ty = y + ys + yOff1;
+		tz = z + zs + zOff;
+		pos.x = tx * phd_mxptr[M00] + ty * phd_mxptr[M01] + tz * phd_mxptr[M02] + phd_mxptr[M03];
+		pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
+		pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
+		zv = f_persp / (float)pos.z;
+		pos.x = short(float(pos.x * zv + f_centerx));
+		pos.y = short(float(pos.y * zv + f_centery));
+		pXY[0] = (short)pos.x;
+		pXY[1] = (short)pos.y;
+		pZ[0] = pos.z;
+
+		tx = x + xs - xOff;
+		ty = y + ys + yOff2;
+		tz = z + zs - zOff;
+		pos.x = tx * phd_mxptr[M00] + ty * phd_mxptr[M01] + tz * phd_mxptr[M02] + phd_mxptr[M03];
+		pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
+		pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
+		zv = f_persp / (float)pos.z;
+		pos.x = short(float(pos.x * zv + f_centerx));
+		pos.y = short(float(pos.y * zv + f_centery));
+		pXY[2] = (short)pos.x;
+		pXY[3] = (short)pos.y;
+		pZ[1] = pos.z;
+
+		pXY += 4;
+		pZ += 2;
+	}
+
+	tx = target.x - item->pos.x_pos;
+	ty = target.y - item->pos.y_pos;
+	tz = target.z - item->pos.z_pos;
+	pos.x = tx * phd_mxptr[M00] + ty * phd_mxptr[M01] + tz * phd_mxptr[M02] + phd_mxptr[M03];
+	pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
+	pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
+	zv = f_persp / (float)pos.z;
+	pos.x = short(float(pos.x * zv + f_centerx));
+	pos.y = short(float(pos.y * zv + f_centery));
+	pXY[0] = (short)pos.x;
+	pXY[1] = (short)pos.y;
+	pXY[2] = (short)pos.x;
+	pXY[3] = (short)pos.y;
+	pZ[0] = pos.z;
+	pZ[1] = pos.z;
+
+	pXY = XY;
+	pZ = Z;
+
+	x1 = *pXY++;
+	y1 = *pXY++;
+	z1 = *pZ++;
+	x2 = *pXY++;
+	y2 = *pXY++;
+	z2 = *pZ++;
+	c1 = 0;
+	c2 = 0;
+
+	for (int i = 0; i < nSegments; i++)
+	{
+		if (i == nSegments - 1)
+		{
+			c3 = 0;
+			c4 = 0;
+		}
+		else
+		{
+			c3 = (GetRandomControl() & 0xFF) >> copy;	//nice
+			c4 = (GetRandomControl() & 0xFF) >> copy;
+		}
+
+		x3 = *pXY++;
+		y3 = *pXY++;
+		z3 = *pZ++;
+		x4 = *pXY++;
+		y4 = *pXY++;
+		z4 = *pZ++;
+
+		if ((z1 + z2 + z3 + z4) >> 2 > phd_znear)
+		{
+			if (c1 || c2 || c3 || c4)
+			{
+				if (x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 &&
+					y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128)
+				{
+					if (x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
+						y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
+					{
+						if (bossdata.attack_type)
+						{
+							r = (c1 & 0xC0) >> 5;
+							g = c1 >> 4;
+							b = (c1 & 0xC0) >> 5;
+							c1 = r << 10 | g << 5 | b;
+
+							r = (c2 & 0xC0) >> 5;
+							g = c2 >> 4;
+							b = (c2 & 0xC0) >> 5;
+							c2 = r << 10 | g << 5 | b;
+
+							r = (c3 & 0xC0) >> 5;
+							g = c3 >> 4;
+							b = (c3 & 0xC0) >> 5;
+							c3 = r << 10 | g << 5 | b;
+
+							r = (c4 & 0xC0) >> 5;
+							g = c4 >> 4;
+							b = (c4 & 0xC0) >> 5;
+							c4 = r << 10 | g << 5 | b;
+						}
+						else
+						{
+							r = (c1 & 0xC0) >> 5;
+							g = c1 >> 4;
+							b = c1 >> 4;
+							c1 = r << 10 | g << 5 | b;
+
+							r = (c2 & 0xC0) >> 5;
+							g = c2 >> 4;
+							b = c2 >> 4;
+							c2 = r << 10 | g << 5 | b;
+
+							r = (c3 & 0xC0) >> 5;
+							g = c3 >> 4;
+							b = c3 >> 4;
+							c3 = r << 10 | g << 5 | b;
+
+							r = (c4 & 0xC0) >> 5;
+							g = c4 >> 4;
+							b = c4 >> 4;
+							c4 = r << 10 | g << 5 | b;
+						}
+
+						HWI_InsertAlphaSprite_Sorted(x2, y2, z2, c2, x1, y1, z1, c2, x4, y4, z4, c3, x3, y3, z3, c4, -1, 16, 1);
+					}
+				}
+			}
+		}
+
+		x1 = x4;
+		y1 = y4;
+		z1 = z4;
+		c1 = c3;
+		x2 = x3;
+		y2 = y3;
+		z2 = z3;
+		c2 = c4;
+	}
+}
+
 void inject_draweffects(bool replace)
 {
 	INJECT(0x00478600, LaraElectricDeath, replace);
@@ -973,4 +1265,5 @@ void inject_draweffects(bool replace)
 	INJECT(0x00479510, ClipLine, replace);
 	INJECT(0x0047F4C0, S_DrawWakeFX, replace);
 	INJECT(0x0047CC10, DrawTonyBossShield, replace);
+	INJECT(0x0047E170, TriggerElectricBeam, replace);
 }
