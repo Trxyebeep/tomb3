@@ -1258,6 +1258,418 @@ void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy)
 	}
 }
 
+void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy)
+{
+	DISPLAYMODE* dm;
+	PHD_VECTOR pos;
+	PHD_VECTOR pos1;
+	PHD_VECTOR pos2;
+	GAME_VECTOR src;
+	long* pZ;
+	short* points;
+	short* pDists;
+	short* pXY;
+	float zv;
+	long w, h, dx, dy, dz, s, x, y, z, tx, ty, tz, ex, ey, ez, vx, vy, vz;
+	long x1, y1, x2, y2, c1, c2, alpha;
+	long Z[128];
+	short XY[128];
+	short dists[128];
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w - 1;
+	h = dm->h - 1;
+	dx = lara_item->pos.x_pos - item->pos.x_pos;
+	dz = lara_item->pos.z_pos - item->pos.z_pos;
+
+	if (dx < -0x4800 || dx > 0x4800 || dz < -0x4800 || dz > 0x4800)
+		return;
+
+	phd_PushMatrix();
+	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+	s = (rcossin_tbl[wibble << 5] >> 7) + 64;
+	points = &electricity_points[0][0];
+	pDists = dists;
+	pXY = XY;
+	pZ = Z;
+
+	for (int i = 0; i < 4; i++)
+	{
+		pos1.x = tribeboss_hit[i].x;
+		pos1.y = tribeboss_hit[i].y;
+		pos1.z = tribeboss_hit[i].z;
+		GetJointAbsPosition(item, &pos1, tribeboss_hit[i].mesh_num);
+
+		pos2.x = tribeboss_hit[i + 1].x;
+		pos2.y = tribeboss_hit[i + 1].y;
+		pos2.z = tribeboss_hit[i + 1].z;
+		GetJointAbsPosition(item, &pos2, tribeboss_hit[i + 1].mesh_num);
+
+		if (i == 2)
+			TrigDynamics[0] = pos1;
+
+		pos1.x -= item->pos.x_pos;
+		pos1.y -= item->pos.y_pos;
+		pos1.z -= item->pos.z_pos;
+		pos2.x -= item->pos.x_pos;
+		pos2.y -= item->pos.y_pos;
+		pos2.z -= item->pos.z_pos;
+		x = pos1.x;
+		y = pos1.y;
+		z = pos1.z;
+		dx = (pos2.x - x) >> 2;
+		dy = (pos2.y - y) >> 2;
+		dz = (pos2.z - z) >> 2;
+
+		for (int j = 0; j < 5; j++)
+		{
+			if (j == 4)
+			{
+				if (i != 3)
+					break;
+
+				tx = pos2.x;
+				ty = pos2.y;
+				tz = pos2.z;
+			}
+			else
+			{
+				tx = x;
+				ty = y;
+				tz = z;
+			}
+
+			if (!j || j == 4)
+				*pDists++ = 0;
+			else
+			{
+				ex = *points++;
+				ey = *points++;
+				ez = *points++;
+
+				if (copy)
+				{
+					tx -= ex >> 3;
+					ty -= ey >> 3;
+					tz -= ez >> 3;
+				}
+				else
+				{
+					tx += ex >> 3;
+					ty += ey >> 3;
+					tz += ez >> 3;
+				}
+
+				points += 3;
+				vx = abs(ex);
+				vy = abs(ey);
+				vz = abs(ez);
+
+				if (vy > vx)
+					vx = vy;
+
+				if (vz > vx)
+					vx = vz;
+
+				*pDists++ = (short)vx;
+			}
+
+			pos.x = tx * phd_mxptr[M00] + ty * phd_mxptr[M01] + tz * phd_mxptr[M02] + phd_mxptr[M03];
+			pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
+			pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
+			zv = f_persp / (float)pos.z;
+			pos.x = short(float(pos.x * zv + f_centerx));
+			pos.y = short(float(pos.y * zv + f_centery));
+			*pXY++ = (short)pos.x;
+			*pXY++ = (short)pos.y;
+			*pZ++ = pos.z;
+
+			x += dx;
+			y += dy;
+			z += dz;
+		}
+	}
+
+	points = &electricity_points[16][0];
+
+	if (bossdata.attack_count && !bossdata.death_count && !bossdata.attack_type)
+	{
+		for (int i = 0, n = 0; i < 5; i++)
+		{
+			pos1.x = tribeboss_hit[i].x;
+			pos1.y = tribeboss_hit[i].y;
+			pos1.z = tribeboss_hit[i].z;
+			GetJointAbsPosition(item, &pos1, tribeboss_hit[i].mesh_num);
+
+			pos2.x = tribeboss_hit[5].x;
+			pos2.y = tribeboss_hit[5].y;
+			pos2.z = tribeboss_hit[5].z;
+			GetJointAbsPosition(item, &pos2, tribeboss_hit[5].mesh_num);
+
+			pos1.x -= item->pos.x_pos;
+			pos1.y -= item->pos.y_pos;
+			pos1.z -= item->pos.z_pos;
+			pos2.x -= item->pos.x_pos;
+			pos2.y -= item->pos.y_pos;
+			pos2.z -= item->pos.z_pos;
+			x = pos1.x;
+			y = pos1.y;
+			z = pos1.z;
+			dx = (pos2.x - x) >> 2;
+			dy = (pos2.y - y) >> 2;
+			dz = (pos2.z - z) >> 2;
+
+			for (int j = 0; j < 5; j++)
+			{
+				if (j == 4)
+				{
+					tx = pos2.x;
+					ty = pos2.y;
+					tz = pos2.z;
+
+					if (i == 4)
+					{
+						src.x = tx + item->pos.x_pos;
+						src.y = ty + item->pos.y_pos;
+						src.z = tz + item->pos.z_pos;
+
+						if (bossdata.attack_count >= 64 && bossdata.attack_count <= 128)
+						{
+							TrigDynamics[2].x = src.x;
+							TrigDynamics[2].y = src.y;
+							TrigDynamics[2].z = src.z;
+						}
+					}
+				}
+				else
+				{
+					tx = x;
+					ty = y;
+					tz = z;
+				}
+
+				if (!j || j == 4)
+					*pDists++ = 0;
+				else
+				{
+					n++;
+
+					if (n > 15)
+					{
+						points = &electricity_points[0][0];
+						n = 0;
+					}
+
+					ex = *points++;
+					ey = *points++;
+
+					if (copy)
+					{
+						tx -= ex >> 4;
+						ty -= ey >> 4;
+					}
+					else
+					{
+						tx += ex >> 4;
+						ty += ey >> 4;
+					}
+
+					points += 4;
+					vx = abs(ex);
+					vy = abs(ey);
+
+					if (vy > vx)
+						vx = vy;
+
+					*pDists++ = (short)vx;
+				}
+
+				pos.x = tx * phd_mxptr[M00] + ty * phd_mxptr[M01] + tz * phd_mxptr[M02] + phd_mxptr[M03];
+				pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
+				pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
+				zv = f_persp / (float)pos.z;
+				pos.x = short(float(pos.x * zv + f_centerx));
+				pos.y = short(float(pos.y * zv + f_centery));
+				*pXY++ = (short)pos.x;
+				*pXY++ = (short)pos.y;
+				*pZ++ = pos.z;
+
+				x += dx;
+				y += dy;
+				z += dz;
+			}
+		}
+	}
+
+	pDists = dists;
+	pXY = XY;
+	pZ = Z;
+
+	for (int i = 0; i < 16; i++)
+	{
+		x1 = pXY[0];
+		y1 = pXY[1];
+		x2 = pXY[2];
+		y2 = pXY[3];
+		z = pZ[0];
+		c1 = pDists[0];
+		c2 = pDists[1];
+
+		pDists++;
+		pXY += 2;
+		pZ++;
+
+		if (z < phd_znear)
+			continue;
+
+		if (c1 > 255)
+		{
+			c1 = 511 - c1;
+
+			if (c1 < 0)
+				c1 = 0;
+		}
+
+		if (c2 > 255)
+		{
+			c2 = 511 - c2;
+
+			if (c2 < 0)
+				c2 = 0;
+		}
+
+		if (copy)
+		{
+			c1 >>= 1;
+			c2 >>= 1;
+		}
+
+		c1 = (s * c1) >> 6;
+		c2 = (s * c2) >> 6;
+
+		if (ClipLine(x1, y1, x2, y2, w, h))
+		{
+			if (x1 >= 0 && x1 <= w &&
+				y1 >= 0 && y1 <= h &&
+				x2 >= 0 && x2 <= w &&
+				y2 >= 0 && y2 <= h)
+			{
+				alpha = GlobalAlpha;
+				GlobalAlpha = 0x70000000;
+				c1 = c1 | (c1 << 8);
+				c2 = c2 | (c2 << 8);
+				HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, c1, c2);
+				GlobalAlpha = alpha;
+			}
+		}
+	}
+
+	if (bossdata.attack_count && !bossdata.death_count && !bossdata.attack_type)
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			pXY += 2;
+			pZ++;
+			pDists++;
+
+			for (int j = 0; j < 4; j++)
+			{
+				x1 = pXY[0];
+				y1 = pXY[1];
+				x2 = pXY[2];
+				y2 = pXY[3];
+				z = pZ[0];
+				c1 = pDists[0];
+				c2 = pDists[1];
+
+				pDists++;
+				pXY += 2;
+				pZ++;
+
+				if (z < phd_znear)
+					continue;
+
+				if (c1 > 255)
+				{
+					c1 = 511 - c1;
+
+					if (c1 < 0)
+						c1 = 0;
+				}
+
+				if (c2 > 255)
+				{
+					c2 = 511 - c2;
+
+					if (c2 < 0)
+						c2 = 0;
+				}
+
+				if (copy)
+				{
+					c1 >>= 1;
+					c2 >>= 1;
+				}
+
+				if (bossdata.attack_count < 64)
+				{
+					c1 = (bossdata.attack_count * c1) >> 6;
+					c2 = (bossdata.attack_count * c2) >> 6;
+				}
+
+				if (ClipLine(x1, y1, x2, y2, w, h))
+				{
+					if (x1 >= 0 && x1 <= w &&
+						y1 >= 0 && y1 <= h &&
+						x2 >= 0 && x2 <= w &&
+						y2 >= 0 && y2 <= h)
+					{
+						alpha = GlobalAlpha;
+						GlobalAlpha = 0x70000000;
+						c1 = c1 | (c1 << 8);
+						c2 = c2 | (c2 << 8);
+						HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, c1, c2);
+						GlobalAlpha = alpha;
+					}
+				}
+			}
+		}
+	}
+
+	if (bossdata.attack_count && !bossdata.death_count && (bossdata.attack_type == 1 || bossdata.attack_type == 2))
+	{
+		pos1.x = 0;
+		pos1.y = 0;
+		pos1.z = 0;
+		GetJointAbsPosition(item, &pos1, 14);
+
+		src.x = pos1.x;
+		src.y = pos1.y;
+		src.z = pos1.z;
+
+		if (bossdata.attack_count >= 64)
+		{
+			if (bossdata.attack_count <= 128)
+				TrigDynamics[2] = pos1;
+
+			if (bossdata.attack_count >= 64 && bossdata.attack_count <= 96)
+			{
+				if (bossdata.attack_count > 90 && !lizard_man_active)
+					TriggerLizardMan();
+
+				TriggerElectricBeam(item, &src, copy);
+
+				for (int i = 0; i < 3; i++)
+					TriggerSummonSmoke(bossdata.BeamTarget.x, bossdata.BeamTarget.y, bossdata.BeamTarget.z);
+			}
+		}
+	}
+	else if (bossdata.attack_count > 64 && !bossdata.death_count && !bossdata.attack_type)
+		TriggerElectricBeam(item, &src, copy);
+
+	phd_PopMatrix();
+}
+
 void inject_draweffects(bool replace)
 {
 	INJECT(0x00478600, LaraElectricDeath, replace);
@@ -1266,4 +1678,5 @@ void inject_draweffects(bool replace)
 	INJECT(0x0047F4C0, S_DrawWakeFX, replace);
 	INJECT(0x0047CC10, DrawTonyBossShield, replace);
 	INJECT(0x0047E170, TriggerElectricBeam, replace);
+	INJECT(0x0047D4A0, TriggerTribeBossHeadElectricity, replace);
 }

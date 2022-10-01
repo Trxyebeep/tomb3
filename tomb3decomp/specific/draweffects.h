@@ -9,6 +9,7 @@ bool ClipLine(long& x1, long& y1, long& x2, long& y2, long w, long h);
 void S_DrawWakeFX(ITEM_INFO* item);
 void DrawTonyBossShield(ITEM_INFO* item);
 void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy);
+void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy);
 
 #define S_DrawSparks	( (void(__cdecl*)()) 0x0047B2C0 )
 #define S_DrawSplashes	( (void(__cdecl*)()) 0x0047BAA0 )

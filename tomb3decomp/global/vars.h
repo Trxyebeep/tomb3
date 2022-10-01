@@ -366,6 +366,7 @@
 #define TrigDynamics	ARRAY_(0x006CFAC0, PHD_VECTOR, [3])
 #define TribeBossShield	ARRAY_(0x006CFB00, SHIELD_POINTS, [40])
 #define lizman_summon_coords	ARRAY_(0x004C7EF0, long, [2][4])
+#define tribeboss_hit	ARRAY_(0x004C7F10, BITE_INFO, [6])
 
 
 /*constants*/
