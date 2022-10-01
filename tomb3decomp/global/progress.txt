@@ -1539,7 +1539,7 @@ tomb3decomp progress.
 0x00479510	+	ClipLine
 0x00479810		S_DrawLaserBeam
 0x00479C20		DrawLondonBossShield
-0x0047A4B0		DoRain
+0x0047A4B0	+	DoRain
 0x0047AA80		DoSnow
 0x0047B2C0		S_DrawSparks
 0x0047BAA0		S_DrawSplashes

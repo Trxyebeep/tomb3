@@ -1727,4 +1727,15 @@ struct BOSS_STRUCT
 	uchar dead;
 	PHD_VECTOR BeamTarget;
 };
+
+struct RAINDROP
+{
+	long x;
+	long y;
+	long z;
+	char xv;
+	uchar yv;
+	char zv;
+	uchar life;
+};
 #pragma pack(pop)

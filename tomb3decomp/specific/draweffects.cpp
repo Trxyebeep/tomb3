@@ -10,6 +10,8 @@
 #include "../game/lasers.h"
 #include "../game/triboss.h"
 
+static RAINDROP raindrops[256];
+
 void LaraElectricDeath(long lr, ITEM_INFO* item)
 {
 	DISPLAYMODE* dm;
@@ -1916,6 +1918,151 @@ void DrawTribeBossShield(ITEM_INFO* item)
 	phd_PopMatrix();
 }
 
+void DoRain()
+{
+	RAINDROP* rptr;
+	PHD_VECTOR pos;
+	long* pZ;
+	short* pXY;
+	float zv;
+	long rad, angle, rnd, alpha;
+	long tx, ty, tz, x1, y1, x2, y2, z;
+	long Z[2];
+	short XY[4];
+
+	for (int i = 0, num_alive = 0; i < 256; i++)
+	{
+		rptr = &raindrops[i];
+
+		if (!rptr->x && num_alive < 8)
+		{
+			num_alive++;
+			rad = GetRandomDraw() & 0xFFF;
+			angle = GetRandomDraw() & 0x1FFE;
+			rptr->x = lara_item->pos.x_pos + (rad * rcossin_tbl[angle] >> 12);
+			rptr->y = lara_item->pos.y_pos -1024 - (GetRandomDraw() & 0x7FF);
+			rptr->z = lara_item->pos.z_pos + (rad * rcossin_tbl[angle + 1] >> 12);
+
+			if (IsRoomOutside(rptr->x, rptr->y, rptr->z) < 0)
+			{
+				rptr->x = 0;
+				continue;
+			}
+
+			rptr->xv = (GetRandomDraw() & 7) - 4;
+			rptr->yv = (GetRandomDraw() & 7) + 16;
+			rptr->zv = (GetRandomDraw() & 7) - 4;
+			rptr->life = 88 - (rptr->yv << 1);
+		}
+
+		if (rptr->x)
+		{
+			if (IsRoomOutside(rptr->x, rptr->y >> 2, rptr->z) == -2 || (room[IsRoomOutsideNo].flags & ROOM_UNDERWATER) ||
+				rptr->life > 240 || abs(CamPos.x - rptr->x) > 6000 || abs(CamPos.z - rptr->z) > 6000)
+			{
+				rptr->x = 0;
+				continue;
+			}
+
+			rptr->x += rptr->xv + 4 * SmokeWindX;
+			rptr->y += rptr->yv << 3;
+			rptr->z += rptr->zv + 4 * SmokeWindZ;
+			rnd = GetRandomDraw();
+
+			if ((rnd & 3) != 3)
+			{
+				rptr->xv += (rnd & 3) - 1;
+
+				if (rptr->xv < -4)
+					rptr->xv = -4;
+				else if (rptr->xv > 4)
+					rptr->xv = 4;
+			}
+
+			rnd = (rnd >> 2) & 3;
+
+			if (rnd != 3)
+			{
+				rptr->zv += char(rnd - 1);
+
+				if (rptr->zv < -4)
+					rptr->zv = -4;
+				else if (rptr->zv > 4)
+					rptr->zv = 4;
+			}
+
+			rptr->life -= 2;
+
+			if (rptr->life > 240)
+				rptr->x = 0;
+		}
+	}
+
+	phd_PushMatrix();
+	phd_TranslateAbs(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos);
+	pXY = XY;
+	pZ = Z;
+
+	for (int i = 0, num_alive = 0; i < 256; i++)
+	{
+		rptr = &raindrops[i];
+
+		if (!rptr->x)
+			continue;
+
+		tx = rptr->x - lara_item->pos.x_pos - 2 * SmokeWindX;
+		ty = rptr->y - 8 * rptr->yv - lara_item->pos.y_pos;
+		tz = rptr->z - lara_item->pos.z_pos - 2 * SmokeWindZ;
+		pos.x = tx * phd_mxptr[M00] + ty * phd_mxptr[M01] + tz * phd_mxptr[M02] + phd_mxptr[M03];
+		pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
+		pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
+		zv = f_persp / (float)pos.z;
+		pos.x = short(float(pos.x * zv + f_centerx));
+		pos.y = short(float(pos.y * zv + f_centery));
+		pXY[0] = (short)pos.x;
+		pXY[1] = (short)pos.y;
+		pZ[0] = pos.z;
+		pXY += 2;
+		pZ++;
+
+		tx = rptr->x - lara_item->pos.x_pos;
+		ty = rptr->y - lara_item->pos.y_pos;
+		tz = rptr->z - lara_item->pos.z_pos;
+		pos.x = tx * phd_mxptr[M00] + ty * phd_mxptr[M01] + tz * phd_mxptr[M02] + phd_mxptr[M03];
+		pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
+		pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
+		zv = f_persp / (float)pos.z;
+		pos.x = short(float(pos.x * zv + f_centerx));
+		pos.y = short(float(pos.y * zv + f_centery));
+		pXY[0] = (short)pos.x;
+		pXY[1] = (short)pos.y;
+		pZ[0] = pos.z;
+		pXY -= 2;
+		pZ--;
+
+		x1 = pXY[0];
+		y1 = pXY[1];
+		x2 = pXY[2];
+		y2 = pXY[3];
+		z = pZ[0];
+
+		if (z < 32 ||
+			x1 < phd_winxmin || x1 > phd_winxmin + phd_winxmax ||
+			y1 < phd_winymin || y1 > phd_winymin + phd_winymax)
+			continue;
+
+		if (ClipLine(x1, y1, x2, y2, 0, 0))
+		{
+			alpha = GlobalAlpha;
+			GlobalAlpha = 0x80000000;
+			HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, 0x20, 0x304060);
+			GlobalAlpha = alpha;
+		}
+	}
+
+	phd_PopMatrix();
+}
+
 void inject_draweffects(bool replace)
 {
 	INJECT(0x00478600, LaraElectricDeath, replace);
@@ -1926,4 +2073,5 @@ void inject_draweffects(bool replace)
 	INJECT(0x0047E170, TriggerElectricBeam, replace);
 	INJECT(0x0047D4A0, TriggerTribeBossHeadElectricity, replace);
 	INJECT(0x0047EC30, DrawTribeBossShield, replace);
+	INJECT(0x0047A4B0, DoRain, replace);
 }
