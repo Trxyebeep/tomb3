@@ -10,6 +10,9 @@
 #include "items.h"
 #include "lot.h"
 #include "control.h"
+#include "draw.h"
+#include "laraelec.h"
+#include "../specific/draweffects.h"
 
 /*BITE_INFO tribeboss_hit[6] =
 {
@@ -535,6 +538,25 @@ void FindClosestShieldPoint(long x, long y, long z, ITEM_INFO* item)
 		TriggerElectricSparks(&pos, 1);
 }
 
+void S_DrawTribeBoss(ITEM_INFO* item)
+{
+	DrawAnimatingItem(item);
+	UpdateElectricityPoints();
+	TrigDynamics[0].x = 0;
+	TrigDynamics[1].x = 0;
+	TrigDynamics[2].x = 0;
+
+	if (bossdata.explode_count)
+		DrawExplosionRings();
+	else
+	{
+		TriggerTribeBossHeadElectricity(item, 0);
+		TriggerTribeBossHeadElectricity(item, 1);
+	}
+
+	DrawTribeBossShield(item);
+}
+
 void inject_triboss(bool replace)
 {
 	INJECT(0x00471FB0, FindLizardManItemNumber, replace);
@@ -546,4 +568,5 @@ void inject_triboss(bool replace)
 	INJECT(0x00471A30, TriggerLizardMan, replace);
 	INJECT(0x00471350, TriggerElectricSparks, replace);
 	INJECT(0x00471680, FindClosestShieldPoint, replace);
+	INJECT(0x004712F0, S_DrawTribeBoss, replace);
 }

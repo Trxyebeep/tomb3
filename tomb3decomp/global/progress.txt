@@ -1430,7 +1430,7 @@ tomb3decomp progress.
 		game/triboss.cpp
 
 0x00470B70		TribeBossControl
-0x004712F0		S_DrawTribeBoss
+0x004712F0	+	S_DrawTribeBoss
 0x00471350	+	TriggerElectricSparks
 0x00471520	+	TribeBossDie
 0x00471570	+	InitialiseTribeBoss

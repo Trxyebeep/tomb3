@@ -8,3 +8,4 @@ void TriggerSummonSmoke(long x, long y, long z);
 void TriggerLizardMan();
 void TriggerElectricSparks(GAME_VECTOR* pos, long shield);
 void FindClosestShieldPoint(long x, long y, long z, ITEM_INFO* item);
+void S_DrawTribeBoss(ITEM_INFO* item);
