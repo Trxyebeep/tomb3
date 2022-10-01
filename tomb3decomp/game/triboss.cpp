@@ -13,8 +13,9 @@
 #include "draw.h"
 #include "laraelec.h"
 #include "../specific/draweffects.h"
+#include "pickup.h"
 
-/*BITE_INFO tribeboss_hit[6] =
+BITE_INFO tribeboss_hit[6] =
 {
 	{ 120, 68, 136, 8 },
 	{ 128, -64, 136, 8 },
@@ -22,7 +23,17 @@
 	{ -128, -64, 136, 8 },
 	{ -124, 64, 126, 8 },
 	{ 8, 32, 400, 8 },
-};*/
+};
+
+SHIELD_POINTS TribeBossShield[40];
+PHD_VECTOR TrigDynamics[3];
+char shield_active;
+
+static long lizman_summon_coords[2][4] =
+{
+	{ 61952, -5376, 62976, 57344 },
+	{ 61952, -5376, 52736, 40960 }
+};
 
 static long radii[5] = { 200, 400, 500, 500, 475 };
 static long heights[5] = { -1536, -1280, -832, -384, 0 };
@@ -557,6 +568,304 @@ void S_DrawTribeBoss(ITEM_INFO* item)
 	DrawTribeBossShield(item);
 }
 
+void TribeBossControl(short item_number)
+{
+	ITEM_INFO* item;
+	CREATURE_INFO* triboss;
+	EXPLOSION_RING* ring;
+	AI_INFO info;
+	PHD_VECTOR pos;
+	long x, y, z, f, r, g, b, x1, z1, x2, z2;
+	ushort ytest;
+	short angle, head, yrot;
+	static char turned;
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (!TrigDynamics[i].x)
+			continue;
+
+		if (!i)
+		{
+			x = TrigDynamics[0].x;
+			y = TrigDynamics[0].y;
+			z = TrigDynamics[0].z;
+			f = (GetRandomControl() & 3) + 8;
+			r = 0;
+			g = (GetRandomControl() & 7) + 8;
+			b = (GetRandomControl() & 7) + 16;
+		}
+		else if (i == 1)
+		{
+			r = 0;
+
+			if (bossdata.attack_type)
+			{
+				g = (GetRandomControl() & 7) + 16;
+				b = (GetRandomControl() & 7) + 8;
+			}
+			else
+			{
+				g = (GetRandomControl() & 7) + 8;
+				b = (GetRandomControl() & 7) + 16;
+			}
+
+			f = (GetRandomControl() & 7) + 8;
+			x = TrigDynamics[1].x;
+			y = TrigDynamics[1].y;
+			z = TrigDynamics[1].z;
+		}
+		else
+		{
+			if (!bossdata.attack_count)
+				continue;
+
+			f = (128 - bossdata.attack_count) >> 1;
+
+			if (f > 31)
+				f = 31;
+
+			if (f <= 0)
+				continue;
+
+			r = f >> 2;
+
+			if (bossdata.attack_type)
+			{
+				g = (GetRandomControl() & 7) + 24;
+				b = (GetRandomControl() & 7) + 16;
+			}
+			else
+			{
+				g = (GetRandomControl() & 7) + 16;
+				b = (GetRandomControl() & 7) + 24;
+			}
+			
+			x = TrigDynamics[2].x;
+			y = TrigDynamics[2].y;
+			z = TrigDynamics[2].z;
+		}
+
+		TriggerDynamic(x, y, z, f, r, g, b);
+	}
+
+	if (!CreatureActive(item_number))
+		return;
+
+	item = &items[item_number];
+	triboss = (CREATURE_INFO*)item->data;
+	TribeBossItem = item;
+	angle = 0;
+	head = 0;
+	yrot = 0x7FFF;	//new line.. originally uninitialized!!! (high value to avoid jeopardizing the tests at the end~) (hmmm)
+
+	if (item->hit_points > 0)
+	{
+		CreatureAIInfo(&items[item_number], &info);
+
+		if (item->hit_status)
+			SoundEffect(SFX_TRIBOSS_TAKE_HIT, &item->pos, SFX_DEFAULT);
+
+		yrot = item->pos.y_rot;
+
+		if (!bossdata.attack_flag)
+		{
+			x = item->pos.x_pos - lara_item->pos.x_pos;
+			z = item->pos.z_pos - lara_item->pos.z_pos;
+
+			if (SQUARE(x) + SQUARE(z) < 0x400000)
+				bossdata.attack_flag = 1;
+		}
+
+		triboss->target.x = lara_item->pos.x_pos;
+		triboss->target.z = lara_item->pos.z_pos;
+
+		if (!lizard_man_active || item->current_anim_state)
+			angle = CreatureTurn(item, triboss->maximum_turn);
+		else
+		{
+			ytest = item->pos.y_rot;
+
+			if (abs(0xC000 - ytest) > 182)
+				item->pos.y_rot += (0xC000 - ytest) >> 3;
+			else
+				item->pos.y_rot = -0x4000;
+		}
+
+		RotateHeadXAngle(item);
+
+		if (info.ahead)
+			head = info.angle;
+
+		switch (item->current_anim_state)
+		{
+		case 0:
+			bossdata.attack_count = 0;
+
+			if (item->goal_anim_state != 1 && item->goal_anim_state != 2)
+				TribeBossShieldOn = 1;
+
+			if (lizard_man_active)
+				CreatureJoint(item, 1, head);
+			else
+				CreatureJoint(item, 1, 0);
+
+			if (!bossdata.attack_flag || lizard_man_active)
+				triboss->maximum_turn = 0;
+			else
+				triboss->maximum_turn = 546;
+
+			if (item->goal_anim_state != 1 && info.angle > -128 && info.angle < 128 && lara_item->hit_points > 0 &&
+				bossdata.attack_head_count < 4 && !lizard_man_active && !shield_active)
+			{
+				pos.x = 0;
+				pos.y = 0;
+				pos.z = 0;
+				GetJointAbsPosition(lara_item, &pos, 0);
+				bossdata.BeamTarget = pos;
+				item->goal_anim_state = 1;
+				triboss->maximum_turn = 0;
+				TribeBossShieldOn = 0;
+				bossdata.attack_head_count++;
+				break;
+			}
+
+			if (item->goal_anim_state == 2 || bossdata.attack_head_count < 4 || lara_item->hit_points <= 0)
+				break;
+
+			triboss->maximum_turn = 0;
+
+			if (!bossdata.attack_type)
+			{
+				x1 = lara_item->pos.x_pos - lizman_summon_coords[0][0];
+				z1 = lara_item->pos.z_pos - lizman_summon_coords[0][2];
+				x2 = lara_item->pos.x_pos - lizman_summon_coords[1][0];
+				z2 = lara_item->pos.z_pos - lizman_summon_coords[1][2];
+
+				if (SQUARE(x1) + SQUARE(z1) > SQUARE(x2) + SQUARE(z2))
+					bossdata.attack_type = 1;
+				else
+					bossdata.attack_type = 2;
+			}
+
+			ytest = item->pos.y_rot;
+			y = lizman_summon_coords[bossdata.attack_type - 1][3];
+
+			if (abs(y - ytest) >= 182)
+				item->pos.y_rot += short((y - ytest) >> 4);
+			else
+			{
+				item->pos.y_rot = (short)y;
+
+				if (!shield_active)
+				{
+					item->goal_anim_state = 2;
+					bossdata.BeamTarget.x = lizman_summon_coords[bossdata.attack_type - 1][0];
+					bossdata.BeamTarget.y = lizman_summon_coords[bossdata.attack_type - 1][1];
+					bossdata.BeamTarget.z = lizman_summon_coords[bossdata.attack_type - 1][2];
+					triboss->maximum_turn = 0;
+					bossdata.attack_head_count = 0;
+					TribeBossShieldOn = 0;
+				}
+			}
+
+			break;
+
+		case 1:
+			triboss->maximum_turn = 0;
+			bossdata.attack_count += 3;
+			bossdata.attack_type = 0;
+			CreatureJoint(item, 1, 0);
+			break;
+
+		case 2:
+			triboss->maximum_turn = 0;
+
+			if (bossdata.attack_count < 64)
+				bossdata.attack_count += 2;
+			else
+				bossdata.attack_count += 3;
+
+			CreatureJoint(item, 1, 0);
+			break;
+		}
+	}
+	else
+	{
+		if (item->current_anim_state != 3)
+		{
+			item->anim_number = objects[item->object_number].anim_index + 3;
+			item->frame_number = anims[item->anim_number].frame_base;
+			item->current_anim_state = 3;
+			bossdata.death_count = 1;
+		}
+
+		if (item->frame_number - anims[item->anim_number].frame_base > 119)
+		{
+			item->mesh_bits = 0;
+			item->frame_number = anims[item->anim_number].frame_base + 120;
+			bossdata.death_count = -1;
+
+			if (!bossdata.explode_count)
+			{
+				bossdata.ring_count = 0;
+				SoundEffect(SFX_EXPLOSION2, &item->pos, SFX_DEFAULT);
+
+				for (int i = 0; i < 6; i++)
+				{
+					ring = &ExpRings[i];
+					ring->on = 0;
+					ring->life = 32;
+					ring->radius = 512;
+					ring->speed = (i << 5) + 128;
+					ring->xrot = ((GetRandomControl() & 0x1FF) - 256) & 0xFFF;
+					ring->zrot = ((GetRandomControl() & 0x1FF) - 256) & 0xFFF;
+				}
+
+				if (!bossdata.dropped_icon)
+				{
+					BossDropIcon(item_number);
+					bossdata.dropped_icon = 1;
+				}
+			}
+
+			if (bossdata.explode_count < 256)
+				bossdata.explode_count++;
+
+			if (bossdata.explode_count <= 128 || bossdata.ring_count != 6 || ExpRings[5].life)
+				ExplodeTribeBoss(item);
+			else
+			{
+				TribeBossDie(item_number);
+				bossdata.dead = 1;
+			}
+
+			return;
+		}
+
+		item->pos.z_rot = GetRandomControl() % bossdata.death_count - (bossdata.death_count >> 1);
+
+		if (bossdata.death_count < 2048)
+			bossdata.death_count += 32;
+	}
+
+	if (bossdata.attack_count && !bossdata.attack_type && bossdata.attack_count < 64)
+		tribeboss_hit[5].z = 4 * bossdata.attack_count + 136;
+
+	triboss->joint_rotation[0] += 1274;
+	CreatureAnimation(item_number, angle, 0);
+
+	if (yrot != item->pos.y_rot && !turned)
+	{
+		turned = 1;
+		SoundEffect(SFX_TRIBOSS_TURN_CHAIR, &item->pos, 0x800000 | SFX_SETPITCH);
+		return;
+	}
+
+	if (yrot == item->pos.y_rot)
+		turned = 0;
+}
+
 void inject_triboss(bool replace)
 {
 	INJECT(0x00471FB0, FindLizardManItemNumber, replace);
@@ -569,4 +878,5 @@ void inject_triboss(bool replace)
 	INJECT(0x00471350, TriggerElectricSparks, replace);
 	INJECT(0x00471680, FindClosestShieldPoint, replace);
 	INJECT(0x004712F0, S_DrawTribeBoss, replace);
+	INJECT(0x00470B70, TribeBossControl, replace);
 }

@@ -187,7 +187,27 @@ void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
 	item->pos.z_rot = rotz;
 }
 
+void BossDropIcon(short item_number)
+{
+	ITEM_INFO* item;
+	ITEM_INFO* icon;
+
+	item = &items[item_number];
+
+	for (short n = item->carried_item; n != NO_ITEM; n = icon->carried_item)	//uhm..
+	{
+		icon = &items[n];
+		icon->pos.x_pos = item->pos.x_pos;
+		icon->pos.y_pos = item->pos.y_pos;
+		icon->pos.z_pos = item->pos.z_pos;
+		ItemNewRoom(n, item->room_number);
+		AddActiveItem(n);
+		item->status = ITEM_ACTIVE;
+	}
+}
+
 void inject_pickup(bool replace)
 {
 	INJECT(0x0045BC00, PickUpCollision, inject_rando ? 1 : replace);
+	INJECT(0x0045CDE0, BossDropIcon, replace);
 }

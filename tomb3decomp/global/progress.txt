@@ -1186,7 +1186,7 @@ tomb3decomp progress.
 0x0045CCB0		SwitchTrigger
 0x0045CD50		KeyTrigger
 0x0045CDA0		PickupTrigger
-0x0045CDE0		BossDropIcon
+0x0045CDE0	+	BossDropIcon
 0x0045CE70		AnimatingPickUp
 
 
@@ -1429,7 +1429,7 @@ tomb3decomp progress.
 
 		game/triboss.cpp
 
-0x00470B70		TribeBossControl
+0x00470B70	+	TribeBossControl
 0x004712F0	+	S_DrawTribeBoss
 0x00471350	+	TriggerElectricSparks
 0x00471520	+	TribeBossDie

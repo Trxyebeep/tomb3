@@ -4,3 +4,4 @@
 void inject_pickup(bool replace);
 
 void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll);
+void BossDropIcon(short item_number);
