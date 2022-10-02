@@ -11,6 +11,7 @@
 #include "../game/triboss.h"
 
 static RAINDROP raindrops[256];
+static SNOWFLAKE snowflakes[256];
 
 void LaraElectricDeath(long lr, ITEM_INFO* item)
 {
@@ -379,7 +380,7 @@ void DrawExplosionRings()
 
 				if (y1 < phd_winymin)
 					clipFlag += 4;
-				else if (y1 > phd_winxmax)
+				else if (y1 > phd_winymax)
 					clipFlag += 8;
 
 				v[0].clip = clipFlag;
@@ -401,7 +402,7 @@ void DrawExplosionRings()
 
 				if (y2 < phd_winymin)
 					clipFlag += 4;
-				else if (y2 > phd_winxmax)
+				else if (y2 > phd_winymax)
 					clipFlag += 8;
 
 				v[1].clip = clipFlag;
@@ -423,7 +424,7 @@ void DrawExplosionRings()
 
 				if (y3 < phd_winymin)
 					clipFlag += 4;
-				else if (y3 > phd_winxmax)
+				else if (y3 > phd_winymax)
 					clipFlag += 8;
 
 				v[3].clip = clipFlag;
@@ -445,7 +446,7 @@ void DrawExplosionRings()
 
 				if (y4 < phd_winymin)
 					clipFlag += 4;
-				else if (y4 > phd_winxmax)
+				else if (y4 > phd_winymax)
 					clipFlag += 8;
 
 				v[2].clip = clipFlag;
@@ -865,7 +866,7 @@ void DrawTonyBossShield(ITEM_INFO* item)
 
 				if (y1 < phd_winymin)
 					clipFlag += 4;
-				else if (y1 > phd_winxmax)
+				else if (y1 > phd_winymax)
 					clipFlag += 8;
 
 				v[0].clip = clipFlag;
@@ -887,7 +888,7 @@ void DrawTonyBossShield(ITEM_INFO* item)
 
 				if (y2 < phd_winymin)
 					clipFlag += 4;
-				else if (y2 > phd_winxmax)
+				else if (y2 > phd_winymax)
 					clipFlag += 8;
 
 				v[1].clip = clipFlag;
@@ -909,7 +910,7 @@ void DrawTonyBossShield(ITEM_INFO* item)
 
 				if (y3 < phd_winymin)
 					clipFlag += 4;
-				else if (y3 > phd_winxmax)
+				else if (y3 > phd_winymax)
 					clipFlag += 8;
 
 				v[3].clip = clipFlag;
@@ -931,7 +932,7 @@ void DrawTonyBossShield(ITEM_INFO* item)
 
 				if (y4 < phd_winymin)
 					clipFlag += 4;
-				else if (y4 > phd_winxmax)
+				else if (y4 > phd_winymax)
 					clipFlag += 8;
 
 				v[2].clip = clipFlag;
@@ -1812,7 +1813,7 @@ void DrawTribeBossShield(ITEM_INFO* item)
 
 				if (y1 < phd_winymin)
 					clipFlag += 4;
-				else if (y1 > phd_winxmax)
+				else if (y1 > phd_winymax)
 					clipFlag += 8;
 
 				v[0].clip = clipFlag;
@@ -1834,7 +1835,7 @@ void DrawTribeBossShield(ITEM_INFO* item)
 
 				if (y2 < phd_winymin)
 					clipFlag += 4;
-				else if (y2 > phd_winxmax)
+				else if (y2 > phd_winymax)
 					clipFlag += 8;
 
 				v[1].clip = clipFlag;
@@ -1856,7 +1857,7 @@ void DrawTribeBossShield(ITEM_INFO* item)
 
 				if (y3 < phd_winymin)
 					clipFlag += 4;
-				else if (y3 > phd_winxmax)
+				else if (y3 > phd_winymax)
 					clipFlag += 8;
 
 				v[3].clip = clipFlag;
@@ -1878,7 +1879,7 @@ void DrawTribeBossShield(ITEM_INFO* item)
 
 				if (y4 < phd_winymin)
 					clipFlag += 4;
-				else if (y4 > phd_winxmax)
+				else if (y4 > phd_winymax)
 					clipFlag += 8;
 
 				v[2].clip = clipFlag;
@@ -2063,6 +2064,244 @@ void DoRain()
 	phd_PopMatrix();
 }
 
+void DoSnow()
+{
+	DISPLAYMODE* dm;
+	SNOWFLAKE* snow;
+	PHDSPRITESTRUCT* sprite;
+	PHDTEXTURESTRUCT tex;
+	PHD_VECTOR pos;
+	PHD_VBUF v[3];
+	float zv;
+	long w, h, rad, angle, ox, oy, oz, r, tx, ty, tz, x, y, z, size;
+	ushort u1, v1, u2, v2;
+	short c;
+	char clipFlag;
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w;
+	h = dm->h;
+	bBlueEffect = 0;
+
+	for (int i = 0, num_alive = 0; i < 256; i++)
+	{
+		snow = &snowflakes[i];
+
+		if (!snow->x && num_alive < 8)
+		{
+			num_alive++;
+			rad = GetRandomDraw() & 0xFFF;
+			angle = GetRandomDraw() & 0x1FFE;
+			snow->x = lara_item->pos.x_pos + (rad * rcossin_tbl[angle] >> 12);
+			snow->y = lara_item->pos.y_pos - 1024 - (GetRandomDraw() & 0x7FF);
+			snow->z = lara_item->pos.z_pos + (rad * rcossin_tbl[angle + 1] >> 12);
+
+			if (IsRoomOutside(snow->x, snow->y, snow->z) < 0)
+			{
+				snow->x = 0;
+				continue;
+			}
+
+			snow->stopped = 0;
+			snow->xv = (GetRandomDraw() & 7) - 4;
+			snow->yv = (GetRandomDraw() % 24 + 8) << 3;
+			snow->zv = (GetRandomDraw() & 7) - 4;
+			snow->life = 96 - (snow->yv << 1);
+		}
+
+		ox = snow->x;
+		oy = snow->y;
+		oz = snow->z;
+
+		if (!snow->stopped)
+		{
+			snow->x += snow->xv;
+			snow->y += (snow->yv & 0xF8) >> 2;
+			snow->z += snow->zv;
+			r = IsRoomOutside(snow->x, snow->y, snow->z);
+
+			if (r == -3)
+			{
+				snow->x = 0;
+				continue;
+			}
+
+			if (r == -2 || room[IsRoomOutsideNo].flags & ROOM_UNDERWATER)
+			{
+				snow->stopped = 1;
+				snow->x = ox;
+				snow->y = oy;
+				snow->z = oz;
+
+				if (snow->life > 16)
+					snow->life = 16;
+
+				if (snow->yv > 16)
+					snow->yv -= 16;
+			}
+		}
+
+		if (!snow->life)
+		{
+			snow->x = 0;
+			continue;
+		}
+
+		if ((abs(CamPos.x - snow->x) > 6000 || abs(CamPos.z - snow->z) > 6000) && snow->life > 16)
+			snow->life = 16;
+
+		if (snow->xv < SmokeWindX << 1)
+			snow->xv++;
+		else if (snow->xv > SmokeWindX << 1)
+			snow->xv--;
+
+		if (snow->zv < SmokeWindZ << 1)
+			snow->zv++;
+		else if (snow->zv > SmokeWindZ << 1)
+			snow->zv--;
+
+		snow->life -= 2;
+
+		if ((snow->yv & 7) != 7)
+			snow->yv++;
+	}
+
+	sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 17];
+	u1 = (sprite->offset << 8) & 0xFF00;
+	v1 = sprite->offset & 0xFF00;
+	u2 = ushort(u1 + sprite->width - App.nUVAdd);
+	v2 = ushort(v1 + sprite->height - App.nUVAdd);
+	u1 += (ushort)App.nUVAdd;
+	v1 += (ushort)App.nUVAdd;
+
+	phd_PushMatrix();
+	phd_TranslateAbs(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos);
+
+	for (int i = 0; i < 256; i++)
+	{
+		snow = &snowflakes[i];
+
+		if (!snow->x)
+			continue;
+
+		tx = snow->x - lara_item->pos.x_pos;
+		ty = snow->y - lara_item->pos.y_pos;
+		tz = snow->z - lara_item->pos.z_pos;
+		pos.x = tx * phd_mxptr[M00] + ty * phd_mxptr[M01] + tz * phd_mxptr[M02] + phd_mxptr[M03];
+		pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
+		pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
+		zv = f_persp / (float)pos.z;
+		pos.x = short(float(pos.x * zv + f_centerx));
+		pos.y = short(float(pos.y * zv + f_centery));
+
+		x = pos.x;
+		y = pos.y;
+		z = pos.z;
+
+		if ((z >> 16) < 32 ||
+			x < 0 || x > w ||
+			y < 0 || y > h)
+		{
+			if (snow->life > 16)
+				snow->life = 16;
+
+			continue;
+		}
+
+		size = phd_persp * (snow->yv >> 3) / (z >> 16);
+
+		if (size < 4)
+			size = 4;
+		else if (size > 16)
+			size = 16;
+
+		size = (size * 0x2AAB) >> 15;
+
+		v[0].xs = float(x + size);
+		v[0].ys = float(y - (size << 1));
+		v[0].zv = (float)z;
+		v[0].ooz = f_oneopersp * zv;
+		v[0].u = u2;
+		v[0].v = v1;
+		clipFlag = 0;
+
+		if (v[0].xs < phd_winxmin)
+			clipFlag++;
+		else if (v[0].xs > phd_winxmin + phd_winxmax)
+			clipFlag += 2;
+
+		if (v[0].ys < phd_winymin)
+			clipFlag += 4;
+		else if (v[0].ys > phd_winymin + phd_winymax)
+			clipFlag += 8;
+
+		v[0].clip = clipFlag;
+
+		v[1].xs = float(x + size);
+		v[1].ys = float(y + size);
+		v[1].zv = (float)z;
+		v[1].ooz = f_oneopersp * zv;
+		v[1].u = u2;
+		v[1].v = v2;
+		clipFlag = 0;
+
+		if (v[1].xs < phd_winxmin)
+			clipFlag++;
+		else if (v[1].xs > phd_winxmin + phd_winxmax)
+			clipFlag += 2;
+
+		if (v[1].ys < phd_winymin)
+			clipFlag += 4;
+		else if (v[1].ys > phd_winymin + phd_winymax)
+			clipFlag += 8;
+
+		v[1].clip = clipFlag;
+
+		v[2].xs = float(x - (size << 1));
+		v[2].ys = float(y + size);
+		v[2].zv = (float)z;
+		v[2].ooz = f_oneopersp * zv;
+		v[2].u = u1;
+		v[2].v = v2;
+		clipFlag = 0;
+
+		if (v[2].xs < phd_winxmin)
+			clipFlag++;
+		else if (v[2].xs > phd_winxmin + phd_winxmax)
+			clipFlag += 2;
+
+		if (v[2].ys < phd_winymin)
+			clipFlag += 4;
+		else if (v[2].ys > phd_winymin + phd_winymax)
+			clipFlag += 8;
+
+		v[2].clip = clipFlag;
+
+		tex.drawtype = 2;
+		tex.tpage = sprite->tpage;
+
+		if ((snow->yv & 7) < 7)
+		{
+			c = snow->yv & 7;
+			c = c << 10 | c << 5 | c;
+		}
+		else if (snow->life > 18)
+			c = 0x3DEF;
+		else
+		{
+			c = snow->life;
+			c = c << 10 | c << 5 | c;
+		}
+
+		v[0].g = c;
+		v[1].g = c;
+		v[2].g = c;
+		HWI_InsertGT3_Poly(&v[0], &v[1], &v[2], &tex, &v[0].u, &v[1].u, &v[2].u, MID_SORT, 0);
+	}
+
+	phd_PopMatrix();
+}
+
 void inject_draweffects(bool replace)
 {
 	INJECT(0x00478600, LaraElectricDeath, replace);
@@ -2074,4 +2313,5 @@ void inject_draweffects(bool replace)
 	INJECT(0x0047D4A0, TriggerTribeBossHeadElectricity, replace);
 	INJECT(0x0047EC30, DrawTribeBossShield, replace);
 	INJECT(0x0047A4B0, DoRain, replace);
+	INJECT(0x0047AA80, DoSnow, replace);
 }

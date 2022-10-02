@@ -1738,4 +1738,17 @@ struct RAINDROP
 	char zv;
 	uchar life;
 };
+
+struct SNOWFLAKE
+{
+	long x;
+	long old_roomflags : 1;
+	long stopped : 1;
+	long y : 30;
+	long z;
+	char xv;
+	uchar yv;
+	char zv;
+	uchar life;
+};
 #pragma pack(pop)
