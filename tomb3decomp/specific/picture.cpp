@@ -289,6 +289,31 @@ void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACE3 surf)
 	ConvertSurfaceToTextures16Bit(surf);
 }
 
+void CreateMonoScreen()
+{
+	DISPLAYMODE* dm;
+
+	DXTextureSetGreyScale(1);
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+
+	if (dm->w == 640 && dm->h == 480)
+		ConvertSurfaceToTextures(App.lpFrontBuffer);
+	else
+	{
+		App.lpPictureBuffer->Blt(0, App.lpFrontBuffer, 0, DDBLT_WAIT, 0);
+		ConvertSurfaceToTextures(App.lpPictureBuffer);
+	}
+
+	HWR_GetAllTextureHandles();
+
+	for (int i = 0; i < nTPages; i++)
+		HWR_SetCurrentTexture(TPages[i]);
+
+	DXTextureSetGreyScale(0);
+	nLoadedPictures++;
+	TIME_Init();
+}
+
 void inject_picture(bool replace)
 {
 	INJECT(0x0048AFD0, CrossFadePicture, replace);
@@ -299,4 +324,5 @@ void inject_picture(bool replace)
 	INJECT(0x0048B270, MemBlt, replace);
 	INJECT(0x0048B370, ConvertSurfaceToTextures16Bit, replace);
 	INJECT(0x0048B300, ConvertSurfaceToTextures, replace);
+	INJECT(0x0048BE60, CreateMonoScreen, replace);
 }

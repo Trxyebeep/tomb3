@@ -207,6 +207,7 @@
 #define bossdata	VAR_(0x006D2240, BOSS_STRUCT)
 #define TribeBossItem	VAR_(0x006D2264, ITEM_INFO*)
 #define IsRoomOutsideNo	VAR_(0x006E2FFE, short)
+#define nTPages	VAR_(0x006CED5C, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
