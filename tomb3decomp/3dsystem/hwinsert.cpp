@@ -387,7 +387,9 @@ long GETR(long col)
 {
 	long r;
 
-	r = ColorTable[(col >> 7) & 0xF8];
+	r = (col >> 10) & 0x1F;
+	r <<= 3;
+	r = ColorTable[r];
 
 	if (bBlueEffect)
 		return (128 * r) >> 8;
@@ -399,7 +401,9 @@ long GETG(long col)
 {
 	long g;
 
-	g = ColorTable[(col >> 2) & 0xF8];
+	g = (col >> 5) & 0x1F;
+	g <<= 3;
+	g = ColorTable[g];
 
 	if (bBlueEffect)
 		return (224 * g) >> 8;
@@ -411,7 +415,9 @@ long GETB(long col)
 {
 	long b;
 
-	b = ColorTable[(col & 0x1F) << 3];
+	b = (col & 0x1F);
+	b <<= 3;
+	b = ColorTable[b];
 	return b;
 }
 
