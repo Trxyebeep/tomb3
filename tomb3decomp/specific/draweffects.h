@@ -14,6 +14,7 @@ void DrawTribeBossShield(ITEM_INFO* item);
 void DoRain();
 void DoSnow();
 void DrawLondonBossShield(ITEM_INFO* item);
+void DrawWillBossShield(ITEM_INFO* item);
 
 #define S_DrawSparks	( (void(__cdecl*)()) 0x0047B2C0 )
 #define S_DrawSplashes	( (void(__cdecl*)()) 0x0047BAA0 )

@@ -1549,7 +1549,7 @@ tomb3decomp progress.
 0x0047E170	+	TriggerElectricBeam
 0x0047EC30	+	DrawTribeBossShield
 0x0047F4C0	+	S_DrawWakeFX
-0x0047FC30		DrawWillBossShield
+0x0047FC30	+	DrawWillBossShield
 
 
 		specific/ds.cpp
