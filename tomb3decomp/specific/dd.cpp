@@ -45,7 +45,21 @@ bool DD_SpinMessageLoop(bool wait)
 	return 1;
 }
 
+HRESULT DD_LockSurface(LPDIRECTDRAWSURFACE3 surf, DDSURFACEDESC& desc, ulong flags)
+{
+	memset(&desc, 0, sizeof(DDSURFACEDESC));
+	desc.dwSize = sizeof(DDSURFACEDESC);
+	return surf->Lock(0, &desc, flags, 0);
+}
+
+HRESULT DD_UnlockSurface(LPDIRECTDRAWSURFACE3 surf, DDSURFACEDESC& desc)
+{
+	return surf->Unlock(desc.lpSurface);
+}
+
 void inject_dd(bool replace)
 {
 	INJECT(0x004B3830, DD_SpinMessageLoop, replace);
+	INJECT(0x004B3900, DD_LockSurface, replace);
+	INJECT(0x004B3930, DD_UnlockSurface, replace);
 }

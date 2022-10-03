@@ -1489,8 +1489,8 @@ tomb3decomp progress.
 		specific/DD.cpp
 
 0x004B3830	+	DD_SpinMessageLoop
-0x004B3900		DD_LockSurface
-0x004B3930		DD_UnlockSurface
+0x004B3900	+	DD_LockSurface
+0x004B3930	+	DD_UnlockSurface
 0x004B3950		DD_CreateSurface
 0x004B39A0		DD_EnsureSurfaceAvailable
 0x004B39F0		DD_ClearSurface
