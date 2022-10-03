@@ -287,7 +287,7 @@ tomb3decomp progress.
 0x0041E630	+	GetNewRoom
 0x0041E690	+	ShiftItem
 0x0041E6D0		UpdateLaraRoom
-0x0041E730		GetTiltType
+0x0041E730	+	GetTiltType
 0x0041E8D0		LaraBaddieCollision
 0x0041EA60		CreatureCollision
 0x0041EBD0	+	ObjectCollision
