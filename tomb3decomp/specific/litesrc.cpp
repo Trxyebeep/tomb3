@@ -268,9 +268,9 @@ void S_CalculateLight(long x, long y, long z, short room_number, ITEM_LIGHT* il)
 			continue;
 		}
 
-		lc.x = light->x - x;
-		lc.y = light->y - y;
-		lc.z = light->z - z;
+		lc.x = (light->x - x) >> 2;
+		lc.y = (light->y - y) >> 2;
+		lc.z = (light->z - z) >> 2;
 		distance = phd_sqrt(SQUARE(lc.x) + SQUARE(lc.y) + SQUARE(lc.z));
 
 		if (distance <= light->spot.falloff)
