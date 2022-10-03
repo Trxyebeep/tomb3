@@ -59,6 +59,7 @@
 #include "../specific/display.h"
 #include "../specific/specific.h"
 #include "../specific/frontend.h"
+#include "../specific/dd.h"
 
 HINSTANCE hinstance = 0;
 
@@ -143,6 +144,7 @@ void inject_all(bool replace)
 	inject_display(replace);
 	inject_specific(replace);
 	inject_frontend(replace);
+	inject_dd(replace);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)

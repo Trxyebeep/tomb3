@@ -1,4 +1,6 @@
 #pragma once
 #include "../global/vars.h"
 
-#define DD_SpinMessageLoop	( (bool(__cdecl*)(bool)) 0x004B3830 )
+void inject_dd(bool replace);
+
+bool DD_SpinMessageLoop(bool wait);

@@ -208,6 +208,7 @@
 #define TribeBossItem	VAR_(0x006D2264, ITEM_INFO*)
 #define IsRoomOutsideNo	VAR_(0x006E2FFE, short)
 #define nTPages	VAR_(0x006CED5C, long)
+#define game_closedown	VAR_(0x00625F70, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
