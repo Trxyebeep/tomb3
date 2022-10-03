@@ -28,7 +28,7 @@ void AddFootprint(ITEM_INFO* item)
 	if (floor->fx != 6 && floor->fx != 5 && floor->fx != 11)
 		SoundEffect(footsounds[floor->fx] + SFX_FOOTSTEPS_MUD, &lara_item->pos, SFX_DEFAULT);
 
-	if (floor->fx < 3 && !OnObject)
+	if (floor->fx <= 4 && !OnObject)
 	{
 		print = &FootPrint[FootPrintNum];
 		print->x = pos.x;
