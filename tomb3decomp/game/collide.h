@@ -9,6 +9,7 @@ void ObjectCollisionSub(short item_num, ITEM_INFO* l, COLL_INFO* coll);
 void GetNewRoom(long x, long y, long z, short room_number);
 void GetNearByRooms(long x, long y, long z, long r, long h, short room_number);
 short GetTiltType(FLOOR_INFO* floor, long x, long y, long z);
+long CollideStaticObjects(COLL_INFO* coll, long x, long y, long z, short room_number, long hite);
 
 #define GetCollisionInfo	( (void(__cdecl*)(COLL_INFO*, long, long, long, short, long)) 0x0041D500 )
 #define LaraBaddieCollision	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x0041E8D0 )

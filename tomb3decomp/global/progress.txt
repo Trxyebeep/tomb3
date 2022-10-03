@@ -282,7 +282,7 @@ tomb3decomp progress.
 
 0x0041D500		GetCollisionInfo
 0x0041E140		FindGridShift
-0x0041E170		CollideStaticObjects
+0x0041E170	+	CollideStaticObjects
 0x0041E560	+	GetNearByRooms
 0x0041E630	+	GetNewRoom
 0x0041E690	+	ShiftItem

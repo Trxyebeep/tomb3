@@ -134,6 +134,182 @@ short GetTiltType(FLOOR_INFO* floor, long x, long y, long z)
 	return 0;
 }
 
+long CollideStaticObjects(COLL_INFO* coll, long x, long y, long z, short room_number, long hite)
+{
+	ROOM_INFO* r;
+	MESH_INFO* mesh;
+	STATIC_INFO* sinfo;
+	long lxmin, lxmax, lymin, lymax, lzmin, lzmax;
+	long xmin, xmax, ymin, ymax, zmin, zmax;
+	long ls, rs, xs, zs;
+
+	coll->hit_static = 0;
+	lxmin = x - coll->radius;
+	lxmax = x + coll->radius;
+	lymin = y - hite;
+	lymax = y;
+	lzmin = z - coll->radius;
+	lzmax = z + coll->radius;
+	GetNearByRooms(x, y, z, coll->radius + 50, hite + 50, room_number);
+
+	for (int i = 0; i < number_draw_rooms; i++)
+	{
+		r = &room[draw_rooms[i]];
+		mesh = r->mesh;
+
+		for (int j = r->num_meshes; j > 0; j--, mesh++)
+		{
+			sinfo = &static_objects[mesh->static_number];
+
+			if (sinfo->flags & 1)
+				continue;
+
+			ymin = mesh->y + sinfo->y_minc;
+			ymax = mesh->y + sinfo->y_maxc;
+
+			if (mesh->y_rot == -0x8000)
+			{
+				xmin = mesh->x - sinfo->x_maxc;
+				xmax = mesh->x - sinfo->x_minc;
+				zmin = mesh->z - sinfo->z_maxc;
+				zmax = mesh->z - sinfo->z_minc;
+			}
+			else if (mesh->y_rot == -0x4000)
+			{
+				xmin = mesh->x - sinfo->z_maxc;
+				xmax = mesh->x - sinfo->z_minc;
+				zmin = mesh->z + sinfo->x_minc;
+				zmax = mesh->z + sinfo->x_maxc;
+			}
+			else if (mesh->y_rot == 0x4000)
+			{
+				xmin = mesh->x + sinfo->z_minc;
+				xmax = mesh->x + sinfo->z_maxc;
+				zmin = mesh->z - sinfo->x_maxc;
+				zmax = mesh->z - sinfo->x_minc;
+			}
+			else
+			{
+				xmin = mesh->x + sinfo->x_minc;
+				xmax = mesh->x + sinfo->x_maxc;
+				zmin = mesh->z + sinfo->z_minc;
+				zmax = mesh->z + sinfo->z_maxc;
+			}
+
+			if (lxmax <= xmin || lxmin >= xmax || lymax <= ymin || lymin >= ymax || lzmax <= zmin || lzmin >= zmax)
+				continue;
+
+			ls = lxmax - xmin;
+			rs = xmax - lxmin;
+			xs = ls >= rs ? rs : -ls;
+
+			ls = lzmax - zmin;
+			rs = zmax - lzmin;
+			zs = ls >= rs ? rs : -ls;
+
+			switch (coll->quadrant)
+			{
+			case NORTH:
+
+				if (xs > coll->radius || xs < -coll->radius)
+				{
+					coll->shift.x = coll->old.x - x;
+					coll->shift.z = zs;
+					coll->coll_type = CT_FRONT;
+				}
+				else if (xs > 0)
+				{
+					coll->shift.x = xs;
+					coll->shift.z = 0;
+					coll->coll_type = CT_LEFT;
+				}
+				else if (xs < 0)
+				{
+					coll->shift.x = xs;
+					coll->shift.z = 0;
+					coll->coll_type = CT_RIGHT;
+				}
+
+				break;
+
+			case EAST:
+
+				if (zs > coll->radius || zs < -coll->radius)
+				{
+					coll->shift.x = xs;
+					coll->shift.z = coll->old.z - z;
+					coll->coll_type = CT_FRONT;
+				}
+				else if (zs > 0)
+				{
+					coll->shift.x = 0;
+					coll->shift.z = zs;
+					coll->coll_type = CT_RIGHT;
+				}
+				else if (zs < 0)
+				{
+					coll->shift.x = 0;
+					coll->shift.z = zs;
+					coll->coll_type = CT_LEFT;
+				}
+
+				break;
+
+			case SOUTH:
+
+				if (xs > coll->radius || xs < -coll->radius)
+				{
+					coll->shift.x = coll->old.x - x;
+					coll->shift.z = zs;
+					coll->coll_type = CT_FRONT;
+				}
+				else if (xs > 0)
+				{
+					coll->shift.x = xs;
+					coll->shift.z = 0;
+					coll->coll_type = CT_RIGHT;
+				}
+				else if (xs < 0)
+				{
+					coll->shift.x = xs;
+					coll->shift.z = 0;
+					coll->coll_type = CT_LEFT;
+				}
+
+				break;
+
+			case WEST:
+
+				if (zs > coll->radius || zs < -coll->radius)
+				{
+					coll->shift.x = xs;
+					coll->shift.z = coll->old.z - z;
+					coll->coll_type = CT_FRONT;
+				}
+				else if (zs > 0)
+				{
+					coll->shift.x = 0;
+					coll->shift.z = zs;
+					coll->coll_type = CT_LEFT;
+				}
+				else if (zs < 0)
+				{
+					coll->shift.x = 0;
+					coll->shift.z = zs;
+					coll->coll_type = CT_RIGHT;
+				}
+
+				break;
+			}
+
+			coll->hit_static = 1;
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
 void inject_collide(bool replace)
 {
 	INJECT(0x0041E690, ShiftItem, replace);
@@ -142,4 +318,5 @@ void inject_collide(bool replace)
 	INJECT(0x0041E630, GetNewRoom, replace);
 	INJECT(0x0041E560, GetNearByRooms, replace);
 	INJECT(0x0041E730, GetTiltType, replace);
+	INJECT(0x0041E170, CollideStaticObjects, replace);
 }
