@@ -2302,6 +2302,251 @@ void DoSnow()
 	phd_PopMatrix();
 }
 
+void DrawLondonBossShield(ITEM_INFO* item)
+{
+	DISPLAYMODE* dm;
+	SHIELD_POINTS* s0;
+	SHIELD_POINTS* s1;
+	PHDSPRITESTRUCT* sprite;
+	PHD_VECTOR pos;
+	PHD_VBUF v[4];
+	PHDTEXTURESTRUCT tex;
+	long* pZ0;
+	long* pZ1;
+	short* pXY0;
+	short* pXY1;
+	float zv;
+	long w, h, r, g, b, rgb;
+	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c1, c2, c3, c4;
+	long Z[150];
+	ushort u1, v1, u2, v2;
+	short XY[150];
+	char clipFlag;
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w - 1;
+	h = dm->h - 1;
+
+	phd_PushMatrix();
+	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+	pXY0 = XY;
+	pZ0 = Z;
+
+	for (int i = 0; i < 40; i++, s0++)
+	{
+		s0 = &LondonBossShield[i];
+		x1 = s0->x;
+		y1 = s0->y;
+		z1 = s0->z;
+
+		if (i >= 8 && i <= 31)
+		{
+			rgb = s0->rgb;
+
+			if (rgb)
+			{
+				r = (rgb & 0xFF) - s0->rsub;;
+				g = ((rgb >> 8) & 0xFF) - s0->gsub;
+				b = ((rgb >> 16) & 0xFF) - s0->bsub;
+
+				if (r < 0)
+					r = 0;
+
+				if (g < 0)
+					g = 0;
+
+				if (b < 0)
+					b = 0;
+
+				s0->rgb = r | (g << 8) | (b << 16);
+			}
+		}
+
+		pos.x = phd_mxptr[M00] * x1 + phd_mxptr[M01] * y1 + phd_mxptr[M02] * z1 + phd_mxptr[M03];
+		pos.y = phd_mxptr[M10] * x1 + phd_mxptr[M11] * y1 + phd_mxptr[M12] * z1 + phd_mxptr[M13];
+		pos.z = phd_mxptr[M20] * x1 + phd_mxptr[M21] * y1 + phd_mxptr[M22] * z1 + phd_mxptr[M23];
+		zv = f_persp / (float)pos.z;
+		pos.x = short(float(pos.x * zv + f_centerx));
+		pos.y = short(float(pos.y * zv + f_centery));
+		*pXY0++ = (short)pos.x;
+		*pXY0++ = (short)pos.y;
+		*pZ0++ = pos.z;
+	}
+
+	pXY0 = &XY[0];
+	pZ0 = &Z[0];
+	pXY1 = &XY[16];
+	pZ1 = &Z[8];
+	s0 = &LondonBossShield[0];
+	s1 = &LondonBossShield[8];
+
+	for (int i = 0; i < 4; i++)
+	{
+		x1 = *pXY0++;
+		y1 = *pXY0++;
+		z1 = *pZ0++;
+		x3 = *pXY1++;
+		y3 = *pXY1++;
+		z3 = *pZ1++;
+		c1 = s0->rgb;
+		c3 = s1->rgb;
+		s0++;
+		s1++;
+
+		sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 18 + ((i + (wibble >> 3)) & 7)];
+		u1 = (sprite->offset << 8) & 0xFF00;
+		v1 = sprite->offset & 0xFF00;
+		u2 = ushort(u1 + sprite->width - App.nUVAdd);
+		v2 = ushort(v1 + sprite->height - App.nUVAdd);
+		u1 += (ushort)App.nUVAdd;
+		v1 += (ushort)App.nUVAdd;
+
+		for (int j = 0; j < 8; j++)
+		{
+			if (j == 7)
+			{
+				x2 = pXY0[-16];
+				y2 = pXY0[-15];
+				z2 = pZ0[-8];
+				x4 = pXY1[-16];
+				y4 = pXY1[-15];
+				z4 = pZ1[-8];
+				c2 = s0[-8].rgb;
+				c4 = s1->rgb;
+			}
+			else
+			{
+				x2 = *pXY0++;
+				y2 = *pXY0++;
+				z2 = *pZ0++;
+				x4 = *pXY1++;
+				y4 = *pXY1++;
+				z4 = *pZ1++;
+				c2 = s0->rgb;
+				c4 = s1->rgb;
+				s0++;
+				s1++;
+			}
+
+			if ((z1 + z2 + z3 + z4) >> 2 > phd_znear && (c1 || c2 || c3 || c4) &&
+				x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
+				y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
+			{
+				clipFlag = 0;
+
+				if (x1 < phd_winxmin)
+					clipFlag++;
+				else if (x1 > phd_winxmax)
+					clipFlag += 2;
+
+				if (y1 < phd_winymin)
+					clipFlag += 4;
+				else if (y1 > phd_winymax)
+					clipFlag += 8;
+
+				v[0].clip = clipFlag;
+				v[0].xs = (float)x1;
+				v[0].ys = (float)y1;
+				v[0].zv = (float)z1;
+				v[0].ooz = f_persp / (float)z1 * f_oneopersp;
+				r = (c1 >> 3) & 0x1F;
+				g = (c1 >> 11) & 0x1F;
+				b = (c1 >> 19) & 0x1F;
+				v[0].g = short(r << 10 | g << 5 | b);
+
+				clipFlag = 0;
+
+				if (x2 < phd_winxmin)
+					clipFlag++;
+				else if (x2 > phd_winxmax)
+					clipFlag += 2;
+
+				if (y2 < phd_winymin)
+					clipFlag += 4;
+				else if (y2 > phd_winymax)
+					clipFlag += 8;
+
+				v[1].clip = clipFlag;
+				v[1].xs = (float)x2;
+				v[1].ys = (float)y2;
+				v[1].zv = (float)z2;
+				v[1].ooz = f_persp / (float)z2 * f_oneopersp;
+				r = (c2 >> 3) & 0x1F;
+				g = (c2 >> 11) & 0x1F;
+				b = (c2 >> 19) & 0x1F;
+				v[1].g = short(r << 10 | g << 5 | b);
+
+				clipFlag = 0;
+
+				if (x3 < phd_winxmin)
+					clipFlag++;
+				else if (x3 > phd_winxmax)
+					clipFlag += 2;
+
+				if (y3 < phd_winymin)
+					clipFlag += 4;
+				else if (y3 > phd_winymax)
+					clipFlag += 8;
+
+				v[3].clip = clipFlag;
+				v[3].xs = (float)x3;
+				v[3].ys = (float)y3;
+				v[3].zv = (float)z3;
+				v[3].ooz = f_persp / (float)z3 * f_oneopersp;
+				r = (c3 >> 3) & 0x1F;
+				g = (c3 >> 11) & 0x1F;
+				b = (c3 >> 19) & 0x1F;
+				v[3].g = short(r << 10 | g << 5 | b);
+
+				clipFlag = 0;
+
+				if (x4 < phd_winxmin)
+					clipFlag++;
+				else if (x4 > phd_winxmax)
+					clipFlag += 2;
+
+				if (y4 < phd_winymin)
+					clipFlag += 4;
+				else if (y4 > phd_winymax)
+					clipFlag += 8;
+
+				v[2].clip = clipFlag;
+				v[2].xs = (float)x4;
+				v[2].ys = (float)y4;
+				v[2].zv = (float)z4;
+				v[2].ooz = f_persp / (float)z4 * f_oneopersp;
+			//	r = (c4 >> 3) & 0x1F;
+			//	g = (c4 >> 11) & 0x1F;
+			//	b = (c4 >> 19) & 0x1F;
+			//	v[2].g = short(r << 10 | g << 5 | b);
+
+				tex.u1 = u1;
+				tex.u2 = u2;
+				tex.u3 = u2;
+				tex.u4 = u1;
+				tex.v1 = v1;
+				tex.v2 = v1;
+				tex.v3 = v2;
+				tex.v4 = v2;
+				tex.tpage = sprite->tpage;
+				tex.drawtype = 2;
+				HWI_InsertGT4_Sorted(&v[0], &v[1], &v[2], &v[3], &tex, MID_SORT, 1);
+			}
+
+			x1 = x2;
+			y1 = y2;
+			z1 = z2;
+			x3 = x4;
+			y3 = y4;
+			z3 = z4;
+			c1 = c2;
+			c3 = c4;
+		}
+	}
+
+	phd_PopMatrix();
+}
+
 void inject_draweffects(bool replace)
 {
 	INJECT(0x00478600, LaraElectricDeath, replace);
@@ -2314,4 +2559,5 @@ void inject_draweffects(bool replace)
 	INJECT(0x0047EC30, DrawTribeBossShield, replace);
 	INJECT(0x0047A4B0, DoRain, replace);
 	INJECT(0x0047AA80, DoSnow, replace);
+	INJECT(0x00479C20, DrawLondonBossShield, replace);
 }
