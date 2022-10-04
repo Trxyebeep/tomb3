@@ -1751,6 +1751,32 @@ long Inv_GetItemOption(long item_number)
 	return NO_ITEM;
 }
 
+long Inv_RequestItem(long item_number)
+{
+	INVENTORY_ITEM* item;
+	long obj_num;
+
+	obj_num = Inv_GetItemOption(item_number);
+
+	for (int i = 0; i < inv_main_objects; i++)
+	{
+		item = inv_main_list[i];
+
+		if (item->object_number == obj_num)
+			return inv_main_qtys[i];
+	}
+
+	for (int i = 0; i < inv_keys_objects; i++)
+	{
+		item = inv_keys_list[i];
+
+		if (item->object_number == obj_num)
+			return inv_keys_qtys[i];
+	}
+
+	return 0;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -1795,4 +1821,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00437380, RingNotActive, replace);
 
 	INJECT(0x00438530, Inv_GetItemOption, replace);
+	INJECT(0x00438380, Inv_RequestItem, replace);
 }

@@ -210,6 +210,7 @@
 #define Inv_downArrow1	VAR_(0x0062643C, TEXTSTRING*)
 #define Inv_downArrow2	VAR_(0x00626440, TEXTSTRING*)
 #define inv_keys_objects	VAR_(0x00626414, short)
+#define inv_main_objects	VAR_(0x004C6AF0, short)
 #define GlobePointLight	VAR_(0x006D62B4, long)
 #define bossdata	VAR_(0x006D2240, BOSS_STRUCT)
 #define TribeBossItem	VAR_(0x006D2264, ITEM_INFO*)
@@ -376,7 +377,10 @@
 #define RequesterFlags1	ARRAY_(0x006D6800, ulong, [24])
 #define RequesterFlags2	ARRAY_(0x006D67A0, ulong, [24])
 #define Inv_itemText	ARRAY_(0x00626420, TEXTSTRING*, [3])
-
+#define inv_main_qtys	ARRAY_(0x004C6AF8, short, [23])
+#define inv_main_list	ARRAY_(0x004C6B28, INVENTORY_ITEM*, [23])
+#define inv_keys_qtys	ARRAY_(0x004C6B88, short, [23])
+#define inv_keys_list	ARRAY_(0x004C6BB8, INVENTORY_ITEM*, [23])
 
 /*constants*/
 #define NO_HEIGHT -32512
