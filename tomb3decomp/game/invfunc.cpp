@@ -1612,6 +1612,145 @@ void RingNotActive(INVENTORY_ITEM* inv_item)
 	}
 }
 
+/************Item stuff************/
+
+long Inv_GetItemOption(long item_number)
+{
+	switch (item_number)
+	{
+	case GUN_ITEM:
+	case GUN_OPTION:
+		return GUN_OPTION;
+		
+	case SHOTGUN_ITEM:
+	case SHOTGUN_OPTION:
+		return SHOTGUN_OPTION;
+		
+	case MAGNUM_ITEM:
+	case MAGNUM_OPTION:
+		return MAGNUM_OPTION;
+		
+	case UZI_ITEM:
+	case UZI_OPTION:
+		return UZI_OPTION;
+		
+	case HARPOON_ITEM:
+	case HARPOON_OPTION:
+		return HARPOON_OPTION;
+		
+	case M16_ITEM:
+	case M16_OPTION:
+		return M16_OPTION;
+		
+	case ROCKET_GUN_ITEM:
+	case ROCKET_OPTION:
+		return ROCKET_OPTION;
+		
+	case GRENADE_GUN_ITEM:
+	case GRENADE_OPTION:
+		return GRENADE_OPTION;
+		
+	case SG_AMMO_ITEM:
+	case SG_AMMO_OPTION:
+		return SG_AMMO_OPTION;
+		
+	case MAG_AMMO_ITEM:
+	case MAG_AMMO_OPTION:
+		return MAG_AMMO_OPTION;
+		
+	case UZI_AMMO_ITEM:
+	case UZI_AMMO_OPTION:
+		return UZI_AMMO_OPTION;
+		
+	case HARPOON_AMMO_ITEM:
+	case HARPOON_AMMO_OPTION:
+		return HARPOON_AMMO_OPTION;
+		
+	case M16_AMMO_ITEM:
+	case M16_AMMO_OPTION:
+		return M16_AMMO_OPTION;
+		
+	case ROCKET_AMMO_ITEM:
+	case ROCKET_AMMO_OPTION:
+		return ROCKET_AMMO_OPTION;
+		
+	case GRENADE_AMMO_ITEM:
+	case GRENADE_AMMO_OPTION:
+		return GRENADE_AMMO_OPTION;
+		
+	case MEDI_ITEM:
+	case MEDI_OPTION:
+		return MEDI_OPTION;
+		
+	case BIGMEDI_ITEM:
+	case BIGMEDI_OPTION:
+		return BIGMEDI_OPTION;
+		
+	case FLAREBOX_ITEM:
+	case FLARE_ITEM:
+	case FLAREBOX_OPTION:
+		return FLAREBOX_OPTION;
+		
+	case PUZZLE_ITEM1:
+	case PUZZLE_OPTION1:
+		return PUZZLE_OPTION1;
+		
+	case PUZZLE_ITEM2:
+	case PUZZLE_OPTION2:
+		return PUZZLE_OPTION2;
+		
+	case PUZZLE_ITEM3:
+	case PUZZLE_OPTION3:
+		return PUZZLE_OPTION3;
+		
+	case PUZZLE_ITEM4:
+	case PUZZLE_OPTION4:
+		return PUZZLE_OPTION4;
+		
+	case KEY_ITEM1:
+	case KEY_OPTION1:
+		return KEY_OPTION1;
+		
+	case KEY_ITEM2:
+	case KEY_OPTION2:
+		return KEY_OPTION2;
+		
+	case KEY_ITEM3:
+	case KEY_OPTION3:
+		return KEY_OPTION3;
+		
+	case KEY_ITEM4:
+	case KEY_OPTION4:
+		return KEY_OPTION4;
+		
+	case PICKUP_ITEM1:
+	case PICKUP_OPTION1:
+		return PICKUP_OPTION1;
+		
+	case PICKUP_ITEM2:
+	case PICKUP_OPTION2:
+		return PICKUP_OPTION2;
+		
+	case ICON_PICKUP1_ITEM:
+	case ICON_PICKUP1_OPTION:
+		return ICON_PICKUP1_OPTION;
+		
+	case ICON_PICKUP2_ITEM:
+	case ICON_PICKUP2_OPTION:
+		return ICON_PICKUP2_OPTION;
+		
+	case ICON_PICKUP3_ITEM:
+	case ICON_PICKUP3_OPTION:
+		return ICON_PICKUP3_OPTION;
+		
+	case ICON_PICKUP4_ITEM:
+	case ICON_PICKUP4_OPTION:
+		return ICON_PICKUP4_OPTION;
+	}
+
+	return NO_ITEM;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -1654,4 +1793,6 @@ void inject_invfunc(bool replace)
 	INJECT(0x004372F0, RingIsNotOpen, replace);
 	INJECT(0x00437870, RingActive, replace);
 	INJECT(0x00437380, RingNotActive, replace);
+
+	INJECT(0x00438530, Inv_GetItemOption, replace);
 }
