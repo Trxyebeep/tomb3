@@ -627,7 +627,7 @@ tomb3decomp progress.
 
 0x00437050	+	InitColours
 0x00437160	+	RingIsOpen
-0x004372F0		RingIsNotOpen
+0x004372F0	+	RingIsNotOpen
 0x00437380		RingNotActive
 0x00437870		RingActive
 0x004378B0		Inv_AddItem

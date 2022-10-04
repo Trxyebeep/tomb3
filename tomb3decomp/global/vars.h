@@ -204,6 +204,7 @@
 #define GF_Key4Strings_buffer	VAR_(0x006D785C, char*)
 #define GF_BonusLevelEnabled	VAR_(0x00626208, long)
 #define Inv_ringText	VAR_(0x0062642C, TEXTSTRING*)
+#define Inv_tagText	VAR_(0x00626430, TEXTSTRING*)
 #define Inv_upArrow1	VAR_(0x00626434, TEXTSTRING*)
 #define Inv_upArrow2	VAR_(0x00626438, TEXTSTRING*)
 #define Inv_downArrow1	VAR_(0x0062643C, TEXTSTRING*)
