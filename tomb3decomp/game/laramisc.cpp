@@ -251,6 +251,9 @@ void LaraCheatGetStuff()
 	if (objects[GRENADE_GUN_ITEM].loaded)
 		Inv_AddItem(GRENADE_GUN_ITEM);
 
+	if (objects[HARPOON_ITEM].loaded)
+		Inv_AddItem(HARPOON_ITEM);
+
 	for (int i = KEY_ITEM1; i <= KEY_ITEM4; i++)
 	{
 		if (objects[i].loaded && !Inv_RequestItem(i))
