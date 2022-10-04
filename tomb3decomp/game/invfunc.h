@@ -46,6 +46,7 @@ void RingNotActive(INVENTORY_ITEM* inv_item);
 
 long Inv_GetItemOption(long item_number);
 long Inv_RequestItem(long item_number);
+void Inv_InsertItem(INVENTORY_ITEM* item);
 
 #define Inv_AddItem	( (long(__cdecl*)(long)) 0x004378B0 )
 #define Inv_RemoveItem	( (long(__cdecl*)(long)) 0x00438420 )

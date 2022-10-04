@@ -1777,6 +1777,71 @@ long Inv_RequestItem(long item_number)
 	return 0;
 }
 
+void Inv_InsertItem(INVENTORY_ITEM* item)
+{
+	INVENTORY_ITEM* next;
+	long i, n;
+
+	if (item->inv_pos < 100)
+	{
+		for (i = 0; i < inv_main_objects; i++)
+		{
+			next = inv_main_list[i];
+
+			if (next->inv_pos > item->inv_pos)
+				break;
+		}
+
+		if (i == inv_main_objects)
+		{
+			inv_main_list[inv_main_objects] = item;
+			inv_main_qtys[inv_main_objects] = 1;
+			inv_main_objects++;
+		}
+		else
+		{
+			for (n = inv_main_objects; n > i - 1; n--)
+			{
+				inv_main_list[n + 1] = inv_main_list[n];
+				inv_main_qtys[n + 1] = inv_main_qtys[n];
+			}
+
+			inv_main_list[i] = item;
+			inv_main_qtys[i] = 1;
+			inv_main_objects++;
+		}
+	}
+	else
+	{
+		for (i = 0; i < inv_keys_objects; i++)
+		{
+			next = inv_keys_list[i];
+
+			if (next->inv_pos > item->inv_pos)
+				break;
+		}
+
+		if (i == inv_keys_objects)
+		{
+			inv_keys_list[inv_keys_objects] = item;
+			inv_keys_qtys[inv_keys_objects] = 1;
+			inv_keys_objects++;
+		}
+		else
+		{
+			for (n = inv_keys_objects; n > i - 1; n--)
+			{
+				inv_keys_list[n + 1] = inv_keys_list[n];
+				inv_keys_qtys[n + 1] = inv_keys_qtys[n];
+			}
+
+			inv_keys_list[i] = item;
+			inv_keys_qtys[i] = 1;
+			inv_keys_objects++;
+		}
+	}
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -1822,4 +1887,5 @@ void inject_invfunc(bool replace)
 
 	INJECT(0x00438530, Inv_GetItemOption, replace);
 	INJECT(0x00438380, Inv_RequestItem, replace);
+	INJECT(0x00438250, Inv_InsertItem, replace);
 }
