@@ -38,6 +38,7 @@
 #include "../game/51civvy.h"
 #include "../game/invfunc.h"
 #include "../game/triboss.h"
+#include "../game/inventry.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -127,6 +128,7 @@ void inject_all(bool replace)
 	inject_civvy(replace);
 	inject_invfunc(replace);
 	inject_triboss(replace);
+	inject_inventry(replace);
 
 	//specific
 	inject_drawbars(replace);
