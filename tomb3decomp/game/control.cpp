@@ -86,7 +86,7 @@ long ControlPhase(long nframes, long demo_mode)
 			if (overlay_flag == 2)
 			{
 				overlay_flag = 1;
-				return_val = Display_Inventory(5);
+				return_val = Display_Inventory(INV_DEATH_MODE);
 
 				if (return_val)
 					return return_val;
@@ -114,11 +114,11 @@ long ControlPhase(long nframes, long demo_mode)
 			else
 			{
 				if (overlay_flag == -1)
-					return_val = Display_Inventory(4);
+					return_val = Display_Inventory(INV_LOAD_MODE);
 				else if (overlay_flag == -2)
-					return_val = Display_Inventory(3);
+					return_val = Display_Inventory(INV_SAVE_MODE);
 				else
-					return_val = Display_Inventory(0);
+					return_val = Display_Inventory(INV_GAME_MODE);
 
 				overlay_flag = 1;
 

@@ -633,7 +633,7 @@ tomb3decomp progress.
 0x004378B0		Inv_AddItem
 0x00438250	+	Inv_InsertItem
 0x00438380	+	Inv_RequestItem
-0x00438400		Inv_RemoveAllItems
+0x00438400	+	Inv_RemoveAllItems
 0x00438420	+	Inv_RemoveItem
 0x00438530	+	Inv_GetItemOption
 0x00438770		RemoveInventoryText

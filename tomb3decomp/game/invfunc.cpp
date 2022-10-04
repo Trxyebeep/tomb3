@@ -1898,6 +1898,14 @@ long Inv_RemoveItem(long item_number)
 	return 0;
 }
 
+void Inv_RemoveAllItems()
+{
+	inv_main_objects = 0;
+	inv_main_current = 0;
+	inv_keys_objects = 0;
+	inv_keys_current = 0;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -1945,4 +1953,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00438380, Inv_RequestItem, replace);
 	INJECT(0x00438250, Inv_InsertItem, replace);
 	INJECT(0x00438420, Inv_RemoveItem, replace);
+	INJECT(0x00438400, Inv_RemoveAllItems, replace);
 }
