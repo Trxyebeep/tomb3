@@ -7,6 +7,8 @@
 #include "gameflow.h"
 #include "../specific/smain.h"
 #include "../3dsystem/3d_gen.h"
+#include "objects.h"
+#include "health.h"
 
 static ushort req_bgnd_gour1[16] =
 {
@@ -1409,6 +1411,207 @@ void RingActive()
 	Inv_itemText[1] = 0;
 }
 
+void RingNotActive(INVENTORY_ITEM* inv_item)
+{
+	long qty;
+	char txt[64];
+
+	if (!Inv_itemText[0])
+	{
+		switch (inv_item->object_number)
+		{
+		case PASSPORT_OPTION:
+		case GAMMA_OPTION:
+			break;
+
+		case PUZZLE_OPTION1:
+			Inv_itemText[0] = T_Print(0, -16, 0, GF_Puzzle1Strings[CurrentLevel]);
+			break;
+
+		case PUZZLE_OPTION2:
+			Inv_itemText[0] = T_Print(0, -16, 0, GF_Puzzle2Strings[CurrentLevel]);
+			break;
+
+		case PUZZLE_OPTION3:
+			Inv_itemText[0] = T_Print(0, -16, 0, GF_Puzzle3Strings[CurrentLevel]);
+			break;
+
+		case PUZZLE_OPTION4:
+			Inv_itemText[0] = T_Print(0, -16, 0, GF_Puzzle4Strings[CurrentLevel]);
+			break;
+
+		case KEY_OPTION1:
+			Inv_itemText[0] = T_Print(0, -16, 0, GF_Key1Strings[CurrentLevel]);
+			break;
+
+		case KEY_OPTION2:
+			Inv_itemText[0] = T_Print(0, -16, 0, GF_Key2Strings[CurrentLevel]);
+			break;
+
+		case KEY_OPTION3:
+			Inv_itemText[0] = T_Print(0, -16, 0, GF_Key3Strings[CurrentLevel]);
+			break;
+
+		case KEY_OPTION4:
+			Inv_itemText[0] = T_Print(0, -16, 0, GF_Key4Strings[CurrentLevel]);
+			break;
+
+		case PICKUP_OPTION1:
+			Inv_itemText[0] = T_Print(0, -16, 0, GF_Pickup1Strings[CurrentLevel]);
+			break;
+
+		case PICKUP_OPTION2:
+			Inv_itemText[0] = T_Print(0, -16, 0, GF_Pickup2Strings[CurrentLevel]);
+			break;
+
+		default:
+			Inv_itemText[0] = T_Print(0, -16, 5, inv_item->itemText);
+			break;
+		}
+
+		if (Inv_itemText[0])
+		{
+			T_BottomAlign(Inv_itemText[0], 1);
+			T_CentreH(Inv_itemText[0], 1);
+		}
+	}
+
+	qty = Inv_RequestItem(inv_item->object_number);
+
+	switch (inv_item->object_number)
+	{
+	case SHOTGUN_OPTION:
+
+		if (Inv_itemText[1] || savegame.bonus_flag)
+			return;
+
+		wsprintf(txt, "%5d", lara.shotgun.ammo / 6);
+		break;
+
+	case MAGNUM_OPTION:
+
+		if (Inv_itemText[1] || savegame.bonus_flag)
+			return;
+
+		wsprintf(txt, "%5d", lara.magnums.ammo);
+		break;
+
+	case UZI_OPTION:
+
+		if (Inv_itemText[1] || savegame.bonus_flag)
+			return;
+
+		wsprintf(txt, "%5d", lara.uzis.ammo);
+		break;
+
+	case HARPOON_OPTION:
+
+		if (Inv_itemText[1] || savegame.bonus_flag)
+			return;
+
+		wsprintf(txt, "%5d", lara.harpoon.ammo);
+		break;
+
+	case M16_OPTION:
+
+		if (Inv_itemText[1] || savegame.bonus_flag)
+			return;
+
+		wsprintf(txt, "%5d", lara.m16.ammo);
+		break;
+
+	case ROCKET_OPTION:
+
+		if (Inv_itemText[1] || savegame.bonus_flag)
+			return;
+
+		wsprintf(txt, "%5d", lara.rocket.ammo);
+		break;
+
+	case GRENADE_OPTION:
+
+		if (Inv_itemText[1] || savegame.bonus_flag)
+			return;
+
+		wsprintf(txt, "%5d", lara.grenade.ammo);
+		break;
+
+	case SG_AMMO_OPTION:
+
+		if (Inv_itemText[1])
+			return;
+
+		wsprintf(txt, "%5d", qty * 2);
+		break;
+
+	case MAG_AMMO_OPTION:
+	case UZI_AMMO_OPTION:
+	case M16_AMMO_OPTION:
+
+		if (Inv_itemText[1] || savegame.bonus_flag)
+			return;
+
+		wsprintf(txt, "%d", qty * 2);
+		break;
+
+	case HARPOON_AMMO_OPTION:
+
+		if (Inv_itemText[1] || savegame.bonus_flag)
+			return;
+
+		wsprintf(txt, "%d", lara.harpoon.ammo);
+		break;
+
+	case ROCKET_AMMO_OPTION:
+	case GRENADE_AMMO_OPTION:
+	case FLAREBOX_OPTION:
+
+		if (Inv_itemText[1] || savegame.bonus_flag)
+			return;
+
+		wsprintf(txt, "%d", qty);
+		break;
+
+	case MEDI_OPTION:
+	case BIGMEDI_OPTION:
+		health_bar_timer = 40;
+		DrawHealthBar(FlashIt());
+		//NO BREAK!
+
+	case SAVEGAME_CRYSTAL_OPTION:
+	case PUZZLE_OPTION1:
+	case PUZZLE_OPTION2:
+	case PUZZLE_OPTION3:
+	case PUZZLE_OPTION4:
+	case KEY_OPTION1:
+	case KEY_OPTION2:
+	case KEY_OPTION3:
+	case KEY_OPTION4:
+	case PICKUP_OPTION1:
+	case PICKUP_OPTION2:
+	case ICON_PICKUP1_OPTION:
+	case ICON_PICKUP2_OPTION:
+	case ICON_PICKUP3_OPTION:
+	case ICON_PICKUP4_OPTION:
+
+		if (Inv_itemText[1] || qty <= 1)
+			return;
+
+		wsprintf(txt, "%d", qty);
+		break;
+
+	default:
+		return;
+	}
+
+	if (!Inv_itemText[1])
+	{
+		Inv_itemText[1] = T_Print(64, -56, 3, txt);
+		T_BottomAlign(Inv_itemText[1], 1);
+		T_CentreH(Inv_itemText[1], 1);
+	}
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -1450,4 +1653,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00437160, RingIsOpen, replace);
 	INJECT(0x004372F0, RingIsNotOpen, replace);
 	INJECT(0x00437870, RingActive, replace);
+	INJECT(0x00437380, RingNotActive, replace);
 }

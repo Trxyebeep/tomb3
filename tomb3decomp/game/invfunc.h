@@ -42,6 +42,7 @@ void Inv_RingRotateRight(RING_INFO* ring);
 void RingIsOpen(RING_INFO* ring);
 void RingIsNotOpen(RING_INFO* ring);
 void RingActive();
+void RingNotActive(INVENTORY_ITEM* inv_item);
 
 #define Inv_AddItem	( (long(__cdecl*)(long)) 0x004378B0 )
 #define Inv_RemoveItem	( (long(__cdecl*)(long)) 0x00438420 )
