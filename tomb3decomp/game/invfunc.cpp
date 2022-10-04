@@ -2287,6 +2287,17 @@ long Inv_AddItem(long item_number)
 	return 0;
 }
 
+/************other stuff************/
+
+void RemoveInventoryText()
+{
+	for (int i = 0; i < 2; i++)
+	{
+		T_RemovePrint(Inv_itemText[i]);
+		Inv_itemText[i] = 0;
+	}
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -2336,4 +2347,6 @@ void inject_invfunc(bool replace)
 	INJECT(0x00438420, Inv_RemoveItem, replace);
 	INJECT(0x00438400, Inv_RemoveAllItems, replace);
 	INJECT(0x004378B0, Inv_AddItem, replace);
+
+	INJECT(0x00438770, RemoveInventoryText, replace);
 }

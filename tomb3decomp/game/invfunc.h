@@ -50,3 +50,5 @@ void Inv_InsertItem(INVENTORY_ITEM* item);
 long Inv_RemoveItem(long item_number);
 void Inv_RemoveAllItems();
 long Inv_AddItem(long item_number);
+
+void RemoveInventoryText();
