@@ -35,7 +35,7 @@ void S_DrawScreenFBox(long x, long y, long z, long w, long h, long c, ushort* gr
 
 void S_FinishInventory()
 {
-	if (Inventory_Mode != 1)
+	if (Inventory_Mode != INV_TITLE_MODE)
 		TempVideoRemove();
 }
 

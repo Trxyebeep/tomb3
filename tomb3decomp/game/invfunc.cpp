@@ -1104,7 +1104,7 @@ void Inv_RingInit(RING_INFO* ring, short type, INVENTORY_ITEM** list, short qty,
 	ring->radius = 0;
 	ring->angle_adder = 0x10000 / qty;
 
-	if (Inventory_Mode == 1)
+	if (Inventory_Mode == INV_TITLE_MODE)
 		ring->camera_pitch = 1024;
 	else
 		ring->camera_pitch = 0;
@@ -1318,6 +1318,67 @@ void Inv_RingRotateRight(RING_INFO* ring)
 	ring->rot_adder = ring->rot_adderR;
 }
 
+void RingIsOpen(RING_INFO* ring)
+{
+	if (Inventory_Mode == INV_TITLE_MODE)
+		return;
+
+	if (!Inv_ringText)
+	{
+		switch (ring->type)
+		{
+		case 0:
+			Inv_ringText = T_Print(0, 26, 5, GF_GameStrings[GT_MAIN_HEADING]);
+			break;
+
+		case 1:
+
+			if (Inventory_Mode == INV_DEATH_MODE)
+				Inv_ringText = T_Print(0, 26, 5, GF_GameStrings[GT_GAMEOVER_HEADING]);
+			else
+				Inv_ringText = T_Print(0, 26, 5, GF_GameStrings[GT_OPTION_HEADING]);
+
+			break;
+
+		case 2:
+			Inv_ringText = T_Print(0, 26, 5, GF_GameStrings[GT_KEYS_HEADING]);
+			break;
+
+		case 3:
+			Inv_ringText = T_Print(0, 26, 5, GF_GameStrings[GT_LEVELSELECT]);
+			break;
+		}
+
+		T_CentreH(Inv_ringText, 1);
+	}
+
+	if (Inventory_Mode == INV_KEYS_MODE || Inventory_Mode == INV_DEATH_MODE)
+		return;
+
+	if (!Inv_upArrow1)
+	{
+		if (ring->type == 1 || !ring->type && inv_keys_objects)
+		{
+			Inv_upArrow1 = T_Print(20, 28, 2, "[");
+			Inv_upArrow2 = T_Print(-20, 28, 2, "[");
+			T_RightAlign(Inv_upArrow2, 1);
+		}
+	}
+
+	if (!Inv_downArrow1)
+	{
+		if (!ring->type && !gameflow.lockout_optionring || ring->type == 2)
+		{
+			Inv_downArrow1 = T_Print(20, -15, 2, "]");
+			T_BottomAlign(Inv_downArrow1, 1);
+
+			Inv_downArrow2 = T_Print(-20, -15, 2, "]");
+			T_BottomAlign(Inv_downArrow2, 1);
+			T_RightAlign(Inv_downArrow2, 1);
+		}
+	}
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -1356,4 +1417,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00438D60, Inv_RingCalcAdders, replace);
 	INJECT(0x00438ED0, Inv_RingRotateLeft, replace);
 	INJECT(0x00438F00, Inv_RingRotateRight, replace);
+	INJECT(0x00437160, RingIsOpen, replace);
 }

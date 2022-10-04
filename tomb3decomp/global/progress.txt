@@ -626,7 +626,7 @@ tomb3decomp progress.
 		game/invfunc.cpp
 
 0x00437050	+	InitColours
-0x00437160		RingIsOpen
+0x00437160	+	RingIsOpen
 0x004372F0		RingIsNotOpen
 0x00437380		RingNotActive
 0x00437870		RingActive

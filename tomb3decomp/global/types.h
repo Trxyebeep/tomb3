@@ -49,6 +49,18 @@ do \
 
 
 /*enums*/
+enum inv_modes
+{
+	INV_GAME_MODE,
+	INV_TITLE_MODE,
+	INV_KEYS_MODE,
+	INV_SAVE_MODE,
+	INV_LOAD_MODE,
+	INV_DEATH_MODE,
+	INV_FMV_MODE,
+	INV_LEVELSELECT_MODE
+};
+
 enum fire_types
 {
 	BIG_FIRE,
