@@ -4,6 +4,7 @@
 void inject_specific(bool replace);
 
 uchar SWR_FindNearestPaletteEntry(uchar* p, long r, long g, long b, bool ignoreSystemPalette);
+bool CD_Init();
 
 #define S_CDStop	( (void(__cdecl*)()) 0x0048D4A0 )
 #define S_CDPlay	( (void(__cdecl*)(short, long)) 0x0048D480 )

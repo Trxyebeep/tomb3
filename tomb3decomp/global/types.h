@@ -1325,15 +1325,14 @@ struct SPARKS
 
 struct DXTEXTURE
 {
-	IDirectDrawSurface3* pSystemSurface;
-	IDirectDrawSurface3* pDeviceSurface;
-	IDirectDrawPalette* pPalette;
-	IDirect3DTexture2* pTexture;
-	D3DTEXTUREHANDLE hTexture;
-	long nWidth;
-	long nHeight;
-	ulong dwFlags;
-	ushort* pSoftwareSurface;
+	IDirectDrawSurface3* pSystemSurface;		//yes
+	IDirectDrawPalette* pPalette;				//yes
+	long nWidth;								//yes
+	long nHeight;								//yes
+	IDirect3DTexture2* pTexture;				//maybe
+	ulong dwFlags;								//yes
+	ushort* pSoftwareSurface;					//no idea
+	D3DTEXTUREHANDLE hTexture;					//no idea
 };
 
 struct TEXTUREBUCKET
@@ -1341,18 +1340,6 @@ struct TEXTUREBUCKET
 	DXTEXTURE* TPage;
 	long nVtx;
 	D3DTLVERTEX vtx[288];
-};
-
-struct TEXTURESHIT	//WIP
-{
-	DXTEXTURE* tex;
-	IDirectDrawSurface3* surf;
-	IDirectDrawPalette* palette;
-	LPDIRECT3DTEXTURE2 d3dtex;
-	LPD3DTEXTUREHANDLE handle;
-	int unk1;
-	int unk2;
-	IDirectDrawSurface3* surf2;
 };
 
 struct POINT_INFO

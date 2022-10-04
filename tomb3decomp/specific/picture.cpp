@@ -110,9 +110,7 @@ void DrawTile(long x, long y, long w, long h, long tpage, long tU, long tV, long
 	v[3].color = c2;
 	v[3].specular = 0xFF000000;
 
-	sizeof(DXTEXTURE);
-	sizeof(TEXTURESHIT);
-	HWR_SetCurrentTexture((DXTEXTURE*)&PictureTextures[tpage].tex);		//FIX ME
+	HWR_SetCurrentTexture(&PictureTextures[tpage]);
 	HWR_EnableColorKey(0);
 	HWR_EnableColorAddition(0);
 	HWR_EnableZBuffer(0, 0);
