@@ -1842,6 +1842,62 @@ void Inv_InsertItem(INVENTORY_ITEM* item)
 	}
 }
 
+long Inv_RemoveItem(long item_number)
+{
+	INVENTORY_ITEM* item;
+	long obj_num;
+
+	obj_num = Inv_GetItemOption(item_number);
+
+	for (int i = 0; i < inv_main_objects; i++)
+	{
+		item = inv_main_list[i];
+
+		if (item->object_number == obj_num)
+		{
+			inv_main_qtys[i]--;
+
+			if (inv_main_qtys[i] <= 0)
+			{
+				inv_main_objects--;
+
+				for (int j = i; j < inv_main_objects; j++)
+				{
+					inv_main_list[j] = inv_main_list[j + 1];
+					inv_main_qtys[j] = inv_main_qtys[j + 1];
+				}
+			}
+
+			return 1;
+		}
+	}
+
+	for (int i = 0; i < inv_keys_objects; i++)
+	{
+		item = inv_keys_list[i];
+
+		if (item->object_number == obj_num)
+		{
+			inv_keys_qtys[i]--;
+
+			if (inv_keys_qtys[i] <= 0)
+			{
+				inv_keys_objects--;
+
+				for (int j = i; j < inv_keys_objects; j++)
+				{
+					inv_keys_list[j] = inv_keys_list[j + 1];
+					inv_keys_qtys[j] = inv_keys_qtys[j + 1];
+				}
+			}
+
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -1888,4 +1944,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00438530, Inv_GetItemOption, replace);
 	INJECT(0x00438380, Inv_RequestItem, replace);
 	INJECT(0x00438250, Inv_InsertItem, replace);
+	INJECT(0x00438420, Inv_RemoveItem, replace);
 }
