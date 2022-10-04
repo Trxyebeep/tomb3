@@ -1494,7 +1494,8 @@ tomb3decomp progress.
 0x004B3950	+	DD_CreateSurface
 0x004B39A0	+	DD_EnsureSurfaceAvailable
 0x004B39F0	+	DD_ClearSurface
-
+0x004900B0		DD_GetSurfaceDesc
+0x004900C0		DD_SurfBlt
 
 		specific/DI.cpp
 
@@ -1571,6 +1572,29 @@ tomb3decomp progress.
 0x00480C40		DS_SetOutputFormat
 0x00480D10		DS_Finish
 0x00480D40		DS_IsSoundEnabled
+
+
+		specific/dxshell.cpp
+
+0x0048EBB0		DXGetDeviceInfo
+0x0048ECE0		DXEnumDirectInput
+0x0048EDE0		DXEnumDirectSound
+0x0048EEE0		DXFreeDeviceInfo
+0x0048EFD0		DXEnumDirectDraw
+0x0048F1C0		DXBitMask2ShiftCnt
+0x0048F1F0		DXEnumDisplayModes
+0x0048F3C0		DXEnumDirect3D
+0x0048FBB0		DXEnumTextureFormats
+0x0048FDB0		BPPToDDBD
+0x0048FE40		DXCreateDirectDraw
+0x0048FEA0		DXCreateDirect3D
+0x0048FEC0		DXSetCooperativeLevel
+0x0048FEE0		DXSetVideoMode
+0x0048FF10		DXCreateSurface
+0x0048FF60		DXGetAttachedSurface
+0x0048FF80		DXAddAttachedSurface
+0x0048FFA0		DXCreateDirect3DDevice
+0x0048FFC0		DXCreateViewPort
 
 
 		specific/file.cpp
