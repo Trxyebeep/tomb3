@@ -9,6 +9,7 @@
 #include "../3dsystem/3d_gen.h"
 #include "objects.h"
 #include "health.h"
+#include "items.h"
 
 static ushort req_bgnd_gour1[16] =
 {
@@ -1906,6 +1907,386 @@ void Inv_RemoveAllItems()
 	inv_keys_current = 0;
 }
 
+long Inv_AddItem(long item_number)
+{
+	INVENTORY_ITEM* item;
+	long obj_num, add, nMain, nKeys, n;
+
+	obj_num = Inv_GetItemOption(item_number);
+	add = 0;
+
+	for (nMain = 0; nMain < inv_main_objects; nMain++)
+	{
+		item = inv_main_list[nMain];
+
+		if (item->object_number == obj_num)
+		{
+			add = 1;
+			break;
+		}
+	}
+
+	for (nKeys = 0; nKeys < inv_keys_objects; nKeys++)
+	{
+		item = inv_keys_list[nKeys];
+
+		if (item->object_number == obj_num)
+		{
+			add = 2;
+			break;
+		}
+	}
+
+	if (add == 1)
+	{
+		if (item_number == FLAREBOX_ITEM)
+			inv_main_qtys[nMain] += 8;
+		else if (item_number == HARPOON_AMMO_ITEM)
+			lara.harpoon.ammo += 3;
+		else
+			inv_main_qtys[nMain]++;
+
+		return 1;
+	}
+
+	if (add == 2)
+	{
+		inv_keys_qtys[nKeys]++;
+		return 1;
+	}
+
+	switch (item_number)
+	{
+	case MAP_OPTION:
+	case MAP_CLOSED:
+		Inv_InsertItem(&icompass_option);
+		return 1;
+
+	case GUN_ITEM:
+	case GUN_OPTION:
+		Inv_InsertItem(&igun_option);
+
+		if (lara.last_gun_type == LG_UNARMED)
+		{
+			lara.last_gun_type = LG_PISTOLS;
+			lara.mesh_ptrs[THIGH_L] = meshes[objects[PISTOLS].mesh_index + THIGH_L];
+			lara.mesh_ptrs[THIGH_R] = meshes[objects[PISTOLS].mesh_index + THIGH_R];
+		}
+
+		return 1;
+
+	case SHOTGUN_ITEM:
+	case SHOTGUN_OPTION:
+		n = Inv_RequestItem(SG_AMMO_ITEM);
+
+		if (n)
+		{
+			for (int i = 0; i < n; i++)
+			{
+				Inv_RemoveItem(SG_AMMO_ITEM);
+				lara.shotgun.ammo += 12;
+			}
+		}
+
+		lara.shotgun.ammo += 12;
+		Inv_InsertItem(&ishotgun_option);
+
+		if (lara.last_gun_type == LG_UNARMED)
+			lara.last_gun_type = LG_SHOTGUN;
+
+		if (!lara.back_gun)
+			lara.back_gun = 3;
+
+		GlobalItemReplace(SHOTGUN_ITEM, SG_AMMO_ITEM);
+		return 0;
+
+	case MAGNUM_ITEM:
+	case MAGNUM_OPTION:
+		n = Inv_RequestItem(MAG_AMMO_ITEM);
+
+		if (n)
+		{
+			for (int i = 0; i < n; i++)
+			{
+				Inv_RemoveItem(MAG_AMMO_ITEM);
+				lara.magnums.ammo += 10;
+			}
+		}
+
+		lara.magnums.ammo += 10;
+		Inv_InsertItem(&imagnum_option);
+		GlobalItemReplace(MAGNUM_ITEM, MAG_AMMO_ITEM);
+		return 0;
+
+	case UZI_ITEM:
+	case UZI_OPTION:
+		n = Inv_RequestItem(UZI_AMMO_ITEM);
+
+		if (n)
+		{
+			for (int i = 0; i < n; i++)
+			{
+				Inv_RemoveItem(UZI_AMMO_ITEM);
+				lara.uzis.ammo += 40;
+			}
+		}
+
+		lara.uzis.ammo += 40;
+		Inv_InsertItem(&iuzi_option);
+		GlobalItemReplace(UZI_ITEM, UZI_AMMO_ITEM);
+		return 0;
+
+	case HARPOON_ITEM:
+	case HARPOON_OPTION:
+		n = Inv_RequestItem(HARPOON_AMMO_ITEM);
+
+		if (n)
+		{
+			for (int i = 0; i < n; i++)
+				Inv_RemoveItem(HARPOON_AMMO_ITEM);
+		}
+
+		lara.harpoon.ammo += 3;
+		Inv_InsertItem(&iharpoon_option);
+		GlobalItemReplace(HARPOON_ITEM, HARPOON_AMMO_ITEM);
+		return 0;
+
+	case M16_ITEM:
+	case M16_OPTION:
+		n = Inv_RequestItem(M16_AMMO_ITEM);
+
+		if (n)
+		{
+			for (int i = 0; i < n; i++)
+			{
+				Inv_RemoveItem(M16_AMMO_ITEM);
+				lara.m16.ammo += 60;
+			}
+		}
+
+		lara.m16.ammo += 60;
+		Inv_InsertItem(&im16_option);
+		GlobalItemReplace(M16_ITEM, M16_AMMO_ITEM);
+		return 0;
+
+	case ROCKET_GUN_ITEM:
+	case ROCKET_OPTION:
+		n = Inv_RequestItem(ROCKET_AMMO_ITEM);
+
+		if (n)
+		{
+			for (int i = 0; i < n; i++)
+			{
+				Inv_RemoveItem(ROCKET_AMMO_ITEM);
+				lara.rocket.ammo++;
+			}
+		}
+
+		lara.rocket.ammo++;
+		Inv_InsertItem(&irocket_option);
+		GlobalItemReplace(ROCKET_GUN_ITEM, ROCKET_AMMO_ITEM);
+		return 0;
+
+	case GRENADE_GUN_ITEM:
+	case GRENADE_OPTION:
+		n = Inv_RequestItem(GRENADE_AMMO_ITEM);
+
+		if (n)
+		{
+			for (int i = 0; i < n; i++)
+			{
+				Inv_RemoveItem(GRENADE_AMMO_ITEM);
+				lara.grenade.ammo += 2;
+			}
+		}
+
+		lara.grenade.ammo += 2;
+		Inv_InsertItem(&igrenade_option);
+		GlobalItemReplace(GRENADE_GUN_ITEM, GRENADE_AMMO_ITEM);
+		return 0;
+
+	case SG_AMMO_ITEM:
+	case SG_AMMO_OPTION:
+
+		if (Inv_RequestItem(SHOTGUN_ITEM))
+			lara.shotgun.ammo += 12;
+		else
+			Inv_InsertItem(&isgunammo_option);
+
+		return 0;
+
+	case MAG_AMMO_ITEM:
+	case MAG_AMMO_OPTION:
+
+		if (Inv_RequestItem(MAGNUM_ITEM))
+			lara.magnums.ammo += 10;
+		else
+			Inv_InsertItem(&imagammo_option);
+
+		return 0;
+
+	case UZI_AMMO_ITEM:
+	case UZI_AMMO_OPTION:
+
+		if (Inv_RequestItem(UZI_ITEM))
+			lara.uzis.ammo += 40;
+		else
+			Inv_InsertItem(&iuziammo_option);
+
+		return 0;
+
+	case HARPOON_AMMO_ITEM:
+	case HARPOON_AMMO_OPTION:
+		lara.harpoon.ammo += 3;
+
+		if (!Inv_RequestItem(HARPOON_ITEM) && !Inv_RequestItem(HARPOON_AMMO_ITEM))
+			Inv_InsertItem(&iharpoonammo_option);
+
+		return 0;
+
+	case M16_AMMO_ITEM:
+	case M16_AMMO_OPTION:
+
+		if (Inv_RequestItem(M16_ITEM))
+			lara.m16.ammo += 60;
+		else
+			Inv_InsertItem(&im16ammo_option);
+
+		return 0;
+
+	case ROCKET_AMMO_ITEM:
+	case ROCKET_AMMO_OPTION:
+
+		if (Inv_RequestItem(ROCKET_GUN_ITEM))
+			lara.rocket.ammo++;
+		else
+			Inv_InsertItem(&irocketammo_option);
+
+		return 0;
+
+	case GRENADE_AMMO_ITEM:
+	case GRENADE_AMMO_OPTION:
+
+		if (Inv_RequestItem(GRENADE_GUN_ITEM))
+			lara.grenade.ammo += 2;
+		else
+			Inv_InsertItem(&igrenadeammo_option);
+
+		return 0;
+
+	case MEDI_ITEM:
+	case MEDI_OPTION:
+		Inv_InsertItem(&imedi_option);
+		return 1;
+
+	case BIGMEDI_ITEM:
+	case BIGMEDI_OPTION:
+		Inv_InsertItem(&ibigmedi_option);
+		return 1;
+
+	case FLAREBOX_ITEM:
+	case FLAREBOX_OPTION:
+		Inv_InsertItem(&iflare_option);
+
+		for (int i = 0; i < 7; i++)
+			Inv_AddItem(FLARE_ITEM);
+
+		return 1;
+
+	case FLARE_ITEM:
+		Inv_InsertItem(&iflare_option);
+		return 1;
+
+	case PUZZLE_ITEM1:
+	case PUZZLE_OPTION1:
+		Inv_InsertItem(&ipuzzle1_option);
+		return 1;
+
+	case PUZZLE_ITEM2:
+	case PUZZLE_OPTION2:
+		Inv_InsertItem(&ipuzzle2_option);
+		return 1;
+
+	case PUZZLE_ITEM3:
+	case PUZZLE_OPTION3:
+		Inv_InsertItem(&ipuzzle3_option);
+		return 1;
+
+	case PUZZLE_ITEM4:
+	case PUZZLE_OPTION4:
+		Inv_InsertItem(&ipuzzle4_option);
+		return 1;
+
+	case SECRET_ITEM1:
+		savegame.secrets |= 1;
+		return 1;
+
+	case SECRET_ITEM2:
+		savegame.secrets |= 2;
+		return 1;
+
+	case SECRET_ITEM3:
+		savegame.secrets |= 4;
+		return 1;
+
+	case KEY_ITEM1:
+	case KEY_OPTION1:
+		Inv_InsertItem(&ikey1_option);
+
+		if (CurrentLevel == LV_GYM)
+			savegame.QuadbikeKeyFlag = 1;
+
+		return 1;
+
+	case KEY_ITEM2:
+	case KEY_OPTION2:
+		Inv_InsertItem(&ikey2_option);
+		return 1;
+
+	case KEY_ITEM3:
+	case KEY_OPTION3:
+		Inv_InsertItem(&ikey3_option);
+		return 1;
+
+	case KEY_ITEM4:
+	case KEY_OPTION4:
+		Inv_InsertItem(&ikey4_option);
+		return 1;
+
+	case PICKUP_ITEM1:
+	case PICKUP_OPTION1:
+		Inv_InsertItem(&ipickup1_option);
+		return 1;
+
+	case PICKUP_ITEM2:
+	case PICKUP_OPTION2:
+		Inv_InsertItem(&ipickup2_option);
+		return 1;
+
+	case ICON_PICKUP1_ITEM:
+	case ICON_PICKUP1_OPTION:
+		Inv_InsertItem(&icon1_option);
+		return 1;
+
+	case ICON_PICKUP2_ITEM:
+	case ICON_PICKUP2_OPTION:
+		Inv_InsertItem(&icon2_option);
+		return 1;
+
+	case ICON_PICKUP3_ITEM:
+	case ICON_PICKUP3_OPTION:
+		Inv_InsertItem(&icon3_option);
+		return 1;
+
+	case ICON_PICKUP4_ITEM:
+	case ICON_PICKUP4_OPTION:
+		Inv_InsertItem(&icon4_option);
+		return 1;
+	}
+
+	return 0;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -1954,4 +2335,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00438250, Inv_InsertItem, replace);
 	INJECT(0x00438420, Inv_RemoveItem, replace);
 	INJECT(0x00438400, Inv_RemoveAllItems, replace);
+	INJECT(0x004378B0, Inv_AddItem, replace);
 }

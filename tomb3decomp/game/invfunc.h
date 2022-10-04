@@ -49,5 +49,4 @@ long Inv_RequestItem(long item_number);
 void Inv_InsertItem(INVENTORY_ITEM* item);
 long Inv_RemoveItem(long item_number);
 void Inv_RemoveAllItems();
-
-#define Inv_AddItem	( (long(__cdecl*)(long)) 0x004378B0 )
+long Inv_AddItem(long item_number);
