@@ -1400,6 +1400,15 @@ void RingIsNotOpen(RING_INFO* ring)
 	Inv_downArrow2 = 0;
 }
 
+void RingActive()
+{
+	T_RemovePrint(Inv_itemText[0]);
+	Inv_itemText[0] = 0;
+
+	T_RemovePrint(Inv_itemText[1]);
+	Inv_itemText[1] = 0;
+}
+
 void inject_invfunc(bool replace)
 {
 	INJECT(0x00437050, InitColours, replace);
@@ -1440,4 +1449,5 @@ void inject_invfunc(bool replace)
 	INJECT(0x00438F00, Inv_RingRotateRight, replace);
 	INJECT(0x00437160, RingIsOpen, replace);
 	INJECT(0x004372F0, RingIsNotOpen, replace);
+	INJECT(0x00437870, RingActive, replace);
 }

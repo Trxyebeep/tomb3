@@ -629,7 +629,7 @@ tomb3decomp progress.
 0x00437160	+	RingIsOpen
 0x004372F0	+	RingIsNotOpen
 0x00437380		RingNotActive
-0x00437870		RingActive
+0x00437870	+	RingActive
 0x004378B0		Inv_AddItem
 0x00438250		Inv_InsertItem
 0x00438380		Inv_RequestItem

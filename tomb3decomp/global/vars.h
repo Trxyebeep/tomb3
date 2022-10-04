@@ -375,6 +375,7 @@
 #define LevelSecrets	ARRAY_(0x004C70B8, short, [21])
 #define RequesterFlags1	ARRAY_(0x006D6800, ulong, [24])
 #define RequesterFlags2	ARRAY_(0x006D67A0, ulong, [24])
+#define Inv_itemText	ARRAY_(0x00626420, TEXTSTRING*, [3])
 
 
 /*constants*/
