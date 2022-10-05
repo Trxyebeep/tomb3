@@ -2929,6 +2929,78 @@ void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 	tex.drawtype = 3;
 	HWI_InsertGT4_Sorted(&v[0], &v[1], &v[2], &v[3], &tex, MID_SORT, 1);
 }
+
+void S_DrawFootPrints()
+{
+	FOOTPRINT* print;
+	PHDSPRITESTRUCT* sprite;
+	PHDTEXTURESTRUCT tex;
+	PHD_VBUF v[3];
+	FVECTOR pos;
+	ushort u1, v1, u2, v2;
+	short c;
+
+	sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 17];
+	u1 = (sprite->offset << 8) & 0xFF00;
+	v1 = sprite->offset & 0xFF00;
+	u2 = ushort(u1 + sprite->width - App.nUVAdd);
+	v2 = ushort(v1 + sprite->height - App.nUVAdd);
+	u1 += (ushort)App.nUVAdd;
+	v1 += (ushort)App.nUVAdd;
+
+	for (int i = 0; i < 32; i++)
+	{
+		print = &FootPrint[i];
+
+		if (!print->Active)
+			continue;
+
+		print->Active--;
+
+		if (print->Active < 29)
+			c = print->Active << 2;
+		else
+			c = 112;
+
+		c >>= 3;
+
+		phd_PushMatrix();
+		phd_TranslateAbs(print->x, print->y, print->z);
+		phd_RotY(print->YRot);
+
+		pos.x = 0;
+		pos.y = 0;
+		pos.z = -64;
+		ProjectPHDVBuf(&pos, &v[0], c);
+
+		pos.x = -128;
+		pos.y = 0;
+		pos.z = 64;
+		ProjectPHDVBuf(&pos, &v[1], c);
+
+		pos.x = 128;
+		pos.y = 0;
+		pos.z = 64;
+		ProjectPHDVBuf(&pos, &v[2], c);
+
+		phd_PopMatrix();
+
+		tex.u1 = u1;
+		tex.v1 = v1;
+
+		tex.u2 = u2;
+		tex.v2 = v1;
+
+		tex.u3 = u1;
+		tex.v3 = v2;
+
+		tex.tpage = sprite->tpage;
+		tex.drawtype = 3;
+
+		for (int i = 0; i < 4; i++)	//HACK: draw 4 times to make up for lack of modulate4x..
+			HWI_InsertGT3_Sorted(&v[0], &v[1], &v[2], &tex, &tex.u1, &tex.u2, &tex.u3, MID_SORT, 1);
+	}
+}
 #endif
 
 void inject_draweffects(bool replace)

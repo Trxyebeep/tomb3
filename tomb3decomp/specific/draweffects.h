@@ -18,6 +18,7 @@ void DrawWillBossShield(ITEM_INFO* item);
 
 #ifdef TROYESTUFF
 void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item);
+void S_DrawFootPrints();
 #endif
 
 #define S_DrawSparks	( (void(__cdecl*)()) 0x0047B2C0 )

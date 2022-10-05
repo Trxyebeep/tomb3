@@ -1917,7 +1917,9 @@ void DrawRooms(short current_room)
 #endif
 			DoRain();
 
-	//	S_DrawFootPrints here
+#ifdef TROYESTUFF
+		S_DrawFootPrints();
+#endif
 	}
 
 	if (lara.electric)
