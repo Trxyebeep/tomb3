@@ -1753,4 +1753,13 @@ struct SNOWFLAKE
 	char zv;
 	uchar life;
 };
+
+#ifdef TROYESTUFF
+struct FVECTOR
+{
+	float x;
+	float y;
+	float z;
+};
+#endif
 #pragma pack(pop)

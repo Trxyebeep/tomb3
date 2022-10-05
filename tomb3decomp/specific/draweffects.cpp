@@ -2792,6 +2792,145 @@ void DrawWillBossShield(ITEM_INFO* item)
 	phd_PopMatrix();
 }
 
+#ifdef TROYESTUFF
+static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, short c)
+{
+	float zv, zT;
+	char clipFlag;
+
+	m00 = float(phd_mxptr[M00]);
+	m01 = float(phd_mxptr[M01]);
+	m02 = float(phd_mxptr[M02]);
+	m03 = float(phd_mxptr[M03]);
+	m10 = float(phd_mxptr[M10]);
+	m11 = float(phd_mxptr[M11]);
+	m12 = float(phd_mxptr[M12]);
+	m13 = float(phd_mxptr[M13]);
+	m20 = float(phd_mxptr[M20]);
+	m21 = float(phd_mxptr[M21]);
+	m22 = float(phd_mxptr[M22]);
+	m23 = float(phd_mxptr[M23]);
+
+	v->xv = m00 * pos->x + m01 * pos->y + m02 * pos->z + m03;
+	v->yv = m10 * pos->x + m11 * pos->y + m12 * pos->z + m13;
+	zv = m20 * pos->x + m21 * pos->y + m22 * pos->z + m23;
+	v->z = (long)zv;
+
+	if (v->z < phd_znear)
+	{
+		v->zv = zv;
+		clipFlag = -128;
+	}
+	else
+	{
+		if (v->z < phd_zfar)
+		{
+			v->zv = zv;
+			zT = ZTable[((v->z >> 14) << 1)];
+			v->xs = v->xv * zT + f_centerx;
+			v->ys = v->yv * zT + f_centery;
+			v->ooz = ZTable[((v->z >> 14) << 1) + 1];
+		}
+		else
+		{
+			v->zv = f_zfar;
+			zv = f_persp / zv;
+			v->xs = v->xv * zv + f_centerx;
+			v->ys = v->yv * zv + f_centery;
+			v->ooz = zv * f_oneopersp;
+		}
+
+		clipFlag = 0;
+
+		if (v->xs < phd_leftfloat)
+			clipFlag++;
+		else if (v->xs > phd_rightfloat)
+			clipFlag += 2;
+
+		if (v->ys < phd_topfloat)
+			clipFlag += 4;
+		else if (v->ys > phd_bottomfloat)
+			clipFlag += 8;
+	}
+
+	v->clip = clipFlag;
+	v->g = c << 10 | c << 5 | c;
+}
+
+void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
+{
+	PHDSPRITESTRUCT* sprite;
+	PHDTEXTURESTRUCT tex;
+	PHD_VBUF v[4];
+	FVECTOR pos;
+	ushort u1, v1, u2, v2;
+	long xMid, zMid, xSize, zSize;
+	short c;
+
+	sprite = &phdspriteinfo[objects[SHADOW].mesh_index];
+	u1 = (sprite->offset << 8) & 0xFF00;
+	v1 = sprite->offset & 0xFF00;
+	u2 = ushort(u1 + sprite->width - App.nUVAdd);
+	v2 = ushort(v1 + sprite->height - App.nUVAdd);
+	u1 += (ushort)App.nUVAdd;
+	v1 += (ushort)App.nUVAdd;
+
+	xMid = (box[1] + box[0]) >> 1;
+	zMid = (box[5] + box[4]) >> 1;
+	size = size + (size >> 1);
+	xSize = (size * (box[1] - box[0])) >> 9;
+	zSize = (size * (box[5] - box[4])) >> 9;
+
+	c = short((4096 - abs(item->floor - lara_item->pos.y_pos)) >> 4) - 1;
+	c >>= 3;
+
+	if (c < 4)
+		c = 4;
+
+	phd_PushMatrix();
+	phd_TranslateAbs(item->pos.x_pos, item->floor - 16, item->pos.z_pos);
+	phd_RotY(item->pos.y_rot);
+
+	pos.x = float(xMid - xSize);
+	pos.y = 0;
+	pos.z = float(zMid + zSize);
+	ProjectPHDVBuf(&pos, &v[0], c);
+
+	pos.x = float(xMid + xSize);
+	pos.y = 0;
+	pos.z = float(zMid + zSize);
+	ProjectPHDVBuf(&pos, &v[1], c);
+
+	pos.x = float(xMid + xSize);
+	pos.y = 0;
+	pos.z = float(zMid - zSize);
+	ProjectPHDVBuf(&pos, &v[2], c);
+
+	pos.x = float(xMid - xSize);
+	pos.y = 0;
+	pos.z = float(zMid - zSize);
+	ProjectPHDVBuf(&pos, &v[3], c);
+
+	phd_PopMatrix();
+
+	tex.u1 = u1;
+	tex.v1 = v1;
+
+	tex.u2 = u2;
+	tex.v2 = v1;
+
+	tex.u3 = u2;
+	tex.v3 = v2;
+
+	tex.u4 = u1;
+	tex.v4 = v2;
+
+	tex.tpage = sprite->tpage;
+	tex.drawtype = 3;
+	HWI_InsertGT4_Sorted(&v[0], &v[1], &v[2], &v[3], &tex, MID_SORT, 1);
+}
+#endif
+
 void inject_draweffects(bool replace)
 {
 	INJECT(0x00478600, LaraElectricDeath, replace);
