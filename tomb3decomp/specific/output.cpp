@@ -41,14 +41,15 @@ static void ProjectPoint(PHD_VECTOR* pos, long& x, long& y, long& z)
 	y = short(float(y * zv + f_centery));
 }
 
-static void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
+static void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)	//todo: find out why it doesn't clip
 {
 	PHDSPRITESTRUCT* sprite;
 	PHDTEXTURESTRUCT tex;
 	PHD_VBUF v[4];
 	PHD_VECTOR pos;
 	ushort u1, v1, u2, v2;
-	long xSize, zSize, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4;
+	long xMid, zMid, xSize, zSize, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4;
+	short col;
 	char clip;
 
 	sprite = &phdspriteinfo[objects[SHADOW].mesh_index];
@@ -59,43 +60,50 @@ static void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 	u1 += (ushort)App.nUVAdd;
 	v1 += (ushort)App.nUVAdd;
 
-	xSize = size * (box[1] - box[0]) / 160;
-	zSize = size * (box[5] - box[4]) / 160;
-	xSize >>= 1;
-	zSize >>= 1;
+	xMid = (box[1] + box[0]) >> 1;
+	zMid = (box[5] + box[4]) >> 1;
+	size = size + (size >> 1);
+	xSize = (size * (box[1] - box[0])) >> 9;
+	zSize = (size * (box[5] - box[4])) >> 9;
 
 	phd_PushMatrix();
-	phd_TranslateAbs(item->pos.x_pos, item->floor, item->pos.z_pos);
+	phd_TranslateAbs(item->pos.x_pos, item->floor - 16, item->pos.z_pos);
 	phd_RotY(item->pos.y_rot);
 
-	pos.x = -xSize;
+	pos.x = xMid - xSize;
 	pos.y = 0;
-	pos.z = zSize;
+	pos.z = zMid + zSize;
 	ProjectPoint(&pos, x1, y1, z1);
 
-	pos.x = xSize;
+	pos.x = xMid + xSize;
 	pos.y = 0;
-	pos.z = zSize;
+	pos.z = zMid + zSize;
 	ProjectPoint(&pos, x2, y2, z2);
 
-	pos.x = xSize;
+	pos.x = xMid + xSize;
 	pos.y = 0;
-	pos.z = -zSize;
+	pos.z = zMid - zSize;
 	ProjectPoint(&pos, x3, y3, z3);
 
-	pos.x = -xSize;
+	pos.x = xMid - xSize;
 	pos.y = 0;
-	pos.z = -zSize;
+	pos.z = zMid - zSize;
 	ProjectPoint(&pos, x4, y4, z4);
 
 	phd_PopMatrix();
+
+	col = short((4096 - abs(item->floor - lara_item->pos.y_pos)) >> 4) - 1;
+	col >>= 3;
+
+	if (col < 4)
+		col = 4;
 
 	v[0].xs = (float)x1;
 	v[0].ys = (float)y1;
 	v[0].zv = (float)z1;
 	v[0].z = z1;
 	v[0].ooz = f_persp / v[0].zv * f_oneopersp;
-	v[0].g = 0x7FFF;
+	v[0].g = col << 10 | col << 5 | col;
 
 	clip = 0;
 
@@ -121,7 +129,7 @@ static void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 	v[1].zv = (float)z2;
 	v[1].z = z2;
 	v[1].ooz = f_persp / v[1].zv * f_oneopersp;
-	v[1].g = 0x7FFF;
+	v[1].g = col << 10 | col << 5 | col;
 
 	clip = 0;
 
@@ -147,7 +155,7 @@ static void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 	v[2].zv = (float)z3;
 	v[2].z = z3;
 	v[2].ooz = f_persp / v[2].zv * f_oneopersp;
-	v[2].g = 0x7FFF;
+	v[2].g = col << 10 | col << 5 | col;
 	
 	clip = 0;
 
@@ -173,7 +181,7 @@ static void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 	v[3].zv = (float)z4;
 	v[3].z = z4;
 	v[3].ooz = f_persp / v[3].zv * f_oneopersp;
-	v[3].g = 0x7FFF;
+	v[3].g = col << 10 | col << 5 | col;
 	
 	clip = 0;
 
