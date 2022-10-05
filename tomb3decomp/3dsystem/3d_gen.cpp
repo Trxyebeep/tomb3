@@ -283,12 +283,24 @@ void phd_TranslateAbs(long x, long y, long z)
 
 void AlterFOV(short fov)
 {
+#ifdef TROYESTUFF	//by Arsunt
+	long fov_width;
+
+	fov /= 2;
+	fov_width = phd_winheight * 320 / 240;
+	LfAspectCorrection = 1.0F; // must always be 1.0 for unstretched view
+	phd_persp = (fov_width / 2) * phd_cos(fov) / phd_sin(fov);
+#else
 	fov /= 2;
 	phd_persp = ((phd_winwidth / 2) * phd_cos(fov)) / phd_sin(fov);
+#endif
+
 	f_persp = (float)phd_persp;
 	f_oneopersp = one / f_persp;
 	f_perspoznear = f_persp / f_znear;
+#ifndef TROYESTUFF
 	LfAspectCorrection = (4.0F / 3.0F) / (float(phd_winwidth) / float(phd_winheight));
+#endif
 	InitZTable();
 }
 
