@@ -2997,7 +2997,7 @@ void S_DrawFootPrints()
 		tex.tpage = sprite->tpage;
 		tex.drawtype = 3;
 
-		for (int i = 0; i < 4; i++)	//HACK: draw 4 times to make up for lack of modulate4x..
+		for (int j = 0; j < 4; j++)	//HACK: draw 4 times to make up for lack of modulate4x..
 			HWI_InsertGT3_Sorted(&v[0], &v[1], &v[2], &tex, &tex.u1, &tex.u2, &tex.u3, MID_SORT, 1);
 	}
 }
