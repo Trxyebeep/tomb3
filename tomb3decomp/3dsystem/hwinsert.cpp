@@ -604,7 +604,11 @@ void HWI_InsertClippedPoly_Textured(long nPoints, float zdepth, long nDrawType, 
 
 	vtxbuf = v_buffer;
 
+#ifdef TROYESTUFF
+	if (App.lpZBuffer && nDrawType != DT_POLY_WGTA && nDrawType != DT_POLY_WGT && nDrawType != DT_POLY_COLSUB)
+#else
 	if (App.lpZBuffer && nDrawType != DT_POLY_WGTA && nDrawType != DT_POLY_WGT)
+#endif
 	{
 		nBucket = FindBucket(TPages[nTPage]);
 
@@ -759,6 +763,11 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 			else
 				zdepth = 1000000000;
 
+#ifdef TROYESTUFF
+			if (pTex->drawtype == 3)
+				nDrawType = DT_POLY_COLSUB;
+			else
+#endif
 			if (pTex->drawtype > 1)
 				nDrawType = DT_POLY_WGTA;
 			else
@@ -805,6 +814,11 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 		goto drawtextured;
 	}
 
+#ifdef TROYESTUFF
+	if (pTex->drawtype == 3)
+		nDrawType = DT_POLY_COLSUB;
+	else
+#endif
 	if (pTex->drawtype > 1)
 		nDrawType = DT_POLY_WGTA;
 	else
@@ -822,7 +836,11 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 			outsideBackgroundTop = v2->ys;
 	}
 
+#ifdef TROYESTUFF
+	if (!App.lpZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_COLSUB)
+#else
 	if (!App.lpZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT)
+#endif
 	{
 		if (nSortType == MID_SORT)
 			zdepth = (v0->zv + v1->zv + v2->zv) * 0.33333334F;
@@ -987,6 +1005,11 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 		return;
 	}
 
+#ifdef TROYESTUFF
+	if (pTex->drawtype == 3)
+		nDrawType = DT_POLY_COLSUB;
+	else
+#endif
 	if (pTex->drawtype > 1)
 		nDrawType = DT_POLY_WGTA;
 	else
@@ -1007,7 +1030,12 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 			outsideBackgroundTop = v3->ys;
 	}
 
+
+#ifdef TROYESTUFF
+	if (!App.lpZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_COLSUB)
+#else
 	if (!App.lpZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT)
+#endif
 	{
 		if (nSortType == MID_SORT)
 			zdepth = (v0->zv + v1->zv + v2->zv + v3->zv) * 0.25F;

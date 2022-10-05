@@ -27,9 +27,199 @@ static short shadow[6 + (3 * 8)] =
 	0, 0, 0,
 };
 
+#ifdef TROYESTUFF
+static void ProjectPoint(PHD_VECTOR* pos, long& x, long& y, long& z)
+{
+	float zv;
+
+	x = (phd_mxptr[M00] * pos->x + phd_mxptr[M01] * pos->y + phd_mxptr[M02] * pos->z + phd_mxptr[M03]) >> W2V_SHIFT;
+	y = (phd_mxptr[M10] * pos->x + phd_mxptr[M11] * pos->y + phd_mxptr[M12] * pos->z + phd_mxptr[M13]) >> W2V_SHIFT;
+	z = (phd_mxptr[M20] * pos->x + phd_mxptr[M21] * pos->y + phd_mxptr[M22] * pos->z + phd_mxptr[M23]) >> W2V_SHIFT;
+
+	zv = f_persp / (float)z;
+	x = short(float(x * zv + f_centerx));
+	y = short(float(y * zv + f_centery));
+}
+
+static void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
+{
+	PHDSPRITESTRUCT* sprite;
+	PHDTEXTURESTRUCT tex;
+	PHD_VBUF v[4];
+	PHD_VECTOR pos;
+	ushort u1, v1, u2, v2;
+	long xSize, zSize, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4;
+	char clip;
+
+	sprite = &phdspriteinfo[objects[SHADOW].mesh_index];
+	u1 = (sprite->offset << 8) & 0xFF00;
+	v1 = sprite->offset & 0xFF00;
+	u2 = ushort(u1 + sprite->width - App.nUVAdd);
+	v2 = ushort(v1 + sprite->height - App.nUVAdd);
+	u1 += (ushort)App.nUVAdd;
+	v1 += (ushort)App.nUVAdd;
+
+	xSize = size * (box[1] - box[0]) / 160;
+	zSize = size * (box[5] - box[4]) / 160;
+	xSize >>= 1;
+	zSize >>= 1;
+
+	phd_PushMatrix();
+	phd_TranslateAbs(item->pos.x_pos, item->floor, item->pos.z_pos);
+	phd_RotY(item->pos.y_rot);
+
+	pos.x = -xSize;
+	pos.y = 0;
+	pos.z = zSize;
+	ProjectPoint(&pos, x1, y1, z1);
+
+	pos.x = xSize;
+	pos.y = 0;
+	pos.z = zSize;
+	ProjectPoint(&pos, x2, y2, z2);
+
+	pos.x = xSize;
+	pos.y = 0;
+	pos.z = -zSize;
+	ProjectPoint(&pos, x3, y3, z3);
+
+	pos.x = -xSize;
+	pos.y = 0;
+	pos.z = -zSize;
+	ProjectPoint(&pos, x4, y4, z4);
+
+	phd_PopMatrix();
+
+	v[0].xs = (float)x1;
+	v[0].ys = (float)y1;
+	v[0].zv = (float)z1;
+	v[0].z = z1;
+	v[0].ooz = f_persp / v[0].zv * f_oneopersp;
+	v[0].g = 0x7FFF;
+
+	clip = 0;
+
+	if (z1 < phd_znear >> W2V_SHIFT)
+		clip = -128;
+	else
+	{
+		if (x1 < phd_winxmin)
+			clip++;
+		else if (x1 > phd_winxmax)
+			clip += 2;
+
+		if (y1 < phd_winymin)
+			clip += 4;
+		else if (y1 > phd_winymax)
+			clip += 8;
+	}
+
+	v[0].clip = clip;
+
+	v[1].xs = (float)x2;
+	v[1].ys = (float)y2;
+	v[1].zv = (float)z2;
+	v[1].z = z2;
+	v[1].ooz = f_persp / v[1].zv * f_oneopersp;
+	v[1].g = 0x7FFF;
+
+	clip = 0;
+
+	if (z2 < phd_znear >> W2V_SHIFT)
+		clip = -128;
+	else
+	{
+		if (x2 < phd_winxmin)
+			clip++;
+		else if (x2 > phd_winxmax)
+			clip += 2;
+
+		if (y2 < phd_winymin)
+			clip += 4;
+		else if (y2 > phd_winymax)
+			clip += 8;
+	}
+
+	v[1].clip = clip;
+
+	v[2].xs = (float)x3;
+	v[2].ys = (float)y3;
+	v[2].zv = (float)z3;
+	v[2].z = z3;
+	v[2].ooz = f_persp / v[2].zv * f_oneopersp;
+	v[2].g = 0x7FFF;
+	
+	clip = 0;
+
+	if (z3 < phd_znear >> W2V_SHIFT)
+		clip = -128;
+	else
+	{
+		if (x3 < phd_winxmin)
+			clip++;
+		else if (x3 > phd_winxmax)
+			clip += 2;
+
+		if (y3 < phd_winymin)
+			clip += 4;
+		else if (y3 > phd_winymax)
+			clip += 8;
+	}
+
+	v[2].clip = clip;
+
+	v[3].xs = (float)x4;
+	v[3].ys = (float)y4;
+	v[3].zv = (float)z4;
+	v[3].z = z4;
+	v[3].ooz = f_persp / v[3].zv * f_oneopersp;
+	v[3].g = 0x7FFF;
+	
+	clip = 0;
+
+	if (z4 < phd_znear >> W2V_SHIFT)
+		clip = -128;
+	else
+	{
+		if (x4 < phd_winxmin)
+			clip++;
+		else if (x4 > phd_winxmax)
+			clip += 2;
+
+		if (y4 < phd_winymin)
+			clip += 4;
+		else if (y4 > phd_winymax)
+			clip += 8;
+	}
+
+	v[3].clip = clip;
+
+	tex.u1 = u1;
+	tex.v1 = v1;
+
+	tex.u2 = u2;
+	tex.v2 = v1;
+
+	tex.u3 = u2;
+	tex.v3 = v2;
+
+	tex.u4 = u1;
+	tex.v4 = v2;
+
+	tex.tpage = sprite->tpage;
+	tex.drawtype = 3;
+	HWI_InsertGT4_Sorted(&v[0], &v[1], &v[2], &v[3], &tex, MID_SORT, 1);
+}
+#endif
+
 void S_PrintShadow(short size, short* box, ITEM_INFO* item)
 {
 	long x0, x1, z0, z1, midX, midZ, xAdd, zAdd;
+
+#ifdef TROYESTUFF
+	S_PrintSpriteShadow(size, box, item);
+	return;
+#endif
 
 	x0 = box[0];
 	x1 = box[1];

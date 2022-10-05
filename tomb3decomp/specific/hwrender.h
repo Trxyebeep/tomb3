@@ -7,6 +7,9 @@ void HWR_EnableZBuffer(bool write, bool compare);
 void HWR_EnableColorKey(bool enable);
 void HWR_EnableAlphaBlend(bool enable);
 void HWR_EnableColorAddition(bool enable);
+#ifdef TROYESTUFF
+void HWR_EnableColorSubtraction(bool enable);
+#endif
 void HWR_ResetZBuffer();
 void HWR_ResetColorKey();
 void HWR_EnablePerspCorrect(bool enable);

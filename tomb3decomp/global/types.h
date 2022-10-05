@@ -78,6 +78,9 @@ enum draw_types
 	DT_POLY_GA = 13,			//Gouraud + Alpha
 	DT_POLY_WGTA = 14,			//Gouraud + Textured + Color key + Alpha
 	DT_UNUSED = 15,				//Unused
+#ifdef TROYESTUFF
+	DT_POLY_COLSUB = 15,		//colsub
+#endif
 	DT_POLY_GTA = 16			//Gouraud + Textured + Alpha
 };
 
