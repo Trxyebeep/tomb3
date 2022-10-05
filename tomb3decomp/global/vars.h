@@ -248,6 +248,9 @@
 #define icon3_option	VAR_(0x004C6820, INVENTORY_ITEM)
 #define icon4_option	VAR_(0x004C6870, INVENTORY_ITEM)
 #define GlobePointLight	VAR_(0x006D62B4, long)
+#define GlobeXRot	VAR_(0x006D62AE, short)
+#define GlobeYRot	VAR_(0x006D62BA, short)
+#define GlobeZRot	VAR_(0x006D62B8, short)
 #define bossdata	VAR_(0x006D2240, BOSS_STRUCT)
 #define TribeBossItem	VAR_(0x006D2264, ITEM_INFO*)
 #define IsRoomOutsideNo	VAR_(0x006E2FFE, short)
@@ -328,6 +331,7 @@
 #define bObjectOn	VAR_(0x004CDC90, long)
 #define bAObjectOn	VAR_(0x004CDC94, long)
 #define bEffectOn	VAR_(0x004CDC98, long)
+#define bInvItemsOff	VAR_(0x00626450, char)
 #define framedump	VAR_(0x006CF248, long)
 /**/
 

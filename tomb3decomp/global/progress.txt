@@ -618,7 +618,7 @@ tomb3decomp progress.
 0x00436840		Construct_Inventory
 0x004369C0	+	SelectMeshes
 0x00436A50	+	AnimateInventoryItem
-0x00436AE0		DrawInventoryItem
+0x00436AE0	+	DrawInventoryItem
 0x00436FA0	+	GetDebouncedInput
 0x00436FC0		GetGlobeMeshFlags
 

@@ -1158,15 +1158,15 @@ void Inv_RingLight(RING_INFO* ring, short object_number)
 	long x, y, z;
 
 	LightCol[M00] = 3312;
-	LightCol[M01] = 3312;
-	LightCol[M02] = 0;
-
-	LightCol[M10] = 1664;
-	LightCol[M11] = 3312;
-	LightCol[M12] = 0;
-
+	LightCol[M10] = 1664;	//sun
 	LightCol[M20] = 0;
+
+	LightCol[M01] = 3312;
+	LightCol[M11] = 3312;	//spot
 	LightCol[M21] = 3312;
+
+	LightCol[M02] = 0;
+	LightCol[M12] = 0;		//dynamic
 	LightCol[M22] = 3072;
 
 	smcr = 32;
@@ -1202,15 +1202,15 @@ void Inv_GlobeLight(short mesh_number)
 	if (mesh_number == 1)
 	{
 		LightCol[M00] = 0;
-		LightCol[M01] = 0;
-		LightCol[M02] = 0;
-
-		LightCol[M10] = 256;
-		LightCol[M11] = 256;
-		LightCol[M12] = 256;
-
+		LightCol[M10] = 256;	//sun
 		LightCol[M20] = 3840;
+
+		LightCol[M01] = 0;
+		LightCol[M11] = 256;	//spot
 		LightCol[M21] = 3840;
+
+		LightCol[M02] = 0;
+		LightCol[M12] = 256;	//dynamic
 		LightCol[M22] = 3840;
 	}
 	else if (mesh_number & 0x7E)	//the location "dots"
@@ -1223,44 +1223,44 @@ void Inv_GlobeLight(short mesh_number)
 			mesh_number == 64 && savegame.AntarcticaComplete)	//Antarctica
 		{
 			LightCol[M00] = rcossin_tbl[GlobePointLight << 5];
-			LightCol[M01] = rcossin_tbl[GlobePointLight << 5];
-			LightCol[M02] = rcossin_tbl[GlobePointLight << 5];
-
 			LightCol[M10] = 0;
-			LightCol[M11] = 0;
-			LightCol[M12] = 0;
-
 			LightCol[M20] = 0;
+
+			LightCol[M01] = rcossin_tbl[GlobePointLight << 5];
+			LightCol[M11] = 0;
 			LightCol[M21] = 0;
+
+			LightCol[M02] = rcossin_tbl[GlobePointLight << 5];
+			LightCol[M12] = 0;
 			LightCol[M22] = 0;
 		}
 		else
 		{
 			LightCol[M00] = 0;
-			LightCol[M01] = 0;
-			LightCol[M02] = 0;
-
 			LightCol[M10] = rcossin_tbl[GlobePointLight << 5];
-			LightCol[M11] = rcossin_tbl[GlobePointLight << 5];
-			LightCol[M12] = rcossin_tbl[GlobePointLight << 5];
-
 			LightCol[M20] = 0;
+
+			LightCol[M01] = 0;
+			LightCol[M11] = rcossin_tbl[GlobePointLight << 5];
 			LightCol[M21] = 0;
+
+			LightCol[M02] = 0;
+			LightCol[M12] = rcossin_tbl[GlobePointLight << 5];
 			LightCol[M22] = 0;
 		}
 	}
 	else
 	{
 		LightCol[M00] = 256;
-		LightCol[M01] = 256;
-		LightCol[M02] = 256;
-
 		LightCol[M10] = 1024;
-		LightCol[M11] = 1024;
-		LightCol[M12] = 1024;
-
 		LightCol[M20] = 256;
+
+		LightCol[M01] = 256;
+		LightCol[M11] = 1024;
 		LightCol[M21] = 256;
+
+		LightCol[M02] = 256;
+		LightCol[M12] = 1024;
 		LightCol[M22] = 256;
 	}
 
@@ -1269,21 +1269,21 @@ void Inv_GlobeLight(short mesh_number)
 	smcb = 32;
 
 	x = 0x1000;
-	y = -0x1000;
+	y = -0x1000;	//sun pos
 	z = 0xC00;
 	LPos[0].x = (x * w2v_matrix[M00] + y * w2v_matrix[M01] + z * w2v_matrix[M02]) >> W2V_SHIFT;
 	LPos[0].y = (x * w2v_matrix[M10] + y * w2v_matrix[M11] + z * w2v_matrix[M12]) >> W2V_SHIFT;
 	LPos[0].z = (x * w2v_matrix[M20] + y * w2v_matrix[M21] + z * w2v_matrix[M22]) >> W2V_SHIFT;
 
 	x = -0x1000;
-	y = -0x1000;
+	y = -0x1000;	//spot pos
 	z = 0xC00;
 	LPos[1].x = (x * w2v_matrix[M00] + y * w2v_matrix[M01] + z * w2v_matrix[M02]) >> W2V_SHIFT;
 	LPos[1].y = (x * w2v_matrix[M10] + y * w2v_matrix[M11] + z * w2v_matrix[M12]) >> W2V_SHIFT;
 	LPos[1].z = (x * w2v_matrix[M20] + y * w2v_matrix[M21] + z * w2v_matrix[M22]) >> W2V_SHIFT;
 
 	x = 0;
-	y = 0x800;
+	y = 0x800;		//dynamic pos
 	z = 0xC00;
 	LPos[2].x = (x * w2v_matrix[M00] + y * w2v_matrix[M01] + z * w2v_matrix[M02]) >> W2V_SHIFT;
 	LPos[2].y = (x * w2v_matrix[M10] + y * w2v_matrix[M11] + z * w2v_matrix[M12]) >> W2V_SHIFT;

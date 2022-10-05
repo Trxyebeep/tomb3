@@ -179,29 +179,30 @@ static void DrawPickup(short obj_num)
 	smcb = 128;
 
 	LightCol[M00] = 3312;
-	LightCol[M01] = 3312;
-	LightCol[M02] = 0;
-
-	LightCol[M10] = 1664;
-	LightCol[M11] = 3312;
-	LightCol[M12] = 0;
-
+	LightCol[M10] = 1664;	//sun
 	LightCol[M20] = 0;
+
+	LightCol[M01] = 3312;
+	LightCol[M11] = 3312;	//spot
 	LightCol[M21] = 3312;
+
+	LightCol[M02] = 0;
+	LightCol[M12] = 0;		//dynamic
 	LightCol[M22] = 3072;
 
 	LPos[0].x = 0x4000;
 	LPos[0].y = -0x4000;
 	LPos[0].z = 0x3000;
+
 	LPos[1].x = -0x4000;
 	LPos[1].y = -0x4000;
 	LPos[1].z = 0x3000;
+
 	LPos[2].x = 0;
 	LPos[2].y = 0x2000;
 	LPos[2].z = 0x3000;
 
 	PickupY += 728;
-
 	entry = find_display_entry(obj_num);
 
 	if (entry == -1)
