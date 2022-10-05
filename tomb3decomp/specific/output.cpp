@@ -5,12 +5,13 @@
 #include "hwrender.h"
 #include "../3dsystem/hwinsert.h"
 #include "picture.h"
+#include "workstubs.h"
 #ifdef TROYESTUFF
 #include "../game/health.h"
 #include "dx.h"
 #include "../game/objects.h"
+#include "litesrc.h"
 #endif
-#include "workstubs.h"
 
 static short shadow[6 + (3 * 8)] =
 {
@@ -169,38 +170,71 @@ long find_display_entry(short obj_num)
 	return -1;
 }
 
+static void phd_PutPolygonsPickup(short* objptr, long clip)
+{
+	short* newPtr;
+
+	phd_leftfloat = (float)phd_winxmin;
+	phd_topfloat = (float)phd_winymin;
+	phd_rightfloat = float(phd_winxmax + phd_winxmin + 1);
+	phd_bottomfloat = float(phd_winymax + phd_winymin + 1);
+	objptr += 4;
+	newPtr = calc_object_vertices(objptr);
+
+	if (newPtr)
+	{
+		newPtr = calc_vertice_light(newPtr, objptr);
+		newPtr = InsertObjectGT4(newPtr + 1, *newPtr, MID_SORT);
+		newPtr = InsertObjectGT3(newPtr + 1, *newPtr, MID_SORT);
+		newPtr = InsertObjectG4(newPtr + 1, *newPtr, MID_SORT);
+		InsertObjectG3(newPtr + 1, *newPtr, MID_SORT);
+	}
+}
+
 static void DrawPickup(short obj_num)
 {
-	long entry;
+	float fx, fy;
+	long entry, x, y, z;
 	short rotx, rotz;
 
-	smcr = 128;
-	smcg = 128;
-	smcb = 128;
+	phd_LookAt(0, -1024, 0, 0, 0, 0, 0);
 
-	LightCol[M00] = 3312;
-	LightCol[M10] = 1664;	//sun
-	LightCol[M20] = 0;
+	LightCol[M00] = 3072;
+	LightCol[M10] = 1680;	//sun
+	LightCol[M20] = 640;
 
-	LightCol[M01] = 3312;
-	LightCol[M11] = 3312;	//spot
-	LightCol[M21] = 3312;
+	LightCol[M01] = 1024;
+	LightCol[M11] = 1024;	//spot
+	LightCol[M21] = 1024;
 
-	LightCol[M02] = 0;
-	LightCol[M12] = 0;		//dynamic
-	LightCol[M22] = 3072;
+	LightCol[M02] = 640;
+	LightCol[M12] = 2432;	//dynamic
+	LightCol[M22] = 4080;
 
-	LPos[0].x = 0x4000;
-	LPos[0].y = -0x4000;
-	LPos[0].z = 0x3000;
+	smcr = 64;
+	smcg = 64;
+	smcb = 64;
 
-	LPos[1].x = -0x4000;
-	LPos[1].y = -0x4000;
-	LPos[1].z = 0x3000;
+	x = 0x2000;
+	y = -0x2000;
+	z = 0x1800;
+	LPos[0].x = (x * w2v_matrix[M00] + y * w2v_matrix[M01] + z * w2v_matrix[M02]) >> W2V_SHIFT;
+	LPos[0].y = (x * w2v_matrix[M10] + y * w2v_matrix[M11] + z * w2v_matrix[M12]) >> W2V_SHIFT;
+	LPos[0].z = (x * w2v_matrix[M20] + y * w2v_matrix[M21] + z * w2v_matrix[M22]) >> W2V_SHIFT;
 
-	LPos[2].x = 0;
-	LPos[2].y = 0x2000;
-	LPos[2].z = 0x3000;
+	x = -0x2000;
+	y = -0x4000;
+	z = 0x3000;
+	LPos[1].x = (x * w2v_matrix[M00] + y * w2v_matrix[M01] + z * w2v_matrix[M02]) >> W2V_SHIFT;
+	LPos[1].y = (x * w2v_matrix[M10] + y * w2v_matrix[M11] + z * w2v_matrix[M12]) >> W2V_SHIFT;
+	LPos[1].z = (x * w2v_matrix[M20] + y * w2v_matrix[M21] + z * w2v_matrix[M22]) >> W2V_SHIFT;
+
+	x = 0;
+	y = 0x2000;
+	z = 0x3000;
+	LPos[2].x = (x * w2v_matrix[M00] + y * w2v_matrix[M01] + z * w2v_matrix[M02]) >> W2V_SHIFT;
+	LPos[2].y = (x * w2v_matrix[M10] + y * w2v_matrix[M11] + z * w2v_matrix[M12]) >> W2V_SHIFT;
+	LPos[2].z = (x * w2v_matrix[M20] + y * w2v_matrix[M21] + z * w2v_matrix[M22]) >> W2V_SHIFT;
 
 	PickupY += 728;
 	entry = find_display_entry(obj_num);
@@ -217,11 +251,20 @@ static void DrawPickup(short obj_num)
 	}
 
 	phd_PushUnitMatrix();
-	phd_mxptr[M03] = (640 * long(float(phd_winxmax) / 582.0F) + PickupX) << W2V_SHIFT;
-	phd_mxptr[M13] = long(float(phd_winymax) / 256.0F * 108.0F) << W2V_SHIFT;
-	phd_mxptr[M23] = 1280 << W2V_SHIFT;
+	phd_mxptr[M03] = 0;
+	phd_mxptr[M13] = 0;
+	phd_mxptr[M23] = 1024 << W2V_SHIFT;
 	phd_RotYXZ(PickupY, rotx, rotz);
-	phd_PutPolygons(meshes[objects[obj_num].mesh_index], 1);							//todo: handle multiple meshes
+
+	fy = f_centery;
+	fx = f_centerx;
+	f_centerx = float(phd_winxmin + phd_winxmax - ((50 * phd_persp) >> 8));
+	f_centery = float(phd_winymax + phd_winymin - ((50 * phd_persp) >> 8));
+	f_centerx += PickupX;
+	phd_PutPolygonsPickup(meshes[objects[obj_num].mesh_index], 1);	
+	f_centerx = fx;
+	f_centery = fy;
+
 	phd_PopMatrix();
 }
 #endif
