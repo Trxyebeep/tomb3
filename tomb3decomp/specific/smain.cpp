@@ -180,6 +180,86 @@ bool S_LoadSettings()
 	return 1;
 }
 
+void S_SaveSettings()
+{
+	FILE* file;
+
+	file = fopen("config.txt", "w+");
+
+	if (file)
+	{
+		if (App.DeviceInfoPtr->nDDInfo)
+			fprintf(file, "DD %d\n", App.DXConfigPtr->nDD);
+
+		if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].nD3DInfo)
+		{
+			fprintf(file, "D3D %d\n", App.DXConfigPtr->nD3D);
+			fprintf(file, "D3DTF %d\n", App.DXConfigPtr->D3DTF);
+		}
+
+		if (App.DeviceInfoPtr->nDSInfo)
+			fprintf(file, "DS %d\n", App.DXConfigPtr->DS);
+
+		if (App.DeviceInfoPtr->nDIInfo)
+			fprintf(file, "DI %d\n", App.DXConfigPtr->DI);
+
+		fprintf(file, "VM %d\n", App.DXConfigPtr->nVMode);
+		fprintf(file, "ZBUFFER %d\n", App.DXConfigPtr->bZBuffer);
+		fprintf(file, "DITHER %d\n", App.DXConfigPtr->Dither);
+		fprintf(file, "FILTER %d\n", App.DXConfigPtr->Filter);
+		fprintf(file, "AGP %d\n", App.DXConfigPtr->AGP);
+		fprintf(file, "SOUND %d\n", App.DXConfigPtr->sound);
+		fprintf(file, "JOYSTICK %d\n", App.DXConfigPtr->Joystick);
+		fprintf(file, "MMX %d\n", App.DXConfigPtr->MMX);
+		fprintf(file, "SFX %d\n", Option_SFX_Volume);
+		fprintf(file, "MUSIC %d\n", Option_Music_Volume);
+		fprintf(file, "GAMMA %f\n", GammaOption);
+		fprintf(file, "DEFKEY %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n",
+			layout[0][0],
+			layout[0][1],
+			layout[0][2],
+			layout[0][3],
+			layout[0][4],
+			layout[0][5],
+			layout[0][6],
+			layout[0][7],
+			layout[0][8],
+			layout[0][9],
+			layout[0][10],
+			layout[0][11],
+			layout[0][12],
+			layout[0][13]);
+
+		fprintf(file, "USERKEY %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n",
+			layout[1][0],
+			layout[1][1],
+			layout[1][2],
+			layout[1][3],
+			layout[1][4],
+			layout[1][5],
+			layout[1][6],
+			layout[1][7],
+			layout[1][8],
+			layout[1][9],
+			layout[1][10],
+			layout[1][11],
+			layout[1][12],
+			layout[1][13]);
+
+		fclose(file);
+	}
+
+	file = fopen("data.bin", "wb+");
+
+	if (file)
+	{
+		fwrite(savegame.best_assault_times, sizeof(ulong), 10, file);
+		fwrite(savegame.best_quadbike_times, sizeof(ulong), 10, file);
+		fwrite(&savegame.QuadbikeKeyFlag, sizeof(ulong), 1, file);
+		fclose(file);	//NOT in original code, they forgot to fclose.
+	}
+}
+
 void CheckCheatMode()
 {
 	static long mode, gun, turn;
@@ -348,5 +428,6 @@ void CheckCheatMode()
 void inject_smain(bool replace)
 {
 	INJECT(0x0048CBF0, S_LoadSettings, inject_rando ? 1 : replace);
+	INJECT(0x0048C8C0, S_SaveSettings, replace);
 	INJECT(0x0048C550, CheckCheatMode, replace);
 }

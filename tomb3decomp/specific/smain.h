@@ -4,9 +4,8 @@
 void inject_smain(bool replace);
 
 bool S_LoadSettings();
+void S_SaveSettings();
 void CheckCheatMode();
-
-#define S_SaveSettings	( (void(__cdecl*)()) 0x0048C8C0 )
 
 extern bool inject_rando;
 
