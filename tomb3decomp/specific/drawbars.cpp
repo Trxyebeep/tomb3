@@ -74,6 +74,7 @@ static void DrawPSXBar(long x0, long y0, long x1, long y1, long bar, long p, ulo
 	long dy[4];
 	long dh;
 
+	DrawColoredRect(x0 - p * 3, y0 - p * 1, x1 + p * 3, y1 + p * 1, phd_znear + 40, f[4], f[5], f[5], f[4]);
 	DrawColoredRect(x0 - p * 2, y0 - p * 2, x1 + p * 2, y1 + p * 2, phd_znear + 30, f[2], f[3], f[3], f[2]);
 	DrawColoredRect(x0 - p * 1, y0 - p * 1, x1 + p * 1, y1 + p * 1, phd_znear + 20, f[0], f[1], f[1], f[0]);
 
@@ -98,10 +99,15 @@ static void DrawPSXBar(long x0, long y0, long x1, long y1, long bar, long p, ulo
 		}
 
 		for (int i = 0; i < 3; i++)
-			DrawColoredRect(x0, y1 - dy[i + 1], x0 + bar, y1 - dy[i], phd_znear + 10, dl[i + 1], dr[i + 1], dl[i], dr[i]);
+		{
+			if (i == 2)
+				DrawColoredRect(x0, y1 - dy[i + 1], x0 + bar, y1 - dy[i], phd_znear + 10, l[5], r[5], l[4], r[4]);
+			else
+				DrawColoredRect(x0, y1 - dy[i + 1], x0 + bar, y1 - dy[i], phd_znear + 10, dl[i + 1], dr[i + 1], dl[i], dr[i]);
+		}
 
-		DrawColoredRect(x0, y0 + p * 0, x0 + bar, y0 + p * 1, phd_znear + 10, l[2], r[2], l[3], r[3]);
-		DrawColoredRect(x0, y0 + p * 1, x0 + bar, y0 + p * 2, phd_znear + 10, l[5], r[5], l[4], r[4]);
+		DrawColoredRect(x0, y0 + p * 0, x0 + bar, y0 + p * 1, phd_znear + 10, l[1], r[1], l[2], r[2]);
+		DrawColoredRect(x0, y0 + p * 1, x0 + bar, y0 + p * 2, phd_znear + 10, l[2], r[2], l[3], r[3]);
 	}
 }
 #endif
