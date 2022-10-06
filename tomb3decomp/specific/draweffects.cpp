@@ -2867,6 +2867,7 @@ void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 	long xMid, zMid, xSize, zSize;
 	short c;
 
+	bBlueEffect = 0;
 	sprite = &phdspriteinfo[objects[SHADOW].mesh_index];
 	u1 = (sprite->offset << 8) & 0xFF00;
 	v1 = sprite->offset & 0xFF00;
@@ -2940,6 +2941,7 @@ void S_DrawFootPrints()
 	ushort u1, v1, u2, v2;
 	short c;
 
+	bBlueEffect = 0;
 	sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 17];
 	u1 = (sprite->offset << 8) & 0xFF00;
 	v1 = sprite->offset & 0xFF00;
