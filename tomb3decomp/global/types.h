@@ -1770,13 +1770,15 @@ struct FVECTOR
 enum t3_shadow_mode
 {
 	SHADOW_ORIGINAL,
-	SHADOW_PSX
+	SHADOW_PSX,
+	NSHADOW_MODES
 };
 
 enum t3_bar_mode
 {
 	BAR_ORIGINAL,
-	BAR_PSX
+	BAR_PSX,
+	NBAR_MODES
 };
 
 struct TOMB3_OPTIONS

@@ -5,6 +5,11 @@
 #include "hwrender.h"
 #include "dxshell.h"
 #include "drawprimitive.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
+
+static TEXTSTRING* dtext[DT_NUMT];
 
 long GetRenderWidth()
 {
@@ -16,8 +21,6 @@ long GetRenderHeight()
 	return phd_winheight;
 }
 
-TEXTSTRING* dtext[DT_NUMT];
-
 void do_detail_option(INVENTORY_ITEM* item)
 {
 	DIRECT3DINFO* dinfo;
@@ -25,7 +28,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 	DISPLAYMODE* cdm;
 	static RES_TXT resolutions[30];
 	static long selected_res;
-	static long selection = 5;
+	static long selection = DOP_NOPTS - 1;
 	long nSel, w, oldRes;
 	static char available[DOP_NOPTS];
 	char gtxt[8];
@@ -59,8 +62,16 @@ void do_detail_option(INVENTORY_ITEM* item)
 		dtext[DT_RESOLUTION] = T_Print(w, -45, 0, GF_PCStrings[PCSTR_RESOLUTION]);
 		dtext[DT_EMPTY] = T_Print(0, -72, 0, " ");
 		dtext[DT_VIDEOTITLE] = T_Print(0, -70, 0, GF_PCStrings[PCSTR_VIDEOTITLE]);
+#ifdef TROYESTUFF
+		dtext[DT_FOOTPRINTS] = T_Print(w, 75, 0, "Footprints");
+		dtext[DT_SHADOW] = T_Print(w, 100, 0, "Shadow");
+		dtext[DT_BARS] = T_Print(w, 125, 0, "Bars");
+		dtext[DT_PICKUP] = T_Print(w, 150, 0, "Pickup icon");
 
+		T_AddBackground(dtext[DT_EMPTY], 240, 250, 0, 0, 48, 0, 0, 0);
+#else
 		T_AddBackground(dtext[DT_EMPTY], 240, 150, 0, 0, 48, 0, 0, 0);
+#endif
 		T_AddOutline(dtext[DT_EMPTY], 1, 15, 0, 0);
 
 		T_AddBackground(dtext[DT_VIDEOTITLE], 236, 0, 0, 0, 48, 0, 0, 0);
@@ -72,12 +83,48 @@ void do_detail_option(INVENTORY_ITEM* item)
 		T_CentreV(dtext[DT_FILTER], 1);
 		T_CentreV(dtext[DT_ZBUFFER], 1);
 		T_CentreV(dtext[DT_RESOLUTION], 1);
+#ifdef TROYESTUFF
+		T_CentreV(dtext[DT_FOOTPRINTS], 1);
+		T_CentreV(dtext[DT_SHADOW], 1);
+		T_CentreV(dtext[DT_BARS], 1);
+		T_CentreV(dtext[DT_PICKUP], 1);
+#endif
 
 		T_CentreH(dtext[DT_EMPTY], 1);
 		T_CentreV(dtext[DT_EMPTY], 1);
 
 		T_CentreH(dtext[DT_VIDEOTITLE], 1);
 		T_CentreV(dtext[DT_VIDEOTITLE], 1);
+
+#ifdef TROYESTUFF
+		if (tomb3.footprints)
+			dtext[DT_OP_FOOTPRINTS] = T_Print(w + 130, 75, 0, GF_PCStrings[PCSTR_ON]);
+		else
+			dtext[DT_OP_FOOTPRINTS] = T_Print(w + 130, 75, 0, GF_PCStrings[PCSTR_OFF]);
+
+		T_CentreV(dtext[DT_OP_FOOTPRINTS], 1);
+
+		if (tomb3.shadow_mode == SHADOW_ORIGINAL)
+			dtext[DT_OP_SHADOW] = T_Print(w + 130, 100, 0, "Original");
+		else
+			dtext[DT_OP_SHADOW] = T_Print(w + 130, 100, 0, "PSX");
+
+		T_CentreV(dtext[DT_OP_SHADOW], 1);
+
+		if (tomb3.bar_mode == BAR_ORIGINAL)
+			dtext[DT_OP_BARS] = T_Print(w + 130, 125, 0, "Original");
+		else
+			dtext[DT_OP_BARS] = T_Print(w + 130, 125, 0, "PSX");
+
+		T_CentreV(dtext[DT_OP_BARS], 1);
+
+		if (tomb3.pickup_display)
+			dtext[DT_OP_PICKUP] = T_Print(w + 130, 150, 0, GF_PCStrings[PCSTR_ON]);
+		else
+			dtext[DT_OP_PICKUP] = T_Print(w + 130, 150, 0, GF_PCStrings[PCSTR_OFF]);
+
+		T_CentreV(dtext[DT_OP_PICKUP], 1);
+#endif
 
 		dtext[DT_OP_RESOLUTION] = T_Print(w + 130, -45, 0, resolutions[selected_res].res);
 
@@ -191,7 +238,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 	{
 		switch (selection)
 		{
-		case 0:
+		case DOP_GAMMA:
 
 			if (inputDB & IN_RIGHT)
 				GammaOption++;
@@ -212,7 +259,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 			T_CentreV(dtext[DT_OP_GAMMA], 1);
 			break;
 
-		case 1:
+		case DOP_TRUEALPHA:
 
 			if (HWConfig.TrueAlpha)
 			{
@@ -230,7 +277,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 			HWR_InitState();
 			break;
 
-		case 2:
+		case DOP_DITHER:
 
 			if (HWConfig.Dither)
 			{
@@ -246,7 +293,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 			HWR_InitState();
 			break;
 
-		case 3:
+		case DOP_FILTER:
 			if (HWConfig.nFilter == 2)
 			{
 				HWConfig.nFilter = 1;
@@ -261,7 +308,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 			HWR_InitState();
 			break;
 
-		case 4:
+		case DOP_ZBUFFER:
 
 			if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
 			{
@@ -289,6 +336,66 @@ void do_detail_option(INVENTORY_ITEM* item)
 			}
 
 			break;
+
+#ifdef TROYESTUFF
+		case DOP_FOOTPRINTS:
+			
+			if (tomb3.footprints)
+			{
+				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_OFF]);
+				tomb3.footprints = 0;
+			}
+			else
+			{
+				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_ON]);
+				tomb3.footprints = 1;
+			}
+
+			break;
+
+		case DOP_SHADOW:
+
+			if (tomb3.shadow_mode < NSHADOW_MODES - 1)
+				tomb3.shadow_mode++;
+			else
+				tomb3.shadow_mode = SHADOW_ORIGINAL;
+
+			if (tomb3.shadow_mode == SHADOW_ORIGINAL)
+				T_ChangeText(dtext[selection + nSel], (char*)"Original");
+			else
+				T_ChangeText(dtext[selection + nSel], (char*)"PSX");
+
+			break;
+
+		case DOP_BARS:
+
+			if (tomb3.bar_mode < NBAR_MODES - 1)
+				tomb3.bar_mode++;
+			else
+				tomb3.bar_mode = BAR_ORIGINAL;
+
+			if (tomb3.bar_mode == BAR_ORIGINAL)
+				T_ChangeText(dtext[selection + nSel], (char*)"Original");
+			else
+				T_ChangeText(dtext[selection + nSel], (char*)"PSX");
+
+			break;
+
+		case DOP_PICKUP:
+
+			if (tomb3.pickup_display)
+			{
+				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_OFF]);
+				tomb3.pickup_display = 0;
+			}
+			else
+			{
+				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_ON]);
+				tomb3.pickup_display = 1;
+			}
+
+			break;
+#endif
 		}
 
 		T_RemoveOutline(dtext[selection + nSel]);

@@ -9,6 +9,12 @@ void do_detail_option(INVENTORY_ITEM* item);
 
 enum d_txt
 {
+#ifdef TROYESTUFF
+	DT_PICKUP,
+	DT_BARS,
+	DT_SHADOW,
+	DT_FOOTPRINTS,
+#endif
 	DT_GAMMA,
 	DT_TRUEALPHA,
 	DT_DITHER,
@@ -17,6 +23,12 @@ enum d_txt
 	DT_RESOLUTION,
 	DT_EMPTY,
 	DT_VIDEOTITLE,
+#ifdef TROYESTUFF
+	DT_OP_PICKUP,
+	DT_OP_BARS,
+	DT_OP_SHADOW,
+	DT_OP_FOOTPRINTS,
+#endif
 	DT_OP_GAMMA,
 	DT_OP_TRUEALPHA,
 	DT_OP_DITHER,
@@ -28,6 +40,12 @@ enum d_txt
 
 enum d_options
 {
+#ifdef TROYESTUFF
+	DOP_PICKUP,
+	DOP_BARS,
+	DOP_SHADOW,
+	DOP_FOOTPRINTS,
+#endif
 	DOP_GAMMA,
 	DOP_TRUEALPHA,
 	DOP_DITHER,
