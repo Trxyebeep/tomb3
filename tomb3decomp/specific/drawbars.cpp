@@ -74,6 +74,7 @@ static void DrawPSXBar(long x0, long y0, long x1, long y1, long bar, long p, ulo
 	long dy[4];
 	long dh;
 
+	DrawColoredRect(x0 - p * 3, y0 - p * 1, x1 + p * 3, y1 + p * 1, phd_znear + 40, f[4], f[5], f[5], f[4]);
 	DrawColoredRect(x0 - p * 2, y0 - p * 2, x1 + p * 2, y1 + p * 2, phd_znear + 30, f[2], f[3], f[3], f[2]);
 	DrawColoredRect(x0 - p * 1, y0 - p * 1, x1 + p * 1, y1 + p * 1, phd_znear + 20, f[0], f[1], f[1], f[0]);
 
