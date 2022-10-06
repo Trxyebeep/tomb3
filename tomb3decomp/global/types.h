@@ -1754,6 +1754,11 @@ struct SNOWFLAKE
 	uchar life;
 };
 
+struct RES_TXT
+{
+	char res[20];
+};
+
 #ifdef TROYESTUFF
 struct FVECTOR
 {
