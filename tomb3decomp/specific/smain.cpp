@@ -7,6 +7,9 @@
 #include "../game/objects.h"
 #include "../game/sound.h"
 #include "../game/missile.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
 
 #ifdef RANDO_STUFF
 #include "init.h"
@@ -58,6 +61,10 @@ bool S_LoadSettings()
 
 #ifdef RANDO_STUFF
 	LoadRandoInfo();
+#endif
+
+#ifdef TROYESTUFF
+	T3_LoadSettings();
 #endif
 
 	file = fopen("data.bin", "rb");
@@ -183,6 +190,10 @@ bool S_LoadSettings()
 void S_SaveSettings()
 {
 	FILE* file;
+
+#ifdef TROYESTUFF
+	T3_SaveSettings();
+#endif
 
 	file = fopen("config.txt", "w+");
 

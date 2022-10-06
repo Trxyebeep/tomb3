@@ -6,6 +6,9 @@
 #include "text.h"
 #include "../specific/specific.h"
 #include "gameflow.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
 
 #ifndef TROYESTUFF
 DISPLAYPU pickups[1];
@@ -462,6 +465,9 @@ void AddDisplayPickup(short objnum)
 		S_CDPlay(gameflow.secret_track, 0);
 
 #ifdef TROYESTUFF
+	if (!tomb3.pickup_display)
+		return;
+
 	for (int i = 0; i < 8; i++)
 	{
 		if (pickups[i].duration == -1)

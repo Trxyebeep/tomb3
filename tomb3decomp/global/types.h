@@ -1761,5 +1761,25 @@ struct FVECTOR
 	float y;
 	float z;
 };
+
+enum t3_shadow_mode
+{
+	SHADOW_ORIGINAL,
+	SHADOW_PSX
+};
+
+enum t3_bar_mode
+{
+	BAR_ORIGINAL,
+	BAR_PSX
+};
+
+struct TOMB3_OPTIONS
+{
+	long footprints;
+	long shadow_mode;	//t3_shadow_mode enum
+	long bar_mode;		//t3_bar_mode enum
+	long pickup_display;
+};
 #endif
 #pragma pack(pop)

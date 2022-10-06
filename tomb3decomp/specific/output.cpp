@@ -12,6 +12,7 @@
 #include "../game/objects.h"
 #include "litesrc.h"
 #include "draweffects.h"
+#include "../tomb3/tomb3.h"
 #endif
 
 static short shadow[6 + (3 * 8)] =
@@ -33,8 +34,11 @@ void S_PrintShadow(short size, short* box, ITEM_INFO* item)
 	long x0, x1, z0, z1, midX, midZ, xAdd, zAdd;
 
 #ifdef TROYESTUFF
-	S_PrintSpriteShadow(size, box, item);
-	return;
+	if (tomb3.shadow_mode == SHADOW_PSX)
+	{
+		S_PrintSpriteShadow(size, box, item);
+		return;
+	}
 #endif
 
 	x0 = box[0];

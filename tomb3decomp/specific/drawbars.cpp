@@ -5,6 +5,8 @@
 #include "output.h"
 
 #ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+
 static ulong InterpolateColor(ulong col0, ulong col1, ulong value, ulong range)
 {
 	uchar* c0;
@@ -135,13 +137,14 @@ void S_DrawHealthBar(long percent)
 
 	bar = w * percent / 100;
 
-	//
-	for (int i = 0; i < 6; ++i)
-		r[i] = InterpolateColor(l[i], r[i], bar, x1 - x0);
+	if (tomb3.bar_mode == BAR_PSX)
+	{
+		for (int i = 0; i < 6; i++)
+			r[i] = InterpolateColor(l[i], r[i], bar, x1 - x0);
 
-	DrawPSXBar(x0, y0, x1, y1, bar, p, l, r, f);
-	return;
-	//
+		DrawPSXBar(x0, y0, x1, y1, bar, p, l, r, f);
+		return;
+	}
 
 	InsertFlatRect(x0 - p * 2, y0 - p * 2, x1 + p * 2, y1 + p * 2, phd_znear + 50, 0xFFFFFFFF);
 	InsertFlatRect(x0 - p, y0 - p, x1 + p * 2, y1 + p * 2, phd_znear + 40, 0xFF404040);
@@ -237,13 +240,14 @@ void S_DrawDashBar(long percent)
 
 	bar = w * percent / 100;
 
-	//
-	for (int i = 0; i < 6; ++i)
-		r[i] = InterpolateColor(l[i], r[i], bar, x1 - x0);
+	if (tomb3.bar_mode == BAR_PSX)
+	{
+		for (int i = 0; i < 6; i++)
+			r[i] = InterpolateColor(l[i], r[i], bar, x1 - x0);
 
-	DrawPSXBar(x0, y0, x1, y1, bar, p, l, r, f);
-	return;
-	//
+		DrawPSXBar(x0, y0, x1, y1, bar, p, l, r, f);
+		return;
+	}
 
 	InsertFlatRect(x0 - p * 2, y0 - p * 2, x1 + p * 2, y1 + p * 2, phd_znear + 50, 0xFFFFFFFF);
 	InsertFlatRect(x0 - p, y0 - p, x1 + p * 2, y1 + p * 2, phd_znear + 40, 0xFF404040);
@@ -319,13 +323,14 @@ void S_DrawAirBar(long percent)
 
 	bar = w * percent / 100;
 
-	//
-	for (int i = 0; i < 6; ++i)
-		r[i] = InterpolateColor(l[i], r[i], bar, x1 - x0);
+	if (tomb3.bar_mode == BAR_PSX)
+	{
+		for (int i = 0; i < 6; i++)
+			r[i] = InterpolateColor(l[i], r[i], bar, x1 - x0);
 
-	DrawPSXBar(x0, y0, x1, y1, bar, p, l, r, f);
-	return;
-	//
+		DrawPSXBar(x0, y0, x1, y1, bar, p, l, r, f);
+		return;
+	}
 
 	InsertFlatRect(x0 - p * 2, y0 - p * 2, x1 + p * 2, y1 + p * 2, phd_znear + 50, 0xFFFFFFFF);
 	InsertFlatRect(x0 - p, y0 - p, x1 + p * 2, y1 + p * 2, phd_znear + 40, 0xFF404040);
@@ -401,13 +406,14 @@ void S_DrawColdBar(long percent)
 
 	bar = w * percent / 100;
 
-	//
-	for (int i = 0; i < 6; ++i)
-		r[i] = InterpolateColor(l[i], r[i], bar, x1 - x0);
+	if (tomb3.bar_mode == BAR_PSX)
+	{
+		for (int i = 0; i < 6; i++)
+			r[i] = InterpolateColor(l[i], r[i], bar, x1 - x0);
 
-	DrawPSXBar(x0, y0, x1, y1, bar, p, l, r, f);
-	return;
-	//
+		DrawPSXBar(x0, y0, x1, y1, bar, p, l, r, f);
+		return;
+	}
 
 	InsertFlatRect(x0 - p * 2, y0 - p * 2, x1 + p * 2, y1 + p * 2, phd_znear + 50, 0xFFFFFFFF);
 	InsertFlatRect(x0 - p, y0 - p, x1 + p * 2, y1 + p * 2, phd_znear + 40, 0xFF404040);

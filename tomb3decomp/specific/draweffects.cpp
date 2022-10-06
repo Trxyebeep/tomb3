@@ -9,6 +9,9 @@
 #include "../game/control.h"
 #include "../game/lasers.h"
 #include "../game/triboss.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
 
 static RAINDROP raindrops[256];
 static SNOWFLAKE snowflakes[256];
@@ -2956,6 +2959,12 @@ void S_DrawFootPrints()
 
 		if (!print->Active)
 			continue;
+
+		if (!tomb3.footprints)
+		{
+			print->Active = 0;
+			continue;
+		}
 
 		print->Active--;
 
