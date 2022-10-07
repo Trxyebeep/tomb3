@@ -165,7 +165,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 		else
 		{
 			T_ChangeText(dtext[DT_OP_DITHER], GF_PCStrings[PCSTR_SPARE8]);
-			T_ChangeText(dtext[DT_OP_FILTER], GF_PCStrings[PCSTR_SPARE8]);
+			T_ChangeText(dtext[DOP_ZBUFFER], GF_PCStrings[PCSTR_SPARE8]);
 			available[DOP_DITHER] = 0;
 			available[DOP_ZBUFFER] = 0;
 
@@ -529,7 +529,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 		else
 		{
 			T_ChangeText(dtext[DT_OP_DITHER], GF_PCStrings[PCSTR_SPARE8]);
-			T_ChangeText(dtext[DT_OP_FILTER], GF_PCStrings[PCSTR_SPARE8]);
+			T_ChangeText(dtext[DOP_ZBUFFER], GF_PCStrings[PCSTR_SPARE8]);
 			available[DOP_DITHER] = 0;
 			available[DOP_ZBUFFER] = 0;
 
