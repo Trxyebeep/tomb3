@@ -307,9 +307,19 @@ void S_OutputPolyList()
 			phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
 			HWR_DrawPolyListBF(surfacenumbf, sort3d_bufferbf);
 		}
+	}
+	else
+	{
+		HWR_EnableColorKey(0);
+		HWR_EnableAlphaBlend(0);
+		phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
+		HWR_DrawPolyList(surfacenumbf, sort3d_bufferbf);
+	}
 
 #ifdef TROYESTUFF
-		if (pickups[CurrentPickup].duration != -1)
+	if (pickups[CurrentPickup].duration != -1)
+	{
+		if (App.lpZBuffer)
 		{
 			for (int i = 0; i < 6; i++)
 			{
@@ -322,23 +332,25 @@ void S_OutputPolyList()
 			HWR_EnableAlphaBlend(0);
 			HWR_EnableColorAddition(0);
 			HWR_EnableZBuffer(1, 1);
-
-			if (level_complete)
-				InitialisePickUpDisplay();
-
-			bBlueEffect = 0;
-			DrawPickup(pickups[CurrentPickup].sprnum);
-			DrawBuckets();
 		}
+		else
+			phd_InitPolyList();
+
+		if (level_complete)
+			InitialisePickUpDisplay();
+
+		bBlueEffect = 0;
+		DrawPickup(pickups[CurrentPickup].sprnum);
+
+		if (App.lpZBuffer)
+			DrawBuckets();
+		else
+		{
+			phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
+			HWR_DrawPolyListBF(surfacenumbf, sort3d_bufferbf);
+		}
+	}
 #endif
-	}
-	else
-	{
-		HWR_EnableColorKey(0);
-		HWR_EnableAlphaBlend(0);
-		phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
-		HWR_DrawPolyList(surfacenumbf, sort3d_bufferbf);
-	}
 
 	S_FadePicture();
 	HWR_EndScene();
