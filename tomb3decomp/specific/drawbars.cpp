@@ -64,6 +64,7 @@ static void DrawColoredRect(long x0, long y0, long x1, long y1, long z, ulong c0
 
 	HWR_SetCurrentTexture(0);
 	HWR_EnableColorKey(1);
+	HWR_EnableColorAddition(0);
 	DrawPrimitive(D3DPT_TRIANGLESTRIP, D3DVT_TLVERTEX, v, 4, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 }
 
