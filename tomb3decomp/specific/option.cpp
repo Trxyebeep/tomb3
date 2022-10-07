@@ -181,16 +181,6 @@ void do_detail_option(INVENTORY_ITEM* item)
 			}
 		}
 
-		if (!available[DOP_ZBUFFER] || !App.lpZBuffer)
-		{
-			available[DOP_FOOTPRINTS] = 0;
-			available[DOP_SHADOW] = 0;
-			T_ChangeText(dtext[DT_OP_FOOTPRINTS], GF_PCStrings[PCSTR_SPARE8]);
-			T_ChangeText(dtext[DT_OP_SHADOW], GF_PCStrings[PCSTR_SPARE8]);
-			tomb3.footprints = 0;
-			tomb3.shadow_mode = SHADOW_ORIGINAL;
-		}
-
 		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, 0, 0);
 		T_AddOutline(dtext[selection + nSel], 1, 4, 0, 0);
 	}
@@ -325,40 +315,17 @@ void do_detail_option(INVENTORY_ITEM* item)
 					DXSwitchVideoMode(selected_res, selected_res, 0);
 					T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_OFF]);
 					App.lpZBuffer = 0;
-
-					available[DOP_FOOTPRINTS] = 0;
-					available[DOP_SHADOW] = 0;
-					T_ChangeText(dtext[DT_OP_FOOTPRINTS], GF_PCStrings[PCSTR_SPARE8]);
-					T_ChangeText(dtext[DT_OP_SHADOW], GF_PCStrings[PCSTR_SPARE8]);
-					tomb3.footprints = 0;
-					tomb3.shadow_mode = SHADOW_ORIGINAL;
 				}
 				else
 				{
 					App.DXConfigPtr->bZBuffer = 1;
 
 					if (DXSwitchVideoMode(selected_res, selected_res, 1))
-					{
 						T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_ON]);
-
-						available[DOP_FOOTPRINTS] = 1;
-						available[DOP_SHADOW] = 1;
-						tomb3.footprints = 1;
-						tomb3.shadow_mode = SHADOW_PSX;
-						T_ChangeText(dtext[DT_OP_FOOTPRINTS], GF_PCStrings[PCSTR_ON]);
-						T_ChangeText(dtext[DT_OP_SHADOW], (char*)"PSX");
-					}
 					else
 					{
 						App.DXConfigPtr->bZBuffer = 0;
 						App.lpZBuffer = 0;
-
-						available[DOP_FOOTPRINTS] = 0;
-						available[DOP_SHADOW] = 0;
-						T_ChangeText(dtext[DT_OP_FOOTPRINTS], GF_PCStrings[PCSTR_SPARE8]);
-						T_ChangeText(dtext[DT_OP_SHADOW], GF_PCStrings[PCSTR_SPARE8]);
-						tomb3.footprints = 0;
-						tomb3.shadow_mode = SHADOW_ORIGINAL;
 					}
 				}
 

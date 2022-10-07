@@ -67,6 +67,35 @@ void HWR_EnableAlphaBlend(bool enable)
 	}
 }
 
+#ifdef TROYESTUFF
+void HWR_EnableColorAddition(bool enable)
+{
+	if (enable)
+	{
+		SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ONE);
+		SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
+	}
+	else
+	{
+		SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
+		SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	}
+}
+
+void HWR_EnableColorSubtraction(bool enable)
+{
+	if (enable)
+	{
+		SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ZERO);
+		SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCCOLOR);
+	}
+	else
+	{
+		SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
+		SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	}
+}
+#else
 void HWR_EnableColorAddition(bool enable)
 {
 	static bool enabled;
@@ -78,27 +107,6 @@ void HWR_EnableColorAddition(bool enable)
 			enabled = 1;
 			SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ONE);
 			SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
-		}
-	}
-	else if (enabled)
-	{
-		enabled = 0;
-		SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
-		SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
-	}
-}
-
-#ifdef TROYESTUFF
-void HWR_EnableColorSubtraction(bool enable)
-{
-	static bool enabled;
-	if (enable)
-	{
-		if (!enabled)
-		{
-			enabled = 1;
-			SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ZERO);
-			SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCCOLOR);
 		}
 	}
 	else if (enabled)
@@ -265,7 +273,6 @@ void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage)
 		HWR_EnableAlphaBlend(1);
 		HWR_EnableColorKey(1);
 		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
-		HWR_EnableColorSubtraction(0);
 		return;
 #endif
 
@@ -341,7 +348,6 @@ void HWR_DrawRoutinesStippledAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, 
 		SetRenderState(D3DRENDERSTATE_STIPPLEDALPHA, 1);
 		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		SetRenderState(D3DRENDERSTATE_STIPPLEDALPHA, 0);
-		HWR_EnableColorSubtraction(0);
 		return;
 #endif
 
@@ -408,7 +414,6 @@ void HWR_DrawRoutinesNoAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long T
 		HWR_EnableAlphaBlend(1);
 		HWR_EnableColorKey(1);
 		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
-		HWR_EnableColorSubtraction(0);
 		return;
 #endif
 	}
