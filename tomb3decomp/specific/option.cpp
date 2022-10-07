@@ -185,13 +185,10 @@ void do_detail_option(INVENTORY_ITEM* item)
 		{
 			available[DOP_FOOTPRINTS] = 0;
 			available[DOP_SHADOW] = 0;
-			available[DOP_BARS] = 0;
 			T_ChangeText(dtext[DT_OP_FOOTPRINTS], GF_PCStrings[PCSTR_SPARE8]);
 			T_ChangeText(dtext[DT_OP_SHADOW], GF_PCStrings[PCSTR_SPARE8]);
-			T_ChangeText(dtext[DT_OP_BARS], GF_PCStrings[PCSTR_SPARE8]);
 			tomb3.footprints = 0;
 			tomb3.shadow_mode = SHADOW_ORIGINAL;
-			tomb3.bar_mode = BAR_ORIGINAL;
 		}
 
 		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, 0, 0);
@@ -331,13 +328,10 @@ void do_detail_option(INVENTORY_ITEM* item)
 
 					available[DOP_FOOTPRINTS] = 0;
 					available[DOP_SHADOW] = 0;
-					available[DOP_BARS] = 0;
 					T_ChangeText(dtext[DT_OP_FOOTPRINTS], GF_PCStrings[PCSTR_SPARE8]);
 					T_ChangeText(dtext[DT_OP_SHADOW], GF_PCStrings[PCSTR_SPARE8]);
-					T_ChangeText(dtext[DT_OP_BARS], GF_PCStrings[PCSTR_SPARE8]);
 					tomb3.footprints = 0;
 					tomb3.shadow_mode = SHADOW_ORIGINAL;
-					tomb3.bar_mode = BAR_ORIGINAL;
 				}
 				else
 				{
@@ -349,13 +343,10 @@ void do_detail_option(INVENTORY_ITEM* item)
 
 						available[DOP_FOOTPRINTS] = 1;
 						available[DOP_SHADOW] = 1;
-						available[DOP_BARS] = 1;
 						tomb3.footprints = 1;
 						tomb3.shadow_mode = SHADOW_PSX;
-						tomb3.bar_mode = BAR_PSX;
 						T_ChangeText(dtext[DT_OP_FOOTPRINTS], GF_PCStrings[PCSTR_ON]);
 						T_ChangeText(dtext[DT_OP_SHADOW], (char*)"PSX");
-						T_ChangeText(dtext[DT_OP_BARS], (char*)"PSX");
 					}
 					else
 					{
@@ -364,13 +355,10 @@ void do_detail_option(INVENTORY_ITEM* item)
 
 						available[DOP_FOOTPRINTS] = 0;
 						available[DOP_SHADOW] = 0;
-						available[DOP_BARS] = 0;
 						T_ChangeText(dtext[DT_OP_FOOTPRINTS], GF_PCStrings[PCSTR_SPARE8]);
 						T_ChangeText(dtext[DT_OP_SHADOW], GF_PCStrings[PCSTR_SPARE8]);
-						T_ChangeText(dtext[DT_OP_BARS], GF_PCStrings[PCSTR_SPARE8]);
 						tomb3.footprints = 0;
 						tomb3.shadow_mode = SHADOW_ORIGINAL;
-						tomb3.bar_mode = BAR_ORIGINAL;
 					}
 				}
 

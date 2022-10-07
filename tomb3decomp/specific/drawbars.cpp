@@ -105,15 +105,36 @@ static void DrawPSXBar(long x0, long y0, long x1, long y1, long bar, long p, ulo
 		DrawColoredRect(x0, y0 + p * 1, x0 + bar, y0 + p * 2, phd_znear + 10, l[5], r[5], l[4], r[4]);
 	}
 }
-#endif
 
-void S_DrawHealthBar(long percent)
+static void InsertPSXBar(long polytype, long x0, long y0, long x1, long y1, long bar, long p)
 {
-#ifdef TROYESTUFF
+	long* sort;
+	short* info;
+
+	sort = sort3dptrbf;
+	info = info3dptrbf;
+	
+	surfacenumbf++;
+	sort3dptrbf += 3;
+	info3dptrbf += 6;
+
+	sort[0] = (long)info;
+	sort[1] = phd_znear;
+	sort[2] = polytype;
+
+	info[0] = (short)x0;
+	info[1] = (short)y0;
+	info[2] = (short)x1;
+	info[3] = (short)y1;
+	info[4] = (short)bar;
+	info[5] = (short)p;
+}
+
+void DoPSXHealthBar(long x0, long y0, long x1, long y1, long bar, long p)
+{
 	ulong l[6] = { 0xFF400000, 0xFF4C0000, 0xFF580000, 0xFF640000, 0xFF700000, 0xFF7C0000 };
 	ulong r[6] = { 0xFF008000, 0xFF009900, 0xFF00B200, 0xFF00CB00, 0xFF00E400, 0xFF00FD00 };
 	ulong f[6] = { 0xFF000000, 0xFF000000, 0xFF508484, 0xFFA0A0A0, 0xFF284242, 0xFF505050 };
-	long w, h, xs, ys, p, x0, y0, x1, y1, bar;
 
 	if (lara.poisoned)
 	{
@@ -124,6 +145,54 @@ void S_DrawHealthBar(long percent)
 		r[4] = 0xFF7000E4;
 		r[5] = 0xFF7C00FD;
 	}
+
+	for (int i = 0; i < 6; i++)
+		r[i] = InterpolateColor(l[i], r[i], bar, x1 - x0);
+
+	DrawPSXBar(x0, y0, x1, y1, bar, p, l, r, f);
+}
+
+void DoPSXDashBar(long x0, long y0, long x1, long y1, long bar, long p)
+{
+	ulong l[6] = { 0xFF900000, 0xFFA30000, 0xFFB60000, 0xFFC90000, 0xFFDC0000, 0xFFEF0000 };
+	ulong r[6] = { 0xFF909000, 0xFFA3A300, 0xFFB6B600, 0xFFC9C900, 0xFFDCDC00, 0xFFEFEF00 };
+	ulong f[6] = { 0xFF000000, 0xFF000000, 0xFF508484, 0xFFA0A0A0, 0xFF284242, 0xFF505050 };
+
+	for (int i = 0; i < 6; i++)
+		r[i] = InterpolateColor(l[i], r[i], bar, x1 - x0);
+
+	DrawPSXBar(x0, y0, x1, y1, bar, p, l, r, f);
+}
+
+void DoPSXAirBar(long x0, long y0, long x1, long y1, long bar, long p)
+{
+	ulong l[6] = { 0xFF004054, 0xFF005064, 0xFF006874, 0xFF007884, 0xFF00848E, 0xFF009098 };
+	ulong r[6] = { 0xFF004000, 0xFF005000, 0xFF006800, 0xFF007800, 0xFF008400, 0xFF009000 };
+	ulong f[6] = { 0xFF000000, 0xFF000000, 0xFF508484, 0xFFA0A0A0, 0xFF284242, 0xFF505050 };
+
+	for (int i = 0; i < 6; i++)
+		r[i] = InterpolateColor(l[i], r[i], bar, x1 - x0);
+
+	DrawPSXBar(x0, y0, x1, y1, bar, p, l, r, f);
+}
+
+void DoPSXColdBar(long x0, long y0, long x1, long y1, long bar, long p)
+{
+	ulong l[6] = { 0xFF000060, 0xFF00006C, 0xFF000078, 0xFF000084, 0xFF000090, 0xFF00009C };
+	ulong r[6] = { 0xFF600000, 0xFF6C0000, 0xFF780000, 0xFF840000, 0xFF900000, 0xFF9C0000 };
+	ulong f[6] = { 0xFF000000, 0xFF000000, 0xFF508484, 0xFFA0A0A0, 0xFF284242, 0xFF505050 };
+
+	for (int i = 0; i < 6; i++)
+		r[i] = InterpolateColor(l[i], r[i], bar, x1 - x0);
+
+	DrawPSXBar(x0, y0, x1, y1, bar, p, l, r, f);
+}
+#endif
+
+void S_DrawHealthBar(long percent)
+{
+#ifdef TROYESTUFF
+	long w, h, xs, ys, p, x0, y0, x1, y1, bar;
 
 	w = GetRenderScale(100);
 	h = GetRenderScale(5);
@@ -140,10 +209,11 @@ void S_DrawHealthBar(long percent)
 
 	if (tomb3.bar_mode == BAR_PSX)
 	{
-		for (int i = 0; i < 6; i++)
-			r[i] = InterpolateColor(l[i], r[i], bar, x1 - x0);
+		if (App.lpZBuffer)
+			DoPSXHealthBar(x0, y0, x1, y1, bar, p);
+		else
+			InsertPSXBar(POLYTYPE_HEALTHBAR, x0, y0, x1, y1, bar, p);
 
-		DrawPSXBar(x0, y0, x1, y1, bar, p, l, r, f);
 		return;
 	}
 
@@ -223,9 +293,6 @@ void S_DrawHealthBar(long percent)
 void S_DrawDashBar(long percent)
 {
 #ifdef TROYESTUFF
-	ulong l[6] = { 0xFF900000, 0xFFA30000, 0xFFB60000, 0xFFC90000, 0xFFDC0000, 0xFFEF0000 };
-	ulong r[6] = { 0xFF909000, 0xFFA3A300, 0xFFB6B600, 0xFFC9C900, 0xFFDCDC00, 0xFFEFEF00 };
-	ulong f[6] = { 0xFF000000, 0xFF000000, 0xFF508484, 0xFFA0A0A0, 0xFF284242, 0xFF505050 };
 	long w, h, xs, ys, p, x0, y0, x1, y1, bar;
 
 	w = GetRenderScale(100);
@@ -243,10 +310,11 @@ void S_DrawDashBar(long percent)
 
 	if (tomb3.bar_mode == BAR_PSX)
 	{
-		for (int i = 0; i < 6; i++)
-			r[i] = InterpolateColor(l[i], r[i], bar, x1 - x0);
+		if (App.lpZBuffer)
+			DoPSXDashBar(x0, y0, x1, y1, bar, p);
+		else
+			InsertPSXBar(POLYTYPE_DASHBAR, x0, y0, x1, y1, bar, p);
 
-		DrawPSXBar(x0, y0, x1, y1, bar, p, l, r, f);
 		return;
 	}
 
@@ -306,9 +374,6 @@ void S_DrawDashBar(long percent)
 void S_DrawAirBar(long percent)
 {
 #ifdef TROYESTUFF
-	ulong l[6] = { 0xFF004054, 0xFF005064, 0xFF006874, 0xFF007884, 0xFF00848E, 0xFF009098 };
-	ulong r[6] = { 0xFF004000, 0xFF005000, 0xFF006800, 0xFF007800, 0xFF008400, 0xFF009000 };
-	ulong f[6] = { 0xFF000000, 0xFF000000, 0xFF508484, 0xFFA0A0A0, 0xFF284242, 0xFF505050 };
 	long w, h, xs, ys, p, x0, y0, x1, y1, bar;
 
 	w = GetRenderScale(100);
@@ -326,10 +391,11 @@ void S_DrawAirBar(long percent)
 
 	if (tomb3.bar_mode == BAR_PSX)
 	{
-		for (int i = 0; i < 6; i++)
-			r[i] = InterpolateColor(l[i], r[i], bar, x1 - x0);
+		if (App.lpZBuffer)
+			DoPSXAirBar(x0, y0, x1, y1, bar, p);
+		else
+			InsertPSXBar(POLYTYPE_AIRBAR, x0, y0, x1, y1, bar, p);
 
-		DrawPSXBar(x0, y0, x1, y1, bar, p, l, r, f);
 		return;
 	}
 
@@ -389,9 +455,6 @@ void S_DrawAirBar(long percent)
 void S_DrawColdBar(long percent)
 {
 #ifdef TROYESTUFF
-	ulong l[6] = { 0xFF000060, 0xFF00006C, 0xFF000078, 0xFF000084, 0xFF000090, 0xFF00009C };
-	ulong r[6] = { 0xFF600000, 0xFF6C0000, 0xFF780000, 0xFF840000, 0xFF900000, 0xFF9C0000 };
-	ulong f[6] = { 0xFF000000, 0xFF000000, 0xFF508484, 0xFFA0A0A0, 0xFF284242, 0xFF505050 };
 	long w, h, xs, ys, p, x0, y0, x1, y1, bar;
 
 	w = GetRenderScale(100);
@@ -409,10 +472,11 @@ void S_DrawColdBar(long percent)
 
 	if (tomb3.bar_mode == BAR_PSX)
 	{
-		for (int i = 0; i < 6; i++)
-			r[i] = InterpolateColor(l[i], r[i], bar, x1 - x0);
+		if (App.lpZBuffer)
+			DoPSXColdBar(x0, y0, x1, y1, bar, p);
+		else
+			InsertPSXBar(POLYTYPE_COLDBAR, x0, y0, x1, y1, bar, p);
 
-		DrawPSXBar(x0, y0, x1, y1, bar, p, l, r, f);
 		return;
 	}
 

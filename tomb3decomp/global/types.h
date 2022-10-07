@@ -49,6 +49,16 @@ do \
 
 
 /*enums*/
+enum poly_types
+{
+	//original ones TBD
+
+	POLYTYPE_HEALTHBAR = 96,
+	POLYTYPE_AIRBAR = 97,
+	POLYTYPE_DASHBAR = 98,
+	POLYTYPE_COLDBAR = 99
+};
+
 enum inv_modes
 {
 	INV_GAME_MODE,

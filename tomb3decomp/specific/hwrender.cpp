@@ -1,5 +1,8 @@
 #include "../tomb3/pch.h"
 #include "hwrender.h"
+#ifdef TROYESTUFF
+#include "drawbars.h"
+#endif
 
 bool zBufWriteEnabled;
 bool zBufCompareEnabled;
@@ -494,6 +497,9 @@ void HWR_DrawPolyList(long num, long* pSort)
 	D3DTLVERTEX* vtx;
 	short* pInfo;
 	long polyType;
+#ifdef TROYESTUFF
+	long x0, y0, x1, y1, bar, p;
+#endif
 	short nVtx, nDrawType, TPage;
 
 	dpPrimitiveType = D3DPT_TRIANGLEFAN;
@@ -503,6 +509,36 @@ void HWR_DrawPolyList(long num, long* pSort)
 		for (int i = 0; i < num; i++)
 		{
 			pInfo = (short*)pSort[0];
+
+#ifdef TROYESTUFF
+			polyType = pSort[2];
+
+			if (polyType == POLYTYPE_HEALTHBAR ||
+				polyType == POLYTYPE_AIRBAR ||
+				polyType == POLYTYPE_DASHBAR ||
+				polyType == POLYTYPE_COLDBAR)
+			{
+				x0 = pInfo[0];
+				y0 = pInfo[1];
+				x1 = pInfo[2];
+				y1 = pInfo[3];
+				bar = pInfo[4];
+				p = pInfo[5];
+
+				if (polyType == POLYTYPE_HEALTHBAR)
+					DoPSXHealthBar(x0, y0, x1, y1, bar, p);
+				else if (polyType == POLYTYPE_DASHBAR)
+					DoPSXDashBar(x0, y0, x1, y1, bar, p);
+				else if (polyType == POLYTYPE_AIRBAR)
+					DoPSXAirBar(x0, y0, x1, y1, bar, p);
+				else if (polyType == POLYTYPE_COLDBAR)
+					DoPSXColdBar(x0, y0, x1, y1, bar, p);
+
+				pSort += 3;
+				continue;
+			}
+#endif
+
 			nDrawType = pInfo[0];
 			TPage = pInfo[1];
 			nVtx = pInfo[2];
