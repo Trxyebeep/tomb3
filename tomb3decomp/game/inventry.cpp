@@ -229,10 +229,28 @@ void DrawInventoryItem(INVENTORY_ITEM* item)
 	phd_PopMatrix();
 }
 
+void GetGlobeMeshFlags()
+{
+	GlobeLevelComplete[0] = savegame.IndiaComplete;
+	GlobeLevelComplete[1] = savegame.SPacificComplete;
+	GlobeLevelComplete[2] = savegame.NevadaComplete;
+	GlobeLevelComplete[3] = -1;
+	GlobeLevelComplete[4] = savegame.LondonComplete;
+
+	if (savegame.IndiaComplete && savegame.SPacificComplete && savegame.NevadaComplete && savegame.LondonComplete)
+		GlobeLevelComplete[5] = savegame.AntarcticaComplete;
+	else
+		GlobeLevelComplete[5] = -1;
+
+	GlobeLevel = 0;
+	while (GlobeLevelComplete[GlobeLevel]) GlobeLevel++;
+}
+
 void inject_inventry(bool replace)
 {
 	INJECT(0x00436FA0, GetDebouncedInput, replace);
 	INJECT(0x004369C0, SelectMeshes, replace);
 	INJECT(0x00436A50, AnimateInventoryItem, replace);
 	INJECT(0x00436AE0, DrawInventoryItem, replace);
+	INJECT(0x00436FC0, GetGlobeMeshFlags, replace);
 }

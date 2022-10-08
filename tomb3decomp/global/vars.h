@@ -256,6 +256,7 @@
 #define IsRoomOutsideNo	VAR_(0x006E2FFE, short)
 #define nTPages	VAR_(0x006CED5C, long)
 #define game_closedown	VAR_(0x00625F70, long)
+#define GlobeLevel	VAR_(0x006D62CA, short)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -421,6 +422,7 @@
 #define inv_main_list	ARRAY_(0x004C6B28, INVENTORY_ITEM*, [23])
 #define inv_keys_qtys	ARRAY_(0x004C6B88, short, [23])
 #define inv_keys_list	ARRAY_(0x004C6BB8, INVENTORY_ITEM*, [23])
+#define GlobeLevelComplete	ARRAY_(0x006D62C0, uchar, [6])
 
 /*constants*/
 #define NO_HEIGHT -32512
