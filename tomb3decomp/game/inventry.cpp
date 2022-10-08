@@ -7,6 +7,7 @@
 #include "../specific/output.h"
 #include "draw.h"
 #include "invfunc.h"
+#include "../specific/display.h"
 
 long GetDebouncedInput(long in)
 {
@@ -246,6 +247,75 @@ void GetGlobeMeshFlags()
 	while (GlobeLevelComplete[GlobeLevel]) GlobeLevel++;
 }
 
+void Construct_Inventory()
+{
+	INVENTORY_ITEM* item;
+	S_SetupAboveWater(0);
+
+	if (Inventory_Mode != INV_TITLE_MODE)
+		TempVideoAdjust(HiResFlag, 1.0);
+
+	memset(Inventory_ExtraData, 0, sizeof(Inventory_ExtraData));
+	phd_right = phd_winxmax;
+	phd_left = 0;
+	phd_top = 0;
+	phd_bottom = phd_winymax;
+
+	Inventory_Displaying = 1;
+	Inventory_Chosen = 0;
+
+	if (Inventory_Mode == INV_TITLE_MODE)
+		inv_option_objects = 5;
+	else
+		inv_option_objects = 4;
+
+	for (int i = 0; i < inv_main_objects; i++)
+	{
+		item = inv_main_list[i];
+		item->current_frame = 0;
+		item->drawn_meshes = item->which_meshes;
+		item->goal_frame = 0;
+		item->anim_count = 0;
+		item->y_rot = 0;
+	}
+
+	for (int i = 0; i < inv_option_objects; i++)
+	{
+		item = inv_option_list[i];
+		item->current_frame = 0;
+		item->goal_frame = 0;
+		item->anim_count = 0;
+		item->y_rot = 0;
+	}
+
+	for (int i = 0; i < 1; i++)
+	{
+		item = inv_levelselect_list[i];
+
+		if (i)
+			item->drawn_meshes = 0xF81;
+		else
+			item->drawn_meshes = -1;
+
+		item->current_frame = 0;
+		item->goal_frame = 0;
+		item->anim_count = 0;
+		item->y_rot = 0;
+	}
+
+	inv_main_current = 0;
+
+	if (OpenInvOnGym && Inventory_Mode == INV_TITLE_MODE && !gameflow.loadsave_disabled && gameflow.gym_enabled)
+		inv_option_current = 4;
+	else
+	{
+		inv_option_current = 0;
+		OpenInvOnGym = 0;
+	}
+
+	item_data = 0;
+}
+
 void inject_inventry(bool replace)
 {
 	INJECT(0x00436FA0, GetDebouncedInput, replace);
@@ -253,4 +323,5 @@ void inject_inventry(bool replace)
 	INJECT(0x00436A50, AnimateInventoryItem, replace);
 	INJECT(0x00436AE0, DrawInventoryItem, replace);
 	INJECT(0x00436FC0, GetGlobeMeshFlags, replace);
+	INJECT(0x00436840, Construct_Inventory, replace);
 }

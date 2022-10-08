@@ -213,6 +213,12 @@
 #define inv_keys_current	VAR_(0x00626418, short)
 #define inv_main_objects	VAR_(0x004C6AF0, short)
 #define inv_main_current	VAR_(0x00626410, short)
+#define Inventory_Displaying	VAR_(0x00626454, short)
+#define Inventory_Chosen	VAR_(0x004C70A0, short)
+#define inv_option_objects	VAR_(0x004C6C14, short)
+#define OpenInvOnGym	VAR_(0x004C6C30, long)
+#define inv_option_current	VAR_(0x0062641C, short)
+#define item_data	VAR_(0x00626488, short)
 #define icompass_option	VAR_(0x004C5E20, INVENTORY_ITEM)
 #define igun_option	VAR_(0x004C5E70, INVENTORY_ITEM)
 #define iflare_option	VAR_(0x004C5EC0, INVENTORY_ITEM)
@@ -258,6 +264,7 @@
 #define game_closedown	VAR_(0x00625F70, long)
 #define GlobeLevel	VAR_(0x006D62CA, short)
 #define NextAdventure	VAR_(0x006D62C6, short)
+#define HiResFlag	VAR_(0x006A184C, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -423,6 +430,8 @@
 #define inv_main_list	ARRAY_(0x004C6B28, INVENTORY_ITEM*, [23])
 #define inv_keys_qtys	ARRAY_(0x004C6B88, short, [23])
 #define inv_keys_list	ARRAY_(0x004C6BB8, INVENTORY_ITEM*, [23])
+#define inv_option_list	ARRAY_(0x004C6C18, INVENTORY_ITEM*, [5])
+#define inv_levelselect_list	ARRAY_(0x004C6C18, INVENTORY_ITEM*, [1])
 #define GlobeLevelComplete	ARRAY_(0x006D62C0, uchar, [6])
 
 /*constants*/
