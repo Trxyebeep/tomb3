@@ -317,7 +317,7 @@ void S_OutputPolyList()
 	}
 
 #ifdef TROYESTUFF
-	if (pickups[CurrentPickup].duration != -1)
+	if (pickups[CurrentPickup].duration != -1 && !Inventory_Displaying)
 	{
 		if (App.lpZBuffer)
 		{
