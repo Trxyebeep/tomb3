@@ -6,6 +6,7 @@ void inject_option(bool replace);
 long GetRenderWidth();
 long GetRenderHeight();
 void do_detail_option(INVENTORY_ITEM* item);
+void do_levelselect_option(INVENTORY_ITEM* item);
 
 enum d_txt
 {

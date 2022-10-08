@@ -257,6 +257,7 @@
 #define nTPages	VAR_(0x006CED5C, long)
 #define game_closedown	VAR_(0x00625F70, long)
 #define GlobeLevel	VAR_(0x006D62CA, short)
+#define NextAdventure	VAR_(0x006D62C6, short)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)

@@ -10,6 +10,17 @@
 #include "output.h"
 #endif
 
+static GLOBE_LEVEL GlobeLevelAngles[7] =
+{
+	{ -1536, -7936, 1536, GT_LSLONDON },
+	{ 1024, -512, -256, GT_LSSPAC },
+	{ 2560, 21248, -4096, GT_LSNEVADA },
+	{ -3328, 29440, 1024, GT_LSPERU },
+	{ 3072, -20992, 6400, GT_LSLONDON },
+	{ -5120, -15360, -18688, GT_LSANTARC },
+	{ 0, 0, 0, 0 },
+};
+
 static TEXTSTRING* dtext[DT_NUMT];
 
 long GetRenderWidth()
@@ -752,9 +763,160 @@ void do_detail_option(INVENTORY_ITEM* item)
 }
 #endif
 
+void do_levelselect_option(INVENTORY_ITEM* item)
+{
+	static TEXTSTRING* AdventureText;
+	static TEXTSTRING* LeftArrow;
+	static TEXTSTRING* RightArrow;
+	static long GlobeButton;
+	long w;
+	short ang, axes, goin, nAvailable;
+	char left_arrow[2];
+	char right_arrow[2];
+
+	strcpy(left_arrow, "\x11");
+	strcpy(right_arrow, "\x12");
+
+	T_RemovePrint(AdventureText);
+	AdventureText = 0;
+
+	T_RemovePrint(LeftArrow);
+	LeftArrow = 0;
+
+	T_RemovePrint(RightArrow);
+	RightArrow = 0;
+
+	axes = 0;
+	ang = GlobeLevelAngles[GlobeLevel].xrot - GlobeXRot;
+
+	if (ang >= 128 || ang <= -128)
+		GlobeXRot += ang >> 3;
+	else
+	{
+		GlobeXRot = GlobeLevelAngles[GlobeLevel].xrot;
+		axes = 1;
+	}
+
+	ang = GlobeLevelAngles[GlobeLevel].yrot - GlobeYRot;
+
+	if (ang >= 128 || ang <= -128)
+		GlobeYRot += ang >> 3;
+	else
+	{
+		GlobeYRot = GlobeLevelAngles[GlobeLevel].yrot;
+		axes++;
+	}
+
+	ang = GlobeLevelAngles[GlobeLevel].zrot - GlobeZRot;
+
+	if (ang >= 128 || ang <= -128)
+		GlobeZRot += ang >> 3;
+	else
+	{
+		GlobeZRot = GlobeLevelAngles[GlobeLevel].zrot;
+		axes++;
+	}
+
+	if (axes == 3 && GlobeLevel != 6)
+	{
+		AdventureText = T_Print(0, -16, 5, GF_GameStrings[GlobeLevelAngles[GlobeLevel].txt]);
+		T_CentreH(AdventureText, 1);
+		T_BottomAlign(AdventureText, 1);
+
+		if (input & IN_LEFT)
+		{
+			do
+			{
+				if (GlobeLevel)
+					GlobeLevel--;
+				else
+					GlobeLevel = 5;
+			}
+			while (GlobeLevelComplete[GlobeLevel]);
+		}
+		else if (input & IN_RIGHT)
+		{
+			do
+			{
+				if (GlobeLevel == 5)
+					GlobeLevel = 0;
+				else
+					GlobeLevel++;
+			}
+			while (GlobeLevelComplete[GlobeLevel]);
+		}
+	}
+
+	if (GlobeLevel == 6)
+		item->drawn_meshes = 3969;
+
+	goin = 0;
+
+	if (axes == 3 && GlobeLevel == 6)
+	{
+		if (GlobeLevel == 6)
+		{
+			GlobeLevel = 0;
+			while (GlobeLevelComplete[GlobeLevel]) GlobeLevel++;
+			inputDB |= GlobeButton;
+			item->drawn_meshes = 3969;
+			return;
+		}
+
+		goin = 1;
+	}
+
+	if (GlobeLevel != 6 || goin)
+	{
+		nAvailable = 0;
+
+		for (int i = 0; i < 6; i++)
+		{
+			if (!GlobeLevelComplete[i])
+				nAvailable++;
+		}
+
+		if (axes == 3 && nAvailable > 1)
+		{
+			w = App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode].w;
+			w -= w >> 1;	//check
+
+			LeftArrow = T_Print(w - 120, -16, 2, left_arrow);
+			T_BottomAlign(LeftArrow, 1);
+
+			RightArrow = T_Print(w + 120, -16, 2, right_arrow);
+			T_BottomAlign(RightArrow, 1);
+		}
+
+		item->drawn_meshes = 0xFFF;
+
+		if (GlobeLevelComplete[3] == 255)
+			item->drawn_meshes = 0xFF7;
+
+		if (GlobeLevelComplete[5] == 255)
+			item->drawn_meshes &= ~0x40;
+	}
+
+	inputDB &= ~IN_DESELECT;
+
+	if ((inputDB & (IN_SELECT | IN_DESELECT)) && GlobeLevel != 6)
+	{
+		if (inputDB & IN_SELECT)
+			NextAdventure = GlobeLevel;
+
+		GlobeLevel = 6;
+		GlobeButton = inputDB & (IN_SELECT | IN_DESELECT);
+		inputDB &= ~(IN_SELECT | IN_DESELECT);
+	}
+
+	if ((inputDB & (IN_SELECT | IN_DESELECT)) && GlobeLevel == 6)
+		inputDB &= ~(IN_SELECT | IN_DESELECT);
+}
+
 void inject_option(bool replace)
 {
 	INJECT(0x0048A200, GetRenderWidth, replace);
 	INJECT(0x0048A1F0, GetRenderHeight, replace);
 	INJECT(0x00488260, do_detail_option, replace);
+	INJECT(0x00487870, do_levelselect_option, replace);
 }

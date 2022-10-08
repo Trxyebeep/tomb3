@@ -1769,6 +1769,14 @@ struct RES_TXT
 	char res[20];
 };
 
+struct GLOBE_LEVEL
+{
+	short xrot;
+	short yrot;
+	short zrot;
+	short txt;
+};
+
 #ifdef TROYESTUFF
 struct FVECTOR
 {
