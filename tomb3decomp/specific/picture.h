@@ -17,3 +17,6 @@ void CreateMonoScreen();
 #define LoadPicture	( (bool(__cdecl*)(const char*, LPDIRECTDRAWSURFACE3, long)) 0x0048B0D0 )
 #define FadePictureUp	( (void(__cdecl*)(long)) 0x0048BC70 )
 #define FadePictureDown	( (void(__cdecl*)(long)) 0x0048BD10 )
+#define RemoveMonoScreen	( (void(__cdecl*)(long)) 0x0048C030 )
+#define DoInventoryPicture	( (void(__cdecl*)()) 0x0048C070 )
+#define DrawMonoScreen	( (void(__cdecl*)(long, long, long)) 0x0048C010 )

@@ -8,6 +8,8 @@ long GetRenderHeight();
 void do_detail_option(INVENTORY_ITEM* item);
 void do_levelselect_option(INVENTORY_ITEM* item);
 
+#define do_inventory_options	( (void(__cdecl*)(INVENTORY_ITEM*)) 0x00487750 )
+
 enum d_txt
 {
 #ifdef TROYESTUFF
