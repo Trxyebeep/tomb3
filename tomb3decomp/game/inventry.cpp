@@ -407,7 +407,7 @@ long Display_Inventory(long mode)
 		break;
 	}
 
-	if (mode != 1)
+	if (mode != INV_TITLE_MODE)
 		SoundEffect(SFX_MENU_SPININ, 0, SFX_ALWAYS);
 
 	nframes = 2;
@@ -462,7 +462,7 @@ long Display_Inventory(long mode)
 			input = 0;
 		}
 
-		if (Inventory_Mode == INV_TITLE_MODE && first_time && !ring.imo->count)
+		if (Inventory_Mode == INV_LEVELSELECT_MODE && first_time && !ring.imo->count)
 		{
 			inputDB = IN_SELECT;
 			input = 0;
@@ -487,7 +487,7 @@ long Display_Inventory(long mode)
 		/*draw phase*/
 		S_InitialisePolyList(0);
 
-		if (Inventory_Mode == 1 || Inventory_Mode == 7)
+		if (Inventory_Mode == INV_TITLE_MODE || Inventory_Mode == INV_LEVELSELECT_MODE)
 			DoInventoryPicture();
 		else
 			DrawMonoScreen(80, 80, 112);

@@ -434,7 +434,7 @@
 #define inv_keys_qtys	ARRAY_(0x004C6B88, short, [23])
 #define inv_keys_list	ARRAY_(0x004C6BB8, INVENTORY_ITEM*, [23])
 #define inv_option_list	ARRAY_(0x004C6C18, INVENTORY_ITEM*, [5])
-#define inv_levelselect_list	ARRAY_(0x004C6C18, INVENTORY_ITEM*, [1])
+#define inv_levelselect_list	ARRAY_(0x004C6C2C, INVENTORY_ITEM*, [1])
 #define GlobeLevelComplete	ARRAY_(0x006D62C0, uchar, [6])
 
 /*constants*/
