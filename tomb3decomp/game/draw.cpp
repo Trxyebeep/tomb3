@@ -187,6 +187,20 @@ void InterpolateMatrix()
 {
 	if (IM_rate == 2 || (IM_frac == 2 && IM_rate == 4))
 	{
+#ifdef TROYESTUFF	//fix overflow
+		phd_mxptr[M00] += (IMptr[M00] - phd_mxptr[M00]) >> 1;
+		phd_mxptr[M01] += (IMptr[M01] - phd_mxptr[M01]) >> 1;
+		phd_mxptr[M02] += (IMptr[M02] - phd_mxptr[M02]) >> 1;
+		phd_mxptr[M03] += (IMptr[M03] - phd_mxptr[M03]) >> 1;
+		phd_mxptr[M10] += (IMptr[M10] - phd_mxptr[M10]) >> 1;
+		phd_mxptr[M11] += (IMptr[M11] - phd_mxptr[M11]) >> 1;
+		phd_mxptr[M12] += (IMptr[M12] - phd_mxptr[M12]) >> 1;
+		phd_mxptr[M13] += (IMptr[M13] - phd_mxptr[M13]) >> 1;
+		phd_mxptr[M20] += (IMptr[M20] - phd_mxptr[M20]) >> 1;
+		phd_mxptr[M21] += (IMptr[M21] - phd_mxptr[M21]) >> 1;
+		phd_mxptr[M22] += (IMptr[M22] - phd_mxptr[M22]) >> 1;
+		phd_mxptr[M23] += (IMptr[M23] - phd_mxptr[M23]) >> 1;
+#else
 		phd_mxptr[M00] = (phd_mxptr[M00] + IMptr[M00]) >> 1;
 		phd_mxptr[M01] = (phd_mxptr[M01] + IMptr[M01]) >> 1;
 		phd_mxptr[M02] = (phd_mxptr[M02] + IMptr[M02]) >> 1;
@@ -199,6 +213,7 @@ void InterpolateMatrix()
 		phd_mxptr[M21] = (phd_mxptr[M21] + IMptr[M21]) >> 1;
 		phd_mxptr[M22] = (phd_mxptr[M22] + IMptr[M22]) >> 1;
 		phd_mxptr[M23] = (phd_mxptr[M23] + IMptr[M23]) >> 1;
+#endif
 	}
 	else if (IM_frac == 1)
 	{
