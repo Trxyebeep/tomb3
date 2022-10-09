@@ -879,7 +879,7 @@ void do_levelselect_option(INVENTORY_ITEM* item)
 		if (axes == 3 && nAvailable > 1)
 		{
 			w = App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode].w;
-			w -= w >> 1;	//check
+			w -= w >> 1;
 
 			LeftArrow = T_Print(w - 120, -16, 2, left_arrow);
 			T_BottomAlign(LeftArrow, 1);
@@ -913,10 +913,20 @@ void do_levelselect_option(INVENTORY_ITEM* item)
 		inputDB &= ~(IN_SELECT | IN_DESELECT);
 }
 
+void do_pickup_option(INVENTORY_ITEM* item)
+{
+	if (inputDB & (IN_SELECT | IN_DESELECT))
+	{
+		item->anim_direction = 1;
+		item->goal_frame = item->frames_total - 1;
+	}
+}
+
 void inject_option(bool replace)
 {
 	INJECT(0x0048A200, GetRenderWidth, replace);
 	INJECT(0x0048A1F0, GetRenderHeight, replace);
 	INJECT(0x00488260, do_detail_option, replace);
 	INJECT(0x00487870, do_levelselect_option, replace);
+	INJECT(0x00487720, do_pickup_option, replace);
 }

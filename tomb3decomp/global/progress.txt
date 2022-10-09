@@ -1724,7 +1724,7 @@ tomb3decomp progress.
 
 		specific/option.cpp
 
-0x00487720		do_pickup_option
+0x00487720	+	do_pickup_option
 0x00487750		do_inventory_options
 0x00487870	+	do_levelselect_option
 0x00487BE0		do_passport_option
