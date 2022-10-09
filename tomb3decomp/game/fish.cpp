@@ -269,7 +269,7 @@ void ControlFish(short item_number)
 
 		pFish->angle = (-((long)mGetAngle(pFish->x + item->pos.x_pos, pFish->z + item->pos.z_pos, enemy->pos.x_pos, enemy->pos.z_pos) + 0x4000) >> 4) & 0xFFF;
 		pLeader->angle = pFish->angle;
-		pLeader->speed = (GetRandomControl() & 63) + 192;
+		pLeader->speed = (GetRandomControl() & 0x3F) - 64;
 	}
 
 	diff = pFish->angle - pLeader->angle;
@@ -297,7 +297,7 @@ void ControlFish(short item_number)
 	{
 		pFish->angadd -= pFish->angadd >> 2;
 
-		if (ABS(pFish->angadd) < 4)
+		if (abs(pFish->angadd) < 4)
 			pFish->angadd = 0;
 	}
 
@@ -306,8 +306,7 @@ void ControlFish(short item_number)
 	if (diff > 1024)
 		pFish->angle += pFish->angadd >> 2;
 
-	pFish->angle &= 4095;
-
+	pFish->angle &= 0xFFF;
 	diff = pFish->speed - pLeader->speed;
 
 	if (diff < -4)
@@ -344,7 +343,7 @@ void ControlFish(short item_number)
 			z = -zRange;
 
 			if (pFish->angle < 2048)
-				pLeader->angle = pFish->angle - (GetRandomControl() & 0x7F) + 128;
+				pLeader->angle = pFish->angle - (GetRandomControl() & 0x7F) - 128;
 			else
 				pLeader->angle = pFish->angle + (GetRandomControl() & 0x7F) + 128;
 
@@ -353,14 +352,14 @@ void ControlFish(short item_number)
 		}
 		else if (z > zRange)
 		{
-			z = zRange
-				;
+			z = zRange;
+
 			if (pFish->angle > 3072)
-				pLeader->angle = pFish->angle - (GetRandomControl() & 0x7F) + 128;
+				pLeader->angle = pFish->angle - (GetRandomControl() & 0x7F) - 128;
 			else
 				pLeader->angle = pFish->angle + (GetRandomControl() & 0x7F) + 128;
 
-			pLeader->angle_time = (GetRandomControl() & 15) + 8;
+			pLeader->angle_time = (GetRandomControl() & 0xF) + 8;
 			pLeader->speed_time = 0;
 		}
 
@@ -369,11 +368,11 @@ void ControlFish(short item_number)
 			x = -xRange;
 
 			if (pFish->angle < 1024)
-				pLeader->angle = pFish->angle - ((GetRandomControl() & 127) + 128);
+				pLeader->angle = pFish->angle - (GetRandomControl() & 0x7F) - 128;
 			else
-				pLeader->angle = pFish->angle + ((GetRandomControl() & 127) + 128);
+				pLeader->angle = pFish->angle + (GetRandomControl() & 0x7F) + 128;
 
-			pLeader->angle_time = (GetRandomControl() & 15) + 8;
+			pLeader->angle_time = (GetRandomControl() & 0xF) + 8;
 			pLeader->speed_time = 0;
 		}
 		else if (x > xRange)
@@ -381,22 +380,22 @@ void ControlFish(short item_number)
 			x = xRange;
 
 			if (pFish->angle < 3072)
-				pLeader->angle = pFish->angle - ((GetRandomControl() & 127) + 128);
+				pLeader->angle = pFish->angle - (GetRandomControl() & 0x7F) - 128;
 			else
-				pLeader->angle = pFish->angle + ((GetRandomControl() & 127) + 128);
+				pLeader->angle = pFish->angle + (GetRandomControl() & 0x7F) + 128;
 
-			pLeader->angle_time = (GetRandomControl() & 15) + 8;
+			pLeader->angle_time = (GetRandomControl() & 0xF) + 8;
 			pLeader->speed_time = 0;
 		}
 
-		if (!(GetRandomControl() & 15))
+		if (!(GetRandomControl() & 0xF))
 			pLeader->angle_time = 0;
 
 		if (pLeader->angle_time)
 			pLeader->angle_time--;
 		else
 		{
-			pLeader->angle_time = (GetRandomControl() & 15) + 8;
+			pLeader->angle_time = (GetRandomControl() & 0xF) + 8;
 			angadd = (GetRandomControl() & 0x3F) - 24;
 
 			if (!(GetRandomControl() & 3))
