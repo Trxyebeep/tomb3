@@ -1544,7 +1544,7 @@ tomb3decomp progress.
 0x0047AA80	+	DoSnow
 0x0047B2C0		S_DrawSparks
 0x0047BAA0		S_DrawSplashes
-0x0047C2A0		DrawSummonRings
+0x0047C2A0	+	DrawSummonRings
 0x0047CC10	+	DrawTonyBossShield
 0x0047D4A0	+	TriggerTribeBossHeadElectricity
 0x0047E170	+	TriggerElectricBeam
