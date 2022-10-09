@@ -30,9 +30,10 @@ void LaraElectricDeath(long lr, ITEM_INFO* item)
 	long coords[600];
 	short distances[200];
 
-	/**/
+#ifndef TROYESTUFF
 	item = lara_item;//remove this line to fix the bug where electricity always appears on Lara. Core used lara_item instead of item inside the entire func.
-	/**/
+#endif
+
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
@@ -457,10 +458,12 @@ void DrawExplosionRings()
 				v[2].ys = (float)y4;
 				v[2].zv = (float)z4;
 				v[2].ooz = f_persp / (float)z4 * f_oneopersp;
-			//	r = (col4 >> 3) & 0x1F;
-			//	g = (col4 >> 11) & 0x1F;
-			//	b = (col4 >> 19) & 0x1F;
-			//	v[2].g = short(r << 10 | g << 5 | b);
+#ifdef TROYESTUFF
+				r = (col4 >> 3) & 0x1F;
+				g = (col4 >> 11) & 0x1F;
+				b = (col4 >> 19) & 0x1F;
+				v[2].g = short(r << 10 | g << 5 | b);
+#endif
 
 				tex.u1 = u1;
 				tex.u2 = u2;
@@ -943,10 +946,12 @@ void DrawTonyBossShield(ITEM_INFO* item)
 				v[2].ys = (float)y4;
 				v[2].zv = (float)z4;
 				v[2].ooz = f_persp / (float)z4 * f_oneopersp;
-			//	r = (c4 >> 3) & 0x1F;
-			//	g = (c4 >> 11) & 0x1F;
-			//	b = (c4 >> 19) & 0x1F;
-			//	v[2].g = short(r << 10 | g << 5 | b);
+#ifdef TROYESTUFF
+				r = (c4 >> 3) & 0x1F;
+				g = (c4 >> 11) & 0x1F;
+				b = (c4 >> 19) & 0x1F;
+				v[2].g = short(r << 10 | g << 5 | b);
+#endif
 
 				tex.u1 = u1;
 				tex.u2 = u2;
@@ -1890,10 +1895,12 @@ void DrawTribeBossShield(ITEM_INFO* item)
 				v[2].ys = (float)y4;
 				v[2].zv = (float)z4;
 				v[2].ooz = f_persp / (float)z4 * f_oneopersp;
-			//	r = (c4 >> 3) & 0x1F;
-			//	g = (c4 >> 11) & 0x1F;
-			//	b = (c4 >> 19) & 0x1F;
-			//	v[2].g = short(r << 10 | g << 5 | b);
+#ifdef TROYESTUFF
+				r = (c4 >> 3) & 0x1F;
+				g = (c4 >> 11) & 0x1F;
+				b = (c4 >> 19) & 0x1F;
+				v[2].g = short(r << 10 | g << 5 | b);
+#endif
 
 				tex.u1 = u1;
 				tex.u2 = u2;
@@ -2518,10 +2525,12 @@ void DrawLondonBossShield(ITEM_INFO* item)
 				v[2].ys = (float)y4;
 				v[2].zv = (float)z4;
 				v[2].ooz = f_persp / (float)z4 * f_oneopersp;
-			//	r = (c4 >> 3) & 0x1F;
-			//	g = (c4 >> 11) & 0x1F;
-			//	b = (c4 >> 19) & 0x1F;
-			//	v[2].g = short(r << 10 | g << 5 | b);
+#ifdef TROYESTUFF
+				r = (c4 >> 3) & 0x1F;
+				g = (c4 >> 11) & 0x1F;
+				b = (c4 >> 19) & 0x1F;
+				v[2].g = short(r << 10 | g << 5 | b);
+#endif
 
 				tex.u1 = u1;
 				tex.u2 = u2;
@@ -2763,10 +2772,12 @@ void DrawWillBossShield(ITEM_INFO* item)
 				v[2].ys = (float)y4;
 				v[2].zv = (float)z4;
 				v[2].ooz = f_persp / (float)z4 * f_oneopersp;
-			//	r = (c4 >> 3) & 0x1F;
-			//	g = (c4 >> 11) & 0x1F;
-			//	b = (c4 >> 19) & 0x1F;
-			//	v[2].g = short(r << 10 | g << 5 | b);
+#ifdef TROYESTUFF
+				r = (c4 >> 3) & 0x1F;
+				g = (c4 >> 11) & 0x1F;
+				b = (c4 >> 19) & 0x1F;
+				v[2].g = short(r << 10 | g << 5 | b);
+#endif
 
 				tex.u1 = u1;
 				tex.u2 = u2;
