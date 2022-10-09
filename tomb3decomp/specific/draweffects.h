@@ -4,15 +4,15 @@
 void inject_draweffects(bool replace);
 
 void LaraElectricDeath(long lr, ITEM_INFO* item);
-void DrawExplosionRings();
 bool ClipLine(long& x1, long& y1, long& x2, long& y2, long w, long h);
 void S_DrawWakeFX(ITEM_INFO* item);
-void DrawTonyBossShield(ITEM_INFO* item);
-void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy);
-void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy);
-void DrawTribeBossShield(ITEM_INFO* item);
 void DoRain();
 void DoSnow();
+void DrawExplosionRings();
+void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy);
+void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy);
+void DrawTonyBossShield(ITEM_INFO* item);
+void DrawTribeBossShield(ITEM_INFO* item);
 void DrawLondonBossShield(ITEM_INFO* item);
 void DrawWillBossShield(ITEM_INFO* item);
 
