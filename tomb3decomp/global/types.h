@@ -30,7 +30,6 @@ do \
 	((JMP*)(from))->offset = (DWORD)(to) - ((DWORD)(from) + sizeof(JMP)); \
 } while (false)
 
-#define ABS(x) (((x)<0) ? (-(x)) : (x))
 #define SQUARE(x) ((x)*(x))
 #define	TRIGMULT2(a, b)	(((a) * (b)) >> W2V_SHIFT)
 #define	TRIGMULT3(a, b, c)	(TRIGMULT2((TRIGMULT2(a, b)), c))

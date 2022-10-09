@@ -206,7 +206,7 @@ void lara_col_climbstnc(ITEM_INFO* item, COLL_INFO* coll)
 				item->goal_anim_state = AS_CLIMBING;
 				item->pos.y_pos += shift_l;
 			}
-			else if (ABS(ledge_l - ledge_r) <= 120)
+			else if (abs(ledge_l - ledge_r) <= 120)
 			{
 				item->goal_anim_state = AS_NULL;
 				item->pos.y_pos += (ledge_l + ledge_r) / 2 - 256;
@@ -290,7 +290,7 @@ void lara_col_climbing(ITEM_INFO* item, COLL_INFO* coll)
 			item->goal_anim_state = AS_CLIMBSTNC;
 			AnimateLara(item);
 
-			if (ABS(ledge_l - ledge_r) <= 120)
+			if (abs(ledge_l - ledge_r) <= 120)
 			{
 				item->goal_anim_state = AS_NULL;
 				item->pos.y_pos += (ledge_l + ledge_r) / 2 - 256;

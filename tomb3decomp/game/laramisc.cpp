@@ -588,7 +588,7 @@ void LaraControl(short item_number)
 
 				if (!room_water_state)
 				{
-					if (wd != NO_HEIGHT && ABS(hfw) < 256)
+					if (wd != NO_HEIGHT && abs(hfw) < 256)
 					{
 						lara_item->anim_number = 114;
 						lara_item->frame_number = anims[114].frame_base;

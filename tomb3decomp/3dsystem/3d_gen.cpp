@@ -263,7 +263,7 @@ long phd_TranslateRel(long x, long y, long z)
 	phd_mxptr[M13] += x * phd_mxptr[M10] + y * phd_mxptr[M11] + z * phd_mxptr[M12];
 	phd_mxptr[M23] += x * phd_mxptr[M20] + y * phd_mxptr[M21] + z * phd_mxptr[M22];
 
-	if (ABS(phd_mxptr[M03]) > phd_zfar || ABS(phd_mxptr[M13]) > phd_zfar || ABS(phd_mxptr[M23]) > phd_zfar)
+	if (abs(phd_mxptr[M03]) > phd_zfar || abs(phd_mxptr[M13]) > phd_zfar || abs(phd_mxptr[M23]) > phd_zfar)
 		return 0;
 
 	return 1;

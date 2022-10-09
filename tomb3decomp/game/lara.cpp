@@ -141,7 +141,7 @@ long LaraLandedBad(ITEM_INFO* item, COLL_INFO* coll)
 	item->pos.y_pos = y;
 	item->floor = y;
 
-	if (ABS(y - item->pos.y_pos) > 256)
+	if (abs(y - item->pos.y_pos) > 256)
 		item->pos.y_pos = y;
 
 	LaraOnPad = 0;
@@ -169,7 +169,7 @@ long TestLaraSlide(ITEM_INFO* item, COLL_INFO* coll)
 	static short old_ang = 1;
 	short ang_diff, ang;
 
-	if (ABS(coll->tilt_x) <= 2 && ABS(coll->tilt_z) <= 2)
+	if (abs(coll->tilt_x) <= 2 && abs(coll->tilt_z) <= 2)
 		return 0;
 
 	ang = 0;
@@ -179,9 +179,9 @@ long TestLaraSlide(ITEM_INFO* item, COLL_INFO* coll)
 	else if (coll->tilt_x < -2)
 		ang = 16384;
 
-	if (coll->tilt_z > 2 && coll->tilt_z > ABS(coll->tilt_x))
+	if (coll->tilt_z > 2 && coll->tilt_z > abs(coll->tilt_x))
 		ang = -32768;
-	else if (coll->tilt_z < -2 && (-coll->tilt_z > ABS(coll->tilt_x)))
+	else if (coll->tilt_z < -2 && (-coll->tilt_z > abs(coll->tilt_x)))
 		ang = 0;
 
 	ang_diff = ang - item->pos.y_rot;
@@ -270,7 +270,7 @@ long TestLaraVault(ITEM_INFO* item, COLL_INFO* coll)
 	if (angle & 0x3FFF)
 		return 0;
 
-	slope = ABS(coll->left_floor2 - coll->right_floor2) >= 60;
+	slope = abs(coll->left_floor2 - coll->right_floor2) >= 60;
 
 	if (coll->front_floor >= -640 && coll->front_floor <= -384)
 	{
@@ -365,7 +365,7 @@ void lara_slide_slope(ITEM_INFO* item, COLL_INFO* coll)
 		TestLaraSlide(item, coll);
 		item->pos.y_pos += coll->mid_floor;
 
-		if ((ABS(coll->tilt_x)) <= 2 && (ABS(coll->tilt_z)) <= 2)
+		if ((abs(coll->tilt_x)) <= 2 && (abs(coll->tilt_z)) <= 2)
 		{
 #ifdef TROYESTUFF
 			if (input & IN_FORWARD && item->anim_number == ANIM_SLIDE)
@@ -1180,7 +1180,7 @@ long LaraTestEdgeCatch(ITEM_INFO* item, COLL_INFO* coll, long* edge)
 		return 0;
 	}
 
-	if (ABS(coll->left_floor2 - coll->right_floor2) >= 60)
+	if (abs(coll->left_floor2 - coll->right_floor2) >= 60)
 		return 0;
 
 	return 1;
@@ -1509,7 +1509,7 @@ void MonkeySwingSnap(ITEM_INFO* item, COLL_INFO* coll)
 
 short GetDirOctant(long rot)
 {
-	rot = ABS(rot);
+	rot = abs(rot);
 	return rot >= 0x2000 && rot <= 0x6000;
 }
 
@@ -1526,7 +1526,7 @@ short TestMonkeyLeft(ITEM_INFO* item, COLL_INFO* coll)
 	coll->slopes_are_walls = 0;
 	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 600);
 
-	if (ABS(coll->mid_ceiling - coll->front_ceiling) > 50)
+	if (abs(coll->mid_ceiling - coll->front_ceiling) > 50)
 		return 0;
 
 	if (coll->coll_type != CT_NONE)
@@ -1556,7 +1556,7 @@ short TestMonkeyRight(ITEM_INFO* item, COLL_INFO* coll)
 	coll->slopes_are_walls = 0;
 	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 600);
 
-	if (ABS(coll->mid_ceiling - coll->front_ceiling) > 50)
+	if (abs(coll->mid_ceiling - coll->front_ceiling) > 50)
 		return 0;
 
 	if (coll->coll_type != CT_NONE)
@@ -1613,7 +1613,7 @@ void lara_col_hang2(ITEM_INFO* item, COLL_INFO* coll)
 		coll->slopes_are_walls = 0;
 		GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 600);
 
-		if (input & IN_FORWARD && coll->coll_type != CT_FRONT && ABS(coll->mid_ceiling - coll->front_ceiling) < 50)
+		if (input & IN_FORWARD && coll->coll_type != CT_FRONT && abs(coll->mid_ceiling - coll->front_ceiling) < 50)
 			item->goal_anim_state = AS_MONKEYSWING;
 		else if (input & IN_LSTEP && TestMonkeyLeft(item, coll))
 			item->goal_anim_state = AS_MONKEYL;
@@ -1707,7 +1707,7 @@ void lara_col_monkeyswing(ITEM_INFO* item, COLL_INFO* coll)
 
 	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 600);
 
-	if (coll->coll_type == CT_FRONT || ABS(coll->mid_ceiling - coll->front_ceiling) > 50)
+	if (coll->coll_type == CT_FRONT || abs(coll->mid_ceiling - coll->front_ceiling) > 50)
 	{
 		item->anim_number = ANIM_MONKEYHANG;
 		item->frame_number = anims[ANIM_MONKEYHANG].frame_base;
@@ -3937,7 +3937,7 @@ void LaraHangTest(ITEM_INFO* item, COLL_INFO* coll)
 		{
 			hdif = coll->front_floor - GetBoundsAccurate(item)[2];
 
-			if (ABS(coll->left_floor2 - coll->right_floor2) >= 60 || coll->mid_ceiling >= 0 ||
+			if (abs(coll->left_floor2 - coll->right_floor2) >= 60 || coll->mid_ceiling >= 0 ||
 				coll->coll_type != CT_FRONT || flag || coll->hit_static || hdif < -60 || hdif > 60)
 			{
 				item->pos.x_pos = coll->old.x;

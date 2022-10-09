@@ -114,7 +114,7 @@ long FireWeapon(long weapon_type, ITEM_INFO* target, ITEM_INFO* source, short* a
 		sphere = &spheres[i];
 		r = sphere->r;
 
-		if (ABS(sphere->x) < r && ABS(sphere->y) < r && sphere->z > r && SQUARE(sphere->x) + SQUARE(sphere->y) <= SQUARE(r))
+		if (abs(sphere->x) < r && abs(sphere->y) < r && sphere->z > r && SQUARE(sphere->x) + SQUARE(sphere->y) <= SQUARE(r))
 		{
 			if (sphere->z - r < bestdist)
 			{

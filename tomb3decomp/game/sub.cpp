@@ -63,7 +63,7 @@ static long GetOnSub(short item_number, COLL_INFO* coll)
 	item = &items[item_number];
 	dy = lara_item->pos.y_pos - item->pos.y_pos + 128;
 
-	if (ABS(dy) > 256)
+	if (abs(dy) > 256)
 		return 0;
 
 	dx = lara_item->pos.x_pos - item->pos.x_pos;
@@ -579,7 +579,7 @@ static void DoCurrent(ITEM_INFO* item)
 	}
 	else
 	{
-		absvel = ABS(lara.current_xvel);
+		absvel = abs(lara.current_xvel);
 
 		if (absvel > 16)
 			shifter = 4;
@@ -590,10 +590,10 @@ static void DoCurrent(ITEM_INFO* item)
 
 		lara.current_xvel -= lara.current_xvel >> shifter;
 
-		if (ABS(lara.current_xvel) < 4)
+		if (abs(lara.current_xvel) < 4)
 			lara.current_xvel = 0;
 
-		absvel = ABS(lara.current_zvel);
+		absvel = abs(lara.current_zvel);
 
 		if (absvel > 16)
 			shifter = 4;
@@ -604,7 +604,7 @@ static void DoCurrent(ITEM_INFO* item)
 
 		lara.current_zvel -= lara.current_zvel >> shifter;
 
-		if (ABS(lara.current_zvel) < 4)
+		if (abs(lara.current_zvel) < 4)
 			lara.current_zvel = 0;
 
 		if (!lara.current_xvel && !lara.current_zvel)
@@ -1002,7 +1002,7 @@ void SubEffects(short item_number)
 			pos.y = sub_bites[0].y;
 			pos.z = sub_bites[0].z;
 			GetJointAbsPosition(item, &pos, sub_bites[0].mesh_num);
-			TriggerSubMist(pos.x, pos.y + 128, pos.z, ABS(sub->Vel) >> 16, item->pos.y_rot + 0x8000);
+			TriggerSubMist(pos.x, pos.y + 128, pos.z, abs(sub->Vel) >> 16, item->pos.y_rot + 0x8000);
 
 			if (!(GetRandomControl() & 1))
 			{

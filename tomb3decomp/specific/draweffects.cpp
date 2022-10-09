@@ -139,9 +139,9 @@ void LaraElectricDeath(long lr, ITEM_INFO* item)
 					pos.z += point.z >> 3;
 				}
 
-				pX = ABS(point.x);
-				pY = ABS(point.y);
-				pZ = ABS(point.z);
+				pX = abs(point.x);
+				pY = abs(point.y);
+				pZ = abs(point.z);
 
 				if (pY > pX)
 					pX = pY;

@@ -27,7 +27,7 @@ void S_CalculateStaticMeshLight(long x, long y, long z, short shade, short shade
 		dy = y - dynamic->y;
 		dz = z - dynamic->z;
 
-		if (ABS(dx) > 0x2000 || ABS(dy) > 0x2000 || ABS(dz) > 0x2000)
+		if (abs(dx) > 0x2000 || abs(dy) > 0x2000 || abs(dz) > 0x2000)
 			continue;
 
 		dist = phd_sqrt(SQUARE(dx) + SQUARE(dy) + SQUARE(dz));

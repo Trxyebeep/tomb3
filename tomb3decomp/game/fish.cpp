@@ -205,7 +205,7 @@ static long FishNearLara(PHD_3DPOS* pos, long dist, ITEM_INFO* item)
 	long dx, dy, dz;
 
 	dx = pos->x_pos - item->pos.x_pos;
-	dy = ABS(pos->y_pos - item->pos.y_pos);
+	dy = abs(pos->y_pos - item->pos.y_pos);
 	dz = pos->z_pos - item->pos.z_pos;
 
 	if (dx < -dist || dx > dist || dz < -dist || dz > dist || dy < -3072 || dy > 3072 || SQUARE(dz) + SQUARE(dx) > SQUARE(dist) || dy > dist)
@@ -485,7 +485,7 @@ void ControlFish(short item_number)
 		{
 			pFish->angadd -= pFish->angadd >> 2;
 
-			if (ABS(pFish->angadd) < 4)
+			if (abs(pFish->angadd) < 4)
 				pFish->angadd = 0;
 		}
 
@@ -539,14 +539,14 @@ void ControlFish(short item_number)
 
 		if (!pirahna_attack)
 		{
-			if (ABS(pFish->y - pFish->desty) < 16)
+			if (abs(pFish->y - pFish->desty) < 16)
 				pFish->desty = GetRandomControl() % lead_info[leader].Yrange;
 		}
 		else
 		{
 			diff = enemy->pos.y_pos - item->pos.y_pos;
 
-			if (ABS(pFish->y - pFish->desty) < 16)
+			if (abs(pFish->y - pFish->desty) < 16)
 				pFish->desty = short(diff + (GetRandomControl() & 0xFF));
 		}
 

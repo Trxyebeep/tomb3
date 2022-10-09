@@ -649,7 +649,7 @@ static void DoCurrent(ITEM_INFO* item)
 	}
 	else
 	{
-		absvel = ABS(lara.current_xvel);
+		absvel = abs(lara.current_xvel);
 
 		if (absvel > 16)
 			shifter = 4;
@@ -660,10 +660,10 @@ static void DoCurrent(ITEM_INFO* item)
 
 		lara.current_xvel -= lara.current_xvel >> shifter;
 
-		if (ABS(lara.current_xvel) < 4)
+		if (abs(lara.current_xvel) < 4)
 			lara.current_xvel = 0;
 
-		absvel = ABS(lara.current_zvel);
+		absvel = abs(lara.current_zvel);
 
 		if (absvel > 16)
 			shifter = 4;
@@ -674,7 +674,7 @@ static void DoCurrent(ITEM_INFO* item)
 
 		lara.current_zvel -= lara.current_zvel >> shifter;
 
-		if (ABS(lara.current_zvel) < 4)
+		if (abs(lara.current_zvel) < 4)
 			lara.current_zvel = 0;
 
 		if (!lara.current_xvel && !lara.current_zvel)
@@ -842,7 +842,7 @@ static long GetCollisionAnim(ITEM_INFO* item, long x, long z)
 	front = (x * s + z * c) >> W2V_SHIFT;
 	side = (x * c - z * s) >> W2V_SHIFT;
 
-	if (ABS(front) <= ABS(side))
+	if (abs(front) <= abs(side))
 	{
 		if (side > 0)
 			return 3;

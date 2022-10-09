@@ -692,9 +692,9 @@ long GetHeight(FLOOR_INFO* floor, long x, long y, long z)
 			tiltxoff = xoff;
 			tiltyoff = yoff;
 
-			if (!chunky_flag || (ABS(xoff) <= 2 && ABS(yoff) <= 2))
+			if (!chunky_flag || (abs(xoff) <= 2 && abs(yoff) <= 2))
 			{
-				if (ABS(xoff) > 2 || ABS(yoff) > 2)
+				if (abs(xoff) > 2 || abs(yoff) > 2)
 					height_type = BIG_SLOPE;
 				else
 					height_type = SMALL_SLOPE;
@@ -851,7 +851,7 @@ long GetHeight(FLOOR_INFO* floor, long x, long y, long z)
 			}
 			else
 			{
-				if (ABS(xoff) > 2 || ABS(yoff) > 2)
+				if (abs(xoff) > 2 || abs(yoff) > 2)
 					height_type = DIAGONAL;
 				else if (height_type != SPLIT_TRI)
 					height_type = SMALL_SLOPE;

@@ -248,7 +248,7 @@ long BigGunControl(COLL_INFO* coll)
 				if (GunRotYAdd < -64)
 					GunRotYAdd = -64;
 
-				if (!(wibble & 7) && ABS(gun->RotY) < 544)
+				if (!(wibble & 7) && abs(gun->RotY) < 544)
 					SoundEffect(SFX_LARA_UZI_STOP, &item->pos, SFX_DEFAULT);
 			}
 			else if (input & IN_RIGHT)
@@ -261,14 +261,14 @@ long BigGunControl(COLL_INFO* coll)
 				if (GunRotYAdd > 64)
 					GunRotYAdd = 64;
 
-				if (!(wibble & 7) && ABS(gun->RotY) < 544)
+				if (!(wibble & 7) && abs(gun->RotY) < 544)
 					SoundEffect(SFX_LARA_UZI_STOP, &item->pos, SFX_DEFAULT);
 			}
 			else
 			{
 				GunRotYAdd -= GunRotYAdd >> 2;
 
-				if (ABS(GunRotYAdd) < 8)
+				if (abs(GunRotYAdd) < 8)
 					GunRotYAdd = 0;
 			}
 

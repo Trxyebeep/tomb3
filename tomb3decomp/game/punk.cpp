@@ -172,9 +172,9 @@ void PunkControl(short item_number)
 
 		if (item->hit_status || (lara_info.distance < 0x100000 || TargetVisible(item, &lara_info)) &&
 #ifdef RANDO_STUFF
-			ABS(lara_item->pos.y_pos - item->pos.y_pos) < 1280 && rando.levels[RANDOLEVEL].original_id != LV_TOWER && !(item->ai_bits & 0x10))
+			abs(lara_item->pos.y_pos - item->pos.y_pos) < 1280 && rando.levels[RANDOLEVEL].original_id != LV_TOWER && !(item->ai_bits & 0x10))
 #else
-			ABS(lara_item->pos.y_pos - item->pos.y_pos) < 1280 && CurrentLevel != LV_TOWER && !(item->ai_bits & 0x10))
+			abs(lara_item->pos.y_pos - item->pos.y_pos) < 1280 && CurrentLevel != LV_TOWER && !(item->ai_bits & 0x10))
 #endif
 		{
 			if (!punk->alerted)
