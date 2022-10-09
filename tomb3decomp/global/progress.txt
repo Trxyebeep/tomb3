@@ -1729,7 +1729,7 @@ tomb3decomp progress.
 0x00487870	+	do_levelselect_option
 0x00487BE0		do_passport_option
 0x00488260	+	do_detail_option
-0x00488F30		do_sound_option
+0x00488F30	+	do_sound_option
 0x004893D0		do_compass_option
 0x00489490		FlashConflicts
 0x00489510		DefaultConflict

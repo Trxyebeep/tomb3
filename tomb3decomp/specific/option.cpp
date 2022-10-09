@@ -5,10 +5,12 @@
 #include "hwrender.h"
 #include "dxshell.h"
 #include "drawprimitive.h"
+#include "specific.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #include "output.h"
 #endif
+#include "../game/sound.h"
 
 static GLOBE_LEVEL GlobeLevelAngles[7] =
 {
@@ -22,6 +24,7 @@ static GLOBE_LEVEL GlobeLevelAngles[7] =
 };
 
 static TEXTSTRING* dtext[DT_NUMT];
+static TEXTSTRING* stext[4];
 
 long GetRenderWidth()
 {
@@ -922,6 +925,139 @@ void do_pickup_option(INVENTORY_ITEM* item)
 	}
 }
 
+void do_sound_option(INVENTORY_ITEM* item)
+{
+	long goin;
+	char buf[20];
+
+	if (!stext[0])
+	{
+		if (Option_Music_Volume > 10)
+			Option_Music_Volume = 10;
+
+		wsprintf(buf, "| %2d", Option_Music_Volume);
+		stext[0] = T_Print(0, 0, 0, buf);
+		T_AddBackground(stext[0], 168, 0, 0, 0, 8, 0, 0, 0);
+		T_AddOutline(stext[0], 1, 4, 0, 0);
+
+		if (Option_SFX_Volume > 10)
+			Option_SFX_Volume = 10;
+
+		wsprintf(buf, "} %2d", Option_SFX_Volume);
+		stext[1] = T_Print(0, 25, 0, buf);
+
+		stext[2] = T_Print(0, -32, 0, " ");
+		T_AddBackground(stext[2], 180, 85, 0, 0, 48, 0, 0, 0);
+		T_AddOutline(stext[2], 1, 15, 0, 0);
+
+		stext[3] = T_Print(0, -30, 0, GF_PCStrings[PCSTR_SETVOLUME]);
+		T_AddBackground(stext[3], 176, 0, 0, 0, 8, 0, 0, 0);
+		T_AddOutline(stext[3], 1, 15, 0, 0);
+
+		for (int i = 0; i < 4; i++)
+		{
+			T_CentreH(stext[i], 1);
+			T_CentreV(stext[i], 1);
+		}
+	}
+
+	if (inputDB & IN_FORWARD && item_data > 0)
+	{
+		T_RemoveOutline(stext[item_data]);
+		T_RemoveBackground(stext[item_data]);
+		item_data--;
+		T_AddBackground(stext[item_data], 168, 0, 0, 0, 8, 0, 0, 0);
+		T_AddOutline(stext[item_data], 1, 4, 0, 0);
+	}
+
+	if (inputDB & IN_BACK && item_data < 1)
+	{
+		T_RemoveOutline(stext[item_data]);
+		T_RemoveBackground(stext[item_data]);
+		item_data++;
+		T_AddBackground(stext[item_data], 168, 0, 0, 0, 8, 0, 0, 0);
+		T_AddOutline(stext[item_data], 1, 4, 0, 0);
+	}
+
+	goin = 0;
+
+	if (item_data)
+	{
+		if (input & IN_LEFT && Option_SFX_Volume > 0)
+		{
+			idelay = 1;
+			idcount = 10;
+			Option_SFX_Volume--;
+			goin = 1;
+		}
+		else if (input & IN_RIGHT && Option_SFX_Volume < 10)
+		{
+			idelay = 1;
+			idcount = 10;
+			Option_SFX_Volume++;
+			goin = 1;
+		}
+
+		if (goin)
+		{
+			wsprintf(buf, "} %2d", Option_SFX_Volume);
+			T_ChangeText(stext[1], buf);
+
+			if (Option_SFX_Volume)
+				S_SoundSetMasterVolume(6 * Option_SFX_Volume + 4);
+			else
+				S_SoundSetMasterVolume(0);
+
+			SoundEffect(SFX_MENU_PASSPORT, 0, SFX_ALWAYS);
+		}
+	}
+	else
+	{
+		if (input & IN_LEFT && Option_Music_Volume > 0)
+		{
+			idelay = 1;
+			idcount = 10;
+			Option_Music_Volume--;
+			goin = 1;
+		}
+		else if (input & IN_RIGHT && Option_Music_Volume < 10)
+		{
+			idelay = 1;
+			idcount = 10;
+			Option_Music_Volume++;
+			goin = 1;
+		}
+
+		if (goin)
+		{
+			wsprintf(buf, "| %2d", Option_Music_Volume);
+			T_ChangeText(stext[0], buf);
+
+			if (Option_Music_Volume)
+				S_CDVolume(25 * Option_Music_Volume + 5);
+			else
+				S_CDVolume(0);
+
+			SoundEffect(SFX_MENU_PASSPORT, 0, SFX_ALWAYS);
+		}
+	}
+
+	if (inputDB & (IN_SELECT | IN_DESELECT))
+	{
+		T_RemovePrint(stext[0]);
+		stext[0] = 0;
+
+		T_RemovePrint(stext[1]);
+		stext[1] = 0;
+
+		T_RemovePrint(stext[2]);
+		stext[2] = 0;
+
+		T_RemovePrint(stext[3]);
+		stext[3] = 0;
+	}
+}
+
 void inject_option(bool replace)
 {
 	INJECT(0x0048A200, GetRenderWidth, replace);
@@ -929,4 +1065,5 @@ void inject_option(bool replace)
 	INJECT(0x00488260, do_detail_option, replace);
 	INJECT(0x00487870, do_levelselect_option, replace);
 	INJECT(0x00487720, do_pickup_option, replace);
+	INJECT(0x00488F30, do_sound_option, replace);
 }
