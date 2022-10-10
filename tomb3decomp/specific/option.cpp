@@ -1053,6 +1053,11 @@ void do_sound_option(INVENTORY_ITEM* item)
 		}
 	}
 
+#ifdef TROYESTUFF
+	if (goin)
+		S_SaveSettings();	//save if needed
+#endif
+
 	if (inputDB & (IN_SELECT | IN_DESELECT))
 	{
 		T_RemovePrint(stext[0]);
