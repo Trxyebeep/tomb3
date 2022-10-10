@@ -2,6 +2,7 @@
 #include "tomb3.h"
 #include "registry.h"
 #include "../specific/specific.h"
+#include "../specific/option.h"
 
 TOMB3_OPTIONS tomb3;
 
@@ -102,6 +103,7 @@ bool T3_LoadSettings()
 	GammaOption = (float)gamma;
 
 	REG_ReadBlock((char*)"keyLayout", &layout[1][0], sizeof(layout) / 2, 0);
+	DefaultConflict();	//fix having to open the control options to set conflicts;
 
 	REG_ReadBool((char*)"footprints", tomb3.footprints, 1);
 	REG_ReadLong((char*)"shadow_mode", (ulong&)tomb3.shadow_mode, SHADOW_PSX);
