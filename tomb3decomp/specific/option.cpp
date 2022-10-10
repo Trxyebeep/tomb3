@@ -1241,6 +1241,240 @@ static void S_RemoveCtrlText()
 	}
 }
 
+void do_control_option(INVENTORY_ITEM* item)
+{
+	static long sel;
+	short c;
+
+	if (!ctrltext[0])
+	{
+		if (iconfig)
+			ctrltext[0] = T_Print(0, -50, 0, GF_PCStrings[PCSTR_USERKEYS]);
+		else
+			ctrltext[0] = T_Print(0, -50, 0, GF_PCStrings[PCSTR_DEFAULTKEYS]);
+
+		ctrltext[0]->zpos = 16;
+		T_CentreH(ctrltext[0], 1);
+		T_CentreV(ctrltext[0], 1);
+		S_ShowControls();
+		keychange = -1;
+		T_AddBackground(ctrltext[0], 0, 0, 0, 0, 48, 0, 0, 0);
+		T_AddOutline(ctrltext[0], 1, 15, 0, 0);
+	}
+
+	switch (sel)
+	{
+	case 0:
+
+		if (inputDB & (IN_RIGHT | IN_LEFT))
+		{
+			if (keychange == -1)
+			{
+				iconfig = !iconfig;
+				S_ChangeCtrlText();
+				FlashConflicts();
+			}
+			else
+			{
+				ctext[keychange]->zpos = 16;
+				T_RemoveBackground(ctext[keychange]);
+				T_RemoveOutline(ctext[keychange]);
+
+				if (keychange <= 6)
+					keychange += 7;
+				else if (keychange == 14)
+					keychange = 7;
+				else
+					keychange -= 7;
+
+				ctext[keychange]->zpos = 16;
+				T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, 0, 0);
+				T_AddOutline(ctext[keychange], 1, 15, 0, 0);
+			}
+		}
+		else if (inputDB & IN_DESELECT || (inputDB & IN_SELECT && keychange == -1))
+		{
+			T_RemovePrint(ctrltext[0]);
+			ctrltext[0] = 0;
+
+			T_RemovePrint(ctrltext[1]);
+			ctrltext[1] = 0;
+
+			S_RemoveCtrlText();
+			DefaultConflict();
+			return;
+		}
+
+		if (iconfig)
+		{
+			if (inputDB & IN_SELECT)
+			{
+				sel = 1;
+
+				ctext[keychange]->zpos = 16;
+				T_RemoveBackground(ctext[keychange]);
+				T_RemoveOutline(ctext[keychange]);
+
+				btext[keychange]->zpos = 16;
+				T_AddBackground(btext[keychange], 0, 0, 0, 0, 0, 0, 0, 0);
+				T_AddOutline(btext[keychange], 1, 15, 0, 0);
+			}
+			else if (inputDB & IN_FORWARD)
+			{
+				if (keychange == -1)
+				{
+					T_RemoveBackground(ctrltext[0]);
+					T_RemoveOutline(ctrltext[0]);
+				}
+				else
+				{
+					ctext[keychange]->zpos = 16;
+					T_RemoveBackground(ctext[keychange]);
+					T_RemoveOutline(ctext[keychange]);
+				}
+
+				keychange--;
+
+				if (keychange < -1)
+					keychange = 13;
+
+				if (keychange == -1)
+				{
+					T_AddBackground(ctrltext[0], 0, 0, 0, 0, 0, 0, 0, 0);
+					T_AddOutline(ctrltext[0], 1, 15, 0, 0);
+				}
+				else
+				{
+					ctext[keychange]->zpos = 16;
+					T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, 0, 0);
+					T_AddOutline(ctext[keychange], 1, 15, 0, 0);
+				}
+			}
+			else if (inputDB & IN_BACK)
+			{
+				if (keychange == -1)
+				{
+					T_RemoveBackground(ctrltext[0]);
+					T_RemoveOutline(ctrltext[0]);
+				}
+				else
+				{
+					ctext[keychange]->zpos = 16;
+					T_RemoveBackground(ctext[keychange]);
+					T_RemoveOutline(ctext[keychange]);
+				}
+
+				keychange++;
+
+				if (keychange > 13)
+					keychange = -1;
+
+				if (keychange == -1)
+				{
+					T_AddBackground(ctrltext[0], 0, 0, 0, 0, 0, 0, 0, 0);
+					T_AddOutline(ctrltext[0], 1, 15, 0, 0);
+				}
+				else
+				{
+					ctext[keychange]->zpos = 16;
+					T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, 0, 0);
+					T_AddOutline(ctext[keychange], 1, 15, 0, 0);
+				}
+			}
+		}
+
+		break;
+
+	case 1:
+
+		if (!(inputDB & IN_SELECT))
+			sel = 2;
+
+		break;
+
+	case 2:
+
+		if (joy_fire)
+		{
+			for (c = 0; c < 256; c++)
+			{
+				if ((1 << c) & joy_fire)
+					break;
+			}
+
+			if (c == 32)
+				c = 0;
+			else
+				c += 256;
+		}
+		else
+		{
+			for (c = 0; c < 256; c++)
+			{
+				if (key_pressed(c))
+					break;
+			}
+
+			if (c == 256)
+				c = 0;
+		}
+
+		if (!c || !KeyboardButtons[c] || c == DIK_RETURN || c == DIK_LEFT || c == DIK_RIGHT || c == DIK_UP || c == DIK_DOWN)
+			break;
+
+		if (c != DIK_ESCAPE)
+		{
+			layout[iconfig][keychange] = c;
+			T_ChangeText(btext[keychange], (char*)KeyboardButtons[c]);
+		}
+
+		btext[keychange]->zpos = 16;
+		T_RemoveBackground(btext[keychange]);
+		T_RemoveOutline(btext[keychange]);
+
+		ctext[keychange]->zpos = 16;
+		T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, 0, 0);
+		T_AddOutline(ctext[keychange], 1, 15, 0, 0);
+
+		sel = 3;
+		FlashConflicts();
+		break;
+
+	case 3:
+
+		if (layout[iconfig][keychange] & 256)
+		{
+			if (!((1 << layout[iconfig][keychange]) & joy_fire))
+				sel = 0;
+		}
+		else if (!key_pressed(layout[iconfig][keychange]))
+		{
+			sel = 0;
+
+			if (layout[iconfig][keychange] == DIK_LCONTROL)
+				layout[iconfig][keychange] = DIK_RCONTROL;
+
+			if (layout[iconfig][keychange] == DIK_LSHIFT)
+				layout[iconfig][keychange] = DIK_RSHIFT;
+
+			if (layout[iconfig][keychange] == DIK_LMENU)
+				layout[iconfig][keychange] = DIK_RMENU;
+
+			FlashConflicts();
+		}
+
+#ifdef TROYESTUFF
+		if (!sel)
+			S_SaveSettings();	//same them if needed
+#endif
+
+		break;
+	}
+
+	input = 0;
+	inputDB = 0;
+}
+
 void inject_option(bool replace)
 {
 	INJECT(0x0048A200, GetRenderWidth, replace);
@@ -1254,4 +1488,5 @@ void inject_option(bool replace)
 	INJECT(0x00489C70, S_ShowControls, replace);
 	INJECT(0x0048A100, S_ChangeCtrlText, replace);
 	INJECT(0x0048A1A0, S_RemoveCtrlText, replace);
+	INJECT(0x00489550, do_control_option, replace);
 }

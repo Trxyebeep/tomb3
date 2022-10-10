@@ -1733,7 +1733,7 @@ tomb3decomp progress.
 0x004893D0		do_compass_option
 0x00489490	+	FlashConflicts
 0x00489510	+	DefaultConflict
-0x00489550		do_control_option
+0x00489550	+	do_control_option
 0x00489C70	+	S_ShowControls
 0x0048A100	+	S_ChangeCtrlText
 0x0048A1A0	+	S_RemoveCtrlText
