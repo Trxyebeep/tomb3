@@ -39,11 +39,6 @@ long GetRenderHeight()
 }
 
 #ifdef TROYESTUFF
-
-#define LINEW	100
-#define LINEH	13
-#define LINEY(n) (GetRenderScale(n * LINEH))
-
 void do_detail_option(INVENTORY_ITEM* item)
 {
 	DIRECT3DINFO* dinfo;
@@ -59,8 +54,8 @@ void do_detail_option(INVENTORY_ITEM* item)
 
 	save = 0;
 	nSel = DT_NUMT - DOP_NOPTS;
-	tW = GetRenderScale(LINEW);
-	w = GetRenderWidth() / 2 - tW;
+	tW = 130;
+	w = GetRenderWidth() / 2 - 115;
 	dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
 
 	if (!dtext[DT_GAMMA])
@@ -82,25 +77,21 @@ void do_detail_option(INVENTORY_ITEM* item)
 		}
 
 		//option names
-		dtext[DT_EMPTY] = T_Print(0, -LINEY(5), 0, " ");
-		dtext[DT_VIDEOTITLE] = T_Print(0, -LINEY(5) + GetRenderScale(2), 0, GF_PCStrings[PCSTR_VIDEOTITLE]);
-		dtext[DT_RESOLUTION] = T_Print(w, -LINEY(4), 0, GF_PCStrings[PCSTR_RESOLUTION]);
-		dtext[DT_ZBUFFER] = T_Print(w, -LINEY(3), 0, GF_PCStrings[PCSTR_ZBUFFER]);
-		dtext[DT_FILTER] = T_Print(w, -LINEY(2), 0, GF_PCStrings[PCSTR_FILTERING]);
-		dtext[DT_DITHER] = T_Print(w, -LINEY(1), 0, GF_PCStrings[PCSTR_DITHER]);
-		dtext[DT_TRUEALPHA] = T_Print(w, LINEY(0), 0, GF_PCStrings[PCSTR_TRUEALPHA]);
-		dtext[DT_GAMMA] = T_Print(w, LINEY(1), 0, GF_PCStrings[PCSTR_SKY]);
-		dtext[DT_FOOTPRINTS] = T_Print(w, LINEY(2), 0, "Footprints");
-		dtext[DT_SHADOW] = T_Print(w, LINEY(3), 0, "Shadow mode");
-		dtext[DT_BARS] = T_Print(w, LINEY(4), 0, "Bar mode");
-		dtext[DT_PICKUP] = T_Print(w, LINEY(5), 0, "Pickup display");
+		dtext[DT_EMPTY] = T_Print(0, -72, 0, " ");
+		dtext[DT_VIDEOTITLE] = T_Print(0, -70, 0, GF_PCStrings[PCSTR_VIDEOTITLE]);
+		dtext[DT_RESOLUTION] = T_Print(w, -45, 0, GF_PCStrings[PCSTR_RESOLUTION]);
+		dtext[DT_ZBUFFER] = T_Print(w, -25, 0, GF_PCStrings[PCSTR_ZBUFFER]);
+		dtext[DT_FILTER] = T_Print(w, -5, 0, GF_PCStrings[PCSTR_FILTERING]);
+		dtext[DT_DITHER] = T_Print(w, 15, 0, GF_PCStrings[PCSTR_DITHER]);
+		dtext[DT_TRUEALPHA] = T_Print(w, 35, 0, GF_PCStrings[PCSTR_TRUEALPHA]);
+		dtext[DT_GAMMA] = T_Print(w, 55, 0, GF_PCStrings[PCSTR_SKY]);
 		
-		T_AddBackground(dtext[DT_EMPTY], short(tW << 1), (short)GetRenderScale((DOP_NOPTS + 1) * LINEH), 0, 0, 48, 0, 0, 0);
+		T_AddBackground(dtext[DT_EMPTY], 240, 150, 0, 0, 48, 0, 0, 0);
 		T_AddOutline(dtext[DT_EMPTY], 1, 15, 0, 0);
 		T_CentreH(dtext[DT_EMPTY], 1);
 		T_CentreV(dtext[DT_EMPTY], 1);
 
-		T_AddBackground(dtext[DT_VIDEOTITLE], short(tW << 1) - 4, 0, 0, 0, 48, 0, 0, 0);
+		T_AddBackground(dtext[DT_VIDEOTITLE], 236, 0, 0, 0, 48, 0, 0, 0);
 		T_AddOutline(dtext[DT_VIDEOTITLE], 1, 4, 0, 0);
 		T_CentreH(dtext[DT_VIDEOTITLE], 1);
 		T_CentreV(dtext[DT_VIDEOTITLE], 1);
@@ -111,56 +102,32 @@ void do_detail_option(INVENTORY_ITEM* item)
 		T_CentreV(dtext[DT_DITHER], 1);
 		T_CentreV(dtext[DT_TRUEALPHA], 1);
 		T_CentreV(dtext[DT_GAMMA], 1);
-		T_CentreV(dtext[DT_FOOTPRINTS], 1);
-		T_CentreV(dtext[DT_SHADOW], 1);
-		T_CentreV(dtext[DT_BARS], 1);
-		T_CentreV(dtext[DT_PICKUP], 1);
 
 		//actual options
-		dtext[DT_OP_RESOLUTION] = T_Print(w + tW, -LINEY(4), 0, resolutions[selected_res].res);
+		dtext[DT_OP_RESOLUTION] = T_Print(w + tW, -45, 0, resolutions[selected_res].res);
 
 		if (App.lpZBuffer)
-			dtext[DT_OP_ZBUFFER] = T_Print(w + tW, -LINEY(3), 0, GF_PCStrings[PCSTR_ON]);
+			dtext[DT_OP_ZBUFFER] = T_Print(w + tW, -25, 0, GF_PCStrings[PCSTR_ON]);
 		else
-			dtext[DT_OP_ZBUFFER] = T_Print(w + tW, -LINEY(3), 0, GF_PCStrings[PCSTR_OFF]);
+			dtext[DT_OP_ZBUFFER] = T_Print(w + tW, -25, 0, GF_PCStrings[PCSTR_OFF]);
 
 		if (HWConfig.nFilter == 2)
-			dtext[DT_OP_FILTER] = T_Print(w + tW, -LINEY(2), 0, GF_PCStrings[PCSTR_ON]);
+			dtext[DT_OP_FILTER] = T_Print(w + tW, -5, 0, GF_PCStrings[PCSTR_ON]);
 		else
-			dtext[DT_OP_FILTER] = T_Print(w + tW, -LINEY(2), 0, GF_PCStrings[PCSTR_OFF]);
+			dtext[DT_OP_FILTER] = T_Print(w + tW, -5, 0, GF_PCStrings[PCSTR_OFF]);
 
 		if (HWConfig.Dither)
-			dtext[DT_OP_DITHER] = T_Print(w + tW, -LINEY(1), 0, GF_PCStrings[PCSTR_ON]);
+			dtext[DT_OP_DITHER] = T_Print(w + tW, 15, 0, GF_PCStrings[PCSTR_ON]);
 		else
-			dtext[DT_OP_DITHER] = T_Print(w + tW, -LINEY(1), 0, GF_PCStrings[PCSTR_OFF]);
+			dtext[DT_OP_DITHER] = T_Print(w + tW, 15, 0, GF_PCStrings[PCSTR_OFF]);
 
 		if (HWConfig.TrueAlpha)
-			dtext[DT_OP_TRUEALPHA] = T_Print(w + tW, LINEY(0), 0, GF_PCStrings[PCSTR_OFF]);
+			dtext[DT_OP_TRUEALPHA] = T_Print(w + tW, 35, 0, GF_PCStrings[PCSTR_OFF]);
 		else
-			dtext[DT_OP_TRUEALPHA] = T_Print(w + tW, LINEY(0), 0, GF_PCStrings[PCSTR_ON]);
+			dtext[DT_OP_TRUEALPHA] = T_Print(w + tW, 35, 0, GF_PCStrings[PCSTR_ON]);
 
 		sprintf(gtxt, "%d", (ulong)GammaOption);
-		dtext[DT_OP_GAMMA] = T_Print(w + tW, LINEY(1), 0, gtxt);
-
-		if (tomb3.footprints)
-			dtext[DT_OP_FOOTPRINTS] = T_Print(w + tW, LINEY(2), 0, GF_PCStrings[PCSTR_ON]);
-		else
-			dtext[DT_OP_FOOTPRINTS] = T_Print(w + tW, LINEY(2), 0, GF_PCStrings[PCSTR_OFF]);
-
-		if (tomb3.shadow_mode == SHADOW_ORIGINAL)
-			dtext[DT_OP_SHADOW] = T_Print(w + tW, LINEY(3), 0, "Original");
-		else
-			dtext[DT_OP_SHADOW] = T_Print(w + tW, LINEY(3), 0, "PSX");
-
-		if (tomb3.bar_mode == BAR_ORIGINAL)
-			dtext[DT_OP_BARS] = T_Print(w + tW, LINEY(4), 0, "Original");
-		else
-			dtext[DT_OP_BARS] = T_Print(w + tW, LINEY(4), 0, "PSX");
-
-		if (tomb3.pickup_display)
-			dtext[DT_OP_PICKUP] = T_Print(w + tW, LINEY(5), 0, GF_PCStrings[PCSTR_ON]);
-		else
-			dtext[DT_OP_PICKUP] = T_Print(w + tW, LINEY(5), 0, GF_PCStrings[PCSTR_OFF]);
+		dtext[DT_OP_GAMMA] = T_Print(w + tW, 55, 0, gtxt);
 
 		T_CentreV(dtext[DT_OP_RESOLUTION], 1);
 		T_CentreV(dtext[DT_OP_ZBUFFER], 1);
@@ -168,10 +135,6 @@ void do_detail_option(INVENTORY_ITEM* item)
 		T_CentreV(dtext[DT_OP_DITHER], 1);
 		T_CentreV(dtext[DT_OP_TRUEALPHA], 1);
 		T_CentreV(dtext[DT_OP_GAMMA], 1);
-		T_CentreV(dtext[DT_OP_FOOTPRINTS], 1);
-		T_CentreV(dtext[DT_OP_SHADOW], 1);
-		T_CentreV(dtext[DT_OP_BARS], 1);
-		T_CentreV(dtext[DT_OP_PICKUP], 1);
 
 		for (int i = 0; i < DOP_NOPTS; i++)
 			available[i] = 1;
@@ -276,7 +239,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 			HWR_InitState();
 			T_RemovePrint(dtext[DT_OP_GAMMA]);
 			sprintf(gtxt, "%d", (ulong)GammaOption);
-			dtext[DT_OP_GAMMA] = T_Print(w + tW, LINEY(1), 0, gtxt);
+			dtext[DT_OP_GAMMA] = T_Print(w + tW, 55, 0, gtxt);
 			T_CentreV(dtext[DT_OP_GAMMA], 1);
 			break;
 
@@ -354,64 +317,6 @@ void do_detail_option(INVENTORY_ITEM* item)
 				}
 
 				HWR_InitState();
-			}
-
-			break;
-
-		case DOP_FOOTPRINTS:
-
-			if (tomb3.footprints)
-			{
-				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_OFF]);
-				tomb3.footprints = 0;
-			}
-			else
-			{
-				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_ON]);
-				tomb3.footprints = 1;
-			}
-
-			break;
-
-		case DOP_SHADOW:
-
-			if (tomb3.shadow_mode < NSHADOW_MODES - 1)
-				tomb3.shadow_mode++;
-			else
-				tomb3.shadow_mode = SHADOW_ORIGINAL;
-
-			if (tomb3.shadow_mode == SHADOW_ORIGINAL)
-				T_ChangeText(dtext[selection + nSel], (char*)"Original");
-			else
-				T_ChangeText(dtext[selection + nSel], (char*)"PSX");
-
-			break;
-
-		case DOP_BARS:
-
-			if (tomb3.bar_mode < NBAR_MODES - 1)
-				tomb3.bar_mode++;
-			else
-				tomb3.bar_mode = BAR_ORIGINAL;
-
-			if (tomb3.bar_mode == BAR_ORIGINAL)
-				T_ChangeText(dtext[selection + nSel], (char*)"Original");
-			else
-				T_ChangeText(dtext[selection + nSel], (char*)"PSX");
-
-			break;
-
-		case DOP_PICKUP:
-
-			if (tomb3.pickup_display)
-			{
-				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_OFF]);
-				tomb3.pickup_display = 0;
-			}
-			else
-			{
-				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_ON]);
-				tomb3.pickup_display = 1;
 			}
 
 			break;
