@@ -49,7 +49,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 	DIRECT3DINFO* dinfo;
 	DISPLAYMODE* dm;
 	DISPLAYMODE* cdm;
-	static RES_TXT resolutions[30];
+	static RES_TXT* resolutions;	//unlimited, original was limited to 30.
 	static long selected_res;
 	static long selection = DOP_NOPTS - 1;
 	long nSel, w, tW, oldRes;
@@ -66,6 +66,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 	if (!dtext[DT_GAMMA])
 	{
 		cdm = &dinfo->DisplayMode[App.DXConfigPtr->nVMode];
+		resolutions = (RES_TXT*)malloc(sizeof(RES_TXT) * dinfo->nDisplayMode);
 
 		for (int i = 0; i < dinfo->nDisplayMode; i++)
 		{
@@ -201,6 +202,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 
 		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, 0, 0);
 		T_AddOutline(dtext[selection + nSel], 1, 4, 0, 0);
+		free(resolutions);
 	}
 
 	if (inputDB & IN_LEFT && selection == DOP_RESOLUTION)
