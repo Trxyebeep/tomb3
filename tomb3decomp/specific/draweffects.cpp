@@ -501,7 +501,7 @@ void DoRain()
 
 		if (rptr->x)
 		{
-			if (IsRoomOutside(rptr->x, rptr->y >> 2, rptr->z) == -2 || (room[IsRoomOutsideNo].flags & ROOM_UNDERWATER) ||
+			if (IsRoomOutside(rptr->x, rptr->y, rptr->z) == -2 || (room[IsRoomOutsideNo].flags & ROOM_UNDERWATER) ||
 				rptr->life > 240 || abs(CamPos.x - rptr->x) > 6000 || abs(CamPos.z - rptr->z) > 6000)
 			{
 				rptr->x = 0;
@@ -547,7 +547,7 @@ void DoRain()
 	pXY = XY;
 	pZ = Z;
 
-	for (int i = 0, num_alive = 0; i < 256; i++)
+	for (int i = 0; i < 256; i++)
 	{
 		rptr = &raindrops[i];
 
@@ -555,7 +555,7 @@ void DoRain()
 			continue;
 
 		tx = rptr->x - lara_item->pos.x_pos - 2 * SmokeWindX;
-		ty = rptr->y - 8 * rptr->yv - lara_item->pos.y_pos;
+		ty = rptr->y - (rptr->yv << 3) - lara_item->pos.y_pos;
 		tz = rptr->z - lara_item->pos.z_pos - 2 * SmokeWindZ;
 		pos.x = tx * phd_mxptr[M00] + ty * phd_mxptr[M01] + tz * phd_mxptr[M02] + phd_mxptr[M03];
 		pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
