@@ -12,6 +12,7 @@
 #include "output.h"
 #include "smain.h"
 #endif
+#include "input.h"
 
 static GLOBE_LEVEL GlobeLevelAngles[7] =
 {
@@ -1075,8 +1076,10 @@ void do_sound_option(INVENTORY_ITEM* item)
 }
 
 #define iconfig	VAR_(0x006A0130, long)
+#define keychange	VAR_(0x006A0128, long)
 #define btext	ARRAY_(0x006A0170, TEXTSTRING*, [14])
 #define ctext	ARRAY_(0x006A0138, TEXTSTRING*, [14])
+#define ctrltext	ARRAY_(0x006A0218, TEXTSTRING*, [2])
 
 static void FlashConflicts()
 {
@@ -1118,6 +1121,89 @@ void DefaultConflict()
 	}
 }
 
+static void S_ShowControls()
+{
+	long mid, x;
+
+	mid = GetRenderWidth() / 2;
+
+	if (!btext[0])
+	{
+		if (mid >= 320)
+			x = mid - 200;
+		else
+			x = mid - 150;
+
+		btext[0] = T_Print(x, -25, 0, KeyboardButtons[layout[iconfig][0]]);
+		btext[1] = T_Print(x, -9, 0, KeyboardButtons[layout[iconfig][1]]);
+		btext[2] = T_Print(x, 7, 0, KeyboardButtons[layout[iconfig][2]]);
+		btext[3] = T_Print(x, 23, 0, KeyboardButtons[layout[iconfig][3]]);
+		btext[4] = T_Print(x, 39, 0, KeyboardButtons[layout[iconfig][4]]);
+		btext[5] = T_Print(x, 55, 0, KeyboardButtons[layout[iconfig][5]]);
+		btext[6] = T_Print(x, 71, 0, KeyboardButtons[layout[iconfig][6]]);
+
+		if (mid >= 320)
+			x = mid + 10;
+		else
+			x = mid - 20;
+
+		btext[7] = T_Print(x, -25, 0, KeyboardButtons[layout[iconfig][7]]);
+		btext[8] = T_Print(x, -9, 0, KeyboardButtons[layout[iconfig][8]]);
+		btext[9] = T_Print(x, 7, 0, KeyboardButtons[layout[iconfig][9]]);
+		btext[10] = T_Print(x, 23, 0, KeyboardButtons[layout[iconfig][10]]);
+		btext[11] = T_Print(x, 39, 0, KeyboardButtons[layout[iconfig][11]]);
+		btext[12] = T_Print(x, 55, 0, KeyboardButtons[layout[iconfig][12]]);
+		btext[13] = T_Print(x, 71, 0, KeyboardButtons[layout[iconfig][13]]);
+
+		for (int i = 0; i < 14; i++)
+			T_CentreV(btext[i], 1);
+
+		keychange = 0;
+	}
+
+	if (!ctext[0])
+	{
+		if (mid >= 320)
+			x = mid - 120;
+		else
+			x = mid - 78;
+
+		ctext[0] = T_Print(x, -25, 0, GF_GameStrings[GT_RUN]);
+		ctext[1] = T_Print(x, -9, 0, GF_GameStrings[GT_BACK]);
+		ctext[2] = T_Print(x, 7, 0, GF_GameStrings[GT_LEFT]);
+		ctext[3] = T_Print(x, 23, 0, GF_GameStrings[GT_RIGHT]);
+		ctext[4] = T_Print(x, 39, 0, GF_GameStrings[GT_STEPLEFT1]);
+		ctext[5] = T_Print(x, 55, 0, GF_GameStrings[GT_STEPRIGHT1]);
+		ctext[6] = T_Print(x, 71, 0, GF_GameStrings[GT_WALK]);
+
+		if (mid >= 320)
+			x = mid + 90;
+		else
+			x = mid + 55;
+
+		ctext[7] = T_Print(x, -25, 0, GF_GameStrings[GT_JUMP]);
+		ctext[8] = T_Print(x, -9, 0, GF_GameStrings[GT_ACTION]);
+		ctext[9] = T_Print(x, 7, 0, GF_GameStrings[GT_DRAWWEAPON1]);
+		ctext[10] = T_Print(x, 23, 0, GF_GameStrings[GT_USEFLARE]);
+		ctext[11] = T_Print(x, 39, 0, GF_GameStrings[GT_LOOK]);
+		ctext[12] = T_Print(x, 55, 0, GF_GameStrings[GT_ROLL]);
+		ctext[13] = T_Print(x, 71, 0, GF_GameStrings[GT_INVENTORY]);
+
+		for (int i = 0; i < 14; i++)
+			T_CentreV(ctext[i], 1);
+	}
+
+	ctrltext[1] = T_Print(0, -55, 0, " ");
+	T_CentreV(ctrltext[1], 1);
+	T_CentreH(ctrltext[1], 1);
+	T_AddOutline(ctrltext[1], 1, 15, 0, 0);
+
+	if (mid >= 320)
+		T_AddBackground(ctrltext[1], 420, 150, 0, 0, 48, 0, 0, 0);
+	else
+		T_AddBackground(ctrltext[1], 308, 145, 0, 0, 48, 0, 0, 0);
+}
+
 void inject_option(bool replace)
 {
 	INJECT(0x0048A200, GetRenderWidth, replace);
@@ -1128,4 +1214,5 @@ void inject_option(bool replace)
 	INJECT(0x00488F30, do_sound_option, replace);
 	INJECT(0x00489490, FlashConflicts, replace);
 	INJECT(0x00489510, DefaultConflict, replace);
+	INJECT(0x00489C70, S_ShowControls, replace);
 }
