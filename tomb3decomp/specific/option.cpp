@@ -1074,6 +1074,50 @@ void do_sound_option(INVENTORY_ITEM* item)
 	}
 }
 
+#define iconfig	VAR_(0x006A0130, long)
+#define btext	ARRAY_(0x006A0170, TEXTSTRING*, [14])
+#define ctext	ARRAY_(0x006A0138, TEXTSTRING*, [14])
+
+static void FlashConflicts()
+{
+	short c;
+
+	for (int i = 0; i < 14; i++)
+	{
+		c = layout[iconfig][i];
+		T_FlashText(btext[i], 0, 0);
+
+		for (int j = 0; j < 14; j++)
+		{
+			if (i != j && c == layout[iconfig][j])
+			{
+				T_FlashText(btext[i], 1, 20);
+				break;
+			}
+		}
+	}
+}
+
+void DefaultConflict()
+{
+	short c;
+
+	for (int i = 0; i < 14; i++)
+	{
+		c = layout[0][i];
+		conflict[i] = 0;
+
+		for (int j = 0; j < 14; j++)
+		{
+			if (c == layout[1][j])
+			{
+				conflict[i] = 1;
+				break;
+			}
+		}
+	}
+}
+
 void inject_option(bool replace)
 {
 	INJECT(0x0048A200, GetRenderWidth, replace);
@@ -1082,4 +1126,6 @@ void inject_option(bool replace)
 	INJECT(0x00487870, do_levelselect_option, replace);
 	INJECT(0x00487720, do_pickup_option, replace);
 	INJECT(0x00488F30, do_sound_option, replace);
+	INJECT(0x00489490, FlashConflicts, replace);
+	INJECT(0x00489510, DefaultConflict, replace);
 }
