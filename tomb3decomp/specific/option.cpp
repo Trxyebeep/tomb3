@@ -1204,6 +1204,43 @@ static void S_ShowControls()
 		T_AddBackground(ctrltext[1], 308, 145, 0, 0, 48, 0, 0, 0);
 }
 
+static void S_ChangeCtrlText()
+{
+	char buf[40];
+
+	if (iconfig)
+	{
+		wsprintf(buf, GF_PCStrings[PCSTR_USERKEYS], iconfig);
+		T_ChangeText(ctrltext[0], buf);
+	}
+	else
+		T_ChangeText(ctrltext[0], GF_PCStrings[PCSTR_DEFAULTKEYS]);
+
+	for (int i = 0; i < 14; i++)
+	{
+		if (KeyboardButtons[layout[iconfig][i]])
+			T_ChangeText(btext[i], (char*)KeyboardButtons[layout[iconfig][i]]);
+		else
+			T_ChangeText(btext[i], (char*)"BAD");
+	}
+}
+
+static void S_RemoveCtrlText()
+{
+	for (int i = 0; i < 14; i++)
+	{
+		if (ctext[i])
+			T_RemovePrint(ctext[i]);
+
+		ctext[i] = 0;
+
+		if (btext[i])
+			T_RemovePrint(btext[i]);
+
+		btext[i] = 0;
+	}
+}
+
 void inject_option(bool replace)
 {
 	INJECT(0x0048A200, GetRenderWidth, replace);
@@ -1215,4 +1252,6 @@ void inject_option(bool replace)
 	INJECT(0x00489490, FlashConflicts, replace);
 	INJECT(0x00489510, DefaultConflict, replace);
 	INJECT(0x00489C70, S_ShowControls, replace);
+	INJECT(0x0048A100, S_ChangeCtrlText, replace);
+	INJECT(0x0048A1A0, S_RemoveCtrlText, replace);
 }
