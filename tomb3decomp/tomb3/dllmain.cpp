@@ -39,6 +39,7 @@
 #include "../game/invfunc.h"
 #include "../game/triboss.h"
 #include "../game/inventry.h"
+#include "../game/londboss.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -129,6 +130,7 @@ void inject_all(bool replace)
 	inject_invfunc(replace);
 	inject_triboss(replace);
 	inject_inventry(replace);
+	inject_londboss(replace);
 
 	//specific
 	inject_drawbars(replace);
