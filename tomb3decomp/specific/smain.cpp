@@ -57,14 +57,12 @@ bool inject_rando = 0;
 bool S_LoadSettings()
 {
 	FILE* file;
+#ifndef TROYESTUFF
 	char s[80];
+#endif
 
 #ifdef RANDO_STUFF
 	LoadRandoInfo();
-#endif
-
-#ifdef TROYESTUFF
-	T3_LoadSettings();
 #endif
 
 	file = fopen("data.bin", "rb");
@@ -77,6 +75,9 @@ bool S_LoadSettings()
 		fclose(file);
 	}
 
+#ifdef TROYESTUFF
+	return T3_LoadSettings();
+#else
 	file = fopen("config.txt", "r");
 
 	if (!file)
@@ -185,6 +186,7 @@ bool S_LoadSettings()
 	S_SoundSetMasterVolume(6 * Option_SFX_Volume + 4);
 	fclose(file);
 	return 1;
+#endif
 }
 
 void S_SaveSettings()
@@ -193,8 +195,7 @@ void S_SaveSettings()
 
 #ifdef TROYESTUFF
 	T3_SaveSettings();
-#endif
-
+#else
 	file = fopen("config.txt", "w+");
 
 	if (file)
@@ -259,6 +260,7 @@ void S_SaveSettings()
 
 		fclose(file);
 	}
+#endif
 
 	file = fopen("data.bin", "wb+");
 

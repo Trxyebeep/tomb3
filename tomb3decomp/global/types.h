@@ -1818,10 +1818,10 @@ enum t3_bar_mode
 
 struct TOMB3_OPTIONS
 {
-	long footprints;
+	bool footprints;
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum
-	long pickup_display;
+	bool pickup_display;
 };
 #endif
 #pragma pack(pop)

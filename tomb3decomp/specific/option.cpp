@@ -6,11 +6,12 @@
 #include "dxshell.h"
 #include "drawprimitive.h"
 #include "specific.h"
+#include "../game/sound.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #include "output.h"
+#include "smain.h"
 #endif
-#include "../game/sound.h"
 
 static GLOBE_LEVEL GlobeLevelAngles[7] =
 {
@@ -53,7 +54,9 @@ void do_detail_option(INVENTORY_ITEM* item)
 	long nSel, w, tW, oldRes;
 	static char available[DOP_NOPTS];
 	char gtxt[8];
+	bool save;
 
+	save = 0;
 	nSel = DT_NUMT - DOP_NOPTS;
 	tW = GetRenderScale(LINEW);
 	w = GetRenderWidth() / 2 - tW;
@@ -219,6 +222,8 @@ void do_detail_option(INVENTORY_ITEM* item)
 
 			for (int i = nSel; i < DT_NUMT; i++)
 				T_RemovePrint(dtext[i]);
+
+			save = 1;
 		}
 	}
 
@@ -242,6 +247,8 @@ void do_detail_option(INVENTORY_ITEM* item)
 
 			for (int i = nSel; i < DT_NUMT; i++)
 				T_RemovePrint(dtext[i]);
+
+			save = 1;
 		}
 	}
 
@@ -407,6 +414,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 			break;
 		}
 
+		save = 1;
 		T_RemoveOutline(dtext[selection + nSel]);
 		T_RemoveBackground(dtext[selection + nSel]);
 		T_AddOutline(dtext[selection + nSel], 1, 4, 0, 0);
@@ -448,6 +456,9 @@ void do_detail_option(INVENTORY_ITEM* item)
 		for (int i = nSel; i < DT_NUMT; i++)
 			T_RemovePrint(dtext[i]);
 	}
+
+	if (save)
+		S_SaveSettings();	//save everything if needed
 }
 #else
 void do_detail_option(INVENTORY_ITEM* item)
