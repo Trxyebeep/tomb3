@@ -1816,12 +1816,21 @@ enum t3_bar_mode
 	NBAR_MODES
 };
 
+enum t3_summon_ring_style
+{
+	SRINGS_PC,
+	SRINGS_PSX,
+	SRINGS_IMPROVED_PC,
+	NSRING_STYLES
+};
+
 struct TOMB3_OPTIONS
 {
 	bool footprints;
+	bool pickup_display;
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum
-	bool pickup_display;
+	long summon_rings;	//t3_summon_ring_style
 };
 #endif
 #pragma pack(pop)

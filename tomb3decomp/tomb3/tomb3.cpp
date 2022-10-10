@@ -14,9 +14,10 @@ static void T3_InitSettings()
 	S_SoundSetMasterVolume(6 * Option_SFX_Volume + 4);
 
 	tomb3.footprints = 1;
+	tomb3.pickup_display = 1;
 	tomb3.shadow_mode = SHADOW_PSX;
 	tomb3.bar_mode = BAR_PSX;
-	tomb3.pickup_display = 1;
+	tomb3.summon_rings = SRINGS_PSX;
 }
 
 void T3_SaveSettings()
@@ -57,9 +58,10 @@ void T3_SaveSettings()
 
 	//new settings :)
 	REG_WriteBool((char*)"footprints", tomb3.footprints);
+	REG_WriteBool((char*)"pickup_display", tomb3.pickup_display);
 	REG_WriteLong((char*)"shadow_mode", tomb3.shadow_mode);
 	REG_WriteLong((char*)"bar_mode", tomb3.bar_mode);
-	REG_WriteBool((char*)"pickup_display", tomb3.pickup_display);
+	REG_WriteLong((char*)"summon_rings", tomb3.summon_rings);
 
 	CloseRegistry();
 }
@@ -106,9 +108,10 @@ bool T3_LoadSettings()
 	DefaultConflict();	//fix having to open the control options to set conflicts;
 
 	REG_ReadBool((char*)"footprints", tomb3.footprints, 1);
+	REG_ReadBool((char*)"pickup_display", tomb3.pickup_display, 1);
 	REG_ReadLong((char*)"shadow_mode", (ulong&)tomb3.shadow_mode, SHADOW_PSX);
 	REG_ReadLong((char*)"bar_mode", (ulong&)tomb3.bar_mode, BAR_PSX);
-	REG_ReadBool((char*)"pickup_display", tomb3.pickup_display, 1);
+	REG_ReadLong((char*)"summon_rings", (ulong&)tomb3.summon_rings, SRINGS_PSX);
 
 	S_CDVolume(25 * Option_Music_Volume + 5);
 	S_SoundSetMasterVolume(6 * Option_SFX_Volume + 4);

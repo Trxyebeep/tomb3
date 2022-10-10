@@ -1154,13 +1154,25 @@ void DrawSummonRings()
 		ring->speed += 2;
 		phd_PushMatrix();
 		phd_TranslateAbs(ring->x, ring->y, ring->z);
+
 #ifdef TROYESTUFF
-		phd_RotZ(ring->zrot);	//horizontal instead of vertical
-		phd_RotX(ring->xrot);
-#else
-		phd_RotZ(ring->zrot << 4);
-		phd_RotX(ring->xrot << 4);
+		if (tomb3.summon_rings == SRINGS_PSX)
+		{
+			phd_RotZ(ring->zrot);
+			phd_RotX(ring->xrot);
+		}
+		else if (tomb3.summon_rings == SRINGS_IMPROVED_PC)
+		{
+			phd_RotZ(ring->zrot << 2);
+			phd_RotX(ring->xrot << 2);
+		}
+		else
 #endif
+		{
+			phd_RotZ(ring->zrot << 4);
+			phd_RotX(ring->xrot << 4);
+		}
+
 		rad = ring->radius;
 		vtx = ring->verts;
 		pXY = XY;
@@ -1361,24 +1373,52 @@ void DrawSummonRings()
 					v[2].ys = (float)y4;
 					v[2].zv = (float)z4;
 					v[2].ooz = f_persp / (float)z4 * f_oneopersp;
-#ifdef TROYESTUFF
-					r = (col4 >> 3) & 0x1F;
-					g = (col4 >> 11) & 0x1F;
-					b = (col4 >> 19) & 0x1F;
-					v[2].g = short(r << 10 | g << 5 | b);
 
-					tex.tpage = 0;	//make it a semitransparent quad, no sprite, like PSX.
-#else
-					tex.u1 = u1;
-					tex.u2 = u2;
-					tex.u3 = u1;
-					tex.u4 = u2;
-					tex.v1 = v1;
-					tex.v2 = v1;
-					tex.v3 = v2;
-					tex.v4 = v2;
-					tex.tpage = sprite->tpage;
+#ifdef TROYESTUFF
+					if (tomb3.summon_rings == SRINGS_PSX)
+					{
+						r = (col4 >> 3) & 0x1F;
+						g = (col4 >> 11) & 0x1F;
+						b = (col4 >> 19) & 0x1F;
+						v[2].g = short(r << 10 | g << 5 | b);
+
+						tex.tpage = 0;	//make it a semitransparent quad, no sprite, like PSX.
+					}
+					else if (tomb3.summon_rings == SRINGS_IMPROVED_PC)	//flip UVs
+					{
+						v[2].g = 0x4210;
+
+						tex.u1 = u1;
+						tex.v1 = v1;
+
+						tex.u2 = u2;
+						tex.v2 = v1;
+
+						tex.u3 = u2;
+						tex.v3 = v2;
+
+						tex.u4 = u1;
+						tex.v4 = v2;
+
+						tex.tpage = sprite->tpage;
+					}
+					else
+					{
+						v[2].g = v[0].g;	//originally uninitialized.
 #endif
+						tex.u1 = u1;
+						tex.u2 = u2;
+						tex.u3 = u1;
+						tex.u4 = u2;
+						tex.v1 = v1;
+						tex.v2 = v1;
+						tex.v3 = v2;
+						tex.v4 = v2;
+						tex.tpage = sprite->tpage;
+#ifdef TROYESTUFF
+					}
+#endif
+
 					tex.drawtype = 2;
 					HWI_InsertGT4_Sorted(&v[0], &v[1], &v[2], &v[3], &tex, MID_SORT, 1);
 				}
