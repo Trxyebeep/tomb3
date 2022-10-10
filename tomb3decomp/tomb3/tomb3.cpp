@@ -17,7 +17,7 @@ static void T3_InitSettings()
 	tomb3.pickup_display = 1;
 	tomb3.shadow_mode = SHADOW_PSX;
 	tomb3.bar_mode = BAR_PSX;
-	tomb3.summon_rings = SRINGS_PSX;
+	tomb3.sophia_rings = SRINGS_PSX;
 }
 
 void T3_SaveSettings()
@@ -61,7 +61,7 @@ void T3_SaveSettings()
 	REG_WriteBool((char*)"pickup_display", tomb3.pickup_display);
 	REG_WriteLong((char*)"shadow_mode", tomb3.shadow_mode);
 	REG_WriteLong((char*)"bar_mode", tomb3.bar_mode);
-	REG_WriteLong((char*)"summon_rings", tomb3.summon_rings);
+	REG_WriteLong((char*)"sophia_rings", tomb3.sophia_rings);
 
 	CloseRegistry();
 }
@@ -111,7 +111,7 @@ bool T3_LoadSettings()
 	REG_ReadBool((char*)"pickup_display", tomb3.pickup_display, 1);
 	REG_ReadLong((char*)"shadow_mode", (ulong&)tomb3.shadow_mode, SHADOW_PSX);
 	REG_ReadLong((char*)"bar_mode", (ulong&)tomb3.bar_mode, BAR_PSX);
-	REG_ReadLong((char*)"summon_rings", (ulong&)tomb3.summon_rings, SRINGS_PSX);
+	REG_ReadLong((char*)"sophia_rings", (ulong&)tomb3.sophia_rings, SRINGS_PSX);
 
 	S_CDVolume(25 * Option_Music_Volume + 5);
 	S_SoundSetMasterVolume(6 * Option_SFX_Volume + 4);

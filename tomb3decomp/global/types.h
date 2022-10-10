@@ -1830,7 +1830,7 @@ struct TOMB3_OPTIONS
 	bool pickup_display;
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum
-	long summon_rings;	//t3_summon_ring_style
+	long sophia_rings;	//t3_summon_ring_style
 };
 #endif
 #pragma pack(pop)

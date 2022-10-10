@@ -10,6 +10,7 @@ void DoRain();
 void DoSnow();
 void DrawExplosionRings();
 void DrawSummonRings();
+void DrawKnockBackRings();
 void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy);
 void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy);
 void DrawTonyBossShield(ITEM_INFO* item);

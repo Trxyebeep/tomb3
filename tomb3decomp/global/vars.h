@@ -402,6 +402,7 @@
 #define lara_last_points	ARRAY_(0x004C52D0, uchar, [14])
 #define lara_line_counts	ARRAY_(0x004C52E0, uchar, [6])
 #define ExpRings	ARRAY_(0x006D5D20, EXPLOSION_RING, [6])
+#define KBRings	ARRAY_(0x006D58C0, EXPLOSION_RING, [3])
 #define OldPicTexIndices	ARRAY_(0x006A1B80, long, [5])
 #define CurPicTexIndices	ARRAY_(0x006A1B98, long, [5])
 #define Inventory_ExtraData	ARRAY_(0x00626458, long, [8])
