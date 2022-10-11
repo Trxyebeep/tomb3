@@ -9,10 +9,11 @@
 #include "../game/control.h"
 #include "../game/lasers.h"
 #include "../game/triboss.h"
+#include "../game/londboss.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
+#include "output.h"
 #endif
-#include "../game/londboss.h"
 
 static RAINDROP raindrops[256];
 static SNOWFLAKE snowflakes[256];
@@ -493,8 +494,17 @@ void DoRain()
 				continue;
 			}
 
+#ifdef TROYESTUFF
+			if (tomb3.improved_rain)
+			{
+				tx = GetRenderScale(1);
+				rptr->yv = uchar((GetRandomDraw() & 7) + (tx * 8));
+			}
+			else
+#endif
+				rptr->yv = (GetRandomDraw() & 7) + 16;
+
 			rptr->xv = (GetRandomDraw() & 7) - 4;
-			rptr->yv = (GetRandomDraw() & 7) + 16;
 			rptr->zv = (GetRandomDraw() & 7) - 4;
 			rptr->life = 88 - (rptr->yv << 1);
 		}
@@ -554,9 +564,9 @@ void DoRain()
 		if (!rptr->x)
 			continue;
 
-		tx = rptr->x - lara_item->pos.x_pos - 2 * SmokeWindX;
+		tx = rptr->x - lara_item->pos.x_pos - (SmokeWindX << 2);
 		ty = rptr->y - (rptr->yv << 3) - lara_item->pos.y_pos;
-		tz = rptr->z - lara_item->pos.z_pos - 2 * SmokeWindZ;
+		tz = rptr->z - lara_item->pos.z_pos - (SmokeWindZ << 2);
 		pos.x = tx * phd_mxptr[M00] + ty * phd_mxptr[M01] + tz * phd_mxptr[M02] + phd_mxptr[M03];
 		pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
 		pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
@@ -599,7 +609,17 @@ void DoRain()
 		{
 			alpha = GlobalAlpha;
 			GlobalAlpha = 0x80000000;
-			HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, 0x20, 0x304060);
+
+#ifdef TROYESTUFF
+			if (tomb3.improved_rain)
+			{
+				HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, 0, 0x304060);
+				HWI_InsertLine_Sorted(x1 - phd_winxmin + 1, y1 - phd_winymin, x2 - phd_winxmin + 1, y2 - phd_winymin, z, 0, 0x304060);
+			}
+			else
+#endif
+				HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, 0x20, 0x304060);
+
 			GlobalAlpha = alpha;
 		}
 	}
