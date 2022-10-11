@@ -3488,7 +3488,120 @@ void DrawWillBossShield(ITEM_INFO* item)
 	phd_PopMatrix();
 }
 
+void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uchar cb)
+{
+	DISPLAYMODE* dm;
+	long* p;
+	long* c;
+	long w, h, dx, dy, dz, dist, nSegments, x, y, z, s;
+	long x1, y1, z1, x2, y2, z2, r1, g1, b1, r2, g2, b2, alpha, c1, c2;
+	long coords[600];
+	long cols[600];
+	long XYZ[3];
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w - 1;
+	h = dm->h - 1;
+	UpdateLaserShades();
+
+	dx = src->x - dest->x;
+	dz = src->z - dest->z;
+	dist = phd_sqrt(SQUARE(dx) + SQUARE(dz));
+	nSegments = dist >> 9;
+
+	if (nSegments < 8)
+		nSegments = 8;
+	else if (nSegments > 32)
+		nSegments = 32;
+
+	dx = (dest->x - src->x) / nSegments;
+	dy = (dest->y - src->y) / nSegments;
+	dz = (dest->z - src->z) / nSegments;
+	x = 0;
+	y = 0;
+	z = 0;
+	p = coords;
+	c = cols;
+
+	for (int i = 0; i < nSegments + 1; i++)
+	{
+		mCalcPoint(src->x + x, src->y + y, src->z + z, XYZ);
+		ProjectPCoord(XYZ[0], XYZ[1], XYZ[2], p, w >> 1, h >> 1, phd_persp);
+
+		p += 3;
+		x += dx;
+		y += dy;
+		z += dz;
+
+		if (!i || i == nSegments)
+		{
+			c[0] = 0;
+			c[1] = 0;
+			c[2] = 0;
+		}
+		else
+		{
+			s = LaserShades[i];
+			c[0] = cr == 0xFF ? s + 32 : s >> cr;
+			c[1] = cg == 0xFF ? s + 32 : s >> cg;
+			c[2] = cb == 0xFF ? s + 32 : s >> cb;
+		}
+		
+		c += 3;
+	}
+
+	p = coords;
+	c = cols;
+
+	x1 = *p++;
+	y1 = *p++;
+	z1 = *p++;
+	r1 = *c++;
+	g1 = *c++;
+	b1 = *c++;
+
+	for (int i = 0; i < nSegments; i++)
+	{
+		x2 = *p++;
+		y2 = *p++;
+		z2 = *p++;
+		r2 = *c++;
+		g2 = *c++;
+		b2 = *c++;
+		r2 <<= 1;
+		g2 <<= 1;
+		b2 <<= 1;
+
+		if (r2 > 255)
+			r2 = 255;
+
+		if (g2 > 255)
+			g2 = 255;
+
+		if (b2 > 255)
+			b2 = 255;
+
+		if (z1 > 32 && z2 > 32 && ClipLine(x1, y1, x2, y2, w, h))
+		{
+			alpha = GlobalAlpha;
+			GlobalAlpha = 0xB0000000;
+			c1 = (r1 << 16) | (g1 << 8) | b1;
+			c2 = (r2 << 16) | (g2 << 8) | b2;
+			HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z1 << W2V_SHIFT, c1, c2);
+			GlobalAlpha = alpha;
+		}
+
+		y1 = y2;
+		x1 = x2;
+		z1 = z2;
+		r1 = r2;
+		g1 = g2;
+		b1 = b2;
+	}
+}
+
 #ifdef TROYESTUFF
+//New effects
 static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, short c)
 {
 	float zv, zT;
@@ -3723,4 +3836,5 @@ void inject_draweffects(bool replace)
 	INJECT(0x0047EC30, DrawTribeBossShield, replace);
 	INJECT(0x00479C20, DrawLondonBossShield, replace);
 	INJECT(0x0047FC30, DrawWillBossShield, replace);
+	INJECT(0x00479810, S_DrawLaserBeam, replace);
 }
