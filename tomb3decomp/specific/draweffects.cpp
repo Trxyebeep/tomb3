@@ -3752,8 +3752,19 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 				if (c2)
 					c1 = c2;
 
+				s = c1;
+
+				if (!i)
+					c1 = 0;
+
 				ProjectPHDVBuf(&v[0], float(view[0].x << W2V_SHIFT), float(view[0].y << W2V_SHIFT), float(view[0].z << W2V_SHIFT), (short)c1);
 				ProjectPHDVBuf(&v[1], float(view[0].x << W2V_SHIFT), float(view[0].y << W2V_SHIFT), float(view[0].z << W2V_SHIFT), (short)c1);
+
+				if (!i)
+					c1 = s;
+				else if (i == nSegments - 1)
+					c1 = 0;
+
 				ProjectPHDVBuf(&v[2], float(view[1].x << W2V_SHIFT), float(view[1].y << W2V_SHIFT), float(view[1].z << W2V_SHIFT), (short)c1);
 				ProjectPHDVBuf(&v[3], float(view[1].x << W2V_SHIFT), float(view[1].y << W2V_SHIFT), float(view[1].z << W2V_SHIFT), (short)c1);
 
