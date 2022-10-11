@@ -18,6 +18,123 @@
 static RAINDROP raindrops[256];
 static SNOWFLAKE snowflakes[256];
 
+#ifdef TROYESTUFF
+static void ProjectPHDVBuf(PHD_VBUF* v, float xv, float yv, float zv, short c)
+{
+	float z, zT;
+	char clipFlag;
+
+	v->xv = xv;
+	v->yv = yv;
+	z = zv;
+	v->z = (long)z;
+
+	if (v->z < phd_znear)
+	{
+		v->zv = z;
+		clipFlag = -128;
+	}
+	else
+	{
+		if (v->z < phd_zfar)
+		{
+			v->zv = z;
+			zT = ZTable[((v->z >> 14) << 1)];
+			v->xs = v->xv * zT + f_centerx;
+			v->ys = v->yv * zT + f_centery;
+			v->ooz = ZTable[((v->z >> 14) << 1) + 1];
+		}
+		else
+		{
+			v->zv = f_zfar;
+			z = f_persp / z;
+			v->xs = v->xv * z + f_centerx;
+			v->ys = v->yv * z + f_centery;
+			v->ooz = z * f_oneopersp;
+		}
+
+		clipFlag = 0;
+
+		if (v->xs < phd_leftfloat)
+			clipFlag++;
+		else if (v->xs > phd_rightfloat)
+			clipFlag += 2;
+
+		if (v->ys < phd_topfloat)
+			clipFlag += 4;
+		else if (v->ys > phd_bottomfloat)
+			clipFlag += 8;
+	}
+
+	v->clip = clipFlag;
+	v->g = c;
+}
+
+static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, short c)
+{
+	float zv, zT;
+	char clipFlag;
+
+	m00 = float(phd_mxptr[M00]);
+	m01 = float(phd_mxptr[M01]);
+	m02 = float(phd_mxptr[M02]);
+	m03 = float(phd_mxptr[M03]);
+	m10 = float(phd_mxptr[M10]);
+	m11 = float(phd_mxptr[M11]);
+	m12 = float(phd_mxptr[M12]);
+	m13 = float(phd_mxptr[M13]);
+	m20 = float(phd_mxptr[M20]);
+	m21 = float(phd_mxptr[M21]);
+	m22 = float(phd_mxptr[M22]);
+	m23 = float(phd_mxptr[M23]);
+
+	v->xv = m00 * pos->x + m01 * pos->y + m02 * pos->z + m03;
+	v->yv = m10 * pos->x + m11 * pos->y + m12 * pos->z + m13;
+	zv = m20 * pos->x + m21 * pos->y + m22 * pos->z + m23;
+	v->z = (long)zv;
+
+	if (v->z < phd_znear)
+	{
+		v->zv = zv;
+		clipFlag = -128;
+	}
+	else
+	{
+		if (v->z < phd_zfar)
+		{
+			v->zv = zv;
+			zT = ZTable[((v->z >> 14) << 1)];
+			v->xs = v->xv * zT + f_centerx;
+			v->ys = v->yv * zT + f_centery;
+			v->ooz = ZTable[((v->z >> 14) << 1) + 1];
+		}
+		else
+		{
+			v->zv = f_zfar;
+			zv = f_persp / zv;
+			v->xs = v->xv * zv + f_centerx;
+			v->ys = v->yv * zv + f_centery;
+			v->ooz = zv * f_oneopersp;
+		}
+
+		clipFlag = 0;
+
+		if (v->xs < phd_leftfloat)
+			clipFlag++;
+		else if (v->xs > phd_rightfloat)
+			clipFlag += 2;
+
+		if (v->ys < phd_topfloat)
+			clipFlag += 4;
+		else if (v->ys > phd_bottomfloat)
+			clipFlag += 8;
+	}
+
+	v->clip = clipFlag;
+	v->g = c << 10 | c << 5 | c;
+}
+#endif
+
 void LaraElectricDeath(long lr, ITEM_INFO* item)
 {
 	DISPLAYMODE* dm;
@@ -3491,6 +3608,13 @@ void DrawWillBossShield(ITEM_INFO* item)
 void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uchar cb)
 {
 	DISPLAYMODE* dm;
+#ifdef TROYESTUFF
+	PHD_VBUF v[4];
+	PHDTEXTURESTRUCT tex;
+	PHD_VECTOR view[2];
+	long* vp;
+	long vc[600];
+#endif
 	long* p;
 	long* c;
 	long w, h, dx, dy, dz, dist, nSegments, x, y, z, s;
@@ -3522,18 +3646,31 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 	z = 0;
 	p = coords;
 	c = cols;
+#ifdef TROYESTUFF
+	vp = vc;
+#endif
 
 	for (int i = 0; i < nSegments + 1; i++)
 	{
 		mCalcPoint(src->x + x, src->y + y, src->z + z, XYZ);
 		ProjectPCoord(XYZ[0], XYZ[1], XYZ[2], p, w >> 1, h >> 1, phd_persp);
+#ifdef TROYESTUFF
+		vp[0] = XYZ[0];
+		vp[1] = XYZ[1];
+		vp[2] = XYZ[2];
+		vp += 3;
+#endif
 
 		p += 3;
 		x += dx;
 		y += dy;
 		z += dz;
 
+#ifdef TROYESTUFF
+		if ((!i || i == nSegments) && !tomb3.improved_lasers)
+#else
 		if (!i || i == nSegments)
+#endif
 		{
 			c[0] = 0;
 			c[1] = 0;
@@ -3552,6 +3689,9 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 
 	p = coords;
 	c = cols;
+#ifdef TROYESTUFF
+	vp = vc;
+#endif
 
 	x1 = *p++;
 	y1 = *p++;
@@ -3559,6 +3699,11 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 	r1 = *c++;
 	g1 = *c++;
 	b1 = *c++;
+#ifdef TROYESTUFF
+	view[0].x = *vp++;
+	view[0].y = *vp++;
+	view[0].z = *vp++;
+#endif
 
 	for (int i = 0; i < nSegments; i++)
 	{
@@ -3568,27 +3713,69 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 		r2 = *c++;
 		g2 = *c++;
 		b2 = *c++;
-		r2 <<= 1;
-		g2 <<= 1;
-		b2 <<= 1;
+#ifdef TROYESTUFF
+		view[1].x = *vp++;
+		view[1].y = *vp++;
+		view[1].z = *vp++;
 
-		if (r2 > 255)
-			r2 = 255;
+		if (!tomb3.improved_lasers)
+#endif
+		{
+			r2 <<= 1;
+			g2 <<= 1;
+			b2 <<= 1;
 
-		if (g2 > 255)
-			g2 = 255;
+			if (r2 > 255)
+				r2 = 255;
 
-		if (b2 > 255)
-			b2 = 255;
+			if (g2 > 255)
+				g2 = 255;
+
+			if (b2 > 255)
+				b2 = 255;
+		}
 
 		if (z1 > 32 && z2 > 32 && ClipLine(x1, y1, x2, y2, w, h))
 		{
-			alpha = GlobalAlpha;
-			GlobalAlpha = 0xB0000000;
-			c1 = (r1 << 16) | (g1 << 8) | b1;
-			c2 = (r2 << 16) | (g2 << 8) | b2;
-			HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z1 << W2V_SHIFT, c1, c2);
-			GlobalAlpha = alpha;
+#ifdef TROYESTUFF
+			if (tomb3.improved_lasers)
+			{
+				r1 >>= 3;
+				r2 >>= 3;
+				g1 >>= 3;
+				g2 >>= 3;
+				b1 >>= 3;
+				b2 >>= 3;
+				c1 = (r1 << 10) | (g1 << 5) | b1;
+				c2 = (r2 << 10) | (g2 << 5) | b2;
+
+				if (c2)
+					c1 = c2;
+
+				ProjectPHDVBuf(&v[0], float(view[0].x << W2V_SHIFT), float(view[0].y << W2V_SHIFT), float(view[0].z << W2V_SHIFT), (short)c1);
+				ProjectPHDVBuf(&v[1], float(view[0].x << W2V_SHIFT), float(view[0].y << W2V_SHIFT), float(view[0].z << W2V_SHIFT), (short)c1);
+				ProjectPHDVBuf(&v[2], float(view[1].x << W2V_SHIFT), float(view[1].y << W2V_SHIFT), float(view[1].z << W2V_SHIFT), (short)c1);
+				ProjectPHDVBuf(&v[3], float(view[1].x << W2V_SHIFT), float(view[1].y << W2V_SHIFT), float(view[1].z << W2V_SHIFT), (short)c1);
+
+				s = GetRenderScale(2);
+
+				v[1].ys -= s;
+				v[3].ys -= s;
+				memset(&tex, 0, sizeof(tex));
+				tex.drawtype = 2;
+				HWI_InsertGT4_Sorted(&v[0], &v[1], &v[3], &v[2], &tex, MID_SORT, 1);
+			}
+			else
+#endif
+			{
+				c1 = (r1 << 16) | (g1 << 8) | b1;
+				c2 = (r2 << 16) | (g2 << 8) | b2;
+
+				alpha = GlobalAlpha;
+				GlobalAlpha = 0xB0000000;
+				HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z1 << W2V_SHIFT, c1, c2);
+				GlobalAlpha = alpha;
+			}
 		}
 
 		y1 = y2;
@@ -3597,75 +3784,16 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 		r1 = r2;
 		g1 = g2;
 		b1 = b2;
+#ifdef TROYESTUFF
+		view[0].x = view[1].x;
+		view[0].y = view[1].y;
+		view[0].z = view[1].z;
+#endif
 	}
 }
 
 #ifdef TROYESTUFF
 //New effects
-static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, short c)
-{
-	float zv, zT;
-	char clipFlag;
-
-	m00 = float(phd_mxptr[M00]);
-	m01 = float(phd_mxptr[M01]);
-	m02 = float(phd_mxptr[M02]);
-	m03 = float(phd_mxptr[M03]);
-	m10 = float(phd_mxptr[M10]);
-	m11 = float(phd_mxptr[M11]);
-	m12 = float(phd_mxptr[M12]);
-	m13 = float(phd_mxptr[M13]);
-	m20 = float(phd_mxptr[M20]);
-	m21 = float(phd_mxptr[M21]);
-	m22 = float(phd_mxptr[M22]);
-	m23 = float(phd_mxptr[M23]);
-
-	v->xv = m00 * pos->x + m01 * pos->y + m02 * pos->z + m03;
-	v->yv = m10 * pos->x + m11 * pos->y + m12 * pos->z + m13;
-	zv = m20 * pos->x + m21 * pos->y + m22 * pos->z + m23;
-	v->z = (long)zv;
-
-	if (v->z < phd_znear)
-	{
-		v->zv = zv;
-		clipFlag = -128;
-	}
-	else
-	{
-		if (v->z < phd_zfar)
-		{
-			v->zv = zv;
-			zT = ZTable[((v->z >> 14) << 1)];
-			v->xs = v->xv * zT + f_centerx;
-			v->ys = v->yv * zT + f_centery;
-			v->ooz = ZTable[((v->z >> 14) << 1) + 1];
-		}
-		else
-		{
-			v->zv = f_zfar;
-			zv = f_persp / zv;
-			v->xs = v->xv * zv + f_centerx;
-			v->ys = v->yv * zv + f_centery;
-			v->ooz = zv * f_oneopersp;
-		}
-
-		clipFlag = 0;
-
-		if (v->xs < phd_leftfloat)
-			clipFlag++;
-		else if (v->xs > phd_rightfloat)
-			clipFlag += 2;
-
-		if (v->ys < phd_topfloat)
-			clipFlag += 4;
-		else if (v->ys > phd_bottomfloat)
-			clipFlag += 8;
-	}
-
-	v->clip = clipFlag;
-	v->g = c << 10 | c << 5 | c;
-}
-
 void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 {
 	PHDSPRITESTRUCT* sprite;

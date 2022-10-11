@@ -1829,6 +1829,7 @@ struct TOMB3_OPTIONS
 	bool footprints;
 	bool pickup_display;
 	bool improved_rain;
+	bool improved_lasers;
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum
 	long sophia_rings;	//t3_summon_ring_style
