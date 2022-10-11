@@ -466,6 +466,10 @@ void S_DrawWakeFX(ITEM_INFO* item)
 void DoRain()
 {
 	RAINDROP* rptr;
+#ifdef TROYESTUFF
+	PHDTEXTURESTRUCT tex;
+	PHD_VBUF v[4];
+#endif
 	PHD_VECTOR pos;
 	long* pZ;
 	short* pXY;
@@ -607,20 +611,46 @@ void DoRain()
 
 		if (ClipLine(x1, y1, x2, y2, 0, 0))
 		{
-			alpha = GlobalAlpha;
-			GlobalAlpha = 0x80000000;
-
 #ifdef TROYESTUFF
 			if (tomb3.improved_rain)
 			{
-				HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, 0, 0x304060);
-				HWI_InsertLine_Sorted(x1 - phd_winxmin + 1, y1 - phd_winymin, x2 - phd_winxmin + 1, y2 - phd_winymin, z, 0, 0x304060);
+				rnd = GetRenderScale(1);	//width
+
+				v[0].xs = (float)x1;
+				v[0].ys = (float)y1;
+				v[0].g = 0;
+
+				v[1].xs = (float)x1 + rnd;
+				v[1].ys = (float)y1;
+				v[1].g = 0;
+
+				v[2].xs = (float)x2 + rnd;
+				v[2].ys = (float)y2;
+				v[2].g = (12 << 10) | (16 << 5) | 24;
+
+				v[3].xs = (float)x2;
+				v[3].ys = (float)y2;
+				v[3].g = v[2].g;
+
+				for (int i = 0; i < 4; i++)
+				{
+					v[i].zv = (float)z;
+					v[i].ooz = f_persp / (float)z * f_oneopersp;
+					v[i].clip = 0;
+				}
+				
+				memset(&tex, 0, sizeof(tex));
+				tex.drawtype = 2;
+				HWI_InsertGT4_Sorted(&v[0], &v[1], &v[2], &v[3], &tex, MID_SORT, 1);
 			}
 			else
 #endif
+			{
+				alpha = GlobalAlpha;
+				GlobalAlpha = 0x80000000;
 				HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, 0x20, 0x304060);
-
-			GlobalAlpha = alpha;
+				GlobalAlpha = alpha;
+			}
 		}
 	}
 
