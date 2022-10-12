@@ -1932,8 +1932,8 @@ void DrawRooms(short current_room)
 #ifdef RANDO_STUFF
 		if (rando.levels[RANDOLEVEL].hasRain)
 #elif TROYESTUFF
-		if (CurrentLevel == LV_JUNGLE || CurrentLevel == LV_ROOFTOPS || CurrentLevel == LV_OFFICE ||
-			CurrentLevel == LV_QUADBIKE || CurrentLevel == LV_STPAULS || CurrentLevel == LV_TOWER)
+		if (CurrentLevel == LV_JUNGLE || CurrentLevel == LV_QUADBIKE || CurrentLevel == LV_ROOFTOPS ||
+			CurrentLevel == LV_OFFICE || CurrentLevel == LV_STPAULS)
 #else
 		if (CurrentLevel == LV_JUNGLE || CurrentLevel == LV_ROOFTOPS)
 #endif
@@ -1941,7 +1941,9 @@ void DrawRooms(short current_room)
 
 #ifdef TROYESTUFF
 		S_DrawFootPrints();
-		DoUwEffect();
+
+		if (CurrentLevel == LV_RAPIDS || CurrentLevel == LV_SEWER || CurrentLevel == LV_TOWER)
+			DoUwEffect();
 #endif
 	}
 
