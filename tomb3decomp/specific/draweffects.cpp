@@ -938,6 +938,10 @@ void DoSnow()
 
 		size = (size * 0x2AAB) >> 15;
 
+#ifdef TROYESTUFF
+		size = GetRenderScale(size);
+#endif
+
 		v[0].xs = float(x + size);
 		v[0].ys = float(y - (size << 1));
 		v[0].zv = (float)z;
