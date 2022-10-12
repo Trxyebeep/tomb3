@@ -1878,7 +1878,11 @@ void DrawRooms(short current_room)
 		}
 	}
 	else
+#ifdef TROYESTUFF
+		S_InitialisePolyList(1);	//fill the back buffer with black, fixes untextured areas showing previous textures
+#else
 		S_InitialisePolyList(0);
+#endif
 
 	obj = &objects[LARA];
 
