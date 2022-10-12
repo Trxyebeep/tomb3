@@ -4291,6 +4291,7 @@ void DoUwEffect()
 			size = 16;
 
 		size = (size * 0x2AAB) >> 15;
+		size = GetRenderScale(size) >> 1;
 
 		v[0].xs = float(x + size);
 		v[0].ys = float(y - (size << 1));
