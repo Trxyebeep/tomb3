@@ -1573,6 +1573,19 @@ tomb3decomp progress.
 0x00480D40		DS_IsSoundEnabled
 
 
+		specific/dxdialog.cpp
+
+0x00496BB0		DXUserDialog
+0x00496C20		DXSetupDlgProc
+0x00497290		DXCheckMMXTechnology
+0x00497530		DXInitDialogBox
+0x00497630		DXInitDSAdapters
+0x00497700		DXInitJoystickAdapter
+0x004977D0		DXInitD3DDrivers
+0x00497C20		DXInitVideoModes
+0x00497FE0		DXInitTextures
+
+
 		specific/dxshell.cpp
 
 0x0048EBB0		DXGetDeviceInfo
