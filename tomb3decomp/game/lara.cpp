@@ -136,12 +136,12 @@ long LaraLandedBad(ITEM_INFO* item, COLL_INFO* coll)
 
 	room_number = item->room_number;
 	y = item->pos.y_pos;
-	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
-	h = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
-	item->pos.y_pos = y;
-	item->floor = y;
+	floor = GetFloor(item->pos.x_pos, y, item->pos.z_pos, &room_number);
+	h = GetHeight(floor, item->pos.x_pos, y - 762, item->pos.z_pos);
+	item->pos.y_pos = h;
+	item->floor = h;
 
-	if (abs(y - item->pos.y_pos) > 256)
+	if (abs(y - h) > 256)
 		item->pos.y_pos = y;
 
 	LaraOnPad = 0;
@@ -159,7 +159,7 @@ long LaraLandedBad(ITEM_INFO* item, COLL_INFO* coll)
 	if (landspeed > 14)
 		item->hit_points = -1;
 	else
-		item->hit_points += short(-1000 * landspeed * landspeed / 196);
+		item->hit_points += short(-1000 * SQUARE(landspeed) / 196);
 
 	return item->hit_points <= 0;
 }
