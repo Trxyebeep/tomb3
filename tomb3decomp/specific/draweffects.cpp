@@ -4184,6 +4184,12 @@ void DoUwEffect()
 	{
 		p = &uwparts[i];
 
+		if (!tomb3.uwdust)
+		{
+			p->x = 0;
+			continue;
+		}
+
 		if (!p->x && num_alive < 16)
 		{
 			num_alive++;

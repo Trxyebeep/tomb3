@@ -17,6 +17,7 @@ static void T3_InitSettings()
 	tomb3.pickup_display = 1;
 	tomb3.improved_rain = 1;
 	tomb3.improved_lasers = 1;
+	tomb3.uwdust = 1;
 	tomb3.shadow_mode = SHADOW_PSX;
 	tomb3.bar_mode = BAR_PSX;
 	tomb3.sophia_rings = SRINGS_PSX;
@@ -63,6 +64,7 @@ void T3_SaveSettings()
 	REG_WriteBool((char*)"pickup_display", tomb3.pickup_display);
 	REG_WriteBool((char*)"improved_rain", tomb3.improved_rain);
 	REG_WriteBool((char*)"improved_lasers", tomb3.improved_lasers);
+	REG_WriteBool((char*)"uwdust", tomb3.uwdust);
 	REG_WriteLong((char*)"shadow_mode", tomb3.shadow_mode);
 	REG_WriteLong((char*)"bar_mode", tomb3.bar_mode);
 	REG_WriteLong((char*)"sophia_rings", tomb3.sophia_rings);
@@ -115,6 +117,7 @@ bool T3_LoadSettings()
 	REG_ReadBool((char*)"pickup_display", tomb3.pickup_display, 1);
 	REG_ReadBool((char*)"improved_rain", tomb3.improved_rain, 1);
 	REG_ReadBool((char*)"improved_lasers", tomb3.improved_lasers, 1);
+	REG_ReadBool((char*)"uwdust", tomb3.uwdust, 1);
 	REG_ReadLong((char*)"shadow_mode", (ulong&)tomb3.shadow_mode, SHADOW_PSX);
 	REG_ReadLong((char*)"bar_mode", (ulong&)tomb3.bar_mode, BAR_PSX);
 	REG_ReadLong((char*)"sophia_rings", (ulong&)tomb3.sophia_rings, SRINGS_PSX);
