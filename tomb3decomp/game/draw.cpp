@@ -1941,6 +1941,7 @@ void DrawRooms(short current_room)
 
 #ifdef TROYESTUFF
 		S_DrawFootPrints();
+		DoUwEffect();
 #endif
 	}
 

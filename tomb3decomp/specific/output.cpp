@@ -483,9 +483,9 @@ void mCalcPoint(long x, long y, long z, long* result)
 	x -= w2v_matrix[M03];
 	y -= w2v_matrix[M13];
 	z -= w2v_matrix[M23];
-	result[0] = (w2v_matrix[M00] * x + w2v_matrix[M01] * y + w2v_matrix[M02] * z) >> 14;
-	result[1] = (w2v_matrix[M10] * x + w2v_matrix[M11] * y + w2v_matrix[M12] * z) >> 14;
-	result[2] = (w2v_matrix[M20] * x + w2v_matrix[M21] * y + w2v_matrix[M22] * z) >> 14;
+	result[0] = (w2v_matrix[M00] * x + w2v_matrix[M01] * y + w2v_matrix[M02] * z) >> W2V_SHIFT;
+	result[1] = (w2v_matrix[M10] * x + w2v_matrix[M11] * y + w2v_matrix[M12] * z) >> W2V_SHIFT;
+	result[2] = (w2v_matrix[M20] * x + w2v_matrix[M21] * y + w2v_matrix[M22] * z) >> W2V_SHIFT;
 }
 
 void ProjectPCoord(long x, long y, long z, long* result, long cx, long cy, long fov)

@@ -4158,6 +4158,214 @@ void S_DrawFootPrints()
 			HWI_InsertGT3_Sorted(&v[0], &v[1], &v[2], &tex, &tex.u1, &tex.u2, &tex.u3, MID_SORT, 1);
 	}
 }
+
+static RAINDROP uwparts[256];
+
+void DoUwEffect()
+{
+	DISPLAYMODE* dm;
+	RAINDROP* p;
+	PHDSPRITESTRUCT* sprite;
+	PHDTEXTURESTRUCT tex;
+	PHD_VECTOR pos;
+	PHD_VBUF v[4];
+	float zv;
+	long w, h, rad, ang, x, y, z, tx, ty, tz, size;
+	ushort u1, v1, u2, v2;
+	short c;
+	char clipFlag;
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w;
+	h = dm->h;
+	bBlueEffect = 0;
+
+	for (int i = 0, num_alive = 0; i < 256; i++)
+	{
+		p = &uwparts[i];
+
+		if (!p->x && num_alive < 16)
+		{
+			num_alive++;
+			rad = GetRandomDraw() & 0xFFF;
+			ang = GetRandomDraw() & 0x1FFE;
+			x = (rad * rcossin_tbl[ang]) >> 12;
+			y = (GetRandomDraw() & 0x7FF) - 1024;
+			z = (rad * rcossin_tbl[ang + 1]) >> 12;
+			p->x = lara_item->pos.x_pos + x;
+			p->y = lara_item->pos.y_pos + y;
+			p->z = lara_item->pos.z_pos + z;
+
+			if (IsRoomOutside(p->x, p->y, p->z) < 0 || !(room[IsRoomOutsideNo].flags & ROOM_UNDERWATER))
+			{
+				p->x = 0;
+				continue;
+			}
+
+			p->life = (GetRandomDraw() & 7) + 16;
+			p->xv = GetRandomDraw() & 3;
+
+			if (p->xv == 2)
+				p->xv = -1;
+
+			p->yv = ((GetRandomDraw() & 7) + 8) << 3;
+			p->zv = GetRandomDraw() & 3;
+
+			if (p->zv == 2)
+				p->zv = -1;
+		}
+
+		p->x += p->xv;
+		p->y += (p->yv & ~7) >> 6;
+		p->z += p->zv;
+
+		if (!p->life)
+		{
+			p->x = 0;
+			continue;
+		}
+
+		p->life--;
+
+		if ((p->yv & 7) < 7)
+			p->yv++;
+	}
+
+	sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 17];
+	u1 = (sprite->offset << 8) & 0xFF00;
+	v1 = sprite->offset & 0xFF00;
+	u2 = ushort(u1 + sprite->width - App.nUVAdd);
+	v2 = ushort(v1 + sprite->height - App.nUVAdd);
+	u1 += (ushort)App.nUVAdd;
+	v1 += (ushort)App.nUVAdd;
+
+	phd_PushMatrix();
+	phd_TranslateAbs(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos);
+
+	for (int i = 0; i < 256; i++)
+	{
+		p = &uwparts[i];
+
+		if (!p->x)
+			continue;
+
+		tx = p->x - lara_item->pos.x_pos;
+		ty = p->y - lara_item->pos.y_pos;
+		tz = p->z - lara_item->pos.z_pos;
+		pos.x = tx * phd_mxptr[M00] + ty * phd_mxptr[M01] + tz * phd_mxptr[M02] + phd_mxptr[M03];
+		pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
+		pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
+		zv = f_persp / (float)pos.z;
+		pos.x = short(float(pos.x * zv + f_centerx));
+		pos.y = short(float(pos.y * zv + f_centery));
+
+		x = pos.x;
+		y = pos.y;
+		z = pos.z;
+
+		if ((z >> 16) < 32 ||
+			x < 0 || x > w ||
+			y < 0 || y > h)
+		{
+			if (p->life > 16)
+				p->life = 16;
+
+			continue;
+		}
+
+		size = phd_persp * (p->yv >> 3) / (z >> 16);
+
+		if (size < 4)
+			size = 4;
+		else if (size > 16)
+			size = 16;
+
+		size = (size * 0x2AAB) >> 15;
+
+		v[0].xs = float(x + size);
+		v[0].ys = float(y - (size << 1));
+		v[0].zv = (float)z;
+		v[0].ooz = f_oneopersp * zv;
+		v[0].u = u2;
+		v[0].v = v1;
+		clipFlag = 0;
+
+		if (v[0].xs < phd_winxmin)
+			clipFlag++;
+		else if (v[0].xs > phd_winxmin + phd_winxmax)
+			clipFlag += 2;
+
+		if (v[0].ys < phd_winymin)
+			clipFlag += 4;
+		else if (v[0].ys > phd_winymin + phd_winymax)
+			clipFlag += 8;
+
+		v[0].clip = clipFlag;
+
+		v[1].xs = float(x + size);
+		v[1].ys = float(y + size);
+		v[1].zv = (float)z;
+		v[1].ooz = f_oneopersp * zv;
+		v[1].u = u2;
+		v[1].v = v2;
+		clipFlag = 0;
+
+		if (v[1].xs < phd_winxmin)
+			clipFlag++;
+		else if (v[1].xs > phd_winxmin + phd_winxmax)
+			clipFlag += 2;
+
+		if (v[1].ys < phd_winymin)
+			clipFlag += 4;
+		else if (v[1].ys > phd_winymin + phd_winymax)
+			clipFlag += 8;
+
+		v[1].clip = clipFlag;
+
+		v[2].xs = float(x - (size << 1));
+		v[2].ys = float(y + size);
+		v[2].zv = (float)z;
+		v[2].ooz = f_oneopersp * zv;
+		v[2].u = u1;
+		v[2].v = v2;
+		clipFlag = 0;
+
+		if (v[2].xs < phd_winxmin)
+			clipFlag++;
+		else if (v[2].xs > phd_winxmin + phd_winxmax)
+			clipFlag += 2;
+
+		if (v[2].ys < phd_winymin)
+			clipFlag += 4;
+		else if (v[2].ys > phd_winymin + phd_winymax)
+			clipFlag += 8;
+
+		v[2].clip = clipFlag;
+
+		tex.drawtype = 2;
+		tex.tpage = sprite->tpage;
+
+		if ((p->yv & 7) < 7)
+		{
+			c = p->yv & 7;
+			c = c << 10 | c << 5 | c;
+		}
+		else if (p->life > 18)
+			c = 0x3DEF;
+		else
+		{
+			c = p->life;
+			c = c << 10 | c << 5 | c;
+		}
+
+		v[0].g = c;
+		v[1].g = c;
+		v[2].g = c;
+		HWI_InsertGT3_Poly(&v[0], &v[1], &v[2], &tex, &v[0].u, &v[1].u, &v[2].u, MID_SORT, 0);
+	}
+
+	phd_PopMatrix();
+}
 #endif
 
 void inject_draweffects(bool replace)
