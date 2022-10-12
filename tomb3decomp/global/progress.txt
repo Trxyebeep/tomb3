@@ -1494,8 +1494,7 @@ tomb3decomp progress.
 0x004B3950	+	DD_CreateSurface
 0x004B39A0	+	DD_EnsureSurfaceAvailable
 0x004B39F0	+	DD_ClearSurface
-0x004900B0		DD_GetSurfaceDesc
-0x004900C0		DD_SurfBlt
+
 
 		specific/DI.cpp
 
@@ -1530,7 +1529,7 @@ tomb3decomp progress.
 
 		specific/draweffects.cpp
 
-0x00476420		S_DrawBat
+0x00476420	+	S_DrawBat
 0x00476A30		S_DrawDarts
 0x00476CA0	+	DrawExplosionRings
 0x004775C0		S_DrawFish
@@ -1595,6 +1594,8 @@ tomb3decomp progress.
 0x0048FF80		DXAddAttachedSurface
 0x0048FFA0		DXCreateDirect3DDevice
 0x0048FFC0		DXCreateViewPort
+0x004900B0		DXGetSurfaceDesc
+0x004900C0		DXSurfBlt
 0x004B3550		DXSwitchVideoMode
 
 

@@ -438,6 +438,7 @@
 #define inv_levelselect_list	ARRAY_(0x004C6C2C, INVENTORY_ITEM*, [1])
 #define GlobeLevelComplete	ARRAY_(0x006D62C0, uchar, [6])
 #define LaserShades	ARRAY_(0x006D6160, uchar, [32])
+#define bats	ARRAY_(0x006DB8A0, BAT_STRUCT, [32])
 
 /*constants*/
 #define NO_HEIGHT -32512

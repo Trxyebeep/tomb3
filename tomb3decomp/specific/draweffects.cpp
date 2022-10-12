@@ -15,6 +15,17 @@
 #include "output.h"
 #endif
 
+static short BatMesh[5][3] =
+{
+	{-192, 0, -48},
+	{-192, 0, 48},
+	{96, 0, 0},
+	{-144, 0, -192},
+	{-144, 0, 192}
+};
+
+static uchar BatLinks[9] = { 0, 2, 4, 6, 0, 4, 2, 8, 4 };
+
 static RAINDROP raindrops[256];
 static SNOWFLAKE snowflakes[256];
 
@@ -3803,6 +3814,196 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 	}
 }
 
+void S_DrawBat()
+{
+	DISPLAYMODE* dm;
+	BAT_STRUCT* bat;
+	PHDSPRITESTRUCT* sprite;
+	PHD_VECTOR pos;
+	PHD_VBUF v[4];
+	PHDTEXTURESTRUCT tex;
+	long* pZ;
+	short* pXY;
+	uchar* links;
+	float zv;
+	long w, h, x, y, z;
+	long x1, y1, z1, x2, y2, z2, x3, y3, z3;
+	long Z[10];
+	ushort u1, v1, u2, v2;
+	short XY[10];
+	char clipFlag;
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w;
+	h = dm->h;
+	pXY = XY;
+	pZ = Z;
+
+	for (int i = 0; i < 32; i++)
+	{
+		bat = &bats[i];
+
+		if (!(bat->flags & 1))
+			continue;
+
+		phd_PushMatrix();
+		phd_TranslateAbs(bat->x, bat->y, bat->z);
+		phd_RotY(bat->angle << 4);
+
+		for (int j = 0; j < 5; j++)
+		{
+			x = BatMesh[j][0];
+
+			if (j < 3)
+				y = (rcossin_tbl[((bat->WingYoff - 32) & 0x3F) << 7] >> 8) + BatMesh[j][1] - 512;
+			else
+				y = (rcossin_tbl[bat->WingYoff << 7] >> 4) + BatMesh[j][1] - 512;
+
+			z = BatMesh[j][3];
+
+			pos.x = phd_mxptr[M00] * x + phd_mxptr[M01] * y + phd_mxptr[M02] * z + phd_mxptr[M03];
+			pos.y = phd_mxptr[M10] * x + phd_mxptr[M11] * y + phd_mxptr[M12] * z + phd_mxptr[M13];
+			pos.z = phd_mxptr[M20] * x + phd_mxptr[M21] * y + phd_mxptr[M22] * z + phd_mxptr[M23];
+
+			zv = f_persp / (float)pos.z;
+			pos.x = short(float(pos.x * zv + f_centerx));
+			pos.y = short(float(pos.y * zv + f_centery));
+
+			pXY[0] = (short)pos.x;
+			pXY[1] = (short)pos.y;
+			pZ[0] = pos.z;
+			pXY += 2;
+			pZ += 2;	//?
+		}
+
+		phd_PopMatrix();
+		pXY = XY;
+		pZ = Z;
+		links = BatLinks;
+
+		for (int j = 0; j < 3; j++)
+		{
+			x1 = pXY[links[0]];
+			y1 = pXY[links[0] + 1];
+			z1 = pZ[links[1]];
+			links++;
+
+			x2 = pXY[links[0]];
+			y2 = pXY[links[0] + 1];
+			z2 = pZ[links[1]];
+			links++;
+
+			x3 = pXY[links[0]];
+			y3 = pXY[links[0] + 1];
+			z3 = pZ[links[1]];
+			links++;
+
+			if (z1 >> W2V_SHIFT < 32 || z2 >> W2V_SHIFT < 32 || z3 >> W2V_SHIFT < 32 ||
+				(x1 < 0 && x2 < 0 && x3 < 0) || (x1 >= w && x2 >= w && x3 >= w) ||
+				(y1 < 0 && y2 < 0 && y3 < 0) || (y1 >= h && y2 >= h && y3 >= h))
+				continue;
+
+			clipFlag = 0;
+
+			if (x1 < phd_winxmin)
+				clipFlag++;
+			else if (x1 > phd_winxmax)
+				clipFlag += 2;
+
+			if (y1 < phd_winymin)
+				clipFlag += 4;
+			else if (y1 > phd_winymax)
+				clipFlag += 8;
+
+			v[0].clip = clipFlag;
+			v[0].xs = (float)x1;
+			v[0].ys = (float)y1;
+			v[0].zv = (float)z1;
+			v[0].ooz = f_persp / v[0].zv * f_oneopersp;
+			v[0].g = 0x7E8C;
+
+			clipFlag = 0;
+
+			if (x2 < phd_winxmin)
+				clipFlag++;
+			else if (x2 > phd_winxmax)
+				clipFlag += 2;
+
+			if (y2 < phd_winymin)
+				clipFlag += 4;
+			else if (y2 > phd_winymax)
+				clipFlag += 8;
+
+			v[1].clip = clipFlag;
+			v[1].xs = (float)x2;
+			v[1].ys = (float)y2;
+			v[1].zv = (float)z2;
+			v[1].ooz = f_persp / v[1].zv * f_oneopersp;
+			v[1].g = 0x7E8C;
+
+			clipFlag = 0;
+
+			if (x3 < phd_winxmin)
+				clipFlag++;
+			else if (x3 > phd_winxmax)
+				clipFlag += 2;
+
+			if (y3 < phd_winymin)
+				clipFlag += 4;
+			else if (y3 > phd_winymax)
+				clipFlag += 8;
+
+			v[2].clip = clipFlag;
+			v[2].xs = (float)x3;
+			v[2].ys = (float)y3;
+			v[2].zv = (float)z3;
+			v[2].ooz = f_persp / v[2].zv * f_oneopersp;
+			v[2].g = 0x7E8C;
+
+			sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 12];
+			u1 = (sprite->offset << 8) & 0xFF00;
+			v1 = sprite->offset & 0xFF00;
+			u2 = ushort(u1 + sprite->width - App.nUVAdd);
+			v2 = ushort(v1 + sprite->height - App.nUVAdd);
+			u1 += (ushort)App.nUVAdd;
+			v1 += (ushort)App.nUVAdd;
+
+			tex.drawtype = 1;
+			tex.tpage = sprite->tpage;
+
+			if (!i)
+			{
+				v[0].u = u1;
+				v[0].v = v1 + (ushort)App.nUVAdd;
+				v[1].u = u2 - (ushort)App.nUVAdd;
+				v[1].v = v2;
+				v[2].u = u1;
+			}
+			else
+			{
+				if (i == 1)
+				{
+					v[0].u = u2;
+					v[0].v = v1;
+					v[1].u = u1;
+				}
+				else
+				{
+					v[0].u = u1;
+					v[0].v = v1;
+					v[1].u = u2;
+				}
+
+				v[1].v = v1;
+				v[2].u = u2;
+			}
+
+			v[2].v = v2;
+			HWI_InsertGT3_Poly(v, &v[1], &v[2], &tex, &v[0].u, &v[1].u, &v[2].u, MID_SORT, 1);
+		}
+	}
+}
+
 #ifdef TROYESTUFF
 //New effects
 void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
@@ -3976,4 +4177,5 @@ void inject_draweffects(bool replace)
 	INJECT(0x00479C20, DrawLondonBossShield, replace);
 	INJECT(0x0047FC30, DrawWillBossShield, replace);
 	INJECT(0x00479810, S_DrawLaserBeam, replace);
+	INJECT(0x00476420, S_DrawBat, replace);
 }

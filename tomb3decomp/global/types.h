@@ -1794,6 +1794,19 @@ struct GLOBE_LEVEL
 	short txt;
 };
 
+struct BAT_STRUCT
+{
+	long x;
+	long y;
+	long z;
+	short angle;
+	short speed;
+	uchar WingYoff;
+	uchar flags;
+	uchar life;
+	uchar pad;
+};
+
 #ifdef TROYESTUFF
 struct FVECTOR
 {
