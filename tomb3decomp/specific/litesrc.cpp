@@ -2,9 +2,6 @@
 #include "litesrc.h"
 #include "../3dsystem/phd_math.h"
 #include "../3dsystem/3d_gen.h"
-#ifdef TROYESTUFF
-#include "../tomb3/tomb3.h"
-#endif
 
 void S_CalculateStaticLight(short adder)
 {
@@ -164,38 +161,18 @@ short* calc_vertice_light(short* objptr, short* objptr1)
 			if (z < 0)
 				z = 0;
 
-#ifdef TROYESTUFF
-			if (tomb3.psx_objlight)
-			{
-				r = ((smcr << 13) + (LightCol[M00] * x + LightCol[M01] * y + LightCol[M02] * z)) >> 19;
-				g = ((smcg << 13) + (LightCol[M10] * x + LightCol[M11] * y + LightCol[M12] * z)) >> 19;
-				b = ((smcb << 13) + (LightCol[M20] * x + LightCol[M21] * y + LightCol[M22] * z)) >> 19;
+			r = smcr + ((LightCol[M00] * x + LightCol[M01] * y + LightCol[M02] * z) >> 16);
+			g = smcg + ((LightCol[M10] * x + LightCol[M11] * y + LightCol[M12] * z) >> 16);
+			b = smcb + ((LightCol[M20] * x + LightCol[M21] * y + LightCol[M22] * z) >> 16);
 
-				if (r > 31)
-					r = 31;
+			if (r > 255)
+				r = 255;
 
-				if (g > 31)
-					g = 31;
+			if (g > 255)
+				g = 255;
 
-				if (b > 31)
-					b = 31;
-			}
-			else
-#endif
-			{
-				r = smcr + ((LightCol[M00] * x + LightCol[M01] * y + LightCol[M02] * z) >> 16);
-				g = smcg + ((LightCol[M10] * x + LightCol[M11] * y + LightCol[M12] * z) >> 16);
-				b = smcb + ((LightCol[M20] * x + LightCol[M21] * y + LightCol[M22] * z) >> 16);
-
-				if (r > 255)
-					r = 255;
-
-				if (g > 255)
-					g = 255;
-
-				if (b > 255)
-					b = 255;
-			}
+			if (b > 255)
+				b = 255;
 
 			if (r < 0)
 				r = 0;
@@ -206,14 +183,9 @@ short* calc_vertice_light(short* objptr, short* objptr1)
 			if (b < 0)
 				b = 0;
 
-#ifdef TROYESTUFF
-			if (!tomb3.psx_objlight)
-#endif
-			{
-				r >>= 3;
-				g >>= 3;
-				b >>= 3;
-			}
+			r >>= 3;
+			g >>= 3;
+			b >>= 3;
 
 			if (buf->z > fade)
 			{
