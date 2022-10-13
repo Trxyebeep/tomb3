@@ -332,6 +332,14 @@ long LevelStats(long level)
 	return ret;
 }
 
+void GetValidLevelsList(REQUEST_INFO* req)
+{
+	RemoveAllReqItems(req);
+
+	for (int i = 1; i < gameflow.num_levels; i++)
+		AddRequesterItem(req, GF_Level_Names[i], R_CENTRE, 0, 0);
+}
+
 void inject_sgame(bool replace)
 {
 	INJECT(0x004841F0, GetRandomControl, replace);
@@ -343,4 +351,5 @@ void inject_sgame(bool replace)
 	INJECT(0x00483FA0, Level2World, replace);
 	INJECT(0x00483FE0, World2Level, replace);
 	INJECT(0x00483B60, LevelStats, replace);
+	INJECT(0x00484250, GetValidLevelsList, replace);
 }

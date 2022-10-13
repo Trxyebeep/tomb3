@@ -12,6 +12,7 @@ void SortOutAdventureSave(long world);
 long Level2World(long level);
 long World2Level(long world);
 long LevelStats(long level);
+void GetValidLevelsList(REQUEST_INFO* req);
 
 #define mGetAngle	( (ulong(__cdecl*)(long, long, long, long)) 0x00483860)
 #define S_SaveGame	( (void(__cdecl*)(void*, long, long)) 0x00484580 )
