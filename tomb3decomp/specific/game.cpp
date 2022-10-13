@@ -6,6 +6,7 @@
 #include "picture.h"
 #include "../game/inventry.h"
 #include "../game/invfunc.h"
+#include "../game/gameflow.h"
 
 static long rand_1 = 0xD371F947;
 static long rand_2 = 0xD371F947;
@@ -111,6 +112,23 @@ void SortOutAdventureSave(long world)
 	savegame.WorldRequired = 0;
 }
 
+long Level2World(long level)
+{
+	if (level <= LV_INDIABOSS)
+		return 1;
+
+	if (level <= LV_PACBOSS)
+		return 2;
+
+	if (level <= LV_OFFICE)
+		return 3;
+
+	if (level <= LV_AREA51)
+		return 4;
+
+	return 5;
+}
+
 void inject_sgame(bool replace)
 {
 	INJECT(0x004841F0, GetRandomControl, replace);
@@ -119,4 +137,5 @@ void inject_sgame(bool replace)
 	INJECT(0x00484240, SeedRandomDraw, replace);
 	INJECT(0x00484010, GameStats, replace);
 	INJECT(0x004838E0, SortOutAdventureSave, replace);
+	INJECT(0x00483FA0, Level2World, replace);
 }
