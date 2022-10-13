@@ -93,6 +93,24 @@ long GameStats(long level_num, long type)
 	return 0;
 }
 
+void SortOutAdventureSave(long world)
+{
+	if (savegame.WorldRequired == 1)
+		savegame.AfterIndia = world;
+
+	if (savegame.WorldRequired == 2)
+		savegame.AfterSPacific = world;
+
+	if (savegame.WorldRequired == 3)
+		savegame.AfterLondon = world;
+
+	if (savegame.WorldRequired == 4)
+		savegame.AfterNevada = world;
+
+	savegame.AfterAdventureSave = 0;
+	savegame.WorldRequired = 0;
+}
+
 void inject_sgame(bool replace)
 {
 	INJECT(0x004841F0, GetRandomControl, replace);
@@ -100,4 +118,5 @@ void inject_sgame(bool replace)
 	INJECT(0x00484220, GetRandomDraw, replace);
 	INJECT(0x00484240, SeedRandomDraw, replace);
 	INJECT(0x00484010, GameStats, replace);
+	INJECT(0x004838E0, SortOutAdventureSave, replace);
 }
