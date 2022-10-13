@@ -430,6 +430,8 @@
 #define LevelSecrets	ARRAY_(0x004C70B8, short, [21])
 #define RequesterFlags1	ARRAY_(0x006D6800, ulong, [24])
 #define RequesterFlags2	ARRAY_(0x006D67A0, ulong, [24])
+#define SaveGameReqFlags1	ARRAY_(0x006D7740, ulong, [24])
+#define SaveGameReqFlags2	ARRAY_(0x006D76E0, ulong, [24])
 #define Inv_itemText	ARRAY_(0x00626420, TEXTSTRING*, [3])
 #define inv_main_qtys	ARRAY_(0x004C6AF8, short, [23])
 #define inv_main_list	ARRAY_(0x004C6B28, INVENTORY_ITEM*, [23])

@@ -340,6 +340,17 @@ void GetValidLevelsList(REQUEST_INFO* req)
 		AddRequesterItem(req, GF_Level_Names[i], R_CENTRE, 0, 0);
 }
 
+void GetSavedGamesList(REQUEST_INFO* req)
+{
+	SetPCRequesterSize(req, 10, -32);
+
+	if (req->selected >= req->vis_lines)
+		req->line_offset = req->selected - req->vis_lines + 1;
+
+	memcpy(RequesterFlags1, SaveGameReqFlags1, sizeof(RequesterFlags1));
+	memcpy(RequesterFlags2, SaveGameReqFlags2, sizeof(RequesterFlags2));
+}
+
 void inject_sgame(bool replace)
 {
 	INJECT(0x004841F0, GetRandomControl, replace);
@@ -352,4 +363,5 @@ void inject_sgame(bool replace)
 	INJECT(0x00483FE0, World2Level, replace);
 	INJECT(0x00483B60, LevelStats, replace);
 	INJECT(0x00484250, GetValidLevelsList, replace);
+	INJECT(0x004842A0, GetSavedGamesList, replace);
 }
