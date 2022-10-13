@@ -203,6 +203,7 @@
 #define GF_Key3Strings_buffer	VAR_(0x006D797C, char*)
 #define GF_Key4Strings_buffer	VAR_(0x006D785C, char*)
 #define GF_BonusLevelEnabled	VAR_(0x00626208, long)
+#define GF_PlayingFMV	VAR_(0x006261DC, long)
 #define Inv_ringText	VAR_(0x0062642C, TEXTSTRING*)
 #define Inv_tagText	VAR_(0x00626430, TEXTSTRING*)
 #define Inv_upArrow1	VAR_(0x00626434, TEXTSTRING*)

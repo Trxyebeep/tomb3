@@ -7,6 +7,12 @@
 #include "../game/inventry.h"
 #include "../game/invfunc.h"
 #include "../game/gameflow.h"
+#include "specific.h"
+#include "display.h"
+#include "texture.h"
+#include "file.h"
+#include "../game/objects.h"
+#include "../game/savegame.h"
 
 static long rand_1 = 0xD371F947;
 static long rand_2 = 0xD371F947;
@@ -146,6 +152,186 @@ long World2Level(long world)
 	return LV_ANTARC - 1;
 }
 
+long LevelStats(long level)
+{
+	long ret, s, world;
+	char buf[32];
+
+	ret = 0;
+	savegame.start[level].timer = savegame.timer;
+	savegame.start[level].ammo_used = savegame.ammo_used;
+	savegame.start[level].ammo_hit = savegame.ammo_hit;
+	savegame.start[level].distance_travelled = savegame.distance_travelled;
+	savegame.start[level].kills = savegame.kills;
+	savegame.start[level].secrets_found = savegame.secrets;
+	savegame.start[level].health_used = savegame.health_used;
+	s = savegame.timer / 30;
+	sprintf(buf, "%02d:%02d:%02d", s / 3600, s / 60 % 60, s % 60);
+	S_CDPlay(gameflow.stats_track, 1);
+	TempVideoAdjust(HiResFlag, 1.0);
+	T_InitPrint();
+
+	if (!GF_PlayingFMV || CurrentLevel == LV_ANTARC || CurrentLevel == LV_STPAULS)
+		CreateMonoScreen();
+	else
+	{
+		DXTextureSetGreyScale(1);
+		LoadPicture(GF_picfilenames[GF_LoadingPic], App.lpPictureBuffer, 1);
+		FadePictureUp(32);
+		DXTextureSetGreyScale(0);
+	}
+
+	GF_PlayingFMV = 0;
+
+	while (input & IN_SELECT)
+		S_UpdateInput();
+
+	do
+	{
+		S_InitialisePolyList(0);
+		S_UpdateInput();
+		DrawMonoScreen(0, 0, 0);
+
+		if (reset_flag)
+			input = IN_SELECT;
+
+		inputDB = GetDebouncedInput(input);
+		ShowStatsText(buf, 0);
+		T_DrawText();
+		S_OutputPolyList();
+		S_DumpScreen();
+	} while (!(input & IN_SELECT));
+
+	if (level != gameflow.num_levels - gameflow.num_demos - 1)
+		S_LoadLevelFile(GF_titlefilenames[0], 0, 6);
+
+	world = Level2World(level);
+
+	if (level == LV_INDIABOSS)
+	{
+		if (savegame.IndiaComplete)
+		{
+			if (savegame.AfterIndia)
+				CurrentLevel = World2Level(savegame.AfterIndia);
+			else
+				ret = world;
+		}
+		else
+		{
+			savegame.IndiaComplete = 1;
+			savegame.AfterAdventureSave = 1;
+			savegame.WorldRequired = world;
+			ret = world;
+			CreateStartInfo(24);
+		}
+	}
+	else if (level == LV_PACBOSS)
+	{
+		if (savegame.SPacificComplete)
+		{
+			if (savegame.AfterSPacific)
+				CurrentLevel = World2Level(savegame.AfterSPacific);
+			else
+				ret = world;
+		}
+		else
+		{
+			savegame.SPacificComplete = 1;
+			savegame.AfterAdventureSave = 1;
+			savegame.WorldRequired = world;
+			ret = world;
+			CreateStartInfo(24);
+		}
+	}
+	else if (level == LV_OFFICE)
+	{
+		if (savegame.LondonComplete)
+		{
+			if (savegame.AfterLondon)
+				CurrentLevel = World2Level(savegame.AfterLondon);
+			else
+				ret = world;
+		}
+		else
+		{
+			savegame.LondonComplete = 1;
+			savegame.AfterAdventureSave = 1;
+			savegame.WorldRequired = world;
+			ret = world;
+			CreateStartInfo(24);
+		}
+	}
+	else if (level == LV_AREA51)
+	{
+		if (savegame.NevadaComplete)
+		{
+			if (savegame.AfterNevada)
+				CurrentLevel = World2Level(savegame.AfterNevada);
+			else
+				ret = world;
+		}
+		else
+		{
+			savegame.NevadaComplete = 1;
+			savegame.AfterAdventureSave = 1;
+			savegame.WorldRequired = world;
+			ret = world;
+			CreateStartInfo(24);
+		}
+	}
+	else if (level == LV_CHAMBER && !savegame.AntarcticaComplete)
+	{
+		savegame.bonus_flag = 1;
+
+		for (int i = 1; i < gameflow.num_levels; i++)
+			ModifyStartInfo(i);
+
+		savegame.AfterAdventureSave = 0;
+		savegame.AntarcticaComplete = 1;
+		savegame.current_level = LV_JUNGLE;
+	}
+	else
+	{
+		if (savegame.WorldRequired)
+		{
+			if (world == 1 && savegame.IndiaComplete ||
+				world == 2 && savegame.SPacificComplete ||
+				world == 3 && savegame.LondonComplete ||
+				world == 4 && savegame.NevadaComplete)
+				savegame.AfterAdventureSave = 1;
+			else
+				SortOutAdventureSave(world);
+		}
+
+		if (level == LV_ANTARC)
+		{
+			Inv_RemoveItem(ICON_PICKUP1_ITEM);
+			Inv_RemoveItem(ICON_PICKUP2_ITEM);
+			Inv_RemoveItem(ICON_PICKUP3_ITEM);
+			Inv_RemoveItem(ICON_PICKUP4_ITEM);
+		}
+
+		savegame.current_level = short(level + 1);
+		CreateStartInfo(level + 1);
+	}
+
+	if (level == LV_STPAULS)
+	{
+		savegame.bonus_flag = 1;
+
+		for (int i = 1; i < gameflow.num_levels; i++)
+			ModifyStartInfo(i);
+	}
+
+	if (!ret)
+	{
+		FadePictureDown(32);
+		TempVideoRemove();
+	}
+
+	return ret;
+}
+
 void inject_sgame(bool replace)
 {
 	INJECT(0x004841F0, GetRandomControl, replace);
@@ -156,4 +342,5 @@ void inject_sgame(bool replace)
 	INJECT(0x004838E0, SortOutAdventureSave, replace);
 	INJECT(0x00483FA0, Level2World, replace);
 	INJECT(0x00483FE0, World2Level, replace);
+	INJECT(0x00483B60, LevelStats, replace);
 }
