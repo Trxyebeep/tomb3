@@ -11,6 +11,7 @@ void do_pickup_option(INVENTORY_ITEM* item);
 void do_sound_option(INVENTORY_ITEM* item);
 void DefaultConflict();
 void do_control_option(INVENTORY_ITEM* item);
+void do_compass_option(INVENTORY_ITEM* item);
 
 #define do_inventory_options	( (void(__cdecl*)(INVENTORY_ITEM*)) 0x00487750 )
 

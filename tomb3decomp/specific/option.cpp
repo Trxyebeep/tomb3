@@ -13,6 +13,7 @@
 #include "smain.h"
 #endif
 #include "input.h"
+#include "../game/invfunc.h"
 
 static GLOBE_LEVEL GlobeLevelAngles[7] =
 {
@@ -1382,6 +1383,29 @@ void do_control_option(INVENTORY_ITEM* item)
 	inputDB = 0;
 }
 
+void do_compass_option(INVENTORY_ITEM* item)
+{
+	long s;
+	char buf[32];
+
+	s = savegame.timer / 30;
+
+	sprintf(buf, "%02d:%02d:%02d", s / 3600, s / 60 % 60, s % 60);
+
+	if (CurrentLevel != LV_GYM)
+		ShowStatsText(buf, 1);
+	else
+		ShowGymStatsText(buf, 1);
+
+	if (inputDB & (IN_SELECT | IN_DESELECT))
+	{
+		item->anim_direction = 1;
+		item->goal_frame = item->frames_total - 1;
+	}
+
+	SoundEffect(SFX_MENU_STOPWATCH, 0, SFX_ALWAYS);
+}
+
 void inject_option(bool replace)
 {
 	INJECT(0x0048A200, GetRenderWidth, replace);
@@ -1396,4 +1420,5 @@ void inject_option(bool replace)
 	INJECT(0x0048A100, S_ChangeCtrlText, replace);
 	INJECT(0x0048A1A0, S_RemoveCtrlText, replace);
 	INJECT(0x00489550, do_control_option, replace);
+	INJECT(0x004893D0, do_compass_option, replace);
 }
