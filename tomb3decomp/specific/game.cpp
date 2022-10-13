@@ -129,6 +129,23 @@ long Level2World(long level)
 	return 5;
 }
 
+long World2Level(long world)
+{
+	if (world == 1)
+		return LV_JUNGLE - 1;
+
+	if (world == 2)
+		return LV_SHORE - 1;
+
+	if (world == 3)
+		return LV_ROOFTOPS - 1;
+
+	if (world == 4)
+		return LV_DESERT - 1;
+
+	return LV_ANTARC - 1;
+}
+
 void inject_sgame(bool replace)
 {
 	INJECT(0x004841F0, GetRandomControl, replace);
@@ -138,4 +155,5 @@ void inject_sgame(bool replace)
 	INJECT(0x00484010, GameStats, replace);
 	INJECT(0x004838E0, SortOutAdventureSave, replace);
 	INJECT(0x00483FA0, Level2World, replace);
+	INJECT(0x00483FE0, World2Level, replace);
 }

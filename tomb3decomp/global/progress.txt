@@ -1670,7 +1670,7 @@ tomb3decomp progress.
 0x00483B50		LevelCompleteSequence
 0x00483B60		LevelStats
 0x00483FA0	+	Level2World
-0x00483FE0		World2Level
+0x00483FE0	+	World2Level
 0x00484010	+	GameStats
 0x004841F0	+	GetRandomControl
 0x00484210	+	SeedRandomControl
