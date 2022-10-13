@@ -257,6 +257,8 @@
 #define icon2_option	VAR_(0x004C67D0, INVENTORY_ITEM)
 #define icon3_option	VAR_(0x004C6820, INVENTORY_ITEM)
 #define icon4_option	VAR_(0x004C6870, INVENTORY_ITEM)
+#define Load_Game_Requester	VAR_(0x004C6C38, REQUEST_INFO)
+#define Level_Select_Requester	VAR_(0x004C6E50, REQUEST_INFO)
 #define GlobePointLight	VAR_(0x006D62B4, long)
 #define GlobeXRot	VAR_(0x006D62AE, short)
 #define GlobeYRot	VAR_(0x006D62BA, short)
@@ -269,6 +271,7 @@
 #define GlobeLevel	VAR_(0x006D62CA, short)
 #define NextAdventure	VAR_(0x006D62C6, short)
 #define HiResFlag	VAR_(0x006A184C, long)
+#define SavedGames	VAR_(0x00633F4C, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)

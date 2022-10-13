@@ -13,6 +13,7 @@
 #include "file.h"
 #include "../game/objects.h"
 #include "../game/savegame.h"
+#include "../game/sound.h"
 
 static long rand_1 = 0xD371F947;
 static long rand_2 = 0xD371F947;
@@ -351,6 +352,295 @@ void GetSavedGamesList(REQUEST_INFO* req)
 	memcpy(RequesterFlags2, SaveGameReqFlags2, sizeof(RequesterFlags2));
 }
 
+void do_passport_option(INVENTORY_ITEM* item)
+{
+	static long mode;
+	long select;
+	short page;
+
+	T_RemovePrint(Inv_itemText[0]);
+	Inv_itemText[0] = 0;
+
+	if ((item->goal_frame - item->open_frame) % 5)
+		page = -1;
+	else
+		page = (item->goal_frame - item->open_frame) / 5;
+
+	if (Inventory_Mode == INV_LOAD_MODE || Inventory_Mode == INV_SAVE_MODE || gameflow.loadsave_disabled)
+		inputDB &= ~(IN_LEFT | IN_RIGHT);
+
+	if (!page)
+	{
+		if (CurrentLevel == LV_GYM && Inventory_Mode != INV_TITLE_MODE || gameflow.loadsave_disabled)
+			inputDB = IN_RIGHT;
+		else if (mode == 1)
+		{
+			SetPCRequesterSize(&Load_Game_Requester, 10, -32);
+			select = Display_Requester(&Load_Game_Requester, 1, 1);
+
+			if (select)
+			{
+				if (select > 1)
+					Inventory_ExtraData[1] = select - 1;
+
+				mode = 0;
+			}
+			else if (inputDB & IN_RIGHT)
+			{
+				Remove_Requester(&Load_Game_Requester);
+				mode = 0;
+			}
+			else
+			{
+				input = 0;
+				inputDB = 0;
+			}
+		}
+		else if (!mode)
+		{
+			if (!SavedGames || Inventory_Mode == INV_SAVE_MODE)
+				inputDB = IN_RIGHT;
+			else
+			{
+				if (!passport_text1)
+				{
+					passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_LOADGAME]);
+					T_BottomAlign(passport_text1, 1);
+					T_CentreH(passport_text1, 1);
+				}
+
+				T_RemovePrint(Inv_itemText[2]);
+				Inv_itemText[2] = 0;
+
+				T_RemovePrint(Inv_tagText);
+				Inv_tagText = 0;
+
+				T_RemovePrint(Inv_ringText);
+				Inv_ringText = 0;
+
+				T_RemovePrint(Inv_itemText[0]);
+				Inv_itemText[0] = 0;
+
+				GetSavedGamesList(&Load_Game_Requester);
+				SetRequesterHeading(&Load_Game_Requester, GF_GameStrings[GT_LOADGAME], 0, 0, 0);
+				mode = 1;
+				input = 0;
+				inputDB = 0;
+			}
+		}
+	}
+	else if (page == 1)
+	{
+		if (CurrentLevel == LV_GYM && Inventory_Mode != INV_TITLE_MODE || gameflow.loadsave_disabled)
+			inputDB = IN_RIGHT;
+		else if (mode == 1 || mode == 2)
+		{
+			if (mode == 1)
+			{
+				SetPCRequesterSize(&Load_Game_Requester, 10, -32);
+				select = Display_Requester(&Load_Game_Requester, 1, 1);
+			}
+			else
+			{
+				SetPCRequesterSize(&Level_Select_Requester, 10, -32);
+				select = Display_Requester(&Level_Select_Requester, 1, 1);
+			}
+
+			if (select)
+			{
+				if (select > 0)
+					Inventory_ExtraData[1] = select - 1;
+
+				mode = 0;
+			}
+			else if (inputDB & (IN_LEFT | IN_RIGHT))
+			{
+				if (mode == 1)
+					Remove_Requester(&Load_Game_Requester);
+				else
+					Remove_Requester(&Level_Select_Requester);
+
+				mode = 0;
+			}
+			else
+			{
+				input = 0;
+				inputDB = 0;
+			}
+		}
+		else if (!mode)
+		{
+			if (Inventory_Mode == INV_DEATH_MODE)
+				inputDB = item->anim_direction != -1 ? 8 : 4;
+			else
+			{
+				if (!passport_text1)
+				{
+					if (Inventory_Mode == INV_TITLE_MODE || CurrentLevel == LV_GYM)
+						passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_STARTGAME]);
+					else
+						passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_SAVEGAME]);
+
+					T_BottomAlign(passport_text1, 1);
+					T_CentreH(passport_text1, 1);
+				}
+
+				if (Inventory_Mode != INV_TITLE_MODE && CurrentLevel != LV_GYM)
+				{
+					T_RemovePrint(Inv_itemText[2]);
+					Inv_itemText[2] = 0;
+
+					T_RemovePrint(Inv_tagText);
+					Inv_tagText = 0;
+
+					T_RemovePrint(Inv_ringText);
+					Inv_ringText = 0;
+
+					T_RemovePrint(Inv_itemText[0]);
+					Inv_itemText[0] = 0;
+
+					GetSavedGamesList(&Load_Game_Requester);
+					SetRequesterHeading(&Load_Game_Requester, GF_GameStrings[GT_SAVEGAME], 0, 0, 0);
+					mode = 1;
+					input = 0;
+					inputDB = 0;
+				}
+				else if (gameflow.play_any_level)
+				{
+					T_RemovePrint(Inv_itemText[2]);
+					Inv_itemText[2] = 0;
+
+					T_RemovePrint(Inv_tagText);
+					Inv_tagText = 0;
+
+					T_RemovePrint(Inv_itemText[0]);
+					Inv_itemText[0] = 0;
+
+					Init_Requester(&Level_Select_Requester);
+					GetValidLevelsList(&Level_Select_Requester);
+					SetRequesterHeading(&Level_Select_Requester, GF_GameStrings[GT_SELECTLEVEL], 0, 0, 0);
+					mode = 2;
+					input = 0;
+					inputDB = 0;
+				}
+				else if (inputDB & IN_SELECT)
+					Inventory_ExtraData[1] = LV_JUNGLE;
+			}
+		}
+	}
+	else if (page == 2)
+	{
+		if (!passport_text1)
+		{
+			if (Inventory_Mode == INV_TITLE_MODE)
+				passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_EXITGAME]);
+			else if (gameflow.demoversion)
+				passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_EXITDEMO]);
+			else
+				passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_EXIT2TITLE]);
+
+			T_BottomAlign(passport_text1, 1);
+			T_CentreH(passport_text1, 1);
+		}
+	}
+
+	if (inputDB & IN_LEFT)
+	{
+		if (Inventory_Mode != INV_DEATH_MODE || SavedGames)
+		{
+			item->goal_frame -= 5;
+			item->anim_direction = -1;
+
+			if (SavedGames)
+			{
+				if (item->goal_frame < item->open_frame)
+					item->goal_frame = item->open_frame;
+				else
+				{
+					SoundEffect(SFX_MENU_PASSPORT, 0, SFX_ALWAYS);
+					T_RemovePrint(passport_text1);
+					passport_text1 = 0;
+				}
+			}
+			else
+			{
+				if (item->goal_frame < item->open_frame + 5)
+					item->goal_frame = item->open_frame + 5;
+				else
+				{
+					T_RemovePrint(passport_text1);
+					passport_text1 = 0;
+				}
+			}
+
+			input = 0;
+			inputDB = 0;
+		}
+	}
+
+	if (inputDB & IN_RIGHT)
+	{
+		item->goal_frame += 5;
+		item->anim_direction = 1;
+
+		if (item->goal_frame <= item->frames_total - 6)
+		{
+			SoundEffect(SFX_MENU_PASSPORT, 0, SFX_ALWAYS);
+			T_RemovePrint(passport_text1);
+			passport_text1 = 0;
+		}
+		else
+			item->goal_frame = item->frames_total - 6;
+
+		input = 0;
+		inputDB = 0;
+	}
+
+	if (inputDB & IN_DESELECT)
+	{
+		if (Inventory_Mode == INV_DEATH_MODE)
+		{
+			input = 0;
+			inputDB = 0;
+		}
+		else
+		{
+			if (page == 2)
+			{
+				item->goal_frame = item->frames_total - 1;
+				item->anim_direction = 1;
+			}
+			else
+			{
+				item->goal_frame = 0;
+				item->anim_direction = -1;
+			}
+
+			T_RemovePrint(passport_text1);
+			passport_text1 = 0;
+		}
+	}
+
+	if (inputDB & IN_SELECT)
+	{
+		Inventory_ExtraData[0] = page;
+
+		if (page == 2)
+		{
+			item->anim_direction = 1;
+			item->goal_frame = item->frames_total - 1;
+		}
+		else
+		{
+			item->goal_frame = 0;
+			item->anim_direction = -1;
+		}
+
+		T_RemovePrint(passport_text1);
+		passport_text1 = 0;
+	}
+}
+
 void inject_sgame(bool replace)
 {
 	INJECT(0x004841F0, GetRandomControl, replace);
@@ -364,4 +654,5 @@ void inject_sgame(bool replace)
 	INJECT(0x00483B60, LevelStats, replace);
 	INJECT(0x00484250, GetValidLevelsList, replace);
 	INJECT(0x004842A0, GetSavedGamesList, replace);
+	INJECT(0x00487BE0, do_passport_option, replace);
 }
