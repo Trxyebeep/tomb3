@@ -378,7 +378,7 @@ void MoveCamera(GAME_VECTOR* ideal, long speed)
 	{
 		x = camera.target.x - camera.pos.x;
 		z = camera.target.z - camera.pos.z;
-		camera.actual_angle = (short)phd_atan(x, z);
+		camera.actual_angle = (short)phd_atan(z, x);
 		camera.mike_pos.x = ((phd_sin(camera.actual_angle) * phd_persp) >> W2V_SHIFT) + camera.pos.x;
 		camera.mike_pos.z = ((phd_cos(camera.actual_angle) * phd_persp) >> W2V_SHIFT) + camera.pos.z;
 		camera.mike_pos.y = camera.pos.y;
@@ -951,7 +951,7 @@ void LookCamera(ITEM_INFO* item)
 	{
 		dx = camera.target.x - camera.pos.x;
 		dz = camera.target.z - camera.pos.z;
-		camera.actual_angle = (short)phd_atan(dx, dz);
+		camera.actual_angle = (short)phd_atan(dz, dx);
 		camera.mike_pos.x = ((phd_sin(camera.actual_angle) * phd_persp) >> W2V_SHIFT) + camera.pos.x;
 		camera.mike_pos.z = ((phd_cos(camera.actual_angle) * phd_persp) >> W2V_SHIFT) + camera.pos.z;
 		camera.mike_pos.y = camera.pos.y;
