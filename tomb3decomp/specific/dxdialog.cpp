@@ -1,6 +1,9 @@
 #include "../tomb3/pch.h"
 #include "dxdialog.h"
 #include "winmain.h"
+#ifdef TROYESTUFF
+#include "smain.h"
+#endif
 
 //these are the BOXES/BUTTONS not the text
 #define IDC_GRAPHICS_ADAPTER	1000
@@ -57,6 +60,9 @@ BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lPara
 
 			if ((ushort)wParam == IDOK)
 			{
+#ifdef TROYESTUFF
+				S_SaveSettings();
+#endif
 				ShowWindow(App.WindowHandle, 1);
 				ShowCursor(0);
 				EndDialog(dlg, 1);
@@ -114,8 +120,8 @@ BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lPara
 
 			if (!HIWORD(wParam))
 			{
-				SendMessage(output_setting, CB_SETCURSEL, 1, 0);
-				SendMessage(resolution, CB_SETCURSEL, 1, 0);
+				SendMessage(output_setting, CB_SETCURSEL, 0, 0);
+				SendMessage(resolution, CB_SETCURSEL, 0, 0);
 				DXInitD3DDrivers(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0));
 				DXInitVideoModes(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
 					SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
