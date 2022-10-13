@@ -6,14 +6,17 @@
 #include "dxshell.h"
 #include "drawprimitive.h"
 #include "specific.h"
+#include "input.h"
+#include "../game/invfunc.h"
+#include "../game/objects.h"
 #include "../game/sound.h"
+#include "game.h"
+
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #include "output.h"
 #include "smain.h"
 #endif
-#include "input.h"
-#include "../game/invfunc.h"
 
 static GLOBE_LEVEL GlobeLevelAngles[7] =
 {
@@ -1406,6 +1409,362 @@ void do_compass_option(INVENTORY_ITEM* item)
 	SoundEffect(SFX_MENU_STOPWATCH, 0, SFX_ALWAYS);
 }
 
+void do_passport_option(INVENTORY_ITEM* item)
+{
+	static long mode;
+	long select;
+	short page;
+
+	T_RemovePrint(Inv_itemText[0]);
+	Inv_itemText[0] = 0;
+
+	if ((item->goal_frame - item->open_frame) % 5)
+		page = -1;
+	else
+		page = (item->goal_frame - item->open_frame) / 5;
+
+	if (Inventory_Mode == INV_LOAD_MODE || Inventory_Mode == INV_SAVE_MODE || gameflow.loadsave_disabled)
+		inputDB &= ~(IN_LEFT | IN_RIGHT);
+
+	if (!page)
+	{
+		if (CurrentLevel == LV_GYM && Inventory_Mode != INV_TITLE_MODE || gameflow.loadsave_disabled)
+			inputDB = IN_RIGHT;
+		else if (mode == 1)
+		{
+			SetPCRequesterSize(&Load_Game_Requester, 10, -32);
+			select = Display_Requester(&Load_Game_Requester, 1, 1);
+
+			if (select)
+			{
+				if (select > 1)
+					Inventory_ExtraData[1] = select - 1;
+
+				mode = 0;
+			}
+			else if (inputDB & IN_RIGHT)
+			{
+				Remove_Requester(&Load_Game_Requester);
+				mode = 0;
+			}
+			else
+			{
+				input = 0;
+				inputDB = 0;
+			}
+		}
+		else if (!mode)
+		{
+			if (!SavedGames || Inventory_Mode == INV_SAVE_MODE)
+				inputDB = IN_RIGHT;
+			else
+			{
+				if (!passport_text1)
+				{
+					passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_LOADGAME]);
+					T_BottomAlign(passport_text1, 1);
+					T_CentreH(passport_text1, 1);
+				}
+
+				T_RemovePrint(Inv_itemText[2]);
+				Inv_itemText[2] = 0;
+
+				T_RemovePrint(Inv_tagText);
+				Inv_tagText = 0;
+
+				T_RemovePrint(Inv_ringText);
+				Inv_ringText = 0;
+
+				T_RemovePrint(Inv_itemText[0]);
+				Inv_itemText[0] = 0;
+
+				GetSavedGamesList(&Load_Game_Requester);
+				SetRequesterHeading(&Load_Game_Requester, GF_GameStrings[GT_LOADGAME], 0, 0, 0);
+				mode = 1;
+				input = 0;
+				inputDB = 0;
+			}
+		}
+	}
+	else if (page == 1)
+	{
+		if (CurrentLevel == LV_GYM && Inventory_Mode != INV_TITLE_MODE || gameflow.loadsave_disabled)
+			inputDB = IN_RIGHT;
+		else if (mode == 1 || mode == 2)
+		{
+			if (mode == 1)
+			{
+				SetPCRequesterSize(&Load_Game_Requester, 10, -32);
+				select = Display_Requester(&Load_Game_Requester, 1, 1);
+			}
+			else
+			{
+				SetPCRequesterSize(&Level_Select_Requester, 10, -32);
+				select = Display_Requester(&Level_Select_Requester, 1, 1);
+			}
+
+			if (select)
+			{
+				if (select > 0)
+					Inventory_ExtraData[1] = select - 1;
+
+				mode = 0;
+			}
+			else if (inputDB & (IN_LEFT | IN_RIGHT))
+			{
+				if (mode == 1)
+					Remove_Requester(&Load_Game_Requester);
+				else
+					Remove_Requester(&Level_Select_Requester);
+
+				mode = 0;
+			}
+			else
+			{
+				input = 0;
+				inputDB = 0;
+			}
+		}
+		else if (!mode)
+		{
+			if (Inventory_Mode == INV_DEATH_MODE)
+				inputDB = item->anim_direction != -1 ? 8 : 4;
+			else
+			{
+				if (!passport_text1)
+				{
+					if (Inventory_Mode == INV_TITLE_MODE || CurrentLevel == LV_GYM)
+						passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_STARTGAME]);
+					else
+						passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_SAVEGAME]);
+
+					T_BottomAlign(passport_text1, 1);
+					T_CentreH(passport_text1, 1);
+				}
+
+				if (Inventory_Mode != INV_TITLE_MODE && CurrentLevel != LV_GYM)
+				{
+					T_RemovePrint(Inv_itemText[2]);
+					Inv_itemText[2] = 0;
+
+					T_RemovePrint(Inv_tagText);
+					Inv_tagText = 0;
+
+					T_RemovePrint(Inv_ringText);
+					Inv_ringText = 0;
+
+					T_RemovePrint(Inv_itemText[0]);
+					Inv_itemText[0] = 0;
+
+					GetSavedGamesList(&Load_Game_Requester);
+					SetRequesterHeading(&Load_Game_Requester, GF_GameStrings[GT_SAVEGAME], 0, 0, 0);
+					mode = 1;
+					input = 0;
+					inputDB = 0;
+				}
+				else if (gameflow.play_any_level)
+				{
+					T_RemovePrint(Inv_itemText[2]);
+					Inv_itemText[2] = 0;
+
+					T_RemovePrint(Inv_tagText);
+					Inv_tagText = 0;
+
+					T_RemovePrint(Inv_itemText[0]);
+					Inv_itemText[0] = 0;
+
+					Init_Requester(&Level_Select_Requester);
+					GetValidLevelsList(&Level_Select_Requester);
+					SetRequesterHeading(&Level_Select_Requester, GF_GameStrings[GT_SELECTLEVEL], 0, 0, 0);
+					mode = 2;
+					input = 0;
+					inputDB = 0;
+				}
+				else if (inputDB & IN_SELECT)
+					Inventory_ExtraData[1] = LV_JUNGLE;
+			}
+		}
+	}
+	else if (page == 2)
+	{
+		if (!passport_text1)
+		{
+			if (Inventory_Mode == INV_TITLE_MODE)
+				passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_EXITGAME]);
+			else if (gameflow.demoversion)
+				passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_EXITDEMO]);
+			else
+				passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_EXIT2TITLE]);
+
+			T_BottomAlign(passport_text1, 1);
+			T_CentreH(passport_text1, 1);
+		}
+	}
+
+	if (inputDB & IN_LEFT)
+	{
+		if (Inventory_Mode != INV_DEATH_MODE || SavedGames)
+		{
+			item->goal_frame -= 5;
+			item->anim_direction = -1;
+
+			if (SavedGames)
+			{
+				if (item->goal_frame < item->open_frame)
+					item->goal_frame = item->open_frame;
+				else
+				{
+					SoundEffect(SFX_MENU_PASSPORT, 0, SFX_ALWAYS);
+					T_RemovePrint(passport_text1);
+					passport_text1 = 0;
+				}
+			}
+			else
+			{
+				if (item->goal_frame < item->open_frame + 5)
+					item->goal_frame = item->open_frame + 5;
+				else
+				{
+					T_RemovePrint(passport_text1);
+					passport_text1 = 0;
+				}
+			}
+
+			input = 0;
+			inputDB = 0;
+		}
+	}
+
+	if (inputDB & IN_RIGHT)
+	{
+		item->goal_frame += 5;
+		item->anim_direction = 1;
+
+		if (item->goal_frame <= item->frames_total - 6)
+		{
+			SoundEffect(SFX_MENU_PASSPORT, 0, SFX_ALWAYS);
+			T_RemovePrint(passport_text1);
+			passport_text1 = 0;
+		}
+		else
+			item->goal_frame = item->frames_total - 6;
+
+		input = 0;
+		inputDB = 0;
+	}
+
+	if (inputDB & IN_DESELECT)
+	{
+		if (Inventory_Mode == INV_DEATH_MODE)
+		{
+			input = 0;
+			inputDB = 0;
+		}
+		else
+		{
+			if (page == 2)
+			{
+				item->goal_frame = item->frames_total - 1;
+				item->anim_direction = 1;
+			}
+			else
+			{
+				item->goal_frame = 0;
+				item->anim_direction = -1;
+			}
+
+			T_RemovePrint(passport_text1);
+			passport_text1 = 0;
+		}
+	}
+
+	if (inputDB & IN_SELECT)
+	{
+		Inventory_ExtraData[0] = page;
+
+		if (page == 2)
+		{
+			item->anim_direction = 1;
+			item->goal_frame = item->frames_total - 1;
+		}
+		else
+		{
+			item->goal_frame = 0;
+			item->anim_direction = -1;
+		}
+
+		T_RemovePrint(passport_text1);
+		passport_text1 = 0;
+	}
+}
+
+void do_inventory_options(INVENTORY_ITEM* item)
+{
+	switch (item->object_number)
+	{
+	case PASSPORT_OPTION:
+		return do_passport_option(item);
+
+	case MAP_OPTION:
+		return do_compass_option(item);
+
+	case DETAIL_OPTION:
+		return do_detail_option(item);
+
+	case SOUND_OPTION:
+		return do_sound_option(item);
+
+	case CONTROL_OPTION:
+		return do_control_option(item);
+
+	case GAMMA_OPTION:
+		return do_levelselect_option(item);
+
+	case GUN_OPTION:
+	case SHOTGUN_OPTION:
+	case MAGNUM_OPTION:
+	case UZI_OPTION:
+	case HARPOON_OPTION:
+	case M16_OPTION:
+	case ROCKET_OPTION:
+	case GRENADE_OPTION:
+	case MEDI_OPTION:
+	case BIGMEDI_OPTION:
+	case PUZZLE_OPTION1:
+	case PUZZLE_OPTION2:
+	case PUZZLE_OPTION3:
+	case PUZZLE_OPTION4:
+	case KEY_OPTION1:
+	case KEY_OPTION2:
+	case KEY_OPTION3:
+	case KEY_OPTION4:
+		inputDB |= IN_SELECT;
+
+	case GUN_AMMO_OPTION:
+	case SG_AMMO_OPTION:
+	case MAG_AMMO_OPTION:
+	case UZI_AMMO_OPTION:
+	case HARPOON_AMMO_OPTION:
+	case M16_AMMO_OPTION:
+	case ROCKET_AMMO_OPTION:
+		return;
+
+	case PICKUP_OPTION1:
+	case PICKUP_OPTION2:
+		return do_pickup_option(item);
+
+	default:
+
+		if (inputDB & (IN_SELECT | IN_DESELECT))
+		{
+			item->goal_frame = 0;
+			item->anim_direction = -1;
+		}
+
+		break;
+	}
+}
+
 void inject_option(bool replace)
 {
 	INJECT(0x0048A200, GetRenderWidth, replace);
@@ -1421,4 +1780,6 @@ void inject_option(bool replace)
 	INJECT(0x0048A1A0, S_RemoveCtrlText, replace);
 	INJECT(0x00489550, do_control_option, replace);
 	INJECT(0x004893D0, do_compass_option, replace);
+	INJECT(0x00487BE0, do_passport_option, replace);
+	INJECT(0x00487750, do_inventory_options, replace);
 }
