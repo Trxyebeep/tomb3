@@ -20,6 +20,9 @@ void HWR_EndScene();
 void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage);
 void HWR_DrawRoutinesStippledAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage);
 void HWR_DrawRoutinesNoAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage);
+#ifdef TROYESTUFF
+__inline void HWR_InitGamma(float gamma);
+#endif
 void HWR_InitState();
 bool HWR_Init();
 void HWR_DrawPolyList(long num, long* pSort);

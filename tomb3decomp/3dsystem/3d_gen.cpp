@@ -9,6 +9,9 @@
 #include "hwinsert.h"
 #include "../specific/game.h"
 #include "../specific/smain.h"
+#ifdef TROYESTUFF
+#include "../specific/hwrender.h"
+#endif
 
 void phd_PutPolygons(short* objptr, long clip)
 {
@@ -403,6 +406,9 @@ void S_InsertBackground(short* objptr)
 
 	if (objptr)
 	{
+#ifdef TROYESTUFF
+		HWR_InitGamma(10);
+#endif
 		objptr = calc_back_light(objptr);
 		objptr = InsertObjectGT4(objptr + 1, objptr[0], BACK_SORT);
 		objptr = InsertObjectGT3(objptr + 1, objptr[0], BACK_SORT);
@@ -431,6 +437,10 @@ void S_InsertBackground(short* objptr)
 		}
 
 		objptr = InsertObjectG3(objptr + 1, objptr[0], BACK_SORT);
+
+#ifdef TROYESTUFF
+		HWR_InitGamma(GammaOption);
+#endif
 	}
 
 	if (CurrentLevel == LV_GYM)

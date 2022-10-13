@@ -419,16 +419,22 @@ void HWR_DrawRoutinesNoAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long T
 	}
 }
 
-void HWR_InitState()
+#ifdef TROYESTUFF
+__inline void HWR_InitGamma(float gamma)
 {
-	DIRECT3DINFO* d3dinfo;
-	float gamma;
-	bool blendOne, stippledAlpha, blendAlpha;
-
-	gamma = 1.0F / (GammaOption / 10.0F * 4.0F);
+	gamma = 1.0F / (gamma / 10.0F * 4.0F);
 
 	for (int i = 0; i < 256; i++)
 		ColorTable[i] = uchar(pow((double)i / 256.0F, gamma) * 256.0F);
+}
+#endif
+
+void HWR_InitState()
+{
+	DIRECT3DINFO* d3dinfo;
+	bool blendOne, stippledAlpha, blendAlpha;
+
+	HWR_InitGamma(GammaOption);		//og has the code directly here
 
 	if (!SetRenderState)
 		return;
