@@ -2272,6 +2272,9 @@ void lara_as_walk(ITEM_INFO* item, COLL_INFO* coll)
 void lara_as_run(ITEM_INFO* item, COLL_INFO* coll)
 {
 	static long jump_ok = 1;
+#ifdef TROYESTUFF
+	bool dash;
+#endif
 
 	if (item->hit_points <= 0)
 	{
@@ -2289,11 +2292,17 @@ void lara_as_run(ITEM_INFO* item, COLL_INFO* coll)
 	}
 
 #ifdef TROYESTUFF
-	if (input & IN_SPRINT && DashTimer)
+	if (tomb3.flexible_sprint)
+		dash = input & IN_SPRINT && DashTimer;
+	else
+		dash = input & IN_SPRINT && DashTimer == 120;
+
+	if (dash)
 #else
 	if (input & IN_SPRINT && DashTimer == 120)
 #endif
 	{
+		//flexible_sprint
 		item->goal_anim_state = AS_DASH;
 		return;
 	}
