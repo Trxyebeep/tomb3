@@ -52,9 +52,15 @@ bool DXCreateSurface(LPDIRECTDRAW2 ddx, LPDDSURFACEDESC desc, LPDIRECTDRAWSURFAC
 	return result == DD_OK;
 }
 
+bool DXGetAttachedSurface(LPDIRECTDRAWSURFACE3 surf, LPDDSCAPS caps, LPDIRECTDRAWSURFACE3* attached)
+{
+	return surf->GetAttachedSurface(caps, attached) == DD_OK;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
 	INJECT(0x0048FEE0, DXSetVideoMode, replace);
 	INJECT(0x0048FF10, DXCreateSurface, replace);
+	INJECT(0x0048FF60, DXGetAttachedSurface, replace);
 }
