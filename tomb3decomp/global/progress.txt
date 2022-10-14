@@ -1599,7 +1599,7 @@ tomb3decomp progress.
 0x0048FBB0		DXEnumTextureFormats
 0x0048FDB0	+	BPPToDDBD
 0x0048FE40	+	DXCreateDirectDraw
-0x0048FEA0		DXCreateDirect3D
+0x0048FEA0	+	DXCreateDirect3D
 0x0048FEC0		DXSetCooperativeLevel
 0x0048FEE0	+	DXSetVideoMode
 0x0048FF10	+	DXCreateSurface
