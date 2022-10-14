@@ -57,10 +57,22 @@ bool DXGetAttachedSurface(LPDIRECTDRAWSURFACE3 surf, LPDDSCAPS caps, LPDIRECTDRA
 	return surf->GetAttachedSurface(caps, attached) == DD_OK;
 }
 
+bool DXAddAttachedSurface(LPDIRECTDRAWSURFACE3 surf, LPDIRECTDRAWSURFACE3 attach)
+{
+	return surf->AddAttachedSurface(attach) == DD_OK;
+}
+
+bool DXCreateDirect3DDevice(LPDIRECT3D2 dd3x, GUID guid, LPDIRECTDRAWSURFACE3 surf, LPDIRECT3DDEVICE2* device)
+{
+	return dd3x->CreateDevice(guid, (LPDIRECTDRAWSURFACE)surf, device) == DD_OK;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
 	INJECT(0x0048FEE0, DXSetVideoMode, replace);
 	INJECT(0x0048FF10, DXCreateSurface, replace);
 	INJECT(0x0048FF60, DXGetAttachedSurface, replace);
+	INJECT(0x0048FF80, DXAddAttachedSurface, replace);
+	INJECT(0x0048FFA0, DXCreateDirect3DDevice, replace);
 }
