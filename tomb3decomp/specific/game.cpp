@@ -13,6 +13,8 @@
 #include "file.h"
 #include "../game/objects.h"
 #include "../game/savegame.h"
+#include "../game/setup.h"
+#include "frontend.h"
 
 static long rand_1 = 0xD371F947;
 static long rand_2 = 0xD371F947;
@@ -351,6 +353,36 @@ void GetSavedGamesList(REQUEST_INFO* req)
 	memcpy(RequesterFlags2, SaveGameReqFlags2, sizeof(RequesterFlags2));
 }
 
+void DisplayCredits()
+{
+	char buf[64];
+
+	strcpy(buf, "pix\\credit0?.bmp");
+	memset(&buf[17], 0, sizeof(buf) - 17);
+	S_UnloadLevelFile();
+
+	if (!InitialiseLevel(0, 0))
+		return;
+
+	S_StartSyncedAudio(121);
+	LoadPicture("pix\\theend.bmp", App.lpPictureBuffer, 1);
+	FadePictureUp(32);
+	S_Wait(300, 0);
+	FadePictureDown(32);
+
+	for (int i = 1; i < 10; i++)
+	{
+		buf[11] = i + '0';
+		LoadPicture(buf, App.lpPictureBuffer, 1);
+		FadePictureUp(32);
+		S_Wait(300, 0);
+		FadePictureDown(32);
+	}
+
+	LoadPicture("pix\\theend2.bmp", App.lpPictureBuffer, 1);
+	FadePictureUp(32);
+}
+
 void inject_sgame(bool replace)
 {
 	INJECT(0x004841F0, GetRandomControl, replace);
@@ -364,4 +396,5 @@ void inject_sgame(bool replace)
 	INJECT(0x00483B60, LevelStats, replace);
 	INJECT(0x00484250, GetValidLevelsList, replace);
 	INJECT(0x004842A0, GetSavedGamesList, replace);
+	INJECT(0x004842F0, DisplayCredits, replace);
 }

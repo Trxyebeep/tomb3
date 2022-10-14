@@ -11,3 +11,4 @@ bool CD_Init();
 #define S_CDVolume	( (void(__cdecl*)(long)) 0x0048D4F0 )
 #define S_SoundSetMasterVolume	( (void(__cdecl*)(long)) 0x0048D200 )
 #define S_CDLoop	( (void(__cdecl*)()) 0x0048D260 )
+#define S_StartSyncedAudio	( (long(__cdecl*)(long)) 0x0048D4B0 )
