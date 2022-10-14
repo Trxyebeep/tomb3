@@ -1607,7 +1607,7 @@ tomb3decomp progress.
 0x0048FF80	+	DXAddAttachedSurface
 0x0048FFA0	+	DXCreateDirect3DDevice
 0x0048FFC0	+	DXCreateViewPort
-0x004900B0		DXGetSurfaceDesc
+0x004900B0	+	DXGetSurfaceDesc
 0x004900C0		DXSurfBlt
 0x004B3550		DXSwitchVideoMode
 
