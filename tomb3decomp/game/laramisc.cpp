@@ -318,6 +318,8 @@ void LaraCheatGetStuff()
 void LaraCheatyBits()
 {
 #ifdef TROYESTUFF
+
+#ifdef _DEBUG
 	uchar s;
 
 	if (key_pressed(DIK_F1))
@@ -327,6 +329,9 @@ void LaraCheatyBits()
 	}
 
 	if (key_pressed(DIK_F2))
+#else	//_DEBUG
+	if (key_pressed(DIK_D) && key_pressed(DIK_O) && key_pressed(DIK_Z) && key_pressed(DIK_Y))
+#endif	//_DEBUG
 	{
 		lara_item->pos.y_pos -= 128;
 
@@ -349,6 +354,7 @@ void LaraCheatyBits()
 		}
 	}
 
+#ifdef _DEBUG
 	if (key_pressed(DIK_F3))
 		FinishLevelCheat = 1;
 
@@ -365,6 +371,8 @@ void LaraCheatyBits()
 			savegame.secrets = s;
 		}
 	}
+#endif //_DEBUG
+
 #else
 	if (!gameflow.cheat_enable && !gameflow.dozy_cheat_enabled)
 		return;
