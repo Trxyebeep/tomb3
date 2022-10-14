@@ -36,8 +36,25 @@ bool DXSetVideoMode(LPDIRECTDRAW2 ddx, long w, long h, long bpp)
 	return ddx->SetDisplayMode(w, h, bpp, 0, 0) == DD_OK;
 }
 
+bool DXCreateSurface(LPDIRECTDRAW2 ddx, LPDDSURFACEDESC desc, LPDIRECTDRAWSURFACE3 surf)
+{
+	LPDIRECTDRAWSURFACE s;
+	HRESULT result;
+
+	if (ddx->CreateSurface(desc, &s, 0) != DD_OK)
+		return 0;
+
+	result = s->QueryInterface(IID_IDirectDrawSurface3, (LPVOID*)surf);
+
+	if (s)
+		s->Release();
+
+	return result == DD_OK;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
 	INJECT(0x0048FEE0, DXSetVideoMode, replace);
+	INJECT(0x0048FF10, DXCreateSurface, replace);
 }
