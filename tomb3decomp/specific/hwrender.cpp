@@ -2,6 +2,7 @@
 #include "hwrender.h"
 #ifdef TROYESTUFF
 #include "drawbars.h"
+#include "../tomb3/tomb3.h"
 #endif
 
 bool zBufWriteEnabled;
@@ -433,6 +434,11 @@ void HWR_InitState()
 {
 	DIRECT3DINFO* d3dinfo;
 	bool blendOne, stippledAlpha, blendAlpha;
+
+#ifdef TROYESTUFF
+	if (tomb3.disable_gamma)
+		GammaOption = 2.5F;
+#endif
 
 	HWR_InitGamma(GammaOption);		//og has the code directly here
 

@@ -167,6 +167,13 @@ void do_detail_option(INVENTORY_ITEM* item)
 			}
 		}
 
+		if (tomb3.disable_gamma)
+		{
+			T_ChangeText(dtext[DT_OP_GAMMA], GF_PCStrings[PCSTR_SPARE8]);
+			available[DOP_GAMMA] = 0;
+			GammaOption = 2.5F;
+		}
+
 		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, 0, 0);
 		T_AddOutline(dtext[selection + nSel], 1, 4, 0, 0);
 		free(resolutions);
@@ -339,7 +346,16 @@ void do_detail_option(INVENTORY_ITEM* item)
 		T_RemoveBackground(dtext[selection + nSel]);
 		selection--;
 
-		while (!available[selection] && selection > 0) selection--;
+		while (!available[selection])
+		{
+			selection--;
+
+			if (selection <= 0)
+			{
+				while (!available[selection] && selection <= DOP_NOPTS - 1) selection++;
+				break;
+			}
+		}
 
 		T_AddOutline(dtext[selection + nSel], 1, 4, 0, 0);
 		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, 0, 0);

@@ -1850,6 +1850,7 @@ struct TOMB3_OPTIONS
 	bool slide_to_run;
 	bool kayak_mist;
 	bool dozy;
+	bool disable_gamma;
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum
 	long sophia_rings;	//t3_summon_ring_style
