@@ -101,6 +101,16 @@ void DXGetSurfaceDesc(LPDIRECTDRAWSURFACE3 surf, LPDDSURFACEDESC desc)
 	surf->GetSurfaceDesc(desc);
 }
 
+bool DXSurfBlt(LPDIRECTDRAWSURFACE3 surf, LPRECT rect, long FillColor)
+{
+	DDBLTFX bfx;
+
+	memset(&bfx, 0, sizeof(DDBLTFX));
+	bfx.dwSize = sizeof(DDBLTFX);
+	bfx.dwFillColor = FillColor;
+	return surf->Blt(rect, 0, 0, DDBLT_COLORFILL | DDBLT_WAIT, &bfx) == DD_OK;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -111,4 +121,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x0048FFA0, DXCreateDirect3DDevice, replace);
 	INJECT(0x0048FFC0, DXCreateViewPort, replace);
 	INJECT(0x004900B0, DXGetSurfaceDesc, replace);
+	INJECT(0x004900C0, DXSurfBlt, replace);
 }
