@@ -18,6 +18,9 @@
 #include "biggun.h"
 #include "minecart.h"
 #include "larafire.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
 
 void LaraAboveWater(ITEM_INFO* item, COLL_INFO* coll)
 {
@@ -750,8 +753,19 @@ void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 		return;
 	}
 
+#ifdef TROYESTUFF
+	if (tomb3.flexible_crawl)
+		h = item->anim_number != ANIM_ALL4S && item->anim_number != ANIM_ALL4S2 && item->anim_number != 266 && item->anim_number != 268;
+	else
+		h = item->anim_number != ANIM_ALL4S && item->anim_number != ANIM_ALL4S2;
+
+	if (h)
+		return;
+
+#else
 	if (item->anim_number != ANIM_ALL4S && item->anim_number != ANIM_ALL4S2)
 		return;
+#endif
 
 	if (input & IN_FORWARD)
 	{
@@ -1340,10 +1354,12 @@ void lara_as_dash(ITEM_INFO* item, COLL_INFO* coll)
 	if (input & IN_DUCK)
 	{
 #ifdef TROYESTUFF
-		item->goal_anim_state = AS_DUCK;
-#else
-		item->goal_anim_state = AS_STOP;
+		if (tomb3.flexible_crawl)
+			item->goal_anim_state = AS_DUCK;
+		else
 #endif
+			item->goal_anim_state = AS_STOP;
+
 		return;
 	}
 
@@ -2282,10 +2298,12 @@ void lara_as_run(ITEM_INFO* item, COLL_INFO* coll)
 	if (input & IN_DUCK && lara.water_status != LARA_WADE)
 	{
 #ifdef TROYESTUFF
-		item->goal_anim_state = AS_DUCK;
-#else
-		item->goal_anim_state = AS_STOP;
+		if (tomb3.flexible_crawl)
+			item->goal_anim_state = AS_DUCK;
+		else
 #endif
+			item->goal_anim_state = AS_STOP;
+
 		return;
 	}
 
