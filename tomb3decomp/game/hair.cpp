@@ -271,7 +271,7 @@ void HairControl(long in_cutscene)
 		phd_PushMatrix();
 		phd_TranslateRel(bone[41], bone[42], bone[43]);
 		gar_RotYXZsuperpack(&rotation, 2);
-		objptr = lara.mesh_ptrs[UARM_R];	//original bug: should be left arm
+		objptr = lara.mesh_ptrs[UARM_L];	//original was right hand, that's a bug
 		phd_TranslateRel(objptr[0], objptr[1], objptr[2]);
 		sphere[4].x = phd_mxptr[M03] >> W2V_SHIFT;
 		sphere[4].y = phd_mxptr[M13] >> W2V_SHIFT;
