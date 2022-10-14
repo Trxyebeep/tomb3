@@ -371,7 +371,7 @@ void lara_slide_slope(ITEM_INFO* item, COLL_INFO* coll)
 		if ((abs(coll->tilt_x)) <= 2 && (abs(coll->tilt_z)) <= 2)
 		{
 #ifdef TROYESTUFF
-			if (input & IN_FORWARD && item->anim_number == ANIM_SLIDE)
+			if (input & IN_FORWARD && item->anim_number == ANIM_SLIDE && tomb3.slide_to_run)
 				item->goal_anim_state = AS_RUN;
 			else
 #endif

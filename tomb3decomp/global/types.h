@@ -1847,6 +1847,7 @@ struct TOMB3_OPTIONS
 	bool flexible_crawl;
 	bool duck_roll;
 	bool flexible_sprint;
+	bool slide_to_run;
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum
 	long sophia_rings;	//t3_summon_ring_style
