@@ -147,6 +147,11 @@ bool DXCreateDirect3D(LPDIRECTDRAW2 ddx, LPDIRECT3D2* d3dx)
 	return ddx->QueryInterface(IID_IDirect3D2, (LPVOID*)d3dx) == DD_OK;
 }
 
+bool DXSetCooperativeLevel(LPDIRECTDRAW2 ddx, HWND hwnd, long flags)
+{
+	return ddx->SetCooperativeLevel(hwnd, flags) == DD_OK;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -161,4 +166,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x0048F1C0, DXBitMask2ShiftCnt, replace);
 	INJECT(0x0048FE40, DXCreateDirectDraw, replace);
 	INJECT(0x0048FEA0, DXCreateDirect3D, replace);
+	INJECT(0x0048FEC0, DXSetCooperativeLevel, replace);
 }
