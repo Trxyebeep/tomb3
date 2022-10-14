@@ -15,6 +15,9 @@
 #include "../3dsystem/phd_math.h"
 #include "gameflow.h"
 #include "../specific/smain.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
 
 void(*extra_control_routines[13])(ITEM_INFO* item, COLL_INFO* coll) =
 {
@@ -330,7 +333,7 @@ void LaraCheatyBits()
 
 	if (key_pressed(DIK_F2))
 #else	//_DEBUG
-	if (key_pressed(DIK_D) && key_pressed(DIK_O) && key_pressed(DIK_Z) && key_pressed(DIK_Y))
+	if (tomb3.dozy && key_pressed(DIK_D) && key_pressed(DIK_O) && key_pressed(DIK_Z) && key_pressed(DIK_Y))
 #endif	//_DEBUG
 	{
 		lara_item->pos.y_pos -= 128;
