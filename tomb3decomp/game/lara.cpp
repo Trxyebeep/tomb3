@@ -633,6 +633,9 @@ void lara_as_duck(ITEM_INFO* item, COLL_INFO* coll)
 	}
 
 #ifdef TROYESTUFF
+	if (!tomb3.duck_roll)
+		return;
+
 	if (input & IN_SPRINT && !(input & IN_DRAW))
 	{
 		if (LaraFloorFront(item, item->pos.y_rot, 512) < 384 && LaraFloorFront(item, item->pos.y_rot, 256) >= -384)
