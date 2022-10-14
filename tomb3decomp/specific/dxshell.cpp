@@ -111,6 +111,21 @@ bool DXSurfBlt(LPDIRECTDRAWSURFACE3 surf, LPRECT rect, long FillColor)
 	return surf->Blt(rect, 0, 0, DDBLT_COLORFILL | DDBLT_WAIT, &bfx) == DD_OK;
 }
 
+void DXBitMask2ShiftCnt(ulong mask, uchar* shift, uchar* count)
+{
+	uchar i;
+
+	for (i = 0; !(mask & 1); i++)
+		mask >>= 1;
+
+	*shift = i;
+
+	for (i = 0; mask & 1; i++)
+		mask >>= 1;
+
+	*count = i;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -122,4 +137,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x0048FFC0, DXCreateViewPort, replace);
 	INJECT(0x004900B0, DXGetSurfaceDesc, replace);
 	INJECT(0x004900C0, DXSurfBlt, replace);
+	INJECT(0x0048F1C0, DXBitMask2ShiftCnt, replace);
 }
