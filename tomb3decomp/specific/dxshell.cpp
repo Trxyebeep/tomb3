@@ -126,6 +126,22 @@ void DXBitMask2ShiftCnt(ulong mask, uchar* shift, uchar* count)
 	*count = i;
 }
 
+bool DXCreateDirectDraw(DEVICEINFO* dev, DXCONFIG* conf, LPDIRECTDRAW2* ddx)
+{
+	LPDIRECTDRAW dd;
+	HRESULT result;
+
+	if (DirectDrawCreate(dev->DDInfo[conf->nDD].lpGuid, &dd, 0) != DD_OK)
+		return 0;
+
+	result = dd->QueryInterface(IID_IDirectDraw2, (LPVOID*)ddx);
+
+	if (dd)
+		dd->Release();
+
+	return result == DD_OK;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -138,4 +154,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x004900B0, DXGetSurfaceDesc, replace);
 	INJECT(0x004900C0, DXSurfBlt, replace);
 	INJECT(0x0048F1C0, DXBitMask2ShiftCnt, replace);
+	INJECT(0x0048FE40, DXCreateDirectDraw, replace);
 }

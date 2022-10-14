@@ -13,5 +13,6 @@ bool DXCreateViewPort(LPDIRECT3D2 dd3x, LPDIRECT3DDEVICE2 device, long w, long h
 void DXGetSurfaceDesc(LPDIRECTDRAWSURFACE3 surf, LPDDSURFACEDESC desc);
 bool DXSurfBlt(LPDIRECTDRAWSURFACE3 surf, LPRECT rect, long FillColor);
 void DXBitMask2ShiftCnt(ulong mask, uchar* shift, uchar* count);
+bool DXCreateDirectDraw(DEVICEINFO* dev, DXCONFIG* conf, LPDIRECTDRAW2* ddx);
 
 #define DXSwitchVideoMode	( (bool(__cdecl*)(long, long, bool)) 0x004B3550 )
