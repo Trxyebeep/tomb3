@@ -31,7 +31,13 @@ long BPPToDDBD(long BPP)
 	}
 }
 
+bool DXSetVideoMode(LPDIRECTDRAW2 ddx, long w, long h, long bpp)
+{
+	return ddx->SetDisplayMode(w, h, bpp, 0, 0) == DD_OK;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
+	INJECT(0x0048FEE0, DXSetVideoMode, replace);
 }
