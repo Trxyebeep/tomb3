@@ -4094,6 +4094,9 @@ void S_DrawFootPrints()
 	ushort u1, v1, u2, v2;
 	short c;
 
+	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+		tomb3.footprints = 0;
+
 	bBlueEffect = 0;
 	sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 17];
 	u1 = (sprite->offset << 8) & 0xFF00;

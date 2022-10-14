@@ -422,6 +422,12 @@ void DrawGameInfo(long timed)
 		DrawAssaultPenalties(0);
 		DrawAssaultPenalties(1);
 		DrawQuadbikeLapTime();
+
+#ifdef TROYESTUFF
+		if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+			tomb3.bar_mode = BAR_ORIGINAL;
+#endif
+
 		DrawHealthBar(flash_state);
 		DrawAirBar(flash_state);
 #ifdef TROYESTUFF
