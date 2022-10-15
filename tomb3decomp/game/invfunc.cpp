@@ -359,7 +359,11 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 			if (req->item > req->vis_lines + req->line_offset)
 			{
 				req->line_offset++;
-				SoundEffect(SFX_MENU_PASSPORT, 0, 0x4000000 | SFX_SETPITCH);
+				SoundEffect(SFX_MENU_PASSPORT, 0, 0x4000000 | SFX_SETPITCH
+#ifdef TROYESTUFF
+				| SFX_ALWAYS
+#endif
+				);
 			}
 		}
 		else
@@ -367,7 +371,11 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 			if (req->selected < req->item - 1)
 			{
 				req->selected++;
-				SoundEffect(SFX_MENU_PASSPORT, 0, 0x4000000 | SFX_SETPITCH);
+				SoundEffect(SFX_MENU_PASSPORT, 0, 0x4000000 | SFX_SETPITCH
+#ifdef TROYESTUFF
+					| SFX_ALWAYS
+#endif
+				);
 			}
 
 			req->line_oldoffset = req->line_offset;
@@ -385,7 +393,11 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 			if (req->line_offset)
 			{
 				req->line_offset--;
-				SoundEffect(SFX_MENU_PASSPORT, 0, 0x4000000 | SFX_SETPITCH);
+				SoundEffect(SFX_MENU_PASSPORT, 0, 0x4000000 | SFX_SETPITCH
+#ifdef TROYESTUFF
+					| SFX_ALWAYS
+#endif
+				);
 			}
 		}
 		else
@@ -393,7 +405,11 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 			if (req->selected)
 			{
 				req->selected--;
-				SoundEffect(SFX_MENU_PASSPORT, 0, 0x4000000 | SFX_SETPITCH);
+				SoundEffect(SFX_MENU_PASSPORT, 0, 0x4000000 | SFX_SETPITCH
+#ifdef TROYESTUFF
+					| SFX_ALWAYS
+#endif
+				);
 			}
 
 			req->line_oldoffset = req->line_offset;

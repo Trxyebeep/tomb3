@@ -17,6 +17,7 @@
 - Fix user settings being lost after crash/ALT+F4
 - Fix the sunglasses menu crash
 - Fix having to go in the keys menu to avoid default/user binds conflicting
+- Fix passport sfx not playing while underwater
 
 ### tomb3 additions
 
