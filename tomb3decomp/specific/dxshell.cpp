@@ -188,6 +188,35 @@ BOOL CALLBACK DXEnumDirectInput(LPCDIDEVICEINSTANCE lpDevInst, LPVOID lpContext)
 	return DIENUM_CONTINUE;
 }
 
+BOOL CALLBACK DXEnumDisplayModes(LPDDSURFACEDESC lpDDSurfaceDesc, LPVOID lpContext)
+{
+	DIRECTDRAWINFO* ddinfo;
+	DISPLAYMODE* dm;
+
+	ddinfo = (DIRECTDRAWINFO*)lpContext;
+	ddinfo->DisplayMode = (DISPLAYMODE*)AddStruct(ddinfo->DisplayMode, ddinfo->nDisplayMode, sizeof(DISPLAYMODE));
+	dm = &ddinfo->DisplayMode[ddinfo->nDisplayMode];
+
+	dm->w = lpDDSurfaceDesc->dwWidth;
+	dm->h = lpDDSurfaceDesc->dwHeight;
+	dm->bpp = lpDDSurfaceDesc->ddpfPixelFormat.dwRGBBitCount;
+	dm->bPalette = lpDDSurfaceDesc->ddpfPixelFormat.dwFlags & DDPF_PALETTEINDEXED8;
+	memcpy(&dm->ddsd, lpDDSurfaceDesc, sizeof(DDSURFACEDESC));
+
+	if (!dm->bPalette)
+	{
+		DXBitMask2ShiftCnt(lpDDSurfaceDesc->ddpfPixelFormat.dwRBitMask, &dm->rshift, &dm->rbpp);
+		DXBitMask2ShiftCnt(lpDDSurfaceDesc->ddpfPixelFormat.dwGBitMask, &dm->gshift, &dm->gbpp);
+		DXBitMask2ShiftCnt(lpDDSurfaceDesc->ddpfPixelFormat.dwBBitMask, &dm->bshift, &dm->bbpp);
+
+		if (lpDDSurfaceDesc->ddpfPixelFormat.dwRGBAlphaBitMask)
+			DXBitMask2ShiftCnt(lpDDSurfaceDesc->ddpfPixelFormat.dwRGBAlphaBitMask, &dm->ashift, &dm->abpp);
+	}
+
+	ddinfo->nDisplayMode++;
+	return DDENUMRET_OK;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -204,4 +233,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x0048FEA0, DXCreateDirect3D, replace);
 	INJECT(0x0048FEC0, DXSetCooperativeLevel, replace);
 	INJECT(0x0048ECE0, DXEnumDirectInput, replace);
+	INJECT(0x0048F1F0, DXEnumDisplayModes, replace);
 }
