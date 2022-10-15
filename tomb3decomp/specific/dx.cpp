@@ -8,6 +8,9 @@ void DX_SaveScreen(LPDIRECTDRAWSURFACE3 surf)
 	DDSURFACEDESC desc;
 	ushort* pSurf;
 	short* pDest;
+#ifdef TROYESTUFF
+	char* pM;
+#endif
 	long r, g, b;
 	static long num;
 	ushort c;
@@ -37,7 +40,12 @@ void DX_SaveScreen(LPDIRECTDRAWSURFACE3 surf)
 		*(short*)&tga_header[14] = (short)desc.dwHeight;
 		fwrite(tga_header, sizeof(tga_header), 1, file);
 
+#ifdef TROYESTUFF
+		pM = (char*)malloc(2 * desc.dwWidth * desc.dwHeight);
+		pDest = (short*)pM;
+#else
 		pDest = (short*)malloc_ptr;
+#endif
 		pSurf += desc.dwHeight * (desc.lPitch / 2);
 
 		for (ulong h = 0; h < desc.dwHeight; h++)
@@ -60,7 +68,12 @@ void DX_SaveScreen(LPDIRECTDRAWSURFACE3 surf)
 			pSurf -= desc.lPitch / 2;
 		}
 
+#ifdef TROYESTUFF
+		fwrite(pM, 2 * desc.dwWidth * desc.dwHeight, 1, file);
+		free(pM);
+#else
 		fwrite(malloc_ptr, 2 * desc.dwWidth * desc.dwHeight, 1, file);
+#endif
 		fclose(file);
 
 		buf[7]++;
