@@ -420,6 +420,9 @@
     <ClInclude Include="tomb3decomp\specific\winmain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tomb3decomp\tomb3\dllmain.cpp">
@@ -818,5 +821,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="tomb3decomp\global\progress.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="tomb3decomp.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
