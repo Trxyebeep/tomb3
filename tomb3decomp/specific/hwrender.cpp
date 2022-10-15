@@ -34,18 +34,25 @@ void HWR_EnableColorKey(bool enable)
 {
 	static bool enabled;
 
-	if (enable)
-	{
-		if (!enabled)
-		{
-			SetRenderState(D3DRENDERSTATE_COLORKEYENABLE, 1);
-			enabled = 1;
-		}
-	}
-	else if (enabled)
-	{
+#ifdef TROYESTUFF
+	if (tomb3.disable_ckey)
 		SetRenderState(D3DRENDERSTATE_COLORKEYENABLE, 0);
-		enabled = 0;
+	else
+#endif
+	{
+		if (enable)
+		{
+			if (!enabled)
+			{
+				SetRenderState(D3DRENDERSTATE_COLORKEYENABLE, 1);
+				enabled = 1;
+			}
+		}
+		else if (enabled)
+		{
+			SetRenderState(D3DRENDERSTATE_COLORKEYENABLE, 0);
+			enabled = 0;
+		}
 	}
 }
 

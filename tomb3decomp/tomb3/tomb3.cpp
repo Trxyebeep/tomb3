@@ -25,6 +25,7 @@ static void T3_InitSettings()
 	tomb3.kayak_mist = 1;
 	tomb3.dozy = 0;
 	tomb3.disable_gamma = 1;
+	tomb3.disable_ckey = 0;
 	tomb3.shadow_mode = SHADOW_PSX;
 	tomb3.bar_mode = BAR_PSX;
 	tomb3.sophia_rings = SRINGS_PSX;
@@ -79,6 +80,7 @@ void T3_SaveSettings()
 	REG_WriteBool((char*)"kayak_mist", tomb3.kayak_mist);
 	REG_WriteBool((char*)"dozy", tomb3.dozy);
 	REG_WriteBool((char*)"disable_gamma", tomb3.disable_gamma);
+	REG_WriteBool((char*)"disable_ckey", tomb3.disable_ckey);
 	REG_WriteLong((char*)"shadow_mode", tomb3.shadow_mode);
 	REG_WriteLong((char*)"bar_mode", tomb3.bar_mode);
 	REG_WriteLong((char*)"sophia_rings", tomb3.sophia_rings);
@@ -139,6 +141,7 @@ bool T3_LoadSettings()
 	REG_ReadBool((char*)"kayak_mist", tomb3.kayak_mist, 1);
 	REG_ReadBool((char*)"dozy", tomb3.dozy, 0);
 	REG_ReadBool((char*)"disable_gamma", tomb3.disable_gamma, 1);
+	REG_ReadBool((char*)"disable_ckey", tomb3.disable_ckey, 0);
 	REG_ReadLong((char*)"shadow_mode", (ulong&)tomb3.shadow_mode, SHADOW_PSX);
 	REG_ReadLong((char*)"bar_mode", (ulong&)tomb3.bar_mode, BAR_PSX);
 	REG_ReadLong((char*)"sophia_rings", (ulong&)tomb3.sophia_rings, SRINGS_PSX);

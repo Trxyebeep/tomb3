@@ -19,6 +19,7 @@
 - Fix having to go in the keys menu to avoid default/user binds conflicting
 - Fix passport sfx not playing while underwater
 - Fix very unsafe memory usage when taking screenshots
+- Add experimental fix for transparency issues on Nvidia cards
 
 ### tomb3 additions
 
