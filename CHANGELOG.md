@@ -1,6 +1,6 @@
 # tomb3 changelog
 
-## [1.0.0](https://github.com/Trxyebeep/tomb3decomp/tree/V1.0.0) (date)
+## [1.0.0](https://github.com/Trxyebeep/tomb3decomp/tree/V1.0.0) (Oct. 15 2022)
 
 ### Original bug fixes
 
@@ -31,7 +31,7 @@
 - Make hair follow interpolated frames for much smoother movement
 - Make hair collide with the floor
 - Restore the pickup display and fix its clipping issues
-- Expand on Lara's moveset*
+- Expand on Lara's moveset
 - Add DOZY cheat
 - Make Lara faster during DOZY
 - Add PSX bars (Arsunt)
@@ -43,9 +43,3 @@
 - Properly scale lasers and change them into semitransparent quads instead of opaque lines
 - Add PSX shadow
 - Move all settings from config.txt to the registry
-
-*New moves:
-- duck roll
-- flexible crawling (less lag in her crawl moveset + restore the run-to-duck and the sprint-to-duck animations)
-- flexible sprint (Allows starting a sprint any time the sprint bar is not empty, rather than having to be full)
-- slide to run
