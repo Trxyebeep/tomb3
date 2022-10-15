@@ -46,6 +46,11 @@ do \
 #define SPR_BLEND_ADD		0x20000000
 #define SPR_BLEND_SUB		0x40000000
 
+	/**********************************/
+#define MALLOC	( (void*(__cdecl*)(size_t)) 0x004B6730 )
+#define REALLOC	( (void*(__cdecl*)(void*, size_t)) 0x004B6EA0 )
+#define FREE	( (void(__cdecl*)(void*)) 0x004B66E0 )
+	/**********************************/
 
 /*enums*/
 enum status_codes
@@ -1234,6 +1239,24 @@ struct DEVICEINFO
 	char unk[4];
 	long nDIInfo;
 	char unk2[4];
+};
+
+struct DXDIRECTINPUTINFO
+{
+	char Name[30];
+	char About[80];
+	LPGUID lpGuid;
+	GUID Guid;
+};
+
+struct DINPUTINFO
+{
+	long a;
+	long b;
+	long c;
+	long d;
+	long nDIInfo;
+	DXDIRECTINPUTINFO* DIInfo;
 };
 
 struct DXCONFIG

@@ -16,5 +16,6 @@ void DXBitMask2ShiftCnt(ulong mask, uchar* shift, uchar* count);
 bool DXCreateDirectDraw(DEVICEINFO* dev, DXCONFIG* conf, LPDIRECTDRAW2* ddx);
 bool DXCreateDirect3D(LPDIRECTDRAW2 ddx, LPDIRECT3D2* d3dx);
 bool DXSetCooperativeLevel(LPDIRECTDRAW2 ddx, HWND hwnd, long flags);
+BOOL CALLBACK DXEnumDirectInput(LPCDIDEVICEINSTANCE lpDevInst, LPVOID lpContext);
 
 #define DXSwitchVideoMode	( (bool(__cdecl*)(long, long, bool)) 0x004B3550 )

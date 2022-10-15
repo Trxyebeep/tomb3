@@ -152,6 +152,42 @@ bool DXSetCooperativeLevel(LPDIRECTDRAW2 ddx, HWND hwnd, long flags)
 	return ddx->SetCooperativeLevel(hwnd, flags) == DD_OK;
 }
 
+__inline void* AddStruct(void* p, long num, long size)	//Note: this function wasn't present/was inlined in the original (taken from TR4)
+{
+	void* ptr;
+
+	if (!num)
+		ptr = MALLOC(size);
+	else
+		ptr = REALLOC(p, size * (num + 1));
+
+	memset((char*)ptr + size * num, 0, size);
+	return ptr;
+}
+
+BOOL CALLBACK DXEnumDirectInput(LPCDIDEVICEINSTANCE lpDevInst, LPVOID lpContext)
+{
+	DINPUTINFO* dinfo;
+	DXDIRECTINPUTINFO* info;
+
+	dinfo = (DINPUTINFO*)lpContext;
+	dinfo->DIInfo = (DXDIRECTINPUTINFO*)AddStruct(dinfo->DIInfo, dinfo->nDIInfo, sizeof(DXDIRECTINPUTINFO));
+	info = &dinfo->DIInfo[dinfo->nDIInfo];
+
+	if (lpDevInst == (LPCDIDEVICEINSTANCE)-4)	//todo, fix me: properly check if guidInstance is valid
+		info->lpGuid = 0;
+	else
+	{
+		info->lpGuid = &info->Guid;
+		info->Guid = lpDevInst->guidInstance;
+	}
+
+	lstrcpy(info->About, lpDevInst->tszProductName);
+	lstrcpy(info->Name, lpDevInst->tszInstanceName);
+	dinfo->nDIInfo++;
+	return DIENUM_CONTINUE;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -167,4 +203,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x0048FE40, DXCreateDirectDraw, replace);
 	INJECT(0x0048FEA0, DXCreateDirect3D, replace);
 	INJECT(0x0048FEC0, DXSetCooperativeLevel, replace);
+	INJECT(0x0048ECE0, DXEnumDirectInput, replace);
 }

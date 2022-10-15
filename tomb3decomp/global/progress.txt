@@ -1589,7 +1589,7 @@ tomb3decomp progress.
 		specific/dxshell.cpp
 
 0x0048EBB0		DXGetDeviceInfo
-0x0048ECE0		DXEnumDirectInput
+0x0048ECE0	+	DXEnumDirectInput
 0x0048EDE0		DXEnumDirectSound
 0x0048EEE0		DXFreeDeviceInfo
 0x0048EFD0		DXEnumDirectDraw
