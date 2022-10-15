@@ -5,10 +5,9 @@
 #include "hwrender.h"
 #include "../3dsystem/hwinsert.h"
 #include "picture.h"
-#include "workstubs.h"
+#include "dx.h"
 #ifdef TROYESTUFF
 #include "../game/health.h"
-#include "dx.h"
 #include "../game/objects.h"
 #include "litesrc.h"
 #include "draweffects.h"
@@ -520,7 +519,7 @@ long S_DumpCine()
 	if (framedump)
 	{
 		nf++;
-		SaveDDBuffer(App.lpFrontBuffer);
+		DX_SaveScreen(App.lpFrontBuffer);
 		return 1;
 	}
 

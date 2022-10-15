@@ -1,7 +1,8 @@
 #include "../tomb3/pch.h"
 #include "input.h"
-#include "workstubs.h"
+#include "dd.h"
 #include "di.h"
+#include "dx.h"
 #include "display.h"
 #include "../game/invfunc.h"
 #include "../game/objects.h"
@@ -248,7 +249,7 @@ long S_UpdateInput()
 		med_debounce--;
 
 	if (key_pressed(DIK_APOSTROPHE))
-		SaveDDBuffer(App.lpFrontBuffer);
+		DX_SaveScreen(App.lpFrontBuffer);
 
 	if (FinishLevelCheat)
 	{

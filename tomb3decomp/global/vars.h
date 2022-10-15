@@ -272,6 +272,7 @@
 #define NextAdventure	VAR_(0x006D62C6, short)
 #define HiResFlag	VAR_(0x006A184C, long)
 #define SavedGames	VAR_(0x00633F4C, long)
+#define malloc_ptr	VAR_(0x00634140, char*)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)

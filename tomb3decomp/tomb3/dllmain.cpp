@@ -64,6 +64,7 @@
 #include "../specific/dd.h"
 #include "../specific/dxdialog.h"
 #include "../specific/dxshell.h"
+#include "../specific/dx.h"
 
 HINSTANCE hinstance = 0;
 
@@ -153,6 +154,7 @@ void inject_all(bool replace)
 	inject_dd(replace);
 	inject_dxdialog(replace);
 	inject_dxshell(replace);
+	inject_dx(replace);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
