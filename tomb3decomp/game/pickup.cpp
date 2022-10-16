@@ -11,6 +11,8 @@
 #include "invfunc.h"
 #include "gameflow.h"
 #include "../specific/smain.h"
+#include "effect2.h"
+#include "sound.h"
 
 static short PickUpBounds[12] = { -256, 256, -100, 100, -256, 256, -1820, 1820, 0, 0, 0, 0 };
 static short PickUpBoundsUW[12] = { -512, 512, -512, 512, -512, 512, -8190, 8190, -8190, 8190, -8190, 8190 };
@@ -206,8 +208,57 @@ void BossDropIcon(short item_number)
 	}
 }
 
+void AnimatingPickUp(short item_number)
+{
+	ITEM_INFO* item;
+	long ang, c, dx, dy, dz;
+
+	item = &items[item_number];
+
+	if (item->status == ITEM_INVISIBLE || item->flags & IFL_CLEARBODY)
+		return;
+
+	if (item->object_number == SAVEGAME_CRYSTAL_ITEM && !item->item_flags[1])
+	{
+		item->item_flags[1] = 1;
+		item->item_flags[2] = (short)item->pos.y_pos;
+	}
+
+	item->pos.y_rot += 1024;
+	item->item_flags[0] = (item->item_flags[0] + 1) & 0x3F;
+	ang = rcossin_tbl[item->item_flags[0] << 7];
+	c = abs(ang >> 7);
+
+	if (c > 31)
+		c = 31;
+
+	if (item->object_number == SAVEGAME_CRYSTAL_ITEM)
+	{
+		item->pos.y_pos = item->item_flags[2] - abs(ang >> 4) - 64;
+		TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 8, 0, c, 0);
+		dx = abs(item->pos.x_pos - lara_item->pos.x_pos);
+		dy = abs(item->pos.y_pos - lara_item->pos.y_pos);
+		dz = abs(item->pos.z_pos - lara_item->pos.z_pos);
+
+		if (dx < 256 && dy < 1024 && dz < 256)
+		{
+			lara.poisoned = 0;
+			lara_item->hit_points += 500;
+
+			if (lara_item->hit_points > 1000)
+				lara_item->hit_points = 1000;
+
+			SoundEffect(SFX_MENU_MEDI, &lara_item->pos, 0);
+			KillItem(item_number);
+		}
+	}
+	else
+		TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 8, 0, c, c >> 1);
+}
+
 void inject_pickup(bool replace)
 {
 	INJECT(0x0045BC00, PickUpCollision, inject_rando ? 1 : replace);
 	INJECT(0x0045CDE0, BossDropIcon, replace);
+	INJECT(0x0045CE70, AnimatingPickUp, replace);
 }
