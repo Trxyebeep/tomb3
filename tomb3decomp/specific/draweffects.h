@@ -24,6 +24,7 @@ void S_DrawBat();
 void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item);
 void S_DrawFootPrints();
 void DoUwEffect();
+void DrawBetterLasers(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uchar cb);
 #endif
 
 #define S_DrawSparks	( (void(__cdecl*)()) 0x0047B2C0 )
