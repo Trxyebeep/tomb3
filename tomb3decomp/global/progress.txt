@@ -1610,6 +1610,7 @@ tomb3decomp progress.
 0x004900B0	+	DXGetSurfaceDesc
 0x004900C0	+	DXSurfBlt
 0x004B3550		DXSwitchVideoMode
+0x004B2E80		DXCreateZBuffer
 
 
 		specific/file.cpp
@@ -1854,3 +1855,16 @@ tomb3decomp progress.
 0x0048E500		UT_FindArg
 0x0048E530		UT_OKCancelBox
 0x0048E570		UT_OKCB_DlgProc
+
+
+		specific/winmain.cpp
+
+0x004B2940		WinMain
+0x004B2C50		WinAppExit
+0x004B2C60		WinFreeDX
+0x004B2D40		WinRegisterWindow
+0x004B2DC0		WinCreateWindow
+0x004B2E10		WinAppProc
+0x004B2F80	+	WinDXInit
+0x004B34D0		WinFrameRate
+0x004B37C0		S_ExitSystem

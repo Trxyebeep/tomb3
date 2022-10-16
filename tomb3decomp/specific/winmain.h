@@ -1,5 +1,9 @@
 #pragma once
 #include "../global/vars.h"
 
-#define WinDXInit	( (bool(__cdecl*)(DEVICEINFO*, DXCONFIG*, bool)) 0x004B2F80 )
+void inject_winmain(bool replace);
+
+bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew);
+
 #define WinFreeDX	( (void(__cdecl*)(bool)) 0x004B2C60 )
+#define S_ExitSystem	( (void(__cdecl*)(const char*)) 0x004B37C0 )

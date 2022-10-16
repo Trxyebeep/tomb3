@@ -375,9 +375,6 @@
     <ClInclude Include="tomb3decomp\specific\input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tomb3decomp\specific\workstubs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="tomb3decomp\specific\option.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -771,9 +768,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tomb3decomp\specific\input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tomb3decomp\specific\workstubs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tomb3decomp\specific\option.cpp">

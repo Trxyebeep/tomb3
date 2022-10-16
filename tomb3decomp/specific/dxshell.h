@@ -20,3 +20,4 @@ BOOL CALLBACK DXEnumDirectInput(LPCDIDEVICEINSTANCE lpDevInst, LPVOID lpContext)
 BOOL CALLBACK DXEnumDisplayModes(LPDDSURFACEDESC lpDDSurfaceDesc, LPVOID lpContext);
 
 #define DXSwitchVideoMode	( (bool(__cdecl*)(long, long, bool)) 0x004B3550 )
+#define DXCreateZBuffer	( (bool(__cdecl*)(DEVICEINFO*, DXCONFIG*)) 0x004B2E80 )

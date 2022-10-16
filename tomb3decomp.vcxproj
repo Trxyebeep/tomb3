@@ -290,7 +290,6 @@
     <ClInclude Include="tomb3decomp\specific\transform.h" />
     <ClInclude Include="tomb3decomp\specific\utils.h" />
     <ClInclude Include="tomb3decomp\specific\winmain.h" />
-    <ClInclude Include="tomb3decomp\specific\workstubs.h" />
     <ClInclude Include="tomb3decomp\tomb3\framework.h" />
     <ClInclude Include="tomb3decomp\tomb3\pch.h" />
     <ClInclude Include="tomb3decomp\tomb3\registry.h" />
@@ -423,7 +422,6 @@
     <ClCompile Include="tomb3decomp\specific\transform.cpp" />
     <ClCompile Include="tomb3decomp\specific\utils.cpp" />
     <ClCompile Include="tomb3decomp\specific\winmain.cpp" />
-    <ClCompile Include="tomb3decomp\specific\workstubs.cpp" />
     <ClCompile Include="tomb3decomp\tomb3\dllmain.cpp" />
     <ClCompile Include="tomb3decomp\tomb3\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

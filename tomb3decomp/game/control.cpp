@@ -17,7 +17,7 @@
 #include "camera.h"
 #include "effects.h"
 #include "../3dsystem/phd_math.h"
-#include "../specific/workstubs.h"
+#include "../specific/winmain.h"
 
 long ControlPhase(long nframes, long demo_mode)
 {
