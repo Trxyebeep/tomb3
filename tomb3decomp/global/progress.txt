@@ -1596,7 +1596,7 @@ tomb3decomp progress.
 0x0048F1C0	+	DXBitMask2ShiftCnt
 0x0048F1F0	+	DXEnumDisplayModes
 0x0048F3C0		DXEnumDirect3D
-0x0048FBB0		DXEnumTextureFormats
+0x0048FBB0	+	DXEnumTextureFormats
 0x0048FDB0	+	BPPToDDBD
 0x0048FE40	+	DXCreateDirectDraw
 0x0048FEA0	+	DXCreateDirect3D

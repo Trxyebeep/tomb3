@@ -301,6 +301,41 @@ BOOL CALLBACK DXEnumDirectDraw(GUID FAR* lpGUID, LPSTR lpDriverDescription, LPST
 	return DDENUMRET_OK;
 }
 
+HRESULT CALLBACK DXEnumTextureFormats(LPDDSURFACEDESC lpDDPixFmt, LPVOID lpContext)
+{
+	DIRECT3DINFO* d3dinfo;
+	D3DTEXTUREINFO* tex;
+
+	d3dinfo = (DIRECT3DINFO*)lpContext;
+
+	d3dinfo->Texture = (D3DTEXTUREINFO*)AddStruct(d3dinfo->Texture, d3dinfo->nTexture, sizeof(D3DTEXTUREINFO));
+	tex = &d3dinfo->Texture[d3dinfo->nTexture];
+	memcpy(&tex->ddsd, lpDDPixFmt, sizeof(DDSURFACEDESC));
+
+	if (lpDDPixFmt->ddpfPixelFormat.dwFlags & DDPF_PALETTEINDEXED8)
+	{
+		tex->bPalette = 1;
+		tex->bpp = 8;
+	}
+	else if (!(lpDDPixFmt->ddpfPixelFormat.dwFlags & DDPF_PALETTEINDEXED4))
+	{
+		tex->bPalette = 0;
+		tex->bpp = lpDDPixFmt->ddpfPixelFormat.dwRGBBitCount;
+		DXBitMask2ShiftCnt(lpDDPixFmt->ddpfPixelFormat.dwRBitMask, &tex->rshift, &tex->rbpp);
+		DXBitMask2ShiftCnt(lpDDPixFmt->ddpfPixelFormat.dwGBitMask, &tex->gshift, &tex->gbpp);
+		DXBitMask2ShiftCnt(lpDDPixFmt->ddpfPixelFormat.dwBBitMask, &tex->bshift, &tex->bbpp);
+
+		if (lpDDPixFmt->ddpfPixelFormat.dwRGBAlphaBitMask)
+		{
+			DXBitMask2ShiftCnt(lpDDPixFmt->ddpfPixelFormat.dwRGBAlphaBitMask, &tex->ashift, &tex->abpp);
+			tex->bAlpha = 1;
+		}
+	}
+
+	d3dinfo->nTexture++;
+	return D3DENUMRET_OK;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -320,4 +355,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x0048F1F0, DXEnumDisplayModes, replace);
 	INJECT(0x004B2E80, DXCreateZBuffer, replace);
 	INJECT(0x0048EFD0, DXEnumDirectDraw, replace);
+	INJECT(0x0048FBB0, DXEnumTextureFormats, replace);
 }
