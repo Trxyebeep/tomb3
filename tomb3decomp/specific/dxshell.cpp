@@ -1,6 +1,11 @@
 #include "../tomb3/pch.h"
 #include "dxshell.h"
 
+//statics
+#define G_ddraw	VAR_(0x006CA0F8, LPDIRECTDRAW2)
+#define G_d3d	VAR_(0x006CA100, LPDIRECT3D2)
+#define SoftwareRenderer	VAR_(0x006CA104, bool)
+
 long BPPToDDBD(long BPP)
 {
 	switch (BPP)
@@ -188,7 +193,7 @@ BOOL CALLBACK DXEnumDirectInput(LPCDIDEVICEINSTANCE lpDevInst, LPVOID lpContext)
 	return DIENUM_CONTINUE;
 }
 
-BOOL CALLBACK DXEnumDisplayModes(LPDDSURFACEDESC lpDDSurfaceDesc, LPVOID lpContext)
+HRESULT CALLBACK DXEnumDisplayModes(LPDDSURFACEDESC lpDDSurfaceDesc, LPVOID lpContext)
 {
 	DIRECTDRAWINFO* ddinfo;
 	DISPLAYMODE* dm;
@@ -252,6 +257,50 @@ bool DXCreateZBuffer(DEVICEINFO* device, DXCONFIG* config)
 	return 1;
 }
 
+BOOL CALLBACK DXEnumDirectDraw(GUID FAR* lpGUID, LPSTR lpDriverDescription, LPSTR lpDriverName, LPVOID lpContext)
+{
+	DEVICEINFO* dinfo;
+	DIRECTDRAWINFO* info;
+	LPDIRECTDRAW ddraw;
+
+	dinfo = (DEVICEINFO*)lpContext;
+	dinfo->DDInfo = (DIRECTDRAWINFO*)AddStruct(dinfo->DDInfo, dinfo->nDDInfo, sizeof(DIRECTDRAWINFO));
+	info = &dinfo->DDInfo[dinfo->nDDInfo];
+
+	if (lpGUID)
+	{
+		info->lpGuid = &info->Guid;
+		info->Guid = *lpGUID;
+	}
+	else
+		info->lpGuid = 0;
+
+	lstrcpy(info->About, lpDriverDescription);
+	lstrcpy(info->Name, lpDriverName);
+	DirectDrawCreate(lpGUID, &ddraw, 0);
+	ddraw->QueryInterface(IID_IDirectDraw2, (LPVOID*)&G_ddraw);
+
+	if (ddraw)
+	{
+		ddraw->Release();
+		ddraw = 0;
+	}
+
+	memset(&info->DDCaps, 0, sizeof(DDCAPS));
+	info->DDCaps.dwSize = sizeof(DDCAPS);
+	G_ddraw->GetCaps(&info->DDCaps, 0);
+	G_ddraw->SetCooperativeLevel(0, DDSCL_FULLSCREEN | DDSCL_NOWINDOWCHANGES | DDSCL_NORMAL | DDSCL_ALLOWMODEX);
+	G_ddraw->EnumDisplayModes(0, 0, (LPVOID)info, DXEnumDisplayModes);
+	G_ddraw->QueryInterface(IID_IDirect3D2, (LPVOID*)&G_d3d);
+	SoftwareRenderer = 0;
+	G_d3d->EnumDevices(DXEnumDirect3D, info);
+	G_ddraw->SetCooperativeLevel(0, DDSCL_NORMAL);
+	G_d3d->Release();
+	G_ddraw->Release();
+	dinfo->nDDInfo++;
+	return DDENUMRET_OK;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -270,4 +319,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x0048ECE0, DXEnumDirectInput, replace);
 	INJECT(0x0048F1F0, DXEnumDisplayModes, replace);
 	INJECT(0x004B2E80, DXCreateZBuffer, replace);
+	INJECT(0x0048EFD0, DXEnumDirectDraw, replace);
 }
