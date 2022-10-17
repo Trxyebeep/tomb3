@@ -143,9 +143,24 @@ LRESULT CALLBACK WinAppProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
+long WinRegisterWindow(HINSTANCE hinstance)
+{
+	App.WindowClass.hIcon = LoadIconA(hinstance, (LPCSTR)115);		//todo: icon resource define
+	App.WindowClass.lpszMenuName = 0;
+	App.WindowClass.lpszClassName = "Window Class";
+	App.WindowClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	App.WindowClass.hInstance = hinstance;
+	App.WindowClass.style = CS_VREDRAW | CS_HREDRAW;
+	App.WindowClass.lpfnWndProc = WinAppProc;
+	App.WindowClass.cbClsExtra = 0;
+	App.WindowClass.cbWndExtra = 0;
+	return RegisterClass(&App.WindowClass);
+}
+
 void inject_winmain(bool replace)
 {
 	INJECT(0x004B2F80, WinDXInit, replace);
 	INJECT(0x004B2C50, WinAppExit, replace);
 	INJECT(0x004B2E10, WinAppProc, replace);
+	INJECT(0x004B2D40, WinRegisterWindow, replace);
 }
