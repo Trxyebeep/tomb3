@@ -1860,7 +1860,7 @@ tomb3decomp progress.
 		specific/winmain.cpp
 
 0x004B2940		WinMain
-0x004B2C50		WinAppExit
+0x004B2C50	+	WinAppExit
 0x004B2C60		WinFreeDX
 0x004B2D40		WinRegisterWindow
 0x004B2DC0		WinCreateWindow

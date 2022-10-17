@@ -5,6 +5,7 @@
 #include "drawprimitive.h"
 #include "hwrender.h"
 #include "texture.h"
+#include "init.h"
 
 bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 {
@@ -103,7 +104,14 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 	return 1;
 }
 
+void WinAppExit()
+{
+	ShutdownGame();
+	exit(0);
+}
+
 void inject_winmain(bool replace)
 {
 	INJECT(0x004B2F80, WinDXInit, replace);
+	INJECT(0x004B2C50, WinAppExit, replace);
 }
