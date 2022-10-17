@@ -268,7 +268,7 @@ void WinFreeDX(bool free_dd)
 void S_ExitSystem(const char* msg)
 {
 	DXSetCooperativeLevel(App.lpDD, App.WindowHandle, DDSCL_NORMAL);
-	MessageBox(App.WindowHandle, msg, 0, 0);
+	MessageBox(App.WindowHandle, msg, 0, MB_OK);
 	ShutdownGame();
 	strcpy(exit_message, msg);
 	exit(1);

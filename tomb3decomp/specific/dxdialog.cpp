@@ -6,6 +6,7 @@
 #endif
 
 //these are the BOXES/BUTTONS not the text
+#define IDD_SETUPDIALOG			101
 #define IDC_GRAPHICS_ADAPTER	1000
 #define IDC_OUTPUT_SETTINGS		1001
 #define IDC_RESOLUTION			1002
@@ -24,6 +25,7 @@
 #define IDC_TEST				1019
 
 #define G_DXConfig	VAR_(0x006CE508, DXCONFIG*)
+#define G_DeviceInfo	VAR_(0x006CE50C, DEVICEINFO*)
 
 BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -169,7 +171,27 @@ BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lPara
 	return 0;
 }
 
+bool DXUserDialog(DEVICEINFO* device, DXCONFIG* config, HINSTANCE hinstance)
+{
+	INT_PTR ret;
+
+	G_DeviceInfo = device;
+	G_DXConfig = config;
+	ShowCursor(1);
+	ret = DialogBoxParam(hinstance, MAKEINTRESOURCE(IDD_SETUPDIALOG), 0, DXSetupDlgProc, 0);
+	ShowCursor(0);
+
+	if (ret == -1)
+	{
+		MessageBox(0, "Unable To Initialise Dialog", "", MB_OK);
+		return 0;
+	}
+
+	return ret != 0;
+}
+
 void inject_dxdialog(bool replace)
 {
 	INJECT(0x00496C20, DXSetupDlgProc, replace);
+	INJECT(0x00496BB0, DXUserDialog, replace);
 }
