@@ -110,8 +110,42 @@ void WinAppExit()
 	exit(0);
 }
 
+LRESULT CALLBACK WinAppProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg)
+	{
+	case WM_CREATE:
+		ShowCursor(0);
+		break;
+
+	case WM_ACTIVATE:
+
+		switch (LOWORD(wParam))
+		{
+		case WA_INACTIVE:
+			App.bFocus = 0;
+			break;
+
+		case WA_ACTIVE:
+		case WA_CLICKACTIVE:
+			App.bFocus = 1;
+			break;
+		}
+
+		break;
+
+	case WM_CLOSE:
+		WinAppExit();
+		PostQuitMessage(0);
+		break;
+	}
+
+	return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
 void inject_winmain(bool replace)
 {
 	INJECT(0x004B2F80, WinDXInit, replace);
 	INJECT(0x004B2C50, WinAppExit, replace);
+	INJECT(0x004B2E10, WinAppProc, replace);
 }
