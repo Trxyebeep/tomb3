@@ -157,10 +157,26 @@ long WinRegisterWindow(HINSTANCE hinstance)
 	return RegisterClass(&App.WindowClass);
 }
 
+HWND WinCreateWindow(HINSTANCE hinstance, long nCmdShow)
+{
+	HWND hwnd;
+
+	hwnd = CreateWindowEx(WS_EX_APPWINDOW, "Window Class", "Tomb Raider III", WS_POPUP, 0, 0, 0, 0, 0, 0, hinstance, 0);
+
+	if (hwnd)
+	{
+		ShowWindow(hwnd, nCmdShow);
+		UpdateWindow(hwnd);
+	}
+
+	return hwnd;
+}
+
 void inject_winmain(bool replace)
 {
 	INJECT(0x004B2F80, WinDXInit, replace);
 	INJECT(0x004B2C50, WinAppExit, replace);
 	INJECT(0x004B2E10, WinAppProc, replace);
 	INJECT(0x004B2D40, WinRegisterWindow, replace);
+	INJECT(0x004B2DC0, WinCreateWindow, replace);
 }
