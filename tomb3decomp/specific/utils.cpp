@@ -57,10 +57,49 @@ char* UT_FindArg(char* arg)
 	return str;
 }
 
+INT_PTR CALLBACK UT_OKCB_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	switch (msg)
+	{
+	case WM_INITDIALOG:
+		UT_CenterWindow(hwnd);
+		return 1;
+
+	case WM_COMMAND:
+
+		switch (LOWORD(wParam))
+		{
+		case IDOK:
+			EndDialog(hwnd, 1);
+			return 1;
+
+		case IDCANCEL:
+			EndDialog(hwnd, 0);
+			return 1;
+		}
+
+		break;
+	}
+
+	return 0;
+}
+
+bool UT_OKCancelBox(char* lpTemplateName, HWND hWndParent)
+{
+	bool ret;
+
+	ShowCursor(1);
+	ret = DialogBoxParam(App.hInstance, lpTemplateName, hWndParent, UT_OKCB_DlgProc, 0) != 0;
+	ShowCursor(0);
+	return ret;
+}
+
 void inject_utils(bool replace)
 {
 	INJECT(0x0048E440, UT_GetAccurateTimer, replace);
 	INJECT(0x0048E3E0, UT_InitAccurateTimer, replace);
 	INJECT(0x0048E490, UT_CenterWindow, replace);
 	INJECT(0x0048E500, UT_FindArg, replace);
+	INJECT(0x0048E570, UT_OKCB_DlgProc, replace);
+	INJECT(0x0048E530, UT_OKCancelBox, replace);
 }

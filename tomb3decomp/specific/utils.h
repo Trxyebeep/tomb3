@@ -7,5 +7,5 @@ double UT_GetAccurateTimer();
 void UT_InitAccurateTimer();
 void UT_CenterWindow(HWND hwnd);
 char* UT_FindArg(char* arg);
-
-#define UT_OKCancelBox	( (bool(__cdecl*)(char*, HWND)) 0x0048E530 )
+INT_PTR CALLBACK UT_OKCB_DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+bool UT_OKCancelBox(char* lpTemplateName, HWND hWndParent);

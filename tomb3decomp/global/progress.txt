@@ -1853,8 +1853,8 @@ tomb3decomp progress.
 0x0048E440	+	UT_GetAccurateTimer
 0x0048E490	+	UT_CenterWindow
 0x0048E500	+	UT_FindArg
-0x0048E530		UT_OKCancelBox
-0x0048E570		UT_OKCB_DlgProc
+0x0048E530	+	UT_OKCancelBox
+0x0048E570	+	UT_OKCB_DlgProc
 
 
 		specific/winmain.cpp
