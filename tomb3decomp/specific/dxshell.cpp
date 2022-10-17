@@ -172,10 +172,10 @@ __inline void* AddStruct(void* p, long num, long size)	//Note: this function was
 
 BOOL CALLBACK DXEnumDirectInput(LPCDIDEVICEINSTANCE lpDevInst, LPVOID lpContext)
 {
-	DINPUTINFO* dinfo;
+	DEVICEINFO* dinfo;
 	DXDIRECTINPUTINFO* info;
 
-	dinfo = (DINPUTINFO*)lpContext;
+	dinfo = (DEVICEINFO*)lpContext;
 	dinfo->DIInfo = (DXDIRECTINPUTINFO*)AddStruct(dinfo->DIInfo, dinfo->nDIInfo, sizeof(DXDIRECTINPUTINFO));
 	info = &dinfo->DIInfo[dinfo->nDIInfo];
 
@@ -336,6 +336,29 @@ HRESULT CALLBACK DXEnumTextureFormats(LPDDSURFACEDESC lpDDPixFmt, LPVOID lpConte
 	return D3DENUMRET_OK;
 }
 
+HRESULT CALLBACK DXEnumDirectSound(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext)
+{
+	DEVICEINFO* device;
+	DXDIRECTSOUNDINFO* sinfo;
+
+	device = (DEVICEINFO*)lpContext;
+	device->DSInfo = (DXDIRECTSOUNDINFO*)AddStruct(device->DSInfo, device->nDDInfo, sizeof(DXDIRECTSOUNDINFO));
+	sinfo = &device->DSInfo[device->nDDInfo];
+
+	if (lpGuid)
+	{
+		sinfo->lpGuid = &sinfo->Guid;
+		sinfo->Guid = *lpGuid;
+	}
+	else
+		sinfo->lpGuid = 0;
+
+	lstrcpy(sinfo->About, lpcstrDescription);
+	lstrcpy(sinfo->Name, lpcstrModule);
+	device->nDSInfo++;
+	return 1;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -356,4 +379,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x004B2E80, DXCreateZBuffer, replace);
 	INJECT(0x0048EFD0, DXEnumDirectDraw, replace);
 	INJECT(0x0048FBB0, DXEnumTextureFormats, replace);
+	INJECT(0x0048EDE0, DXEnumDirectSound, replace);
 }

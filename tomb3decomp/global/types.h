@@ -1202,6 +1202,14 @@ struct D3DTEXTUREINFO
 	uchar ashift;
 };
 
+struct DXDIRECTSOUNDINFO
+{
+	char Name[30];
+	char About[80];
+	LPGUID lpGuid;
+	GUID Guid;
+};
+
 struct DIRECT3DINFO
 {
 	char Name[30];
@@ -1231,16 +1239,6 @@ struct DIRECTDRAWINFO
 	DIRECT3DINFO* D3DInfo;
 };
 
-struct DEVICEINFO
-{
-	long nDDInfo;
-	DIRECTDRAWINFO* DDInfo;
-	long nDSInfo;
-	char unk[4];
-	long nDIInfo;
-	char unk2[4];
-};
-
 struct DXDIRECTINPUTINFO
 {
 	char Name[30];
@@ -1249,12 +1247,12 @@ struct DXDIRECTINPUTINFO
 	GUID Guid;
 };
 
-struct DINPUTINFO
+struct DEVICEINFO
 {
-	long a;
-	long b;
-	long c;
-	long d;
+	long nDDInfo;
+	DIRECTDRAWINFO* DDInfo;
+	long nDSInfo;
+	DXDIRECTSOUNDINFO* DSInfo;
 	long nDIInfo;
 	DXDIRECTINPUTINFO* DIInfo;
 };
