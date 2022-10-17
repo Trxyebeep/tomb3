@@ -359,6 +359,35 @@ HRESULT CALLBACK DXEnumDirectSound(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCS
 	return 1;
 }
 
+void DXFreeDeviceInfo(DEVICEINFO* device)
+{
+	DIRECTDRAWINFO* dinfo;
+
+	for (int i = 0; i < device->nDDInfo; i++)
+	{
+		dinfo = &device->DDInfo[i];
+
+		for (int j = 0; j < dinfo->nD3DInfo; j++)
+		{
+			FREE(dinfo->D3DInfo[j].DisplayMode);
+			FREE(dinfo->D3DInfo[j].Texture);
+		}
+
+		FREE(dinfo->D3DInfo);
+		FREE(dinfo->DisplayMode);
+	}
+
+	FREE(device->DDInfo);
+
+	if (device->DSInfo)
+		FREE(device->DSInfo);
+
+	if (device->DIInfo)
+		FREE(device->DIInfo);
+
+	memset(device, 0, sizeof(DEVICEINFO));
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -380,4 +409,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x0048EFD0, DXEnumDirectDraw, replace);
 	INJECT(0x0048FBB0, DXEnumTextureFormats, replace);
 	INJECT(0x0048EDE0, DXEnumDirectSound, replace);
+	INJECT(0x0048EEE0, DXFreeDeviceInfo, replace);
 }
