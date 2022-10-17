@@ -273,6 +273,7 @@
 #define HiResFlag	VAR_(0x006A184C, long)
 #define SavedGames	VAR_(0x00633F4C, long)
 #define malloc_ptr	VAR_(0x00634140, char*)
+#define G_lpCmdLine	VAR_(0x006CF25C, char*)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)

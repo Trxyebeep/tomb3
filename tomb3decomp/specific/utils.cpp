@@ -45,9 +45,22 @@ void UT_CenterWindow(HWND hwnd)
 		-1, -1, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
+char* UT_FindArg(char* arg)
+{
+	char* str;
+
+	str = strstr(G_lpCmdLine, arg);
+
+	if (str)
+		str += strlen(arg);
+
+	return str;
+}
+
 void inject_utils(bool replace)
 {
 	INJECT(0x0048E440, UT_GetAccurateTimer, replace);
 	INJECT(0x0048E3E0, UT_InitAccurateTimer, replace);
 	INJECT(0x0048E490, UT_CenterWindow, replace);
+	INJECT(0x0048E500, UT_FindArg, replace);
 }
