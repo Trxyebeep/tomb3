@@ -172,6 +172,34 @@ HWND WinCreateWindow(HINSTANCE hinstance, long nCmdShow)
 	return hwnd;
 }
 
+float WinFrameRate()
+{
+	double t, time_now;
+	static float fps;
+	static long time, counter;
+	static char first_time;
+
+	if (!(first_time & 1))
+	{
+		first_time |= 1;
+		time = clock();
+	}
+
+	counter++;
+
+	if (counter == 10)
+	{
+		time_now = clock();
+		t = (time_now - time) / (double)CLOCKS_PER_SEC;
+		time = (long)time_now;
+		fps = float(counter / t);
+		counter = 0;
+	}
+
+	App.fps = fps;
+	return fps;
+}
+
 void inject_winmain(bool replace)
 {
 	INJECT(0x004B2F80, WinDXInit, replace);
@@ -179,4 +207,5 @@ void inject_winmain(bool replace)
 	INJECT(0x004B2E10, WinAppProc, replace);
 	INJECT(0x004B2D40, WinRegisterWindow, replace);
 	INJECT(0x004B2DC0, WinCreateWindow, replace);
+	INJECT(0x004B34D0, WinFrameRate, replace);
 }

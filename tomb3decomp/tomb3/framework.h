@@ -14,6 +14,7 @@
 #include <dinput.h>
 #include <mmreg.h>
 #include <mmeapi.h>
+#include <ctime>
 
 //#define RANDO_STUFF	1
 #define TROYESTUFF	1

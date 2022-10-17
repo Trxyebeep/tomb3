@@ -1866,5 +1866,5 @@ tomb3decomp progress.
 0x004B2DC0	+	WinCreateWindow
 0x004B2E10	+	WinAppProc
 0x004B2F80	+	WinDXInit
-0x004B34D0		WinFrameRate
+0x004B34D0	+	WinFrameRate
 0x004B37C0		S_ExitSystem
