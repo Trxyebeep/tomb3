@@ -838,7 +838,7 @@ const char* GetFullPath(const char* name)
 #if 0
 	wsprintf(path, "%c:\\%s", cd_drive, name);	//original code
 #else
-	wsprintfA(path, "%s", name);				//Steam no cd
+	wsprintf(path, "%s", name);					//Steam no cd
 #endif
 	return path;
 }

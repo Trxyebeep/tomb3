@@ -9,6 +9,7 @@
 ### tomb3 bug fixes
 
 - Fix laser seams and color by refactoring its drawing function.
+- Fix GetFullPath (fixes FMV playback).
 
 
 ## [1.0.0](https://github.com/Trxyebeep/tomb3decomp/tree/V1.0.0) (Oct. 15 2022)
