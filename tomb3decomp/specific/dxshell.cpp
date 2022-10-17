@@ -217,6 +217,41 @@ BOOL CALLBACK DXEnumDisplayModes(LPDDSURFACEDESC lpDDSurfaceDesc, LPVOID lpConte
 	return DDENUMRET_OK;
 }
 
+bool DXCreateZBuffer(DEVICEINFO* device, DXCONFIG* config)
+{
+	DIRECT3DINFO** dinfopp;
+	DDSURFACEDESC desc;
+
+	if (!config->bZBuffer)
+	{
+		App.lpZBuffer = 0;
+		return 1;
+	}
+	
+	dinfopp = &device->DDInfo[config->nDD].D3DInfo;
+	memset(&desc, 0, sizeof(DDSURFACEDESC));
+	desc.dwSize = sizeof(DDSURFACEDESC);
+	desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_ZBUFFERBITDEPTH;
+	desc.ddsCaps.dwCaps = DDSCAPS_ZBUFFER;
+
+	if ((*dinfopp)[config->nD3D].bHardware)
+		desc.ddsCaps.dwCaps |= DDSCAPS_VIDEOMEMORY;
+	else
+		desc.ddsCaps.dwCaps |= DDSCAPS_SYSTEMMEMORY;
+
+	desc.dwWidth = (*dinfopp)[config->nD3D].DisplayMode[config->nVMode].w;
+	desc.dwHeight = (*dinfopp)[config->nD3D].DisplayMode[config->nVMode].h;
+	desc.dwMipMapCount = 16;
+
+	if (!DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACE3)&App.lpZBuffer))
+		return 0;
+
+	if (!DXAddAttachedSurface(App.lpBackBuffer, App.lpZBuffer))
+		return 0;
+
+	return 1;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -234,4 +269,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x0048FEC0, DXSetCooperativeLevel, replace);
 	INJECT(0x0048ECE0, DXEnumDirectInput, replace);
 	INJECT(0x0048F1F0, DXEnumDisplayModes, replace);
+	INJECT(0x004B2E80, DXCreateZBuffer, replace);
 }
