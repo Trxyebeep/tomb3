@@ -265,6 +265,15 @@ void WinFreeDX(bool free_dd)
 	}
 }
 
+void S_ExitSystem(const char* msg)
+{
+	DXSetCooperativeLevel(App.lpDD, App.WindowHandle, DDSCL_NORMAL);
+	MessageBox(App.WindowHandle, msg, 0, 0);
+	ShutdownGame();
+	strcpy(exit_message, msg);
+	exit(1);
+}
+
 void inject_winmain(bool replace)
 {
 	INJECT(0x004B2F80, WinDXInit, replace);
@@ -274,4 +283,5 @@ void inject_winmain(bool replace)
 	INJECT(0x004B2DC0, WinCreateWindow, replace);
 	INJECT(0x004B34D0, WinFrameRate, replace);
 	INJECT(0x004B2C60, WinFreeDX, replace);
+	INJECT(0x004B37C0, S_ExitSystem, replace);
 }

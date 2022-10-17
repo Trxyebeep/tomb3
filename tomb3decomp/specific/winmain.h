@@ -10,5 +10,4 @@ long WinRegisterWindow(HINSTANCE hinstance);
 HWND WinCreateWindow(HINSTANCE hinstance, long nCmdShow);
 float WinFrameRate();
 void WinFreeDX(bool free_dd);
-
-#define S_ExitSystem	( (void(__cdecl*)(const char*)) 0x004B37C0 )
+void S_ExitSystem(const char* msg);
