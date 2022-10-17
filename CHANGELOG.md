@@ -1,5 +1,16 @@
 # tomb3 changelog
 
+## Unreleased
+
+### Original bug fixes
+
+### tomb3 additions
+
+### tomb3 bug fixes
+
+- Fix laser seams and color by refactoring its drawing function.
+
+
 ## [1.0.0](https://github.com/Trxyebeep/tomb3decomp/tree/V1.0.0) (Oct. 15 2022)
 
 ### Original bug fixes

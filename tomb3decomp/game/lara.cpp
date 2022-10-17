@@ -2302,7 +2302,6 @@ void lara_as_run(ITEM_INFO* item, COLL_INFO* coll)
 	if (input & IN_SPRINT && DashTimer == 120)
 #endif
 	{
-		//flexible_sprint
 		item->goal_anim_state = AS_DASH;
 		return;
 	}

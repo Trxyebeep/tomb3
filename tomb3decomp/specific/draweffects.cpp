@@ -4259,10 +4259,9 @@ void DrawBetterLasers(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, u
 	PHD_VBUF v[4];
 	FVECTOR pos;
 	PHDTEXTURESTRUCT tex;
-	float zv;
-	long dx, dy, dz, dist, nSegments, x, y, z, vx, vy, vz, s;
+	long dx, dy, dz, dist, nSegments, x, y, z, s;
 	long r, g, b;
-	short c, oc;
+	short c;
 	short angles[2];
 
 	dx = src->x - dest->x;
@@ -4322,11 +4321,11 @@ void DrawBetterLasers(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, u
 		r >>= 3;
 		g >>= 3;
 		b >>= 3;
-		c = r << 10 | g << 5 | b;
+		c = short(r << 10 | g << 5 | b);
 
-		pos.x = x;
-		pos.y = y;
-		pos.z = z;
+		pos.x = (float)x;
+		pos.y = (float)y;
+		pos.z = (float)z;
 		ProjectPHDVBuf(&pos, &v[0], c, 1);
 
 		x += dx;
@@ -4358,12 +4357,12 @@ void DrawBetterLasers(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, u
 			r >>= 3;
 			g >>= 3;
 			b >>= 3;
-			c = r << 10 | g << 5 | b;
+			c = short(r << 10 | g << 5 | b);
 		}
 
-		pos.x = x;
-		pos.y = y;
-		pos.z = z;
+		pos.x = (float)x;
+		pos.y = (float)y;
+		pos.z = (float)z;
 		ProjectPHDVBuf(&pos, &v[1], c, 1);
 
 		v[2] = v[1];
