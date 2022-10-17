@@ -200,6 +200,71 @@ float WinFrameRate()
 	return fps;
 }
 
+void WinFreeDX(bool free_dd)
+{
+	DXFreeTPages();
+
+	if (App.Palette)
+	{
+		App.Palette->Release();
+		App.Palette = 0;
+	}
+
+	if (App.lpViewPort)
+	{
+		App.lpViewPort->Release();
+		App.lpViewPort = 0;
+	}
+
+	if (App.lpD3DDevice)
+	{
+		App.lpD3DDevice->Release();
+		App.lpD3DDevice = 0;
+	}
+
+	if (App.lpZBuffer)
+	{
+		App.lpZBuffer->Release();
+		App.lpZBuffer = 0;
+	}
+
+	if (App.lpBackBuffer)
+	{
+		App.lpBackBuffer->Release();
+		App.lpBackBuffer = 0;
+	}
+
+	if (App.lpFrontBuffer)
+	{
+		App.lpFrontBuffer->Release();
+		App.lpFrontBuffer = 0;
+	}
+
+	if (App.lpPictureBuffer)
+	{
+		App.lpPictureBuffer->Release();
+		App.lpPictureBuffer = 0;
+	}
+
+	if (App.unk)
+		FREE(App.unk);
+
+	if (free_dd)
+	{
+		if (App.lpD3D)
+		{
+			App.lpD3D->Release();
+			App.lpD3D = 0;
+		}
+
+		if (App.lpDD)
+		{
+			App.lpDD->Release();
+			App.lpDD = 0;
+		}
+	}
+}
+
 void inject_winmain(bool replace)
 {
 	INJECT(0x004B2F80, WinDXInit, replace);
@@ -208,4 +273,5 @@ void inject_winmain(bool replace)
 	INJECT(0x004B2D40, WinRegisterWindow, replace);
 	INJECT(0x004B2DC0, WinCreateWindow, replace);
 	INJECT(0x004B34D0, WinFrameRate, replace);
+	INJECT(0x004B2C60, WinFreeDX, replace);
 }
