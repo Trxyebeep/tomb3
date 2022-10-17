@@ -137,14 +137,33 @@ void DoPSXHealthBar(long x0, long y0, long x1, long y1, long bar, long p)
 	ulong r[6] = { 0xFF008000, 0xFF009900, 0xFF00B200, 0xFF00CB00, 0xFF00E400, 0xFF00FD00 };
 	ulong f[6] = { 0xFF000000, 0xFF000000, 0xFF508484, 0xFFA0A0A0, 0xFF284242, 0xFF505050 };
 
-	if (lara.poisoned)
+	if (PoisonFlag)
 	{
-		r[0] = 0xFF400080;
-		r[1] = 0xFF4C0099;
-		r[2] = 0xFF5800B2;
-		r[3] = 0xFF6400CB;
-		r[4] = 0xFF7000E4;
-		r[5] = 0xFF7C00FD;
+		if (tomb3.improved_poison_bar)
+		{
+			r[0] = 0xFF400080;
+			r[1] = 0xFF4C0099;
+			r[2] = 0xFF5800B2;
+			r[3] = 0xFF6400CB;
+			r[4] = 0xFF7000E4;
+			r[5] = 0xFF7C00FD;
+		}
+		else
+		{
+			r[0] = 0xFF606000;
+			r[1] = 0xFF7C7C00;
+			r[2] = 0xFF989800;
+			r[3] = 0xFFB4B400;
+			r[4] = 0xFFD0D000;
+			r[5] = 0xFFECEC00;
+
+			l[0] = 0xFF606000;
+			l[1] = 0xFF7C7C00;
+			l[2] = 0xFF989800;
+			l[3] = 0xFFB4B400;
+			l[4] = 0xFFD0D000;
+			l[5] = 0xFFECEC00;
+		}
 	}
 
 	for (int i = 0; i < 6; i++)
@@ -224,7 +243,7 @@ void S_DrawHealthBar(long percent)
 	
 	if (bar > 0)
 	{
-		if (lara.poisoned)
+		if (PoisonFlag)
 		{
 			InsertFlatRect(x0, y0, x0 + bar, y0 + h, phd_znear + 20, 0xFFC0C000);
 			InsertFlatRect(x0, y0 + p, x0 + bar, y0 + p * 2, phd_znear + 10, 0xFFA0A000);

@@ -6,6 +6,10 @@
 
 ### tomb3 additions
 
+- Add crawl tilting.
+- Add an option for PSX yellow poison bar.
+- Make poison bar flash.
+
 ### tomb3 bug fixes
 
 - Fix laser seams and color by refactoring its drawing function.

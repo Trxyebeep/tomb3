@@ -1873,6 +1873,8 @@ struct TOMB3_OPTIONS
 	bool dozy;
 	bool disable_gamma;
 	bool disable_ckey;
+	bool crawl_tilt;
+	bool improved_poison_bar;
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum
 	long sophia_rings;	//t3_summon_ring_style
