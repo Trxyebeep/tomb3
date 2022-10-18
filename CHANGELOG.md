@@ -9,11 +9,13 @@
 - Add crawl tilting.
 - Add an option for PSX yellow poison bar.
 - Make poison bar flash.
+- Add an option for PSX water color.
 
 ### tomb3 bug fixes
 
 - Fix laser seams and color by refactoring its drawing function.
 - Fix GetFullPath (fixes FMV playback).
+- Fix skybox drawing (fixes Lara's Home crash when using the no crystals patch).
 
 
 ## [1.0.0](https://github.com/Trxyebeep/tomb3decomp/tree/V1.0.0) (Oct. 15 2022)

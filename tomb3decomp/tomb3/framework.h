@@ -17,4 +17,4 @@
 
 //#define RANDO_STUFF	1
 #define TROYESTUFF	1
-#define DO_LOG	1
+//#define DO_LOG	1
