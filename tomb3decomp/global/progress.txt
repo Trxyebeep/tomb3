@@ -1541,7 +1541,7 @@ tomb3decomp progress.
 0x00479C20	+	DrawLondonBossShield
 0x0047A4B0	+	DoRain
 0x0047AA80	+	DoSnow
-0x0047B2C0		S_DrawSparks
+0x0047B2C0	+	S_DrawSparks
 0x0047BAA0		S_DrawSplashes
 0x0047C2A0	+	DrawSummonRings
 0x0047CC10	+	DrawTonyBossShield

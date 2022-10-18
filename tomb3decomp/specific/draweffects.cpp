@@ -15,6 +15,26 @@
 #include "output.h"
 #endif
 
+static BITE_INFO NodeOffsets[16] =
+{
+	{0, 340, 64, 7},
+	{0, 0, -96, 10},
+	{16, 48, 320, 13},
+	{0, -256, 0, 5},
+	{0, 64, 0, 10},
+	{0, 64, 0, 13},
+	{-32, -16, -192, 13},
+	{-64, 410, 0, 20},
+	{64, 410, 0, 23},
+	{-160, -8, 16, 5},
+	{-160, -8, 16, 9},
+	{-160, -8, 16, 13},
+	{0, 0, 0, 0},
+	{0, 0, 0, 0},
+	{0, 0, 0, 0},
+	{0, 0, 0, 0}
+};
+
 static short BatMesh[5][3] =
 {
 	{-192, 0, -48},
@@ -3881,6 +3901,309 @@ void S_DrawBat()
 	}
 }
 
+void S_DrawSparks()
+{
+	DISPLAYMODE* dm;
+	SPARKS* sptr;
+	FX_INFO* fx;
+	ITEM_INFO* item;
+	PHD_VECTOR pos;
+	long w, h, x, y, z, sw, sh;
+	long x1, y1, x2, y2, x3, y3, x4, y4, r, g, b, f, c, drawType;
+	long sin, cos, sx1, sx2, sy1, sy2, cx1, cx2, cy1, cy2;
+	long vpos[3][3];
+	long point[3];
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w;
+	h = dm->h;
+
+	for (int i = 0; i < 192; i++)
+	{
+		sptr = &sparks[i];
+
+		if (!sptr->On)
+			continue;
+
+		if (sptr->Flags & 0x40)
+		{
+			fx = &effects[sptr->FxObj];
+
+			if (sptr->Flags & 0x400)
+			{
+				x = fx->pos.x_pos;
+				y = fx->pos.y_pos;
+				z = fx->pos.z_pos;
+			}
+			else
+			{
+				x = sptr->x + fx->pos.x_pos;
+				y = sptr->y + fx->pos.y_pos;
+				z = sptr->z + fx->pos.z_pos;
+			}
+		}
+		else if (sptr->Flags & 0x80)
+		{
+			item = &items[sptr->FxObj];
+
+			if (sptr->Flags & 0x400)
+			{
+				x = item->pos.x_pos;
+				y = item->pos.y_pos;
+				z = item->pos.z_pos;
+			}
+			else if (sptr->Flags & 0x1000)
+			{
+				pos.x = NodeOffsets[sptr->NodeNumber].x;
+				pos.y = NodeOffsets[sptr->NodeNumber].y;
+				pos.z = NodeOffsets[sptr->NodeNumber].z;
+				GetJointAbsPosition(item, &pos, NodeOffsets[sptr->NodeNumber].mesh_num);
+				x = sptr->x + pos.x;
+				y = sptr->y + pos.y;
+				z = sptr->z + pos.z;
+
+				if (sptr->NodeNumber == 2 || sptr->NodeNumber == 3)
+				{
+					b = sptr->NodeNumber == 3 ? (GetRandomDraw() & 3) + 12 : (GetRandomDraw() & 3) + 8;
+
+					if (sptr->sLife - sptr->Life > b)
+					{
+						sptr->Flags &= ~0x1080;
+						sptr->x = x;
+						sptr->y = y;
+						sptr->z = z;
+					}
+				}
+			}
+			else
+			{
+				x = sptr->x + item->pos.x_pos;
+				y = sptr->y + item->pos.y_pos;
+				z = sptr->z + item->pos.z_pos;
+			}
+		}
+		else
+		{
+			x = sptr->x;
+			y = sptr->y;
+			z = sptr->z;
+		}
+
+		mCalcPoint(x, y, z, point);
+		ProjectPCoord(point[0], point[1], point[2], vpos[0], w >> 1, h >> 1, phd_persp);
+
+		if (sptr->Flags & 8)
+		{
+			if (sptr->Flags & 2)
+			{
+				if (!vpos[0][2])
+					vpos[0][2] = 1;
+
+				if (sptr->Flags & 0x1000 && !sptr->NodeNumber)
+					x = 2;
+				else
+					x = 4;
+
+				sw = ((sptr->Width * phd_persp) << sptr->Scalar) / vpos[0][2];
+				sh = ((sptr->Height * phd_persp) << sptr->Scalar) / vpos[0][2];
+
+				if (sw > sptr->Width << sptr->Scalar)
+					sw = sptr->Width << sptr->Scalar;
+				else if (sw < x)
+					sw = x;
+
+				if (sh > sptr->Height << sptr->Scalar)
+					sh = sptr->Height << sptr->Scalar;
+				else if (sh < x)
+					sh = x;
+			}
+			else
+			{
+				sw = sptr->Width;
+				sh = sptr->Height;
+			}
+
+			z = vpos[0][2] << W2V_SHIFT;
+
+			if (z < phd_znear || z > phd_zfar)
+				continue;
+
+			x = vpos[0][0];
+			y = vpos[0][1];
+
+			if (x + (sw >> 1) < 0 || x - (sw >> 1) > w ||
+				y + (sh >> 1) < 0 || y - (sh >> 1) > h)
+				continue;
+
+			if (sptr->Flags & 0x10)
+			{
+				sin = rcossin_tbl[sptr->RotAng << 1];
+				cos = rcossin_tbl[(sptr->RotAng << 1) + 1];
+				sx1 = (-(sw >> 1) * sin) >> 12;
+				sx2 = ((sw >> 1) * sin) >> 12;
+				sy1 = (-(sh >> 1) * sin) >> 12;
+				sy2 = ((sh >> 1) * sin) >> 12;
+				cx1 = (-(sw >> 1) * cos) >> 12;
+				cx2 = ((sw >> 1) * cos) >> 12;
+				cy1 = (-(sh >> 1) * cos) >> 12;
+				cy2 = ((sh >> 1) * cos) >> 12;
+
+				x1 = x + sx1 - cy1;
+				x2 = x + sx2 - cy1;
+				x3 = x + sx2 - cy2;
+				x4 = x + sx1 - cy2;
+				y1 = y + sy1 + cx1;
+				y2 = y + cx2 + sy1;
+				y3 = y + sy2 + cx2;
+				y4 = y + sy2 + cx1;
+
+				r = sptr->R >> 3;
+				g = sptr->G >> 3;
+				b = sptr->B >> 3;
+				c = r << 10 | g << 5 | b;
+
+				if (z > distanceFogValue << W2V_SHIFT)
+				{
+					f = 2048 - ((z - (distanceFogValue << W2V_SHIFT)) >> 16);
+					r = (r * f) >> W2V_SHIFT;
+					g = (g * f) >> W2V_SHIFT;
+					b = (b * f) >> W2V_SHIFT;
+
+					if (r < 0)
+						r = 0;
+
+					if (g < 0)
+						g = 0;
+
+					if (b < 0)
+						b = 0;
+
+					c = r << 10 | g << 5 | b;
+				}
+
+				if (sptr->TransType == 2 || sptr->TransType == 3)
+					drawType = DT_POLY_WGTA;
+				else
+					drawType = DT_POLY_WGT;
+
+				HWI_InsertAlphaSprite_Sorted(x1, y1, z, c, x2, y2, z, c, x3, y3, z, c, x4, y4, z, c, sptr->Def, drawType, 0);
+			}
+			else
+			{
+				x1 = x - (sw >> 1);
+				y1 = y - (sh >> 1);
+				x2 = x1 + sw;
+				y2 = y1 + sh;
+
+				r = sptr->R >> 3;
+				g = sptr->G >> 3;
+				b = sptr->B >> 3;
+				c = r << 10 | g << 5 | b;
+
+				if (z > distanceFogValue << W2V_SHIFT)
+				{
+					f = 2048 - ((z - (distanceFogValue << W2V_SHIFT)) >> 16);
+					r = (r * f) >> W2V_SHIFT;
+					g = (g * f) >> W2V_SHIFT;
+					b = (b * f) >> W2V_SHIFT;
+
+					if (r < 0)
+						r = 0;
+
+					if (g < 0)
+						g = 0;
+
+					if (b < 0)
+						b = 0;
+
+					c = r << 10 | g << 5 | b;
+				}
+
+				if (sptr->TransType == 2 || sptr->TransType == 3)
+					drawType = DT_POLY_WGTA;
+				else
+					drawType = DT_POLY_WGT;
+
+				HWI_InsertAlphaSprite_Sorted(x1, y1, z, c, x2, y1, z, c, x2, y2, z, c, x1, y2, z, c, sptr->Def, drawType, 0);
+			}
+		}
+		else
+		{
+			if (sptr->Flags & 2)
+			{
+				if (!vpos[0][2])
+					vpos[0][2] = 1;
+
+				sw = ((sptr->Width * phd_persp) << sptr->Scalar) / vpos[0][2];
+				sh = ((sptr->Height * phd_persp) << sptr->Scalar) / vpos[0][2];
+
+				if (sw > sptr->Width << 2)
+					sw = sptr->Width << 2;
+				else if (sw < 1)
+					sw = 1;
+
+				if (sh > sptr->Height << 2)
+					sh = sptr->Height << 2;
+				else if (sh < 1)
+					sh = 1;
+			}
+			else
+			{
+				sw = sptr->Width;
+				sh = sptr->Height;
+			}
+
+			z = vpos[0][2] << W2V_SHIFT;
+
+			if (z < phd_znear || z > phd_zfar)
+				continue;
+
+			x = vpos[0][0];
+			y = vpos[0][1];
+
+			if (x + (sw >> 1) < 0 || x - (sw >> 1) > w ||
+				y + (sh >> 1) < 0 || y - (sh >> 1) > h)
+				continue;
+
+			x1 = x - (sw >> 1);
+			y1 = y - (sh >> 1);
+			x2 = x1 + sw;
+			y2 = y1 + sh;
+
+			r = sptr->R >> 3;
+			g = sptr->G >> 3;
+			b = sptr->B >> 3;
+			c = r << 10 | g << 5 | b;
+
+			if (z > distanceFogValue << W2V_SHIFT)
+			{
+				f = 2048 - ((z - (distanceFogValue << W2V_SHIFT)) >> 16);
+				r = (r * f) >> W2V_SHIFT;
+				g = (g * f) >> W2V_SHIFT;
+				b = (b * f) >> W2V_SHIFT;
+
+				if (r < 0)
+					r = 0;
+
+				if (g < 0)
+					g = 0;
+
+				if (b < 0)
+					b = 0;
+
+				c = r << 10 | g << 5 | b;
+			}
+
+			if (sptr->TransType == 2 || sptr->TransType == 3)
+				drawType = DT_POLY_GA;
+			else
+				drawType = DT_POLY_G;
+
+			HWI_InsertAlphaSprite_Sorted(x1, y1, z, c, x2, y1, z, c, x2, y2, z, c, x1, y2, z, c, -1, drawType, 0);
+		}
+	}
+}
+
 #ifdef TROYESTUFF
 //New effects
 void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
@@ -4397,4 +4720,5 @@ void inject_draweffects(bool replace)
 	INJECT(0x0047FC30, DrawWillBossShield, replace);
 	INJECT(0x00479810, S_DrawLaserBeam, replace);
 	INJECT(0x00476420, S_DrawBat, replace);
+	INJECT(0x0047B2C0, S_DrawSparks, replace);
 }
