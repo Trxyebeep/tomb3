@@ -272,6 +272,7 @@
 #define NextAdventure	VAR_(0x006D62C6, short)
 #define HiResFlag	VAR_(0x006A184C, long)
 #define SavedGames	VAR_(0x00633F4C, long)
+#define save_counter	VAR_(0x00633F58, long)
 #define malloc_ptr	VAR_(0x00634140, char*)
 #define G_lpCmdLine	VAR_(0x006CF25C, char*)
 #define TLUnRollBuffer	VAR_(0x006598D0, D3DTLVERTEX*)
@@ -450,6 +451,7 @@
 #define GlobeLevelComplete	ARRAY_(0x006D62C0, uchar, [6])
 #define LaserShades	ARRAY_(0x006D6160, uchar, [32])
 #define bats	ARRAY_(0x006DB8A0, BAT_STRUCT, [32])
+#define saved_levels	ARRAY_(0x004CD878, short, [24])
 
 /*constants*/
 #define NO_HEIGHT -32512

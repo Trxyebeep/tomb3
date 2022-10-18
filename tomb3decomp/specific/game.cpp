@@ -388,6 +388,52 @@ long LevelCompleteSequence()
 	return EXIT_TO_TITLE;
 }
 
+long S_FrontEndCheck(SAVEGAME_INFO* pData, long nBytes)
+{
+	HANDLE handle;
+	ulong read;
+	long num;
+	char name[80];
+	char ntxt[16];
+
+	Init_Requester(&Load_Game_Requester);
+	SavedGames = 0;
+
+	for (int i = 0; i < 16; i++)
+	{
+		wsprintf(name, "savegame.%d", i);
+		handle = CreateFile(name, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+		if (handle == INVALID_HANDLE_VALUE)
+		{
+			AddRequesterItem(&Load_Game_Requester, GF_PCStrings[PCSTR_SAVESLOT], 0, 0, 0);
+			saved_levels[i] = 0;
+		}
+		else
+		{
+			ReadFile(handle, name, 75, &read, 0);
+			ReadFile(handle, &num, sizeof(long), &read, 0);
+			CloseHandle(handle);
+			wsprintf(ntxt, "%d", num);
+			AddRequesterItem(&Load_Game_Requester, name, R_LEFTALIGN, ntxt, R_RIGHTALIGN);
+
+			if (num > save_counter)
+			{
+				save_counter = num;
+				Load_Game_Requester.selected = i;
+			}
+
+			saved_levels[i] = 0;
+			SavedGames++;
+		}
+	}
+
+	memcpy(SaveGameReqFlags1, RequesterFlags1, sizeof(SaveGameReqFlags1));
+	memcpy(SaveGameReqFlags2, RequesterFlags2, sizeof(SaveGameReqFlags2));
+	save_counter++;
+	return 1;
+}
+
 void inject_sgame(bool replace)
 {
 	INJECT(0x004841F0, GetRandomControl, replace);
@@ -403,4 +449,5 @@ void inject_sgame(bool replace)
 	INJECT(0x004842A0, GetSavedGamesList, replace);
 	INJECT(0x004842F0, DisplayCredits, replace);
 	INJECT(0x00483B50, LevelCompleteSequence, replace);
+	INJECT(0x00484410, S_FrontEndCheck, replace);
 }
