@@ -1720,7 +1720,7 @@ tomb3decomp progress.
 0x00485F60		init_game_malloc
 0x00485F90		game_malloc
 0x00486010		game_free
-0x00486050		CalculateWibbleTable
+0x00486050	+	CalculateWibbleTable
 
 
 		specific/input.cpp

@@ -7,6 +7,8 @@
 #include "ds.h"
 #include "drawprimitive.h"
 #include "winmain.h"
+#include "../3dsystem/phd_math.h"
+#include "game.h"
 
 void ShutdownGame()
 {
@@ -35,7 +37,24 @@ void ShutdownGame()
 #endif
 }
 
+void CalculateWibbleTable()
+{
+	long sin;
+
+	for (int i = 0; i < 32; i++)
+	{
+		sin = phd_sin(i * 0x10000 / 32);
+		wibble_table[i] = float((2 * sin) >> W2V_SHIFT);
+		shade_table[i] = short((768 * sin) >> W2V_SHIFT);
+		rand_table[i] = (GetRandomDraw() >> 5) - 511;
+
+		for (int j = 0; j < 31; j++)
+			wibble_light[i][j] = ((j - 16 * i) << 9) / 31;
+	}
+}
+
 void inject_init(bool replace)
 {
 	INJECT(0x00485EA0, ShutdownGame, replace);
+	INJECT(0x00486050, CalculateWibbleTable, replace);
 }
