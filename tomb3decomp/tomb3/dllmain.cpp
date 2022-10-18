@@ -67,6 +67,7 @@
 #include "../specific/dx.h"
 #include "../specific/winmain.h"
 #include "../specific/utils.h"
+#include "../specific/init.h"
 
 HINSTANCE hinstance = 0;
 
@@ -159,6 +160,7 @@ void inject_all(bool replace)
 	inject_dx(replace);
 	inject_winmain(replace);
 	inject_utils(replace);
+	inject_init(replace);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)

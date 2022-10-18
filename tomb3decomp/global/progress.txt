@@ -1716,7 +1716,7 @@ tomb3decomp progress.
 0x00485AB0		init_water_table
 0x00485CA0		GetRandom
 0x00485CE0		S_InitialiseSystem
-0x00485EA0		ShutdownGame
+0x00485EA0	+	ShutdownGame
 0x00485F60		init_game_malloc
 0x00485F90		game_malloc
 0x00486010		game_free

@@ -5,3 +5,4 @@
 #define DXFreeTPages	( (void(__cdecl*)()) 0x004B1F10 )
 #define DXCreateMaxTPages	( (void(__cdecl*)(long)) 0x004B1D90 )
 #define DXTextureSetGreyScale	( (void(__cdecl*)(bool)) 0x004B1B70 )
+#define DXClearAllTextures	( (void(__cdecl*)(DXTEXTURE*)) 0x004B21F0 )

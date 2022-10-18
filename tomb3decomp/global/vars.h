@@ -274,6 +274,9 @@
 #define SavedGames	VAR_(0x00633F4C, long)
 #define malloc_ptr	VAR_(0x00634140, char*)
 #define G_lpCmdLine	VAR_(0x006CF25C, char*)
+#define TLUnRollBuffer	VAR_(0x006598D0, D3DTLVERTEX*)
+#define TLVertexBuffer	VAR_(0x0063413C, D3DTLVERTEX*)
+#define malloc_buffer	VAR_(0x0069FCAC, char*)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
