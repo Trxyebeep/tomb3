@@ -1,6 +1,9 @@
 #include "../tomb3/pch.h"
 #include "hwinsert.h"
 #include "../specific/hwrender.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
 
 #define	SetBufferPtrs(sort, info, nDrawType, pass)\
 {\
@@ -385,6 +388,9 @@ void InitUVTable()
 
 long GETR(long col)
 {
+#ifdef TROYESTUFF
+	long w;
+#endif
 	long r;
 
 	r = (col >> 10) & 0x1F;
@@ -392,13 +398,26 @@ long GETR(long col)
 	r = ColorTable[r];
 
 	if (bBlueEffect)
-		return (128 * r) >> 8;
+	{
+#ifdef TROYESTUFF
+		if (tomb3.custom_water_color)
+		{
+			w = RGB_GETRED(water_color[CurrentLevel]);
+			return (w * r) >> 8;
+		}
+		else
+#endif
+			return (128 * r) >> 8;
+	}
 
 	return r;
 }
 
 long GETG(long col)
 {
+#ifdef TROYESTUFF
+	long w;
+#endif
 	long g;
 
 	g = (col >> 5) & 0x1F;
@@ -406,18 +425,43 @@ long GETG(long col)
 	g = ColorTable[g];
 
 	if (bBlueEffect)
-		return (224 * g) >> 8;
+	{
+#ifdef TROYESTUFF
+		if (tomb3.custom_water_color)
+		{
+			w = RGB_GETGREEN(water_color[CurrentLevel]);
+			return (w * g) >> 8;
+		}
+		else
+#endif
+			return (224 * g) >> 8;
+	}
 
 	return g;
 }
 
 long GETB(long col)
 {
+#ifdef TROYESTUFF
+	long w;
+#endif
 	long b;
 
 	b = (col & 0x1F);
 	b <<= 3;
 	b = ColorTable[b];
+
+#ifdef TROYESTUFF
+	if (bBlueEffect)
+	{
+		if (tomb3.custom_water_color)
+		{
+			w = RGB_GETBLUE(water_color[CurrentLevel]);
+			return (w * b) >> 8;
+		}
+	}
+#endif
+
 	return b;
 }
 

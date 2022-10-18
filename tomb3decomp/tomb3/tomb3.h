@@ -5,3 +5,4 @@ void T3_SaveSettings();
 bool T3_LoadSettings();
 
 extern TOMB3_OPTIONS tomb3;
+extern ulong water_color[24];

@@ -6,6 +6,49 @@
 
 TOMB3_OPTIONS tomb3;
 
+ulong water_color[24] =
+{
+	//home
+	0xFFCCFF80,
+
+	//India
+	0xFFCCFF80,
+	0xFFCCFF80,
+	0xFFCCFF80,
+	0xFFCCFF80,
+
+	//South Pacific
+	0xFF80FFFF,
+	0xFFFFFFFF,
+	0xFFFFFFFF,
+	0xFF80E0FF,		//puna has no water
+
+	//London
+	0xFFFFFFFF,
+	0xFFCCFF80,
+	0xFFCCFF80,
+	0xFFCCFF80,
+
+	//Nevada
+	0xFFFFFFFF,
+	0xFFFFFFFF,
+	0xFFFFFFFF,
+
+	//Antarctica
+	0xFF80FFFF,
+	0xFFCCFFCC,
+	0xFF80E0FF,
+	0xFF80E0FF,		//cavern has no water
+
+	//Hallows
+	0xFFB2E6E6,
+
+	//
+	0xFF80E0FF,
+	0xFF80E0FF,
+	0xFF80E0FF
+};
+
 static void T3_InitSettings()
 {
 	Option_Music_Volume = 7;
@@ -28,6 +71,7 @@ static void T3_InitSettings()
 	tomb3.disable_ckey = 0;
 	tomb3.crawl_tilt = 1;
 	tomb3.improved_poison_bar = 1;
+	tomb3.custom_water_color = 1;
 	tomb3.shadow_mode = SHADOW_PSX;
 	tomb3.bar_mode = BAR_PSX;
 	tomb3.sophia_rings = SRINGS_PSX;
@@ -85,6 +129,7 @@ void T3_SaveSettings()
 	REG_WriteBool((char*)"disable_ckey", tomb3.disable_ckey);
 	REG_WriteBool((char*)"crawl_tilt", tomb3.crawl_tilt);
 	REG_WriteBool((char*)"improved_poison_bar", tomb3.improved_poison_bar);
+	REG_WriteBool((char*)"custom_water_color", tomb3.custom_water_color);
 	REG_WriteLong((char*)"shadow_mode", tomb3.shadow_mode);
 	REG_WriteLong((char*)"bar_mode", tomb3.bar_mode);
 	REG_WriteLong((char*)"sophia_rings", tomb3.sophia_rings);
@@ -148,6 +193,7 @@ bool T3_LoadSettings()
 	REG_ReadBool((char*)"disable_ckey", tomb3.disable_ckey, 0);
 	REG_ReadBool((char*)"crawl_tilt", tomb3.crawl_tilt, 1);
 	REG_ReadBool((char*)"improved_poison_bar", tomb3.improved_poison_bar, 1);
+	REG_ReadBool((char*)"custom_water_color", tomb3.custom_water_color, 1);
 	REG_ReadLong((char*)"shadow_mode", (ulong&)tomb3.shadow_mode, SHADOW_PSX);
 	REG_ReadLong((char*)"bar_mode", (ulong&)tomb3.bar_mode, BAR_PSX);
 	REG_ReadLong((char*)"sophia_rings", (ulong&)tomb3.sophia_rings, SRINGS_PSX);
