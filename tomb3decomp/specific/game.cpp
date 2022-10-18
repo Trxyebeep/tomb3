@@ -383,6 +383,11 @@ void DisplayCredits()
 	FadePictureUp(32);
 }
 
+long LevelCompleteSequence()
+{
+	return EXIT_TO_TITLE;
+}
+
 void inject_sgame(bool replace)
 {
 	INJECT(0x004841F0, GetRandomControl, replace);
@@ -397,4 +402,5 @@ void inject_sgame(bool replace)
 	INJECT(0x00484250, GetValidLevelsList, replace);
 	INJECT(0x004842A0, GetSavedGamesList, replace);
 	INJECT(0x004842F0, DisplayCredits, replace);
+	INJECT(0x00483B50, LevelCompleteSequence, replace);
 }

@@ -1668,7 +1668,7 @@ tomb3decomp progress.
 0x004838E0	+	SortOutAdventureSave
 0x00483960		StartGame
 0x00483AA0		GameLoop
-0x00483B50		LevelCompleteSequence
+0x00483B50	+	LevelCompleteSequence
 0x00483B60	+	LevelStats
 0x00483FA0	+	Level2World
 0x00483FE0	+	World2Level
