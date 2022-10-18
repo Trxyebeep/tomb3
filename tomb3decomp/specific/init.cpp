@@ -28,6 +28,11 @@ void ShutdownGame()
 
 	WinFreeDX(1);
 	DXFreeDeviceInfo(&App.DeviceInfo);
+
+#ifdef DO_LOG
+	if (logF)
+		fclose(logF);
+#endif
 }
 
 void inject_init(bool replace)

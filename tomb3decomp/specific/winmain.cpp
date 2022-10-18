@@ -7,6 +7,10 @@
 #include "texture.h"
 #include "init.h"
 
+#ifdef DO_LOG
+FILE* logF = 0;
+#endif
+
 bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 {
 	DISPLAYMODE* dm;
@@ -16,21 +20,31 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 	DDSCAPS caps;
 	D3DMATERIALHANDLE handle;
 
+	Log("Starting WinDXInit");
 	App.nRenderMode = 1;
 
 	if (createNew)
 	{
 		if (!DXCreateDirectDraw(device, config, &App.lpDD) || !DXCreateDirect3D(App.lpDD, &App.lpD3D))
+		{
+			Log("Failed to create DirectDraw or Direct3D, exitting..");
 			return 0;
+		}
 	}
 
 	if (!DXSetCooperativeLevel(App.lpDD, App.WindowHandle, DDSCL_FULLSCREEN | DDSCL_EXCLUSIVE))
+	{
+		Log("DXSetCooperativeLevel failed: DDSCL_FULLSCREEN | DDSCL_EXCLUSIVE, exitting..");
 		return 0;
+	}
 
 	dm = &device->DDInfo[config->nDD].D3DInfo[config->nD3D].DisplayMode[config->nVMode];
 
 	if (!DXSetVideoMode(App.lpDD, dm->w, dm->h, dm->bpp))
+	{
+		Log("DXSetVideoMode failed, exitting..");
 		return 0;
+	}
 
 	memset(&desc, 0, sizeof(DDSURFACEDESC));
 	desc.dwSize = sizeof(DDSURFACEDESC);
@@ -39,7 +53,10 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 	desc.ddsCaps.dwCaps = DDSCAPS_COMPLEX | DDSCAPS_FLIP | DDSCAPS_PRIMARYSURFACE | DDSCAPS_3DDEVICE;
 
 	if (!DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACE3)&App.lpFrontBuffer))
+	{
+		Log("DXCreateSurface failed to create front buffer, exitting..");
 		return 0;
+	}
 
 	App.lpFrontBuffer->GetSurfaceDesc(&desc);
 	d3d = &device->DDInfo[config->nDD].D3DInfo[config->nD3D];
@@ -54,7 +71,10 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 		caps.dwCaps = DDSCAPS_BACKBUFFER;
 
 		if (!DXGetAttachedSurface(App.lpFrontBuffer, &caps, &App.lpBackBuffer))
+		{
+			Log("DXGetAttachedSurface failed to get back buffer, exitting..");
 			return 0;
+		}
 	}
 	else
 	{
@@ -64,15 +84,24 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 	}
 
 	if (!DXCreateZBuffer(device, config))
+	{
+		Log("DXCreateZBuffer failed, exitting..");
 		return 0;
+	}
 
 	if (!DXCreateDirect3DDevice(App.lpD3D, d3d->Guid, App.lpBackBuffer, &App.lpD3DDevice))
+	{
+		Log("DXCreateDirect3DDevice failed, exitting..");
 		return 0;
+	}
 
 	dm = &device->DDInfo[config->nDD].D3DInfo[config->nD3D].DisplayMode[config->nVMode];
 
 	if (!DXCreateViewPort(App.lpD3D, App.lpD3DDevice, dm->w, dm->h, &App.lpViewPort))
+	{
+		Log("DXCreateViewPort failed, exitting..");
 		return 0;
+	}
 
 	memset(&m, 0, sizeof(D3DMATERIAL));
 	m.dwSize = sizeof(D3DMATERIAL);
@@ -98,9 +127,13 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 		DXCreateMaxTPages(1);
 
 		if (!nTPages)
+		{
+			Log("nTPages is 0, DXCreateMaxTPages failed, exitting..");
 			return 0;
+		}
 	}
 
+	Log("WinDXInit finished successfully");
 	return 1;
 }
 
@@ -272,6 +305,23 @@ void S_ExitSystem(const char* msg)
 	ShutdownGame();
 	strcpy(exit_message, msg);
 	exit(1);
+}
+
+void Log(const char* s, ...)		//NOT present in original code
+{
+#ifdef DO_LOG
+	va_list list;
+	char buf[4096];
+
+	if (!logF)
+		logF = fopen("tomb3_log.txt", "w+");
+
+	va_start(list, s);
+	vsprintf(buf, s, list);
+	strcat(buf, "\n");
+	va_end(list);
+	fwrite(buf, strlen(buf), 1, logF);
+#endif
 }
 
 void inject_winmain(bool replace)

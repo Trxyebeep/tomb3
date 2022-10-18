@@ -817,7 +817,9 @@
     <ClCompile Include="tomb3decomp\specific\winmain.cpp">
       <Filter>specific</Filter>
     </ClCompile>
-    <ClCompile Include="tomb3decomp\specific\audio.cpp" />
+    <ClCompile Include="tomb3decomp\specific\audio.cpp">
+      <Filter>specific</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="tomb3decomp.rc" />

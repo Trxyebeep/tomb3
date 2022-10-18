@@ -11,3 +11,8 @@ HWND WinCreateWindow(HINSTANCE hinstance, long nCmdShow);
 float WinFrameRate();
 void WinFreeDX(bool free_dd);
 void S_ExitSystem(const char* msg);
+void Log(const char* s, ...);		//NOT present in original code
+
+#ifdef DO_LOG
+extern FILE* logF;
+#endif
