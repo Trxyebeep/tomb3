@@ -427,7 +427,7 @@ void S_InsertBackground(short* objptr)
 
 			nTris = *objptr - 16;
 
-			for (; nTris; nTris--)
+			for (; nTris > 0; nTris--)
 			{
 				triPtr[0] = short(BlackGouraudIndex << 8);
 				triPtr += 4;
@@ -436,7 +436,7 @@ void S_InsertBackground(short* objptr)
 			bFixSkyColour = 0;
 		}
 
-		objptr = InsertObjectG3(objptr + 1, objptr[0], BACK_SORT);
+		InsertObjectG3(objptr + 1, objptr[0], BACK_SORT);
 
 #ifdef TROYESTUFF
 		HWR_InitGamma(GammaOption);
