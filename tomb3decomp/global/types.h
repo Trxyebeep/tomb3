@@ -50,6 +50,9 @@ do \
 #define MALLOC	( (void*(__cdecl*)(size_t)) 0x004B6730 )
 #define REALLOC	( (void*(__cdecl*)(void*, size_t)) 0x004B6EA0 )
 #define FREE	( (void(__cdecl*)(void*)) 0x004B66E0 )
+
+#define GLOBALALLOC    ( *(HGLOBAL(__stdcall**)(UINT, SIZE_T)) 0x004C311C )
+#define GLOBALFREE    ( *(HGLOBAL(__stdcall**)(HGLOBAL)) 0x004C3120 )
 	/**********************************/
 
 /*enums*/

@@ -14,7 +14,7 @@
 //gameflow loading checks
 #define LOAD_GF(main, allocSize, buffer, readSize)\
 {\
-main = (char**)GlobalAlloc(GMEM_FIXED, allocSize);\
+main = (char**)GLOBALALLOC(GMEM_FIXED, allocSize);\
 if (!main) return 0;\
 if (!Read_Strings(readSize, main, &buffer, &read, file)) return 0;\
 }
@@ -89,7 +89,7 @@ long LoadTexturePages(HANDLE file)
 
 	_16bit = !App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bPalette;
 	size = _16bit ? 0x20000 : 0x10000;
-	p = (char*)GlobalAlloc(GMEM_FIXED, nPages * size);
+	p = (char*)GLOBALALLOC(GMEM_FIXED, nPages * size);
 
 	if (!p)
 		return 0;
@@ -112,7 +112,7 @@ long LoadTexturePages(HANDLE file)
 		HWR_LoadTexturePages(nPages, p, game_palette);
 	}
 
-	GlobalFree(p);
+	GLOBALFREE(p);
 	return 1;
 }
 
@@ -896,7 +896,7 @@ long Read_Strings(long num, char** strings, char** buffer, ulong* read, HANDLE f
 
 	MyReadFile(file, GF_Offsets, sizeof(short) * num, read, 0);
 	MyReadFile(file, &size, sizeof(short), read, 0);
-	*buffer = (char*)GlobalAlloc(GMEM_FIXED, size);
+	*buffer = (char*)GLOBALALLOC(GMEM_FIXED, size);
 
 	if (!*buffer)
 		return 0;
@@ -951,7 +951,7 @@ long S_LoadGameFlow(const char* name)
 
 	MyReadFile(file, GF_Offsets, sizeof(short) * (gameflow.num_levels + 1), &read, 0);
 	MyReadFile(file, &num, sizeof(short), &read, 0);
-	GF_sequence_buffer = (short*)GlobalAlloc(GMEM_FIXED, num);
+	GF_sequence_buffer = (short*)GLOBALALLOC(GMEM_FIXED, num);
 
 	if (!GF_sequence_buffer)
 		return 0;
