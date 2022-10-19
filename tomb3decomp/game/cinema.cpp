@@ -5,6 +5,8 @@
 #include "../specific/picture.h"
 #include "../specific/output.h"
 #include "items.h"
+#include "sphere.h"
+#include "laramisc.h"
 
 long DrawPhaseCinematic()
 {
@@ -77,10 +79,35 @@ long GetCinematicRoom(long x, long y, long z)
 	return -1;
 }
 
+void LaraControlCinematic(short item_number)
+{
+	ITEM_INFO* item;
+	PHD_VECTOR pos;
+	short room_number;
+
+	item = &items[item_number];
+	item->pos.y_rot = camera.target_angle;
+	item->pos.x_pos = camera.pos.x;
+	item->pos.y_pos = camera.pos.y;
+	item->pos.z_pos = camera.pos.z;
+
+	pos.x = 0;
+	pos.y = 0;
+	pos.z = 0;
+	GetJointAbsPosition(item, &pos, 0);
+	room_number = GetCinematicRoom(pos.x, pos.y, pos.z);
+
+	if (room_number != -1 && item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+
+	AnimateLara(item);
+}
+
 void inject_cinema(bool replace)
 {
 	INJECT(0x0041A890, DrawPhaseCinematic, replace);
 	INJECT(0x0041A8F0, InitialiseGenPlayer, replace);
 	INJECT(0x0041AA40, InitCinematicRooms, replace);
 	INJECT(0x0041AC20, GetCinematicRoom, replace);
+	INJECT(0x0041AB80, LaraControlCinematic, replace);
 }
