@@ -7,6 +7,7 @@
 #include "items.h"
 #include "sphere.h"
 #include "laramisc.h"
+#include "objects.h"
 
 long DrawPhaseCinematic()
 {
@@ -95,12 +96,34 @@ void LaraControlCinematic(short item_number)
 	pos.y = 0;
 	pos.z = 0;
 	GetJointAbsPosition(item, &pos, 0);
-	room_number = GetCinematicRoom(pos.x, pos.y, pos.z);
+	room_number = (short)GetCinematicRoom(pos.x, pos.y, pos.z);
 
 	if (room_number != -1 && item->room_number != room_number)
 		ItemNewRoom(item_number, room_number);
 
 	AnimateLara(item);
+}
+
+void InitialisePlayer1(short item_number)
+{
+	objects[LARA].draw_routine = dummyDrawFunc;
+	objects[LARA].control = LaraControlCinematic;
+	objects[LARA].shadow_size = 0;
+	AddActiveItem(item_number);
+	lara_item = &items[item_number];
+
+	camera.pos.x = lara_item->pos.x_pos;
+	camera.pos.y = lara_item->pos.y_pos;
+	camera.pos.z = lara_item->pos.z_pos;
+	lara_item->pos.y_rot = 0;
+	camera.target_angle = 0;
+	camera.pos.room_number = lara_item->room_number;
+	lara_item->dynamic_light = 0;
+	lara_item->anim_number = 0;
+	lara_item->frame_number = 0;
+	lara_item->current_anim_state = 0;
+	lara_item->goal_anim_state = 0;
+	lara.hit_direction = -1;
 }
 
 void inject_cinema(bool replace)
@@ -110,4 +133,5 @@ void inject_cinema(bool replace)
 	INJECT(0x0041AA40, InitCinematicRooms, replace);
 	INJECT(0x0041AC20, GetCinematicRoom, replace);
 	INJECT(0x0041AB80, LaraControlCinematic, replace);
+	INJECT(0x0041AAD0, InitialisePlayer1, replace);
 }
