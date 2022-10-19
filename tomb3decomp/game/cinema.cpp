@@ -60,9 +60,27 @@ void InitCinematicRooms()
 	}
 }
 
+long GetCinematicRoom(long x, long y, long z)
+{
+	ROOM_INFO* r;
+
+	for (int i = 0; i < number_rooms; i++)
+	{
+		r = &room[i];
+
+		if (x >= r->x + WALL_SIZE && x < (r->y_size << WALL_SHIFT) + r->x - WALL_SIZE &&
+			y >= r->maxceiling && y <= r->minfloor &&
+			z >= r->z + WALL_SIZE && z < (r->x_size << WALL_SHIFT) + r->z - WALL_SIZE)
+			return i;
+	}
+
+	return -1;
+}
+
 void inject_cinema(bool replace)
 {
 	INJECT(0x0041A890, DrawPhaseCinematic, replace);
 	INJECT(0x0041A8F0, InitialiseGenPlayer, replace);
 	INJECT(0x0041AA40, InitCinematicRooms, replace);
+	INJECT(0x0041AC20, GetCinematicRoom, replace);
 }
