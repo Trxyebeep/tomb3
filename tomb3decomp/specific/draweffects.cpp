@@ -4081,12 +4081,32 @@ void S_DrawSparks()
 					c = r << 10 | g << 5 | b;
 				}
 
+#ifdef TROYESTUFF
+				if (sptr->TransType == 3)
+				{
+					drawType = DT_POLY_COLSUB;
+					r = 4;
+				}
+				else
+				{
+					r = 1;
+
+					if (sptr->TransType == 2)
+						drawType = DT_POLY_WGTA;
+					else
+						drawType = DT_POLY_WGT;
+				}
+
+				for (g = 0; g < r; g++)	//HACK: draw colsub multiple times to make up for lack of modulate4x
+					HWI_InsertAlphaSprite_Sorted(x1, y1, z, c, x2, y2, z, c, x3, y3, z, c, x4, y4, z, c, sptr->Def, drawType, 0);
+#else
 				if (sptr->TransType == 2 || sptr->TransType == 3)
 					drawType = DT_POLY_WGTA;
 				else
 					drawType = DT_POLY_WGT;
 
 				HWI_InsertAlphaSprite_Sorted(x1, y1, z, c, x2, y2, z, c, x3, y3, z, c, x4, y4, z, c, sptr->Def, drawType, 0);
+#endif
 			}
 			else
 			{
@@ -4119,12 +4139,33 @@ void S_DrawSparks()
 					c = r << 10 | g << 5 | b;
 				}
 
+#ifdef TROYESTUFF
+				if (sptr->TransType == 3)
+				{
+					drawType = DT_POLY_COLSUB;
+					r = 4;
+				}
+				else
+				{
+					r = 1;
+
+					if (sptr->TransType == 2)
+						drawType = DT_POLY_WGTA;
+					else
+						drawType = DT_POLY_WGT;
+				}
+
+				for (g = 0; g < r; g++)	//HACK: draw colsub multiple times to make up for lack of modulate4x
+					HWI_InsertAlphaSprite_Sorted(x1, y1, z, c, x2, y1, z, c, x2, y2, z, c, x1, y2, z, c, sptr->Def, drawType, 0);
+
+#else
 				if (sptr->TransType == 2 || sptr->TransType == 3)
 					drawType = DT_POLY_WGTA;
 				else
 					drawType = DT_POLY_WGT;
 
 				HWI_InsertAlphaSprite_Sorted(x1, y1, z, c, x2, y1, z, c, x2, y2, z, c, x1, y2, z, c, sptr->Def, drawType, 0);
+#endif
 			}
 		}
 		else
@@ -4193,13 +4234,33 @@ void S_DrawSparks()
 
 				c = r << 10 | g << 5 | b;
 			}
+			
+#ifdef TROYESTUFF
+			if (sptr->TransType == 3)
+			{
+				drawType = DT_POLY_COLSUB;
+				r = 4;
+			}
+			else
+			{
+				r = 1;
 
+				if (sptr->TransType == 2)
+					drawType = DT_POLY_WGTA;
+				else
+					drawType = DT_POLY_WGT;
+			}
+
+			for (g = 0; g < r; g++)	//HACK: draw colsub multiple times to make up for lack of modulate4x
+				HWI_InsertAlphaSprite_Sorted(x1, y1, z, c, x2, y1, z, c, x2, y2, z, c, x1, y2, z, c, -1, drawType, 0);
+#else
 			if (sptr->TransType == 2 || sptr->TransType == 3)
 				drawType = DT_POLY_GA;
 			else
 				drawType = DT_POLY_G;
 
 			HWI_InsertAlphaSprite_Sorted(x1, y1, z, c, x2, y1, z, c, x2, y2, z, c, x1, y2, z, c, -1, drawType, 0);
+#endif
 		}
 	}
 }

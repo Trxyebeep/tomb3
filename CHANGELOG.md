@@ -10,6 +10,7 @@
 - Add an option for PSX yellow poison bar.
 - Make poison bar flash.
 - Add an option for PSX water color.
+- Add colsub for sparks, like smoke.
 
 ### tomb3 bug fixes
 
