@@ -32,8 +32,37 @@ void InitialiseGenPlayer(short item_number)
 	item->dynamic_light = 0;
 }
 
+void InitCinematicRooms()
+{
+	ROOM_INFO* r;
+
+	for (int i = 0; i < number_rooms; i++)
+	{
+		r = &room[i];
+
+		if (r->flipped_room >= 0)
+			room[r->flipped_room].bound_active = 1;
+
+		r->flags |= ROOM_OUTSIDE;
+	}
+
+	number_draw_rooms = 0;
+
+	for (int i = 0; i < number_rooms; i++)
+	{
+		r = &room[i];
+
+		if (!r->bound_active)
+		{
+			draw_rooms[number_draw_rooms] = i;
+			number_draw_rooms++;
+		}
+	}
+}
+
 void inject_cinema(bool replace)
 {
 	INJECT(0x0041A890, DrawPhaseCinematic, replace);
 	INJECT(0x0041A8F0, InitialiseGenPlayer, replace);
+	INJECT(0x0041AA40, InitCinematicRooms, replace);
 }
