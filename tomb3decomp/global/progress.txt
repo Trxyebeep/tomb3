@@ -576,7 +576,7 @@ tomb3decomp progress.
 		game/gameflow.cpp
 
 0x00432020		SetCutsceneTrack
-0x00432030		GF_LoadScriptFile
+0x00432030	+	GF_LoadScriptFile
 0x00432280		GF_DoFrontEndSequence
 0x004322A0		GF_DoLevelSequence
 0x00432310		GF_InterpretSequence
