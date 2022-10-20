@@ -12,3 +12,4 @@ void InitialisePlayer1(short item_number);
 void UpdateLaraGuns();
 void CalculateCinematicCamera();
 void InGameCinematicCamera();
+void ControlCinematicPlayer(short item_number);

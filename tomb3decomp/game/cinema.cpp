@@ -311,6 +311,38 @@ void InGameCinematicCamera()
 	}
 }
 
+void ControlCinematicPlayer(short item_number)
+{
+	ITEM_INFO* item;
+	PHD_VECTOR pos;
+	short room_number;
+
+	item = &items[item_number];
+	item->pos.y_rot = camera.target_angle;
+	item->pos.x_pos = camera.pos.x;
+	item->pos.y_pos = camera.pos.y;
+	item->pos.z_pos = camera.pos.z;
+
+	pos.x = 0;
+	pos.y = 0;
+	pos.z = 0;
+	GetJointAbsPosition(item, &pos, 0);
+	room_number = (short)GetCinematicRoom(pos.x, pos.y, pos.z);
+
+	if (room_number != -1 && item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+
+	if (item->dynamic_light && item->status != ITEM_INVISIBLE)
+	{
+		pos.x = 0;
+		pos.y = 0;
+		pos.z = 0;
+		GetJointAbsPosition(item, &pos, 0);
+	}
+
+	AnimateItem(item);
+}
+
 void inject_cinema(bool replace)
 {
 	INJECT(0x0041A890, DrawPhaseCinematic, replace);
@@ -322,4 +354,5 @@ void inject_cinema(bool replace)
 	INJECT(0x0041AE10, UpdateLaraGuns, replace);
 	INJECT(0x0041B090, CalculateCinematicCamera, replace);
 	INJECT(0x0041B2A0, InGameCinematicCamera, replace);
+	INJECT(0x0041B1D0, ControlCinematicPlayer, replace);
 }
