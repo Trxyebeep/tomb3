@@ -10,6 +10,8 @@
 #include "objects.h"
 #include "../specific/game.h"
 #include "effect2.h"
+#include "../3dsystem/phd_math.h"
+#include "../3dsystem/3d_gen.h"
 
 long DrawPhaseCinematic()
 {
@@ -184,7 +186,7 @@ void UpdateLaraGuns()
 				fx->room_number = room_number;
 				fx->pos.x_rot = 0;
 				fx->pos.y_rot = 0;
-				fx->pos.z_rot = GetRandomControl();
+				fx->pos.z_rot = (short)GetRandomControl();
 				fx->speed = (GetRandomControl() & 0x1F) + 16;
 				fx->object_number = GUNSHELL;
 				fx->fallspeed = -48 - (GetRandomControl() & 7);
@@ -218,6 +220,43 @@ void UpdateLaraGuns()
 	}
 }
 
+void CalculateCinematicCamera()
+{
+	PHD_VECTOR pos;
+	PHD_VECTOR tar;
+	short* ptr;
+	long s, c;
+	short tx, ty, tz, cx, cy, cz, roll, fov, room_number;
+
+	ptr = &cine[8 * cine_frame];
+	tx = ptr[0];
+	ty = ptr[1];
+	tz = ptr[2];
+	cx = ptr[3];
+	cy = ptr[4];
+	cz = ptr[5];
+	fov = ptr[6];
+	roll = ptr[7];
+	s = phd_sin(camera.target_angle);
+	c = phd_cos(camera.target_angle);
+
+	pos.x = lara_item->pos.x_pos + ((cz * s + cx * c) >> W2V_SHIFT);
+	pos.y = lara_item->pos.y_pos + cy;
+	pos.z = lara_item->pos.z_pos + ((cz * c - cx * s) >> W2V_SHIFT);
+
+	tar.x = lara_item->pos.x_pos + ((tx * c + tz * s) >> W2V_SHIFT);
+	tar.y = lara_item->pos.y_pos + ty;
+	tar.z = lara_item->pos.z_pos + ((tz * c - tx * s) >> W2V_SHIFT);
+
+	room_number = (short)GetCinematicRoom(pos.x, pos.y, pos.z);
+
+	if (room_number >= 0)
+		camera.pos.room_number = room_number;
+
+	AlterFOV(fov);
+	phd_LookAt(pos.x, pos.y, pos.z, tar.x, tar.y, tar.z, roll);
+}
+
 void inject_cinema(bool replace)
 {
 	INJECT(0x0041A890, DrawPhaseCinematic, replace);
@@ -227,4 +266,5 @@ void inject_cinema(bool replace)
 	INJECT(0x0041AB80, LaraControlCinematic, replace);
 	INJECT(0x0041AAD0, InitialisePlayer1, replace);
 	INJECT(0x0041AE10, UpdateLaraGuns, replace);
+	INJECT(0x0041B090, CalculateCinematicCamera, replace);
 }

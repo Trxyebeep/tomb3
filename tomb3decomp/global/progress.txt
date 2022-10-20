@@ -251,7 +251,7 @@ tomb3decomp progress.
 0x0041AC20	+	GetCinematicRoom
 0x0041ACA0		DoCinematic
 0x0041AE10	+	UpdateLaraGuns
-0x0041B090		CalculateCinematicCamera
+0x0041B090	+	CalculateCinematicCamera
 0x0041B1D0		ControlCinematicPlayer
 0x0041B2A0		InGameCinematicCamera
 
