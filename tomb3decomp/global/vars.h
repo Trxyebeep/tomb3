@@ -154,6 +154,7 @@
 #define cine_frame	VAR_(0x006E3032, short)
 #define num_cine_frames	VAR_(0x006E300A, short)
 #define cine_loaded	VAR_(0x006E3008, short)
+#define cinematic_pos	VAR_(0x006E3020, PHD_3DPOS)
 #define demo_loaded	VAR_(0x00625F7C, long)
 #define sound_active	VAR_(0x006D1F24, long)
 #define num_sample_infos	VAR_(0x006D1F20, long)

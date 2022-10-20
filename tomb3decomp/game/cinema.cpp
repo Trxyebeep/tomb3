@@ -12,6 +12,7 @@
 #include "effect2.h"
 #include "../3dsystem/phd_math.h"
 #include "../3dsystem/3d_gen.h"
+#include "control.h"
 
 long DrawPhaseCinematic()
 {
@@ -257,6 +258,59 @@ void CalculateCinematicCamera()
 	phd_LookAt(pos.x, pos.y, pos.z, tar.x, tar.y, tar.z, roll);
 }
 
+void InGameCinematicCamera()
+{
+	short* ptr;
+	long s, c, dx, dz;
+	short tx, ty, tz, cx, cy, cz, roll, fov;
+
+	cine_frame++;
+
+	if (cine_frame > num_cine_frames)
+		cine_frame = num_cine_frames - 1;
+
+	ptr = &cine[8 * cine_frame];
+	tx = ptr[0];
+	ty = ptr[1];
+	tz = ptr[2];
+	cx = ptr[3];
+	cy = ptr[4];
+	cz = ptr[5];
+	fov = ptr[6];
+	roll = ptr[7];
+	s = phd_sin(camera.target_angle);
+	c = phd_cos(camera.target_angle);
+
+	camera.pos.x = cinematic_pos.x_pos + ((c * cx + s * cz) >> W2V_SHIFT);
+	camera.pos.y = cinematic_pos.y_pos + cy;
+	camera.pos.z = cinematic_pos.z_pos + ((c * cz - s * cx) >> W2V_SHIFT);
+
+	camera.target.x = cinematic_pos.x_pos + ((c * tx + s * tz) >> W2V_SHIFT);
+	camera.target.y = cinematic_pos.y_pos + ty;
+	camera.target.z = cinematic_pos.z_pos + ((c * tz - s * tx) >> W2V_SHIFT);
+
+	AlterFOV(fov);
+	phd_LookAt(camera.pos.x, camera.pos.y, camera.pos.z, camera.target.x, camera.target.y, camera.target.z, roll);
+	GetFloor(camera.pos.x, camera.pos.y, camera.pos.z, &camera.pos.room_number);
+
+	if (camera.mike_at_lara)
+	{
+		camera.actual_angle = lara.torso_y_rot + lara.head_y_rot + lara_item->pos.y_rot;
+		camera.mike_pos.x = lara_item->pos.x_pos;
+		camera.mike_pos.y = lara_item->pos.y_pos;
+		camera.mike_pos.z = lara_item->pos.z_pos;
+	}
+	else
+	{
+		dx = camera.target.x - camera.pos.x;
+		dz = camera.target.z - camera.pos.z;
+		camera.actual_angle = (short)phd_atan(dz, dx);
+		camera.mike_pos.x = camera.pos.x + ((phd_persp * phd_sin(camera.actual_angle)) >> W2V_SHIFT);
+		camera.mike_pos.y = camera.pos.y;
+		camera.mike_pos.z = camera.pos.z + ((phd_persp * phd_cos(camera.actual_angle)) >> W2V_SHIFT);
+	}
+}
+
 void inject_cinema(bool replace)
 {
 	INJECT(0x0041A890, DrawPhaseCinematic, replace);
@@ -267,4 +321,5 @@ void inject_cinema(bool replace)
 	INJECT(0x0041AAD0, InitialisePlayer1, replace);
 	INJECT(0x0041AE10, UpdateLaraGuns, replace);
 	INJECT(0x0041B090, CalculateCinematicCamera, replace);
+	INJECT(0x0041B2A0, InGameCinematicCamera, replace);
 }

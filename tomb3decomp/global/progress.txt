@@ -253,7 +253,7 @@ tomb3decomp progress.
 0x0041AE10	+	UpdateLaraGuns
 0x0041B090	+	CalculateCinematicCamera
 0x0041B1D0		ControlCinematicPlayer
-0x0041B2A0		InGameCinematicCamera
+0x0041B2A0	+	InGameCinematicCamera
 
 
 		game/clawmute.cpp
