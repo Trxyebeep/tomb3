@@ -9,5 +9,6 @@ void InitCinematicRooms();
 long GetCinematicRoom(long x, long y, long z);
 void LaraControlCinematic(short item_number);
 void InitialisePlayer1(short item_number);
+void UpdateLaraGuns();
 
 #define InGameCinematicCamera	( (void(__cdecl*)()) 0x0041B2A0 )

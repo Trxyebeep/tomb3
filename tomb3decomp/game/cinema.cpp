@@ -8,6 +8,8 @@
 #include "sphere.h"
 #include "laramisc.h"
 #include "objects.h"
+#include "../specific/game.h"
+#include "effect2.h"
 
 long DrawPhaseCinematic()
 {
@@ -126,6 +128,96 @@ void InitialisePlayer1(short item_number)
 	lara.hit_direction = -1;
 }
 
+void UpdateLaraGuns()
+{
+	FX_INFO* fx;
+	PHD_VECTOR* pos;
+	PHD_VECTOR lpos;
+	PHD_VECTOR rpos;
+	long flash, r;
+	short room_number, fx_num;
+
+	if (!lara.left_arm.flash_gun && !lara.right_arm.flash_gun && !SmokeCountL && !SmokeCountR)
+		return;
+
+	flash = 0;
+	r = 0;
+
+	lpos.x = -12;
+	lpos.y = 48;
+	lpos.z = 40;
+	GetJointAbsPosition(lara_item, &lpos, HAND_L);
+
+	rpos.x = 8;
+	rpos.y = 48;
+	rpos.z = 40;
+	GetJointAbsPosition(lara_item, &rpos, HAND_R);
+
+	pos = &lpos;
+
+	if (lara.left_arm.flash_gun)
+	{
+		flash = lara.left_arm.flash_gun;
+		lara.left_arm.flash_gun--;
+	}
+	else if (lara.right_arm.flash_gun)
+	{
+		flash = lara.right_arm.flash_gun;
+		pos = &rpos;
+		r = 1;
+		lara.right_arm.flash_gun--;
+	}
+
+	if (flash)
+	{
+		if (flash == 3)
+		{
+			room_number = (short)GetCinematicRoom(pos->x, pos->y, pos->z);
+			fx_num = CreateEffect(room_number);
+
+			if (fx_num != NO_ITEM)
+			{
+				fx = &effects[fx_num];
+				fx->pos.x_pos = pos->x;
+				fx->pos.y_pos = pos->y;
+				fx->pos.z_pos = pos->z;
+				fx->room_number = room_number;
+				fx->pos.x_rot = 0;
+				fx->pos.y_rot = 0;
+				fx->pos.z_rot = GetRandomControl();
+				fx->speed = (GetRandomControl() & 0x1F) + 16;
+				fx->object_number = GUNSHELL;
+				fx->fallspeed = -48 - (GetRandomControl() & 7);
+				fx->frame_number = objects[GUNSHELL].mesh_index;
+				fx->shade = 0x4210;
+				fx->counter = (GetRandomControl() & 1) + 1;
+			}
+
+			if (r)
+				SmokeCountR = 28;
+			else
+				SmokeCountL = 28;
+		}
+
+		TriggerDynamic(pos->x + (GetRandomControl() & 0xFF) - 128,
+			pos->y - (GetRandomControl() & 0x7F) + 63,
+			pos->z + (GetRandomControl() & 0xFF) - 128,
+			10, (GetRandomControl() & 7) + 24, (GetRandomControl() & 3) + 16, GetRandomControl() & 7);
+	}
+
+	if (SmokeCountL)
+	{
+		TriggerGunSmoke(lpos.x, lpos.y, lpos.z, 0, 0, 0, 0, LG_PISTOLS, SmokeCountL);
+		SmokeCountL--;
+	}
+
+	if (SmokeCountR)
+	{
+		TriggerGunSmoke(rpos.x, rpos.y, rpos.z, 0, 0, 0, 0, LG_PISTOLS, SmokeCountR);
+		SmokeCountR--;
+	}
+}
+
 void inject_cinema(bool replace)
 {
 	INJECT(0x0041A890, DrawPhaseCinematic, replace);
@@ -134,4 +226,5 @@ void inject_cinema(bool replace)
 	INJECT(0x0041AC20, GetCinematicRoom, replace);
 	INJECT(0x0041AB80, LaraControlCinematic, replace);
 	INJECT(0x0041AAD0, InitialisePlayer1, replace);
+	INJECT(0x0041AE10, UpdateLaraGuns, replace);
 }
