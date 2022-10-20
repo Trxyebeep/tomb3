@@ -14,3 +14,4 @@ void CalculateCinematicCamera();
 void InGameCinematicCamera();
 void ControlCinematicPlayer(short item_number);
 long DoCinematic(long nframes);
+long StartCinematic(long level_number);

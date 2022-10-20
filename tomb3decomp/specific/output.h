@@ -21,3 +21,4 @@ long GetRenderScale(long unit);
 #define S_InitialisePolyList	( (void(__cdecl*)(long)) 0x0048A210 )
 #define S_DumpScreen	( (long(__cdecl*)()) 0x0048A2D0 )
 #define S_AnimateTextures	( (void(__cdecl*)(long)) 0x0048AB50 )
+#define S_ClearScreen	( (void(__cdecl*)()) 0x0048A320 )

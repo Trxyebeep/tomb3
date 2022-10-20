@@ -405,6 +405,56 @@ long DoCinematic(long nframes)
 	return 0;
 }
 
+long StartCinematic(long level_number)
+{
+	long old_sound, ret, nframes;
+
+	title_loaded = 0;
+	cinematic_level = (short)level_number;
+	InitCinematicRooms();
+	InitialisePlayer1(lara.item_number);
+	old_sound = sound_active;
+	camera.target_angle = GF_Cutscene_Orientation;
+	sound_active = 0;
+	cine_frame = 0;
+	S_ClearScreen();
+
+	if (!S_StartSyncedAudio(cutscene_track))
+		return 1;
+
+	S_CDVolume(255);
+	actual_current_frame = 0;
+	GnGameMode = GAMEMODE_IN_CUTSCENE;
+
+	do
+	{
+		DrawPhaseCinematic();
+		nframes = actual_current_frame + 2 * (4 - cine_frame);
+
+		if (nframes < 2)
+			nframes = 2;
+
+		if (framedump)
+			nframes = 2;
+
+		ret = DoCinematic(nframes);
+
+	} while (!ret);
+
+	GnGameMode = GAMEMODE_NOT_IN_GAME;
+
+	if (Option_Music_Volume)
+		S_CDVolume(25 * Option_Music_Volume + 5);
+	else
+		S_CDVolume(0);
+
+	S_CDStop();
+	sound_active = old_sound;
+	S_SoundStopAllSamples();
+	level_complete = 1;
+	return ret;
+}
+
 void inject_cinema(bool replace)
 {
 	INJECT(0x0041A890, DrawPhaseCinematic, replace);
@@ -418,4 +468,5 @@ void inject_cinema(bool replace)
 	INJECT(0x0041B2A0, InGameCinematicCamera, replace);
 	INJECT(0x0041B1D0, ControlCinematicPlayer, replace);
 	INJECT(0x0041ACA0, DoCinematic, replace);
+	INJECT(0x0041A930, StartCinematic, replace);
 }
