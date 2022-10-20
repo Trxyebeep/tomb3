@@ -13,6 +13,9 @@
 #include "../3dsystem/phd_math.h"
 #include "../3dsystem/3d_gen.h"
 #include "control.h"
+#include "../specific/input.h"
+#include "hair.h"
+#include "../specific/specific.h"
 
 long DrawPhaseCinematic()
 {
@@ -343,6 +346,65 @@ void ControlCinematicPlayer(short item_number)
 	AnimateItem(item);
 }
 
+long DoCinematic(long nframes)
+{
+	ITEM_INFO* item;
+	FX_INFO* fx;
+	static long framecount, delay = 0x8000;
+	short item_number, nex;
+	
+	for (framecount += delay * nframes; framecount > 0; framecount -= 0x10000)
+	{
+		if (S_UpdateInput())
+			return 3;
+
+		if (input & IN_ACTION)
+			return 1;
+
+		if (input & IN_OPTION)
+			return 2;
+
+		ClearDynamics();
+		item_number = next_item_active;
+
+		while (item_number != NO_ITEM)
+		{
+			item = &items[item_number];
+			nex = item->next_active;
+
+			if (objects[item->object_number].control)
+				objects[item->object_number].control(item_number);
+
+			item_number = nex;
+		}
+
+		item_number = next_fx_active;
+
+		while (item_number != NO_ITEM)
+		{
+			fx = &effects[item_number];
+			nex = fx->next_active;
+
+			if (objects[fx->object_number].control)
+				objects[fx->object_number].control(item_number);
+
+			item_number = nex;
+		}
+
+		UpdateLaraGuns();
+		UpdateSparks();
+		HairControl(1);
+		CalculateCinematicCamera();
+		cine_frame++;
+
+		if (cine_frame >= num_cine_frames)
+			return 1;
+	}
+
+	actual_current_frame = S_CDGetLoc();
+	return 0;
+}
+
 void inject_cinema(bool replace)
 {
 	INJECT(0x0041A890, DrawPhaseCinematic, replace);
@@ -355,4 +417,5 @@ void inject_cinema(bool replace)
 	INJECT(0x0041B090, CalculateCinematicCamera, replace);
 	INJECT(0x0041B2A0, InGameCinematicCamera, replace);
 	INJECT(0x0041B1D0, ControlCinematicPlayer, replace);
+	INJECT(0x0041ACA0, DoCinematic, replace);
 }

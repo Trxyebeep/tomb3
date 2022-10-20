@@ -13,3 +13,4 @@ void UpdateLaraGuns();
 void CalculateCinematicCamera();
 void InGameCinematicCamera();
 void ControlCinematicPlayer(short item_number);
+long DoCinematic(long nframes);
