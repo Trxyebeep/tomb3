@@ -1834,9 +1834,9 @@ tomb3decomp progress.
 
 		specific/time.cpp
 
-0x0048D5D0		TIME_Reset
-0x0048D5E0		TIME_Init
-0x0048D630		Sync
+0x0048D5D0	+	TIME_Reset
+0x0048D5E0	+	TIME_Init
+0x0048D630	+	Sync
 
 
 		specific/transform.cpp
