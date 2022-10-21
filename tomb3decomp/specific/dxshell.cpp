@@ -1,6 +1,8 @@
 #include "../tomb3/pch.h"
 #include "dxshell.h"
 #include "dd.h"
+#include "winmain.h"
+#include "hwrender.h"
 
 //statics
 #define G_ddraw	VAR_(0x006CA0F8, LPDIRECTDRAW2)
@@ -480,6 +482,27 @@ void DXDoFlipWait()
 	while (App.lpFrontBuffer->GetFlipStatus(DDGFS_ISFLIPDONE) == DDERR_WASSTILLDRAWING);
 }
 
+bool DXCheckForLostSurfaces()
+{
+	bool pass;
+
+	if (!App.lpFrontBuffer)
+		S_ExitSystem("Oops... no front buffer");
+
+	pass = SUCCEEDED(DD_EnsureSurfaceAvailable(App.lpFrontBuffer, 0, 1)) ||
+		SUCCEEDED(DD_EnsureSurfaceAvailable(App.lpBackBuffer, App.lpFrontBuffer, 1));
+
+	if (App.lpZBuffer)
+		pass = pass || SUCCEEDED(DD_EnsureSurfaceAvailable(App.lpZBuffer, 0, 0));
+
+	pass = pass || SUCCEEDED(DD_EnsureSurfaceAvailable(App.lpPictureBuffer, 0, 0));
+
+	if (pass && !GtWindowClosed && App.nRenderMode == 1)
+		HWR_GetAllTextureHandles();
+
+	return pass;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -504,4 +527,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x0048EEE0, DXFreeDeviceInfo, replace);
 	INJECT(0x004B40A0, DXSaveScreen, replace);
 	INJECT(0x004B3A40, DXDoFlipWait, replace);
+	INJECT(0x004B3C50, DXCheckForLostSurfaces, replace);
 }

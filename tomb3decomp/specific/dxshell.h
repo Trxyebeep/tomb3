@@ -25,6 +25,7 @@ HRESULT CALLBACK DXEnumDirectSound(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCS
 void DXFreeDeviceInfo(DEVICEINFO* device);
 void DXSaveScreen(LPDIRECTDRAWSURFACE3 surf);
 void DXDoFlipWait();
+bool DXCheckForLostSurfaces();
 
 #define DXSwitchVideoMode	( (bool(__cdecl*)(long, long, bool)) 0x004B3550 )
 #define DXEnumDirect3D	( (HRESULT(CALLBACK*)(LPGUID, LPSTR, LPSTR, LPD3DDEVICEDESC, LPD3DDEVICEDESC, LPVOID)) 0x0048F3C0 )
