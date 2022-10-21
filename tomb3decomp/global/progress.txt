@@ -319,7 +319,7 @@ tomb3decomp progress.
 0x00420C70	+	GetWaterHeight
 0x00420E10	+	GetHeight
 0x00421370	+	RefreshCamera
-0x00421460		TestTriggers
+0x00421460	+	TestTriggers
 0x00421D80		TriggerActive
 0x00421DE0		GetCeiling
 0x004222B0		GetDoor

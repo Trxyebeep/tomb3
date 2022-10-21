@@ -18,6 +18,11 @@
 #include "effects.h"
 #include "../3dsystem/phd_math.h"
 #include "../specific/winmain.h"
+#include "traps.h"
+#include "fish.h"
+#include "items.h"
+#include "lot.h"
+#include "pickup.h"
 
 long ControlPhase(long nframes, long demo_mode)
 {
@@ -922,6 +927,407 @@ void RefreshCamera(short type, short* data)
 		camera.timer = -1;
 }
 
+void TestTriggers(short* data, long heavy)
+{
+	ITEM_INFO* item;
+	ITEM_INFO* camera_item;
+	long quad, switch_off, neweffect, flip, flip_available;
+	short type, flags, value, trigger, camera_flags, camera_timer;
+	char timer;
+
+	switch_off = 0;
+	flip = -1;
+	flip_available = 0;
+	neweffect = -1;
+	HeavyTriggered = 0;
+
+	if (!heavy)
+	{
+		lara.CanMonkeySwing = 0;
+		lara.MineL = 0;
+		lara.MineR = 0;
+		lara.climb_status = 0;
+	}
+
+	if (!data)
+		return;
+
+	if ((*data & 0x1F) == LAVA_TYPE)
+	{
+		if (!heavy && (lara_item->pos.y_pos == lara_item->floor || lara.water_status))
+			LavaBurn(lara_item);
+
+		if (*data & 0x8000)
+			return;
+
+		data++;
+	}
+
+	if ((*data & 0x1F) == CLIMB_TYPE)
+	{
+		if (!heavy)
+		{
+			quad = ushort(lara_item->pos.y_rot + 8192) >> 14;
+
+			if ((1 << (quad + 8)) & *data)
+				lara.climb_status = 1;
+		}
+
+		if (*data & 0x8000)
+			return;
+
+		data++;
+	}
+
+	if ((*data & 0x1F) == MONKEY_TYPE)
+	{
+		if (!heavy)
+			lara.CanMonkeySwing = 1;
+
+		if (*data & 0x8000)
+			return;
+
+		data++;
+	}
+
+	if ((*data & 0x1F) == MINEL_TYPE)
+	{
+		if (!heavy)
+			lara.MineL = 1;
+
+		if (*data & 0x8000)
+			return;
+
+		data++;
+	}
+
+	if ((*data & 0x1F) == MINER_TYPE)
+	{
+		if (!heavy)
+			lara.MineR = 1;
+
+		if (*data & 0x8000)
+			return;
+
+		data++;
+	}
+
+	type = (*data++ >> 8) & 0x3F;
+	flags = *data++;
+	timer = flags & 0xFF;
+
+	if (camera.type != HEAVY_CAMERA)
+		RefreshCamera(type, data);
+
+	if (heavy)
+	{
+		if (type != HEAVY)
+			return;
+	}
+	else
+	{
+		switch (type)
+		{
+		case PAD:
+		case ANTIPAD:
+			LaraOnPad = 1;
+
+			if (lara_item->pos.y_pos != lara_item->floor || lara_item->item_flags[0])
+				return;
+
+			if (CurrentLevel == LV_GYM)
+			{
+				if (lara_item->item_flags[1] == 1)
+					return;
+
+				lara_item->item_flags[1] = 1;
+			}
+
+			break;
+
+		case SWITCH:
+			value = *data++ & 0x3FF;
+
+			if (flags & IFL_INVISIBLE)
+				items[value].item_flags[0] = 1;
+
+			if (!SwitchTrigger(value, timer))
+				return;
+
+			switch_off = items[value].current_anim_state == 1;
+			break;
+
+		case KEY:
+			value = *data++ & 0x3FF;
+
+			if (KeyTrigger(value))
+				break;
+
+			return;
+
+		case PICKUP:
+			value = *data++ & 0x3FF;
+
+			if (PickupTrigger(value))
+				break;
+
+			return;
+
+		case COMBAT:
+
+			if (lara.gun_status == LG_READY)
+				break;
+
+			//fallthrough
+
+		case HEAVY:
+		case DUMMY:
+			return;
+		}
+	}
+
+	camera_item = 0;
+
+	do
+	{
+		trigger = *data++;
+		value = trigger & 0x3FF;
+
+		switch ((trigger & 0x3FFF) >> 10)
+		{
+		case TO_OBJECT:
+			item = &items[value];
+
+			if (((type == ANTIPAD || type == ANTITRIGGER) && item->flags & IFL_ANTITRIGGER_ONESHOT) ||
+				(type == SWITCH && item->flags & IFL_SWITCH_ONESHOT) ||
+				(type != SWITCH && type != ANTIPAD && type != ANTITRIGGER && item->flags & IFL_INVISIBLE))
+				break;
+
+			if (type != ANTIPAD && type != ANTITRIGGER)
+			{
+				if ((item->object_number == DART_EMITTER || item->object_number == HOMING_DART_EMITTER) && item->active)
+					break;
+
+				if (item->object_number == TROPICAL_FISH || item->object_number == PIRAHNAS)
+				{
+					item->hit_points = timer & 7;
+					SetupShoal(item->hit_points);
+					timer = 0;
+				}
+				else if (item->object_number >= SECURITY_LASER_ALARM && item->object_number <= SECURITY_LASER_KILLER)
+				{
+					timer &= 7;
+
+					if (!timer)
+						timer = 1;
+
+					item->hit_points = timer;
+					timer = 0;
+				}
+				else if (item->object_number == CEILING_SPIKES || item->object_number == PENDULUM || item->object_number == FIREHEAD)
+				{
+					item->item_flags[0] = timer;
+
+					if (item->object_number == FIREHEAD)
+						item->hit_points = timer;
+
+					timer = 0;
+				}
+			}
+
+			item->timer = timer;
+
+			if (timer != 1)
+				item->timer *= 30;
+
+			if (type == SWITCH)
+			{
+				item->flags ^= (flags & IFL_CODEBITS);
+
+				if (flags & IFL_INVISIBLE)
+					item->flags |= IFL_SWITCH_ONESHOT;
+			}
+			else if (type == ANTIPAD || type == ANTITRIGGER)
+			{
+				if (item->object_number == TROPICAL_FISH || item->object_number == PIRAHNAS)
+					lead_info[item->hit_points].on = 0;
+
+				if (item->object_number == EARTHQUAKE)
+				{
+					item->item_flags[0] = 0;
+					item->item_flags[1] = 100;
+				}
+
+				item->flags &= ~(IFL_CODEBITS | IFL_REVERSE);
+
+				if (flags & IFL_INVISIBLE)
+					item->flags |= IFL_ANTITRIGGER_ONESHOT;
+			}
+			else if (flags & IFL_CODEBITS)
+				item->flags |= flags & IFL_CODEBITS;
+
+			if ((item->flags & IFL_CODEBITS) != IFL_CODEBITS)
+				break;
+
+			if (flags & IFL_INVISIBLE)
+				item->flags |= IFL_INVISIBLE;
+
+			if (!item->active)
+			{
+				if (objects[item->object_number].intelligent)
+				{
+					if (item->status == ITEM_INACTIVE)
+					{
+						item->touch_bits = 0;
+						item->status = ITEM_ACTIVE;
+						AddActiveItem(value);
+
+						if (item->object_number != TARGETS)
+							EnableBaddieAI(value, 1);
+					}
+					else if (item->status == ITEM_INVISIBLE)
+					{
+						item->touch_bits = 0;
+
+						if (EnableBaddieAI(value, 0))
+							item->status = ITEM_ACTIVE;
+						else
+							item->status = ITEM_INVISIBLE;
+
+						AddActiveItem(value);
+					}
+				}
+				else
+				{
+					item->touch_bits = 0;
+					AddActiveItem(value);
+					item->status = ITEM_ACTIVE;
+					HeavyTriggered = (uchar)heavy;
+				}
+			}
+
+			break;
+
+		case TO_CAMERA:
+			trigger = *data++;
+			camera_flags = trigger;
+			camera_timer = trigger & 0xFF;
+
+			if (camera.fixed[value].flags & IFL_INVISIBLE)
+				break;
+
+			camera.number = value;
+
+			if ((camera.type == LOOK_CAMERA || camera.type == COMBAT_CAMERA) || type == COMBAT || (type == SWITCH && timer && switch_off))
+				break;
+
+			if (camera.number != camera.last || type == SWITCH)
+			{
+				camera.timer = camera_timer * 30;
+
+				if (camera_flags & IFL_INVISIBLE)
+					camera.fixed[camera.number].flags |= IFL_INVISIBLE;
+
+				camera.speed = ((camera_flags & IFL_CODEBITS) >> 6) + 1;
+
+				if (heavy)
+					camera.type = HEAVY_CAMERA;
+				else
+					camera.type = FIXED_CAMERA;
+			}
+
+			break;
+
+		case TO_SINK:
+			lara.current_active = value + 1;
+			break;
+
+		case TO_FLIPMAP:
+			flip_available = 1;
+
+			if (flipmap[value] & IFL_INVISIBLE)
+				break;
+
+			if (type == SWITCH)
+				flipmap[value] ^= flags & IFL_CODEBITS;
+			else if (flags & IFL_CODEBITS)
+				flipmap[value] |= flags & IFL_CODEBITS;
+
+			if ((flipmap[value] & IFL_CODEBITS) == IFL_CODEBITS)
+			{
+				if (flags & IFL_INVISIBLE)
+					flipmap[value] |= IFL_INVISIBLE;
+
+				if (!flip_status)
+					flip = 1;
+			}
+			else if (flip_status)
+				flip = 1;
+
+			break;
+
+		case TO_FLIPON:
+			flip_available = 1;
+
+			if ((flipmap[value] & IFL_CODEBITS) == IFL_CODEBITS && !flip_status)
+				flip = 1;
+
+			break;
+
+		case TO_FLIPOFF:
+			flip_available = 1;
+
+			if ((flipmap[value] & IFL_CODEBITS) == IFL_CODEBITS && flip_status)
+				flip = 1;
+
+			break;
+
+		case TO_TARGET:
+			camera_item = &items[value];
+			break;
+
+		case TO_FINISH:
+			level_complete = 1;
+			break;
+
+		case TO_CD:
+			TriggerCDTrack(value, flags, type);
+			break;
+
+		case TO_FLIPEFFECT:
+			neweffect = value;
+			break;
+
+		case TO_SECRET:
+
+			if (!(savegame.secrets & 1 << value))
+			{
+				S_CDPlay(122, 0);
+				savegame.secrets |= 1 << value;
+			}
+
+			break;
+
+		case TO_BODYBAG:
+			ClearBodyBag();
+			break;
+		}
+
+	} while (!(trigger & 0x8000));
+
+	if (camera_item && (camera.type == FIXED_CAMERA || camera.type == HEAVY_CAMERA))
+		camera.item = camera_item;
+
+	if (flip != -1)
+		FlipMap();
+
+	if (neweffect != -1 && (flip || !flip_available))
+	{
+		flipeffect = neweffect;
+		fliptimer = 0;
+	}
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, inject_rando ? 1 : replace);
@@ -932,4 +1338,5 @@ void inject_control(bool replace)
 	INJECT(0x00420C70, GetWaterHeight, replace);
 	INJECT(0x00420E10, GetHeight, replace);
 	INJECT(0x00421370, RefreshCamera, replace);
+	INJECT(0x00421460, TestTriggers, replace);
 }

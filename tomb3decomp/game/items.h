@@ -13,3 +13,4 @@
 #define RemoveActiveItem	( (void(__cdecl*)(short)) 0x0043AE40 )
 #define RemoveDrawnItem	( (void(__cdecl*)(short)) 0x0043AEE0 )
 #define GlobalItemReplace	( (void(__cdecl*)(long, long)) 0x0043B080 )
+#define ClearBodyBag	( (void(__cdecl*)()) 0x0043B330 )

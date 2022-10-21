@@ -293,6 +293,10 @@
 #define TLVertexBuffer	VAR_(0x0063413C, D3DTLVERTEX*)
 #define malloc_buffer	VAR_(0x0069FCAC, char*)
 #define title_loaded	VAR_(0x006A1C58, long)
+#define HeavyTriggered	VAR_(0x006E28CC, uchar)
+#define flip_status	VAR_(0x006E296C, long)
+#define flipeffect	VAR_(0x004C5200, long)
+#define fliptimer	VAR_(0x00625F68, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -470,6 +474,7 @@
 #define LaserShades	ARRAY_(0x006D6160, uchar, [32])
 #define bats	ARRAY_(0x006DB8A0, BAT_STRUCT, [32])
 #define saved_levels	ARRAY_(0x004CD878, short, [24])
+#define flipmap	ARRAY_(0x006E2980, long, [10])
 
 /*constants*/
 #define NO_HEIGHT -32512
