@@ -1,7 +1,6 @@
 #include "../tomb3/pch.h"
 #include "winmain.h"
 #include "dxshell.h"
-#include "dx.h"
 #include "drawprimitive.h"
 #include "hwrender.h"
 #include "texture.h"
@@ -118,7 +117,7 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 	desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH;
 	desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
 	DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACE3)&App.lpPictureBuffer);
-	DX_ClearBuffers(11, 0);
+	DXClearBuffers(11, 0);
 	InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer, App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware);
 	HWR_InitState();
 

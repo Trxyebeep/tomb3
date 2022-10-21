@@ -23,6 +23,10 @@ BOOL CALLBACK DXEnumDirectDraw(GUID FAR* lpGUID, LPSTR lpDriverDescription, LPST
 HRESULT CALLBACK DXEnumTextureFormats(LPDDSURFACEDESC lpDDPixFmt, LPVOID lpContext);
 HRESULT CALLBACK DXEnumDirectSound(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext);
 void DXFreeDeviceInfo(DEVICEINFO* device);
+void DXSaveScreen(LPDIRECTDRAWSURFACE3 surf);
+void DXDoFlipWait();
 
 #define DXSwitchVideoMode	( (bool(__cdecl*)(long, long, bool)) 0x004B3550 )
 #define DXEnumDirect3D	( (HRESULT(CALLBACK*)(LPGUID, LPSTR, LPSTR, LPD3DDEVICEDESC, LPD3DDEVICEDESC, LPVOID)) 0x0048F3C0 )
+#define DXClearBuffers	( (void(__cdecl*)(ulong, ulong)) 0x004B3A70 )
+#define DXUpdateFrame	( (void(__cdecl*)(bool, RECT*)) 0x004B3D10 )

@@ -5,7 +5,7 @@
 #include "hwrender.h"
 #include "../3dsystem/hwinsert.h"
 #include "picture.h"
-#include "dx.h"
+#include "dxshell.h"
 #ifdef TROYESTUFF
 #include "../game/health.h"
 #include "../game/objects.h"
@@ -329,7 +329,7 @@ void S_OutputPolyList()
 				Buckets[i].nVtx = 0;
 			}
 
-			DX_ClearBuffers(8, 0);
+			DXClearBuffers(8, 0);
 			HWR_EnableColorKey(0);
 			HWR_EnableAlphaBlend(0);
 			HWR_EnableColorAddition(0);
@@ -519,7 +519,7 @@ long S_DumpCine()
 	if (framedump)
 	{
 		nf++;
-		DX_SaveScreen(App.lpFrontBuffer);
+		DXSaveScreen(App.lpFrontBuffer);
 		return 1;
 	}
 

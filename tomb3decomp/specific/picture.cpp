@@ -1,7 +1,7 @@
 #include "../tomb3/pch.h"
 #include "picture.h"
 #include "hwrender.h"
-#include "dx.h"
+#include "dxshell.h"
 #include "time.h"
 #include "dxshell.h"
 #include "texture.h"
@@ -14,7 +14,7 @@ void CrossFadePicture()
 		DrawPictureAlpha(i, CurPicTexIndices, f_znear);
 		DrawPictureAlpha(j, OldPicTexIndices, f_zfar);
 		HWR_EndScene();
-		DX_UpdateFrame(1, 0);
+		DXUpdateFrame(1, 0);
 	}
 
 	FreePictureTextures(CurPicTexIndices);
@@ -35,7 +35,7 @@ void CrossFadePicture()
 	HWR_BeginScene();
 	TRDrawPicture(0, CurPicTexIndices, f_znear);
 	HWR_EndScene();
-	DX_UpdateFrame(1, 0);
+	DXUpdateFrame(1, 0);
 	TIME_Init();
 }
 

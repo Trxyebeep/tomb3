@@ -65,7 +65,6 @@
 #include "../specific/dd.h"
 #include "../specific/dxdialog.h"
 #include "../specific/dxshell.h"
-#include "../specific/dx.h"
 #include "../specific/winmain.h"
 #include "../specific/utils.h"
 #include "../specific/init.h"
@@ -160,7 +159,6 @@ void inject_all(bool replace)
 	inject_dd(replace);
 	inject_dxdialog(replace);
 	inject_dxshell(replace);
-	inject_dx(replace);
 	inject_winmain(replace);
 	inject_utils(replace);
 	inject_init(replace);

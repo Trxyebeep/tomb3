@@ -43,9 +43,6 @@
     <ClInclude Include="tomb3decomp\specific\picture.h">
       <Filter>specific</Filter>
     </ClInclude>
-    <ClInclude Include="tomb3decomp\specific\dx.h">
-      <Filter>specific</Filter>
-    </ClInclude>
     <ClInclude Include="tomb3decomp\specific\game.h">
       <Filter>specific</Filter>
     </ClInclude>
@@ -755,9 +752,6 @@
       <Filter>specific</Filter>
     </ClCompile>
     <ClCompile Include="tomb3decomp\specific\ds.cpp">
-      <Filter>specific</Filter>
-    </ClCompile>
-    <ClCompile Include="tomb3decomp\specific\dx.cpp">
       <Filter>specific</Filter>
     </ClCompile>
     <ClCompile Include="tomb3decomp\specific\dxdialog.cpp">

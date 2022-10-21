@@ -1611,6 +1611,12 @@ tomb3decomp progress.
 0x004900C0	+	DXSurfBlt
 0x004B3550		DXSwitchVideoMode
 0x004B2E80	+	DXCreateZBuffer
+0x004B3A40	+	DXDoFlipWait
+0x004B3A70		DXClearBuffers
+0x004B3C50		DXCheckForLostSurfaces
+0x004B3D10		DXUpdateFrame
+0x004B4040		_0x004B4040
+0x004B40A0	+	DXSaveScreen
 
 
 		specific/file.cpp

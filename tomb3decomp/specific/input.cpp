@@ -2,7 +2,7 @@
 #include "input.h"
 #include "dd.h"
 #include "di.h"
-#include "dx.h"
+#include "dxshell.h"
 #include "display.h"
 #include "../game/invfunc.h"
 #include "../game/objects.h"
@@ -249,7 +249,7 @@ long S_UpdateInput()
 		med_debounce--;
 
 	if (key_pressed(DIK_APOSTROPHE))
-		DX_SaveScreen(App.lpFrontBuffer);
+		DXSaveScreen(App.lpFrontBuffer);
 
 	if (FinishLevelCheat)
 	{
