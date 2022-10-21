@@ -88,7 +88,13 @@ void DX_SaveScreen(LPDIRECTDRAWSURFACE3 surf)
 	DD_UnlockSurface(surf, desc);
 }
 
+void DX_DoFlipWait()
+{
+	while (App.lpFrontBuffer->GetFlipStatus(DDGFS_ISFLIPDONE) == DDERR_WASSTILLDRAWING);
+}
+
 void inject_dx(bool replace)
 {
 	INJECT(0x004B40A0, DX_SaveScreen, replace);
+	INJECT(0x004B3A40, DX_DoFlipWait, replace);
 }
