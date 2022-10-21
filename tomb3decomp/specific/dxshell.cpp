@@ -503,6 +503,66 @@ bool DXCheckForLostSurfaces()
 	return pass;
 }
 
+void DXClearBuffers(ulong flags, ulong color)
+{
+	DIRECT3DINFO* d3d;
+	DISPLAYMODE* dm;
+	RECT r;
+	D3DRECT vr;
+	ulong sflags;
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	r.top = 0;
+	r.left = 0;
+	r.right = dm->w;
+	r.bottom = dm->h;
+
+	if (App.nRenderMode == 1)
+	{
+		sflags = 0;
+
+		if (flags & 2)
+			sflags = 1;
+
+		if (flags & 8)
+			sflags |= 2;
+
+		if (sflags)
+		{
+			vr.x1 = 0;
+			vr.y1 = 0;
+			vr.x2 = dm->w;
+			vr.y2 = dm->h;
+			App.lpViewPort->Clear(1, &vr, sflags);
+		}
+	}
+	else if (flags & 2)
+		DD_ClearSurface(App.lpBackBuffer, &r, color);
+
+	if (flags & 1)
+		DD_ClearSurface(App.lpFrontBuffer, &r, color);
+
+	if (flags & 0x20)
+	{
+		r.top = 0;
+		r.left = 0;
+		r.right = 640;
+		r.bottom = 480;
+		DD_ClearSurface(App.lpPictureBuffer, &r, color);
+	}
+
+	d3d = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
+
+	if (!d3d->bHardware)
+	{
+		if (flags & 2)
+		{
+			dm = &d3d->DisplayMode[App.DXConfigPtr->nVMode];
+			memset(App.unk, 0, 4 * dm->w * dm->h);
+		}
+	}
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -528,4 +588,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x004B40A0, DXSaveScreen, replace);
 	INJECT(0x004B3A40, DXDoFlipWait, replace);
 	INJECT(0x004B3C50, DXCheckForLostSurfaces, replace);
+	INJECT(0x004B3A70, DXClearBuffers, replace);
 }

@@ -26,8 +26,8 @@ void DXFreeDeviceInfo(DEVICEINFO* device);
 void DXSaveScreen(LPDIRECTDRAWSURFACE3 surf);
 void DXDoFlipWait();
 bool DXCheckForLostSurfaces();
+void DXClearBuffers(ulong flags, ulong color);
 
 #define DXSwitchVideoMode	( (bool(__cdecl*)(long, long, bool)) 0x004B3550 )
 #define DXEnumDirect3D	( (HRESULT(CALLBACK*)(LPGUID, LPSTR, LPSTR, LPD3DDEVICEDESC, LPD3DDEVICEDESC, LPVOID)) 0x0048F3C0 )
-#define DXClearBuffers	( (void(__cdecl*)(ulong, ulong)) 0x004B3A70 )
 #define DXUpdateFrame	( (void(__cdecl*)(bool, RECT*)) 0x004B3D10 )
