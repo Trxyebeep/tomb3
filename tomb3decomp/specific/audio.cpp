@@ -170,6 +170,11 @@ void ThreadACMEmulateCDPlay(long track, long mode)
 	acm_wait = 0;
 }
 
+long ACMGetTrackLocation()
+{
+	return long((float(timeGetTime() - acm_start_time) / (float)CLOCKS_PER_SEC) * 60.0F);
+}
+
 void inject_audio(bool replace)
 {
 	INJECT(0x004742A0, ACMEnumCallBack, replace);
@@ -178,4 +183,5 @@ void inject_audio(bool replace)
 	INJECT(0x00474D50, ACMEmulateCDStop, replace);
 	INJECT(0x00474900, ACMEmulateCDPlay, replace);
 	INJECT(0x00474B30, ThreadACMEmulateCDPlay, replace);
+	INJECT(0x00475240, ACMGetTrackLocation, replace);
 }
