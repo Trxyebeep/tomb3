@@ -92,6 +92,15 @@ bool DI_StartJoystick()
 	return 1;
 }
 
+void DI_Start()
+{
+	if (!DI_Create())
+		throw 5;
+
+	DI_StartKeyboard();
+	DI_StartJoystick();
+}
+
 void inject_di(bool replace)
 {
 	INJECT(0x00475450, DI_ReadKeyboard, replace);
@@ -99,4 +108,5 @@ void inject_di(bool replace)
 	INJECT(0x004755B0, DI_StartKeyboard, replace);
 	INJECT(0x00475680, DI_FinishKeyboard, replace);
 	INJECT(0x004756B0, DI_StartJoystick, replace);
+	INJECT(0x004756C0, DI_Start, replace);
 }

@@ -1504,7 +1504,7 @@ tomb3decomp progress.
 0x004755B0	+	DI_StartKeyboard
 0x00475680	+	DI_FinishKeyboard
 0x004756B0	+	DI_StartJoystick
-0x004756C0		DI_Start
+0x004756C0	+	DI_Start
 0x004756F0		DI_Finish
 
 
