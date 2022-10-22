@@ -77,7 +77,7 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 	}
 	else
 	{
-		App.unk = malloc(4 * dm->w * dm->h);
+		App.unk = (ulong*)malloc(4 * dm->w * dm->h);
 		caps.dwCaps = DDSCAPS_BACKBUFFER;
 		DXGetAttachedSurface(App.lpFrontBuffer, &caps, &App.lpBackBuffer);
 	}

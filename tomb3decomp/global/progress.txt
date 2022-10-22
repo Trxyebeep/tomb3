@@ -1614,8 +1614,8 @@ tomb3decomp progress.
 0x004B3A40	+	DXDoFlipWait
 0x004B3A70	+	DXClearBuffers
 0x004B3C50	+	DXCheckForLostSurfaces
-0x004B3D10		DXUpdateFrame
-0x004B4040		_0x004B4040
+0x004B3D10	+	DXUpdateFrame
+0x004B4040		SWRBlit32to15
 0x004B40A0	+	DXSaveScreen
 
 
@@ -1741,6 +1741,23 @@ tomb3decomp progress.
 0x00486BA0	+	S_CalculateLight
 0x00487550	+	S_CalculateStaticLight
 0x00487590	+	S_CalculateStaticMeshLight
+
+
+		specific/mmx.cpp
+
+0x004933E0		MMXInit
+0x004934D0		MMXBeginScene
+0x00493530		MMXSetRenderState
+0x004937F0		MMXDrawPrimitive
+0x00493920		MMXDrawLine
+0x00493C70		MMXDrawTrianglePFog
+0x004946B0		MMXDrawTriangleP
+0x00494E30		MMXDrawTriangleGouraud
+0x004952E0		DrawSpansGouraud
+0x004953B0		DrawSpansAlpha
+0x00496930		MMXBlit32to15
+0x00496A70		MMXBlit32to16
+0x00496B20		MMXBlit32to24
 
 
 		specific/option.cpp

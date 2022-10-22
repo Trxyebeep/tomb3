@@ -3,6 +3,7 @@
 #include "dd.h"
 #include "winmain.h"
 #include "hwrender.h"
+#include "mmx.h"
 
 //statics
 #define G_ddraw	VAR_(0x006CA0F8, LPDIRECTDRAW2)
@@ -563,6 +564,91 @@ void DXClearBuffers(ulong flags, ulong color)
 	}
 }
 
+bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
+{
+	DIRECT3DINFO* d3dinfo;
+	LPDIRECTDRAWSURFACE3 surf;
+	DDSURFACEDESC desc;
+	DDSURFACEDESC backDesc;
+	uchar* dest;
+	ulong w;
+
+	App.SomeCounter++;
+	DXCheckForLostSurfaces();
+	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
+	w = d3dinfo->DisplayMode[App.DXConfigPtr->nVMode].w;
+
+	if (d3dinfo->bHardware)
+		App.lpFrontBuffer->Flip(0, DDFLIP_WAIT);
+	else
+	{
+		memset(&desc, 0, sizeof(DDSURFACEDESC));
+		memset(&backDesc, 0, sizeof(DDSURFACEDESC));
+		desc.dwSize = sizeof(DDSURFACEDESC);
+		backDesc.dwSize = sizeof(DDSURFACEDESC);
+		DXGetSurfaceDesc(App.lpBackBuffer, &backDesc);
+
+		if (backDesc.ddsCaps.dwCaps & DDSCAPS_VIDEOMEMORY)
+			surf = App.lpBackBuffer;
+		else
+			surf = App.lpFrontBuffer;
+
+		surf->Lock(0, &desc, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, 0);
+		dest = (uchar*)desc.lpSurface;
+
+		if (App.DXConfig.MMX)
+		{
+			if (desc.ddpfPixelFormat.dwRGBBitCount == 32)
+			{
+				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += w)
+					memcpy(dest + desc.lPitch * i, &App.unk[n], w * 4);
+			}
+
+			if (desc.ddpfPixelFormat.dwRGBBitCount == 16 && desc.ddpfPixelFormat.dwGBitMask == 0x3E0)
+			{
+				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += w)
+					MMXBlit32to15(dest + desc.lPitch * i, &App.unk[n], w);
+			}
+			else if (desc.ddpfPixelFormat.dwRGBBitCount == 16 && desc.ddpfPixelFormat.dwGBitMask == 0x7E0)
+			{
+				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += w)
+					MMXBlit32to16(dest + desc.lPitch * i, &App.unk[n], w);
+			}
+			else if (desc.ddpfPixelFormat.dwRGBBitCount == 24)
+			{
+				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += w)
+					MMXBlit32to24(dest + desc.lPitch * i, &App.unk[n], w);
+			}
+		}
+		else
+		{
+			if (desc.ddpfPixelFormat.dwGBitMask == 0x3E0)
+			{
+				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += 2 * w)
+					SWRBlit32to15((ulong*)(dest + desc.lPitch * i), (ulong*)((uchar*)App.unk + n), w);
+			}
+			else
+			{
+				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += 2 * w)
+					memcpy(dest + desc.lPitch * i, (uchar*)App.unk + n, 2 * w);
+			}
+		}
+
+		if (backDesc.ddsCaps.dwCaps & DDSCAPS_VIDEOMEMORY)
+		{
+			App.lpBackBuffer->Unlock(0);
+			App.lpFrontBuffer->Flip(0, DDFLIP_WAIT);
+		}
+		else
+			App.lpFrontBuffer->Unlock(0);
+	}
+
+	if (runMessageLoop)
+		return DD_SpinMessageLoop(0);
+
+	return 1;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -589,4 +675,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x004B3A40, DXDoFlipWait, replace);
 	INJECT(0x004B3C50, DXCheckForLostSurfaces, replace);
 	INJECT(0x004B3A70, DXClearBuffers, replace);
+	INJECT(0x004B3D10, DXUpdateFrame, replace);
 }
