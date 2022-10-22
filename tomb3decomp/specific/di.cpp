@@ -2,6 +2,7 @@
 #include "di.h"
 
 #define Keyboard	VAR_(0x006302A8, LPDIRECTINPUTDEVICE)
+#define lpDirectInput	VAR_(0x006302A4, LPDIRECTINPUT)
 
 void DI_ReadKeyboard(uchar* KeyMap)
 {
@@ -57,8 +58,24 @@ long DI_ReadJoystick(long& x, long& y)
 	return joystick.dwButtons;
 }
 
+void DI_StartKeyboard()
+{
+	if (FAILED(lpDirectInput->CreateDevice(GUID_SysKeyboard, &Keyboard, 0)))
+		throw 6;
+
+	if (FAILED(Keyboard->SetCooperativeLevel(App.WindowHandle, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
+		throw 7;
+
+	if (FAILED(Keyboard->SetDataFormat(&c_dfDIKeyboard)))
+		throw 8;
+
+	if (FAILED(Keyboard->Acquire()))
+		throw 9;
+}
+
 void inject_di(bool replace)
 {
 	INJECT(0x00475450, DI_ReadKeyboard, replace);
 	INJECT(0x004754B0, DI_ReadJoystick, replace);
+	INJECT(0x004755B0, DI_StartKeyboard, replace);
 }
