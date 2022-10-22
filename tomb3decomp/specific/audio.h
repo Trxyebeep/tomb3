@@ -8,5 +8,6 @@ void ACMCloseFile();
 bool ACMOpenFile(const char* name);
 void ACMEmulateCDStop();
 void ACMEmulateCDPlay(long track, long mode);
+void ThreadACMEmulateCDPlay(long track, long mode);
 
 #define ACMClose	( (void(__cdecl*)()) 0x00474760 )
