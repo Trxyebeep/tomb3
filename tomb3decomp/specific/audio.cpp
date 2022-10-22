@@ -22,6 +22,7 @@
 #define pAudioWrite	VAR_(0x0062FCC0, uchar*)
 #define AudioBytes	VAR_(0x0062FD00, ulong)
 #define DSBuffer	VAR_(0x006300C4, LPDIRECTSOUNDBUFFER)
+#define DSNotify	VAR_(0x006300C8, LPDIRECTSOUNDNOTIFY)
 #define ADPCMBuffer	VAR_(0x006300B4, uchar*)
 #define XATrack	VAR_(0x0062FCFC, long)
 
@@ -313,6 +314,41 @@ long ACMHandleNotifications()
 	return 1;
 }
 
+long ACMSetupNotifications()
+{
+	DSBPOSITIONNOTIFY posNotif[5];
+	static HANDLE handle;
+	ulong ThreadId;
+	long result;
+
+	NotifyEventHandles[0] = CreateEvent(0, 0, 0, 0);
+	NotifyEventHandles[1] = CreateEvent(0, 0, 0, 0);
+	posNotif[0].dwOffset = NotifySize;
+	posNotif[0].hEventNotify = NotifyEventHandles[0];
+
+	for (int i = 1; i < 4; i++)
+	{
+		posNotif[i].dwOffset = NotifySize + posNotif[i - 1].dwOffset;
+		posNotif[i].hEventNotify = NotifyEventHandles[0];
+	}
+
+	posNotif[3].dwOffset--;
+	posNotif[4].dwOffset = -1;
+	posNotif[4].hEventNotify = NotifyEventHandles[1];
+	handle = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)ACMHandleNotifications, 0, 0, &ThreadId);
+	result = DSNotify->SetNotificationPositions(5, posNotif);
+
+	if (result != DS_OK)
+	{
+		CloseHandle(NotifyEventHandles[0]);
+		CloseHandle(NotifyEventHandles[1]);
+		NotifyEventHandles[1] = 0;
+		NotifyEventHandles[0] = 0;
+	}
+
+	return result;
+}
+
 void inject_audio(bool replace)
 {
 	INJECT(0x004742A0, ACMEnumCallBack, replace);
@@ -324,4 +360,5 @@ void inject_audio(bool replace)
 	INJECT(0x00475240, ACMGetTrackLocation, replace);
 	INJECT(0x00475280, ACMSetVolume, replace);
 	INJECT(0x00474D70, ACMHandleNotifications, replace);
+	INJECT(0x00475160, ACMSetupNotifications, replace);
 }
