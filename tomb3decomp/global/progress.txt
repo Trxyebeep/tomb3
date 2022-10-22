@@ -1499,7 +1499,7 @@ tomb3decomp progress.
 		specific/DI.cpp
 
 0x00475400		DI_Create
-0x00475450		DI_ReadKeyboard
+0x00475450	+	DI_ReadKeyboard
 0x004754B0		DI_ReadJoystick
 0x004755B0		DI_StartKeyboard
 0x00475680		DI_FinishKeyboard
