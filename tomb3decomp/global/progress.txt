@@ -1480,7 +1480,7 @@ tomb3decomp progress.
 0x00474900	+	ACMEmulateCDPlay
 0x00474B30	+	ThreadACMEmulateCDPlay
 0x00474D50	+	ACMEmulateCDStop
-0x00474D70		ACMHandleNotifications
+0x00474D70	+	ACMHandleNotifications
 0x00475160		ACMSetupNotifications
 0x00475240	+	ACMGetTrackLocation
 0x00475280	+	ACMSetVolume

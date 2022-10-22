@@ -11,5 +11,6 @@ void ACMEmulateCDPlay(long track, long mode);
 void ThreadACMEmulateCDPlay(long track, long mode);
 long ACMGetTrackLocation();
 void ACMSetVolume(long volume);
+long ACMHandleNotifications();
 
 #define ACMClose	( (void(__cdecl*)()) 0x00474760 )
