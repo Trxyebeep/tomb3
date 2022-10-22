@@ -1831,6 +1831,13 @@ struct BAT_STRUCT
 	uchar pad;
 };
 
+struct TRACK_INFO
+{
+	char name[260];
+	ulong size;
+	ulong offset;
+};
+
 #ifdef TROYESTUFF
 struct FVECTOR
 {
