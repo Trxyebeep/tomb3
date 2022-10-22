@@ -14,6 +14,7 @@
 #include <mmreg.h>
 #include <mmeapi.h>
 #include <ctime>
+#include <MSAcm.h>
 
 //#define RANDO_STUFF	1
 #define TROYESTUFF	1
