@@ -1483,7 +1483,7 @@ tomb3decomp progress.
 0x00474D70		ACMHandleNotifications
 0x00475160		ACMSetupNotifications
 0x00475240	+	ACMGetTrackLocation
-0x00475280		ACMSetVolume
+0x00475280	+	ACMSetVolume
 
 
 		specific/DD.cpp

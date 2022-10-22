@@ -175,6 +175,14 @@ long ACMGetTrackLocation()
 	return long((float(timeGetTime() - acm_start_time) / (float)CLOCKS_PER_SEC) * 60.0F);
 }
 
+void ACMSetVolume(long volume)
+{
+	acm_volume = long(float(volume * 1.5625F - 400.0F) * 6.0F);
+
+	if (DSBuffer)
+		DSBuffer->SetVolume(acm_volume);
+}
+
 void inject_audio(bool replace)
 {
 	INJECT(0x004742A0, ACMEnumCallBack, replace);
@@ -184,4 +192,5 @@ void inject_audio(bool replace)
 	INJECT(0x00474900, ACMEmulateCDPlay, replace);
 	INJECT(0x00474B30, ThreadACMEmulateCDPlay, replace);
 	INJECT(0x00475240, ACMGetTrackLocation, replace);
+	INJECT(0x00475280, ACMSetVolume, replace);
 }
