@@ -101,6 +101,26 @@ void DI_Start()
 	DI_StartJoystick();
 }
 
+void DI_Finish()
+{
+	DI_FinishKeyboard();
+
+	if (lpDirectInput)
+	{
+		lpDirectInput->Release();
+		lpDirectInput = 0;
+	}
+}
+
+bool DI_Create()
+{
+#if (DIRECTINPUT_VERSION >= 0x800)
+	return SUCCEEDED(DirectInput8Create(App.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&lpDirectInput, 0));
+#else
+	return SUCCEEDED(DirectInputCreate(App.hInstance, DIRECTINPUT_VERSION, &lpDirectInput, 0));	//this is the original line
+#endif
+}
+
 void inject_di(bool replace)
 {
 	INJECT(0x00475450, DI_ReadKeyboard, replace);
@@ -109,4 +129,6 @@ void inject_di(bool replace)
 	INJECT(0x00475680, DI_FinishKeyboard, replace);
 	INJECT(0x004756B0, DI_StartJoystick, replace);
 	INJECT(0x004756C0, DI_Start, replace);
+	INJECT(0x004756F0, DI_Finish, replace);
+	INJECT(0x00475400, DI_Create, replace);
 }
