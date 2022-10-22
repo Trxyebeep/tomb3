@@ -570,24 +570,31 @@ long FindBucket(DXTEXTURE* TPage)
 	TEXTUREBUCKET* bucket;
 	long nVtx, fullest;
 
+#ifndef TROYESTUFF
 	if (nDrawnPoints > 2700)
 		return -1;
-
-	for (int i = 0; i < 6; i++)
+#else
+	if (nDrawnPoints <= 2700)	//HACK: this seems to be a useless artifical limit (not sure though),
+								//so instead of failing to draw, immediately go find fullest bucket, draw it, and use it.
+								//TODO: make sure it's actually a useless limit and remove it, otherwise raise it.
+#endif
 	{
-		bucket = &Buckets[i];
-
-		if (bucket->TPage == TPage && bucket->nVtx < 256)
-			return i;
-
-		if (bucket->nVtx > 256)
+		for (int i = 0; i < 6; i++)
 		{
-			HWR_EnableZBuffer(1, 1);
-			HWR_SetCurrentTexture(bucket->TPage);
-			DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
-			bucket->TPage = TPage;
-			bucket->nVtx = 0;
-			return i;
+			bucket = &Buckets[i];
+
+			if (bucket->TPage == TPage && bucket->nVtx < 256)
+				return i;
+
+			if (bucket->nVtx > 256)
+			{
+				HWR_EnableZBuffer(1, 1);
+				HWR_SetCurrentTexture(bucket->TPage);
+				DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+				bucket->TPage = TPage;
+				bucket->nVtx = 0;
+				return i;
+			}
 		}
 	}
 
