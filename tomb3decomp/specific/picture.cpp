@@ -350,6 +350,28 @@ bool LoadPicture(const char* name, LPDIRECTDRAWSURFACE3 surf, long a)
 	return 1;
 }
 
+void FadePictureUp(long steps)
+{
+	if (nLoadedPictures > 1)
+		CrossFadePicture();
+	else
+	{
+		for (int i = 0; i < steps; i++)
+		{
+			HWR_BeginScene();
+			TRDrawPicture(255 - (i * (256 / steps)), CurPicTexIndices, f_znear);
+			HWR_EndScene();
+			DXUpdateFrame(1, 0);
+		}
+	}
+
+	HWR_BeginScene();
+	TRDrawPicture(0, CurPicTexIndices, f_znear);
+	HWR_EndScene();
+	DXUpdateFrame(1, 0);
+	TIME_Init();
+}
+
 void inject_picture(bool replace)
 {
 	INJECT(0x0048AFD0, CrossFadePicture, replace);
@@ -364,4 +386,5 @@ void inject_picture(bool replace)
 	INJECT(0x0048AD60, SetPictureToFade, replace);
 	INJECT(0x0048AD80, ForceFadeDown, replace);
 	INJECT(0x0048B0D0, LoadPicture, replace);
+	INJECT(0x0048BC70, FadePictureUp, replace);
 }
