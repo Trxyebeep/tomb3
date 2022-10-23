@@ -138,6 +138,16 @@ void DS_AdjustPitch(long num, long pitch)
 	}
 }
 
+void DS_StopSample(long num)
+{
+	if (num >= 0 && DS_Samples[num])
+	{
+		DS_Samples[num]->Stop();
+		DS_Samples[num]->Release();
+		DS_Samples[num] = 0;
+	}
+}
+
 void inject_ds(bool replace)
 {
 	INJECT(0x00480740, DS_IsChannelPlaying, replace);
@@ -147,4 +157,5 @@ void inject_ds(bool replace)
 	INJECT(0x00480630, DS_MakeSample, replace);
 	INJECT(0x004808F0, DS_AdjustVolumeAndPan, replace);
 	INJECT(0x00480920, DS_AdjustPitch, replace);
+	INJECT(0x00480960, DS_StopSample, replace);
 }
