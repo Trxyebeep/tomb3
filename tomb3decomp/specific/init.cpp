@@ -10,6 +10,57 @@
 #include "../3dsystem/phd_math.h"
 #include "game.h"
 
+const char* game_malloc_types[47] =
+{
+	"Temp Alloc",
+	"Texture Pages",
+	"Mesh Pointers",
+	"Meshes",
+	"Anims",
+	"Structs",
+	"Ranges",
+	"Commands",
+	"Bones",
+	"Frames",
+	"Room Textures",
+	"Room Infos",
+	"Room Mesh",
+	"Room Door",
+	"Room Floor",
+	"Room Lights",
+	"Room Static Mesh Infos",
+	"Floor Data",
+	"ITEMS!!",
+	"Cameras",
+	"Sound FX",
+	"Boxes",
+	"Overlaps",
+	"GroundZone",
+	"FlyZone",
+	"Animating Texture Ranges",
+	"Cinematic Frames",
+	"LoadDemo Buffer",
+	"SaveDemo Buffer",
+	"Cinematic Effects",
+	"Mummy Head Turn",
+	"Extra Door stuff",
+	"Effects_Array",
+	"Creature Data",
+	"Creature LOT",
+	"Sample Infos",
+	"Samples",
+	"Sample Offsets",
+	"Rolling Ball Stuff",
+	"Skidoo Stuff",
+	"Load Piccy Buffer",
+	"FMV Buffers",
+	"Polygon Buffers",
+	"Order Tables",
+	"CLUTs",
+	"Texture Infos",
+	"Sprite Infos"
+};
+
 void ShutdownGame()
 {
 	GLOBALFREE(TLVertexBuffer);
@@ -121,10 +172,47 @@ void init_water_table()
 	}
 }
 
+void init_game_malloc()
+{
+	malloc_ptr = malloc_buffer;
+	malloc_free = malloc_size;
+	malloc_used = 0;
+}
+
+void* game_malloc(long size, long type)
+{
+	void* ptr;
+
+	size = (size + 3) & ~3;
+
+	if (size > malloc_free)
+	{
+		wsprintf(exit_message, "game_malloc(): OUT OF MEMORY %s %d", game_malloc_types[type], size);
+		S_ExitSystem(exit_message);
+	}
+
+	ptr = malloc_ptr;
+	malloc_free -= size;
+	malloc_used += size;
+	malloc_ptr += size;
+	return ptr;
+}
+
+void game_free(long size, long type)
+{
+	size = (size + 3) & ~3;
+	malloc_ptr -= size;
+	malloc_free += size;
+	malloc_used -= size;
+}
+
 void inject_init(bool replace)
 {
 	INJECT(0x00485EA0, ShutdownGame, replace);
 	INJECT(0x00486050, CalculateWibbleTable, replace);
 	INJECT(0x00485CA0, GetRandom, replace);
 	INJECT(0x00485AB0, init_water_table, replace);
+	INJECT(0x00485F60, init_game_malloc, replace);
+	INJECT(0x00485F90, game_malloc, replace);
+	INJECT(0x00486010, game_free, replace);
 }
