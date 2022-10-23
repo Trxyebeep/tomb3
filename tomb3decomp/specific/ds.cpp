@@ -127,6 +127,17 @@ void DS_AdjustVolumeAndPan(long num, long volume, long pan)
 	}
 }
 
+void DS_AdjustPitch(long num, long pitch)
+{
+	ulong fq;
+
+	if (num >= 0 && DS_Samples[num])
+	{
+		fq = (pitch * DS_SampleFrequencies[DS_SamplesPlaying[num]]) >> 16;
+		DS_Samples[num]->SetFrequency(fq);
+	}
+}
+
 void inject_ds(bool replace)
 {
 	INJECT(0x00480740, DS_IsChannelPlaying, replace);
@@ -135,4 +146,5 @@ void inject_ds(bool replace)
 	INJECT(0x00480600, DS_FreeAllSamples, replace);
 	INJECT(0x00480630, DS_MakeSample, replace);
 	INJECT(0x004808F0, DS_AdjustVolumeAndPan, replace);
+	INJECT(0x00480920, DS_AdjustPitch, replace);
 }
