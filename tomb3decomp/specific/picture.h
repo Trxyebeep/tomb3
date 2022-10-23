@@ -19,7 +19,7 @@ void FadePictureUp(long steps);
 void FadePictureDown(long steps);
 void S_FadeToBlack();
 void DrawMonoScreen(long a, long b, long c);
+void RemoveMonoScreen(long fade);
 
 #define FreePictureTextures	( (void(__cdecl*)(long*)) 0x0048B190 )
-#define RemoveMonoScreen	( (void(__cdecl*)(long)) 0x0048C030 )
 #define DoInventoryPicture	( (void(__cdecl*)()) 0x0048C070 )

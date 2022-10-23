@@ -1819,7 +1819,7 @@ tomb3decomp progress.
 0x0048BE60	+	CreateMonoScreen
 0x0048BF40	+	S_FadeToBlack
 0x0048C010	+	DrawMonoScreen
-0x0048C030		RemoveMonoScreen
+0x0048C030	+	RemoveMonoScreen
 0x0048C070		DoInventoryPicture
 0x0048C0A0	+	S_FadePicture
 

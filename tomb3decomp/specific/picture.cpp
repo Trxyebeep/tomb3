@@ -434,6 +434,20 @@ void DrawMonoScreen(long a, long b, long c)
 	TRDrawPicture(0, CurPicTexIndices, f_zfar);
 }
 
+void RemoveMonoScreen(long fade)
+{
+	if (fade)
+	{
+		nLoadedPictures = 1;
+		FadePictureDown(32);
+	}
+	else
+	{
+		FreePictureTextures(CurPicTexIndices);
+		nLoadedPictures = 0;
+	}
+}
+
 void inject_picture(bool replace)
 {
 	INJECT(0x0048AFD0, CrossFadePicture, replace);
@@ -452,4 +466,5 @@ void inject_picture(bool replace)
 	INJECT(0x0048BD10, FadePictureDown, replace);
 	INJECT(0x0048BF40, S_FadeToBlack, replace);
 	INJECT(0x0048C010, DrawMonoScreen, replace);
+	INJECT(0x0048C030, RemoveMonoScreen, replace);
 }
