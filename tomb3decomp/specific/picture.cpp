@@ -448,6 +448,12 @@ void RemoveMonoScreen(long fade)
 	}
 }
 
+void DoInventoryPicture()
+{
+	HWR_EnableZBuffer(0, 0);
+	TRDrawPicture(0, CurPicTexIndices, f_zfar);
+}
+
 void inject_picture(bool replace)
 {
 	INJECT(0x0048AFD0, CrossFadePicture, replace);
@@ -467,4 +473,5 @@ void inject_picture(bool replace)
 	INJECT(0x0048BF40, S_FadeToBlack, replace);
 	INJECT(0x0048C010, DrawMonoScreen, replace);
 	INJECT(0x0048C030, RemoveMonoScreen, replace);
+	INJECT(0x0048C070, DoInventoryPicture, replace);
 }
