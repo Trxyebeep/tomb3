@@ -187,6 +187,24 @@ bool DS_SetOutputFormat()
 	return ret;
 }
 
+void DS_Start(HWND hwnd)
+{
+	memset(DS_Buffers, 0, sizeof(DS_Buffers));
+	memset(DS_Samples, 0, sizeof(DS_Samples));
+	camera.mike_at_lara = 0;
+
+	if (DS_Create(App.DeviceInfoPtr->DSInfo[App.DXConfigPtr->DS].lpGuid))
+	{
+		if (!hwnd)
+			hwnd = App.WindowHandle;
+
+		if (FAILED(lpDirectSound->SetCooperativeLevel(hwnd, DSSCL_EXCLUSIVE)))
+			throw 10;
+
+		DS_SetOutputFormat();
+	}
+}
+
 void inject_ds(bool replace)
 {
 	INJECT(0x00480740, DS_IsChannelPlaying, replace);
@@ -200,4 +218,5 @@ void inject_ds(bool replace)
 	INJECT(0x00480C20, DS_Create, replace);
 	INJECT(0x00480D40, DS_IsSoundEnabled, replace);
 	INJECT(0x00480C40, DS_SetOutputFormat, replace);
+	INJECT(0x00480B80, DS_Start, replace);
 }
