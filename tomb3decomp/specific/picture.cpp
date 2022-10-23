@@ -429,6 +429,11 @@ void S_FadeToBlack()
 	TIME_Init();
 }
 
+void DrawMonoScreen(long a, long b, long c)
+{
+	TRDrawPicture(0, CurPicTexIndices, f_zfar);
+}
+
 void inject_picture(bool replace)
 {
 	INJECT(0x0048AFD0, CrossFadePicture, replace);
@@ -446,4 +451,5 @@ void inject_picture(bool replace)
 	INJECT(0x0048BC70, FadePictureUp, replace);
 	INJECT(0x0048BD10, FadePictureDown, replace);
 	INJECT(0x0048BF40, S_FadeToBlack, replace);
+	INJECT(0x0048C010, DrawMonoScreen, replace);
 }
