@@ -1474,7 +1474,7 @@ tomb3decomp progress.
 
 0x004742A0	+	ACMEnumCallBack
 0x00474330	+	ACMInit
-0x00474760		ACMClose
+0x00474760	+	ACMClose
 0x004748B0	+	ACMOpenFile
 0x004748E0	+	ACMCloseFile
 0x00474900	+	ACMEmulateCDPlay

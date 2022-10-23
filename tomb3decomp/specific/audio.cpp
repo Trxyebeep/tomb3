@@ -33,6 +33,8 @@
 #define StreamHeaders	ARRAY_(0x00627320, ACMSTREAMHEADER, [4])
 #define NotifyEventHandles	ARRAY_(0x00627478, HANDLE, [2])
 
+static uchar* AllocBuffer;
+
 BOOL __stdcall ACMEnumCallBack(HACMDRIVERID hadid, DWORD_PTR dwInstance, DWORD fdwSupport)
 {
 	ACMDRIVERDETAILS driver;
@@ -356,7 +358,6 @@ bool ACMInit()
 {
 	DSBUFFERDESC desc;
 	static WAVEFORMATEX wav_format;
-	uchar* buffer;
 	ulong pMetric;
 	long nEmpty;
 	char wadname[80];
@@ -381,8 +382,8 @@ bool ACMInit()
 	if (!ACMOpenFile(wadname))
 		ACMOpenFile(GetFullPath(wadname));
 
-	buffer = (uchar*)GlobalAlloc(GMEM_FIXED, 0x16040);
-	ADPCMBuffer = (uchar*)(((long)buffer + 32) & 0xFFFFFFE0);
+	AllocBuffer = (uchar*)GlobalAlloc(GMEM_FIXED, 0x16040);
+	ADPCMBuffer = (uchar*)(((long)AllocBuffer + 32) & 0xFFFFFFE0);
 	ReadFile(acm_file, TrackInfos, 130 * sizeof(TRACK_INFO), &acm_read, 0);
 	nEmpty = 0;
 
@@ -429,6 +430,60 @@ bool ACMInit()
 	return 1;
 }
 
+void ACMClose()
+{
+	if (!acm_ready)
+		return;
+
+	acm_done = 1;
+
+	if (DSBuffer)
+	{
+		DSBuffer->Play(0, 0, DSBPLAY_LOOPING);
+		DSBuffer->Stop();
+	}
+
+	if (StreamHeaders[0].fdwStatus & ACMSTREAMHEADER_STATUSF_PREPARED)
+	{
+		StreamHeaders[0].cbSrcLength = 0x5800;
+		StreamHeaders[0].cbDstLength = StreamSize;
+		acmStreamUnprepareHeader(hACMStream, StreamHeaders, 0);
+	}
+
+	if (StreamHeaders[1].fdwStatus & ACMSTREAMHEADER_STATUSF_PREPARED)
+	{
+		StreamHeaders[0].cbSrcLength = 0x5800;
+		StreamHeaders[0].cbDstLength = StreamSize;
+		acmStreamUnprepareHeader(hACMStream, &StreamHeaders[1], 0);
+	}
+
+	if (StreamHeaders[2].fdwStatus & ACMSTREAMHEADER_STATUSF_PREPARED)
+	{
+		StreamHeaders[0].cbSrcLength = 0x5800;
+		StreamHeaders[0].cbDstLength = StreamSize;
+		acmStreamUnprepareHeader(hACMStream, &StreamHeaders[2], 0);
+	}
+
+	if (StreamHeaders[3].fdwStatus & ACMSTREAMHEADER_STATUSF_PREPARED)
+	{
+		StreamHeaders[0].cbSrcLength = 0x5800;
+		StreamHeaders[0].cbDstLength = StreamSize;
+		acmStreamUnprepareHeader(hACMStream, &StreamHeaders[3], 0);
+	}
+
+	acmStreamClose(hACMStream, 0);
+	acmDriverClose(hACMDriver, 0);
+	GlobalFree(AllocBuffer);
+
+	if (DSNotify)
+		DSNotify->Release();
+
+	if (DSBuffer)
+		DSBuffer->Release();
+
+	ACMCloseFile();
+}
+
 void inject_audio(bool replace)
 {
 	INJECT(0x004742A0, ACMEnumCallBack, replace);
@@ -442,4 +497,5 @@ void inject_audio(bool replace)
 	INJECT(0x00474D70, ACMHandleNotifications, replace);
 	INJECT(0x00475160, ACMSetupNotifications, replace);
 	INJECT(0x00474330, ACMInit, replace);
+	INJECT(0x00474760, ACMClose, replace);
 }
