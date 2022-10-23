@@ -13,5 +13,6 @@ void DS_AdjustPitch(long num, long pitch);
 void DS_StopSample(long num);
 bool DS_Create(LPGUID lpGuid);
 bool DS_IsSoundEnabled();
+bool DS_SetOutputFormat();
 
 #define DS_Finish	( (void(__cdecl*)()) 0x00480D10 )

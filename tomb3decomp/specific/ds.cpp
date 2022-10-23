@@ -158,6 +158,35 @@ bool DS_IsSoundEnabled()
 	return App.DXConfig.sound;
 }
 
+bool DS_SetOutputFormat()
+{
+	LPDIRECTSOUNDBUFFER buffer;
+	DSBUFFERDESC desc;
+	WAVEFORMATEX pcfxFormat;
+	bool ret;
+
+	memset(&desc, 0, sizeof(desc));
+	desc.dwSize = sizeof(desc);
+	desc.dwFlags = DSBCAPS_PRIMARYBUFFER;
+
+	if (FAILED(lpDirectSound->CreateSoundBuffer(&desc, &buffer, 0)))
+		return 0;
+
+	pcfxFormat.wFormatTag = WAVE_FORMAT_PCM;
+	pcfxFormat.nChannels = 2;
+	pcfxFormat.nSamplesPerSec = 22050;
+	pcfxFormat.nAvgBytesPerSec = 4 * 22050;
+	pcfxFormat.cbSize = 0;
+	pcfxFormat.nBlockAlign = 4;
+	pcfxFormat.wBitsPerSample = 16;
+	ret = SUCCEEDED(buffer->SetFormat(&pcfxFormat));
+
+	if (buffer)
+		buffer->Release();
+
+	return ret;
+}
+
 void inject_ds(bool replace)
 {
 	INJECT(0x00480740, DS_IsChannelPlaying, replace);
@@ -170,4 +199,5 @@ void inject_ds(bool replace)
 	INJECT(0x00480960, DS_StopSample, replace);
 	INJECT(0x00480C20, DS_Create, replace);
 	INJECT(0x00480D40, DS_IsSoundEnabled, replace);
+	INJECT(0x00480C40, DS_SetOutputFormat, replace);
 }
