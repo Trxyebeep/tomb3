@@ -312,6 +312,11 @@ void CreateMonoScreen()
 	TIME_Init();
 }
 
+void SetPictureToFade(long fade)
+{
+	pictureFading = fade;
+}
+
 void inject_picture(bool replace)
 {
 	INJECT(0x0048AFD0, CrossFadePicture, replace);
@@ -323,4 +328,5 @@ void inject_picture(bool replace)
 	INJECT(0x0048B370, ConvertSurfaceToTextures16Bit, replace);
 	INJECT(0x0048B300, ConvertSurfaceToTextures, replace);
 	INJECT(0x0048BE60, CreateMonoScreen, replace);
+	INJECT(0x0048AD60, SetPictureToFade, replace);
 }

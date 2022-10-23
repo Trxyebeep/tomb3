@@ -1803,7 +1803,7 @@ tomb3decomp progress.
 
 		specific/picture.cpp
 
-0x0048AD60		SetPictureToFade
+0x0048AD60	+	SetPictureToFade
 0x0048AD80		ForceFadeDown
 0x0048ADA0	+	DrawPictureAlpha
 0x0048AFD0	+	CrossFadePicture
