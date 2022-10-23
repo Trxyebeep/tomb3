@@ -12,6 +12,6 @@ void DS_AdjustVolumeAndPan(long num, long volume, long pan);
 void DS_AdjustPitch(long num, long pitch);
 void DS_StopSample(long num);
 bool DS_Create(LPGUID lpGuid);
+bool DS_IsSoundEnabled();
 
-#define DS_IsSoundEnabled	( (bool(__cdecl*)()) 0x00480D40 )
 #define DS_Finish	( (void(__cdecl*)()) 0x00480D10 )

@@ -153,6 +153,11 @@ bool DS_Create(LPGUID lpGuid)
 	return SUCCEEDED(DirectSoundCreate(lpGuid, &lpDirectSound, 0));
 }
 
+bool DS_IsSoundEnabled()
+{
+	return App.DXConfig.sound;
+}
+
 void inject_ds(bool replace)
 {
 	INJECT(0x00480740, DS_IsChannelPlaying, replace);
@@ -164,4 +169,5 @@ void inject_ds(bool replace)
 	INJECT(0x00480920, DS_AdjustPitch, replace);
 	INJECT(0x00480960, DS_StopSample, replace);
 	INJECT(0x00480C20, DS_Create, replace);
+	INJECT(0x00480D40, DS_IsSoundEnabled, replace);
 }
