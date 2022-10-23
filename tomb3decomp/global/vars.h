@@ -111,6 +111,7 @@
 #define FinishLevelCheat	VAR_(0x006A1BD0, long)
 #define dontFadePicture	VAR_(0x006A1B78, bool)
 #define pictureFading	VAR_(0x006A1B7C, bool)
+#define forceFadeDown	VAR_(0x006A1BB0, bool)
 #define democount	VAR_(0x006E28C4, long)
 #define demoptr	VAR_(0x006E28C0, ulong*)
 #define next_item_active	VAR_(0x006D62AA, short)
