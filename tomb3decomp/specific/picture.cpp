@@ -406,6 +406,29 @@ void FadePictureDown(long steps)
 	}
 }
 
+void S_FadeToBlack()
+{
+	DISPLAYMODE* dm;
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+
+	if (dm->w == 640 && dm->h == 480)
+		ConvertSurfaceToTextures(App.lpFrontBuffer);
+	else
+	{
+		App.lpPictureBuffer->Blt(0, App.lpFrontBuffer, 0, DDBLT_WAIT, 0);
+		ConvertSurfaceToTextures(App.lpPictureBuffer);
+	}
+
+	HWR_GetAllTextureHandles();
+
+	for (int i = 0; i < nTPages; i++)
+		HWR_SetCurrentTexture(TPages[i]);
+
+	nLoadedPictures++;
+	TIME_Init();
+}
+
 void inject_picture(bool replace)
 {
 	INJECT(0x0048AFD0, CrossFadePicture, replace);
@@ -422,4 +445,5 @@ void inject_picture(bool replace)
 	INJECT(0x0048B0D0, LoadPicture, replace);
 	INJECT(0x0048BC70, FadePictureUp, replace);
 	INJECT(0x0048BD10, FadePictureDown, replace);
+	INJECT(0x0048BF40, S_FadeToBlack, replace);
 }
