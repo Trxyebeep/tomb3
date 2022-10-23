@@ -5,6 +5,7 @@
 #include "time.h"
 #include "dxshell.h"
 #include "texture.h"
+#include "file.h"
 
 void CrossFadePicture()
 {
@@ -322,6 +323,33 @@ void ForceFadeDown(long fade)
 	forceFadeDown = fade;
 }
 
+bool LoadPicture(const char* name, LPDIRECTDRAWSURFACE3 surf, long a)
+{
+	HANDLE img;
+	BITMAP bitmap;
+	HDC cdc;
+	HDC hdc;
+
+	img = LoadImage(0, GetFullPath(name), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+
+	if (!img)
+		return 0;
+
+	cdc = CreateCompatibleDC(0);
+	SelectObject(cdc, img);
+	GetObject(img, sizeof(BITMAP), &bitmap);
+
+	surf->GetDC(&hdc);
+	BitBlt(hdc, 0, 0, bitmap.bmWidth, bitmap.bmHeight, cdc, 0, 0, SRCCOPY);
+	surf->ReleaseDC(hdc);
+	DeleteDC(cdc);
+
+	ConvertSurfaceToTextures(surf);
+	HWR_GetAllTextureHandles();
+	nLoadedPictures++;
+	return 1;
+}
+
 void inject_picture(bool replace)
 {
 	INJECT(0x0048AFD0, CrossFadePicture, replace);
@@ -335,4 +363,5 @@ void inject_picture(bool replace)
 	INJECT(0x0048BE60, CreateMonoScreen, replace);
 	INJECT(0x0048AD60, SetPictureToFade, replace);
 	INJECT(0x0048AD80, ForceFadeDown, replace);
+	INJECT(0x0048B0D0, LoadPicture, replace);
 }

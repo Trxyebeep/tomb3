@@ -14,9 +14,9 @@ void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACE3 surf);
 void CreateMonoScreen();
 void SetPictureToFade(long fade);
 void ForceFadeDown(long fade);
+bool LoadPicture(const char* name, LPDIRECTDRAWSURFACE3 surf, long a);
 
 #define FreePictureTextures	( (void(__cdecl*)(long*)) 0x0048B190 )
-#define LoadPicture	( (bool(__cdecl*)(const char*, LPDIRECTDRAWSURFACE3, long)) 0x0048B0D0 )
 #define FadePictureUp	( (void(__cdecl*)(long)) 0x0048BC70 )
 #define FadePictureDown	( (void(__cdecl*)(long)) 0x0048BD10 )
 #define RemoveMonoScreen	( (void(__cdecl*)(long)) 0x0048C030 )
