@@ -88,10 +88,41 @@ void DS_FreeAllSamples()
 	}
 }
 
+bool DS_MakeSample(long num, LPWAVEFORMATEX fmt, LPVOID data, ulong bytes)
+{
+	DSBUFFERDESC desc;
+	LPVOID pWrite;
+	ulong aBytes;
+
+	if (!App.DXConfig.sound || num > 256)
+		return 0;
+
+	desc.dwSize = sizeof(DSBUFFERDESC);
+	desc.lpwfxFormat = fmt;
+	desc.dwFlags = DSBCAPS_STATIC | DSBCAPS_CTRLFREQUENCY | DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME;
+	desc.dwBufferBytes = bytes;
+	desc.dwReserved = 0;
+
+	if (FAILED(lpDirectSound->CreateSoundBuffer(&desc, &DS_Buffers[num], 0)))
+		return 0;
+
+	if (FAILED(DS_Buffers[num]->Lock(0, bytes, &pWrite, &aBytes, 0, 0, 0)))
+		return 0;
+
+	memcpy(pWrite, data, aBytes);
+
+	if (FAILED(DS_Buffers[num]->Unlock(pWrite, aBytes, 0, 0)))
+		return 0;
+
+	DS_SampleFrequencies[num] = fmt->nSamplesPerSec;
+	return 1;
+}
+
 void inject_ds(bool replace)
 {
 	INJECT(0x00480740, DS_IsChannelPlaying, replace);
 	INJECT(0x004808B0, DS_GetFreeChannel, replace);
 	INJECT(0x00480790, DS_StartSample, replace);
 	INJECT(0x00480600, DS_FreeAllSamples, replace);
+	INJECT(0x00480630, DS_MakeSample, replace);
 }
