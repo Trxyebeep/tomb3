@@ -73,9 +73,25 @@ long DS_StartSample(long num, long volume, long pitch, long pan, ulong flags)
 	return channel;
 }
 
+void DS_FreeAllSamples()
+{
+	if (App.DXConfig.sound)
+	{
+		for (int i = 0; i < 256; i++)
+		{
+			if (DS_Buffers[i])
+			{
+				DS_Buffers[i]->Release();
+				DS_Buffers[i] = 0;
+			}
+		}
+	}
+}
+
 void inject_ds(bool replace)
 {
 	INJECT(0x00480740, DS_IsChannelPlaying, replace);
 	INJECT(0x004808B0, DS_GetFreeChannel, replace);
 	INJECT(0x00480790, DS_StartSample, replace);
+	INJECT(0x00480600, DS_FreeAllSamples, replace);
 }

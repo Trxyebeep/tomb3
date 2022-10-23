@@ -1554,7 +1554,7 @@ tomb3decomp progress.
 
 		specific/ds.cpp
 
-0x00480600		DS_FreeAllSamples
+0x00480600	+	DS_FreeAllSamples
 0x00480630		DS_MakeSample
 0x00480740	+	DS_IsChannelPlaying	
 0x00480790	+	DS_StartSample
