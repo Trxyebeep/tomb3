@@ -1556,7 +1556,7 @@ tomb3decomp progress.
 
 0x00480600		DS_FreeAllSamples
 0x00480630		DS_MakeSample
-0x00480740		DS_IsChannelPlaying	
+0x00480740	+	DS_IsChannelPlaying	
 0x00480790		DS_StartSample
 0x004808B0		DS_GetFreeChannel
 0x004808F0		DS_AdjustVolumeAndPan

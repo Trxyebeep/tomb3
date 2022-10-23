@@ -71,6 +71,7 @@
 #include "../specific/time.h"
 #include "../specific/di.h"
 #include "../specific/audio.h"
+#include "../specific/ds.h"
 
 HINSTANCE hinstance = 0;
 
@@ -167,6 +168,7 @@ void inject_all(bool replace)
 	inject_time(replace);
 	inject_di(replace);
 	inject_audio(replace);
+	inject_ds(replace);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
