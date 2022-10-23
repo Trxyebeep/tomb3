@@ -289,8 +289,6 @@
 #define save_counter	VAR_(0x00633F58, long)
 #define malloc_ptr	VAR_(0x00634140, char*)
 #define G_lpCmdLine	VAR_(0x006CF25C, char*)
-#define TLUnRollBuffer	VAR_(0x006598D0, D3DTLVERTEX*)
-#define TLVertexBuffer	VAR_(0x0063413C, D3DTLVERTEX*)
 #define malloc_buffer	VAR_(0x0069FCAC, char*)
 #define title_loaded	VAR_(0x006A1C58, long)
 #define HeavyTriggered	VAR_(0x006E28CC, uchar)
@@ -298,6 +296,7 @@
 #define flipeffect	VAR_(0x004C5200, long)
 #define fliptimer	VAR_(0x00625F68, long)
 #define lpDirectSound	VAR_(0x00632AC8, LPDIRECTSOUND)
+#define acm_volume	VAR_(0x00627470, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -347,7 +346,9 @@
 #define m22	VAR_(0x006A2080, float)
 #define m23	VAR_(0x006A2084, float)
 #define CurrentTLVertex	VAR_(0x00634004, D3DTLVERTEX*)
+#define TLVertexBuffer	VAR_(0x0063413C, D3DTLVERTEX*)
 #define VertexBuffer	VAR_(0x00633FF8, D3DTLVERTEX*)
+#define TLUnRollBuffer	VAR_(0x006598D0, D3DTLVERTEX*)
 #define UnRollBuffer	VAR_(0x00633FF0, D3DTLVERTEX*)
 #define bAlphaTesting	VAR_(0x00633FF4, bool)
 #define sort3dptrbf	VAR_(0x005316E4, long*)
@@ -476,6 +477,7 @@
 #define bats	ARRAY_(0x006DB8A0, BAT_STRUCT, [32])
 #define saved_levels	ARRAY_(0x004CD878, short, [24])
 #define flipmap	ARRAY_(0x006E2980, long, [10])
+#define TrackInfos	ARRAY_(0x00627480, TRACK_INFO, [130])
 
 /*constants*/
 #define NO_HEIGHT -32512
