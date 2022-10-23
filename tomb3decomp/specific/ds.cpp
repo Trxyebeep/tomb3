@@ -22,7 +22,25 @@ bool DS_IsChannelPlaying(long num)
 	return 0;
 }
 
+long DS_GetFreeChannel()
+{
+	for (int i = 0; i < 32; i++)
+	{
+		if (!DS_Samples[i])
+			return i;
+	}
+
+	for (int i = 0; i < 32; i++)
+	{
+		if (!DS_IsChannelPlaying(i))
+			return i;
+	}
+
+	return -1;
+}
+
 void inject_ds(bool replace)
 {
 	INJECT(0x00480740, DS_IsChannelPlaying, replace);
+	INJECT(0x004808B0, DS_GetFreeChannel, replace);
 }
