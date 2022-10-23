@@ -12,6 +12,7 @@
 - Add an option for PSX water color.
 - Add colsub for sparks, like smoke.
 - Improve bucket drawing, fixes PC bars disappearing in open spaces. Eg. beginning of Thames Wharf.
+- Improve pickup display code to show transparency correctly.
 
 ### tomb3 bug fixes
 

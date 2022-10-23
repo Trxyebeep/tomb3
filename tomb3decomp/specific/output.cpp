@@ -279,6 +279,62 @@ static void DrawPickup(short obj_num)
 
 	phd_PopMatrix();
 }
+
+static void OutputPickupDisplay()
+{
+	DXClearBuffers(8, 0);
+
+	if (App.lpZBuffer)
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			Buckets[i].TPage = (DXTEXTURE*)-1;
+			Buckets[i].nVtx = 0;
+		}
+
+		HWR_EnableColorKey(0);
+		HWR_EnableAlphaBlend(0);
+		HWR_EnableColorAddition(0);
+		HWR_EnableZBuffer(1, 1);
+	}
+
+	phd_InitPolyList();
+
+	if (level_complete)
+		InitialisePickUpDisplay();
+
+	bBlueEffect = 0;
+	DrawPickup(pickups[CurrentPickup].sprnum);
+
+	if (App.lpZBuffer)
+	{
+		if (bAlphaTesting)
+		{
+			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 0);
+			DrawBuckets();
+			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 1);
+			phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
+			HWR_DrawPolyListBF(surfacenumbf, sort3d_bufferbf);
+			HWR_EnableZBuffer(0, 1);
+			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 0);
+			phd_SortPolyList(surfacenumfb, sort3d_bufferfb);
+			HWR_DrawPolyListBF(surfacenumfb, sort3d_bufferfb);
+		}
+		else
+		{
+			DrawBuckets();
+			phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
+			HWR_DrawPolyListBF(surfacenumbf, sort3d_bufferbf);
+		}
+	}
+	else
+	{
+		HWR_EnableColorKey(0);
+		HWR_EnableAlphaBlend(0);
+		phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
+		HWR_DrawPolyList(surfacenumbf, sort3d_bufferbf);
+	}
+}
 #endif
 
 void S_OutputPolyList()
@@ -320,38 +376,7 @@ void S_OutputPolyList()
 
 #ifdef TROYESTUFF
 	if (pickups[CurrentPickup].duration != -1 && !Inventory_Displaying)
-	{
-		if (App.lpZBuffer)
-		{
-			for (int i = 0; i < 6; i++)
-			{
-				Buckets[i].TPage = (DXTEXTURE*)-1;
-				Buckets[i].nVtx = 0;
-			}
-
-			DXClearBuffers(8, 0);
-			HWR_EnableColorKey(0);
-			HWR_EnableAlphaBlend(0);
-			HWR_EnableColorAddition(0);
-			HWR_EnableZBuffer(1, 1);
-		}
-		else
-			phd_InitPolyList();
-
-		if (level_complete)
-			InitialisePickUpDisplay();
-
-		bBlueEffect = 0;
-		DrawPickup(pickups[CurrentPickup].sprnum);
-
-		if (App.lpZBuffer)
-			DrawBuckets();
-		else
-		{
-			phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
-			HWR_DrawPolyListBF(surfacenumbf, sort3d_bufferbf);
-		}
-	}
+		OutputPickupDisplay();
 #endif
 
 	S_FadePicture();
