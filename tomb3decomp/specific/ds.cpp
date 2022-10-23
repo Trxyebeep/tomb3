@@ -118,6 +118,15 @@ bool DS_MakeSample(long num, LPWAVEFORMATEX fmt, LPVOID data, ulong bytes)
 	return 1;
 }
 
+void DS_AdjustVolumeAndPan(long num, long volume, long pan)
+{
+	if (num >= 0 && DS_Samples[num])
+	{
+		DS_Samples[num]->SetVolume(volume);
+		DS_Samples[num]->SetPan(pan);
+	}
+}
+
 void inject_ds(bool replace)
 {
 	INJECT(0x00480740, DS_IsChannelPlaying, replace);
@@ -125,4 +134,5 @@ void inject_ds(bool replace)
 	INJECT(0x00480790, DS_StartSample, replace);
 	INJECT(0x00480600, DS_FreeAllSamples, replace);
 	INJECT(0x00480630, DS_MakeSample, replace);
+	INJECT(0x004808F0, DS_AdjustVolumeAndPan, replace);
 }
