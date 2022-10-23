@@ -1515,8 +1515,8 @@ tomb3decomp progress.
 0x00475800	+	setup_screen_size
 0x00475910	+	TempVideoAdjust
 0x00475950	+	TempVideoRemove
-0x00475990		S_FadeInInventory
-0x004759D0		S_FadeOutInventory
+0x00475990	+	S_FadeInInventory
+0x004759D0	+	S_FadeOutInventory
 
 
 		specific/drawbars.cpp

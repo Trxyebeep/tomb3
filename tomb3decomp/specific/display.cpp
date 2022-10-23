@@ -3,6 +3,9 @@
 #include "../3dsystem/3d_gen.h"
 
 static long mode_lock;
+static long fade_value = 0x100000;
+static long fade_limit = 0x100000;
+static long fade_adder = 0x8000;
 
 void setup_screen_size()
 {
@@ -83,6 +86,29 @@ void TempVideoRemove()
 	}
 }
 
+void S_FadeInInventory(long fade)
+{
+//	if (Inventory_Mode != INV_TITLE_MODE)
+		//empty function call here
+
+	if (fade)
+	{
+		fade_value = 0x100000;
+		fade_limit = 0x180000;
+		fade_adder = 0x8000;
+	}
+}
+
+void S_FadeOutInventory(long fade)
+{
+	if (fade)
+	{
+		fade_value = 0x180000;
+		fade_limit = 0x100000;
+		fade_adder = -0x8000;
+	}
+}
+
 void inject_display(bool replace)
 {
 	INJECT(0x00475800, setup_screen_size, replace);
@@ -90,4 +116,6 @@ void inject_display(bool replace)
 	INJECT(0x00475790, DecreaseScreenSize, replace);
 	INJECT(0x00475910, TempVideoAdjust, replace);
 	INJECT(0x00475950, TempVideoRemove, replace);
+	INJECT(0x00475990, S_FadeInInventory, replace);
+	INJECT(0x004759D0, S_FadeOutInventory, replace);
 }

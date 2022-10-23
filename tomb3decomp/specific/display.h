@@ -8,6 +8,5 @@ void IncreaseScreenSize();
 void DecreaseScreenSize();
 void TempVideoAdjust(long a, double sizer);
 void TempVideoRemove();
-
-#define S_FadeInInventory	( (void(__cdecl*)(long)) 0x00475990 )
-#define S_FadeOutInventory	( (void(__cdecl*)(long)) 0x004759D0 )
+void S_FadeInInventory(long fade);
+void S_FadeOutInventory(long fade);
