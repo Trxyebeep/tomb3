@@ -148,6 +148,11 @@ void DS_StopSample(long num)
 	}
 }
 
+bool DS_Create(LPGUID lpGuid)
+{
+	return SUCCEEDED(DirectSoundCreate(lpGuid, &lpDirectSound, 0));
+}
+
 void inject_ds(bool replace)
 {
 	INJECT(0x00480740, DS_IsChannelPlaying, replace);
@@ -158,4 +163,5 @@ void inject_ds(bool replace)
 	INJECT(0x004808F0, DS_AdjustVolumeAndPan, replace);
 	INJECT(0x00480920, DS_AdjustPitch, replace);
 	INJECT(0x00480960, DS_StopSample, replace);
+	INJECT(0x00480C20, DS_Create, replace);
 }

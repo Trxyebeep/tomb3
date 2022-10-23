@@ -1567,7 +1567,7 @@ tomb3decomp progress.
 0x00480A70		DS_EnumerateDevices
 0x00480A90		DS_EnumCallback
 0x00480B80		DS_Start
-0x00480C20		DS_Create
+0x00480C20	+	DS_Create
 0x00480C40		DS_SetOutputFormat
 0x00480D10		DS_Finish
 0x00480D40		DS_IsSoundEnabled
