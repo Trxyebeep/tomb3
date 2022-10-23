@@ -13,5 +13,6 @@ long ACMGetTrackLocation();
 void ACMSetVolume(long volume);
 long ACMHandleNotifications();
 long ACMSetupNotifications();
+bool ACMInit();
 
 #define ACMClose	( (void(__cdecl*)()) 0x00474760 )

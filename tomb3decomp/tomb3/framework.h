@@ -11,6 +11,7 @@
 #include <process.h>
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
+#define DIRECTSOUND_VERSION	0x0500
 #include <dsound.h>
 #include <mmreg.h>
 #include <mmeapi.h>

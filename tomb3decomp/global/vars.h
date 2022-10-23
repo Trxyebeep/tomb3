@@ -297,6 +297,7 @@
 #define flip_status	VAR_(0x006E296C, long)
 #define flipeffect	VAR_(0x004C5200, long)
 #define fliptimer	VAR_(0x00625F68, long)
+#define lpDirectSound	VAR_(0x00632AC8, LPDIRECTSOUND)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)

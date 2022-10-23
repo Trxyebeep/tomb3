@@ -1,7 +1,9 @@
 #include "../tomb3/pch.h"
 #include "audio.h"
+#include "file.h"
 
 //statics
+#define hACMDriver	VAR_(0x006300BC, HACMDRIVER)
 #define hACMDriverID	VAR_(0x0062FCA8, HACMDRIVERID)
 #define hACMStream	VAR_(0x0062FD08, HACMSTREAM)
 #define acm_file	VAR_(0x0062FD10, HANDLE)
@@ -25,6 +27,7 @@
 #define DSNotify	VAR_(0x006300C8, LPDIRECTSOUNDNOTIFY)
 #define ADPCMBuffer	VAR_(0x006300B4, uchar*)
 #define XATrack	VAR_(0x0062FCFC, long)
+#define StreamSize	VAR_(0x0062FCA0, ulong)
 
 #define TrackInfos	ARRAY_(0x00627480, TRACK_INFO, [130])
 #define StreamHeaders	ARRAY_(0x00627320, ACMSTREAMHEADER, [4])
@@ -349,6 +352,83 @@ long ACMSetupNotifications()
 	return result;
 }
 
+bool ACMInit()
+{
+	DSBUFFERDESC desc;
+	static WAVEFORMATEX wav_format;
+	uchar* buffer;
+	ulong pMetric;
+	long nEmpty;
+	char wadname[80];
+	static char source_wav_format[50];
+
+	acm_ready = 0;
+
+	if (!App.DXConfig.sound || !lpDirectSound)
+		return 0;
+
+	acmDriverEnum(ACMEnumCallBack, 0, 0);
+
+	if (!hACMDriverID)
+		return 0;
+
+	if (acmDriverOpen(&hACMDriver, hACMDriverID, 0))
+		return 0;
+
+	strcpy(wadname, "audio\\cdaudio.wad");
+	memset(&wadname[18], 0, 80 - 18);
+
+	if (!ACMOpenFile(wadname))
+		ACMOpenFile(GetFullPath(wadname));
+
+	buffer = (uchar*)GlobalAlloc(GMEM_FIXED, 0x16040);
+	ADPCMBuffer = (uchar*)(((long)buffer + 32) & 0xFFFFFFE0);
+	ReadFile(acm_file, TrackInfos, 130 * sizeof(TRACK_INFO), &acm_read, 0);
+	nEmpty = 0;
+
+	while (!TrackInfos[nEmpty].size)
+		nEmpty++;
+
+	SetFilePointer(acm_file, TrackInfos[nEmpty].offset, 0, FILE_BEGIN);
+	SetFilePointer(acm_file, 20, 0, FILE_CURRENT);
+	ReadFile(acm_file, &source_wav_format, 50, &acm_read, 0);
+	wav_format.wFormatTag = WAVE_FORMAT_PCM;
+	acmMetrics(0, ACM_METRIC_MAX_SIZE_FORMAT, &pMetric);
+	acmFormatSuggest(hACMDriver, (LPWAVEFORMATEX)&source_wav_format, &wav_format, pMetric, ACM_FORMATSUGGESTF_WFORMATTAG);
+	audio_buffer_size = 0x577C0;
+	NotifySize = 0x15DF0;
+	desc.dwBufferBytes = 0x577C0;
+	desc.dwReserved = 0;
+	desc.dwSize = sizeof(DSBUFFERDESC);
+	desc.dwFlags = DSBCAPS_LOCSOFTWARE | DSBCAPS_CTRLFREQUENCY | DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GETCURRENTPOSITION2;
+	desc.lpwfxFormat = &wav_format;
+	lpDirectSound->CreateSoundBuffer(&desc, &DSBuffer, 0);
+	DSBuffer->QueryInterface(IID_IDirectSoundNotify, (LPVOID*)&DSNotify);
+
+	ACMSetupNotifications();
+	acmStreamOpen(&hACMStream, hACMDriver, (LPWAVEFORMATEX)&source_wav_format, &wav_format, 0, 0, 0, 0);
+
+	acm_ready = 1;
+	while (DSBuffer->Lock(0, audio_buffer_size, (LPVOID*)&pAudioWrite, &AudioBytes, 0, 0, 0) != DS_OK);
+
+	acmStreamSize(hACMStream, 0x5800, &StreamSize, 0);
+	memset(pAudioWrite, 0, audio_buffer_size);
+
+	for (int i = 0; i < 4; i++)
+	{
+		memset(&StreamHeaders[i], 0, sizeof(ACMSTREAMHEADER));
+		StreamHeaders[i].cbStruct = sizeof(ACMSTREAMHEADER);
+		StreamHeaders[i].pbSrc = ADPCMBuffer;
+		StreamHeaders[i].cbSrcLength = 0x5800;
+		StreamHeaders[i].cbDstLength = StreamSize;
+		StreamHeaders[i].pbDst = &pAudioWrite[NotifySize * i];
+		acmStreamPrepareHeader(hACMStream, &StreamHeaders[i], 0);
+	}
+
+	DSBuffer->Unlock(pAudioWrite, audio_buffer_size, 0, 0);
+	return 1;
+}
+
 void inject_audio(bool replace)
 {
 	INJECT(0x004742A0, ACMEnumCallBack, replace);
@@ -361,4 +441,5 @@ void inject_audio(bool replace)
 	INJECT(0x00475280, ACMSetVolume, replace);
 	INJECT(0x00474D70, ACMHandleNotifications, replace);
 	INJECT(0x00475160, ACMSetupNotifications, replace);
+	INJECT(0x00474330, ACMInit, replace);
 }
