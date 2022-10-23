@@ -372,6 +372,40 @@ void FadePictureUp(long steps)
 	TIME_Init();
 }
 
+void FadePictureDown(long steps)
+{
+	DIRECT3DINFO* d3dinfo;
+
+	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
+
+	if (forceFadeDown || d3dinfo->Texture[App.DXConfigPtr->D3DTF].bPalette || !d3dinfo->bHardware || !d3dinfo->bAlpha)
+	{
+		for (int i = 0; i < steps; i++)
+		{
+			HWR_BeginScene();
+			TRDrawPicture((256 % steps) - (i * (-256 / steps)), CurPicTexIndices, f_znear);
+			HWR_EndScene();
+			DXUpdateFrame(1, 0);
+		}
+
+		HWR_BeginScene();
+		TRDrawPicture(255, CurPicTexIndices, f_znear);
+		HWR_EndScene();
+		DXUpdateFrame(1, 0);
+		forceFadeDown = 0;
+		nLoadedPictures = 0;
+		FreePictureTextures(CurPicTexIndices);
+		TIME_Init();
+	}
+	else
+	{
+		HWR_BeginScene();
+		TRDrawPicture(0, CurPicTexIndices, f_znear);
+		HWR_EndScene();
+		DXUpdateFrame(1, 0);
+	}
+}
+
 void inject_picture(bool replace)
 {
 	INJECT(0x0048AFD0, CrossFadePicture, replace);
@@ -387,4 +421,5 @@ void inject_picture(bool replace)
 	INJECT(0x0048AD80, ForceFadeDown, replace);
 	INJECT(0x0048B0D0, LoadPicture, replace);
 	INJECT(0x0048BC70, FadePictureUp, replace);
+	INJECT(0x0048BD10, FadePictureDown, replace);
 }

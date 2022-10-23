@@ -16,9 +16,9 @@ void SetPictureToFade(long fade);
 void ForceFadeDown(long fade);
 bool LoadPicture(const char* name, LPDIRECTDRAWSURFACE3 surf, long a);
 void FadePictureUp(long steps);
+void FadePictureDown(long steps);
 
 #define FreePictureTextures	( (void(__cdecl*)(long*)) 0x0048B190 )
-#define FadePictureDown	( (void(__cdecl*)(long)) 0x0048BD10 )
 #define RemoveMonoScreen	( (void(__cdecl*)(long)) 0x0048C030 )
 #define DoInventoryPicture	( (void(__cdecl*)()) 0x0048C070 )
 #define DrawMonoScreen	( (void(__cdecl*)(long, long, long)) 0x0048C010 )
