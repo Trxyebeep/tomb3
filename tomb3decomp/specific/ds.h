@@ -5,6 +5,7 @@ void inject_ds(bool replace);
 
 bool DS_IsChannelPlaying(long num);
 long DS_GetFreeChannel();
+long DS_StartSample(long num, long volume, long pitch, long pan, ulong flags);
 
 #define DS_IsSoundEnabled	( (bool(__cdecl*)()) 0x00480D40 )
 #define DS_FreeAllSamples	( (void(__cdecl*)()) 0x00480600 )
