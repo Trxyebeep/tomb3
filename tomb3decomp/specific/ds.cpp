@@ -205,6 +205,17 @@ void DS_Start(HWND hwnd)
 	}
 }
 
+void DS_Finish()
+{
+	DS_FreeAllSamples();
+
+	if (lpDirectSound)
+	{
+		lpDirectSound->Release();
+		lpDirectSound = 0;
+	}
+}
+
 void inject_ds(bool replace)
 {
 	INJECT(0x00480740, DS_IsChannelPlaying, replace);
@@ -219,4 +230,5 @@ void inject_ds(bool replace)
 	INJECT(0x00480D40, DS_IsSoundEnabled, replace);
 	INJECT(0x00480C40, DS_SetOutputFormat, replace);
 	INJECT(0x00480B80, DS_Start, replace);
+	INJECT(0x00480D10, DS_Finish, replace);
 }

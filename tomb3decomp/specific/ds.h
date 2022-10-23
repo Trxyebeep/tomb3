@@ -15,5 +15,4 @@ bool DS_Create(LPGUID lpGuid);
 bool DS_IsSoundEnabled();
 bool DS_SetOutputFormat();
 void DS_Start(HWND hwnd);
-
-#define DS_Finish	( (void(__cdecl*)()) 0x00480D10 )
+void DS_Finish();
