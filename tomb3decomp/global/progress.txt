@@ -1781,7 +1781,7 @@ tomb3decomp progress.
 
 		specific/output.cpp
 
-0x0048A210		S_InitialisePolyList
+0x0048A210	+	S_InitialisePolyList
 0x0048A2A0	+	S_DumpCine
 0x0048A2D0	+	S_DumpScreen
 0x0048A320	+	S_ClearScreen

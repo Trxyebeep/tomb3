@@ -10,6 +10,7 @@
 #include "time.h"
 #include "game.h"
 #include "../3dsystem/phd_math.h"
+#include "dd.h"
 #ifdef TROYESTUFF
 #include "../game/health.h"
 #include "../game/objects.h"
@@ -654,6 +655,40 @@ void S_AnimateTextures(long n)
 	AnimateTextures(n);
 }
 
+void S_InitialisePolyList(bool clearBackBuffer)
+{
+	ulong flags;
+
+	nPolyType = 0;
+
+	if (GtFullScreenClearNeeded)
+	{
+		DXCheckForLostSurfaces();
+		DD_SpinMessageLoop(0);
+		DXDoFlipWait();
+		DXClearBuffers(3, 0);
+		GtFullScreenClearNeeded = 0;
+		clearBackBuffer = 0;
+	}
+
+	if (!App.nRenderMode)
+		flags = 272;
+	else
+	{
+		if (clearBackBuffer || HWConfig.nFillMode < D3DFILL_SOLID)
+			flags = 258;
+		else
+			flags = 256;
+
+		flags |= 8;
+	}
+
+	DXClearBuffers(flags, 0);
+	HWR_BeginScene();
+	phd_InitPolyList();
+	objbcnt = 0;
+}
+
 void inject_output(bool replace)
 {
 	INJECT(0x0048A7B0, S_PrintShadow, replace);
@@ -673,4 +708,5 @@ void inject_output(bool replace)
 	INJECT(0x0048A320, S_ClearScreen, replace);
 	INJECT(0x0048AA00, AnimateTextures, replace);
 	INJECT(0x0048AB50, S_AnimateTextures, replace);
+	INJECT(0x0048A210, S_InitialisePolyList, replace);
 }
