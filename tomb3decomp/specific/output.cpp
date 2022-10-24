@@ -600,6 +600,37 @@ void S_ClearScreen()
 	ScreenClear(0);
 }
 
+void AnimateTextures(long n)
+{
+	PHDTEXTURESTRUCT tex;
+	short* range;
+	static long comp;
+	short nRanges, nRangeFrames;
+
+	for (comp += n; comp > 5; comp -= 5)
+	{
+		nRanges = *aranges;
+		range = aranges + 1;
+
+		for (int i = 0; i < nRanges; i++)
+		{
+			nRangeFrames = *range++;
+
+			tex = phdtextinfo[range[0]];
+
+			while (nRangeFrames > 0)
+			{
+				phdtextinfo[range[0]] = phdtextinfo[range[1]];
+				range++;
+				nRangeFrames--;
+			}
+
+			phdtextinfo[range[0]] = tex;
+			range++;
+		}
+	}
+}
+
 void inject_output(bool replace)
 {
 	INJECT(0x0048A7B0, S_PrintShadow, replace);
@@ -617,4 +648,5 @@ void inject_output(bool replace)
 	INJECT(0x0048A2D0, S_DumpScreen, replace);
 	INJECT(0x0048AC10, ScreenClear, replace);
 	INJECT(0x0048A320, S_ClearScreen, replace);
+	INJECT(0x0048AA00, AnimateTextures, replace);
 }

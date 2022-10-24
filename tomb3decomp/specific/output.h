@@ -18,6 +18,7 @@ void ScreenPartialDump();
 long S_DumpScreen();
 void ScreenClear(bool a);
 void S_ClearScreen();
+void AnimateTextures(long n);
 
 #ifdef TROYESTUFF
 long GetRenderScale(long unit);

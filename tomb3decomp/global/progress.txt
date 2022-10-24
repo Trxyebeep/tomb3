@@ -1791,7 +1791,7 @@ tomb3decomp progress.
 0x0048A760	+	S_InsertBackPolygon
 0x0048A7B0	+	S_PrintShadow
 0x0048A9B0	+	S_LightRoom
-0x0048AA00		AnimateTextures
+0x0048AA00	+	AnimateTextures
 0x0048AAC0	+	S_SetupBelowWater
 0x0048AB20	+	S_SetupAboveWater
 0x0048AB50		S_AnimateTextures
