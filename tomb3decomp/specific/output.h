@@ -17,6 +17,7 @@ void S_InitialiseScreen(long type);
 void ScreenPartialDump();
 long S_DumpScreen();
 void ScreenClear(bool a);
+void S_ClearScreen();
 
 #ifdef TROYESTUFF
 long GetRenderScale(long unit);
@@ -24,4 +25,3 @@ long GetRenderScale(long unit);
 
 #define S_InitialisePolyList	( (void(__cdecl*)(long)) 0x0048A210 )
 #define S_AnimateTextures	( (void(__cdecl*)(long)) 0x0048AB50 )
-#define S_ClearScreen	( (void(__cdecl*)()) 0x0048A320 )
