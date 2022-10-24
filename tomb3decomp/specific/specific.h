@@ -20,5 +20,4 @@ void S_CDPlay(short track, long mode);
 void S_CDStop();
 long S_CDGetLoc();
 void S_CDVolume(long volume);
-
-#define S_StartSyncedAudio	( (long(__cdecl*)(long)) 0x0048D4B0 )
+long S_StartSyncedAudio(long track);

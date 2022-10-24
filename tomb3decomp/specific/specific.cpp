@@ -252,6 +252,17 @@ void S_CDVolume(long volume)
 	ACMSetVolume(volume);
 }
 
+long S_StartSyncedAudio(long track)
+{
+	if (App.DXConfig.sound)
+	{
+		ACMEmulateCDPlay(track, 0);
+		return 1;
+	}
+
+	return 0;
+}
+
 void inject_specific(bool replace)
 {
 	INJECT(0x0048D500, SWR_FindNearestPaletteEntry, replace);
@@ -271,4 +282,5 @@ void inject_specific(bool replace)
 	INJECT(0x0048D4A0, S_CDStop, replace);
 	INJECT(0x0048D4E0, S_CDGetLoc, replace);
 	INJECT(0x0048D4F0, S_CDVolume, replace);
+	INJECT(0x0048D4B0, S_StartSyncedAudio, replace);
 }
