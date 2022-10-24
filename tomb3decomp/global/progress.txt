@@ -1785,7 +1785,7 @@ tomb3decomp progress.
 0x0048A2A0	+	S_DumpCine
 0x0048A2D0		S_DumpScreen
 0x0048A320		S_ClearScreen
-0x0048A330		S_InitialiseScreen
+0x0048A330	+	S_InitialiseScreen
 0x0048A370	+	S_OutputPolyList
 0x0048A4C0	+	S_GetObjectBounds
 0x0048A760	+	S_InsertBackPolygon

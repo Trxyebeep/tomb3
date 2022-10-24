@@ -13,6 +13,7 @@
 #include "draweffects.h"
 #include "../tomb3/tomb3.h"
 #endif
+#include "display.h"
 
 static short shadow[6 + (3 * 8)] =
 {
@@ -551,6 +552,17 @@ long S_DumpCine()
 	return 0;
 }
 
+void S_InitialiseScreen(long type)
+{
+	if (type > 0)
+		TempVideoRemove();
+
+	//Empty function call here
+
+	if (App.nRenderMode)
+		HWR_InitState();
+}
+
 void inject_output(bool replace)
 {
 	INJECT(0x0048A7B0, S_PrintShadow, replace);
@@ -563,4 +575,5 @@ void inject_output(bool replace)
 	INJECT(0x0048AC20, mCalcPoint, replace);
 	INJECT(0x0048ACC0, ProjectPCoord, replace);
 	INJECT(0x0048A2A0, S_DumpCine, replace);
+	INJECT(0x0048A330, S_InitialiseScreen, replace);
 }

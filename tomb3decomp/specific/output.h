@@ -13,6 +13,7 @@ long S_GetObjectBounds(short* box);
 void mCalcPoint(long x, long y, long z, long* result);
 void ProjectPCoord(long x, long y, long z, long* result, long cx, long cy, long fov);
 long S_DumpCine();
+void S_InitialiseScreen(long type);
 
 #ifdef TROYESTUFF
 long GetRenderScale(long unit);
