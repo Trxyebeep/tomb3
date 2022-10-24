@@ -247,6 +247,11 @@ long S_CDGetLoc()
 	return ACMGetTrackLocation();
 }
 
+void S_CDVolume(long volume)
+{
+	ACMSetVolume(volume);
+}
+
 void inject_specific(bool replace)
 {
 	INJECT(0x0048D500, SWR_FindNearestPaletteEntry, replace);
@@ -265,4 +270,5 @@ void inject_specific(bool replace)
 	INJECT(0x0048D480, S_CDPlay, replace);
 	INJECT(0x0048D4A0, S_CDStop, replace);
 	INJECT(0x0048D4E0, S_CDGetLoc, replace);
+	INJECT(0x0048D4F0, S_CDVolume, replace);
 }
