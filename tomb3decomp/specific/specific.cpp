@@ -175,6 +175,12 @@ void S_SoundSetPanAndVolume(long num, short angle, ushort volume)
 		DS_AdjustVolumeAndPan(num, CalcVolume(volume), CalcPan(angle));
 }
 
+void S_SoundSetPitch(long num, long pitch)
+{
+	if (sound_active)
+		DS_AdjustPitch(num, pitch);
+}
+
 void inject_specific(bool replace)
 {
 	INJECT(0x0048D500, SWR_FindNearestPaletteEntry, replace);
@@ -185,4 +191,5 @@ void inject_specific(bool replace)
 	INJECT(0x0048D0D0, S_SoundPlaySample, replace);
 	INJECT(0x0048D150, S_SoundPlaySampleLooped, replace);
 	INJECT(0x0048D1A0, S_SoundSetPanAndVolume, replace);
+	INJECT(0x0048D1E0, S_SoundSetPitch, replace);
 }
