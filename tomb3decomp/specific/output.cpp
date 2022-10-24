@@ -8,6 +8,8 @@
 #include "dxshell.h"
 #include "display.h"
 #include "time.h"
+#include "game.h"
+#include "../3dsystem/phd_math.h"
 #ifdef TROYESTUFF
 #include "../game/health.h"
 #include "../game/objects.h"
@@ -631,6 +633,27 @@ void AnimateTextures(long n)
 	}
 }
 
+void S_AnimateTextures(long n)
+{
+	static long pulse;
+
+	pulse = (pulse + n) & 0x1F;
+	light_level[1] = GetRandomDraw() & 0x1F;
+	light_level[2] = ((phd_sin((pulse << 16) / 32) + 0x4000) * 31) >> 15;
+
+	if (GF_SunsetEnabled)
+	{
+		SunsetTimer += n;
+
+		if (SunsetTimer < 72000)
+			light_level[3] = 31 * SunsetTimer / 72000;
+		else
+			light_level[3] = 31;
+	}
+
+	AnimateTextures(n);
+}
+
 void inject_output(bool replace)
 {
 	INJECT(0x0048A7B0, S_PrintShadow, replace);
@@ -649,4 +672,5 @@ void inject_output(bool replace)
 	INJECT(0x0048AC10, ScreenClear, replace);
 	INJECT(0x0048A320, S_ClearScreen, replace);
 	INJECT(0x0048AA00, AnimateTextures, replace);
+	INJECT(0x0048AB50, S_AnimateTextures, replace);
 }

@@ -1794,7 +1794,7 @@ tomb3decomp progress.
 0x0048AA00	+	AnimateTextures
 0x0048AAC0	+	S_SetupBelowWater
 0x0048AB20	+	S_SetupAboveWater
-0x0048AB50		S_AnimateTextures
+0x0048AB50	+	S_AnimateTextures
 0x0048AC00	+	ScreenPartialDump
 0x0048AC10	+	ScreenClear
 0x0048AC20	+	mCalcPoint

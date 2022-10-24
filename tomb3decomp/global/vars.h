@@ -301,6 +301,7 @@
 #define fliptimer	VAR_(0x00625F68, long)
 #define lpDirectSound	VAR_(0x00632AC8, LPDIRECTSOUND)
 #define acm_volume	VAR_(0x00627470, long)
+#define SunsetTimer	VAR_(0x006E289C, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)

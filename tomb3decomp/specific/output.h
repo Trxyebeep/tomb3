@@ -19,10 +19,10 @@ long S_DumpScreen();
 void ScreenClear(bool a);
 void S_ClearScreen();
 void AnimateTextures(long n);
+void S_AnimateTextures(long n);
 
 #ifdef TROYESTUFF
 long GetRenderScale(long unit);
 #endif
 
 #define S_InitialisePolyList	( (void(__cdecl*)(long)) 0x0048A210 )
-#define S_AnimateTextures	( (void(__cdecl*)(long)) 0x0048AB50 )
