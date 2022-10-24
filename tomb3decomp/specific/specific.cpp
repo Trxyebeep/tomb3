@@ -2,6 +2,7 @@
 #include "specific.h"
 #include "file.h"
 #include "utils.h"
+#include "ds.h"
 
 static long MasterVolume;
 
@@ -152,6 +153,14 @@ void S_SoundSetMasterVolume(long volume)
 	MasterVolume = volume;
 }
 
+long S_SoundPlaySample(long num, ushort volume, long pitch, short pan)
+{
+	if (!sound_active)
+		return -3;
+
+	return DS_StartSample(num, CalcVolume(volume), pitch, CalcPan(pan), 0);
+}
+
 void inject_specific(bool replace)
 {
 	INJECT(0x0048D500, SWR_FindNearestPaletteEntry, replace);
@@ -159,4 +168,5 @@ void inject_specific(bool replace)
 	INJECT(0x0048D0A0, CalcVolume, replace);
 	INJECT(0x0048D120, CalcPan, replace);
 	INJECT(0x0048D200, S_SoundSetMasterVolume, replace);
+	INJECT(0x0048D0D0, S_SoundPlaySample, replace);
 }
