@@ -203,6 +203,14 @@ void S_SoundStopAllSamples()
 	}
 }
 
+long S_SoundSampleIsPlaying(long num)
+{
+	if (sound_active)
+		return DS_IsChannelPlaying(num);
+
+	return 0;
+}
+
 void inject_specific(bool replace)
 {
 	INJECT(0x0048D500, SWR_FindNearestPaletteEntry, replace);
@@ -216,4 +224,5 @@ void inject_specific(bool replace)
 	INJECT(0x0048D1E0, S_SoundSetPitch, replace);
 	INJECT(0x0048D210, S_SoundStopSample, replace);
 	INJECT(0x0048D230, S_SoundStopAllSamples, replace);
+	INJECT(0x0048D240, S_SoundSampleIsPlaying, replace);
 }

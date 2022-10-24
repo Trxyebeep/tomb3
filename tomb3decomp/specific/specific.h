@@ -14,6 +14,7 @@ void S_SoundSetPanAndVolume(long num, short angle, ushort volume);
 void S_SoundSetPitch(long num, long pitch);
 void S_SoundStopSample(long num);
 void S_SoundStopAllSamples();
+long S_SoundSampleIsPlaying(long num);
 
 #define S_CDStop	( (void(__cdecl*)()) 0x0048D4A0 )
 #define S_CDPlay	( (void(__cdecl*)(short, long)) 0x0048D480 )
