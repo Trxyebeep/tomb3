@@ -3,6 +3,7 @@
 #include "file.h"
 #include "utils.h"
 #include "ds.h"
+#include "audio.h"
 
 static long MasterVolume;
 
@@ -231,6 +232,11 @@ void S_CDLoop()	//old code
 	}
 }
 
+void S_CDPlay(short track, long mode)
+{
+	ACMEmulateCDPlay(track, mode);
+}
+
 void inject_specific(bool replace)
 {
 	INJECT(0x0048D500, SWR_FindNearestPaletteEntry, replace);
@@ -246,4 +252,5 @@ void inject_specific(bool replace)
 	INJECT(0x0048D230, S_SoundStopAllSamples, replace);
 	INJECT(0x0048D240, S_SoundSampleIsPlaying, replace);
 	INJECT(0x0048D260, S_CDLoop, replace);
+	INJECT(0x0048D480, S_CDPlay, replace);
 }

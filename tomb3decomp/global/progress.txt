@@ -1847,7 +1847,7 @@ tomb3decomp progress.
 0x0048D240	+	S_SoundSampleIsPlaying
 0x0048D260	+	S_CDLoop
 0x0048D2E0	+	CD_Init
-0x0048D480		S_CDPlay
+0x0048D480	+	S_CDPlay
 0x0048D4A0		S_CDStop
 0x0048D4B0		S_StartSyncedAudio
 0x0048D4E0		S_CDGetLoc
