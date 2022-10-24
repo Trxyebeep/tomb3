@@ -181,6 +181,12 @@ void S_SoundSetPitch(long num, long pitch)
 		DS_AdjustPitch(num, pitch);
 }
 
+void S_SoundStopSample(long num)
+{
+	if (sound_active)
+		DS_StopSample(num);
+}
+
 void inject_specific(bool replace)
 {
 	INJECT(0x0048D500, SWR_FindNearestPaletteEntry, replace);
@@ -192,4 +198,5 @@ void inject_specific(bool replace)
 	INJECT(0x0048D150, S_SoundPlaySampleLooped, replace);
 	INJECT(0x0048D1A0, S_SoundSetPanAndVolume, replace);
 	INJECT(0x0048D1E0, S_SoundSetPitch, replace);
+	INJECT(0x0048D210, S_SoundStopSample, replace);
 }
