@@ -132,6 +132,21 @@ long CalcVolume(long volume)
 	return long((float(MasterVolume * volume) * 0.00019074068F - 400.0F) * 6.0F);
 }
 
+long CalcPan(short angle)
+{
+	angle += 0x4000;
+
+	if (angle < 0)
+	{
+		angle = -angle;
+
+		if (angle < 0)
+			angle = 0x7FFF;
+	}
+
+	return (angle - 0x4000) >> 4;
+}
+
 void S_SoundSetMasterVolume(long volume)
 {
 	MasterVolume = volume;
@@ -142,5 +157,6 @@ void inject_specific(bool replace)
 	INJECT(0x0048D500, SWR_FindNearestPaletteEntry, replace);
 	INJECT(0x0048D2E0, CD_Init, replace);
 	INJECT(0x0048D0A0, CalcVolume, replace);
+	INJECT(0x0048D120, CalcPan, replace);
 	INJECT(0x0048D200, S_SoundSetMasterVolume, replace);
 }

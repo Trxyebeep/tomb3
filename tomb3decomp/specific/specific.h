@@ -6,6 +6,7 @@ void inject_specific(bool replace);
 uchar SWR_FindNearestPaletteEntry(uchar* p, long r, long g, long b, bool ignoreSystemPalette);
 bool CD_Init();
 long CalcVolume(long volume);
+long CalcPan(short angle);
 void S_SoundSetMasterVolume(long volume);
 
 #define S_CDStop	( (void(__cdecl*)()) 0x0048D4A0 )
