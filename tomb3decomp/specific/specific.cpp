@@ -211,6 +211,26 @@ long S_SoundSampleIsPlaying(long num)
 	return 0;
 }
 
+void S_CDLoop()	//old code
+{
+	MCI_PLAY_PARMS playParams;
+	MCI_STATUS_PARMS statusParams;
+	static MCIDEVICEID mciId;
+	static long CD_LoopTrack;
+
+	if (CD_LoopTrack)
+	{
+		statusParams.dwItem = MCI_STATUS_MODE;
+
+		if (!mciSendCommand(mciId, MCI_STATUS, MCI_STATUS_ITEM, (DWORD_PTR)&statusParams) && statusParams.dwReturn == MCI_MODE_STOP)
+		{
+			playParams.dwFrom = CD_LoopTrack;
+			playParams.dwTo = CD_LoopTrack + 1;
+			mciSendCommand(mciId, MCI_PLAY, MCI_FROM | MCI_TO, (DWORD_PTR)&playParams);
+		}
+	}
+}
+
 void inject_specific(bool replace)
 {
 	INJECT(0x0048D500, SWR_FindNearestPaletteEntry, replace);
@@ -225,4 +245,5 @@ void inject_specific(bool replace)
 	INJECT(0x0048D210, S_SoundStopSample, replace);
 	INJECT(0x0048D230, S_SoundStopAllSamples, replace);
 	INJECT(0x0048D240, S_SoundSampleIsPlaying, replace);
+	INJECT(0x0048D260, S_CDLoop, replace);
 }
