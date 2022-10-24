@@ -13,6 +13,7 @@ long S_SoundPlaySampleLooped(long num, ushort volume, long pitch, short pan);
 void S_SoundSetPanAndVolume(long num, short angle, ushort volume);
 void S_SoundSetPitch(long num, long pitch);
 void S_SoundStopSample(long num);
+void S_SoundStopAllSamples();
 
 #define S_CDStop	( (void(__cdecl*)()) 0x0048D4A0 )
 #define S_CDPlay	( (void(__cdecl*)(short, long)) 0x0048D480 )
@@ -20,4 +21,3 @@ void S_SoundStopSample(long num);
 #define S_CDLoop	( (void(__cdecl*)()) 0x0048D260 )
 #define S_StartSyncedAudio	( (long(__cdecl*)(long)) 0x0048D4B0 )
 #define S_CDGetLoc	( (long(__cdecl*)()) 0x0048D4E0 )
-#define S_SoundStopAllSamples	( (void(__cdecl*)()) 0x0048D230 )

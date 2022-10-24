@@ -187,6 +187,22 @@ void S_SoundStopSample(long num)
 		DS_StopSample(num);
 }
 
+void S_SoundStopAllSamples()
+{
+	if (sound_active)
+	{
+		for (int i = 0; i < 32; i++)
+		{
+			if (DS_Samples[i])
+			{
+				DS_Samples[i]->Stop();
+				DS_Samples[i]->Release();
+				DS_Samples[i] = 0;
+			}
+		}
+	}
+}
+
 void inject_specific(bool replace)
 {
 	INJECT(0x0048D500, SWR_FindNearestPaletteEntry, replace);
@@ -199,4 +215,5 @@ void inject_specific(bool replace)
 	INJECT(0x0048D1A0, S_SoundSetPanAndVolume, replace);
 	INJECT(0x0048D1E0, S_SoundSetPitch, replace);
 	INJECT(0x0048D210, S_SoundStopSample, replace);
+	INJECT(0x0048D230, S_SoundStopAllSamples, replace);
 }

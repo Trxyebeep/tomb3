@@ -1,7 +1,6 @@
 #include "../tomb3/pch.h"
 #include "ds.h"
 
-#define DS_Samples	ARRAY_(0x00632B50, LPDIRECTSOUNDBUFFER, [32])
 #define DS_Buffers	ARRAY_(0x006326C8, LPDIRECTSOUNDBUFFER, [256])
 #define DS_SamplesPlaying	ARRAY_(0x00632AD0, long, [32])
 #define DS_SampleFrequencies	ARRAY_(0x006322B8, ulong, [256])

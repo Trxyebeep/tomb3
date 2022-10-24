@@ -1843,7 +1843,7 @@ tomb3decomp progress.
 0x0048D1E0	+	S_SoundSetPitch
 0x0048D200	+	S_SoundSetMasterVolume
 0x0048D210	+	S_SoundStopSample
-0x0048D230		S_SoundStopAllSamples
+0x0048D230	+	S_SoundStopAllSamples
 0x0048D240		S_SoundSampleIsPlaying
 0x0048D260		S_CDLoop
 0x0048D2E0	+	CD_Init
