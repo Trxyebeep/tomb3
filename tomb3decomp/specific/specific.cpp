@@ -161,6 +161,14 @@ long S_SoundPlaySample(long num, ushort volume, long pitch, short pan)
 	return DS_StartSample(num, CalcVolume(volume), pitch, CalcPan(pan), 0);
 }
 
+long S_SoundPlaySampleLooped(long num, ushort volume, long pitch, short pan)
+{
+	if (!sound_active)
+		return -3;
+
+	return DS_StartSample(num, CalcVolume(volume), pitch, CalcPan(pan), DSBPLAY_LOOPING);
+}
+
 void inject_specific(bool replace)
 {
 	INJECT(0x0048D500, SWR_FindNearestPaletteEntry, replace);
@@ -169,4 +177,5 @@ void inject_specific(bool replace)
 	INJECT(0x0048D120, CalcPan, replace);
 	INJECT(0x0048D200, S_SoundSetMasterVolume, replace);
 	INJECT(0x0048D0D0, S_SoundPlaySample, replace);
+	INJECT(0x0048D150, S_SoundPlaySampleLooped, replace);
 }

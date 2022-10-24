@@ -1838,7 +1838,7 @@ tomb3decomp progress.
 0x0048D0A0	+	CalcVolume
 0x0048D0D0	+	S_SoundPlaySample
 0x0048D120	+	CalcPan
-0x0048D150		S_SoundPlaySampleLooped
+0x0048D150	+	S_SoundPlaySampleLooped
 0x0048D1A0		S_SoundSetPanAndVolume
 0x0048D1E0		S_SoundSetPitch
 0x0048D200	+	S_SoundSetMasterVolume

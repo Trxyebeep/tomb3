@@ -9,6 +9,7 @@ long CalcVolume(long volume);
 long CalcPan(short angle);
 void S_SoundSetMasterVolume(long volume);
 long S_SoundPlaySample(long num, ushort volume, long pitch, short pan);
+long S_SoundPlaySampleLooped(long num, ushort volume, long pitch, short pan);
 
 #define S_CDStop	( (void(__cdecl*)()) 0x0048D4A0 )
 #define S_CDPlay	( (void(__cdecl*)(short, long)) 0x0048D480 )
