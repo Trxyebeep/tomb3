@@ -1783,7 +1783,7 @@ tomb3decomp progress.
 
 0x0048A210		S_InitialisePolyList
 0x0048A2A0	+	S_DumpCine
-0x0048A2D0		S_DumpScreen
+0x0048A2D0	+	S_DumpScreen
 0x0048A320		S_ClearScreen
 0x0048A330	+	S_InitialiseScreen
 0x0048A370	+	S_OutputPolyList
@@ -1795,7 +1795,7 @@ tomb3decomp progress.
 0x0048AAC0	+	S_SetupBelowWater
 0x0048AB20	+	S_SetupAboveWater
 0x0048AB50		S_AnimateTextures
-0x0048AC00		ScreenPartialDump
+0x0048AC00	+	ScreenPartialDump
 0x0048AC10		ScreenClear
 0x0048AC20	+	mCalcPoint
 0x0048ACC0	+	ProjectPCoord

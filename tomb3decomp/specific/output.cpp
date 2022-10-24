@@ -6,6 +6,8 @@
 #include "../3dsystem/hwinsert.h"
 #include "picture.h"
 #include "dxshell.h"
+#include "display.h"
+#include "time.h"
 #ifdef TROYESTUFF
 #include "../game/health.h"
 #include "../game/objects.h"
@@ -13,7 +15,6 @@
 #include "draweffects.h"
 #include "../tomb3/tomb3.h"
 #endif
-#include "display.h"
 
 static short shadow[6 + (3 * 8)] =
 {
@@ -563,6 +564,32 @@ void S_InitialiseScreen(long type)
 		HWR_InitState();
 }
 
+void ScreenPartialDump()
+{
+	DXUpdateFrame(1, &phd_WindowRect);
+}
+
+long S_DumpScreen()
+{
+	long nFrames;
+
+	if (framedump)
+		nFrames = 2;
+	else
+	{
+		nFrames = Sync();
+
+		while (nFrames < 2)
+		{
+			while (!Sync());
+			nFrames++;
+		}
+	}
+
+	ScreenPartialDump();
+	return nFrames;
+}
+
 void inject_output(bool replace)
 {
 	INJECT(0x0048A7B0, S_PrintShadow, replace);
@@ -576,4 +603,6 @@ void inject_output(bool replace)
 	INJECT(0x0048ACC0, ProjectPCoord, replace);
 	INJECT(0x0048A2A0, S_DumpCine, replace);
 	INJECT(0x0048A330, S_InitialiseScreen, replace);
+	INJECT(0x0048AC00, ScreenPartialDump, replace);
+	INJECT(0x0048A2D0, S_DumpScreen, replace);
 }
