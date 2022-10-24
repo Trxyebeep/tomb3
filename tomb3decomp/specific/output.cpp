@@ -590,6 +590,11 @@ long S_DumpScreen()
 	return nFrames;
 }
 
+void ScreenClear(bool a)
+{
+	DXClearBuffers(2, 0);
+}
+
 void inject_output(bool replace)
 {
 	INJECT(0x0048A7B0, S_PrintShadow, replace);
@@ -605,4 +610,5 @@ void inject_output(bool replace)
 	INJECT(0x0048A330, S_InitialiseScreen, replace);
 	INJECT(0x0048AC00, ScreenPartialDump, replace);
 	INJECT(0x0048A2D0, S_DumpScreen, replace);
+	INJECT(0x0048AC10, ScreenClear, replace);
 }

@@ -16,6 +16,7 @@ long S_DumpCine();
 void S_InitialiseScreen(long type);
 void ScreenPartialDump();
 long S_DumpScreen();
+void ScreenClear(bool a);
 
 #ifdef TROYESTUFF
 long GetRenderScale(long unit);
