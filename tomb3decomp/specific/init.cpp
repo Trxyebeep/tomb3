@@ -9,6 +9,8 @@
 #include "winmain.h"
 #include "../3dsystem/phd_math.h"
 #include "game.h"
+#include "transform.h"
+#include "../3dsystem/hwinsert.h"
 
 const char* game_malloc_types[47] =
 {
@@ -206,6 +208,46 @@ void game_free(long size, long type)
 	malloc_used -= size;
 }
 
+long S_InitialiseSystem()
+{
+	DISPLAYMODE* dm;
+	long cval;
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	DumpX = 0;
+	DumpY = 0;
+	DumpWidth = (short)dm->w;
+	DumpHeight = (short)dm->h;
+	InitZTable();
+	InitUVTable();
+
+	TLVertexBuffer = (D3DTLVERTEX*)GLOBALALLOC(GMEM_FIXED, 0x2400 * sizeof(D3DTLVERTEX));
+	VertexBuffer = (D3DTLVERTEX*)(((long)TLVertexBuffer + 32) & 0xFFFFFFE0);
+
+	TLUnRollBuffer = (D3DTLVERTEX*)GLOBALALLOC(GMEM_FIXED, 0x2400 * sizeof(D3DTLVERTEX));
+	UnRollBuffer = (D3DTLVERTEX*)(((long)TLUnRollBuffer + 32) & 0xFFFFFFE0);
+
+	for (int i = 0; i < 1024; i++)
+		SqrtTable[i] = (long)sqrt((float)i);
+
+	for (int a = 1; a < 33; a++)
+	{
+		for (int b = 1; b < 33; b++)
+		{
+			for (int c = 1; c < 33; c++)
+			{
+				cval = ((a - b) * c) / a;
+				RColorTable[a][b][c] = cval << 10;
+				GColorTable[a][b][c] = cval << 5;
+				BColorTable[a][b][c] = cval;
+			}
+		}
+	}
+
+	malloc_size = 0x380000;
+	return 1;
+}
+
 void inject_init(bool replace)
 {
 	INJECT(0x00485EA0, ShutdownGame, replace);
@@ -215,4 +257,5 @@ void inject_init(bool replace)
 	INJECT(0x00485F60, init_game_malloc, replace);
 	INJECT(0x00485F90, game_malloc, replace);
 	INJECT(0x00486010, game_free, replace);
+	INJECT(0x00485CE0, S_InitialiseSystem, replace);
 }
