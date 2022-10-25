@@ -434,6 +434,28 @@ long S_FrontEndCheck(SAVEGAME_INFO* pData, long nBytes)
 	return 1;
 }
 
+long S_LoadGame(LPVOID data, long size, long slot)
+{
+	HANDLE file;
+	ulong bytes;
+	long value;
+	char buffer[80];
+
+	wsprintf(buffer, "savegame.%d", slot);
+	file = CreateFile(buffer, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (file != INVALID_HANDLE_VALUE)
+	{
+		ReadFile(file, buffer, 75, &bytes, 0);
+		ReadFile(file, &value, sizeof(long), &bytes, 0);
+		ReadFile(file, data, size, &bytes, 0);
+		CloseHandle(file);
+		return 1;
+	}
+
+	return 0;
+}
+
 void inject_sgame(bool replace)
 {
 	INJECT(0x004841F0, GetRandomControl, replace);
@@ -450,4 +472,5 @@ void inject_sgame(bool replace)
 	INJECT(0x004842F0, DisplayCredits, replace);
 	INJECT(0x00483B50, LevelCompleteSequence, replace);
 	INJECT(0x00484410, S_FrontEndCheck, replace);
+	INJECT(0x004846A0, S_LoadGame, replace);
 }
