@@ -61,6 +61,11 @@ void ModifyStartInfo(long level)
 		pInfo->num_medis = 1;
 		pInfo->num_big_medis = 1;
 		pInfo->num_sgcrystals = 1;
+
+#ifdef TROYESTUFF
+		pInfo->got_shotgun = 0;
+		pInfo->shotgun_ammo = 0;
+#endif
 	}
 
 	pInfo->gun_status = LG_ARMLESS;

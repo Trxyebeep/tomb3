@@ -6,6 +6,7 @@
 
 - Fix lara getting stuck in corners.
 - Fix lara wading in 1 click deep water.
+- Fix the shotgun and its ammo not resetting in Jungle sometimes.
 
 ### tomb3 additions
 
