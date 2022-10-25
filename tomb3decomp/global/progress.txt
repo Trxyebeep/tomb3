@@ -1687,7 +1687,7 @@ tomb3decomp progress.
 0x004842A0	+	GetSavedGamesList
 0x004842F0	+	DisplayCredits
 0x00484410	+	S_FrontEndCheck
-0x00484580		S_SaveGame
+0x00484580	+	S_SaveGame
 0x004846A0	+	S_LoadGame
 
 
