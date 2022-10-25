@@ -280,7 +280,7 @@ tomb3decomp progress.
 
 		game/collide.cpp
 
-0x0041D500		GetCollisionInfo
+0x0041D500	+	GetCollisionInfo
 0x0041E140	+	FindGridShift
 0x0041E170	+	CollideStaticObjects
 0x0041E560	+	GetNearByRooms
