@@ -310,6 +310,24 @@ long CollideStaticObjects(COLL_INFO* coll, long x, long y, long z, short room_nu
 	return 0;
 }
 
+long FindGridShift(long src, long dst)
+{
+	long srcw, dstw;
+
+	srcw = src >> WALL_SHIFT;
+	dstw = dst >> WALL_SHIFT;
+
+	if (srcw == dstw)
+		return 0;
+
+	src &= WALL_SIZE - 1;
+
+	if (dstw > srcw)
+		return (WALL_SIZE + 1) - src;
+	else
+		return -1 - src;
+}
+
 void inject_collide(bool replace)
 {
 	INJECT(0x0041E690, ShiftItem, replace);
@@ -319,4 +337,5 @@ void inject_collide(bool replace)
 	INJECT(0x0041E560, GetNearByRooms, replace);
 	INJECT(0x0041E730, GetTiltType, replace);
 	INJECT(0x0041E170, CollideStaticObjects, replace);
+	INJECT(0x0041E140, FindGridShift, replace);
 }
