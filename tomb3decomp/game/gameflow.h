@@ -4,8 +4,10 @@
 void inject_gameflow(bool replace);
 
 long GF_LoadScriptFile(const char* name);
+long GF_DoFrontEndSequence();
 
 #define GF_ModifyInventory	( (void(__cdecl*)(long, long)) 0x004328D0 )
+#define GF_InterpretSequence	( (long(__cdecl*)(short*, long, long)) 0x00432310 )
 
 enum game_levels
 {
