@@ -6,6 +6,7 @@ void inject_smain(bool replace);
 bool S_LoadSettings();
 void S_SaveSettings();
 void CheckCheatMode();
+long TitleSequence();
 
 extern bool inject_rando;
 

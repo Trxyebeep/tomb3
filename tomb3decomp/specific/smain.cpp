@@ -7,13 +7,20 @@
 #include "../game/objects.h"
 #include "../game/sound.h"
 #include "../game/missile.h"
+#include "../game/text.h"
+#include "display.h"
+#include "picture.h"
+#include "../game/setup.h"
+#include "time.h"
+#include "../game/inventry.h"
+#include "game.h"
+#include "../game/savegame.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
+#include "init.h"
 #endif
 
 #ifdef RANDO_STUFF
-#include "init.h"
-
 rando_info rando;
 bool inject_rando = 1;
 
@@ -440,9 +447,70 @@ void CheckCheatMode()
 	}
 }
 
+long TitleSequence()
+{
+	T_InitPrint();
+	TempVideoAdjust(1, 1.0);
+	noinput_count = 0;
+	dontFadePicture = 1;
+	LoadPicture(GF_titlefilenames[1], App.lpPictureBuffer, 0);
+	FadePictureUp(32);
+
+	if (!title_loaded)
+	{
+		if (!InitialiseLevel(0, 0))
+			return EXITGAME;
+
+		title_loaded = 1;
+	}
+
+	S_CDStop();
+
+	if (gameflow.title_track)
+		S_CDPlay(gameflow.title_track, 1);
+
+	TIME_Init();
+	Display_Inventory(1);
+	dontFadePicture = 0;
+	FadePictureDown(32);
+	S_CDStop();
+
+	if (reset_flag)
+	{
+		reset_flag = 0;
+		return STARTDEMO;
+	}
+
+	if (Inventory_Chosen == PHOTO_OPTION)
+		return STARTGAME;
+
+	if (Inventory_Chosen == PASSPORT_OPTION)
+	{
+		if (!Inventory_ExtraData[0])
+		{
+			Inv_RemoveAllItems();
+			S_LoadGame(&savegame, sizeof(SAVEGAME_INFO), Inventory_ExtraData[1]);
+			return Inventory_ExtraData[1] | STARTSAVEDGAME;
+		}
+
+		if (Inventory_ExtraData[0] == 1)
+		{
+			InitialiseStartInfo();
+
+			if (gameflow.play_any_level)
+				return Inventory_ExtraData[1] + 1;
+
+			return 1;
+		}
+	}
+
+	return EXITGAME;
+}
+
 void inject_smain(bool replace)
 {
 	INJECT(0x0048CBF0, S_LoadSettings, inject_rando ? 1 : replace);
 	INJECT(0x0048C8C0, S_SaveSettings, replace);
 	INJECT(0x0048C550, CheckCheatMode, replace);
+	INJECT(0x0048C410, TitleSequence, replace);
 }
