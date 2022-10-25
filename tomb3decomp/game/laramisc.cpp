@@ -678,7 +678,11 @@ void LaraControl(short item_number)
 
 				camera.target_elevation = -4004;
 
+#ifdef TROYESTUFF
+				if (hfw <= 256)
+#else
 				if (hfw < 256)
+#endif
 				{
 					lara.water_status = 0;
 

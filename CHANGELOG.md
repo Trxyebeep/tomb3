@@ -5,6 +5,7 @@
 ### Original bug fixes
 
 - Fix lara getting stuck in corners.
+- Fix lara wading in 1 click deep water.
 
 ### tomb3 additions
 
