@@ -1,6 +1,10 @@
 #pragma once
 #include "../global/vars.h"
 
+void inject_sound(bool replace);
+
+void SOUND_Init();
+
 #define StopSoundEffect	( (void(__cdecl*)(long)) 0x00467D00 )
 #define SoundEffect	( (long(__cdecl*)(long, PHD_3DPOS*, long)) 0x00467840 )
 #define SOUND_Stop	( (void(__cdecl*)()) 0x00467DF0 )

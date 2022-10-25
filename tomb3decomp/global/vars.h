@@ -485,6 +485,7 @@
 #define TrackInfos	ARRAY_(0x00627480, TRACK_INFO, [130])
 #define DS_Samples	ARRAY_(0x00632B50, LPDIRECTSOUNDBUFFER, [32])
 #define SqrtTable	ARRAY_(0x006588D0, long, [1024])
+#define LaSlot	ARRAY_(0x006267E0, SOUND_SLOT, [32])
 
 /*constants*/
 #define NO_HEIGHT -32512

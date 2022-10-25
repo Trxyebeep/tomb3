@@ -41,6 +41,7 @@
 #include "../game/inventry.h"
 #include "../game/londboss.h"
 #include "../game/gameflow.h"
+#include "../game/sound.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -142,6 +143,7 @@ void inject_all(bool replace)
 	inject_inventry(replace);
 	inject_londboss(replace);
 	inject_gameflow(replace);
+	inject_sound(replace);
 
 	//specific
 	inject_drawbars(replace);

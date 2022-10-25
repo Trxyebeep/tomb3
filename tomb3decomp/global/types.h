@@ -1838,6 +1838,14 @@ struct TRACK_INFO
 	ulong offset;
 };
 
+struct SOUND_SLOT
+{
+	long nVolume;
+	long nPan;
+	long nSampleInfo;
+	long nPitch;
+};
+
 #ifdef TROYESTUFF
 struct FVECTOR
 {
