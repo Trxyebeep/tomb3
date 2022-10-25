@@ -4,6 +4,8 @@
 
 ### Original bug fixes
 
+- Fix lara getting stuck in corners.
+
 ### tomb3 additions
 
 - Add crawl tilting.

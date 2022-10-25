@@ -626,6 +626,7 @@ void GetCollisionInfo(COLL_INFO* coll, long x, long y, long z, short room_number
 		coll->coll_type = CT_TOP;
 	}
 
+#ifndef TROYESTUFF	//fix lara getting stuck in corners
 	if (hit_left && hit_right)
 	{
 		coll->shift.x = coll->old.x - x;
@@ -633,6 +634,7 @@ void GetCollisionInfo(COLL_INFO* coll, long x, long y, long z, short room_number
 		coll->coll_type = CT_FRONT;
 		return;
 	}
+#endif
 
 	if (coll->front_floor > coll->bad_pos || coll->front_floor < coll->bad_neg || coll->front_ceiling > coll->bad_ceiling)
 	{
