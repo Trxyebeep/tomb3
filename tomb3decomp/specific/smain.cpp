@@ -266,10 +266,12 @@ void S_SaveSettings()
 
 	if (file)
 	{
-		fwrite(savegame.best_assault_times, sizeof(ulong), 10, file);
-		fwrite(savegame.best_quadbike_times, sizeof(ulong), 10, file);
+		fwrite(savegame.best_assault_times, sizeof(ulong), sizeof(savegame.best_assault_times) / sizeof(long), file);
+		fwrite(savegame.best_quadbike_times, sizeof(ulong), sizeof(savegame.best_quadbike_times) / sizeof(long), file);
 		fwrite(&savegame.QuadbikeKeyFlag, sizeof(ulong), 1, file);
-		fclose(file);	//NOT in original code, they forgot to fclose.
+#ifdef TROYESTUFF
+		fclose(file);
+#endif
 	}
 }
 

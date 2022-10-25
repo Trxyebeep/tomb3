@@ -1241,7 +1241,7 @@ tomb3decomp progress.
 
 		game/savegame.cpp
 
-0x00461950		InitialiseStartInfo
+0x00461950	+	InitialiseStartInfo
 0x00461A60	+	ModifyStartInfo
 0x00461B50		CreateStartInfo
 0x00461DD0		CreateSaveGameInfo

@@ -96,7 +96,68 @@ void ModifyStartInfo(long level)
 	}
 }
 
+void InitialiseStartInfo()
+{
+	START_INFO* pInfo;
+	FILE* file;
+
+	if (savegame.bonus_flag)
+		return;
+
+	for (int i = 0; i < 24; i++)
+	{
+		pInfo = &savegame.start[i];
+
+		ModifyStartInfo(i);
+		pInfo->available = 0;
+		pInfo->timer = 0;
+		pInfo->ammo_used = 0;
+		pInfo->ammo_hit = 0;
+		pInfo->distance_travelled = 0;
+		pInfo->kills = 0;
+		pInfo->secrets_found = 0;
+		pInfo->health_used = 0;
+	}
+
+	for (int i = 0; i < 10; i++)
+	{
+		savegame.best_assault_times[i] = 0;
+		savegame.best_quadbike_times[i] = 0;
+	}
+
+	savegame.start[LV_GYM].available = 1;
+	savegame.start[LV_JUNGLE].available = 1;
+	savegame.AfterAdventureSave = 0;
+	savegame.WorldRequired = 0;
+	savegame.IndiaComplete = 0;
+	savegame.SPacificComplete = 0;
+	savegame.LondonComplete = 0;
+	savegame.NevadaComplete = 0;
+	savegame.AntarcticaComplete = 0;
+	savegame.PeruComplete = 0;
+	savegame.AfterIndia = 0;
+	savegame.AfterSPacific = 0;
+	savegame.AfterLondon = 0;
+	savegame.AfterNevada = 0;
+	savegame.QuadbikeKeyFlag = 0;
+	savegame.bonus_flag = 0;
+	savegame.GameComplete = 0;
+
+	file = fopen("data.bin", "rb");
+
+	if (file)
+	{
+		fread(&savegame.best_assault_times, sizeof(long), sizeof(savegame.best_assault_times) / sizeof(long), file);
+		fread(&savegame.best_quadbike_times, sizeof(long), sizeof(savegame.best_quadbike_times) / sizeof(long), file);
+		fread(&savegame.QuadbikeKeyFlag, sizeof(long), 1, file);
+#ifdef TROYESTUFF
+		fclose(file);
+#endif
+	}
+}
+
 void inject_savegame(bool replace)
 {
 	INJECT(0x00461A60, ModifyStartInfo, replace);
+	INJECT(0x00461950, InitialiseStartInfo, replace);
 }
