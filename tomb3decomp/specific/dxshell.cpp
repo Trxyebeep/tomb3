@@ -9,6 +9,8 @@
 #define G_ddraw	VAR_(0x006CA0F8, LPDIRECTDRAW2)
 #define G_d3d	VAR_(0x006CA100, LPDIRECT3D2)
 #define SoftwareRenderer	VAR_(0x006CA104, bool)
+#define G_hwnd	VAR_(0x006CA0F4, HWND)
+#define MMXSupported	VAR_(0x006CA108, bool)
 
 long BPPToDDBD(long BPP)
 {
@@ -340,7 +342,7 @@ HRESULT CALLBACK DXEnumTextureFormats(LPDDSURFACEDESC lpDDPixFmt, LPVOID lpConte
 	return D3DENUMRET_OK;
 }
 
-HRESULT CALLBACK DXEnumDirectSound(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext)
+BOOL CALLBACK DXEnumDirectSound(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext)
 {
 	DEVICEINFO* device;
 	DXDIRECTSOUNDINFO* sinfo;
@@ -649,6 +651,86 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 	return 1;
 }
 
+void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance)
+{
+	LPDIRECTINPUT lpDinput;
+	ulong maxCPUID, processorType, info, features, unk1, unk2;
+	char name[13];
+
+	maxCPUID = 0;
+	processorType = 0;
+	info = 0;
+	features = 0;
+	unk1 = 0;
+	unk2 = 0;
+	G_hwnd = hWnd;
+	memset(device, 0, sizeof(DEVICEINFO));
+
+	//MMX check...
+	strcpy(name, "AnonymousCPU");
+	
+	__asm
+	{
+		pushad
+		mov processorType, 4;
+		pushfd
+		pop eax
+		mov ecx, eax
+		xor eax, 200000h
+		push eax
+		popfd
+		pushfd
+		pop eax
+		xor eax, ecx
+		je end
+
+		mov maxCPUID, 0
+		mov eax, 0;	//get largest eax value, and CPU name
+		cpuid
+		mov maxCPUID, eax
+		mov dword ptr[name], ebx
+		mov dword ptr[name + 4], edx
+		mov dword ptr[name + 8], ecx
+
+		mov eax, 1;	//get version info and feature bits
+		cpuid
+		mov info, eax
+		mov features, edx
+
+		shr eax, 8; //actually getting the type now
+		and eax, 0Fh
+		mov processorType, eax
+
+		cmp eax, 5;	//no idea tbh
+		jl end
+		shr eax, 8
+		and eax, 100h
+		setne byte ptr unk1
+
+		and edx, 10h
+		je end
+		shr eax, 8
+		and eax, 4
+		sete byte ptr unk2
+
+		end:
+		popad
+	}
+
+	MMXSupported = (features >> 23) & 1;
+	DirectDrawEnumerate(DXEnumDirectDraw, device);
+	DirectSoundEnumerate(DXEnumDirectSound, device);
+
+#ifdef TROYESTUFF
+	DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&lpDinput, 0);
+	lpDinput->EnumDevices(DI8DEVTYPE_JOYSTICK, DXEnumDirectInput, device, 1);
+#else
+	DirectInputCreate(hInstance, DIRECTINPUT_VERSION, &lpDinput, 0);
+	lpDinput->EnumDevices(DIDEVTYPE_JOYSTICK, DXEnumDirectInput, device, 1);
+#endif
+	lpDinput->Release();
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -676,4 +758,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x004B3C50, DXCheckForLostSurfaces, replace);
 	INJECT(0x004B3A70, DXClearBuffers, replace);
 	INJECT(0x004B3D10, DXUpdateFrame, replace);
+	INJECT(0x0048EBB0, DXGetDeviceInfo, replace);
 }
