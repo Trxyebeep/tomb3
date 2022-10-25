@@ -73,8 +73,32 @@ long GF_DoFrontEndSequence()
 	return GF_InterpretSequence(GF_frontendSequence, 1, 1) == EXITGAME;
 }
 
+long GF_DoLevelSequence(long level, long type)
+{
+	long option;
+
+	do
+	{
+		if (level > gameflow.num_levels - 1)
+		{
+			title_loaded = 0;
+			return EXIT_TO_TITLE;
+		}
+
+		option = GF_InterpretSequence(GF_level_sequence_list[level], type, 0);
+		level++;
+
+		if (gameflow.singlelevel >= 0)
+			break;
+
+	} while ((option & ~0xFF) == LEVELCOMPLETE);
+
+	return option;
+}
+
 void inject_gameflow(bool replace)
 {
 	INJECT(0x00432030, GF_LoadScriptFile, replace);
 	INJECT(0x00432280, GF_DoFrontEndSequence, replace);
+	INJECT(0x004322A0, GF_DoLevelSequence, replace);
 }
