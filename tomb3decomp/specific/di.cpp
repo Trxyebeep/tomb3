@@ -1,8 +1,8 @@
 #include "../tomb3/pch.h"
 #include "di.h"
 
-#define Keyboard	VAR_(0x006302A8, LPDIRECTINPUTDEVICE)
-#define lpDirectInput	VAR_(0x006302A4, LPDIRECTINPUT)
+#define Keyboard	VAR_(0x006302A8, LPDIRECTINPUTDEVICEX)
+#define lpDirectInput	VAR_(0x006302A4, LPDIRECTINPUTX)
 
 void DI_ReadKeyboard(uchar* KeyMap)
 {
@@ -115,7 +115,7 @@ void DI_Finish()
 bool DI_Create()
 {
 #if (DIRECTINPUT_VERSION >= 0x800)
-	return SUCCEEDED(DirectInput8Create(App.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&lpDirectInput, 0));
+	return SUCCEEDED(DirectInput8Create(App.hInstance, DIRECTINPUT_VERSION, DIGUID, (LPVOID*)&lpDirectInput, 0));
 #else
 	return SUCCEEDED(DirectInputCreate(App.hInstance, DIRECTINPUT_VERSION, &lpDirectInput, 0));	//this is the original line
 #endif

@@ -185,7 +185,7 @@ void TRDrawPicture(long col, long* indices, float z)
 	HWR_EnablePerspCorrect(1);
 }
 
-void MemBlt(char* dest, long x, long y, long w, long h, long sz, char* source, long x2, long y2, DDSURFACEDESC desc)
+void MemBlt(char* dest, long x, long y, long w, long h, long sz, char* source, long x2, long y2, DDSURFACEDESCX desc)
 {
 	ulong stride;
 
@@ -202,10 +202,10 @@ void MemBlt(char* dest, long x, long y, long w, long h, long sz, char* source, l
 	}
 }
 
-void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACE3 surf)
+void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACEX surf)
 {
-	DDSURFACEDESC desc;
-	DDSURFACEDESC desc2;
+	DDSURFACEDESCX desc;
+	DDSURFACEDESCX desc2;
 	long* pIndices;
 	char* source;
 	char* dest;
@@ -217,8 +217,8 @@ void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACE3 surf)
 	else
 		pIndices = CurPicTexIndices;
 
-	memset(&desc, 0, sizeof(DDSURFACEDESC));
-	desc.dwSize = sizeof(DDSURFACEDESC);
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
 	surf->Lock(0, &desc, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, 0);
 	source = (char*)desc.lpSurface;
 	dest = (char*)malloc(desc.ddpfPixelFormat.dwRGBBitCount >> 3 << 16);	//fix me
@@ -236,39 +236,39 @@ void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACE3 surf)
 	surf->Unlock(0);
 	pIndices[0] = DXTextureAdd(256, 256, (ushort*)dest, PictureTextures, bitcnt, 16);
 
-	memset(&desc, 0, sizeof(DDSURFACEDESC));
-	desc.dwSize = sizeof(DDSURFACEDESC);
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
 	surf->Lock(0, &desc, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, 0);
-	memcpy(&desc2, &desc, sizeof(DDSURFACEDESC));
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESCX));
 	source = (char*)desc.lpSurface;
 	MemBlt(dest, 0, 0, 256, 256, 256, source, 256, 0, desc2);
 	surf->Unlock(0);
 	pIndices[1] = DXTextureAdd(256, 256, (ushort*)dest, PictureTextures, bitcnt, 16);
 
-	memset(&desc, 0, sizeof(DDSURFACEDESC));
-	desc.dwSize = sizeof(DDSURFACEDESC);
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
 	surf->Lock(0, &desc, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, 0);
-	memcpy(&desc2, &desc, sizeof(DDSURFACEDESC));
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESCX));
 //	source = (char*)desc.lpSurface;
 	MemBlt(dest, 0, 0, 128, 256, 256, source, 512, 0, desc2);
-	memcpy(&desc2, &desc, sizeof(DDSURFACEDESC));
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESCX));
 	MemBlt(dest, 128, 0, 128, 224, 256, source, 512, 256, desc2);
 	surf->Unlock(0);
 	pIndices[2] = DXTextureAdd(256, 256, (ushort*)dest, PictureTextures, bitcnt, 16);
 
-	memset(&desc, 0, sizeof(DDSURFACEDESC));
-	desc.dwSize = sizeof(DDSURFACEDESC);
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
 	surf->Lock(0, &desc, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, 0);
-	memcpy(&desc2, &desc, sizeof(DDSURFACEDESC));
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESCX));
 	source = (char*)desc.lpSurface;
 	MemBlt(dest, 0, 0, 256, 224, 256, source, 0, 256, desc2);
 	surf->Unlock(0);
 	pIndices[3] = DXTextureAdd(256, 256, (ushort*)dest, PictureTextures, bitcnt, 16);
 
-	memset(&desc, 0, sizeof(DDSURFACEDESC));
-	desc.dwSize = sizeof(DDSURFACEDESC);
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
 	surf->Lock(0, &desc, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, 0);
-	memcpy(&desc2, &desc, sizeof(DDSURFACEDESC));
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESCX));
 	source = (char*)desc.lpSurface;
 	MemBlt(dest, 0, 0, 256, 224, 256, source, 256, 256, desc2);
 	surf->Unlock(0);
@@ -277,7 +277,7 @@ void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACE3 surf)
 	free(dest);
 }
 
-void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACE3 surf)
+void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf)
 {
 	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bPalette)
 	{
@@ -323,7 +323,7 @@ void ForceFadeDown(long fade)
 	forceFadeDown = fade;
 }
 
-bool LoadPicture(const char* name, LPDIRECTDRAWSURFACE3 surf, long a)
+bool LoadPicture(const char* name, LPDIRECTDRAWSURFACEX surf, long a)
 {
 	HANDLE img;
 	BITMAP bitmap;

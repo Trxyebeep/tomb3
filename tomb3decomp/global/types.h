@@ -55,6 +55,29 @@ do \
 #define GLOBALFREE    ( *(HGLOBAL(__stdcall**)(HGLOBAL)) 0x004C3120 )
 	/**********************************/
 
+/********************DX defs********************/
+#define LPDIRECTDRAWX			LPDIRECTDRAW2
+#define LPDIRECT3DX				LPDIRECT3D2
+#define LPDIRECT3DDEVICEX		LPDIRECT3DDEVICE2
+#define LPDIRECTDRAWSURFACEX	LPDIRECTDRAWSURFACE3
+#define LPDIRECT3DVIEWPORTX		LPDIRECT3DVIEWPORT2
+#define LPDIRECTINPUTX			LPDIRECTINPUT
+#define LPDIRECTINPUTDEVICEX	LPDIRECTINPUTDEVICE
+#define DDSURFACEDESCX			DDSURFACEDESC
+#define LPDDSURFACEDESCX		DDSURFACEDESCX*
+#define DDSCAPSX				DDSCAPS
+#define LPDDSCAPSX				DDSCAPS*
+#define D3DMATERIALX			D3DMATERIAL
+#define LPDIRECT3DMATERIALX		LPDIRECT3DMATERIAL2
+#define LPDIRECT3DTEXTUREX		LPDIRECT3DTEXTURE2
+
+#define DDSGUID					IID_IDirectDrawSurface3
+#define DDGUID					IID_IDirectDraw2
+#define D3DGUID					IID_IDirect3D2
+#define DIGUID					IID_IDirectInput8
+#define DSNGUID					IID_IDirectSoundNotify
+/***********************************************/
+
 /*enums*/
 enum status_codes
 {
@@ -1181,7 +1204,7 @@ struct DISPLAYMODE
 	uchar gbpp;
 	uchar bbpp;
 	uchar abpp;
-	DDSURFACEDESC ddsd;
+	DDSURFACEDESCX ddsd;
 	uchar rshift;
 	uchar gshift;
 	uchar bshift;
@@ -1197,7 +1220,7 @@ struct D3DTEXTUREINFO
 	uchar gbpp;
 	uchar bbpp;
 	uchar abpp;
-	DDSURFACEDESC ddsd;
+	DDSURFACEDESCX ddsd;
 	DDPIXELFORMAT ddpf;
 	uchar rshift;
 	uchar gshift;
@@ -1286,16 +1309,16 @@ struct WINAPP
 	DXCONFIG DXConfig;
 	DEVICEINFO* DeviceInfoPtr;
 	DXCONFIG* DXConfigPtr;
-	LPDIRECTDRAW2 lpDD;
-	LPDIRECT3D2 lpD3D;
-	LPDIRECT3DDEVICE2 lpD3DDevice;
-	LPDIRECTDRAWSURFACE3 lpFrontBuffer;
-	LPDIRECTDRAWSURFACE3 lpBackBuffer;
-	LPDIRECTDRAWSURFACE3 lpZBuffer;
-	LPDIRECTDRAWSURFACE3 lpPictureBuffer;
+	LPDIRECTDRAWX lpDD;
+	LPDIRECT3DX lpD3D;
+	LPDIRECT3DDEVICEX lpD3DDevice;
+	LPDIRECTDRAWSURFACEX lpFrontBuffer;
+	LPDIRECTDRAWSURFACEX lpBackBuffer;
+	LPDIRECTDRAWSURFACEX lpZBuffer;
+	LPDIRECTDRAWSURFACEX lpPictureBuffer;
 	ulong* unk;
-	LPDIRECT3DVIEWPORT2 lpViewPort;
-	LPDIRECT3DMATERIAL2 lpViewPortMaterial;
+	LPDIRECT3DVIEWPORTX lpViewPort;
+	LPDIRECT3DMATERIALX lpViewPortMaterial;
 	LPDIRECTDRAWPALETTE Palette;
 	PALETTEENTRY PaletteEntries[257];
 	bool bFocus;
@@ -1391,11 +1414,11 @@ struct SPARKS
 
 struct DXTEXTURE
 {
-	IDirectDrawSurface3* pSystemSurface;		//yes
-	IDirectDrawPalette* pPalette;				//yes
+	LPDIRECTDRAWSURFACEX pSystemSurface;		//yes
+	LPDIRECTDRAWPALETTE pPalette;				//yes
 	long nWidth;								//yes
 	long nHeight;								//yes
-	IDirect3DTexture2* pTexture;				//maybe
+	LPDIRECT3DTEXTUREX pTexture;				//maybe
 	ulong dwFlags;								//yes
 	ushort* pSoftwareSurface;					//no idea
 	D3DTEXTUREHANDLE hTexture;					//no idea

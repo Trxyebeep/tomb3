@@ -23,9 +23,9 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 {
 	DISPLAYMODE* dm;
 	DIRECT3DINFO* d3d;
-	DDSURFACEDESC desc;
-	D3DMATERIAL m;
-	DDSCAPS caps;
+	DDSURFACEDESCX desc;
+	D3DMATERIALX m;
+	DDSCAPSX caps;
 	D3DMATERIALHANDLE handle;
 
 	Log("Starting WinDXInit");
@@ -54,13 +54,13 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 		return 0;
 	}
 
-	memset(&desc, 0, sizeof(DDSURFACEDESC));
-	desc.dwSize = sizeof(DDSURFACEDESC);
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
 	desc.dwBackBufferCount = 1;
 	desc.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
 	desc.ddsCaps.dwCaps = DDSCAPS_COMPLEX | DDSCAPS_FLIP | DDSCAPS_PRIMARYSURFACE | DDSCAPS_3DDEVICE;
 
-	if (!DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACE3)&App.lpFrontBuffer))
+	if (!DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACEX)&App.lpFrontBuffer))
 	{
 		Log("DXCreateSurface failed to create front buffer, exitting..");
 		return 0;
@@ -111,21 +111,21 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 		return 0;
 	}
 
-	memset(&m, 0, sizeof(D3DMATERIAL));
-	m.dwSize = sizeof(D3DMATERIAL);
+	memset(&m, 0, sizeof(D3DMATERIALX));
+	m.dwSize = sizeof(D3DMATERIALX);
 
 	App.lpD3D->CreateMaterial(&App.lpViewPortMaterial, 0);
 	App.lpViewPortMaterial->SetMaterial(&m);
 	App.lpViewPortMaterial->GetHandle(App.lpD3DDevice, &handle);
 	App.lpViewPort->SetBackground(handle);
 
-	memset(&desc, 0, sizeof(DDSURFACEDESC));
-	desc.dwSize = sizeof(DDSURFACEDESC);
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
 	desc.dwWidth = 640;
 	desc.dwHeight = 480;
 	desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH;
 	desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-	DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACE3)&App.lpPictureBuffer);
+	DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACEX)&App.lpPictureBuffer);
 	DXClearBuffers(11, 0);
 	InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer, App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware);
 	HWR_InitState();
