@@ -484,6 +484,52 @@ long S_SaveGame(LPVOID data, long size, long slot)
 	return 0;
 }
 
+ulong mGetAngle(long x, long z, long x1, long z1)
+{
+	long dx, dz, octant, swap, angle;
+
+	dx = x1 - x;
+	dz = z1 - z;
+
+	if (!dx && !dz)
+		return 0;
+
+	octant = 0;
+
+	if (dx < 0)
+	{
+		octant = 4;
+		dx = -dx;
+	}
+
+	if (dz < 0)
+	{
+		octant += 2;
+		dz = -dz;
+	}
+
+	if (dz > dx)
+	{
+		octant++;
+		swap = dx;
+		dx = dz;
+		dz = swap;
+	}
+
+	while (short(dz) != dz)
+	{
+		dx >>= 1;
+		dz >>= 1;
+	}
+
+	angle = phdtan2[octant] + phdtantab[(dz << 11) / dx];
+
+	if (angle < 0)
+		angle = -angle;
+
+	return -angle & 0xFFFF;
+}
+
 void inject_sgame(bool replace)
 {
 	INJECT(0x004841F0, GetRandomControl, replace);
@@ -502,4 +548,5 @@ void inject_sgame(bool replace)
 	INJECT(0x00484410, S_FrontEndCheck, replace);
 	INJECT(0x004846A0, S_LoadGame, replace);
 	INJECT(0x00484580, S_SaveGame, replace);
+	INJECT(0x00483860, mGetAngle, replace);
 }
