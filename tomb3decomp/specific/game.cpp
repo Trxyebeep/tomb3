@@ -15,6 +15,9 @@
 #include "../game/savegame.h"
 #include "../game/setup.h"
 #include "frontend.h"
+#include "../game/camera.h"
+#include "../game/control.h"
+#include "../game/draw.h"
 
 static long rand_1 = 0xD371F947;
 static long rand_2 = 0xD371F947;
@@ -530,6 +533,42 @@ ulong mGetAngle(long x, long z, long x1, long z1)
 	return -angle & 0xFFFF;
 }
 
+long GameLoop(long demo_mode)
+{
+	long lp;
+
+	overlay_flag = 1;
+	InitialiseCamera();
+	noinput_count = 0;
+
+	if (demo_mode)
+		GnGameMode = GAMEMODE_IN_DEMO;
+	else
+		GnGameMode = GAMEMODE_IN_GAME;
+
+	lp = ControlPhase(1, demo_mode);
+
+	while (lp == STARTGAME)
+	{
+		if (GtWindowClosed)
+			lp = EXITGAME;
+		else
+			lp = ControlPhase(DrawPhaseGame(), demo_mode);
+	}
+
+	if (lp != 1)		//1 means level complete
+		S_FadeToBlack();
+
+	GnGameMode = GAMEMODE_NOT_IN_GAME;
+	S_SoundStopAllSamples();
+	S_CDStop();
+
+	if (Option_Music_Volume)
+		S_CDVolume(25 * Option_Music_Volume + 5);
+
+	return lp;
+}
+
 void inject_sgame(bool replace)
 {
 	INJECT(0x004841F0, GetRandomControl, replace);
@@ -549,4 +588,5 @@ void inject_sgame(bool replace)
 	INJECT(0x004846A0, S_LoadGame, replace);
 	INJECT(0x00484580, S_SaveGame, replace);
 	INJECT(0x00483860, mGetAngle, replace);
+	INJECT(0x00483AA0, GameLoop, replace);
 }
