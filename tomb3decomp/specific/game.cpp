@@ -569,6 +569,77 @@ long GameLoop(long demo_mode)
 	return lp;
 }
 
+long StartGame(long level, long type)
+{
+	long result;
+
+	if (type == 1 || type == 2 || type == 3)
+		CurrentLevel = level;
+
+	if (type != 2)
+		ModifyStartInfo(level);
+
+	title_loaded = 0;
+
+	if (type != 2)
+		InitialiseLevelFlags();
+
+	if (!InitialiseLevel(level, type))
+	{
+		CurrentLevel = 0;
+		return EXITGAME;
+	}
+
+	result = GameLoop(0);
+
+	if (result == EXIT_TO_TITLE || result == STARTDEMO)
+		return result;
+
+	if (result == EXITGAME)
+	{
+		CurrentLevel = 0;
+		return result;
+	}
+
+	if (level_complete)
+	{
+		if (!gameflow.demoversion || !gameflow.singlelevel)
+		{
+			if (CurrentLevel != LV_GYM)
+			{
+				S_FadeInInventory(1);
+				result = CurrentLevel | LEVELCOMPLETE;
+			}
+			else
+			{
+				//empty function call here
+				result = EXIT_TO_TITLE;
+			}
+		}
+		else
+			result = EXIT_TO_TITLE;
+
+		return result;
+	}
+
+	if (!Inventory_Chosen)
+		return EXIT_TO_TITLE;
+
+	if (!Inventory_ExtraData[0])
+	{
+		S_LoadGame(&savegame, sizeof(SAVEGAME_INFO), Inventory_ExtraData[1]);
+		return Inventory_ExtraData[1] | STARTSAVEDGAME;
+	}
+
+	if (Inventory_ExtraData[0] != 1)
+		return EXIT_TO_TITLE;
+
+	if (gameflow.play_any_level)
+		return Inventory_ExtraData[1] + 1;
+	else
+		return LV_JUNGLE;
+}
+
 void inject_sgame(bool replace)
 {
 	INJECT(0x004841F0, GetRandomControl, replace);
@@ -589,4 +660,5 @@ void inject_sgame(bool replace)
 	INJECT(0x00484580, S_SaveGame, replace);
 	INJECT(0x00483860, mGetAngle, replace);
 	INJECT(0x00483AA0, GameLoop, replace);
+	INJECT(0x00483960, StartGame, replace);
 }

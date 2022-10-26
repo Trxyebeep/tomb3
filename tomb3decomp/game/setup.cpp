@@ -49,7 +49,25 @@ void GetAIPickups()
 	}
 }
 
+void InitialiseLevelFlags()
+{
+	CarcassItem = NO_ITEM;
+	savegame.secrets = 0;
+	savegame.timer = 0;
+	savegame.kills = 0;
+	savegame.distance_travelled = 0;
+	savegame.ammo_used = 0;
+	savegame.ammo_hit = 0;
+	savegame.health_used = 0;
+	assault_timer_active = 0;
+	QuadbikeLapTimeDisplayTimer = 0;
+	QuadbikeLapTime = 0;
+	compy_scared_timer = 0;
+	compys_attack_lara = 0;
+}
+
 void inject_setup(bool replace)
 {
 	INJECT(0x00466590, GetAIPickups, inject_rando ? 1 : replace);
+	INJECT(0x00463B70, InitialiseLevelFlags, replace);
 }

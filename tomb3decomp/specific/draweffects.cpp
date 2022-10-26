@@ -4084,8 +4084,16 @@ void S_DrawSparks()
 #ifdef TROYESTUFF
 				if (sptr->TransType == 3)
 				{
-					drawType = DT_POLY_COLSUB;
-					r = 4;
+					if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+					{
+						drawType = DT_POLY_COLSUB;
+						r = 4;
+					}
+					else
+					{
+						drawType = DT_POLY_WGTA;
+						r = 1;
+					}
 				}
 				else
 				{
@@ -4142,8 +4150,16 @@ void S_DrawSparks()
 #ifdef TROYESTUFF
 				if (sptr->TransType == 3)
 				{
-					drawType = DT_POLY_COLSUB;
-					r = 4;
+					if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+					{
+						drawType = DT_POLY_COLSUB;
+						r = 4;
+					}
+					else
+					{
+						drawType = DT_POLY_WGTA;
+						r = 1;
+					}
 				}
 				else
 				{
@@ -4238,17 +4254,25 @@ void S_DrawSparks()
 #ifdef TROYESTUFF
 			if (sptr->TransType == 3)
 			{
-				drawType = DT_POLY_COLSUB;
-				r = 4;
+				if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+				{
+					drawType = DT_POLY_COLSUB;
+					r = 4;
+				}
+				else
+				{
+					drawType = DT_POLY_GA;
+					r = 1;
+				}
 			}
 			else
 			{
 				r = 1;
 
 				if (sptr->TransType == 2)
-					drawType = DT_POLY_WGTA;
+					drawType = DT_POLY_GA;
 				else
-					drawType = DT_POLY_WGT;
+					drawType = DT_POLY_G;
 			}
 
 			for (g = 0; g < r; g++)	//HACK: draw colsub multiple times to make up for lack of modulate4x

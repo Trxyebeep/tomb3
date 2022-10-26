@@ -1262,7 +1262,7 @@ tomb3decomp progress.
 
 0x004638F0		InitialiseLevel
 0x00463B00		InitialiseGameFlags
-0x00463B70		InitialiseLevelFlags
+0x00463B70	+	InitialiseLevelFlags
 0x00463BC0		InitialiseObjects
 0x00463C30		BaddyObjects
 0x00465240		TrapObjects
@@ -1672,7 +1672,7 @@ tomb3decomp progress.
 
 0x00483860	+	mGetAngle
 0x004838E0	+	SortOutAdventureSave
-0x00483960		StartGame
+0x00483960	+	StartGame
 0x00483AA0	+	GameLoop
 0x00483B50	+	LevelCompleteSequence
 0x00483B60	+	LevelStats
