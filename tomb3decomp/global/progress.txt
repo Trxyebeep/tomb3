@@ -345,7 +345,7 @@ tomb3decomp progress.
 
 		game/demo.cpp
 
-0x004236B0		DoDemoSequence
+0x004236B0	+	DoDemoSequence
 0x00423710		StartDemo
 0x004238A0		LoadLaraDemoPos
 0x00423970	+	GetDemoInput
@@ -1826,7 +1826,7 @@ tomb3decomp progress.
 
 		specific/smain.cpp
 
-0x0048C150		GameMain
+0x0048C150	+	GameMain
 0x0048C410	+	TitleSequence
 0x0048C550	+	CheckCheatMode
 0x0048C8C0	+	S_SaveSettings

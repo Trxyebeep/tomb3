@@ -4,3 +4,4 @@
 void inject_demo(bool replace);
 
 void GetDemoInput();
+long DoDemoSequence(long level);

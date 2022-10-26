@@ -212,6 +212,7 @@
 #define GF_PlayingFMV	VAR_(0x006261DC, long)
 #define GF_Cutscene_Orientation	VAR_(0x004C5618, ushort)
 #define GF_SunsetEnabled	VAR_(0x006261E8, short)
+#define GF_StartGame	VAR_(0x00626200, char)
 #define Inv_ringText	VAR_(0x0062642C, TEXTSTRING*)
 #define Inv_tagText	VAR_(0x00626430, TEXTSTRING*)
 #define Inv_upArrow1	VAR_(0x00626434, TEXTSTRING*)

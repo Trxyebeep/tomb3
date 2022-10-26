@@ -7,6 +7,7 @@ bool S_LoadSettings();
 void S_SaveSettings();
 void CheckCheatMode();
 long TitleSequence();
+long GameMain();
 
 extern bool inject_rando;
 
