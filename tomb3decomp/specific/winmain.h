@@ -10,6 +10,7 @@ long WinRegisterWindow(HINSTANCE hinstance);
 HWND WinCreateWindow(HINSTANCE hinstance, long nCmdShow);
 float WinFrameRate();
 void WinFreeDX(bool free_dd);
+int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nShowCmd);
 void S_ExitSystem(const char* msg);
 void Log(const char* s, ...);		//NOT present in original code
 
