@@ -64,6 +64,13 @@ void InitialiseLevelFlags()
 	QuadbikeLapTime = 0;
 	compy_scared_timer = 0;
 	compys_attack_lara = 0;
+
+#ifdef TROYESTUFF	//clear footprints
+	for (int i = 0; i < 32; i++)
+		FootPrint[i].Active = 0;
+
+	FootPrintNum = 0;
+#endif
 }
 
 void inject_setup(bool replace)
