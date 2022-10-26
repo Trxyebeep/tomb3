@@ -17,6 +17,7 @@
 - Add colsub for sparks, like smoke.
 - Improve bucket drawing, fixes PC bars disappearing in open spaces. Eg. beginning of Thames Wharf.
 - Improve pickup display code to show transparency correctly.
+- Add an option for PSX crystal sfx.
 
 ### tomb3 bug fixes
 

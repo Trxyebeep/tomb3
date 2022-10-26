@@ -13,6 +13,9 @@
 #include "../specific/smain.h"
 #include "effect2.h"
 #include "sound.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
 
 static short PickUpBounds[12] = { -256, 256, -100, 100, -256, 256, -1820, 1820, 0, 0, 0, 0 };
 static short PickUpBoundsUW[12] = { -512, 512, -512, 512, -512, 512, -8190, 8190, -8190, 8190, -8190, 8190 };
@@ -247,8 +250,14 @@ void AnimatingPickUp(short item_number)
 
 			if (lara_item->hit_points > 1000)
 				lara_item->hit_points = 1000;
-
-			SoundEffect(SFX_MENU_MEDI, &lara_item->pos, 0);
+			
+#ifdef TROYESTUFF
+			if (tomb3.psx_crystal_sfx)
+				SoundEffect(SFX_SAVE_CRYSTAL, &lara_item->pos, SFX_DEFAULT);
+			else
+#endif
+				SoundEffect(SFX_MENU_MEDI, &lara_item->pos, SFX_DEFAULT);
+			
 			KillItem(item_number);
 		}
 	}
