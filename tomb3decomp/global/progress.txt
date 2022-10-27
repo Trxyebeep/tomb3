@@ -168,7 +168,7 @@ tomb3decomp progress.
 
 		game/boat.cpp
 
-0x00411FE0		InitialiseBoat
+0x00411FE0	+	InitialiseBoat
 0x00412040		BoatCheckGeton
 0x004121B0		BoatCollision
 0x00412330		BoatUserControl

@@ -1869,6 +1869,18 @@ struct SOUND_SLOT
 	long nPitch;
 };
 
+struct BOAT_INFO
+{
+	long boat_turn;
+	long left_fallspeed;
+	long right_fallspeed;
+	short tilt_angle;
+	short extra_rotation;
+	long water;
+	long pitch;
+	short prop_rot;
+};
+
 #ifdef TROYESTUFF
 struct FVECTOR
 {
