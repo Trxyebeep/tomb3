@@ -745,6 +745,161 @@ void SWRBlit32to15(ulong* dest, ulong* src, ulong w)
 	} while (w);
 }
 
+HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LPD3DDEVICEDESC lpHWDesc, LPD3DDEVICEDESC lpHELDesc, LPVOID lpContext)
+{
+	DIRECTDRAWINFO* ddinfo;
+	DIRECT3DINFO* d3dinfo;
+	static LPDIRECTDRAWSURFACEX surf;
+	static LPDIRECT3DDEVICEX d3dDevice;
+	DDSURFACEDESCX desc;
+	long goin;
+
+	ddinfo = (DIRECTDRAWINFO*)lpContext;
+
+	if (!lpHWDesc->dwFlags)
+	{
+		if (lpHELDesc->dcmColorModel & D3DCOLOR_MONO || SoftwareRenderer == 1)
+			return 1;
+	}
+
+	if (!lpHWDesc->dwFlags)
+	{
+		SoftwareRenderer = 1;
+
+		if (MMXSupported)
+		{
+			strcpy(description, "Core Design MMX Hardware Card Emulation");
+			strcpy(name, "MMX Emulation");
+		}
+		else
+		{
+			strcpy(description, "Core Design RGB Hardware Card Emulation");
+			strcpy(name, "RGB Emulation");
+		}
+	}
+
+	if (lpHWDesc->dwFlags && !lpHWDesc->dpcTriCaps.dwTextureCaps)
+		return D3DENUMRET_OK;
+
+	ddinfo->D3DInfo = (DIRECT3DINFO*)AddStruct(ddinfo->D3DInfo, ddinfo->nD3DInfo, sizeof(DIRECT3DINFO));
+	d3dinfo = &ddinfo->D3DInfo[ddinfo->nD3DInfo];
+
+	if (lpGuid)
+	{
+		d3dinfo->lpGuid = &d3dinfo->Guid;
+		d3dinfo->Guid = *lpGuid;
+	}
+	else
+		d3dinfo->lpGuid = 0;
+
+	lstrcpy(d3dinfo->About, description);
+	lstrcpy(d3dinfo->Name, name);
+
+	if (lpHWDesc->dwFlags)
+	{
+		d3dinfo->bHardware = 1;
+		memcpy(&d3dinfo->DeviceDesc, lpHWDesc, sizeof(D3DDEVICEDESC));
+	}
+	else
+	{
+		d3dinfo->bHardware = 0;
+		memcpy(&d3dinfo->DeviceDesc, lpHELDesc, sizeof(D3DDEVICEDESC));
+	}
+
+	d3dinfo->bAlpha = d3dinfo->DeviceDesc.dpcTriCaps.dwShadeCaps & D3DPSHADECAPS_ALPHAFLATBLEND;
+	d3dinfo->bUnk = d3dinfo->DeviceDesc.dwDevCaps & D3DDEVCAPS_TEXTURENONLOCALVIDMEM;
+
+	if (SoftwareRenderer)
+	{
+		for (int i = 0; i < ddinfo->nDisplayMode; i++)
+		{
+			if (!(BPPToDDBD(ddinfo->DisplayMode[i].bpp) & d3dinfo->DeviceDesc.dwDeviceRenderBitDepth))
+				continue;
+
+			goin = 0;
+
+			if (MMXSupported)
+			{
+				if (ddinfo->DisplayMode[i].bpp == 16 || ddinfo->DisplayMode[i].bpp == 24 || ddinfo->DisplayMode[i].bpp == 32)	//check me
+					goin = 1;
+			}
+			else if (ddinfo->DisplayMode[i].bpp == 16)
+				goin = 1;
+
+			if (!goin)
+				continue;
+
+			d3dinfo->DisplayMode = (DISPLAYMODE*)AddStruct(d3dinfo->DisplayMode, d3dinfo->nDisplayMode, sizeof(DISPLAYMODE));
+			memcpy(&d3dinfo->DisplayMode[d3dinfo->nDisplayMode], &ddinfo->DisplayMode[i], sizeof(DISPLAYMODE));
+			d3dinfo->nDisplayMode++;
+		}
+	}
+	else
+	{
+		for (int i = 0; i < ddinfo->nDisplayMode; i++)
+		{
+			if (!(BPPToDDBD(ddinfo->DisplayMode[i].bpp) & d3dinfo->DeviceDesc.dwDeviceRenderBitDepth))
+				continue;
+
+			d3dinfo->DisplayMode = (DISPLAYMODE*)AddStruct(d3dinfo->DisplayMode, d3dinfo->nDisplayMode, sizeof(DISPLAYMODE));
+			memcpy(&d3dinfo->DisplayMode[d3dinfo->nDisplayMode], &ddinfo->DisplayMode[i], sizeof(DISPLAYMODE));
+			d3dinfo->nDisplayMode++;
+		}
+	}
+
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
+	desc.dwFlags = DDSD_CAPS;
+	desc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE | DDSCAPS_3DDEVICE;
+	surf = 0;
+	DXSetCooperativeLevel(G_ddraw, G_hwnd, DDSCL_FULLSCREEN | DDSCL_NOWINDOWCHANGES | DDSCL_EXCLUSIVE);
+	DXCreateSurface(G_ddraw, &desc, (LPDIRECTDRAWSURFACE3)&surf);
+
+	if (surf)
+	{
+		d3dDevice = 0;
+		DXCreateDirect3DDevice(G_d3d, ddinfo->D3DInfo[ddinfo->nD3DInfo].Guid, surf, &d3dDevice);
+
+		if (!d3dDevice)	//fail
+		{
+			if (surf)
+			{
+				surf->Release();
+				surf = 0;
+			}
+
+			DXSetVideoMode(G_ddraw, d3dinfo->DisplayMode->w, d3dinfo->DisplayMode->h, d3dinfo->DisplayMode->bpp);
+			DXCreateSurface(G_ddraw, &desc, (LPDIRECTDRAWSURFACE3)&surf);
+
+			if (surf)
+				DXCreateDirect3DDevice(G_d3d, d3dinfo->Guid, surf, &d3dDevice);
+		}
+
+		if (d3dDevice)	//did it work?
+		{
+			d3dinfo->nTexture = 0;
+			d3dDevice->EnumTextureFormats(DXEnumTextureFormats, (LPVOID)d3dinfo);
+
+			if (d3dDevice)
+			{
+				d3dDevice->Release();
+				d3dDevice = 0;
+			}
+		}
+
+		if (surf)
+		{
+			surf->Release();
+			surf = 0;
+		}
+
+		DXSetCooperativeLevel(G_ddraw, G_hwnd, DDSCL_NORMAL);
+	}
+
+	ddinfo->nD3DInfo++;
+	return D3DENUMRET_OK;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -774,4 +929,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x004B3D10, DXUpdateFrame, replace);
 	INJECT(0x0048EBB0, DXGetDeviceInfo, replace);
 	INJECT(0x004B4040, SWRBlit32to15, replace);
+	INJECT(0x0048F3C0, DXEnumDirect3D, replace);
 }
