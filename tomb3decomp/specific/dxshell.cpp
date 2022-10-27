@@ -731,6 +731,20 @@ void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance)
 	lpDinput->Release();
 }
 
+void SWRBlit32to15(ulong* dest, ulong* src, ulong w)
+{
+	w >>= 1;
+
+	do
+	{
+		dest[0] = src[0] & 0x1F001F | ((src[0] & 0xFFC0FFC0) >> 1);
+		dest[1] = src[1] & 0x1F001F | ((src[1] & 0xFFC0FFC0) >> 1);
+		src += 2;
+		dest += 2;
+		w--;
+	} while (w);
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -759,4 +773,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x004B3A70, DXClearBuffers, replace);
 	INJECT(0x004B3D10, DXUpdateFrame, replace);
 	INJECT(0x0048EBB0, DXGetDeviceInfo, replace);
+	INJECT(0x004B4040, SWRBlit32to15, replace);
 }

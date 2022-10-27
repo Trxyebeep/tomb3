@@ -29,7 +29,7 @@ bool DXCheckForLostSurfaces();
 void DXClearBuffers(ulong flags, ulong color);
 bool DXUpdateFrame(bool runMessageLoop, LPRECT rect);
 void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance);
+void SWRBlit32to15(ulong* dest, ulong* src, ulong w);
 
 #define DXSwitchVideoMode	( (bool(__cdecl*)(long, long, bool)) 0x004B3550 )
 #define DXEnumDirect3D	( (HRESULT(CALLBACK*)(LPGUID, LPSTR, LPSTR, LPD3DDEVICEDESC, LPD3DDEVICEDESC, LPVOID)) 0x0048F3C0 )
-#define SWRBlit32to15	( (void(__cdecl*)(ulong*, ulong*, long)) 0x004B4040 )

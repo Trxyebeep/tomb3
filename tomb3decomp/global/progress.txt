@@ -1615,7 +1615,7 @@ tomb3decomp progress.
 0x004B3A70	+	DXClearBuffers
 0x004B3C50	+	DXCheckForLostSurfaces
 0x004B3D10	+	DXUpdateFrame
-0x004B4040		SWRBlit32to15
+0x004B4040	+	SWRBlit32to15
 0x004B40A0	+	DXSaveScreen
 
 
