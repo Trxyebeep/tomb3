@@ -45,19 +45,19 @@ bool DD_SpinMessageLoop(bool wait)
 	return 1;
 }
 
-HRESULT DD_LockSurface(LPDIRECTDRAWSURFACE3 surf, DDSURFACEDESC& desc, ulong flags)
+HRESULT DD_LockSurface(LPDIRECTDRAWSURFACEX surf, DDSURFACEDESCX& desc, ulong flags)
 {
-	memset(&desc, 0, sizeof(DDSURFACEDESC));
-	desc.dwSize = sizeof(DDSURFACEDESC);
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
 	return surf->Lock(0, &desc, flags, 0);
 }
 
-HRESULT DD_UnlockSurface(LPDIRECTDRAWSURFACE3 surf, DDSURFACEDESC& desc)
+HRESULT DD_UnlockSurface(LPDIRECTDRAWSURFACEX surf, DDSURFACEDESCX& desc)
 {
 	return surf->Unlock(desc.lpSurface);
 }
 
-HRESULT DD_CreateSurface(DDSURFACEDESC& desc, LPDIRECTDRAWSURFACE3& surf)
+HRESULT DD_CreateSurface(DDSURFACEDESCX& desc, LPDIRECTDRAWSURFACEX& surf)
 {
 	HRESULT res;
 	LPDIRECTDRAWSURFACE ps;
@@ -67,12 +67,12 @@ HRESULT DD_CreateSurface(DDSURFACEDESC& desc, LPDIRECTDRAWSURFACE3& surf)
 	if (FAILED(res))
 		return res;
 
-	res = ps->QueryInterface(IID_IDirectDrawSurface3, (LPVOID*)&surf);
+	res = ps->QueryInterface(DDSGUID, (LPVOID*)&surf);
 	ps->Release();
 	return res;
 }
 
-HRESULT DD_EnsureSurfaceAvailable(LPDIRECTDRAWSURFACE3 surf, LPDIRECTDRAWSURFACE3 tSurf, bool clear)
+HRESULT DD_EnsureSurfaceAvailable(LPDIRECTDRAWSURFACEX surf, LPDIRECTDRAWSURFACEX tSurf, bool clear)
 {
 	HRESULT res;
 
@@ -92,7 +92,7 @@ HRESULT DD_EnsureSurfaceAvailable(LPDIRECTDRAWSURFACE3 surf, LPDIRECTDRAWSURFACE
 	return res;
 }
 
-bool DD_ClearSurface(LPDIRECTDRAWSURFACE3 surf, LPRECT rect, ulong col)
+bool DD_ClearSurface(LPDIRECTDRAWSURFACEX surf, LPRECT rect, ulong col)
 {
 	DDBLTFX blt;
 

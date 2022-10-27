@@ -45,7 +45,7 @@ void UT_CenterWindow(HWND hwnd)
 		-1, -1, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
-char* UT_FindArg(char* arg)
+char* UT_FindArg(const char* arg)
 {
 	char* str;
 

@@ -399,7 +399,7 @@ bool ACMInit()
 	desc.dwFlags = DSBCAPS_LOCSOFTWARE | DSBCAPS_CTRLFREQUENCY | DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GETCURRENTPOSITION2;
 	desc.lpwfxFormat = &wav_format;
 	lpDirectSound->CreateSoundBuffer(&desc, &DSBuffer, 0);
-	DSBuffer->QueryInterface(IID_IDirectSoundNotify, (LPVOID*)&DSNotify);
+	DSBuffer->QueryInterface(DSNGUID, (LPVOID*)&DSNotify);
 
 	ACMSetupNotifications();
 	acmStreamOpen(&hACMStream, hACMDriver, (LPWAVEFORMATEX)&source_wav_format, &wav_format, 0, 0, 0, 0);

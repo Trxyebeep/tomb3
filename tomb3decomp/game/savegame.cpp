@@ -1,6 +1,8 @@
 #include "../tomb3/pch.h"
 #include "savegame.h"
 #include "gameflow.h"
+#include "invfunc.h"
+#include "objects.h"
 
 void ModifyStartInfo(long level)
 {
@@ -156,8 +158,116 @@ void InitialiseStartInfo()
 	}
 }
 
+void CreateStartInfo(long level)
+{
+	START_INFO* pInfo;
+
+	pInfo = &savegame.start[level];
+	pInfo->available = 1;
+	pInfo->pistol_ammo = 1000;
+
+	if (Inv_RequestItem(GUN_ITEM))
+		pInfo->got_pistols = 1;
+	else
+		pInfo->got_pistols = 0;
+
+	if (Inv_RequestItem(MAGNUM_ITEM))
+	{
+		pInfo->got_magnums = 1;
+		pInfo->magnum_ammo = (ushort)lara.magnums.ammo;
+	}
+	else
+	{
+		pInfo->got_magnums = 0;
+		pInfo->magnum_ammo = ushort(Inv_RequestItem(MAG_AMMO_ITEM) * 10);
+	}
+
+	if (Inv_RequestItem(UZI_ITEM))
+	{
+		pInfo->got_uzis = 1;
+		pInfo->uzi_ammo = (ushort)lara.uzis.ammo;
+	}
+	else
+	{
+		pInfo->got_uzis = 0;
+		pInfo->uzi_ammo = ushort(Inv_RequestItem(UZI_AMMO_ITEM) * 40);
+	}
+
+	if (Inv_RequestItem(SHOTGUN_ITEM))
+	{
+		pInfo->got_shotgun = 1;
+		pInfo->shotgun_ammo = (ushort)lara.shotgun.ammo;
+	}
+	else
+	{
+		pInfo->got_shotgun = 0;
+		pInfo->shotgun_ammo = ushort(Inv_RequestItem(SG_AMMO_ITEM) * 12);
+	}
+
+	if (Inv_RequestItem(HARPOON_ITEM))
+	{
+		pInfo->got_harpoon = 1;
+		pInfo->harpoon_ammo = (ushort)lara.harpoon.ammo;
+	}
+	else
+	{
+		pInfo->got_harpoon = 0;
+		pInfo->harpoon_ammo = (ushort)lara.harpoon.ammo;	//...ok
+	}
+
+	if (Inv_RequestItem(M16_ITEM))
+	{
+		pInfo->got_m16 = 1;
+		pInfo->m16_ammo = (ushort)lara.m16.ammo;
+	}
+	else
+	{
+		pInfo->got_m16 = 0;
+		pInfo->m16_ammo = ushort(Inv_RequestItem(M16_AMMO_ITEM) * 60);
+	}
+
+	if (Inv_RequestItem(ROCKET_GUN_ITEM))
+	{
+		pInfo->got_rocket = 1;
+		pInfo->rocket_ammo = (ushort)lara.rocket.ammo;
+	}
+	else
+	{
+		pInfo->got_rocket = 0;
+		pInfo->rocket_ammo = (ushort)Inv_RequestItem(ROCKET_AMMO_ITEM);
+	}
+
+	if (Inv_RequestItem(GRENADE_GUN_ITEM))
+	{
+		pInfo->got_grenade = 1;
+		pInfo->grenade_ammo = (ushort)lara.grenade.ammo;
+	}
+	else
+	{
+		pInfo->got_grenade = 0;
+		pInfo->grenade_ammo = ushort(Inv_RequestItem(GRENADE_AMMO_ITEM) * 2);
+	}
+
+	pInfo->num_flares = (uchar)Inv_RequestItem(FLARE_ITEM);
+	pInfo->num_medis = (uchar)Inv_RequestItem(MEDI_ITEM);
+	pInfo->num_big_medis = (uchar)Inv_RequestItem(BIGMEDI_ITEM);
+	pInfo->num_sgcrystals = (uchar)Inv_RequestItem(SAVEGAME_CRYSTAL_ITEM);
+	pInfo->num_icon1 = (uchar)Inv_RequestItem(ICON_PICKUP1_ITEM);
+	pInfo->num_icon2 = (uchar)Inv_RequestItem(ICON_PICKUP2_ITEM);
+	pInfo->num_icon3 = (uchar)Inv_RequestItem(ICON_PICKUP3_ITEM);
+	pInfo->num_icon4 = (uchar)Inv_RequestItem(ICON_PICKUP4_ITEM);
+
+	if (lara.gun_type == LG_FLARE)
+		pInfo->gun_type = (char)lara.last_gun_type;
+	else
+		pInfo->gun_type = (char)lara.gun_type;
+
+	pInfo->gun_status = LG_ARMLESS;
+}
+
 void inject_savegame(bool replace)
 {
 	INJECT(0x00461A60, ModifyStartInfo, replace);
 	INJECT(0x00461950, InitialiseStartInfo, replace);
+	INJECT(0x00461B50, CreateStartInfo, replace);
 }

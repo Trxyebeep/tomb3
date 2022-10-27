@@ -15,6 +15,9 @@
 #include "../game/savegame.h"
 #include "../game/setup.h"
 #include "frontend.h"
+#include "../game/camera.h"
+#include "../game/control.h"
+#include "../game/draw.h"
 
 static long rand_1 = 0xD371F947;
 static long rand_2 = 0xD371F947;
@@ -484,6 +487,159 @@ long S_SaveGame(LPVOID data, long size, long slot)
 	return 0;
 }
 
+ulong mGetAngle(long x, long z, long x1, long z1)
+{
+	long dx, dz, octant, swap, angle;
+
+	dx = x1 - x;
+	dz = z1 - z;
+
+	if (!dx && !dz)
+		return 0;
+
+	octant = 0;
+
+	if (dx < 0)
+	{
+		octant = 4;
+		dx = -dx;
+	}
+
+	if (dz < 0)
+	{
+		octant += 2;
+		dz = -dz;
+	}
+
+	if (dz > dx)
+	{
+		octant++;
+		swap = dx;
+		dx = dz;
+		dz = swap;
+	}
+
+	while (short(dz) != dz)
+	{
+		dx >>= 1;
+		dz >>= 1;
+	}
+
+	angle = phdtan2[octant] + phdtantab[(dz << 11) / dx];
+
+	if (angle < 0)
+		angle = -angle;
+
+	return -angle & 0xFFFF;
+}
+
+long GameLoop(long demo_mode)
+{
+	long lp;
+
+	overlay_flag = 1;
+	InitialiseCamera();
+	noinput_count = 0;
+
+	if (demo_mode)
+		GnGameMode = GAMEMODE_IN_DEMO;
+	else
+		GnGameMode = GAMEMODE_IN_GAME;
+
+	lp = ControlPhase(1, demo_mode);
+
+	while (lp == STARTGAME)
+	{
+		if (GtWindowClosed)
+			lp = EXITGAME;
+		else
+			lp = ControlPhase(DrawPhaseGame(), demo_mode);
+	}
+
+	if (lp != 1)		//1 means level complete
+		S_FadeToBlack();
+
+	GnGameMode = GAMEMODE_NOT_IN_GAME;
+	S_SoundStopAllSamples();
+	S_CDStop();
+
+	if (Option_Music_Volume)
+		S_CDVolume(25 * Option_Music_Volume + 5);
+
+	return lp;
+}
+
+long StartGame(long level, long type)
+{
+	long result;
+
+	if (type == 1 || type == 2 || type == 3)
+		CurrentLevel = level;
+
+	if (type != 2)
+		ModifyStartInfo(level);
+
+	title_loaded = 0;
+
+	if (type != 2)
+		InitialiseLevelFlags();
+
+	if (!InitialiseLevel(level, type))
+	{
+		CurrentLevel = 0;
+		return EXITGAME;
+	}
+
+	result = GameLoop(0);
+
+	if (result == EXIT_TO_TITLE || result == STARTDEMO)
+		return result;
+
+	if (result == EXITGAME)
+	{
+		CurrentLevel = 0;
+		return result;
+	}
+
+	if (level_complete)
+	{
+		if (!gameflow.demoversion || !gameflow.singlelevel)
+		{
+			if (CurrentLevel != LV_GYM)
+			{
+				S_FadeInInventory(1);
+				result = CurrentLevel | LEVELCOMPLETE;
+			}
+			else
+			{
+				//empty function call here
+				result = EXIT_TO_TITLE;
+			}
+		}
+		else
+			result = EXIT_TO_TITLE;
+
+		return result;
+	}
+
+	if (!Inventory_Chosen)
+		return EXIT_TO_TITLE;
+
+	if (!Inventory_ExtraData[0])
+	{
+		S_LoadGame(&savegame, sizeof(SAVEGAME_INFO), Inventory_ExtraData[1]);
+		return Inventory_ExtraData[1] | STARTSAVEDGAME;
+	}
+
+	if (Inventory_ExtraData[0] != 1)
+		return EXIT_TO_TITLE;
+
+	if (gameflow.play_any_level)
+		return Inventory_ExtraData[1] + 1;
+	else
+		return LV_JUNGLE;
+}
+
 void inject_sgame(bool replace)
 {
 	INJECT(0x004841F0, GetRandomControl, replace);
@@ -502,4 +658,7 @@ void inject_sgame(bool replace)
 	INJECT(0x00484410, S_FrontEndCheck, replace);
 	INJECT(0x004846A0, S_LoadGame, replace);
 	INJECT(0x00484580, S_SaveGame, replace);
+	INJECT(0x00483860, mGetAngle, replace);
+	INJECT(0x00483AA0, GameLoop, replace);
+	INJECT(0x00483960, StartGame, replace);
 }

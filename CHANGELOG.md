@@ -7,6 +7,7 @@
 - Fix lara getting stuck in corners.
 - Fix lara wading in 1 click deep water.
 - Fix the shotgun and its ammo not resetting in Jungle sometimes.
+- Fix footprints not being cleared between levels.
 
 ### tomb3 additions
 
@@ -17,6 +18,7 @@
 - Add colsub for sparks, like smoke.
 - Improve bucket drawing, fixes PC bars disappearing in open spaces. Eg. beginning of Thames Wharf.
 - Improve pickup display code to show transparency correctly.
+- Add an option for PSX crystal sfx.
 
 ### tomb3 bug fixes
 

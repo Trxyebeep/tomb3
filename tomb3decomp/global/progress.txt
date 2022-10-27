@@ -168,8 +168,8 @@ tomb3decomp progress.
 
 		game/boat.cpp
 
-0x00411FE0		InitialiseBoat
-0x00412040		BoatCheckGeton
+0x00411FE0	+	InitialiseBoat
+0x00412040	+	BoatCheckGeton
 0x004121B0		BoatCollision
 0x00412330		BoatUserControl
 0x00412500		BoatAnimation
@@ -345,7 +345,7 @@ tomb3decomp progress.
 
 		game/demo.cpp
 
-0x004236B0		DoDemoSequence
+0x004236B0	+	DoDemoSequence
 0x00423710		StartDemo
 0x004238A0		LoadLaraDemoPos
 0x00423970	+	GetDemoInput
@@ -1243,7 +1243,7 @@ tomb3decomp progress.
 
 0x00461950	+	InitialiseStartInfo
 0x00461A60	+	ModifyStartInfo
-0x00461B50		CreateStartInfo
+0x00461B50	+	CreateStartInfo
 0x00461DD0		CreateSaveGameInfo
 0x004623F0		ExtractSaveGameInfo
 0x00462DF0		ResetSG
@@ -1262,7 +1262,7 @@ tomb3decomp progress.
 
 0x004638F0		InitialiseLevel
 0x00463B00		InitialiseGameFlags
-0x00463B70		InitialiseLevelFlags
+0x00463B70	+	InitialiseLevelFlags
 0x00463BC0		InitialiseObjects
 0x00463C30		BaddyObjects
 0x00465240		TrapObjects
@@ -1595,7 +1595,7 @@ tomb3decomp progress.
 0x0048EFD0	+	DXEnumDirectDraw
 0x0048F1C0	+	DXBitMask2ShiftCnt
 0x0048F1F0	+	DXEnumDisplayModes
-0x0048F3C0		DXEnumDirect3D
+0x0048F3C0	+	DXEnumDirect3D
 0x0048FBB0	+	DXEnumTextureFormats
 0x0048FDB0	+	BPPToDDBD
 0x0048FE40	+	DXCreateDirectDraw
@@ -1609,13 +1609,13 @@ tomb3decomp progress.
 0x0048FFC0	+	DXCreateViewPort
 0x004900B0	+	DXGetSurfaceDesc
 0x004900C0	+	DXSurfBlt
-0x004B3550		DXSwitchVideoMode
+0x004B3550	+	DXSwitchVideoMode
 0x004B2E80	+	DXCreateZBuffer
 0x004B3A40	+	DXDoFlipWait
 0x004B3A70	+	DXClearBuffers
 0x004B3C50	+	DXCheckForLostSurfaces
 0x004B3D10	+	DXUpdateFrame
-0x004B4040		SWRBlit32to15
+0x004B4040	+	SWRBlit32to15
 0x004B40A0	+	DXSaveScreen
 
 
@@ -1670,10 +1670,10 @@ tomb3decomp progress.
 
 		specific/game.cpp
 
-0x00483860		mGetAngle
+0x00483860	+	mGetAngle
 0x004838E0	+	SortOutAdventureSave
-0x00483960		StartGame
-0x00483AA0		GameLoop
+0x00483960	+	StartGame
+0x00483AA0	+	GameLoop
 0x00483B50	+	LevelCompleteSequence
 0x00483B60	+	LevelStats
 0x00483FA0	+	Level2World
@@ -1826,7 +1826,7 @@ tomb3decomp progress.
 
 		specific/smain.cpp
 
-0x0048C150		GameMain
+0x0048C150	+	GameMain
 0x0048C410	+	TitleSequence
 0x0048C550	+	CheckCheatMode
 0x0048C8C0	+	S_SaveSettings
@@ -1882,7 +1882,7 @@ tomb3decomp progress.
 
 		specific/winmain.cpp
 
-0x004B2940		WinMain
+0x004B2940	+	WinMain
 0x004B2C50	+	WinAppExit
 0x004B2C60	+	WinFreeDX
 0x004B2D40	+	WinRegisterWindow

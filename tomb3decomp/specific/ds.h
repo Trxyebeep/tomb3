@@ -16,3 +16,5 @@ bool DS_IsSoundEnabled();
 bool DS_SetOutputFormat();
 void DS_Start(HWND hwnd);
 void DS_Finish();
+
+#define DS_Init	( (void(__cdecl*)()) 0x004809C0 )

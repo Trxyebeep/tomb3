@@ -5,6 +5,15 @@
 #include "hwrender.h"
 #include "texture.h"
 #include "init.h"
+#include "specific.h"
+#include "smain.h"
+#include "utils.h"
+#include "dxdialog.h"
+#include "ds.h"
+#include "time.h"
+#include "di.h"
+#include "audio.h"
+#include "display.h"
 
 #ifdef DO_LOG
 FILE* logF = 0;
@@ -14,9 +23,9 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 {
 	DISPLAYMODE* dm;
 	DIRECT3DINFO* d3d;
-	DDSURFACEDESC desc;
-	D3DMATERIAL m;
-	DDSCAPS caps;
+	DDSURFACEDESCX desc;
+	D3DMATERIALX m;
+	DDSCAPSX caps;
 	D3DMATERIALHANDLE handle;
 
 	Log("Starting WinDXInit");
@@ -45,13 +54,13 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 		return 0;
 	}
 
-	memset(&desc, 0, sizeof(DDSURFACEDESC));
-	desc.dwSize = sizeof(DDSURFACEDESC);
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
 	desc.dwBackBufferCount = 1;
 	desc.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
 	desc.ddsCaps.dwCaps = DDSCAPS_COMPLEX | DDSCAPS_FLIP | DDSCAPS_PRIMARYSURFACE | DDSCAPS_3DDEVICE;
 
-	if (!DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACE3)&App.lpFrontBuffer))
+	if (!DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACEX)&App.lpFrontBuffer))
 	{
 		Log("DXCreateSurface failed to create front buffer, exitting..");
 		return 0;
@@ -102,21 +111,21 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 		return 0;
 	}
 
-	memset(&m, 0, sizeof(D3DMATERIAL));
-	m.dwSize = sizeof(D3DMATERIAL);
+	memset(&m, 0, sizeof(D3DMATERIALX));
+	m.dwSize = sizeof(D3DMATERIALX);
 
 	App.lpD3D->CreateMaterial(&App.lpViewPortMaterial, 0);
 	App.lpViewPortMaterial->SetMaterial(&m);
 	App.lpViewPortMaterial->GetHandle(App.lpD3DDevice, &handle);
 	App.lpViewPort->SetBackground(handle);
 
-	memset(&desc, 0, sizeof(DDSURFACEDESC));
-	desc.dwSize = sizeof(DDSURFACEDESC);
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
 	desc.dwWidth = 640;
 	desc.dwHeight = 480;
 	desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH;
 	desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-	DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACE3)&App.lpPictureBuffer);
+	DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACEX)&App.lpPictureBuffer);
 	DXClearBuffers(11, 0);
 	InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer, App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware);
 	HWR_InitState();
@@ -297,6 +306,87 @@ void WinFreeDX(bool free_dd)
 	}
 }
 
+int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nShowCmd)
+{
+	DIRECT3DINFO* d3dinfo;
+	bool hw;
+
+	G_lpCmdLine = lpCmdLine;
+	memset(&App, 0, sizeof(WINAPP));
+	App.hInstance = hInstance;
+
+	if (!hPrevInstance && !WinRegisterWindow(hInstance))
+	{
+		MessageBox(0, "Unable To Register Window Class", "", MB_OK);
+		return 0;
+	}
+
+	App.WindowHandle = WinCreateWindow(hInstance, nShowCmd);
+
+	if (!App.WindowHandle)
+	{
+		MessageBox(0, "Unable To Create Window", "", MB_OK);
+		return 0;
+	}
+
+#ifndef TROYESTUFF	//nocd
+	if (!CD_Init())
+		return 0;
+#endif
+
+	DXGetDeviceInfo(&App.DeviceInfo, App.WindowHandle, App.hInstance);
+	App.DXConfigPtr = &App.DXConfig;
+	App.DeviceInfoPtr = &App.DeviceInfo;
+
+	if ((!S_LoadSettings() || UT_FindArg("setup")) && !DXUserDialog(&App.DeviceInfo, &App.DXConfig, App.hInstance))
+	{
+		DXFreeDeviceInfo(&App.DeviceInfo);
+		return 0;
+	}
+
+	if (!WinDXInit(&App.DeviceInfo, &App.DXConfig, 1))
+	{
+		WinFreeDX(1);
+		DXFreeDeviceInfo(&App.DeviceInfo);
+		ShowWindow(App.WindowHandle, 0);
+		MessageBox(App.WindowHandle, "Tomb Raider 3 Failed To Initialise, Please Run Setup", "Error", MB_ICONEXCLAMATION);
+		return 0;
+	}
+
+	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
+
+	if (!(d3dinfo->DeviceDesc.dpcTriCaps.dwTextureCaps & D3DPTEXTURECAPS_ALPHA))
+		d3dinfo->Texture[App.DXConfigPtr->D3DTF].bAlpha = 0;
+
+	HWConfig.Perspective = 1;
+	HWConfig.Dither = App.DXConfig.Dither;
+	HWConfig.nFilter = D3DFILTER_NEAREST + (App.DXConfig.Filter != 0);
+	HWConfig.nShadeMode = D3DSHADE_GOURAUD;
+	HWConfig.nFillMode = D3DFILL_SOLID;
+	HWConfig.TrueAlpha = 0;
+
+	hw = App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware;
+	framedump = 0;
+	App.nUVAdd = hw ? 256 : 128;
+	UT_InitAccurateTimer();
+	DXResetPalette(PictureTextures);
+	InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer, hw);
+	farz = 0x5000;
+	distanceFogValue = 0x3000;
+	DS_Init();
+	TIME_Init();
+	HWR_Init();
+	DS_Start(0);
+	DI_Start();
+	ACMInit();
+	setup_screen_size();
+	game_closedown = 0;
+	GtWindowClosed = 0;
+	GtFullScreenClearNeeded = 0;
+	GameMain();
+	return 0;
+}
+
 void S_ExitSystem(const char* msg)
 {
 	DXSetCooperativeLevel(App.lpDD, App.WindowHandle, DDSCL_NORMAL);
@@ -332,5 +422,6 @@ void inject_winmain(bool replace)
 	INJECT(0x004B2DC0, WinCreateWindow, replace);
 	INJECT(0x004B34D0, WinFrameRate, replace);
 	INJECT(0x004B2C60, WinFreeDX, replace);
+	INJECT(0x004B2940, WinMain, replace);
 	INJECT(0x004B37C0, S_ExitSystem, replace);
 }
