@@ -31,5 +31,4 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect);
 void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance);
 void SWRBlit32to15(ulong* dest, ulong* src, ulong w);
 HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LPD3DDEVICEDESC lpHWDesc, LPD3DDEVICEDESC lpHELDesc, LPVOID lpContext);
-
-#define DXSwitchVideoMode	( (bool(__cdecl*)(long, long, bool)) 0x004B3550 )
+bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer);

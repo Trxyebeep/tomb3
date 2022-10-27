@@ -4,6 +4,8 @@
 #include "winmain.h"
 #include "hwrender.h"
 #include "mmx.h"
+#include "drawprimitive.h"
+#include "display.h"
 
 //statics
 #define G_ddraw	VAR_(0x006CA0F8, LPDIRECTDRAWX)
@@ -900,6 +902,96 @@ HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LP
 	return D3DENUMRET_OK;
 }
 
+bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer)
+{
+	DIRECT3DINFO* d3dinfo;
+	DISPLAYMODE* dm;
+	ulong currentBpp;
+	bool change;
+
+	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
+
+	dm = &d3dinfo->DisplayMode[App.DXConfigPtr->nVMode];
+	currentBpp = dm->bpp;
+
+	App.DXConfig.nVMode = needed;
+	dm = &d3dinfo->DisplayMode[App.DXConfigPtr->nVMode];
+	change = 1;
+
+	if (needed != current && dm->bpp != currentBpp)
+	{
+		change = 0;
+
+		if (needed > current)
+		{
+			while (++needed <= d3dinfo->nDisplayMode)
+			{
+				App.DXConfig.nVMode = needed;
+				dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+
+				if (dm->bpp == currentBpp)
+				{
+					change = 1;
+					break;
+				}
+			}
+		}
+		else
+		{
+			while (--needed >= 0)
+			{
+				App.DXConfig.nVMode = needed;
+				dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+
+				if (dm->bpp == currentBpp)
+				{
+					change = 1;
+					break;
+				}
+			}
+		}
+	}
+
+	if (!change)
+	{
+		App.DXConfig.nVMode = current;	//abort!
+		return 0;
+	}
+
+	DXSurfBlt(App.lpFrontBuffer, 0, 0);
+
+	for (int i = 0; i < 32; i++)
+		PictureTextures[i].pSoftwareSurface = 0;
+
+	if (!d3dinfo->bHardware)
+		CloseDrawPrimitive();
+
+	WinFreeDX(0);
+
+	if (WinDXInit(App.DeviceInfoPtr, App.DXConfigPtr, 0))
+		change = 1;
+	else
+	{
+		WinFreeDX(0);
+		App.DXConfig.nVMode = current;
+
+		if (disableZBuffer)
+			App.DXConfigPtr->bZBuffer = 0;
+
+		WinDXInit(App.DeviceInfoPtr, App.DXConfigPtr, 0);
+		change = 0;
+	}
+
+	HWR_GetAllTextureHandles();
+
+	for (int i = 0; i < nTPages; i++)
+		HWR_SetCurrentTexture(TPages[i]);
+
+	HWR_InitState();
+	setup_screen_size();
+	return change;
+}
+
 void inject_dxshell(bool replace)
 {
 	INJECT(0x0048FDB0, BPPToDDBD, replace);
@@ -930,4 +1022,5 @@ void inject_dxshell(bool replace)
 	INJECT(0x0048EBB0, DXGetDeviceInfo, replace);
 	INJECT(0x004B4040, SWRBlit32to15, replace);
 	INJECT(0x0048F3C0, DXEnumDirect3D, replace);
+	INJECT(0x004B3550, DXSwitchVideoMode, replace);
 }

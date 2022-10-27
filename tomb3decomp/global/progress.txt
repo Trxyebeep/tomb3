@@ -1609,7 +1609,7 @@ tomb3decomp progress.
 0x0048FFC0	+	DXCreateViewPort
 0x004900B0	+	DXGetSurfaceDesc
 0x004900C0	+	DXSurfBlt
-0x004B3550		DXSwitchVideoMode
+0x004B3550	+	DXSwitchVideoMode
 0x004B2E80	+	DXCreateZBuffer
 0x004B3A40	+	DXDoFlipWait
 0x004B3A70	+	DXClearBuffers
