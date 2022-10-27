@@ -10,9 +10,9 @@
 #include "../game/lasers.h"
 #include "../game/triboss.h"
 #include "../game/londboss.h"
+#include "output.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
-#include "output.h"
 #endif
 
 static BITE_INFO NodeOffsets[16] =
@@ -4699,6 +4699,15 @@ void DrawBetterLasers(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, u
 
 	for (int i = 0; i < nSegments; i++)
 	{
+		phd_TranslateRel(x, y, z);
+
+		if (i)
+		{
+			x -= dx;
+			y -= dy;
+			z -= dz;
+		}
+
 		if (!i)
 		{
 			r = 0;
