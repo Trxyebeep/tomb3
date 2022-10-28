@@ -8,6 +8,8 @@
 #include "items.h"
 #include "control.h"
 #include "../specific/specific.h"
+#include "draw.h"
+#include "../specific/draweffects.h"
 
 void InitialiseBoat(short item_number)
 {
@@ -151,9 +153,21 @@ void BoatCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	S_CDPlay(12, 0);
 }
 
+void DrawBoat(ITEM_INFO* item)
+{
+	BOAT_INFO* boat;
+
+	boat = (BOAT_INFO*)item->data;
+	item->data = &boat->prop_rot;
+	DrawAnimatingItem(item);
+	item->data = boat;
+	S_DrawWakeFX(item);
+}
+
 void inject_boat(bool replace)
 {
 	INJECT(0x00411FE0, InitialiseBoat, replace);
 	INJECT(0x00412040, BoatCheckGeton, replace);
 	INJECT(0x004121B0, BoatCollision, replace);
+	INJECT(0x00413CF0, DrawBoat, replace);
 }
