@@ -565,6 +565,31 @@ static void DoBoatShift(long item_number)
 	}
 }
 
+static long DoBoatDynamics(long height, long fallspeed, long* ypos)
+{
+	if (height <= *ypos)
+	{
+		fallspeed += (height - fallspeed - *ypos) >> 3;
+
+		if (*ypos > height)
+			*ypos = height;
+	}
+	else
+	{
+		*ypos += fallspeed;
+
+		if (*ypos <= height)
+			fallspeed += 6;
+		else
+		{
+			*ypos = height;
+			fallspeed = 0;
+		}
+	}
+
+	return fallspeed;
+}
+
 void inject_boat(bool replace)
 {
 	INJECT(0x00411FE0, InitialiseBoat, replace);
@@ -578,4 +603,5 @@ void inject_boat(bool replace)
 	INJECT(0x00413900, DoShift, replace);
 	INJECT(0x00413B80, GetCollisionAnim, replace);
 	INJECT(0x00413C10, DoBoatShift, replace);
+	INJECT(0x00413390, DoBoatDynamics, replace);
 }
