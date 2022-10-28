@@ -311,7 +311,7 @@ static void BoatAnimation(ITEM_INFO* item, long collide)
 	{
 		if (lara_item->current_anim_state != 5)
 		{
-			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + collide;
+			lara_item->anim_number = short(objects[VEHICLE_ANIM].anim_index + collide);
 			lara_item->frame_number = anims[lara_item->anim_number].frame_base;
 			lara_item->current_anim_state = 5;
 			lara_item->goal_anim_state = 5;
@@ -372,6 +372,34 @@ static void BoatAnimation(ITEM_INFO* item, long collide)
 	}
 }
 
+static long TestWaterHeight(ITEM_INFO* item, long z, long x, PHD_VECTOR* pos)
+{
+	FLOOR_INFO* floor;
+	long s, c, h;
+	short room_number;
+
+	s = phd_sin(item->pos.y_rot);
+	c = phd_cos(item->pos.y_rot);
+	pos->x = item->pos.x_pos + ((x * c + z * s) >> W2V_SHIFT);
+	pos->y = item->pos.y_pos + ((x * phd_sin(item->pos.z_rot)) >> W2V_SHIFT) - ((z * phd_sin(item->pos.x_rot)) >> W2V_SHIFT);
+	pos->z = item->pos.z_pos + ((z * c - x * s) >> W2V_SHIFT);
+
+	room_number = item->room_number;
+	GetFloor(pos->x, pos->y, pos->z, &room_number);
+	h = GetWaterHeight(pos->x, pos->y, pos->z, room_number);
+
+	if (h == NO_HEIGHT)
+	{
+		floor = GetFloor(pos->x, pos->y, pos->z, &room_number);
+		h = GetHeight(floor, pos->x, pos->y, pos->z);
+
+		if (h == NO_HEIGHT)
+			return h;
+	}
+
+	return h - 5;
+}
+
 void inject_boat(bool replace)
 {
 	INJECT(0x00411FE0, InitialiseBoat, replace);
@@ -381,4 +409,5 @@ void inject_boat(bool replace)
 	INJECT(0x00412330, BoatUserControl, replace);
 	INJECT(0x00412730, CanGetOff, replace);
 	INJECT(0x00412500, BoatAnimation, replace);
+	INJECT(0x00413290, TestWaterHeight, replace);
 }
