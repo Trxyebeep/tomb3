@@ -181,7 +181,7 @@ tomb3decomp progress.
 0x004133E0		BoatDynamics
 0x00413900	+	DoShift
 0x00413B80	+	GetCollisionAnim
-0x00413C10		DoBoatShift
+0x00413C10	+	DoBoatShift
 0x00413CF0	+	DrawBoat
 0x00413D20		TriggerBoatMist
 0x00413F00		BoatSplash

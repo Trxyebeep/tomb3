@@ -536,6 +536,35 @@ static long GetCollisionAnim(ITEM_INFO* item, PHD_VECTOR* pos)
 	}
 }
 
+static void DoBoatShift(long item_number)
+{
+	ITEM_INFO* item;
+	ITEM_INFO* boat;
+	long item_num, x, z, dist;
+
+	item = &items[item_number];
+
+	for (item_num = room[item->room_number].item_number; item_num != NO_ITEM; item_num = boat->next_item)
+	{
+		boat = &items[item_num];
+		
+		if (boat->object_number == BOAT && item_num != item_number && lara.skidoo != item_num)
+		{
+			x = boat->pos.z_pos - item->pos.z_pos;
+			z = boat->pos.x_pos - item->pos.x_pos;
+			dist = SQUARE(x) + SQUARE(z);
+
+			if (dist < 1000000)
+			{
+				item->pos.x_pos = boat->pos.x_pos - 1000000 * z / dist;
+				item->pos.z_pos = boat->pos.z_pos - 1000000 * x / dist;
+			}
+
+			break;
+		}
+	}
+}
+
 void inject_boat(bool replace)
 {
 	INJECT(0x00411FE0, InitialiseBoat, replace);
@@ -548,4 +577,5 @@ void inject_boat(bool replace)
 	INJECT(0x00413290, TestWaterHeight, replace);
 	INJECT(0x00413900, DoShift, replace);
 	INJECT(0x00413B80, GetCollisionAnim, replace);
+	INJECT(0x00413C10, DoBoatShift, replace);
 }
