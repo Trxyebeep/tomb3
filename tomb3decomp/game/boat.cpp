@@ -281,6 +281,97 @@ static long CanGetOff(long lr)
 	return 0;
 }
 
+static void BoatAnimation(ITEM_INFO* item, long collide)
+{
+	BOAT_INFO* boat;
+
+	boat = (BOAT_INFO*)item->data;
+
+	if (lara_item->hit_points <= 0)
+	{
+		if (lara_item->current_anim_state != 8)
+		{
+			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 18;
+			lara_item->frame_number = anims[lara_item->anim_number].frame_base;
+			lara_item->current_anim_state = 8;
+			lara_item->goal_anim_state = 8;
+		}
+	}
+	else if (item->pos.y_pos < boat->water - 128 && item->fallspeed > 0)
+	{
+		if (lara_item->current_anim_state != 6)
+		{
+			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 15;
+			lara_item->frame_number = anims[lara_item->anim_number].frame_base;
+			lara_item->current_anim_state = 6;
+			lara_item->goal_anim_state = 6;
+		}
+	}
+	else if (collide)
+	{
+		if (lara_item->current_anim_state != 5)
+		{
+			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + collide;
+			lara_item->frame_number = anims[lara_item->anim_number].frame_base;
+			lara_item->current_anim_state = 5;
+			lara_item->goal_anim_state = 5;
+		}
+	}
+	else
+	{
+		switch (lara_item->current_anim_state)
+		{
+		case 1:
+
+			if (input & IN_ROLL && !item->speed)
+			{
+				if (input & (IN_RSTEP | IN_RIGHT) && CanGetOff(item->pos.y_rot + 0x4000))
+					lara_item->goal_anim_state = 3;
+				else if (input & (IN_LSTEP | IN_LEFT) && CanGetOff(item->pos.y_rot - 0x4000))
+					lara_item->goal_anim_state = 4;
+			}
+
+			if (item->speed > 0)
+				lara_item->goal_anim_state = 2;
+
+			break;
+
+		case 2:
+
+			if (item->speed <= 0)
+				lara_item->goal_anim_state = 1;
+			else if (input & (IN_RSTEP | IN_RIGHT))
+				lara_item->goal_anim_state = 7;
+			else if (input & (IN_LSTEP | IN_LEFT))
+				lara_item->goal_anim_state = 9;
+
+			break;
+
+		case 6:
+			lara_item->goal_anim_state = 2;
+			break;
+
+		case 7:
+
+			if (item->speed <= 0)
+				lara_item->goal_anim_state = 1;
+			else if (!(input & (IN_RSTEP | IN_RIGHT)))
+				lara_item->goal_anim_state = 2;
+
+			break;
+
+		case 9:
+
+			if (item->speed <= 0)
+				lara_item->goal_anim_state = 1;
+			else if (!(input & (IN_LSTEP | IN_LEFT)))
+				lara_item->goal_anim_state = 2;
+
+			break;
+		}
+	}
+}
+
 void inject_boat(bool replace)
 {
 	INJECT(0x00411FE0, InitialiseBoat, replace);
@@ -289,4 +380,5 @@ void inject_boat(bool replace)
 	INJECT(0x00413CF0, DrawBoat, replace);
 	INJECT(0x00412330, BoatUserControl, replace);
 	INJECT(0x00412730, CanGetOff, replace);
+	INJECT(0x00412500, BoatAnimation, replace);
 }
