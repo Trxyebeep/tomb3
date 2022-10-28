@@ -4,6 +4,10 @@
 #include "../3dsystem/phd_math.h"
 #include "collide.h"
 #include "sphere.h"
+#include "objects.h"
+#include "items.h"
+#include "control.h"
+#include "../specific/specific.h"
 
 void InitialiseBoat(short item_number)
 {
@@ -90,8 +94,66 @@ static long BoatCheckGeton(short item_number, COLL_INFO* coll)
 	return pass;
 }
 
+void BoatCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+	long geton;
+
+	if (l->hit_points < 0 || lara.skidoo != NO_ITEM)
+		return;
+
+	geton = BoatCheckGeton(item_number, coll);
+
+	if (!geton)
+	{
+		coll->enable_baddie_push = 1;
+		ObjectCollision(item_number, l, coll);
+		return;
+	}
+
+	lara.skidoo = item_number;
+
+	if (geton == 1)
+		l->anim_number = objects[VEHICLE_ANIM].anim_index + 8;
+	else if (geton == 2)
+		l->anim_number = objects[VEHICLE_ANIM].anim_index;
+	else if (geton == 3)
+		l->anim_number = objects[VEHICLE_ANIM].anim_index + 6;
+	else
+		l->anim_number = objects[VEHICLE_ANIM].anim_index + 1;
+
+	lara.water_status = LARA_ABOVEWATER;
+	item = &items[item_number];
+	l->pos.x_pos = item->pos.x_pos;
+	l->pos.y_pos = item->pos.y_pos - 5;
+	l->pos.z_pos = item->pos.z_pos;
+	l->pos.x_rot = 0;
+	l->pos.y_rot = item->pos.y_rot;
+	l->pos.z_rot = 0;
+	l->gravity_status = 0;
+	l->speed = 0;
+	l->fallspeed = 0;
+	l->frame_number = anims[l->anim_number].frame_base;
+	l->current_anim_state = 0;
+	l->goal_anim_state = 0;
+
+	if (l->room_number != item->room_number)
+		ItemNewRoom(lara.item_number, item->room_number);
+
+	AnimateItem(l);
+
+	if (item->status != ITEM_ACTIVE)
+	{
+		AddActiveItem(item_number);
+		item->status = ITEM_ACTIVE;
+	}
+
+	S_CDPlay(12, 0);
+}
+
 void inject_boat(bool replace)
 {
 	INJECT(0x00411FE0, InitialiseBoat, replace);
 	INJECT(0x00412040, BoatCheckGeton, replace);
+	INJECT(0x004121B0, BoatCollision, replace);
 }
