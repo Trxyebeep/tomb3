@@ -171,7 +171,7 @@ tomb3decomp progress.
 0x00411FE0	+	InitialiseBoat
 0x00412040	+	BoatCheckGeton
 0x004121B0	+	BoatCollision
-0x00412330		BoatUserControl
+0x00412330	+	BoatUserControl
 0x00412500		BoatAnimation
 0x00412730		CanGetOff
 0x00412820		BoatControl

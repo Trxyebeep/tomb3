@@ -10,6 +10,7 @@
 #include "../specific/specific.h"
 #include "draw.h"
 #include "../specific/draweffects.h"
+#include "lara.h"
 
 void InitialiseBoat(short item_number)
 {
@@ -164,10 +165,98 @@ void DrawBoat(ITEM_INFO* item)
 	S_DrawWakeFX(item);
 }
 
+static long BoatUserControl(ITEM_INFO* item)
+{
+	BOAT_INFO* boat;
+	long no_turn, max_speed;
+
+	boat = (BOAT_INFO*)item->data;
+	no_turn = 1;
+
+	if (item->pos.y_pos < boat->water - 128 || boat->water == NO_HEIGHT)
+		return 1;
+
+	if ((input & IN_ROLL || input & IN_LOOK) && !item->speed)
+	{
+		if (!(input & (IN_RSTEP | IN_RIGHT | IN_LSTEP | IN_LEFT)))
+			item->speed = 0;
+		else if (!(input & IN_ROLL))
+			item->speed = 20;
+
+		if (input & IN_LOOK && !item->speed)
+			LookUpDown();
+	}
+	else
+	{
+		if ((input & (IN_LSTEP | IN_LEFT)) && !(input & IN_JUMP) || (input & (IN_RSTEP | IN_RIGHT)) && input & IN_JUMP)
+		{
+			if (boat->boat_turn > 0)
+				boat->boat_turn -= 45;
+			else
+			{
+				boat->boat_turn -= 22;
+
+				if (boat->boat_turn < -728)
+					boat->boat_turn = -728;
+			}
+
+			no_turn = 0;
+		}
+		else if ((input & (IN_RSTEP | IN_RIGHT)) && !(input & IN_JUMP) || (input & (IN_LSTEP | IN_LEFT)) && input & IN_JUMP)
+		{
+			if (boat->boat_turn < 0)
+				boat->boat_turn += 45;
+			else
+			{
+				boat->boat_turn += 22;
+
+				if (boat->boat_turn > 728)
+					boat->boat_turn = 728;
+			}
+
+			no_turn = 0;
+		}
+
+		if (input & IN_JUMP)
+		{
+			if (item->speed > 0)
+				item->speed -= 5;
+			else if (item->speed > -20)
+				item->speed -= 2;
+		}
+		else if (input & IN_ACTION)
+		{
+			if (input & IN_SPRINT)
+				max_speed = 185;
+			else if (input & IN_WALK)
+				max_speed = 36;
+			else
+				max_speed = 110;
+
+			if (item->speed < max_speed)
+				item->speed = short(5 * item->speed / (2 * max_speed) + item->speed + 2);
+			else if (item->speed > max_speed + 1)
+				item->speed--;
+		}
+		else if (item->speed >= 0 && item->speed < 20 && (input & (IN_RSTEP | IN_RIGHT | IN_LSTEP | IN_LEFT)))
+		{
+			if (!item->speed && !(input & IN_ROLL))
+				item->speed = 20;
+		}
+		else if (item->speed > 1)
+			item->speed--;
+		else
+			item->speed = 0;
+	}
+
+	return no_turn;
+}
+
 void inject_boat(bool replace)
 {
 	INJECT(0x00411FE0, InitialiseBoat, replace);
 	INJECT(0x00412040, BoatCheckGeton, replace);
 	INJECT(0x004121B0, BoatCollision, replace);
 	INJECT(0x00413CF0, DrawBoat, replace);
+	INJECT(0x00412330, BoatUserControl, replace);
 }
