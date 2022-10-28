@@ -505,6 +505,37 @@ static long DoShift(ITEM_INFO* item, PHD_VECTOR* newPos, PHD_VECTOR* oldPos)
 	return 0;
 }
 
+static long GetCollisionAnim(ITEM_INFO* item, PHD_VECTOR* pos)
+{
+	long s, c, fb, lr;
+
+	pos->x = item->pos.x_pos - pos->x;
+	pos->z = item->pos.z_pos - pos->z;
+
+	if (!pos->x && !pos->z)
+		return 0;
+
+	s = phd_sin(item->pos.y_rot);
+	c = phd_cos(item->pos.y_rot);
+	fb = (s * pos->x + c * pos->z) >> W2V_SHIFT;
+	lr = (c * pos->x - s * pos->z) >> W2V_SHIFT;
+
+	if (abs(fb) <= abs(lr))
+	{
+		if (lr > 0)
+			return 11;
+		else
+			return 12;
+	}
+	else
+	{
+		if (fb > 0)
+			return 14;
+		else
+			return 13;
+	}
+}
+
 void inject_boat(bool replace)
 {
 	INJECT(0x00411FE0, InitialiseBoat, replace);
@@ -516,4 +547,5 @@ void inject_boat(bool replace)
 	INJECT(0x00412500, BoatAnimation, replace);
 	INJECT(0x00413290, TestWaterHeight, replace);
 	INJECT(0x00413900, DoShift, replace);
+	INJECT(0x00413B80, GetCollisionAnim, replace);
 }
