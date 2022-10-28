@@ -252,6 +252,35 @@ static long BoatUserControl(ITEM_INFO* item)
 	return no_turn;
 }
 
+static long CanGetOff(long lr)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	long x, y, z, h, c;
+	short angle, room_number;
+
+	item = &items[lara.skidoo];
+
+	if (lr >= 0)
+		angle = item->pos.y_rot + 0x4000;
+	else
+		angle = item->pos.y_rot - 0x4000;
+
+	x = item->pos.x_pos + ((WALL_SIZE * phd_sin(angle)) >> W2V_SHIFT);
+	y = item->pos.y_pos;
+	z = item->pos.z_pos + ((WALL_SIZE * phd_cos(angle)) >> W2V_SHIFT);
+
+	room_number = item->room_number;
+	floor = GetFloor(x, y, z, &room_number);
+	h = GetHeight(floor, x, y, z);
+	c = GetCeiling(floor, x, y, z);
+
+	if (h - item->pos.y_pos >= -512 && height_type != BIG_SLOPE && height_type != DIAGONAL && c - item->pos.y_pos <= -762 && h - c >= 762)
+		return 1;
+
+	return 0;
+}
+
 void inject_boat(bool replace)
 {
 	INJECT(0x00411FE0, InitialiseBoat, replace);
@@ -259,4 +288,5 @@ void inject_boat(bool replace)
 	INJECT(0x004121B0, BoatCollision, replace);
 	INJECT(0x00413CF0, DrawBoat, replace);
 	INJECT(0x00412330, BoatUserControl, replace);
+	INJECT(0x00412730, CanGetOff, replace);
 }
