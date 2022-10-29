@@ -11,6 +11,7 @@
 #include "draw.h"
 #include "../specific/draweffects.h"
 #include "lara.h"
+#include "sound.h"
 
 void InitialiseBoat(short item_number)
 {
@@ -590,6 +591,150 @@ static long DoBoatDynamics(long height, long fallspeed, long* ypos)
 	return fallspeed;
 }
 
+static long BoatDynamics(short item_number)
+{
+	ITEM_INFO* item;
+	BOAT_INFO* boat;
+	FLOOR_INFO* floor;
+	PHD_VECTOR pos, newPos;
+	PHD_VECTOR flPos, frPos, blPos, brPos, fmPos, flPos2, frPos2, blPos2, brPos2, fmPos2;
+	long front_left, front_right, back_left, back_right, front_mid, front_left2, front_right2, back_left2, back_right2, front_mid2;
+	long slip, shift, h, anim, dx, dz, speed;
+	short room_number;
+
+	item = &items[item_number];
+	boat = (BOAT_INFO*)item->data;
+	item->pos.z_rot -= boat->tilt_angle;
+
+	front_left = TestWaterHeight(item, 750, -300, &flPos);
+	front_right = TestWaterHeight(item, 750, 300, &frPos);
+	back_left = TestWaterHeight(item, -750, -300, &blPos);
+	back_right = TestWaterHeight(item, -750, 300, &brPos);
+	front_mid = TestWaterHeight(item, 1000, 0, &fmPos);
+	pos.x = item->pos.x_pos;
+	pos.y = item->pos.y_pos;
+	pos.z = item->pos.z_pos;
+
+	if (blPos.y > back_left)
+		blPos.y = back_left;
+
+	if (brPos.y > back_right)
+		brPos.y = back_right;
+
+	if (flPos.y > front_left)
+		flPos.y = front_left;
+
+	if (frPos.y > front_right)
+		frPos.y = front_right;
+
+	if (fmPos.y > front_mid)
+		fmPos.y = front_mid;
+
+	item->pos.y_rot += short(boat->extra_rotation + boat->boat_turn);
+	boat->tilt_angle = short(6 * boat->boat_turn);
+
+	item->pos.x_pos += (item->speed * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+	item->pos.z_pos += (item->speed * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+
+	if (item->speed < 0)
+		boat->prop_rot += 6006;
+	else
+		boat->prop_rot += 546 * item->speed + 364;
+
+	slip = (30 * phd_sin(item->pos.z_rot)) >> W2V_SHIFT;
+
+	if (!slip && item->pos.z_rot)
+		slip = item->pos.z_rot <= 0 ? -1 : 1;
+
+	item->pos.x_pos += (slip * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+	item->pos.z_pos -= (slip * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+
+	slip = (10 * phd_sin(item->pos.x_rot)) >> W2V_SHIFT;
+
+	if (!slip && item->pos.x_rot)
+		slip = item->pos.x_rot <= 0 ? -1 : 1;
+
+	item->pos.x_pos -= (slip * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+	item->pos.z_pos -= (slip * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+
+	newPos.x = item->pos.x_pos;
+	newPos.z = item->pos.z_pos;
+	DoBoatShift(item_number);
+
+	shift = 0;
+	back_left2 = TestWaterHeight(item, -750, -300, &blPos2);
+
+	if (back_left2 < blPos.y - 128)
+		shift = DoShift(item, &blPos2, &blPos);
+
+	back_right2 = TestWaterHeight(item, -750, 300, &brPos2);
+
+	if (back_right2 < brPos.y - 128)
+		shift += DoShift(item, &brPos2, &brPos);
+
+	front_left2 = TestWaterHeight(item, 750, -300, &flPos2);
+
+	if (front_left2 < flPos.y - 128)
+		shift += DoShift(item, &flPos2, &flPos);
+
+	front_right2 = TestWaterHeight(item, 750, 300, &frPos2);
+
+	if (front_right2 < frPos.y - 128)
+		shift += DoShift(item, &frPos2, &frPos);
+
+	if (!slip)
+	{
+		front_mid2 = TestWaterHeight(item, 1000, 0, &fmPos2);
+
+		if (front_mid2 < fmPos.y - 128)
+			DoShift(item, &fmPos2, &fmPos);
+	}
+
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	h = GetWaterHeight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, room_number);
+
+	if (h == NO_HEIGHT)
+		h = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (h < item->pos.y_pos - 128)
+		DoShift(item, (PHD_VECTOR*)&item->pos, &pos);
+
+	boat->extra_rotation = (short)shift;
+	anim = GetCollisionAnim(item, &newPos);
+
+	if (slip || anim)
+	{
+		dx = item->pos.x_pos - pos.x;
+		dz = item->pos.z_pos - pos.z;
+		speed = (dx * phd_sin(item->pos.y_rot) + dz * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+
+		if (lara.skidoo == item_number && item->speed > 115 && speed < item->speed - 10)
+		{
+			lara_item->hit_points -= item->speed;
+			lara_item->hit_status = 1;
+			SoundEffect(SFX_LARA_INJURY, &lara_item->pos, SFX_DEFAULT);
+			speed >>= 1;
+			item->speed >>= 1;
+		}
+
+		if (slip)
+		{
+			if (item->speed <= 120)
+				item->speed = (short)speed;
+		}
+		else if (item->speed > 0 && speed < item->speed)
+			item->speed = (short)speed;
+		else if (item->speed < 0 && speed > item->speed)
+			item->speed = (short)speed;
+
+		if (item->speed < -20)
+			item->speed = -20;
+	}
+
+	return anim;
+}
+
 void inject_boat(bool replace)
 {
 	INJECT(0x00411FE0, InitialiseBoat, replace);
@@ -604,4 +749,5 @@ void inject_boat(bool replace)
 	INJECT(0x00413B80, GetCollisionAnim, replace);
 	INJECT(0x00413C10, DoBoatShift, replace);
 	INJECT(0x00413390, DoBoatDynamics, replace);
+	INJECT(0x004133E0, BoatDynamics, replace);
 }
