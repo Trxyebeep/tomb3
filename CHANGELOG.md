@@ -1,5 +1,16 @@
 # tomb3 changelog
 
+## Unreleased
+
+### Original bug fixes
+
+### tomb3 additions
+
+### tomb3 bug fixes
+
+- Fix footstep sfx being wrong in some rooms.
+
+
 ## [1.1.0](https://github.com/Trxyebeep/tomb3decomp/tree/V1.1.0) (Oct. 29 2022)
 
 ### Original bug fixes
