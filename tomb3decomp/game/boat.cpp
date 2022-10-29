@@ -848,6 +848,71 @@ static void TriggerBoatMist(long x, long y, long z, long speed, short angle, lon
 	}
 }
 
+static void DoWake(ITEM_INFO* item, long xoff, long zoff, short rotate)
+{
+	long s, c, x, y, z;
+	long xv[2];
+	long zv[2];
+	short room_number, angle1, angle2;
+
+	if (WakePts[CurrentStartWake][rotate].life)
+		return;
+
+	s = phd_sin(item->pos.y_rot);
+	c = phd_cos(item->pos.y_rot);
+	x = item->pos.x_pos + ((zoff * s + xoff * c) >> W2V_SHIFT);
+	y = item->pos.y_pos + 128;
+	z = item->pos.z_pos + ((zoff * c - xoff * s) >> W2V_SHIFT);
+	room_number = item->room_number;
+	GetFloor(x, y, z, &room_number);
+	GetWaterHeight(x, y, z, room_number);
+
+	if (item->speed >= 0)
+	{
+		if (rotate)
+		{
+			angle1 = item->pos.y_rot + 29120;
+			angle2 = item->pos.y_rot + 25480;
+		}
+		else
+		{
+			angle1 = item->pos.y_rot - 29120;
+			angle2 = item->pos.y_rot - 25480;
+		}
+	}
+	else
+	{
+		if (rotate)
+		{
+			angle1 = item->pos.y_rot + 3640;
+			angle2 = item->pos.y_rot + 7280;
+		}
+		else
+		{
+			angle1 = item->pos.y_rot - 3640;
+			angle2 = item->pos.y_rot - 7280;
+		}
+	}
+
+	xv[0] = (4 * phd_sin(angle1)) >> W2V_SHIFT;
+	xv[1] = (10 * phd_sin(angle2)) >> W2V_SHIFT;
+	zv[0] = (4 * phd_cos(angle1)) >> W2V_SHIFT;
+	zv[1] = (10 * phd_cos(angle2)) >> W2V_SHIFT;
+	WakePts[CurrentStartWake][rotate].y = item->pos.y_pos + 32;
+	WakePts[CurrentStartWake][rotate].life = 64;
+
+	for (int i = 0; i < 2; i++)
+	{
+		WakePts[CurrentStartWake][rotate].x[i] = x;
+		WakePts[CurrentStartWake][rotate].z[i] = z;
+		WakePts[CurrentStartWake][rotate].xvel[i] = (short)xv[i];
+		WakePts[CurrentStartWake][rotate].zvel[i] = (short)zv[i];
+	}
+
+	if (rotate == 1)
+		CurrentStartWake = (CurrentStartWake + 1) & 0x1F;
+}
+
 void inject_boat(bool replace)
 {
 	INJECT(0x00411FE0, InitialiseBoat, replace);
@@ -865,4 +930,5 @@ void inject_boat(bool replace)
 	INJECT(0x004133E0, BoatDynamics, replace);
 	INJECT(0x00413F00, BoatSplash, replace);
 	INJECT(0x00413D20, TriggerBoatMist, replace);
+	INJECT(0x004130C0, DoWake, replace);
 }

@@ -175,7 +175,7 @@ tomb3decomp progress.
 0x00412500	+	BoatAnimation
 0x00412730	+	CanGetOff
 0x00412820		BoatControl
-0x004130C0		DoWake
+0x004130C0	+	DoWake
 0x00413290	+	TestWaterHeight
 0x00413390	+	DoBoatDynamics
 0x004133E0	+	BoatDynamics
