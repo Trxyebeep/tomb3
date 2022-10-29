@@ -170,19 +170,19 @@ tomb3decomp progress.
 
 0x00411FE0	+	InitialiseBoat
 0x00412040	+	BoatCheckGeton
-0x004121B0		BoatCollision
-0x00412330		BoatUserControl
-0x00412500		BoatAnimation
-0x00412730		CanGetOff
+0x004121B0	+	BoatCollision
+0x00412330	+	BoatUserControl
+0x00412500	+	BoatAnimation
+0x00412730	+	CanGetOff
 0x00412820		BoatControl
 0x004130C0		DoWake
-0x00413290		TestWaterHeight
-0x00413390		DoBoatDynamics
+0x00413290	+	TestWaterHeight
+0x00413390	+	DoBoatDynamics
 0x004133E0		BoatDynamics
-0x00413900		DoShift
-0x00413B80		GetCollisionAnim
-0x00413C10		DoBoatShift
-0x00413CF0		DrawBoat
+0x00413900	+	DoShift
+0x00413B80	+	GetCollisionAnim
+0x00413C10	+	DoBoatShift
+0x00413CF0	+	DrawBoat
 0x00413D20		TriggerBoatMist
 0x00413F00		BoatSplash
 

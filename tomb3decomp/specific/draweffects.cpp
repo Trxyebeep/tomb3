@@ -3607,8 +3607,11 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 	UpdateLaserShades();
 
 #ifdef TROYESTUFF
-	if (tomb3.improved_lasers)
-		return DrawBetterLasers(src, dest, cr, cg, cb);
+	if (dest->box_number != 0x1FFF)	//BITE. ME.
+	{
+		if (tomb3.improved_lasers)
+			return DrawBetterLasers(src, dest, cr, cg, cb);
+	}
 #endif
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
@@ -4789,7 +4792,7 @@ void DrawBetterLasers(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, u
 
 		v[2].ys -= s;
 		v[3].ys -= s;
-		HWI_InsertGT4_Sorted(&v[0], &v[1], &v[2], &v[3], &tex, MID_SORT, 1);
+		HWI_InsertGT4_Poly(&v[0], &v[1], &v[2], &v[3], &tex, MID_SORT, 1);
 	}
 
 	phd_PopMatrix();

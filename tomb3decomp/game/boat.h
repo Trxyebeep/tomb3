@@ -2,5 +2,7 @@
 #include "../global/vars.h"
 
 void InitialiseBoat(short item_number);
+void BoatCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
+void DrawBoat(ITEM_INFO* item);
 
 void inject_boat(bool replace);
