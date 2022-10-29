@@ -13,6 +13,7 @@
 #include "lara.h"
 #include "sound.h"
 #include "effect2.h"
+#include "../specific/game.h"
 
 void InitialiseBoat(short item_number)
 {
@@ -741,7 +742,7 @@ static void BoatSplash(ITEM_INFO* item, long fallspeed, long h)
 	splash_setup.x = item->pos.x_pos;
 	splash_setup.y = h;
 	splash_setup.z = item->pos.z_pos;
-	splash_setup.InnerYvel = -128 * fallspeed;
+	splash_setup.InnerYvel = short(-128 * fallspeed);
 	splash_setup.InnerXZoff = 64;
 	splash_setup.InnerXZsize = 48;
 	splash_setup.InnerYsize = -384;
@@ -752,7 +753,7 @@ static void BoatSplash(ITEM_INFO* item, long fallspeed, long h)
 	splash_setup.MiddleXZsize = 96;
 	splash_setup.MiddleYsize = -256;
 	splash_setup.MiddleXZvel = 224;
-	splash_setup.MiddleYvel = -64 * fallspeed;
+	splash_setup.MiddleYvel = short(-64 * fallspeed);
 	splash_setup.MiddleGravity = 72;
 	splash_setup.MiddleFriction = 8;
 	splash_setup.OuterXZoff = 128;
@@ -761,6 +762,90 @@ static void BoatSplash(ITEM_INFO* item, long fallspeed, long h)
 	splash_setup.OuterFriction = 9;
 	SetupSplash(&splash_setup);
 	SplashCount = 16;
+}
+
+static void TriggerBoatMist(long x, long y, long z, long speed, short angle, long snow)
+{
+	SPARKS* sptr;
+	long size;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 0;
+	sptr->sG = 0;
+	sptr->sB = 0;
+
+	if (snow)
+	{
+		sptr->dR = 255;
+		sptr->dG = 255;
+		sptr->dB = 255;
+	}
+	else
+	{
+		sptr->dR = 64;
+		sptr->dG = 64;
+		sptr->dB = 64;
+	}
+
+	sptr->ColFadeSpeed = (GetRandomControl() & 3) + 4;
+	sptr->FadeToBlack = uchar(12 - (snow << 3));
+	sptr->TransType = 2;
+	sptr->extras = 0;
+	sptr->Life = (GetRandomControl() & 3) + 20;
+	sptr->sLife = sptr->Life;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 0xF) + x - 8;
+	sptr->y = (GetRandomControl() & 0xF) + y - 8;
+	sptr->z = (GetRandomControl() & 0xF) + z - 8;
+	sptr->Xvel = (GetRandomControl() & 0x7F) + ((speed * phd_sin(angle)) >> (W2V_SHIFT + 2)) - 64;
+	sptr->Yvel = short(12 * speed);
+	sptr->Zvel = (GetRandomControl() & 0x7F) + ((speed * phd_cos(angle)) >> (W2V_SHIFT + 2)) - 64;
+	sptr->Friction = 3;
+
+	if (GetRandomControl() & 1)
+	{
+		sptr->Flags = 538;
+		sptr->RotAng = GetRandomControl() & 0xFFF;
+
+		if (GetRandomControl() & 1)
+			sptr->RotAdd = -16 - (GetRandomControl() & 0xF);
+		else
+			sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
+	}
+	else
+		sptr->Flags = 522;
+
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+
+	if (snow)
+	{
+		sptr->Friction = 0;
+		sptr->Scalar = 3;
+		sptr->Yvel = -sptr->Yvel >> 5;
+		sptr->MaxYvel = 0;
+		sptr->Gravity = (GetRandomControl() & 0x1F) + 32;
+		size = (GetRandomControl() & 7) + 16;
+		sptr->Width = (uchar)size;
+		sptr->sWidth = sptr->Width;
+		sptr->dWidth = sptr->Width;
+		sptr->Height = (uchar)size;
+		sptr->sHeight = sptr->Height;
+		sptr->dHeight = sptr->Height;
+	}
+	else
+	{
+		sptr->Scalar = 4;
+		sptr->MaxYvel = 0;
+		sptr->Gravity = 0;
+		size = (GetRandomControl() & 7) + (speed >> 1) + 16;
+		sptr->dWidth = (uchar)size;
+		sptr->Width = sptr->dWidth >> 2;
+		sptr->sWidth = sptr->dWidth >> 2;
+		sptr->dHeight = (uchar)size;
+		sptr->sHeight = sptr->dHeight >> 2;
+		sptr->Height = sptr->dHeight >> 2;
+	}
 }
 
 void inject_boat(bool replace)
@@ -779,4 +864,5 @@ void inject_boat(bool replace)
 	INJECT(0x00413390, DoBoatDynamics, replace);
 	INJECT(0x004133E0, BoatDynamics, replace);
 	INJECT(0x00413F00, BoatSplash, replace);
+	INJECT(0x00413D20, TriggerBoatMist, replace);
 }
