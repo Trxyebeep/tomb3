@@ -1,6 +1,6 @@
 # tomb3 changelog
 
-## Unreleased
+## [1.1.0](https://github.com/Trxyebeep/tomb3decomp/tree/V1.1.0) (Oct. 29 2022)
 
 ### Original bug fixes
 
@@ -14,7 +14,7 @@
 - Add crawl tilting.
 - Add an option for PSX yellow poison bar.
 - Make poison bar flash.
-- Add an option for PSX water color.
+- Add an option for (approximate, for now) PSX water color.
 - Add colsub for sparks, like smoke.
 - Improve bucket drawing, fixes PC bars disappearing in open spaces. Eg. beginning of Thames Wharf.
 - Improve pickup display code to show transparency correctly.
@@ -22,8 +22,8 @@
 
 ### tomb3 bug fixes
 
-- Fix laser seams and color by refactoring its drawing function.
-- Fix GetFullPath (fixes FMV playback).
+- Fix laser seams and color.
+- Fix GetFullPath (fixes some FMV playback issues).
 - Fix skybox drawing (fixes Lara's Home crash when using the no crystals patch).
 
 
