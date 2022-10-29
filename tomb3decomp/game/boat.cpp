@@ -12,6 +12,7 @@
 #include "../specific/draweffects.h"
 #include "lara.h"
 #include "sound.h"
+#include "effect2.h"
 
 void InitialiseBoat(short item_number)
 {
@@ -735,6 +736,33 @@ static long BoatDynamics(short item_number)
 	return anim;
 }
 
+static void BoatSplash(ITEM_INFO* item, long fallspeed, long h)
+{
+	splash_setup.x = item->pos.x_pos;
+	splash_setup.y = h;
+	splash_setup.z = item->pos.z_pos;
+	splash_setup.InnerYvel = -128 * fallspeed;
+	splash_setup.InnerXZoff = 64;
+	splash_setup.InnerXZsize = 48;
+	splash_setup.InnerYsize = -384;
+	splash_setup.InnerXZvel = 160;
+	splash_setup.InnerGravity = 128;
+	splash_setup.InnerFriction = 7;
+	splash_setup.MiddleXZoff = 96;
+	splash_setup.MiddleXZsize = 96;
+	splash_setup.MiddleYsize = -256;
+	splash_setup.MiddleXZvel = 224;
+	splash_setup.MiddleYvel = -64 * fallspeed;
+	splash_setup.MiddleGravity = 72;
+	splash_setup.MiddleFriction = 8;
+	splash_setup.OuterXZoff = 128;
+	splash_setup.OuterXZsize = 128;
+	splash_setup.OuterXZvel = 272;
+	splash_setup.OuterFriction = 9;
+	SetupSplash(&splash_setup);
+	SplashCount = 16;
+}
+
 void inject_boat(bool replace)
 {
 	INJECT(0x00411FE0, InitialiseBoat, replace);
@@ -750,4 +778,5 @@ void inject_boat(bool replace)
 	INJECT(0x00413C10, DoBoatShift, replace);
 	INJECT(0x00413390, DoBoatDynamics, replace);
 	INJECT(0x004133E0, BoatDynamics, replace);
+	INJECT(0x00413F00, BoatSplash, replace);
 }

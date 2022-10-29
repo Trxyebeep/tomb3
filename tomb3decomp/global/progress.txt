@@ -184,7 +184,7 @@ tomb3decomp progress.
 0x00413C10	+	DoBoatShift
 0x00413CF0	+	DrawBoat
 0x00413D20		TriggerBoatMist
-0x00413F00		BoatSplash
+0x00413F00	+	BoatSplash
 
 
 		game/boomute.cpp
