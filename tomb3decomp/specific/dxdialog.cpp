@@ -22,6 +22,7 @@
 #define IDC_AGPMEM				1012
 #define IDC_DISABLE_JOYSTICK	1014
 #define IDC_DISABLE_SOUND		1015
+#define IDC_VERSION				1016
 #define IDC_TEST				1019
 
 #define G_DXConfig	VAR_(0x006CE508, DXCONFIG*)
@@ -615,6 +616,111 @@ void DXInitJoystickAdapter(HWND hwnd)
 	}
 }
 
+void DXCheckMMXTechnology(HWND hwnd)
+{
+	HWND version;
+	ulong maxCPUID, processorType, info, features, unk1, unk2;
+	long mmx;
+	char buf[32];
+	char name[13];
+
+	version = GetDlgItem(hwnd, IDC_VERSION);
+	maxCPUID = 0;
+	processorType = 0;
+	info = 0;
+	features = 0;
+	unk1 = 0;
+	unk2 = 0;
+	strcpy(name, "AnonymousCPU");
+
+	__asm
+	{
+		pushad
+		mov processorType, 4;
+		pushfd
+		pop eax
+		mov ecx, eax
+		xor eax, 200000h
+		push eax
+		popfd
+		pushfd
+		pop eax
+		xor eax, ecx
+		je end
+
+		mov maxCPUID, 0
+		mov eax, 0;	//get largest eax value, and CPU name
+		cpuid
+		mov maxCPUID, eax
+		mov dword ptr[name], ebx
+		mov dword ptr[name + 4], edx
+		mov dword ptr[name + 8], ecx
+
+		mov eax, 1;	//get version info and feature bits
+		cpuid
+		mov info, eax
+		mov features, edx
+
+		shr eax, 8; //actually getting the type now
+		and eax, 0Fh
+		mov processorType, eax
+
+		cmp eax, 5;	//no idea tbh
+		jl end
+		shr eax, 8
+		and eax, 100h
+		setne byte ptr unk1
+
+		and edx, 10h
+		je end
+		shr eax, 8
+		and eax, 4
+		sete byte ptr unk2
+
+	end:
+		popad
+	}
+
+	mmx = (features >> 23) & 1;
+
+	if (!strcmp("GenuineIntel", name))
+	{
+		if (processorType == 5)
+		{
+			if (mmx)
+				strcpy(buf, "Intel Pentium MMX");
+			else
+				strcpy(buf, "Intel Pentium");
+		}
+		else if (processorType == 6)
+		{
+			if (mmx)
+				strcpy(buf, "Intel Pentium Pro MMX");
+			else
+				strcpy(buf, "Intel Pentium Pro");
+		}
+	}
+
+	if (!strcmp("AuthenticAMD", name))
+	{
+		if (processorType == 5)
+			strcpy(buf, "AMD K5");
+		else if (processorType == 6)
+			strcpy(buf, "AMD K6");
+	}
+
+	if (!strcmp("CyrixInstead", name))
+	{
+		if (processorType == 5)
+			strcpy(buf, "Cyrix 6x86");
+		else if (processorType == 6)
+			strcpy(buf, "Cyrix M2");
+	}
+
+	SetWindowText(version, buf);
+	G_DXConfig->MMX = mmx;
+}
+
 void inject_dxdialog(bool replace)
 {
 	INJECT(0x00496C20, DXSetupDlgProc, replace);
@@ -624,4 +730,5 @@ void inject_dxdialog(bool replace)
 	INJECT(0x00497FE0, DXInitTextures, replace);
 	INJECT(0x00497630, DXInitDSAdapters, replace);
 	INJECT(0x00497700, DXInitJoystickAdapter, replace);
+	INJECT(0x00497290, DXCheckMMXTechnology, replace);
 }

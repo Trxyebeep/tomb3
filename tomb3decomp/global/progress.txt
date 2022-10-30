@@ -1577,7 +1577,7 @@ tomb3decomp progress.
 
 0x00496BB0	+	DXUserDialog
 0x00496C20	+	DXSetupDlgProc
-0x00497290		DXCheckMMXTechnology
+0x00497290	+	DXCheckMMXTechnology
 0x00497530		DXInitDialogBox
 0x00497630	+	DXInitDSAdapters
 0x00497700	+	DXInitJoystickAdapter

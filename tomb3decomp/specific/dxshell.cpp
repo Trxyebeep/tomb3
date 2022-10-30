@@ -715,7 +715,7 @@ void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance)
 		and eax, 4
 		sete byte ptr unk2
 
-		end:
+	end:
 		popad
 	}
 
