@@ -391,10 +391,183 @@ void DXInitVideoModes(HWND hwnd, long nDD, long nD3D)
 	}
 }
 
+void DXInitTextures(HWND hwnd, long nDD, long nD3D)
+{
+	DIRECT3DINFO* d3dinfo;
+	D3DTEXTUREINFO* tex;
+	HWND format;
+	static long selected = -1;
+	long nTF;
+	char old[20];
+	char buf[20];
+	char bit[12];
+	bool palette, found;
+
+	nTF = -1;
+	format = GetDlgItem(hwnd, IDC_D3DTF);
+
+	if (selected != -1)
+		SendMessage(format, CB_GETLBTEXT, SendMessage(format, CB_GETCURSEL, 0, 0), (LPARAM)old);
+
+	SendMessage(format, CB_RESETCONTENT, 0, 0);
+	palette = 0;
+
+	d3dinfo = &G_DeviceInfo->DDInfo[nDD].D3DInfo[nD3D];
+
+	for (int i = 0; i < d3dinfo->nTexture; i++)
+	{
+		tex = &d3dinfo->Texture[i];
+
+		if (tex->bPalette)
+		{
+			palette = 1;
+			sprintf(buf, "%d Bit", tex->bpp);
+		}
+		else if (tex->abpp)
+			sprintf(buf, "%d%d%d%d", tex->rbpp, tex->gbpp, tex->bbpp, tex->abpp);
+		else
+			sprintf(buf, "%d%d%d", tex->rbpp, tex->gbpp, tex->bbpp);
+
+		SendMessage(format, CB_ADDSTRING, 0, (LPARAM)buf);
+
+		if (selected == -1)
+		{
+			if (!strcmp(bit, buf))
+				nTF = i;
+		}
+		else if (!strcmp(old, buf))
+			nTF = i;
+	}
+
+	found = 0;
+
+	if (palette)
+	{
+		if (SendMessage(GetDlgItem(hwnd, IDC_8BIT_TEXTURES), BM_GETCHECK, 0, 0))
+		{
+			strcpy(bit, "8 Bit");
+
+			for (int i = 0; i < d3dinfo->nTexture; i++)
+			{
+				SendMessage(format, CB_GETLBTEXT, i, (LPARAM)buf);
+
+				if (!strcmp(bit, buf))
+				{
+					nTF = i;
+					found = 1;
+					break;
+				}
+			}
+		}
+	}
+	else
+		EnableWindow(GetDlgItem(hwnd, IDC_8BIT_TEXTURES), 0);
+
+	if (G_DXConfig->MMX && SendMessage(GetDlgItem(hwnd, IDC_SOFTWARE), BM_GETCHECK, 0, 0))
+	{
+		if (!found)
+		{
+			strcpy(bit, "8888");
+
+			for (int i = 0; i < d3dinfo->nTexture; i++)
+			{
+				SendMessage(format, CB_GETLBTEXT, i, (LPARAM)buf);
+
+				if (!strcmp(bit, buf))
+				{
+					nTF = i;
+					found = 1;
+					break;
+				}
+			}
+		}
+	}
+
+	if (!found)
+	{
+		strcpy(bit, "5551");
+
+		for (int i = 0; i < d3dinfo->nTexture; i++)
+		{
+			SendMessage(format, CB_GETLBTEXT, i, (LPARAM)buf);
+
+			if (!strcmp(bit, buf))
+			{
+				nTF = i;
+				found = 1;
+				break;
+			}
+		}
+	}
+
+	if (!found)
+	{
+		strcpy(bit, "4444");
+
+		for (int i = 0; i < d3dinfo->nTexture; i++)
+		{
+			SendMessage(format, CB_GETLBTEXT, i, (LPARAM)buf);
+
+			if (!strcmp(bit, buf))
+			{
+				nTF = i;
+				found = 1;
+				break;
+			}
+		}
+	}
+
+	if (!found)
+	{
+		strcpy(bit, "555");
+
+		for (int i = 0; i < d3dinfo->nTexture; i++)
+		{
+			SendMessage(format, CB_GETLBTEXT, i, (LPARAM)buf);
+
+			if (!strcmp(bit, buf))
+			{
+				nTF = i;
+				found = 1;
+				break;
+			}
+		}
+	}
+
+	if (!found)
+	{
+		strcpy(bit, "565");
+
+		for (int i = 0; i < d3dinfo->nTexture; i++)
+		{
+			SendMessage(format, CB_GETLBTEXT, i, (LPARAM)buf);
+
+			if (!strcmp(bit, buf))
+			{
+				nTF = i;
+				found = 1;
+				break;
+			}
+		}
+	}
+
+	if (nTF == -1)
+	{
+		selected = 0;
+		SendMessage(format, CB_SETCURSEL, 0, 0);
+	}
+	else
+	{
+		selected = nTF;
+		SendMessage(format, CB_SETCURSEL, nTF, 0);
+	}
+}
+
 void inject_dxdialog(bool replace)
 {
 	INJECT(0x00496C20, DXSetupDlgProc, replace);
 	INJECT(0x00496BB0, DXUserDialog, replace);
 	INJECT(0x004977D0, DXInitD3DDrivers, replace);
 	INJECT(0x00497C20, DXInitVideoModes, replace);
+	INJECT(0x00497FE0, DXInitTextures, replace);
 }

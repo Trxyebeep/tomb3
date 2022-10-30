@@ -1583,7 +1583,7 @@ tomb3decomp progress.
 0x00497700		DXInitJoystickAdapter
 0x004977D0	+	DXInitD3DDrivers
 0x00497C20	+	DXInitVideoModes
-0x00497FE0		DXInitTextures
+0x00497FE0	+	DXInitTextures
 
 
 		specific/dxshell.cpp
