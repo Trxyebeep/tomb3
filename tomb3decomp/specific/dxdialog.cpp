@@ -721,6 +721,34 @@ void DXCheckMMXTechnology(HWND hwnd)
 	G_DXConfig->MMX = mmx;
 }
 
+void DXInitDialogBox(HWND hwnd)
+{
+	HWND gfx;
+	long nDD;
+	char abt[80];
+
+	gfx = GetDlgItem(hwnd, IDC_GRAPHICS_ADAPTER);
+
+	for (int i = 0; i < G_DeviceInfo->nDDInfo; i++)
+	{
+		sprintf(abt, "%s (%s)", G_DeviceInfo->DDInfo[i].About, G_DeviceInfo->DDInfo[i].Name);
+		SendMessage(gfx, CB_ADDSTRING, 0, (LPARAM)abt);
+	}
+
+	if (bSoftwareDefault)
+		nDD = 0;
+	else
+		nDD = G_DeviceInfo->nDDInfo - 1;
+
+	SendMessage(gfx, CB_SETCURSEL, nDD, 0);
+	DXCheckMMXTechnology(hwnd);
+	DXInitD3DDrivers(hwnd, nDD);
+	DXInitVideoModes(hwnd, nDD, SendMessage(GetDlgItem(hwnd, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
+	DXInitTextures(hwnd, nDD, SendMessage(GetDlgItem(hwnd, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
+	DXInitDSAdapters(hwnd);
+	DXInitJoystickAdapter(hwnd);
+}
+
 void inject_dxdialog(bool replace)
 {
 	INJECT(0x00496C20, DXSetupDlgProc, replace);
@@ -731,4 +759,5 @@ void inject_dxdialog(bool replace)
 	INJECT(0x00497630, DXInitDSAdapters, replace);
 	INJECT(0x00497700, DXInitJoystickAdapter, replace);
 	INJECT(0x00497290, DXCheckMMXTechnology, replace);
+	INJECT(0x00497530, DXInitDialogBox, replace);
 }

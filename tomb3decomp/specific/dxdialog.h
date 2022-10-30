@@ -11,5 +11,4 @@ void DXInitTextures(HWND hwnd, long nDD, long nD3D);
 void DXInitDSAdapters(HWND hwnd);
 void DXInitJoystickAdapter(HWND hwnd);
 void DXCheckMMXTechnology(HWND hwnd);
-
-#define DXInitDialogBox	( (void(__cdecl*)(HWND)) 0x00497530 )
+void DXInitDialogBox(HWND hwnd);
