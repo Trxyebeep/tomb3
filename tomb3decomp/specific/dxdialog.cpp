@@ -563,6 +563,32 @@ void DXInitTextures(HWND hwnd, long nDD, long nD3D)
 	}
 }
 
+void DXInitDSAdapters(HWND hwnd)
+{
+	HWND sound, disable_sound;
+
+	sound = GetDlgItem(hwnd, IDC_SOUND);
+	disable_sound = GetDlgItem(hwnd, IDC_DISABLE_SOUND);
+
+	if (G_DeviceInfo->DSInfo)
+	{
+		SendMessage(sound, CB_RESETCONTENT, 0, 0);
+
+		for (int i = 0; i < G_DeviceInfo->nDSInfo; i++)
+			SendMessage(sound, CB_ADDSTRING, 0, (LPARAM)G_DeviceInfo->DSInfo[i].About);
+
+		SendMessage(sound, CB_SETCURSEL, 0, 0);
+	}
+	else
+	{
+		EnableWindow(disable_sound, 0);
+		SendMessage(disable_sound, BM_SETCHECK, 1, 0);
+		SendMessage(sound, CB_ADDSTRING, 0, (LPARAM)"No Sound Adapter Available");
+		SendMessage(sound, CB_SETCURSEL, 0, 0);
+		EnableWindow(sound, 0);
+	}
+}
+
 void inject_dxdialog(bool replace)
 {
 	INJECT(0x00496C20, DXSetupDlgProc, replace);
@@ -570,4 +596,5 @@ void inject_dxdialog(bool replace)
 	INJECT(0x004977D0, DXInitD3DDrivers, replace);
 	INJECT(0x00497C20, DXInitVideoModes, replace);
 	INJECT(0x00497FE0, DXInitTextures, replace);
+	INJECT(0x00497630, DXInitDSAdapters, replace);
 }
