@@ -9,5 +9,6 @@ void DXInitD3DDrivers(HWND hwnd, long nDrivers);
 void DXInitVideoModes(HWND hwnd, long nDD, long nD3D);
 void DXInitTextures(HWND hwnd, long nDD, long nD3D);
 void DXInitDSAdapters(HWND hwnd);
+void DXInitJoystickAdapter(HWND hwnd);
 
 #define DXInitDialogBox	( (void(__cdecl*)(HWND)) 0x00497530 )

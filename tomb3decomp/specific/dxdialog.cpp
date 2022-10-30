@@ -589,6 +589,32 @@ void DXInitDSAdapters(HWND hwnd)
 	}
 }
 
+void DXInitJoystickAdapter(HWND hwnd)
+{
+	HWND joystick, disable_joystick;
+
+	joystick = GetDlgItem(hwnd, IDC_JOYSTICK);
+	disable_joystick = GetDlgItem(hwnd, IDC_DISABLE_JOYSTICK);
+
+	if (G_DeviceInfo->DIInfo)
+	{
+		SendMessage(joystick, CB_RESETCONTENT, 0, 0);
+
+		for (int i = 0; i < G_DeviceInfo->nDIInfo; i++)
+			SendMessage(joystick, CB_ADDSTRING, 0, (LPARAM)G_DeviceInfo->DIInfo[i].About);
+
+		SendMessage(joystick, CB_SETCURSEL, 0, 0);
+	}
+	else
+	{
+		EnableWindow(disable_joystick, 0);
+		SendMessage(disable_joystick, BM_SETCHECK, 1, 0);
+		SendMessage(joystick, CB_ADDSTRING, 0, (LPARAM)"No Joystick Adapter Available");
+		SendMessage(joystick, CB_SETCURSEL, 0, 0);
+		EnableWindow(joystick, 0);
+	}
+}
+
 void inject_dxdialog(bool replace)
 {
 	INJECT(0x00496C20, DXSetupDlgProc, replace);
@@ -597,4 +623,5 @@ void inject_dxdialog(bool replace)
 	INJECT(0x00497C20, DXInitVideoModes, replace);
 	INJECT(0x00497FE0, DXInitTextures, replace);
 	INJECT(0x00497630, DXInitDSAdapters, replace);
+	INJECT(0x00497700, DXInitJoystickAdapter, replace);
 }
