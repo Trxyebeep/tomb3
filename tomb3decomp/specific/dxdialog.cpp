@@ -301,9 +301,100 @@ void DXInitD3DDrivers(HWND hwnd, long nDrivers)
 	}
 }
 
+void DXInitVideoModes(HWND hwnd, long nDD, long nD3D)
+{
+	DIRECT3DINFO* d3dinfo;
+	DISPLAYMODE* dm;
+	HWND res;
+	static long selected = -1;
+	long nVM, nListed;
+	char Default[32];
+	char vm[40];
+
+	nVM = -1;
+
+	if (bSoftwareDefault)
+		strcpy(Default, "320x200 High Colour (16 Bit)");
+	else
+		strcpy(Default, "640x480 High Colour (16 Bit)");
+
+	res = GetDlgItem(hwnd, IDC_RESOLUTION);
+
+	if (selected != -1)
+		SendMessage(res, CB_GETLBTEXT, SendMessage(res, CB_GETCURSEL, 0, 0), (LPARAM)Default);
+
+	SendMessage(res, CB_RESETCONTENT, 0, 0);
+	nListed = 0;
+
+	d3dinfo = &G_DeviceInfo->DDInfo[nDD].D3DInfo[nD3D];
+
+	for (int i = 0; i < d3dinfo->nDisplayMode; i++)
+	{
+		dm = &d3dinfo->DisplayMode[i];
+
+		if (dm->bpp == 16)
+		{
+			sprintf(vm, "%dx%d High Colour (%d Bit)", dm->w, dm->h, 16);
+			SendMessage(res, CB_ADDSTRING, 0, (LPARAM)vm);
+			SendMessage(res, CB_SETITEMDATA, nListed, i);
+
+			if (!strcmp(Default, vm))
+				nVM = nListed;
+
+			nListed++;
+		}
+	}
+
+	for (int i = 0; i < d3dinfo->nDisplayMode; i++)
+	{
+		dm = &d3dinfo->DisplayMode[i];
+
+		if (dm->bpp == 24)
+		{
+			sprintf(vm, "%dx%d True Colour (%d Bit)", dm->w, dm->h, 24);
+			SendMessage(res, CB_ADDSTRING, 0, (LPARAM)vm);
+			SendMessage(res, CB_SETITEMDATA, nListed, i);
+
+			if (!strcmp(Default, vm))
+				nVM = nListed;
+
+			nListed++;
+		}
+	}
+
+	for (int i = 0; i < d3dinfo->nDisplayMode; i++)
+	{
+		dm = &d3dinfo->DisplayMode[i];
+
+		if (dm->bpp == 32)
+		{
+			sprintf(vm, "%dx%d True Colour (%d Bit)", dm->w, dm->h, 32);
+			SendMessage(res, CB_ADDSTRING, 0, (LPARAM)vm);
+			SendMessage(res, CB_SETITEMDATA, nListed, i);
+
+			if (!strcmp(Default, vm))
+				nVM = nListed;
+
+			nListed++;
+		}
+	}
+
+	if (nVM == -1)
+	{
+		selected = 0;
+		SendMessage(res, CB_SETCURSEL, 0, 0);
+	}
+	else
+	{
+		selected = nVM;
+		SendMessage(res, CB_SETCURSEL, nVM, 0);
+	}
+}
+
 void inject_dxdialog(bool replace)
 {
 	INJECT(0x00496C20, DXSetupDlgProc, replace);
 	INJECT(0x00496BB0, DXUserDialog, replace);
 	INJECT(0x004977D0, DXInitD3DDrivers, replace);
+	INJECT(0x00497C20, DXInitVideoModes, replace);
 }
