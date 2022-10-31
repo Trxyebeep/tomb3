@@ -1,6 +1,9 @@
 #include "../tomb3/pch.h"
 #include "scalespr.h"
 #include "3d_gen.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
 
 ulong TextLight[12] =
 {
@@ -64,10 +67,52 @@ short* ins_room_sprite(short* objptr, long num)
 	return objptr;
 }
 
+#ifdef TROYESTUFF
+static void SetPSXTextColor()
+{
+	TextLight[0] = 0x808080;
+	TextLight[1] = 0x00B0B0;
+	TextLight[2] = 0xA0A0A0;
+	TextLight[3] = 0x6060FF;
+	TextLight[4] = 0xFF8080;
+	TextLight[5] = 0x4080C0;
+	TextLight[6] = 0x60C0C0;
+	TextLight[7] = 0x00C000;
+	TextLight[8] = 0x00C000;
+	TextLight[9] = 0x000080;
+	TextLight[10] = 0x008080;
+	TextLight[11] = 0x404080;
+
+	TextDark[0] = 0x808080;
+	TextDark[1] = 0x005050;
+	TextDark[2] = 0x181818;
+	TextDark[3] = 0x000018;
+	TextDark[4] = 0x180000;
+	TextDark[5] = 0x001040;
+	TextDark[6] = 0x101010;
+	TextDark[7] = 0x004000;
+	TextDark[8] = 0x004000;
+	TextDark[9] = 0x000040;
+	TextDark[10] = 0x004040;
+	TextDark[11] = 0x101040;
+}
+#endif
+
 void S_DrawScreenSprite2d(long x, long y, long z, long scaleH, long scaleV, short sprnum, short shade, ushort flags)
 {
 	PHDSPRITESTRUCT* sprite;
 	long x1, y1, x2, y2, r, g, b, shade1, shade2;
+#ifdef TROYESTUFF
+	static bool set = 0;
+
+	if (!set)
+	{
+		if (tomb3.psx_text_colors)
+			SetPSXTextColor();
+
+		set = 1;
+	}
+#endif
 
 	sprite = &phdspriteinfo[sprnum];
 	y1 = y + ((scaleV * sprite->y1) >> 16);

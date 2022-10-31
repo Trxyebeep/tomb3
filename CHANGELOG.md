@@ -6,6 +6,9 @@
 
 ### tomb3 additions
 
+- Add scale for some UI elements (bars and home timers).
+- Add option for PSX text colors.
+
 ### tomb3 bug fixes
 
 - Fix footstep sfx being wrong in some rooms.
