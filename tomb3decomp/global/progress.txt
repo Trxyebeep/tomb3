@@ -1712,7 +1712,7 @@ tomb3decomp progress.
 0x004854C0	+	HWR_DrawPolyList
 0x004855C0	+	HWR_DrawPolyListBF
 0x00485900		HWR_LoadTexturePages
-0x004859C0		HWR_FreeTexturePages
+0x004859C0	+	HWR_FreeTexturePages
 0x00485A10		HWR_GetAllTextureHandles
 0x00485A90	+	HWR_Init
 
@@ -1853,6 +1853,26 @@ tomb3decomp progress.
 0x0048D4E0	+	S_CDGetLoc
 0x0048D4F0	+	S_CDVolume
 0x0048D500	+	SWR_FindNearestPaletteEntry	
+
+
+		specific/texture.cpp
+
+0x004B1B70		DXTextureSetGreyScale
+0x004B1B80		DXTextureNewPalette
+0x004B1BF0		DXCreateTextureSurface
+0x004B1D90		DXCreateMaxTPages
+0x004B1F10		DXFreeTPages
+0x004B1FB0		DXResetPalette
+0x004B1FD0		DXTextureGetInterface
+0x004B2000		DXTextureFindTextureSlot
+0x004B2020		DXTextureMakeSystemSurface
+0x004B20C0		DXTextureMakeDeviceSurface
+0x004B2180		DXTextureCleanup
+0x004B21F0		DXClearAllTextures
+0x004B2230		DXRestoreSurfaceIfLost
+0x004B2280		DXTextureAddPal
+0x004B2370		MMXTextureAdd
+0x004B23D0		DXTextureAdd
 
 
 		specific/time.cpp

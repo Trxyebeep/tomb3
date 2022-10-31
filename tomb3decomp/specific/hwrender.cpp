@@ -1,5 +1,6 @@
 #include "../tomb3/pch.h"
 #include "hwrender.h"
+#include "texture.h"
 #ifdef TROYESTUFF
 #include "drawbars.h"
 #include "../tomb3/tomb3.h"
@@ -753,6 +754,21 @@ void HWR_DrawPolyListBF(long num, long* pSort)
 		DrawRoutine(nURVtx, UnRollBuffer, nDrawType1, TPage1);
 }
 
+void HWR_FreeTexturePages()
+{
+	for (int i = 0; i < 32; i++)
+	{
+		if (PictureTextures[i].dwFlags & 8)
+			DXTextureCleanup(i, PictureTextures);
+	}
+
+	if (DXPalette)
+	{
+		DXPalette->Release();
+		DXPalette = 0;
+	}
+}
+
 void inject_hwrender(bool replace)
 {
 	INJECT(0x00484E20, HWR_EnableZBuffer, replace);
@@ -773,4 +789,5 @@ void inject_hwrender(bool replace)
 	INJECT(0x00485A90, HWR_Init, replace);
 	INJECT(0x004854C0, HWR_DrawPolyList, replace);
 	INJECT(0x004855C0, HWR_DrawPolyListBF, replace);
+	INJECT(0x004859C0, HWR_FreeTexturePages, replace);
 }

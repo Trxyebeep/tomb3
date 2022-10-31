@@ -1418,10 +1418,10 @@ struct DXTEXTURE
 	LPDIRECTDRAWPALETTE pPalette;				//yes
 	long nWidth;								//yes
 	long nHeight;								//yes
-	LPDIRECT3DTEXTUREX pTexture;				//maybe
 	ulong dwFlags;								//yes
+	LPDIRECT3DTEXTUREX pTexture;				//maybe
 	ushort* pSoftwareSurface;					//no idea
-	D3DTEXTUREHANDLE hTexture;					//no idea
+	ulong bpp;									//yes
 };
 
 struct TEXTUREBUCKET
