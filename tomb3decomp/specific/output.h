@@ -23,5 +23,6 @@ void S_AnimateTextures(long n);
 void S_InitialisePolyList(bool clearBackBuffer);
 
 #ifdef TROYESTUFF
+long GetFixedScale(long unit);
 long GetRenderScale(long unit);
 #endif

@@ -76,6 +76,8 @@ static void T3_InitSettings()
 	tomb3.shadow_mode = SHADOW_PSX;
 	tomb3.bar_mode = BAR_PSX;
 	tomb3.sophia_rings = SRINGS_PSX;
+	tomb3.GUI_Scale = 1.0F;
+	tomb3.INV_Scale = 1.0F;
 }
 
 void T3_SaveSettings()
@@ -131,6 +133,8 @@ void T3_SaveSettings()
 	REG_WriteLong((char*)"shadow_mode", tomb3.shadow_mode);
 	REG_WriteLong((char*)"bar_mode", tomb3.bar_mode);
 	REG_WriteLong((char*)"sophia_rings", tomb3.sophia_rings);
+	REG_WriteFloat((char*)"GUI_Scale", tomb3.GUI_Scale);
+	REG_WriteFloat((char*)"INV_Scale", tomb3.INV_Scale);
 
 	CloseRegistry();
 }
@@ -193,6 +197,8 @@ bool T3_LoadSettings()
 	REG_ReadLong((char*)"shadow_mode", (ulong&)tomb3.shadow_mode, SHADOW_PSX);
 	REG_ReadLong((char*)"bar_mode", (ulong&)tomb3.bar_mode, BAR_PSX);
 	REG_ReadLong((char*)"sophia_rings", (ulong&)tomb3.sophia_rings, SRINGS_PSX);
+	REG_ReadFloat((char*)"GUI_Scale", tomb3.GUI_Scale, 1.0F);
+	REG_ReadFloat((char*)"INV_Scale", tomb3.INV_Scale, 1.0F);
 
 	S_CDVolume(25 * Option_Music_Volume + 5);
 	S_SoundSetMasterVolume(6 * Option_SFX_Volume + 4);

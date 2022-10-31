@@ -2,7 +2,6 @@
 #include "display.h"
 #include "../3dsystem/3d_gen.h"
 
-static long mode_lock;
 static long fade_value = 0x100000;
 static long fade_limit = 0x100000;
 static long fade_adder = 0x8000;
@@ -66,7 +65,7 @@ void DecreaseScreenSize()
 
 void TempVideoAdjust(long a, double sizer)
 {
-	mode_lock = 1;
+	VidSizeLocked = 1;
 
 	if (sizer != screen_sizer)
 	{
@@ -77,7 +76,7 @@ void TempVideoAdjust(long a, double sizer)
 
 void TempVideoRemove()
 {
-	mode_lock = 0;
+	VidSizeLocked = 0;
 
 	if (screen_sizer != game_sizer)
 	{

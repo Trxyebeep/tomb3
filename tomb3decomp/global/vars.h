@@ -41,6 +41,7 @@
 #define water_effect	VAR_(0x005D7AF8, long)
 #define shade_effect	VAR_(0x005D7AFC, long)
 #define wet	VAR_(0x006A1B60, long)
+#define VidSizeLocked	VAR_(0x006302B4, long)
 #define BarsWidth	VAR_(0x004C805C, long)
 #define DumpX	VAR_(0x004CD8FC, short)
 #define DumpY	VAR_(0x004CD8FE, short)

@@ -602,7 +602,7 @@ void DoRain()
 #ifdef TROYESTUFF
 			if (tomb3.improved_rain)
 			{
-				tx = GetRenderScale(1);
+				tx = GetFixedScale(1);
 				rptr->yv = uchar((GetRandomDraw() & 7) + (tx * 8));
 			}
 			else
@@ -715,7 +715,7 @@ void DoRain()
 #ifdef TROYESTUFF
 			if (tomb3.improved_rain)
 			{
-				rnd = GetRenderScale(1);	//width
+				rnd = GetFixedScale(1);	//width
 
 				v[0].xs = (float)x1;
 				v[0].ys = (float)y1;
@@ -912,7 +912,7 @@ void DoSnow()
 		size = (size * 0x2AAB) >> 15;
 
 #ifdef TROYESTUFF
-		size = GetRenderScale(size);
+		size = GetFixedScale(size);
 #endif
 
 		v[0].xs = float(x + size);
@@ -4578,7 +4578,7 @@ void DoUwEffect()
 			size = 16;
 
 		size = (size * 0x2AAB) >> 15;
-		size = GetRenderScale(size) >> 1;
+		size = GetFixedScale(size) >> 1;
 
 		v[0].xs = float(x + size);
 		v[0].ys = float(y - (size << 1));
@@ -4788,7 +4788,7 @@ void DrawBetterLasers(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, u
 		v[2] = v[1];
 		v[3] = v[0];
 
-		s = GetRenderScale(2);
+		s = GetFixedScale(2);
 
 		v[2].ys -= s;
 		v[3].ys -= s;
