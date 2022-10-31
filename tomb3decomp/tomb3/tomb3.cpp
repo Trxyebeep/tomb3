@@ -80,8 +80,6 @@ static void T3_InitSettings()
 
 void T3_SaveSettings()
 {
-	ulong gamma;
-
 	OpenRegistry(SUB_KEY);
 
 	if (App.DeviceInfoPtr->nDDInfo)
@@ -109,9 +107,7 @@ void T3_SaveSettings()
 	REG_WriteLong((char*)"MMX", App.DXConfigPtr->MMX);
 	REG_WriteLong((char*)"SFXVolume", Option_SFX_Volume);
 	REG_WriteLong((char*)"MusicVolume", Option_Music_Volume);
-
-	gamma = (ulong)GammaOption;
-	REG_WriteLong((char*)"Gamma", gamma);
+	REG_WriteFloat((char*)"Gamma", GammaOption);
 	REG_WriteBlock((char*)"keyLayout", &layout[1][0], sizeof(layout) / 2);
 
 	//new settings :)
@@ -141,8 +137,6 @@ void T3_SaveSettings()
 
 bool T3_LoadSettings()
 {
-	ulong gamma;
-
 	if (!OpenRegistry(SUB_KEY))
 	{
 		T3_InitSettings();
@@ -174,8 +168,7 @@ bool T3_LoadSettings()
 	REG_ReadLong((char*)"MMX", (ulong&)App.DXConfigPtr->MMX, 0);
 	REG_ReadLong((char*)"SFXVolume", (ulong&)Option_SFX_Volume, 0);
 	REG_ReadLong((char*)"MusicVolume", (ulong&)Option_Music_Volume, 0);
-	REG_ReadLong((char*)"Gamma", gamma, 0);
-	GammaOption = (float)gamma;
+	REG_ReadFloat((char*)"Gamma", GammaOption, 0);
 
 	REG_ReadBlock((char*)"keyLayout", &layout[1][0], sizeof(layout) / 2, 0);
 	DefaultConflict();	//fix having to open the control options to set conflicts;
