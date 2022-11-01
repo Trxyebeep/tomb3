@@ -1866,7 +1866,7 @@ tomb3decomp progress.
 0x004B1FD0	+	DXTextureGetInterface
 0x004B2000	+	DXTextureFindTextureSlot
 0x004B2020	+	DXTextureMakeSystemSurface
-0x004B20C0		DXTextureMakeDeviceSurface
+0x004B20C0	+	DXTextureMakeDeviceSurface
 0x004B2180		DXTextureCleanup
 0x004B21F0		DXClearAllTextures
 0x004B2230		DXRestoreSurfaceIfLost

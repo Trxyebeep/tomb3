@@ -9,6 +9,7 @@ void DXTextureSetGreyScale(bool set);
 LPDIRECT3DTEXTUREX DXTextureGetInterface(LPDIRECTDRAWSURFACEX surf);
 long DXTextureFindTextureSlot(DXTEXTURE* tex);
 bool DXTextureMakeSystemSurface(DXTEXTURE* tex, LPDDPIXELFORMAT ddpf);
+long DXTextureMakeDeviceSurface(long w, long h, LPDIRECTDRAWPALETTE palette, DXTEXTURE* list);
 
 #define DXTextureAdd	( (long(__cdecl*)(long, long, ushort*, DXTEXTURE*, long, long)) 0x004B23D0 )
 #define DXFreeTPages	( (void(__cdecl*)()) 0x004B1F10 )
