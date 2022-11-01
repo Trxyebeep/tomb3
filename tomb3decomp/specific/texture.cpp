@@ -1,5 +1,6 @@
 #include "../tomb3/pch.h"
 #include "texture.h"
+#include "dd.h"
 
 #define bSetColorKey	VAR_(0x004CEEC4, bool)
 #define bMakeGrey	VAR_(0x006CED60, bool)
@@ -52,6 +53,24 @@ long DXTextureFindTextureSlot(DXTEXTURE* tex)
 	return -1;
 }
 
+bool DXTextureMakeSystemSurface(DXTEXTURE* tex, LPDDPIXELFORMAT ddpf)
+{
+	DDSURFACEDESCX desc;
+
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
+	desc.dwHeight = tex->nHeight;
+	desc.dwWidth = tex->nWidth;
+	desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
+	desc.ddsCaps.dwCaps = DDSCAPS_SYSTEMMEMORY | DDSCAPS_TEXTURE;
+	memcpy(&desc.ddpfPixelFormat, ddpf, sizeof(DDPIXELFORMAT));
+
+	if (FAILED(DD_CreateSurface(desc, tex->pSystemSurface)))
+		return 0;
+
+	return !tex->pPalette || SUCCEEDED(tex->pSystemSurface->SetPalette(tex->pPalette));
+}
+
 void inject_texture(bool replace)
 {
 	INJECT(0x004B1B80, DXTextureNewPalette, replace);
@@ -59,4 +78,5 @@ void inject_texture(bool replace)
 	INJECT(0x004B1B70, DXTextureSetGreyScale, replace);
 	INJECT(0x004B1FD0, DXTextureGetInterface, replace);
 	INJECT(0x004B2000, DXTextureFindTextureSlot, replace);
+	INJECT(0x004B2020, DXTextureMakeSystemSurface, replace);
 }
