@@ -66,7 +66,7 @@ bool LoadPalette(HANDLE file)
 
 long LoadTexturePages(HANDLE file)
 {
-	char* p;
+	uchar* p;
 	ulong read;
 	long nPages, size;
 	bool _16bit;
@@ -89,7 +89,7 @@ long LoadTexturePages(HANDLE file)
 
 	_16bit = !App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bPalette;
 	size = _16bit ? 0x20000 : 0x10000;
-	p = (char*)GLOBALALLOC(GMEM_FIXED, nPages * size);
+	p = (uchar*)GLOBALALLOC(GMEM_FIXED, nPages * size);
 
 	if (!p)
 		return 0;

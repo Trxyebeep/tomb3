@@ -801,6 +801,37 @@ void HWR_GetAllTextureHandles()
 	}
 }
 
+void HWR_LoadTexturePages(long nPages, uchar* src, uchar* palette)
+{
+	HWR_FreeTexturePages();
+
+	if (palette)
+	{
+		DXTextureNewPalette(palette);
+		DXFreeTPages();
+		DXCreateMaxTPages(1);
+	}
+
+	for (int i = 0; i < nPages; i++)
+	{
+		if (palette)
+		{
+			DXTextureAddPal(256, 256, src, PictureTextures, 8);
+			src += 0x10000;
+		}
+		else
+		{
+			DXTextureAdd(256, 256, src, PictureTextures, 555, 8);
+			src += 0x20000;
+		}
+	}
+
+	HWR_GetAllTextureHandles();
+
+	for (int i = 0; i < nTPages; i++)
+		HWR_SetCurrentTexture(TPages[i]);
+}
+
 void inject_hwrender(bool replace)
 {
 	INJECT(0x00484E20, HWR_EnableZBuffer, replace);
@@ -823,4 +854,5 @@ void inject_hwrender(bool replace)
 	INJECT(0x004855C0, HWR_DrawPolyListBF, replace);
 	INJECT(0x004859C0, HWR_FreeTexturePages, replace);
 	INJECT(0x00485A10, HWR_GetAllTextureHandles, replace);
+	INJECT(0x00485900, HWR_LoadTexturePages, replace);
 }
