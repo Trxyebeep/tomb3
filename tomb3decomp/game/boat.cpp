@@ -1098,8 +1098,8 @@ void BoatControl(short item_number)
 			lara_item->pos.x_pos = x;
 			lara_item->pos.z_pos = z;
 
-			if (item_number != lara_item->room_number)
-				ItemNewRoom(lara.item_number, item_number);
+			if (room_number != lara_item->room_number)
+				ItemNewRoom(lara.item_number, room_number);
 		}
 
 		lara_item->pos.y_pos = y;
