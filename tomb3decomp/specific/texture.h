@@ -18,5 +18,4 @@ long DXTextureAddPal(long w, long h, uchar* src, DXTEXTURE* list, ulong flags);
 void MMXTextureCopy(ulong* dest, uchar* src, ulong step);
 long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong flags);
 void DXCreateMaxTPages(long create);
-
-#define DXFreeTPages	( (void(__cdecl*)()) 0x004B1F10 )
+void DXFreeTPages();

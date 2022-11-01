@@ -145,7 +145,7 @@ bool DXCreateTextureSurface(TEXTURE* tex, LPDDPIXELFORMAT ddpf)
 		{
 			ckey.dwColorSpaceLowValue = 0;
 			ckey.dwColorSpaceHighValue = 0;
-			tex->pSurf->SetColorKey(8, &ckey);
+			tex->pSurf->SetColorKey(DDCKEY_SRCBLT, &ckey);
 		}
 	}
 
@@ -429,7 +429,7 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 	{
 		ckey.dwColorSpaceLowValue = 0;
 		ckey.dwColorSpaceHighValue = 0;
-		tex->pSystemSurface->SetColorKey(8, &ckey);
+		tex->pSystemSurface->SetColorKey(DDCKEY_SRCBLT, &ckey);
 	}
 
 	DD_UnlockSurface(tex->pSystemSurface, desc);
@@ -493,6 +493,46 @@ void DXCreateMaxTPages(long create)
 	nTPages = n;
 }
 
+void DXFreeTPages()
+{
+	TEXTURE* tex;
+	DXTEXTURE* DXTex;
+
+	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+		return;
+
+	for (int i = 0; i < 32; i++)
+	{
+		tex = &Textures[i];
+		DXTex = (DXTEXTURE*)tex->DXTex;
+
+		if (DXTex)
+			DXTex->tex = 0;
+
+		if (tex->pTexture)
+		{
+			tex->pTexture->Release();
+			tex->pTexture = 0;
+		}
+
+		if (tex->pSurf)
+		{
+			tex->pSurf->Release();
+			tex->pSurf = 0;
+		}
+
+		if (tex->pPalette)
+		{
+			tex->pPalette->Release();
+			tex->pPalette = 0;
+		}
+
+		memset(tex, 0, sizeof(TEXTURE));
+	}
+
+	nTPages = 0;
+}
+
 void inject_texture(bool replace)
 {
 	INJECT(0x004B1B80, DXTextureNewPalette, replace);
@@ -510,4 +550,5 @@ void inject_texture(bool replace)
 	INJECT(0x004B2370, MMXTextureCopy, replace);
 	INJECT(0x004B23D0, DXTextureAdd, 0);	//breaks alpha textures
 	INJECT(0x004B1D90, DXCreateMaxTPages, replace);
+	INJECT(0x004B1F10, DXFreeTPages, replace);
 }

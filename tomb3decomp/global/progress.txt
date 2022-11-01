@@ -1861,7 +1861,7 @@ tomb3decomp progress.
 0x004B1B80	+	DXTextureNewPalette
 0x004B1BF0	+	DXCreateTextureSurface
 0x004B1D90	+	DXCreateMaxTPages
-0x004B1F10		DXFreeTPages
+0x004B1F10	+	DXFreeTPages
 0x004B1FB0	+	DXResetPalette
 0x004B1FD0	+	DXTextureGetInterface
 0x004B2000	+	DXTextureFindTextureSlot
