@@ -266,6 +266,186 @@ void MMXTextureCopy(ulong* dest, uchar* src, ulong step)
 	}
 }
 
+long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong flags)
+{
+	DXTEXTURE* tex;
+	D3DTEXTUREINFO* tinfo;
+	DDCOLORKEY ckey;
+	DDSURFACEDESCX desc;
+	uchar* udest;
+	char* dest;
+	ulong col;
+	long oldTF, index, lw, a, r, g, b;
+
+	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bPalette)
+	{
+		oldTF = App.DXConfigPtr->D3DTF;
+		App.DXConfigPtr->D3DTF = 0;
+	}
+	else
+		oldTF = -1;
+
+	index = DXTextureMakeDeviceSurface(w, h, 0, list);
+
+	if (index < 0)
+		return -1;
+
+	tex = &list[index];
+	tex->dwFlags |= flags;
+
+	if (FAILED(DD_LockSurface(tex->pSystemSurface, desc, DDLOCK_WAIT | DDLOCK_WRITEONLY)))
+		return -1;
+
+	dest = (char*)desc.lpSurface;
+
+#ifdef TROYESTUFF	//uninitialized
+	r = 0;
+	g = 0;
+	b = 0;
+	a = 0;
+#endif
+
+	while (h)
+	{
+		udest = (uchar*)dest;
+		lw = w;
+
+		while (lw)
+		{
+			if (bpp == 8888)	//get full color
+			{
+				col = *(ulong*)src;
+				src += 4;
+			}
+			else if (bpp == 888)
+			{
+				col = *(ulong*)src & 0xFFFFFF;
+				src += 3;
+			}
+			else
+			{
+				col = *(ushort*)src;
+				src += 2;
+			}
+
+			switch (bpp)	//extract RGBA
+			{
+			case 8888:
+				a = 0;
+				r = RGBA_GETRED(col);
+				g = RGBA_GETGREEN(col);
+				b = RGBA_GETBLUE(col);
+
+				if (r && g && b)
+					a = 255;
+
+				break;
+
+			case 888:
+				a = 0;
+				r = RGBA_GETRED(col);
+				g = RGBA_GETGREEN(col);
+				b = RGBA_GETBLUE(col);
+
+				if (r && g && b)
+					a = 255;
+
+				break;
+
+			case 565:
+				r = (col >> 8) & 0xF8;
+				g = (col >> 3) & 0xF8;
+				b = (col << 3) & 0xF8;
+				a = 0;
+				break;
+
+			case 555:
+				r = (col >> 7) & 0xF8;
+				g = (col >> 2) & 0xF8;
+				b = (col << 3) & 0xF8;
+				a = (ushort)col >> 15;
+				break;
+			}
+
+			if (flags == 16)
+				a = 255;
+
+			if (bMakeGrey)
+			{
+				r = b;
+				g = b;
+			}
+
+			tinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF];
+
+			if (tinfo->bAlpha || App.DXConfigPtr->MMX)
+			{
+				col =
+					(r >> (8 - tinfo->rbpp) << tinfo->rshift) |
+					(g >> (8 - tinfo->gbpp) << tinfo->gshift) |
+					(b >> (8 - tinfo->bbpp) << tinfo->bshift) |
+					(a >> (8 - tinfo->abpp) << tinfo->ashift);
+			}
+			else
+			{
+				col =
+					(r >> (8 - tinfo->rbpp) << tinfo->rshift) |
+					(g >> (8 - tinfo->gbpp) << tinfo->gshift) |
+					(b >> (8 - tinfo->bbpp) << tinfo->bshift);
+			}
+
+			for (ulong i = 0; i < tinfo->bpp; i += 8)
+			{
+				*udest++ = (uchar)col;
+				col >>= 8;
+			}
+
+			lw--;
+		}
+
+		dest += desc.lPitch;
+		h--;
+	}
+
+	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+	{
+		if (App.DXConfig.MMX)
+		{
+			tex->pData = (ulong*)GLOBALALLOC(GMEM_FIXED, 0x55400);
+			memcpy(tex->pData, desc.lpSurface, 0x40000);
+			MMXTextureCopy(tex->pData + 0x10000, (uchar*)desc.lpSurface, 2);
+			MMXTextureCopy(tex->pData + 0x14000, (uchar*)desc.lpSurface, 4);
+			MMXTextureCopy(tex->pData + 0x15000, (uchar*)desc.lpSurface, 8);
+			MMXTextureCopy(tex->pData + 0x15400, (uchar*)desc.lpSurface, 16);
+		}
+		else
+		{
+			tex->pData = (ulong*)GLOBALALLOC(GMEM_FIXED, 0x20000);
+			memcpy(tex->pData, desc.lpSurface, 0x20000);
+		}
+	}
+
+	if (flags == 8 && !App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bAlpha)
+	{
+		ckey.dwColorSpaceLowValue = 0;
+		ckey.dwColorSpaceHighValue = 0;
+		tex->pSystemSurface->SetColorKey(8, &ckey);
+	}
+
+	DD_UnlockSurface(tex->pSystemSurface, desc);
+
+	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+	{
+		tex->pSystemSurface->Release();
+		tex->pSystemSurface = 0;
+	}
+
+	if (oldTF != -1)
+		App.DXConfigPtr->D3DTF = oldTF;
+
+	return index;
+}
+
 void inject_texture(bool replace)
 {
 	INJECT(0x004B1B80, DXTextureNewPalette, replace);
@@ -281,4 +461,5 @@ void inject_texture(bool replace)
 	INJECT(0x004B2230, DXRestoreSurfaceIfLost, replace);
 	INJECT(0x004B2280, DXTextureAddPal, replace);
 	INJECT(0x004B2370, MMXTextureCopy, replace);
+	INJECT(0x004B23D0, DXTextureAdd, 0);	//breaks alpha textures
 }

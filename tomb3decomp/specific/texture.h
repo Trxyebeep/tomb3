@@ -16,7 +16,7 @@ void DXTextureCleanup(long index, DXTEXTURE* list);
 DXTEXTURE* DXRestoreSurfaceIfLost(long index, DXTEXTURE* list);
 long DXTextureAddPal(long w, long h, uchar* src, DXTEXTURE* list, ulong flags);
 void MMXTextureCopy(ulong* dest, uchar* src, ulong step);
+long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong flags);
 
-#define DXTextureAdd	( (long(__cdecl*)(long, long, ushort*, DXTEXTURE*, long, long)) 0x004B23D0 )
 #define DXFreeTPages	( (void(__cdecl*)()) 0x004B1F10 )
 #define DXCreateMaxTPages	( (void(__cdecl*)(long)) 0x004B1D90 )
