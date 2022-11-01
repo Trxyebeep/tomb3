@@ -770,6 +770,37 @@ void HWR_FreeTexturePages()
 	}
 }
 
+void HWR_GetAllTextureHandles()
+{
+	DXTEXTURE* tex;
+	long n;
+
+	memset(TPages, 0, sizeof(TPages));
+	n = 0;
+
+	for (int i = 0; i < 32; i++)
+	{
+		tex = DXRestoreSurfaceIfLost(i, PictureTextures);
+
+		if (tex->dwFlags & 8)
+		{
+			TPages[n] = tex;
+			n++;
+		}
+	}
+
+	for (int i = 0; i < 32; i++)
+	{
+		tex = DXRestoreSurfaceIfLost(i, PictureTextures);
+
+		if (tex->dwFlags & 16)
+		{
+			TPages[n] = tex;
+			n++;
+		}
+	}
+}
+
 void inject_hwrender(bool replace)
 {
 	INJECT(0x00484E20, HWR_EnableZBuffer, replace);
@@ -791,4 +822,5 @@ void inject_hwrender(bool replace)
 	INJECT(0x004854C0, HWR_DrawPolyList, replace);
 	INJECT(0x004855C0, HWR_DrawPolyListBF, replace);
 	INJECT(0x004859C0, HWR_FreeTexturePages, replace);
+	INJECT(0x00485A10, HWR_GetAllTextureHandles, replace);
 }

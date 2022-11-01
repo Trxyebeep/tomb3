@@ -28,9 +28,9 @@ bool HWR_Init();
 void HWR_DrawPolyList(long num, long* pSort);
 void HWR_DrawPolyListBF(long num, long* pSort);
 void HWR_FreeTexturePages();
+void HWR_GetAllTextureHandles();
 
 #define HWR_SetCurrentTexture	( (void(__cdecl*)(DXTEXTURE*)) 0x00484C30 )
-#define HWR_GetAllTextureHandles	( (void(__cdecl*)()) 0x00485A10 )
 #define HWR_LoadTexturePages	( (void(__cdecl*)(long, char*, uchar*)) 0x00485900 )
 
 #define SetRenderState	( *(HRESULT(__cdecl**)(D3DRENDERSTATETYPE, long)) 0x006CA1B8 )	//here FOR NOW

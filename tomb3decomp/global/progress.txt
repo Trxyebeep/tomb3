@@ -1713,7 +1713,7 @@ tomb3decomp progress.
 0x004855C0	+	HWR_DrawPolyListBF
 0x00485900		HWR_LoadTexturePages
 0x004859C0	+	HWR_FreeTexturePages
-0x00485A10		HWR_GetAllTextureHandles
+0x00485A10	+	HWR_GetAllTextureHandles
 0x00485A90	+	HWR_Init
 
 
