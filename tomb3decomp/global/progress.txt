@@ -1857,7 +1857,7 @@ tomb3decomp progress.
 
 		specific/texture.cpp
 
-0x004B1B70		DXTextureSetGreyScale
+0x004B1B70	+	DXTextureSetGreyScale
 0x004B1B80	+	DXTextureNewPalette
 0x004B1BF0		DXCreateTextureSurface
 0x004B1D90		DXCreateMaxTPages

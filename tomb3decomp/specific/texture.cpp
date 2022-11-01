@@ -2,6 +2,7 @@
 #include "texture.h"
 
 #define bSetColorKey	VAR_(0x004CEEC4, bool)
+#define bMakeGrey	VAR_(0x006CED60, bool)
 
 long DXTextureNewPalette(uchar* palette)
 {
@@ -25,8 +26,14 @@ void DXResetPalette(DXTEXTURE* tex)
 	bSetColorKey = 1;
 }
 
+void DXTextureSetGreyScale(bool set)
+{
+	bMakeGrey = set;
+}
+
 void inject_texture(bool replace)
 {
 	INJECT(0x004B1B80, DXTextureNewPalette, replace);
 	INJECT(0x004B1FB0, DXResetPalette, replace);
+	INJECT(0x004B1B70, DXTextureSetGreyScale, replace);
 }
