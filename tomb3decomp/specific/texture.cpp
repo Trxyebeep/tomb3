@@ -194,6 +194,25 @@ void DXTextureCleanup(long index, DXTEXTURE* list)
 	tex->nHeight = 0;
 }
 
+DXTEXTURE* DXRestoreSurfaceIfLost(long index, DXTEXTURE* list)
+{
+	DXTEXTURE* tex;
+
+	tex = &list[index];
+
+	if (tex->tex && tex->tex->pSurf)
+	{
+		if (tex->tex->pSurf->IsLost() == DDERR_SURFACELOST)
+		{
+			tex->tex->pSurf->Restore();
+			tex->tex->DXTex = 0;
+			tex->tex = 0;
+		}
+	}
+
+	return &list[index];
+}
+
 void inject_texture(bool replace)
 {
 	INJECT(0x004B1B80, DXTextureNewPalette, replace);
@@ -206,4 +225,5 @@ void inject_texture(bool replace)
 	INJECT(0x004B21F0, DXClearAllTextures, replace);
 	INJECT(0x004B1BF0, DXCreateTextureSurface, replace);
 	INJECT(0x004B2180, DXTextureCleanup, replace);
+	INJECT(0x004B2230, DXRestoreSurfaceIfLost, replace);
 }
