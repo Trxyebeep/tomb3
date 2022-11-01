@@ -1,4 +1,5 @@
 #include "../tomb3/pch.h"
+#include "../tomb3/pch.h"
 #include "hwrender.h"
 #include "texture.h"
 #ifdef TROYESTUFF
