@@ -97,6 +97,18 @@ long DXTextureMakeDeviceSurface(long w, long h, LPDIRECTDRAWPALETTE palette, DXT
 	return -1;
 }
 
+void DXClearAllTextures(DXTEXTURE* list)
+{
+	for (int i = 0; i < 32; i++)
+		DXTextureCleanup(i, list);
+
+	if (DXPalette)
+	{
+		DXPalette->Release();
+		DXPalette = 0;
+	}
+}
+
 void inject_texture(bool replace)
 {
 	INJECT(0x004B1B80, DXTextureNewPalette, replace);
@@ -106,4 +118,5 @@ void inject_texture(bool replace)
 	INJECT(0x004B2000, DXTextureFindTextureSlot, replace);
 	INJECT(0x004B2020, DXTextureMakeSystemSurface, replace);
 	INJECT(0x004B20C0, DXTextureMakeDeviceSurface, replace);
+	INJECT(0x004B21F0, DXClearAllTextures, replace);
 }
