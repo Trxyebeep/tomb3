@@ -157,6 +157,43 @@ bool DXCreateTextureSurface(TEXTURE* tex, LPDDPIXELFORMAT ddpf)
 	return 1;
 }
 
+void DXTextureCleanup(long index, DXTEXTURE* list)
+{
+	DXTEXTURE* tex;
+
+	tex = &list[index];
+
+	if (tex->pPalette)
+	{
+		tex->pPalette->Release();
+		tex->pPalette = 0;
+	}
+
+	while (tex->pSystemSurface)
+	{
+		if (!tex->pSystemSurface->Release())
+			tex->pSystemSurface = 0;
+	}
+
+	if (tex->tex)
+	{
+		tex->tex->nFrames = 0;
+		tex->tex->num = 0;
+		tex->tex->DXTex = 0;
+		tex->tex = 0;
+	}
+
+	if (tex->pData)
+	{
+		GLOBALFREE(tex->pData);
+		tex->pData = 0;
+	}
+
+	tex->dwFlags = 0;
+	tex->nWidth = 0;
+	tex->nHeight = 0;
+}
+
 void inject_texture(bool replace)
 {
 	INJECT(0x004B1B80, DXTextureNewPalette, replace);
@@ -168,4 +205,5 @@ void inject_texture(bool replace)
 	INJECT(0x004B20C0, DXTextureMakeDeviceSurface, replace);
 	INJECT(0x004B21F0, DXClearAllTextures, replace);
 	INJECT(0x004B1BF0, DXCreateTextureSurface, replace);
+	INJECT(0x004B2180, DXTextureCleanup, replace);
 }
