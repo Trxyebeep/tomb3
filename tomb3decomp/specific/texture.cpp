@@ -245,6 +245,27 @@ long DXTextureAddPal(long w, long h, uchar* src, DXTEXTURE* list, ulong flags)
 	return index;
 }
 
+void MMXTextureCopy(ulong* dest, uchar* src, ulong step)
+{
+	ulong* pSrc;
+	long add;
+
+	add = step << 10;
+
+	for (int i = 0; i < 256; i += step)
+	{
+		pSrc = (ulong*)src;
+
+		for (int j = 0; j < 256; j += step)
+		{
+			*dest++ = *pSrc;
+			pSrc += step;
+		}
+
+		src += add;
+	}
+}
+
 void inject_texture(bool replace)
 {
 	INJECT(0x004B1B80, DXTextureNewPalette, replace);
@@ -259,4 +280,5 @@ void inject_texture(bool replace)
 	INJECT(0x004B2180, DXTextureCleanup, replace);
 	INJECT(0x004B2230, DXRestoreSurfaceIfLost, replace);
 	INJECT(0x004B2280, DXTextureAddPal, replace);
+	INJECT(0x004B2370, MMXTextureCopy, replace);
 }
