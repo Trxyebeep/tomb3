@@ -460,6 +460,7 @@
 #define LondonBossShield	ARRAY_(0x006D5AA0, SHIELD_POINTS, [40])
 #define WillBossShield	ARRAY_(0x006CF820, SHIELD_POINTS, [40])
 #define PictureTextures	ARRAY_(0x006CE958, DXTEXTURE, [32])
+#define Textures	ARRAY_(0x006CE558, TEXTURE, [32])
 #define texture_page_ptrs	ARRAY_(0x005D79C8, char*, [32])
 #define ground_zone	ARRAY_(0x006E3160, short*, [4][2])
 #define fly_zone	ARRAY_(0x006E3180, short*, [2])

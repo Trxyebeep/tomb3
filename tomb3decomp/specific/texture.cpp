@@ -446,6 +446,53 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 	return index;
 }
 
+void DXCreateMaxTPages(long create)
+{
+	DIRECT3DINFO* d3dinfo;
+	TEXTURE* tex;
+	LPDDPIXELFORMAT ddpf, ddpf2;
+	long n, oldTF;
+
+	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
+
+	if (!d3dinfo->bHardware)
+		return;
+
+	ddpf = &d3dinfo->Texture[App.DXConfigPtr->D3DTF].ddsd.ddpfPixelFormat;
+	DXCreateTextureSurface(Textures, ddpf);
+	n = 1;
+
+	if (create && ddpf->dwRGBBitCount == 8)
+	{
+		bSetColorKey = 0;
+		oldTF = App.DXConfigPtr->D3DTF;
+		App.DXConfigPtr->D3DTF = 0;
+		ddpf2 = &d3dinfo->Texture[App.DXConfigPtr->D3DTF].ddsd.ddpfPixelFormat;
+
+		for (; n < 6; n++)
+		{
+			tex = &Textures[n];
+
+			if (!DXCreateTextureSurface(tex, ddpf2))
+				break;
+		}
+
+		App.DXConfigPtr->D3DTF = oldTF;
+		bSetColorKey = 1;
+		ddpf = &d3dinfo->Texture[App.DXConfigPtr->D3DTF].ddsd.ddpfPixelFormat;
+	}
+
+	for (; n < 32; n++)
+	{
+		tex = &Textures[n];
+
+		if (!DXCreateTextureSurface(tex, ddpf))
+			break;
+	}
+
+	nTPages = n;
+}
+
 void inject_texture(bool replace)
 {
 	INJECT(0x004B1B80, DXTextureNewPalette, replace);
@@ -462,4 +509,5 @@ void inject_texture(bool replace)
 	INJECT(0x004B2280, DXTextureAddPal, replace);
 	INJECT(0x004B2370, MMXTextureCopy, replace);
 	INJECT(0x004B23D0, DXTextureAdd, 0);	//breaks alpha textures
+	INJECT(0x004B1D90, DXCreateMaxTPages, replace);
 }
