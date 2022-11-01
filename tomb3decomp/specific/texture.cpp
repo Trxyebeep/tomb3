@@ -1,6 +1,8 @@
 #include "../tomb3/pch.h"
 #include "texture.h"
 
+#define bSetColorKey	VAR_(0x004CEEC4, bool)
+
 long DXTextureNewPalette(uchar* palette)
 {
 	ulong data[256];
@@ -17,7 +19,14 @@ long DXTextureNewPalette(uchar* palette)
 	return App.lpDD->CreatePalette(DDPCAPS_8BIT | DDPCAPS_ALLOW256, (LPPALETTEENTRY)data, &DXPalette, 0);
 }
 
+void DXResetPalette(DXTEXTURE* tex)
+{
+	DXPalette = 0;
+	bSetColorKey = 1;
+}
+
 void inject_texture(bool replace)
 {
 	INJECT(0x004B1B80, DXTextureNewPalette, replace);
+	INJECT(0x004B1FB0, DXResetPalette, replace);
 }
