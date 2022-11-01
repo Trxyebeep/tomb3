@@ -31,9 +31,20 @@ void DXTextureSetGreyScale(bool set)
 	bMakeGrey = set;
 }
 
+LPDIRECT3DTEXTUREX DXTextureGetInterface(LPDIRECTDRAWSURFACEX surf)
+{
+	LPDIRECT3DTEXTUREX tex;
+
+	if (SUCCEEDED(surf->QueryInterface(D3DTEXGUID, (LPVOID*)&tex)))
+		return tex;
+	
+	return 0;
+}
+
 void inject_texture(bool replace)
 {
 	INJECT(0x004B1B80, DXTextureNewPalette, replace);
 	INJECT(0x004B1FB0, DXResetPalette, replace);
 	INJECT(0x004B1B70, DXTextureSetGreyScale, replace);
+	INJECT(0x004B1FD0, DXTextureGetInterface, replace);
 }

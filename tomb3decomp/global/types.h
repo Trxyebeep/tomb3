@@ -74,6 +74,7 @@ do \
 #define DDSGUID					IID_IDirectDrawSurface3
 #define DDGUID					IID_IDirectDraw2
 #define D3DGUID					IID_IDirect3D2
+#define D3DTEXGUID				IID_IDirect3DTexture2
 #define DIGUID					IID_IDirectInput8
 #define DSNGUID					IID_IDirectSoundNotify
 /***********************************************/
