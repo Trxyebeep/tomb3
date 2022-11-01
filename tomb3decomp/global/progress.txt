@@ -1859,7 +1859,7 @@ tomb3decomp progress.
 
 0x004B1B70	+	DXTextureSetGreyScale
 0x004B1B80	+	DXTextureNewPalette
-0x004B1BF0		DXCreateTextureSurface
+0x004B1BF0	+	DXCreateTextureSurface
 0x004B1D90		DXCreateMaxTPages
 0x004B1F10		DXFreeTPages
 0x004B1FB0	+	DXResetPalette

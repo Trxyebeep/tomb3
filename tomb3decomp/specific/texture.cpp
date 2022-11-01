@@ -109,6 +109,54 @@ void DXClearAllTextures(DXTEXTURE* list)
 	}
 }
 
+bool DXCreateTextureSurface(TEXTURE* tex, LPDDPIXELFORMAT ddpf)
+{
+	DDSURFACEDESC desc;
+	DDCOLORKEY ckey;
+
+	memset(&desc, 0, sizeof(DDSURFACEDESC));
+	desc.dwSize = sizeof(DDSURFACEDESC);
+	desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
+	desc.ddsCaps.dwCaps = DDSCAPS_TEXTURE | DDSCAPS_VIDEOMEMORY;
+
+	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bAGP)
+		desc.ddsCaps.dwCaps |= DDSCAPS_NONLOCALVIDMEM;
+
+	desc.dwWidth = 256;
+	desc.dwHeight = 256;
+	memcpy(&desc.ddpfPixelFormat, ddpf, sizeof(DDPIXELFORMAT));
+
+	if (FAILED(DD_CreateSurface(desc, tex->pSurf)))
+	{
+		tex->num = 4;
+		return 0;
+	}
+
+	if (desc.ddpfPixelFormat.dwRGBBitCount == 8 && DXPalette)
+	{
+		tex->pSurf->SetPalette(DXPalette);
+		tex->pPalette = DXPalette;
+		DXPalette->AddRef();
+	}
+
+	if (bSetColorKey)
+	{
+		if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bAlpha)
+		{
+			ckey.dwColorSpaceLowValue = 0;
+			ckey.dwColorSpaceHighValue = 0;
+			tex->pSurf->SetColorKey(8, &ckey);
+		}
+	}
+
+	tex->pTexture = DXTextureGetInterface(tex->pSurf);
+	tex->pTexture->GetHandle(App.lpD3DDevice, &tex->handle);
+	tex->num = 2;
+	tex->DXTex = 0;
+	tex->bpp = desc.ddpfPixelFormat.dwRGBBitCount;
+	return 1;
+}
+
 void inject_texture(bool replace)
 {
 	INJECT(0x004B1B80, DXTextureNewPalette, replace);
@@ -119,4 +167,5 @@ void inject_texture(bool replace)
 	INJECT(0x004B2020, DXTextureMakeSystemSurface, replace);
 	INJECT(0x004B20C0, DXTextureMakeDeviceSurface, replace);
 	INJECT(0x004B21F0, DXClearAllTextures, replace);
+	INJECT(0x004B1BF0, DXCreateTextureSurface, replace);
 }

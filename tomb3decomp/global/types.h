@@ -1325,7 +1325,7 @@ struct WINAPP
 	bool bFocus;
 	long nRenderMode;
 	long nUVAdd;
-	long SomeCounter;
+	long nFrames;
 	float fps;
 };
 
@@ -1413,16 +1413,28 @@ struct SPARKS
 	uchar pad;
 };
 
+struct TEXTURE
+{
+	LPVOID DXTex;	//DXTEXTURE*
+	LPDIRECTDRAWSURFACEX pSurf;
+	LPDIRECTDRAWPALETTE pPalette;
+	LPDIRECT3DTEXTUREX pTexture;
+	D3DTEXTUREHANDLE handle;
+	long num;
+	ulong nFrames;
+	ulong bpp;
+};
+
 struct DXTEXTURE
 {
-	LPDIRECTDRAWSURFACEX pSystemSurface;		//yes
-	LPDIRECTDRAWPALETTE pPalette;				//yes
-	long nWidth;								//yes
-	long nHeight;								//yes
-	ulong dwFlags;								//yes
-	LPDIRECT3DTEXTUREX pTexture;				//maybe
-	ushort* pSoftwareSurface;					//no idea
-	ulong bpp;									//yes
+	LPDIRECTDRAWSURFACEX pSystemSurface;
+	LPDIRECTDRAWPALETTE pPalette;
+	long nWidth;
+	long nHeight;
+	ulong dwFlags;
+	ulong* pData;
+	TEXTURE* tex;
+	ulong bpp;
 };
 
 struct TEXTUREBUCKET

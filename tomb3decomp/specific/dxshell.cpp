@@ -577,7 +577,7 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 	uchar* dest;
 	ulong w;
 
-	App.SomeCounter++;
+	App.nFrames++;
 	DXCheckForLostSurfaces();
 	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
 	w = d3dinfo->DisplayMode[App.DXConfigPtr->nVMode].w;
@@ -961,7 +961,7 @@ bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer)
 	DXSurfBlt(App.lpFrontBuffer, 0, 0);
 
 	for (int i = 0; i < 32; i++)
-		PictureTextures[i].pSoftwareSurface = 0;
+		PictureTextures[i].tex = 0;
 
 	if (!d3dinfo->bHardware)
 		CloseDrawPrimitive();
