@@ -14,6 +14,7 @@ void DXClearAllTextures(DXTEXTURE* list);
 bool DXCreateTextureSurface(TEXTURE* tex, LPDDPIXELFORMAT ddpf);
 void DXTextureCleanup(long index, DXTEXTURE* list);
 DXTEXTURE* DXRestoreSurfaceIfLost(long index, DXTEXTURE* list);
+long DXTextureAddPal(long w, long h, uchar* src, DXTEXTURE* list, ulong flags);
 
 #define DXTextureAdd	( (long(__cdecl*)(long, long, ushort*, DXTEXTURE*, long, long)) 0x004B23D0 )
 #define DXFreeTPages	( (void(__cdecl*)()) 0x004B1F10 )

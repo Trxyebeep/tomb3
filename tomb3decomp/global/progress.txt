@@ -1870,7 +1870,7 @@ tomb3decomp progress.
 0x004B2180	+	DXTextureCleanup
 0x004B21F0	+	DXClearAllTextures
 0x004B2230	+	DXRestoreSurfaceIfLost
-0x004B2280		DXTextureAddPal
+0x004B2280	+	DXTextureAddPal
 0x004B2370		MMXTextureAdd
 0x004B23D0		DXTextureAdd
 

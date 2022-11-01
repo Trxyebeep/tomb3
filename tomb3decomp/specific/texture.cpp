@@ -213,6 +213,38 @@ DXTEXTURE* DXRestoreSurfaceIfLost(long index, DXTEXTURE* list)
 	return &list[index];
 }
 
+long DXTextureAddPal(long w, long h, uchar* src, DXTEXTURE* list, ulong flags)
+{
+	DXTEXTURE* tex;
+	DDSURFACEDESCX desc;
+	char* dest;
+	long index;
+
+	index = DXTextureMakeDeviceSurface(w, h, DXPalette, list);
+
+	if (index < 0)
+		return -1;
+
+	tex = &list[index];
+	tex->dwFlags |= flags;
+
+	if (FAILED(DD_LockSurface(tex->pSystemSurface, desc, DDLOCK_WAIT | DDLOCK_WRITEONLY)))
+		return -1;
+
+	dest = (char*)desc.lpSurface;
+
+	while (h)
+	{
+		memcpy(dest, src, w);
+		src += w;
+		dest += desc.lPitch;
+		h--;
+	}
+
+	DD_UnlockSurface(tex->pSystemSurface, desc);
+	return index;
+}
+
 void inject_texture(bool replace)
 {
 	INJECT(0x004B1B80, DXTextureNewPalette, replace);
@@ -226,4 +258,5 @@ void inject_texture(bool replace)
 	INJECT(0x004B1BF0, DXCreateTextureSurface, replace);
 	INJECT(0x004B2180, DXTextureCleanup, replace);
 	INJECT(0x004B2230, DXRestoreSurfaceIfLost, replace);
+	INJECT(0x004B2280, DXTextureAddPal, replace);
 }
