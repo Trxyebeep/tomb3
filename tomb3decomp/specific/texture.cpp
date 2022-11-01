@@ -41,10 +41,22 @@ LPDIRECT3DTEXTUREX DXTextureGetInterface(LPDIRECTDRAWSURFACEX surf)
 	return 0;
 }
 
+long DXTextureFindTextureSlot(DXTEXTURE* tex)
+{
+	for (int i = 0; i < 32; i++)
+	{
+		if (!(tex[i].dwFlags & 1))
+			return i;
+	}
+
+	return -1;
+}
+
 void inject_texture(bool replace)
 {
 	INJECT(0x004B1B80, DXTextureNewPalette, replace);
 	INJECT(0x004B1FB0, DXResetPalette, replace);
 	INJECT(0x004B1B70, DXTextureSetGreyScale, replace);
 	INJECT(0x004B1FD0, DXTextureGetInterface, replace);
+	INJECT(0x004B2000, DXTextureFindTextureSlot, replace);
 }

@@ -7,6 +7,7 @@ long DXTextureNewPalette(uchar* palette);
 void DXResetPalette(DXTEXTURE* tex);
 void DXTextureSetGreyScale(bool set);
 LPDIRECT3DTEXTUREX DXTextureGetInterface(LPDIRECTDRAWSURFACEX surf);
+long DXTextureFindTextureSlot(DXTEXTURE* tex);
 
 #define DXTextureAdd	( (long(__cdecl*)(long, long, ushort*, DXTEXTURE*, long, long)) 0x004B23D0 )
 #define DXFreeTPages	( (void(__cdecl*)()) 0x004B1F10 )
