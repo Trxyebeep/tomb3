@@ -11,6 +11,9 @@ void QuadBikeDraw(ITEM_INFO* item)
 	long* bone;
 	short* frm[2];
 	short* rot;
+#ifdef TROYESTUFF
+	short* rot2;
+#endif
 	long frac, rate, clip;
 
 	frac = GetFrames(item, frm, &rate);
@@ -30,60 +33,124 @@ void QuadBikeDraw(ITEM_INFO* item)
 	bone = &bones[objects[item->object_number].bone_index];
 	CalculateObjectLighting(item, frm[0]);
 
-	phd_TranslateRel(frm[0][6], frm[0][7], frm[0][8]);
-	rot = frm[0] + 9;
-	gar_RotYXZsuperpack(&rot, 0);
-	phd_PutPolygons(*meshpp++, clip);
+#ifdef TROYESTUFF
+	if (frac)
+	{
+		InitInterpolate(frac, rate);
+		phd_TranslateRel_ID(frm[0][6], frm[0][7], frm[0][8], frm[1][6], frm[1][7], frm[1][8]);
+		rot = frm[0] + 9;
+		rot2 = frm[1] + 9;
+		gar_RotYXZsuperpack_I(&rot, &rot2, 0);
+		phd_PutPolygons_I(*meshpp++, clip);
 
-	phd_PushMatrix();
-	phd_TranslateRel(bone[1], bone[2], bone[3]);
-	gar_RotYXZsuperpack(&rot, 0);
-	phd_PutPolygons(*meshpp++, clip);
-	phd_PopMatrix();
+		phd_PushMatrix_I();
+		phd_TranslateRel_I(bone[1], bone[2], bone[3]);
+		gar_RotYXZsuperpack_I(&rot, &rot2, 0);
+		phd_PutPolygons_I(*meshpp++, clip);
+		phd_PopMatrix_I();
 
-	phd_PushMatrix();
+		phd_PushMatrix_I();
 
-	phd_TranslateRel(bone[5], bone[6], bone[7]);
-	gar_RotYXZsuperpack(&rot, 0);
-	phd_PutPolygons(*meshpp++, clip);
+		phd_TranslateRel_I(bone[5], bone[6], bone[7]);
+		gar_RotYXZsuperpack_I(&rot, &rot2, 0);
+		phd_PutPolygons_I(*meshpp++, clip);
 
-	phd_PushMatrix();
-	phd_TranslateRel(bone[9], bone[10], bone[11]);
-	gar_RotYXZsuperpack(&rot, 0);
-	phd_RotX(quad->RearRot);
-	phd_PutPolygons(*meshpp++, clip);
-	phd_PopMatrix();
+		phd_PushMatrix_I();
+		phd_TranslateRel_I(bone[9], bone[10], bone[11]);
+		gar_RotYXZsuperpack_I(&rot, &rot2, 0);
+		phd_RotX_I(quad->RearRot);
+		phd_PutPolygons_I(*meshpp++, clip);
+		phd_PopMatrix_I();
 
-	phd_PushMatrix();
-	phd_TranslateRel(bone[13], bone[14], bone[15]);
-	gar_RotYXZsuperpack(&rot, 0);
-	phd_RotX(quad->RearRot);
-	phd_PutPolygons(*meshpp++, clip);
-	phd_PopMatrix();
+		phd_PushMatrix_I();
+		phd_TranslateRel_I(bone[13], bone[14], bone[15]);
+		gar_RotYXZsuperpack_I(&rot, &rot2, 0);
+		phd_RotX_I(quad->RearRot);
+		phd_PutPolygons_I(*meshpp++, clip);
+		phd_PopMatrix_I();
 
-	phd_PopMatrix();
+		phd_PopMatrix_I();
 
-	phd_PushMatrix();
+		phd_PushMatrix_I();
 
-	phd_TranslateRel(bone[17], bone[18], bone[19]);
-	gar_RotYXZsuperpack(&rot, 0);
-	phd_PutPolygons(*meshpp++, clip);
+		phd_TranslateRel_I(bone[17], bone[18], bone[19]);
+		gar_RotYXZsuperpack_I(&rot, &rot2, 0);
+		phd_PutPolygons_I(*meshpp++, clip);
 
-	phd_PushMatrix();
-	phd_TranslateRel(bone[21], bone[22], bone[23]);
-	gar_RotYXZsuperpack(&rot, 0);
-	phd_RotX(quad->FrontRot);
-	phd_PutPolygons(*meshpp++, clip);
-	phd_PopMatrix();
+		phd_PushMatrix_I();
+		phd_TranslateRel_I(bone[21], bone[22], bone[23]);
+		gar_RotYXZsuperpack_I(&rot, &rot2, 0);
+		phd_RotX_I(quad->FrontRot);
+		phd_PutPolygons_I(*meshpp++, clip);
+		phd_PopMatrix_I();
 
-	phd_PushMatrix();
-	phd_TranslateRel(bone[25], bone[26], bone[27]);
-	gar_RotYXZsuperpack(&rot, 0);
-	phd_RotX(quad->FrontRot);
-	phd_PutPolygons(*meshpp++, clip);
-	phd_PopMatrix();
+		phd_PushMatrix_I();
+		phd_TranslateRel_I(bone[25], bone[26], bone[27]);
+		gar_RotYXZsuperpack_I(&rot, &rot2, 0);
+		phd_RotX_I(quad->FrontRot);
+		phd_PutPolygons_I(*meshpp++, clip);
+		phd_PopMatrix_I();
 
-	phd_PopMatrix();
+		phd_PopMatrix_I();
+	}
+	else
+#endif
+	{
+		phd_TranslateRel(frm[0][6], frm[0][7], frm[0][8]);
+		rot = frm[0] + 9;
+		gar_RotYXZsuperpack(&rot, 0);
+		phd_PutPolygons(*meshpp++, clip);
+
+		phd_PushMatrix();
+		phd_TranslateRel(bone[1], bone[2], bone[3]);
+		gar_RotYXZsuperpack(&rot, 0);
+		phd_PutPolygons(*meshpp++, clip);
+		phd_PopMatrix();
+
+		phd_PushMatrix();
+
+		phd_TranslateRel(bone[5], bone[6], bone[7]);
+		gar_RotYXZsuperpack(&rot, 0);
+		phd_PutPolygons(*meshpp++, clip);
+
+		phd_PushMatrix();
+		phd_TranslateRel(bone[9], bone[10], bone[11]);
+		gar_RotYXZsuperpack(&rot, 0);
+		phd_RotX(quad->RearRot);
+		phd_PutPolygons(*meshpp++, clip);
+		phd_PopMatrix();
+
+		phd_PushMatrix();
+		phd_TranslateRel(bone[13], bone[14], bone[15]);
+		gar_RotYXZsuperpack(&rot, 0);
+		phd_RotX(quad->RearRot);
+		phd_PutPolygons(*meshpp++, clip);
+		phd_PopMatrix();
+
+		phd_PopMatrix();
+
+		phd_PushMatrix();
+
+		phd_TranslateRel(bone[17], bone[18], bone[19]);
+		gar_RotYXZsuperpack(&rot, 0);
+		phd_PutPolygons(*meshpp++, clip);
+
+		phd_PushMatrix();
+		phd_TranslateRel(bone[21], bone[22], bone[23]);
+		gar_RotYXZsuperpack(&rot, 0);
+		phd_RotX(quad->FrontRot);
+		phd_PutPolygons(*meshpp++, clip);
+		phd_PopMatrix();
+
+		phd_PushMatrix();
+		phd_TranslateRel(bone[25], bone[26], bone[27]);
+		gar_RotYXZsuperpack(&rot, 0);
+		phd_RotX(quad->FrontRot);
+		phd_PutPolygons(*meshpp++, clip);
+		phd_PopMatrix();
+
+		phd_PopMatrix();
+	}
 
 	phd_PopMatrix();
 }

@@ -4,6 +4,8 @@
 
 ### Original bug fixes
 
+- Make quadbike follow interpolated frames for smoother animations.
+
 ### tomb3 additions
 
 - Add scale for some UI elements (bars and home timers).
