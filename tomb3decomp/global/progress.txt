@@ -77,7 +77,7 @@ tomb3decomp progress.
 0x0040A510	+	HWI_InsertLine_Sorted
 0x0040A690	+	HWI_InsertTransQuad_Sorted
 0x0040A850	+	HWI_InsertTrans8_Sorted
-0x0040AA00		RoomZedClipper
+0x0040AA00	+	RoomZedClipper
 0x0040ABE0		RoomXYGUVClipper
 0x0040B6F0	+	HWI_InsertAlphaSprite_Sorted
 0x0040BCD0	+	HWI_InsertPoly_GouraudRGB

@@ -2146,6 +2146,60 @@ short* HWI_InsertObjectGT4_Sorted(short* pFaceInfo, long nFaces, sort_type nSort
 	return pFaceInfo;
 }
 
+long RoomZedClipper(long n, POINT_INFO* in, VERTEX_INFO* out)
+{
+	POINT_INFO* last;
+	POINT_INFO* pIn;
+	float lastZ, inZ, dz;
+	long nPoints;
+
+	pIn = in;
+	last = &in[n - 1];
+
+	for (nPoints = 0; n--; last = pIn++)
+	{
+		inZ = f_znear - pIn->zv;
+		lastZ = f_znear - last->zv;
+
+		if (((*(long*)&lastZ) | (*(long*)&inZ)) >= 0)
+			continue;
+
+		if (((*(long*)&lastZ) ^ (*(long*)&inZ)) < 0)
+		{
+			dz = inZ / (last->zv - pIn->zv);
+			out->x = ((last->xv - pIn->xv) * dz + pIn->xv) * f_perspoznear + f_centerx;
+			out->y = ((last->yv - pIn->yv) * dz + pIn->yv) * f_perspoznear + f_centery;
+			out->ooz = f_oneoznear;
+			out->u = ((last->u - pIn->u) * dz + pIn->u) * f_oneoznear;
+			out->v = ((last->v - pIn->v) * dz + pIn->v) * f_oneoznear;
+			out->vr = long((last->vr - pIn->vr) * dz + pIn->vr);
+			out->vg = long((last->vg - pIn->vg) * dz + pIn->vg);
+			out->vb = long((last->vb - pIn->vb) * dz + pIn->vb);
+			out++;
+			nPoints++;
+		}
+
+		if ((*(long*)&inZ) < 0)
+		{
+			out->x = pIn->xs;
+			out->y = pIn->ys;
+			out->ooz = pIn->ooz;
+			out->u = pIn->u * pIn->ooz;
+			out->v = pIn->v * pIn->ooz;
+			out->vr = pIn->vr;
+			out->vg = pIn->vg;
+			out->vb = pIn->vb;
+			out++;
+			nPoints++;
+		}
+	}
+
+	if (nPoints < 3)
+		nPoints = 0;
+
+	return nPoints;
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -2176,4 +2230,5 @@ void inject_hwinsert(bool replace)
 	INJECT(0x00408800, HWI_InsertObjectGT3_Sorted, replace);
 	INJECT(0x00408DA0, HWI_InsertObjectG4_Sorted, replace);
 	INJECT(0x004086B0, HWI_InsertObjectGT4_Sorted, replace);
+	INJECT(0x0040AA00, RoomZedClipper, replace);
 }
