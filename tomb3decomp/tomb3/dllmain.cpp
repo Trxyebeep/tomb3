@@ -44,6 +44,7 @@
 #include "../game/sound.h"
 #include "../game/savegame.h"
 #include "../game/boat.h"
+#include "../game/quadbike.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -149,6 +150,7 @@ void inject_all(bool replace)
 	inject_sound(replace);
 	inject_savegame(replace);
 	inject_boat(replace);
+	inject_quadbike(replace);
 
 	//specific
 	inject_drawbars(replace);

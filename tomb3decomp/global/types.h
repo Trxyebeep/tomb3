@@ -1894,6 +1894,23 @@ struct BOAT_INFO
 	short prop_rot;
 };
 
+struct QUADINFO
+{
+	long Velocity;
+	short FrontRot;
+	short RearRot;
+	long Revs;
+	long EngineRevs;
+	short track_mesh;
+	long skidoo_turn;
+	long left_fallspeed;
+	long right_fallspeed;
+	short momentum_angle;
+	short extra_rotation;
+	long pitch;
+	uchar Flags;
+};
+
 #ifdef TROYESTUFF
 struct FVECTOR
 {
