@@ -30,8 +30,7 @@ void HWR_DrawPolyListBF(long num, long* pSort);
 void HWR_FreeTexturePages();
 void HWR_GetAllTextureHandles();
 void HWR_LoadTexturePages(long nPages, uchar* src, uchar* palette);
-
-#define HWR_SetCurrentTexture	( (void(__cdecl*)(DXTEXTURE*)) 0x00484C30 )
+void HWR_SetCurrentTexture(DXTEXTURE* tex);
 
 #define SetRenderState	( *(HRESULT(__cdecl**)(D3DRENDERSTATETYPE, long)) 0x006CA1B8 )	//here FOR NOW
 #define DrawPrimitive	( *(HRESULT(__cdecl**)(D3DPRIMITIVETYPE, D3DVERTEXTYPE, LPVOID, ulong, ulong)) 0x006CA1C0 )

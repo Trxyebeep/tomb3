@@ -1701,7 +1701,7 @@ tomb3decomp progress.
 0x00484AE0	+	HWR_EnablePerspCorrect
 0x00484B70	+	HWR_EnableFilter
 0x00484BF0	+	HWR_EnableAlphaBlend
-0x00484C30		HWR_SetCurrentTexture
+0x00484C30	+	HWR_SetCurrentTexture
 0x00484DE0	+	HWR_EnableColorKey
 0x00484E20	+	HWR_EnableZBuffer
 0x00484EB0	+	HWR_BeginScene

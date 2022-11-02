@@ -832,6 +832,93 @@ void HWR_LoadTexturePages(long nPages, uchar* src, uchar* palette)
 		HWR_SetCurrentTexture(TPages[i]);
 }
 
+void HWR_SetCurrentTexture(DXTEXTURE* tex)
+{
+	TEXTURE* tdata;
+	TEXTURE* temp;
+	LPDIRECT3DTEXTUREX d3dtex;
+	D3DTEXTUREHANDLE handle;
+	static D3DTEXTUREHANDLE lastTextureHandle;
+	ulong n;
+
+	handle = 0;
+
+	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+	{
+		if (!nTPages)
+			return;
+
+		if (tex)
+		{
+			for (int i = 0; i < 32; i++)
+			{
+				if (Textures[i].DXTex == tex)
+				{
+					handle = Textures[i].handle;
+					Textures[i].nFrames = App.nFrames;
+					break;
+				}
+			}
+
+			if (!handle)
+			{
+				n = 0;
+				tdata = (TEXTURE*)tex;
+
+				for (int i = 0; i < nTPages; i++)
+				{
+					temp = &Textures[i];
+
+					if (!temp->DXTex && tex->bpp == temp->bpp)
+					{
+						tdata = temp;
+						break;
+					}
+
+					if (App.nFrames - temp->nFrames >= n && tex->bpp == temp->bpp)
+					{
+						n = App.nFrames - temp->nFrames;
+						tdata = &temp[-1];
+					}
+				}
+
+				handle = tdata->handle;
+
+				if (!n)
+					SetRenderState(D3DRENDERSTATE_FLUSHBATCH, 0);
+
+				if (tdata->pSurf->IsLost() == DDERR_SURFACELOST)
+					tdata->pSurf->Restore();
+
+				if (tex->pSystemSurface)
+				{
+					d3dtex = DXTextureGetInterface(tex->pSystemSurface);
+
+					if (tdata->pTexture->Load(d3dtex) != D3D_OK)
+					{
+						d3dtex = DXTextureGetInterface(tex->pSystemSurface);
+						tdata->pTexture->Load(d3dtex);
+					}
+				}
+
+				tdata->DXTex = tex;
+				tdata->nFrames = App.nFrames;
+				tex->tex = tdata;
+			}
+		}
+	}
+	else if (tex)
+		SetRenderState(D3DRENDERSTATE_TEXTUREHANDLE, (ulong)tex->pData);
+	else
+		SetRenderState(D3DRENDERSTATE_TEXTUREHANDLE, 0);
+
+	if (handle != lastTextureHandle)
+	{
+		SetRenderState(D3DRENDERSTATE_TEXTUREHANDLE, handle);
+		lastTextureHandle = handle;
+	}
+}
+
 void inject_hwrender(bool replace)
 {
 	INJECT(0x00484E20, HWR_EnableZBuffer, replace);
@@ -855,4 +942,5 @@ void inject_hwrender(bool replace)
 	INJECT(0x004859C0, HWR_FreeTexturePages, replace);
 	INJECT(0x00485A10, HWR_GetAllTextureHandles, replace);
 	INJECT(0x00485900, HWR_LoadTexturePages, replace);
+	INJECT(0x00484C30, HWR_SetCurrentTexture, replace);
 }

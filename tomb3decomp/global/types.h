@@ -1325,7 +1325,7 @@ struct WINAPP
 	bool bFocus;
 	long nRenderMode;
 	long nUVAdd;
-	long nFrames;
+	ulong nFrames;
 	float fps;
 };
 
