@@ -216,12 +216,31 @@ void S_DrawHealthBar(long percent)
 
 	w = GetRenderScale(100);
 	h = GetRenderScale(5);
-	xs = GetRenderScale(8);
-	ys = GetRenderScale(8);
+
+	if (tomb3.bar_pos == BPOS_PSX)
+	{
+		xs = GetRenderScale(20);
+		ys = GetRenderScale(18);
+	}
+	else
+	{
+		xs = GetRenderScale(8);
+		ys = GetRenderScale(8);
+	}
+
 	p = GetRenderScale(1);
 
-	x0 = phd_winxmin + xs;
-	x1 = x0 + w;
+	if (tomb3.bar_pos == BPOS_PSX)
+	{
+		x1 = phd_winxmin + DumpWidth - xs;
+		x0 = x1 - w;
+	}
+	else
+	{
+		x0 = phd_winxmin + xs;
+		x1 = x0 + w;
+	}
+
 	y0 = phd_winymin + ys;
 	y1 = y0 + h;
 
@@ -317,8 +336,18 @@ void S_DrawDashBar(long percent)
 
 	w = GetRenderScale(100);
 	h = GetRenderScale(5);
-	xs = GetRenderScale(8);
-	ys = GetRenderScale(25);
+
+	if (tomb3.bar_pos == BPOS_PSX)
+	{
+		xs = GetRenderScale(20);
+		ys = GetRenderScale(46);
+	}
+	else
+	{
+		xs = GetRenderScale(8);
+		ys = GetRenderScale(25);
+	}
+
 	p = GetRenderScale(1);
 
 	x1 = phd_winxmin + DumpWidth - xs;
@@ -398,8 +427,18 @@ void S_DrawAirBar(long percent)
 
 	w = GetRenderScale(100);
 	h = GetRenderScale(5);
-	xs = GetRenderScale(8);
-	ys = GetRenderScale(8);
+
+	if (tomb3.bar_pos == BPOS_PSX)
+	{
+		xs = GetRenderScale(20);
+		ys = GetRenderScale(32);
+	}
+	else
+	{
+		xs = GetRenderScale(8);
+		ys = GetRenderScale(8);
+	}
+
 	p = GetRenderScale(1);
 
 	x1 = phd_winxmin + DumpWidth - xs;
@@ -479,12 +518,31 @@ void S_DrawColdBar(long percent)
 
 	w = GetRenderScale(100);
 	h = GetRenderScale(5);
-	xs = GetRenderScale(8);
-	ys = GetRenderScale(25);
+
+	if (tomb3.bar_pos == BPOS_PSX)
+	{
+		xs = GetRenderScale(20);
+		ys = GetRenderScale(60);
+	}
+	else
+	{
+		xs = GetRenderScale(8);
+		ys = GetRenderScale(25);
+	}
+
 	p = GetRenderScale(1);
 
-	x0 = phd_winxmin + xs;
-	x1 = x0 + w;
+	if (tomb3.bar_pos == BPOS_PSX)
+	{
+		x1 = phd_winxmin + DumpWidth - xs;
+		x0 = x1 - w;
+	}
+	else
+	{
+		x0 = phd_winxmin + xs;
+		x1 = x0 + w;
+	}
+
 	y0 = phd_winymin + ys;
 	y1 = y0 + h;
 

@@ -1941,6 +1941,14 @@ enum t3_summon_ring_style
 	NSRING_STYLES
 };
 
+enum t3_bar_pos
+{
+	BPOS_ORIGINAL,
+	BPOS_IMPROVED,
+	BPOS_PSX,
+	NBAR_POS
+};
+
 struct TOMB3_OPTIONS
 {
 	bool footprints;
@@ -1964,6 +1972,7 @@ struct TOMB3_OPTIONS
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum
 	long sophia_rings;	//t3_summon_ring_style
+	long bar_pos;		//t3_bar_pos enum
 	float GUI_Scale;
 	float INV_Scale;
 };

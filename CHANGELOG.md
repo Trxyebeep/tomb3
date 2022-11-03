@@ -10,6 +10,7 @@
 
 - Add scale for some UI elements (bars and home timers).
 - Add option for PSX text colors.
+- Add option for PSX bar positions.
 
 ### tomb3 bug fixes
 
