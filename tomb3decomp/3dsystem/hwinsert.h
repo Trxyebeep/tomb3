@@ -36,6 +36,6 @@ short* HWI_InsertObjectG4_Sorted(short* pFaceInfo, long nFaces, sort_type nSortT
 short* HWI_InsertObjectGT4_Sorted(short* pFaceInfo, long nFaces, sort_type nSortType);
 long RoomZedClipper(long n, POINT_INFO* in, VERTEX_INFO* out);
 long RoomXYGUVClipper(long n, VERTEX_INFO* in);
+long XYGClipper(long n, VERTEX_INFO* in);
 
 #define XYClipper	( (long(__cdecl*)(long, VERTEX_INFO*)) 0x0040CA50 )
-#define XYGClipper	( (long(__cdecl*)(long, VERTEX_INFO*)) 0x0040C0B0 )
