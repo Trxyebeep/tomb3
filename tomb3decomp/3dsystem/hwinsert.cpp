@@ -789,12 +789,17 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 		if (!nPoints)
 			return;
 
+#ifdef TROYESTUFF
+	drawtextured:
+#endif
 		phd_leftfloat = (float)phd_winxmin;
 		phd_rightfloat = float(phd_winxmin + phd_winwidth);
 		phd_topfloat = (float)phd_winymin;
 		phd_bottomfloat = float(phd_winymin + phd_winheight);
 
+#ifndef TROYESTUFF
 	drawtextured:
+#endif
 		nPoints = RoomXYGUVClipper(nPoints, v_buffer);
 
 		if (nPoints)
