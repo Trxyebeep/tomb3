@@ -14,6 +14,7 @@
 ### tomb3 bug fixes
 
 - Fix footstep sfx being wrong in some rooms.
+- Fix bats shape.
 
 
 ## [1.1.0](https://github.com/Trxyebeep/tomb3decomp/tree/V1.1.0) (Oct. 29 2022)

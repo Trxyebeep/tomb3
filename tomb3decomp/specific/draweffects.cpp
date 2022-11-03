@@ -3759,7 +3759,7 @@ void S_DrawBat()
 			else
 				y = (rcossin_tbl[bat->WingYoff << 7] >> 4) + BatMesh[j][1] - 512;
 
-			z = BatMesh[j][3];
+			z = BatMesh[j][2];
 
 			pos.x = phd_mxptr[M00] * x + phd_mxptr[M01] * y + phd_mxptr[M02] * z + phd_mxptr[M03];
 			pos.y = phd_mxptr[M10] * x + phd_mxptr[M11] * y + phd_mxptr[M12] * z + phd_mxptr[M13];
@@ -3871,7 +3871,7 @@ void S_DrawBat()
 			tex.drawtype = 1;
 			tex.tpage = sprite->tpage;
 
-			if (!i)
+			if (!j)
 			{
 				v[0].u = u1;
 				v[0].v = v1 + (ushort)App.nUVAdd;
@@ -3881,7 +3881,7 @@ void S_DrawBat()
 			}
 			else
 			{
-				if (i == 1)
+				if (j == 1)
 				{
 					v[0].u = u2;
 					v[0].v = v1;
