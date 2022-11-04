@@ -79,6 +79,31 @@ do \
 #define DSNGUID					IID_IDirectSoundNotify
 /***********************************************/
 
+//constants
+#define NO_HEIGHT -32512
+#define NO_TARGET	-16384
+#define NO_ITEM	-1
+#define W2V_SHIFT	14
+
+#ifdef TROYESTUFF	//*4
+#define MAX_TLVERTICES	0x9000
+#else
+#define MAX_TLVERTICES	0x2400
+#endif
+
+#ifdef TROYESTUFF	//*4
+#define MAX_SORTLISTS	0xBB80
+#else
+#define MAX_SORTLISTS	0x2EE0
+#endif
+
+#define MAX_TPAGES	32
+#define MAX_TINFOS	4096
+
+#define NO_ROOM	255
+#define WALL_SHIFT	10
+#define WALL_SIZE	(1 << WALL_SHIFT)
+
 /*enums*/
 enum status_codes
 {

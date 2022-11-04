@@ -441,7 +441,7 @@ long LoadAnimatedTextures(HANDLE file)
 
 	MyReadFile(file, &num, sizeof(long), &read, 0);
 
-	if (num > 4096)
+	if (num > MAX_TINFOS)
 	{
 		lstrcpy(exit_message, "Too many Textures in level");
 		return 0;

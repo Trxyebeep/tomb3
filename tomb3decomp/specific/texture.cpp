@@ -44,7 +44,7 @@ LPDIRECT3DTEXTUREX DXTextureGetInterface(LPDIRECTDRAWSURFACEX surf)
 
 long DXTextureFindTextureSlot(DXTEXTURE* tex)
 {
-	for (int i = 0; i < 32; i++)
+	for (int i = 0; i < MAX_TPAGES; i++)
 	{
 		if (!(tex[i].dwFlags & 1))
 			return i;
@@ -99,7 +99,7 @@ long DXTextureMakeDeviceSurface(long w, long h, LPDIRECTDRAWPALETTE palette, DXT
 
 void DXClearAllTextures(DXTEXTURE* list)
 {
-	for (int i = 0; i < 32; i++)
+	for (int i = 0; i < MAX_TPAGES; i++)
 		DXTextureCleanup(i, list);
 
 	if (DXPalette)
@@ -482,7 +482,7 @@ void DXCreateMaxTPages(long create)
 		ddpf = &d3dinfo->Texture[App.DXConfigPtr->D3DTF].ddsd.ddpfPixelFormat;
 	}
 
-	for (; n < 32; n++)
+	for (; n < MAX_TPAGES; n++)
 	{
 		tex = &Textures[n];
 
@@ -501,7 +501,7 @@ void DXFreeTPages()
 	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
 		return;
 
-	for (int i = 0; i < 32; i++)
+	for (int i = 0; i < MAX_TPAGES; i++)
 	{
 		tex = &Textures[i];
 		DXTex = (DXTEXTURE*)tex->DXTex;

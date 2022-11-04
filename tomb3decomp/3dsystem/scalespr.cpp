@@ -51,13 +51,13 @@ short* ins_room_sprite(short* objptr, long num)
 		{
 			sprite = &phdspriteinfo[objptr[1]];
 			zv = (long)vtx->zv / phd_persp;
-			x1 = long(((sprite->x1 << 14) + vtx->xv) / zv + phd_centerx);
-			y1 = long(((sprite->y1 << 14) + vtx->yv) / zv + phd_centery);
-			x2 = long(((sprite->x2 << 14) + vtx->xv) / zv + phd_centerx);
-			y2 = long(((sprite->y2 << 14) + vtx->yv) / zv + phd_centery);
+			x1 = long(((sprite->x1 << W2V_SHIFT) + vtx->xv) / zv + phd_centerx);
+			y1 = long(((sprite->y1 << W2V_SHIFT) + vtx->yv) / zv + phd_centery);
+			x2 = long(((sprite->x2 << W2V_SHIFT) + vtx->xv) / zv + phd_centerx);
+			y2 = long(((sprite->y2 << W2V_SHIFT) + vtx->yv) / zv + phd_centery);
 
 			if (x2 >= phd_left && y2 >= phd_top && x1 < phd_right && y1 < phd_bottom)
-				InsertSprite((long)vtx->zv, x1, y1, x2, y2, objptr[1], vtx->g, -1, 10, 0);
+				InsertSprite((long)vtx->zv, x1, y1, x2, y2, objptr[1], vtx->g, -1, DT_POLY_WGT, 0);
 		}
 
 		objptr += 2;
@@ -133,11 +133,11 @@ void S_DrawScreenSprite2d(long x, long y, long z, long scaleH, long scaleV, shor
 		shade2 = r << 10 | g << 5 | b;
 
 		if (flags == 0xFFFF)
-			InsertSprite(phd_znear, x1, y1, x2, y2, sprnum, shade1, shade2, 10, 0);
+			InsertSprite(phd_znear, x1, y1, x2, y2, sprnum, shade1, shade2, DT_POLY_WGT, 0);
 		else
 		{
-			InsertSprite(phd_znear + 0x28000, x1, y1, x2, y2, sprnum, shade1, shade2, 10, 0);
-			InsertSprite(phd_znear + 0x3C000, x1 + 1, y1 + 1, x2 + 1, y2 + 1, sprnum, 0, 0, 10, 0);
+			InsertSprite(phd_znear + 0x28000, x1, y1, x2, y2, sprnum, shade1, shade2, DT_POLY_WGT, 0);
+			InsertSprite(phd_znear + 0x3C000, x1 + 1, y1 + 1, x2 + 1, y2 + 1, sprnum, 0, 0, DT_POLY_WGT, 0);
 		}
 	}
 }
@@ -154,7 +154,7 @@ void S_DrawScreenSprite(long x, long y, long z, long scaleH, long scaleV, short 
 	y2 = y + ((scaleV * (sprite->y2 >> 3)) >> 16);
 
 	if (x2 >= 0 && y2 >= 0 && x1 < phd_winwidth && y1 < phd_winheight)
-		InsertSprite(z << 3, x1, y1, x2, y2, sprnum, shade, -1, 10, 0);
+		InsertSprite(z << 3, x1, y1, x2, y2, sprnum, shade, -1, DT_POLY_WGT, 0);
 }
 
 void S_DrawSprite(ulong flags, long x, long y, long z, short sprnum, short shade, short scale)
@@ -163,7 +163,7 @@ void S_DrawSprite(ulong flags, long x, long y, long z, short sprnum, short shade
 	long xv, yv, zv, zop, x1, y1, x2, y2;
 	short r, g, b;
 
-	if (flags & 0x1000000)
+	if (flags & SPR_ABS)
 	{
 		x -= w2v_matrix[M03];
 		y -= w2v_matrix[M13];
@@ -208,7 +208,7 @@ void S_DrawSprite(ulong flags, long x, long y, long z, short sprnum, short shade
 	x2 = sprite->x2;
 	y2 = sprite->y2;
 
-	if (flags & 0x4000000)
+	if (flags & SPR_SCALE)
 	{
 		x1 = (scale * x1) << 6;
 		y1 = (scale * y1) << 6;
@@ -217,10 +217,10 @@ void S_DrawSprite(ulong flags, long x, long y, long z, short sprnum, short shade
 	}
 	else
 	{
-		x1 <<= 14;
-		y1 <<= 14;
-		x2 <<= 14;
-		y2 <<= 14;
+		x1 <<= W2V_SHIFT;
+		y1 <<= W2V_SHIFT;
+		x2 <<= W2V_SHIFT;
+		y2 <<= W2V_SHIFT;
 	}
 
 	x1 = phd_centerx + (x1 + xv) / zop;
@@ -243,11 +243,11 @@ void S_DrawSprite(ulong flags, long x, long y, long z, short sprnum, short shade
 	if (y2 < 0)
 		return;
 
-	if (flags & 0x8000000)
+	if (flags & SPR_SHADE)
 	{
-		if (zv > distanceFogValue << 14)
+		if (zv > distanceFogValue << W2V_SHIFT)
 		{
-			shade += short((zv >> 14) - distanceFogValue);
+			shade += short((zv >> W2V_SHIFT) - distanceFogValue);
 
 			if (shade > 8191)
 				return;
@@ -263,10 +263,10 @@ void S_DrawSprite(ulong flags, long x, long y, long z, short sprnum, short shade
 		g = ((shade >> 8) & 0xFF) >> 3;
 		b = ((shade >> 16) & 0xFF) >> 3;
 		shade = r << 10 | g << 5 | b;
-		InsertSprite(zv, x1, y1, x2, y2, sprnum, shade, -1, 14, 0);
+		InsertSprite(zv, x1, y1, x2, y2, sprnum, shade, -1, DT_POLY_WGTA, 0);
 	}
 	else
-		InsertSprite(zv, x1, y1, x2, y2, sprnum, shade, -1, 10, 0);
+		InsertSprite(zv, x1, y1, x2, y2, sprnum, shade, -1, DT_POLY_WGT, 0);
 }
 
 void inject_scalespr(bool replace)

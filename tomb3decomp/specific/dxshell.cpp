@@ -960,7 +960,7 @@ bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer)
 
 	DXSurfBlt(App.lpFrontBuffer, 0, 0);
 
-	for (int i = 0; i < 32; i++)
+	for (int i = 0; i < MAX_TPAGES; i++)
 		PictureTextures[i].tex = 0;
 
 	if (!d3dinfo->bHardware)

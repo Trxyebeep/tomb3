@@ -412,15 +412,12 @@
 #define conflict	ARRAY_(0x0069FCB0, long, [15])
 #define keymap	ARRAY_(0x0069FCF0, uchar, [256])
 #define sparks	ARRAY_(0x006D8880, SPARKS, [192])
-#define Buckets	ARRAY_(0x005D7B00, TEXTUREBUCKET, [6])
-#define TPages	ARRAY_(0x00633F70, DXTEXTURE*, [32])
 #define depthq_table	ARRAY_(0x005BB2D8, char, [33][256])
 #define gouraud_table	ARRAY_(0x004D38E8, char, [256][32])
 #define water_palette	ARRAY_(0x006A1228, uchar, [768])
 #define game_palette	ARRAY_(0x006A1858, uchar, [768])
 #define exit_message	ARRAY_(0x006A1BD8, char, [128])
 #define phdspriteinfo	ARRAY_(0x004D58F0, PHDSPRITESTRUCT, [512])
-#define phdtextinfo	ARRAY_(0x005A6B00, PHDTEXTURESTRUCT, [4096])
 #define G_GouraudPalette	ARRAY_(0x00625450, uchar, [1024])
 #define FootPrint	ARRAY_(0x006D79E0, FOOTPRINT, [32])
 #define light_level	ARRAY_(0x006A1828, long, [4])
@@ -455,12 +452,15 @@
 #define TonyBossShield	ARRAY_(0x006CFD80, SHIELD_POINTS, [40])
 #define LondonBossShield	ARRAY_(0x006D5AA0, SHIELD_POINTS, [40])
 #define WillBossShield	ARRAY_(0x006CF820, SHIELD_POINTS, [40])
-#define PictureTextures	ARRAY_(0x006CE958, DXTEXTURE, [32])
-#define Textures	ARRAY_(0x006CE558, TEXTURE, [32])
-#define texture_page_ptrs	ARRAY_(0x005D79C8, char*, [32])
+#define Buckets	ARRAY_(0x005D7B00, TEXTUREBUCKET, [6])
+#define phdtextinfo	ARRAY_(0x005A6B00, PHDTEXTURESTRUCT, [MAX_TINFOS])
+#define TexturesUVFlag	ARRAY_(0x00632C00, uchar, [MAX_TINFOS])
+#define TPages	ARRAY_(0x00633F70, DXTEXTURE*, [MAX_TPAGES])
+#define PictureTextures	ARRAY_(0x006CE958, DXTEXTURE, [MAX_TPAGES])
+#define Textures	ARRAY_(0x006CE558, TEXTURE, [MAX_TPAGES])
+#define texture_page_ptrs	ARRAY_(0x005D79C8, char*, [MAX_TPAGES])
 #define ground_zone	ARRAY_(0x006E3160, short*, [4][2])
 #define fly_zone	ARRAY_(0x006E3180, short*, [2])
-#define TexturesUVFlag	ARRAY_(0x00632C00, uchar, [4096])
 #define sample_lut	ARRAY_(0x006D1F40, short, [370])
 #define LastLoadedLevelPath	ARRAY_(0x00633E28, char, [256])
 #define GF_Offsets	ARRAY_(0x00633C90, short, [200])
@@ -488,25 +488,3 @@
 #define DS_Samples	ARRAY_(0x00632B50, LPDIRECTSOUNDBUFFER, [32])
 #define SqrtTable	ARRAY_(0x006588D0, long, [1024])
 #define LaSlot	ARRAY_(0x006267E0, SOUND_SLOT, [32])
-
-/*constants*/
-#define NO_HEIGHT -32512
-#define NO_TARGET	-16384
-#define NO_ITEM	-1
-#define W2V_SHIFT	14
-
-#ifdef TROYESTUFF	//*4
-#define MAX_TLVERTICES	0x9000
-#else
-#define MAX_TLVERTICES	0x2400
-#endif
-
-#ifdef TROYESTUFF	//*4
-#define MAX_SORTLISTS	0xBB80
-#else
-#define MAX_SORTLISTS	0x2EE0
-#endif
-
-#define NO_ROOM	255
-#define WALL_SHIFT	10
-#define WALL_SIZE	(1 << WALL_SHIFT)

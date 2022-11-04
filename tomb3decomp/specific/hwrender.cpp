@@ -757,7 +757,7 @@ void HWR_DrawPolyListBF(long num, long* pSort)
 
 void HWR_FreeTexturePages()
 {
-	for (int i = 0; i < 32; i++)
+	for (int i = 0; i < MAX_TPAGES; i++)
 	{
 		if (PictureTextures[i].dwFlags & 8)
 			DXTextureCleanup(i, PictureTextures);
@@ -778,7 +778,7 @@ void HWR_GetAllTextureHandles()
 	memset(TPages, 0, sizeof(TPages));
 	n = 0;
 
-	for (int i = 0; i < 32; i++)
+	for (int i = 0; i < MAX_TPAGES; i++)
 	{
 		tex = DXRestoreSurfaceIfLost(i, PictureTextures);
 
@@ -789,7 +789,7 @@ void HWR_GetAllTextureHandles()
 		}
 	}
 
-	for (int i = 0; i < 32; i++)
+	for (int i = 0; i < MAX_TPAGES; i++)
 	{
 		tex = DXRestoreSurfaceIfLost(i, PictureTextures);
 
@@ -850,7 +850,7 @@ void HWR_SetCurrentTexture(DXTEXTURE* tex)
 
 		if (tex)
 		{
-			for (int i = 0; i < 32; i++)
+			for (int i = 0; i < MAX_TPAGES; i++)
 			{
 				if (Textures[i].DXTex == tex)
 				{
