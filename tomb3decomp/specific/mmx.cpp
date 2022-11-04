@@ -140,8 +140,50 @@ void MMXBlit32to16(uchar* dest, ulong* src, long w)
 	}
 }
 
+void MMXBlit32to24(uchar* dest, ulong* src, long w)
+{
+	__int64 c0 = 0x0000000000FFFFFF;	//rgb1
+	__int64 c1 = 0x00FFFFFF00000000;	//rgb2
+	__int64 c2 = 0x000000000000FFFF;	//gb1
+	__int64 c3 = 0x0000000000FF0000;	//r1
+
+	__asm
+	{
+		mov esi, [src]
+		mov edi, [dest]
+		mov eax, w
+
+	lp:
+		movq mm0, [esi]
+		movq mm1, [esi + 8]
+		movq mm2, mm0
+		movq mm3, mm1
+		sub eax, 4
+		movq mm4, mm1
+		pand mm0, [c0]
+		pand mm1, [c2]
+		pand mm2, [c1]
+		psrlq mm2, 8
+		psllq mm1, 30h
+		por mm1, mm2
+		por mm0, mm1
+		pand mm3, [c3]
+		pand mm4, [c1]
+		psrlq mm3, 10h
+		psrlq mm4, 18h
+		por mm3, mm4
+		lea esi, [esi + 10h]
+		movq[edi], mm0
+		movd[edi + 8], mm3
+		lea edi, [edi + 0Ch]
+		jne lp
+		emms
+	}
+}
+
 void inject_mmx(bool replace)
 {
 	INJECT(0x00496930, MMXBlit32to15, replace);
 	INJECT(0x00496A70, MMXBlit32to16, replace);
+	INJECT(0x00496B20, MMXBlit32to24, replace);
 }

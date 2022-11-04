@@ -1757,7 +1757,7 @@ tomb3decomp progress.
 0x004953B0		DrawSpansAlpha
 0x00496930	+	MMXBlit32to15
 0x00496A70	+	MMXBlit32to16
-0x00496B20		MMXBlit32to24
+0x00496B20	+	MMXBlit32to24
 
 
 		specific/option.cpp
