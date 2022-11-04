@@ -12,6 +12,7 @@
 #include "../game/londboss.h"
 #include "output.h"
 #ifdef TROYESTUFF
+#include "../game/sub.h"
 #include "../tomb3/tomb3.h"
 #endif
 
@@ -4793,6 +4794,170 @@ void DrawBetterLasers(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, u
 		v[2].ys -= s;
 		v[3].ys -= s;
 		HWI_InsertGT4_Poly(&v[0], &v[1], &v[2], &v[3], &tex, MID_SORT, 1);
+	}
+
+	phd_PopMatrix();
+}
+
+void S_DrawSubWakeFX(ITEM_INFO* item)
+{
+	DISPLAYMODE* dm;
+	SUB_WAKE_PTS* pt;
+	BITE_INFO* bite;
+	PHD_VECTOR pos;
+	long* pZ;
+	short* pXY;
+	uchar* pRGBs;
+	float zv;
+	long w, h, current, nw, s1, s2, s3, s4;
+	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c12, c34, cval;
+	long Z[64];
+	short XY[128];
+	uchar rgbs[128];
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w - 1;
+	h = dm->h - 1;
+
+	phd_PushMatrix();
+	phd_TranslateAbs(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos);
+
+	for (int i = 0; i < 2; i++)
+	{
+		pXY = XY;
+		pZ = Z;
+		pRGBs = rgbs;
+
+		for (int j = 0; j < 2; j++)
+		{
+			bite = &sub_bites[(i << 1) + 2 + j];
+			pos.x = bite->x;
+			pos.y = bite->y;
+			pos.z = bite->z;
+			GetJointAbsPosition(item, &pos, bite->mesh_num);
+			x1 = pos.x - lara_item->pos.x_pos;
+			y1 = pos.y + 128 - lara_item->pos.y_pos;
+			z1 = pos.z - lara_item->pos.z_pos;
+
+			pos.x = phd_mxptr[M00] * x1 + phd_mxptr[M01] * y1 + phd_mxptr[M02] * z1 + phd_mxptr[M03];
+			pos.y = phd_mxptr[M10] * x1 + phd_mxptr[M11] * y1 + phd_mxptr[M12] * z1 + phd_mxptr[M13];
+			pos.z = phd_mxptr[M20] * x1 + phd_mxptr[M21] * y1 + phd_mxptr[M22] * z1 + phd_mxptr[M23];
+
+			zv = f_persp / (float)pos.z;
+			pos.x = short(float(pos.x * zv + f_centerx));
+			pos.y = short(float(pos.y * zv + f_centery));
+
+			pXY[0] = (short)pos.x;
+			pXY[1] = (short)pos.y;
+			pXY += 2;
+			*pZ++ = pos.z;
+		}
+
+		*pRGBs++ = 0;
+		current = (SubCurrentStartWake - 1) & 0x1F;
+
+		for (nw = 0; nw < 32; nw++)
+		{
+			pt = &SubWakePts[current][i];
+
+			if (pt->life)
+			{
+				for (int k = 0; k < 2; k++)
+				{
+					x1 = pt->x[k] - lara_item->pos.x_pos;
+					y1 = pt->y[k] - lara_item->pos.y_pos;
+					z1 = pt->z[k] - lara_item->pos.z_pos;
+					pos.x = phd_mxptr[M00] * x1 + phd_mxptr[M01] * y1 + phd_mxptr[M02] * z1 + phd_mxptr[M03];
+					pos.y = phd_mxptr[M10] * x1 + phd_mxptr[M11] * y1 + phd_mxptr[M12] * z1 + phd_mxptr[M13];
+					pos.z = phd_mxptr[M20] * x1 + phd_mxptr[M21] * y1 + phd_mxptr[M22] * z1 + phd_mxptr[M23];
+
+					zv = f_persp / (float)pos.z;
+					pos.x = short(float(pos.x * zv + f_centerx));
+					pos.y = short(float(pos.y * zv + f_centery));
+
+					pXY[0] = (short)pos.x;
+					pXY[1] = (short)pos.y;
+					pXY += 2;
+					*pZ++ = pos.z;
+				}
+
+				*pRGBs++ = pt->life >> 2;
+			}
+			else
+			{
+				*pZ = -5555;
+				break;
+			}
+
+			current = (current - 1) & 0x1F;
+		}
+
+		if (!nw)
+			break;
+
+		pXY = XY;
+		pZ = Z;
+		pRGBs = rgbs;
+
+		x2 = *pXY++;
+		y2 = *pXY++;
+		x1 = *pXY++;
+		y1 = *pXY++;
+		z2 = *pZ++;
+		z1 = *pZ++;
+		c12 = *pRGBs++;
+
+		if (SubWakeShade < 16)
+			c12 = (c12 * SubWakeShade) >> 4;
+
+		for (;;)
+		{
+			z3 = *pZ++;
+
+			if (z3 == -5555)
+				break;
+
+			x3 = *pXY++;
+			y3 = *pXY++;
+			x4 = *pXY++;
+			y4 = *pXY++;
+			z4 = *pZ++;
+			c34 = *pRGBs++;
+
+			if (SubWakeShade < 16)
+				c34 = (c34 * SubWakeShade) >> 4;
+
+			z1 = (z1 + z2 + z3 + z4) >> 2;
+
+			if ((z1 >> W2V_SHIFT) > 32 &&
+				x1 > -512 && x2 > -512 && x3 > -512 && x4 > -512 &&
+				x1 < w + 512 && x2 < w + 512 && x3 < w + 512 && x4 < w + 512 &&
+				y1 > -512 && y2 > -512 && y3 > -512 && y4 > -512 &&
+				y1 < h + 512 && y2 < h + 512 && y3 < h + 512 && y4 < h + 512)
+			{
+				cval = 0;
+				s1 = cval << 10 | cval << 5 | cval;
+
+				cval = c12 >> 1;
+				s2 = cval << 10 | cval << 5 | cval;
+
+				cval = c34 >> 1;
+				s3 = cval << 10 | cval << 5 | cval;
+
+				cval = 0;
+				s4 = cval << 10 | cval << 5 | cval;
+
+				HWI_InsertAlphaSprite_Sorted(x1, y1, z1, s1, x2, y2, z2, s2, x3, y3, z3, s3, x4, y4, z4, s4, -1, 16, 1);
+			}
+
+			x1 = x4;
+			y1 = y4;
+			z1 = z4;
+			x2 = x3;
+			y2 = y3;
+			z2 = z3;
+			c12 = c34;
+		}
 	}
 
 	phd_PopMatrix();

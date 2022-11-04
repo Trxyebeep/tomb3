@@ -26,6 +26,7 @@ void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item);
 void S_DrawFootPrints();
 void DoUwEffect();
 void DrawBetterLasers(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uchar cb);
+void S_DrawSubWakeFX(ITEM_INFO* item);
 #endif
 
 #define S_DrawSplashes	( (void(__cdecl*)()) 0x0047BAA0 )
