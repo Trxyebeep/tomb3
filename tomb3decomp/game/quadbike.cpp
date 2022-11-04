@@ -4,6 +4,8 @@
 #include "../3dsystem/3d_gen.h"
 #include "../specific/output.h"
 #include "../specific/init.h"
+#include "control.h"
+#include "../3dsystem/phd_math.h"
 
 void QuadBikeDraw(ITEM_INFO* item)
 {
@@ -175,8 +177,54 @@ void InitialiseQuadBike(short item_number)
 	quad->Flags = 0;
 }
 
+static long GetOnQuadBike(short item_number, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	long dx, dy, dz, dist, h;
+	ushort uang;
+	short room_number, ang;
+
+	item = &items[item_number];
+
+	if (!(input & IN_ACTION) || item->flags & IFL_INVISIBLE || lara.gun_status != LG_ARMLESS || lara_item->gravity_status)
+		return 0;
+
+	dx = lara_item->pos.x_pos - item->pos.x_pos;
+	dy = abs(item->pos.y_pos - lara_item->pos.y_pos);
+	dz = lara_item->pos.z_pos - item->pos.z_pos;
+	dist = SQUARE(dx) + SQUARE(dz);
+
+	if (dy > 256 || dist > 170000)
+		return 0;
+
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	h = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (h < -32000)
+		return 0;
+
+	ang = (short)phd_atan(item->pos.z_pos - lara_item->pos.z_pos, item->pos.x_pos - lara_item->pos.x_pos) - item->pos.y_rot;
+	uang = lara_item->pos.y_rot - item->pos.y_rot;
+
+	if (ang > -0x1FFE && ang < 0x5FFA)
+	{
+		if (uang <= 0x1FFE || uang >= 0x5FFA)
+			return 0;
+	}
+	else
+	{
+		if (uang <= 0x9FF6 || uang >= 0xDFF2)
+			return 0;
+	}
+
+	return 1;
+}
+
 void inject_quadbike(bool replace)
 {
 	INJECT(0x0045EB20, QuadBikeDraw, replace);
 	INJECT(0x0045E7E0, InitialiseQuadBike, replace);
+	INJECT(0x0045E9E0, GetOnQuadBike, replace);
 }
