@@ -3,6 +3,7 @@
 #include "draw.h"
 #include "../3dsystem/3d_gen.h"
 #include "../specific/output.h"
+#include "../specific/init.h"
 
 void QuadBikeDraw(ITEM_INFO* item)
 {
@@ -155,7 +156,27 @@ void QuadBikeDraw(ITEM_INFO* item)
 	phd_PopMatrix();
 }
 
+void InitialiseQuadBike(short item_number)
+{
+	ITEM_INFO* item;
+	QUADINFO* quad;
+
+	item = &items[item_number];
+	quad = (QUADINFO*)game_malloc(sizeof(QUADINFO), 0);
+	item->data = quad;
+	quad->Velocity = 0;
+	quad->skidoo_turn = 0;
+	quad->right_fallspeed = 0;
+	quad->left_fallspeed = 0;
+	quad->momentum_angle = item->pos.y_rot;
+	quad->extra_rotation = 0;
+	quad->track_mesh = 0;
+	quad->pitch = 0;
+	quad->Flags = 0;
+}
+
 void inject_quadbike(bool replace)
 {
 	INJECT(0x0045EB20, QuadBikeDraw, replace);
+	INJECT(0x0045E7E0, InitialiseQuadBike, replace);
 }
