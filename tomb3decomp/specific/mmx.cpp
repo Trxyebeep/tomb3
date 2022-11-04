@@ -89,7 +89,59 @@ void MMXBlit32to15(uchar* dest, ulong* src, long w)
 	}
 }
 
+void MMXBlit32to16(uchar* dest, ulong* src, long w)
+{
+	__int64 rm = 0x00F8000000F80000;	//R mask
+	__int64 gm = 0x0000FC000000FC00;	//G mask
+	__int64 bm = 0x000000F8000000F8;	//B mask
+
+	__asm
+	{
+		mov eax, w
+		shr eax, 2
+		mov esi, [src]
+		mov edi, [dest]
+		movq mm3, [rm]
+		movq mm7, [gm]
+		lea ecx, [ecx + 0]		;alignment before the loop?
+
+	lp:
+		movq mm0, [esi]
+		movq mm4, [esi + 8]
+		movq mm1, mm0
+		movq mm2, mm0
+		movq mm5, mm4
+		movq mm6, mm4
+		pand mm0, mm3
+		pand mm1, mm7
+		pand mm2, [bm]
+		pand mm4, mm3
+		pand mm5, mm7
+		pand mm6, [bm]
+		pslld mm0, 8
+		pslld mm4, 8
+		psrad mm0, 10h
+		psrld mm1, 5
+		psrld mm2, 3
+		psrad mm4, 10h
+		psrld mm5, 5
+		psrld mm6, 3
+		por mm0, mm1
+		por mm4, mm5
+		por mm0, mm2
+		por mm4, mm6
+		packssdw mm0, mm4
+		movq[edi], mm0
+		add edi, 8
+		add esi, 10h
+		dec eax
+		jne lp
+		emms
+	}
+}
+
 void inject_mmx(bool replace)
 {
 	INJECT(0x00496930, MMXBlit32to15, replace);
+	INJECT(0x00496A70, MMXBlit32to16, replace);
 }
