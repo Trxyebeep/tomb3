@@ -77,6 +77,7 @@
 #include "../specific/audio.h"
 #include "../specific/ds.h"
 #include "../specific/texture.h"
+#include "../specific/mmx.h"
 
 HINSTANCE hinstance = 0;
 
@@ -179,6 +180,7 @@ void inject_all(bool replace)
 	inject_audio(replace);
 	inject_ds(replace);
 	inject_texture(replace);
+	inject_mmx(replace);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
