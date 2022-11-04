@@ -13,6 +13,11 @@
 #include "../specific/hwrender.h"
 #endif
 
+long sort3d_bufferbf[MAX_SORTLISTS];
+long sort3d_bufferfb[MAX_SORTLISTS];
+short info3d_bufferbf[MAX_SORTLISTS];
+short info3d_bufferfb[MAX_SORTLISTS];
+
 void phd_PutPolygons(short* objptr, long clip)
 {
 	short* newPtr;

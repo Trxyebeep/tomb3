@@ -422,10 +422,6 @@
 #define phdspriteinfo	ARRAY_(0x004D58F0, PHDSPRITESTRUCT, [512])
 #define phdtextinfo	ARRAY_(0x005A6B00, PHDTEXTURESTRUCT, [4096])
 #define G_GouraudPalette	ARRAY_(0x00625450, uchar, [1024])
-#define sort3d_bufferbf	ARRAY_(0x004EB1B0, long, [12000])
-#define info3d_bufferbf	ARRAY_(0x00531720, short, [12000])
-#define sort3d_bufferfb	ARRAY_(0x004D7920, long, [12000])
-#define info3d_bufferfb	ARRAY_(0x0056C0A8, short, [12000])
 #define FootPrint	ARRAY_(0x006D79E0, FOOTPRINT, [32])
 #define light_level	ARRAY_(0x006A1828, long, [4])
 #define box_lines	ARRAY_(0x004C53F8, long, [12][2])
@@ -498,7 +494,19 @@
 #define NO_TARGET	-16384
 #define NO_ITEM	-1
 #define W2V_SHIFT	14
+
+#ifdef TROYESTUFF	//*4
+#define MAX_TLVERTICES	0x9000
+#else
 #define MAX_TLVERTICES	0x2400
+#endif
+
+#ifdef TROYESTUFF	//*4
+#define MAX_SORTLISTS	0xBB80
+#else
+#define MAX_SORTLISTS	0x2EE0
+#endif
+
 #define NO_ROOM	255
 #define WALL_SHIFT	10
 #define WALL_SIZE	(1 << WALL_SHIFT)
