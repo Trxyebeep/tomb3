@@ -6,6 +6,12 @@
 #include "../specific/init.h"
 #include "control.h"
 #include "../3dsystem/phd_math.h"
+#include "collide.h"
+#include "laraflar.h"
+#include "objects.h"
+#include "gameflow.h"
+#include "../specific/game.h"
+#include "../specific/specific.h"
 
 void QuadBikeDraw(ITEM_INFO* item)
 {
@@ -222,9 +228,79 @@ static long GetOnQuadBike(short item_number, COLL_INFO* coll)
 	return 1;
 }
 
+void QuadBikeCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+	QUADINFO* quad;
+	short ang, track;
+	static char tunes[4] = { 9, 12, 4, 12 };
+
+	if (l->hit_points < 0 || lara.skidoo != NO_ITEM)
+		return;
+
+	if (!GetOnQuadBike(item_number, coll))
+		return ObjectCollision(item_number, l, coll);
+
+	lara.skidoo = item_number;
+
+	if (lara.gun_type == LG_FLARE)
+	{
+		CreateFlare(0);
+		undraw_flare_meshes();
+		lara.flare_control_left = 0;
+		lara.gun_type = LG_ARMLESS;
+		lara.request_gun_type = LG_ARMLESS;
+	}
+
+	lara.gun_status = LG_HANDSBUSY;
+	item = &items[item_number];
+	ang = (short)phd_atan(item->pos.z_pos - l->pos.z_pos, item->pos.x_pos - l->pos.x_pos) - item->pos.y_rot;
+
+	if (ang > -0x1FFE && ang < 0x5FFA)
+	{
+		l->anim_number = objects[VEHICLE_ANIM].anim_index + 23;
+		l->current_anim_state = 23;
+		l->goal_anim_state = 23;
+	}
+	else
+	{
+		l->anim_number = objects[VEHICLE_ANIM].anim_index + 9;
+		l->current_anim_state = 9;
+		l->goal_anim_state = 9;
+	}
+
+	l->frame_number = anims[l->anim_number].frame_base;
+	item->hit_points = 1;
+	l->pos.x_pos = item->pos.x_pos;
+	l->pos.y_pos = item->pos.y_pos;
+	l->pos.z_pos = item->pos.z_pos;
+	l->pos.y_rot = item->pos.y_rot;
+	lara.head_y_rot = 0;
+	lara.head_x_rot = 0;
+	lara.torso_y_rot = 0;
+	lara.torso_x_rot = 0;
+	lara.hit_direction = -1;
+	AnimateItem(l);
+
+	if (CurrentLevel == LV_QUADBIKE)
+	{
+		track = tunes[GetRandomControl() & 3];
+
+		if (track != cdtrack && IsAtmospherePlaying)
+		{
+			cdtrack = track;
+			S_CDPlay(track, 0);
+		}
+	}
+
+	quad = (QUADINFO*)item->data;
+	quad->Revs = 0;
+}
+
 void inject_quadbike(bool replace)
 {
 	INJECT(0x0045EB20, QuadBikeDraw, replace);
 	INJECT(0x0045E7E0, InitialiseQuadBike, replace);
 	INJECT(0x0045E9E0, GetOnQuadBike, replace);
+	INJECT(0x0045E830, QuadBikeCollision, replace);
 }

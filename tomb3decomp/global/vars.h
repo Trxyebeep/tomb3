@@ -122,6 +122,7 @@
 #define KillEverythingFlag	VAR_(0x006261AC, long)
 #define baddie_slots	VAR_(0x006D58B0, CREATURE_INFO*)
 #define cdtrack	VAR_(0x004C51F8, short)
+#define IsAtmospherePlaying	VAR_(0x006E2A28, char)
 #define reset_flag	VAR_(0x00625F64, long)
 #define noinput_count	VAR_(0x00625F60, long)
 #define item_after_projectile	VAR_(0x006E2FF8, short)
