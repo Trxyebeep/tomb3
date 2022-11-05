@@ -19,6 +19,7 @@
 #include "sound.h"
 #include "laraanim.h"
 #include "lara.h"
+#include "effects.h"
 
 void QuadBikeDraw(ITEM_INFO* item)
 {
@@ -681,6 +682,66 @@ static long DoShift(ITEM_INFO* item, PHD_VECTOR* newPos, PHD_VECTOR* oldPos)	//f
 	return 0;
 }
 
+static void SkidooBaddieCollision(ITEM_INFO* quad)
+{
+	ITEM_INFO* item;
+	OBJECT_INFO* obj;
+	short* doors;
+	long dx, dy, dz;
+	short roomies[16];
+	short room_count, item_number;
+
+	room_count = 1;
+	roomies[0] = quad->room_number;
+	doors = room[quad->room_number].door;
+
+	if (doors)
+	{
+		for (int i = *doors++; i > 0; i--, doors += 16)
+		{
+			roomies[room_count] = *doors;
+			room_count++;
+		}
+	}
+
+	for (int i = 0; i < room_count; i++)
+	{
+		for (item_number = room[roomies[i]].item_number; item_number != NO_ITEM; item_number = item->next_item)
+		{
+			item = &items[item_number];
+
+			if (item->collidable && item->status != ITEM_INVISIBLE && item != lara_item && item != quad)
+			{
+				obj = &objects[item->object_number];
+
+				if (obj->collision && (obj->intelligent || item->object_number == AVALANCHE))
+				{
+					dx = quad->pos.x_pos - item->pos.x_pos;
+					dy = quad->pos.y_pos - item->pos.y_pos;
+					dz = quad->pos.z_pos - item->pos.z_pos;
+
+					if (dx > -2048 && dx < 2048 && dz > -2048 && dz < 2048 && dy > -2048 && dy < 2048 && TestBoundsCollide(item, quad, 500))
+					{
+						if (item->object_number == AVALANCHE)
+						{
+							if (item->current_anim_state == 1)
+							{
+								lara_item->hit_status = 1;
+								lara_item->hit_points -= 100;
+							}
+
+							continue;
+						}
+
+						DoLotsOfBlood(item->pos.x_pos, quad->pos.y_pos - 256, item->pos.z_pos, quad->speed, quad->pos.y_rot, item->room_number, 3);
+						item->hit_points = 0;
+					}
+				}
+			}
+		}
+	}
+}
+
 void inject_quadbike(bool replace)
 {
 	INJECT(0x0045EB20, QuadBikeDraw, replace);
@@ -694,4 +755,5 @@ void inject_quadbike(bool replace)
 	INJECT(0x004606A0, CanGetOff, replace);
 	INJECT(0x004601A0, GetCollisionAnim, replace);
 	INJECT(0x0045F720, DoDynamics, replace);
+	INJECT(0x0045FFB0, SkidooBaddieCollision, replace);
 }
