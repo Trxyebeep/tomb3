@@ -513,6 +513,37 @@ static long CanGetOff(long lr)
 	return 0;
 }
 
+static long GetCollisionAnim(ITEM_INFO* item, PHD_VECTOR* pos)
+{
+	long s, c, fb, lr;
+
+	pos->x = item->pos.x_pos - pos->x;
+	pos->z = item->pos.z_pos - pos->z;
+
+	if (!pos->x && !pos->z)
+		return 0;
+
+	s = phd_sin(item->pos.y_rot);
+	c = phd_cos(item->pos.y_rot);
+	fb = (pos->x * s + pos->z * c) >> W2V_SHIFT;
+	lr = (pos->x * c - pos->z * s) >> W2V_SHIFT;
+
+	if (abs(fb) > abs(lr))
+	{
+		if (fb > 0)
+			return 14;
+		else
+			return 13;
+	}
+	else
+	{
+		if (lr > 0)
+			return 11;
+		else
+			return 12;
+	}
+}
+
 void inject_quadbike(bool replace)
 {
 	INJECT(0x0045EB20, QuadBikeDraw, replace);
@@ -524,4 +555,5 @@ void inject_quadbike(bool replace)
 	INJECT(0x0045F640, TestHeight, replace);
 	INJECT(0x00460BD0, TriggerExhaustSmoke, replace);
 	INJECT(0x004606A0, CanGetOff, replace);
+	INJECT(0x004601A0, GetCollisionAnim, replace);
 }
