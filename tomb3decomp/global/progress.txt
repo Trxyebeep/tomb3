@@ -1220,7 +1220,7 @@ tomb3decomp progress.
 0x00460230		AnimateQuadBike
 0x004606A0		CanGetOff
 0x004607A0		UserControl
-0x00460BD0		TriggerExhaustSmoke
+0x00460BD0	+	TriggerExhaustSmoke
 
 
 		game/rapmaker.cpp

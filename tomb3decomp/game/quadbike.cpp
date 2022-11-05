@@ -412,6 +412,76 @@ static long TestHeight(ITEM_INFO* item, long x, long z, PHD_VECTOR* pos)
 	return GetHeight(floor, pos->x, pos->y, pos->z);
 }
 
+static void TriggerExhaustSmoke(long x, long y, long z, short angle, long speed, long moving)
+{
+	SPARKS* sptr;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 0;
+	sptr->sG = 0;
+	sptr->sB = 0;
+
+	if (moving)
+	{
+		sptr->dR = uchar((96 * speed) >> 5);
+		sptr->dG = uchar((96 * speed) >> 5);
+		sptr->dB = uchar((128 * speed) >> 5);
+	}
+	else
+	{
+		sptr->dR = 96;
+		sptr->dG = 96;
+		sptr->dB = 128;
+	}
+
+	sptr->ColFadeSpeed = 4;
+	sptr->FadeToBlack = 4;
+	sptr->Life = uchar((GetRandomControl() & 3) - (speed >> 12) + 20);
+	sptr->sLife = sptr->Life;
+
+	if (sptr->Life < 9)
+	{
+		sptr->Life = 9;
+		sptr->sLife = 9;
+	}
+
+	sptr->TransType = 2;
+	sptr->extras = 0;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 0xF) + x - 8;
+	sptr->y = (GetRandomControl() & 0xF) + y - 8;
+	sptr->z = (GetRandomControl() & 0xF) + z - 8;
+	sptr->Xvel = (GetRandomControl() & 0xFF) + ((speed * phd_sin(angle)) >> 16) - 128;
+	sptr->Yvel = -8 - (GetRandomControl() & 7);
+	sptr->Zvel = (GetRandomControl() & 0xFF) + ((speed * phd_cos(angle)) >> 16) - 128;
+	sptr->Friction = 4;
+
+	if (GetRandomControl() & 1)
+	{
+		sptr->Flags = 538;
+		sptr->RotAng = GetRandomControl() & 0xFFF;
+
+		if (GetRandomControl() & 1)
+			sptr->RotAdd = -24 - (GetRandomControl() & 7);
+		else
+			sptr->RotAdd = (GetRandomControl() & 7) + 24;
+	}
+	else
+		sptr->Flags = 522;
+
+	sptr->Scalar = 2;
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+	sptr->Gravity = -4 - (GetRandomControl() & 3);
+	sptr->MaxYvel = -8 - (GetRandomControl() & 7);
+	sptr->dWidth = uchar((GetRandomControl() & 7) + (speed >> 7) + 32);
+	sptr->sWidth = sptr->dWidth >> 1;
+	sptr->Width = sptr->dWidth >> 1;
+	sptr->dHeight = sptr->dWidth;
+	sptr->sHeight = sptr->dHeight >> 1;
+	sptr->Height = sptr->dHeight >> 1;
+}
+
 void inject_quadbike(bool replace)
 {
 	INJECT(0x0045EB20, QuadBikeDraw, replace);
@@ -421,4 +491,5 @@ void inject_quadbike(bool replace)
 	INJECT(0x0045F3C0, QuadbikeExplode, replace);
 	INJECT(0x0045F490, SkidooCheckGetOff, replace);
 	INJECT(0x0045F640, TestHeight, replace);
+	INJECT(0x00460BD0, TriggerExhaustSmoke, replace);
 }
