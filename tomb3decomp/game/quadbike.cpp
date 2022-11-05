@@ -1155,6 +1155,193 @@ static void AnimateQuadBike(ITEM_INFO* item, long hitWall, long killed)
 	}
 }
 
+static long UserControl(ITEM_INFO* item, long height, long* pitch)
+{
+	QUADINFO* quad;
+	long revs;
+	static char CanHandbrakeStart;
+
+	quad = (QUADINFO*)item->data;
+
+	if (!quad->Velocity && !(input & IN_SPRINT) && !CanHandbrakeStart)
+		CanHandbrakeStart = 1;
+	else if (quad->Velocity)
+		CanHandbrakeStart = 0;
+
+	if (!(input & IN_SPRINT))
+		HandbrakeStarting = 0;
+
+	if (!HandbrakeStarting)
+	{
+		if (quad->Revs > 16)
+		{
+			quad->Velocity += quad->Revs >> 4;
+			quad->Revs -= quad->Revs >> 3;
+		}
+		else
+			quad->Revs = 0;
+	}
+
+	if (item->pos.y_pos < height - 256)
+	{
+		if (quad->EngineRevs < 0xA000)
+			quad->EngineRevs += (0xA000 - quad->EngineRevs) >> 3;
+	}
+	else
+	{
+		if (!quad->Velocity && input & IN_LOOK)
+			LookUpDown();
+
+		if (quad->Velocity > 0)
+		{
+			if (input & IN_SPRINT && !HandbrakeStarting && quad->Velocity > 0x3000)
+			{
+				if (input & IN_LEFT)
+				{
+					quad->skidoo_turn -= 500;
+
+					if (quad->skidoo_turn < -0x5B0)
+						quad->skidoo_turn = -0x5B0;
+				}
+				else if (input & IN_RIGHT)
+				{
+					quad->skidoo_turn += 500;
+
+					if (quad->skidoo_turn > 0x5B0)
+						quad->skidoo_turn = 0x5B0;
+				}
+			}
+			else
+			{
+				if (input & IN_LEFT)
+				{
+					quad->skidoo_turn -= 455;
+
+					if (quad->skidoo_turn < -910)
+						quad->skidoo_turn = -910;
+				}
+				else if (input & IN_RIGHT)
+				{
+					quad->skidoo_turn += 455;
+
+					if (quad->skidoo_turn > 910)
+						quad->skidoo_turn = 910;
+				}
+			}
+		}
+		else if (quad->Velocity < 0)
+		{
+			if (input & IN_SPRINT && !HandbrakeStarting && quad->Velocity < -0x2800)
+			{
+				if (input & IN_RIGHT)
+				{
+					quad->skidoo_turn -= 500;
+
+					if (quad->skidoo_turn < -0x5B0)
+						quad->skidoo_turn = -0x5B0;
+				}
+				else if (input & IN_LEFT)
+				{
+					quad->skidoo_turn += 500;
+
+					if (quad->skidoo_turn > 0x5B0)
+						quad->skidoo_turn = 0x5B0;
+				}
+			}
+			else
+			{
+				if (input & IN_RIGHT)
+				{
+					quad->skidoo_turn -= 455;
+
+					if (quad->skidoo_turn < -910)
+						quad->skidoo_turn = -910;
+				}
+				else if (input & IN_LEFT)
+				{
+					quad->skidoo_turn += 455;
+
+					if (quad->skidoo_turn > 910)
+						quad->skidoo_turn = 910;
+				}
+			}
+		}
+
+		if (input & IN_JUMP)
+		{
+			if (input & IN_SPRINT && (CanHandbrakeStart || HandbrakeStarting))
+			{
+				HandbrakeStarting = 1;
+				quad->Revs -= 512;
+
+				if (quad->Revs < -0x3000)
+					quad->Revs = -0x3000;
+			}
+			else if (quad->Velocity > 0)
+				quad->Velocity -= 640;
+			else  if (quad->Velocity > -0x3000)
+				quad->Velocity -= 768;
+		}
+		else if (input & IN_ACTION)
+		{
+			if (input & IN_SPRINT && (CanHandbrakeStart || HandbrakeStarting))
+			{
+				HandbrakeStarting = 1;
+				quad->Revs += 512;
+
+				if (quad->Revs >= 0xA000)
+					quad->Revs = 0xA000;
+			}
+			else if (quad->Velocity < 0xA000)
+			{
+				if (quad->Velocity < 0x4000)
+					quad->Velocity += ((0x4800 - quad->Velocity) >> 3) + 8;
+				else if (quad->Velocity < 0x7000)
+					quad->Velocity += ((0x7800 - quad->Velocity) >> 4) + 4;
+				else
+					quad->Velocity += ((0xA000 - quad->Velocity) >> 3) + 2;
+			}
+			else
+				quad->Velocity = 0xA000;
+		}
+		else if (quad->Velocity > 256)
+			quad->Velocity -= 256;
+		else if (quad->Velocity < -256)
+			quad->Velocity += 256;
+		else
+			quad->Velocity = 0;
+
+		if (HandbrakeStarting && quad->Revs && !(input & IN_JUMP | IN_ACTION))
+		{
+			if (quad->Revs > 8)
+				quad->Revs -= quad->Revs >> 3;
+			else
+				quad->Revs = 0;
+		}
+
+		item->speed = short(quad->Velocity >> 8);
+
+		if (quad->EngineRevs > 0x7000)
+			quad->EngineRevs = -0x2000;
+
+		revs = 0;	//originally uninitialized
+
+		if (quad->Velocity < 0)
+			revs = abs(quad->Revs) + abs(quad->Velocity >> 1);
+		else if (quad->Velocity < 0x7000)
+			revs = abs(quad->Revs) + 0x8800 * quad->Velocity / 0x7000 - 0x2000;
+		else if (quad->Velocity <= 0xA000)
+			revs = abs(quad->Revs) + 0x9800 * (quad->Velocity - 0x7000) / 0x3000 - 0x2800;
+		else
+			revs += abs(quad->Revs);
+
+		quad->EngineRevs += (revs - quad->EngineRevs) >> 3;
+	}
+
+	*pitch = quad->EngineRevs;
+	return 0;
+}
+
 void inject_quadbike(bool replace)
 {
 	INJECT(0x0045EB20, QuadBikeDraw, replace);
@@ -1171,4 +1358,5 @@ void inject_quadbike(bool replace)
 	INJECT(0x0045FFB0, SkidooBaddieCollision, replace);
 	INJECT(0x0045F780, SkidooDynamics, replace);
 	INJECT(0x00460230, AnimateQuadBike, replace);
+	INJECT(0x004607A0, UserControl, replace);
 }
