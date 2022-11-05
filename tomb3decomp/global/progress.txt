@@ -1664,8 +1664,8 @@ tomb3decomp progress.
 0x00483770	+	S_DrawScreenFBox
 0x004837B0	+	S_FinishInventory
 0x004837D0	+	S_Wait
-0x00483830		S_PlayFMV
-0x00483840		S_IntroFMV
+0x00483830	+	S_PlayFMV
+0x00483840	+	S_IntroFMV
 
 
 		specific/game.cpp

@@ -5,6 +5,7 @@
 #include "display.h"
 #include "input.h"
 #include "time.h"
+#include "fmv.h"
 
 ushort S_COLOUR(long r, long g, long b)
 {
@@ -71,6 +72,16 @@ void S_Wait(long nFrames, long skip)
 	}
 }
 
+long S_PlayFMV(char* name)
+{
+	return FMV_Play(name);
+}
+
+long S_IntroFMV(char* name1, char* name2)
+{
+	return FMV_PlayIntro(name1, name2);
+}
+
 void inject_frontend(bool replace)
 {
 	INJECT(0x004835E0, S_COLOUR, replace);
@@ -79,4 +90,6 @@ void inject_frontend(bool replace)
 	INJECT(0x00483770, S_DrawScreenFBox, replace);
 	INJECT(0x004837B0, S_FinishInventory, replace);
 	INJECT(0x004837D0, S_Wait, replace);
+	INJECT(0x00483830, S_PlayFMV, replace);
+	INJECT(0x00483840, S_IntroFMV, replace);
 }
