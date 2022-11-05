@@ -274,6 +274,7 @@
     <ClInclude Include="tomb3decomp\specific\dxdialog.h" />
     <ClInclude Include="tomb3decomp\specific\dxshell.h" />
     <ClInclude Include="tomb3decomp\specific\file.h" />
+    <ClInclude Include="tomb3decomp\specific\fmv.h" />
     <ClInclude Include="tomb3decomp\specific\frontend.h" />
     <ClInclude Include="tomb3decomp\specific\game.h" />
     <ClInclude Include="tomb3decomp\specific\hwrender.h" />
@@ -407,6 +408,7 @@
     <ClCompile Include="tomb3decomp\specific\dxdialog.cpp" />
     <ClCompile Include="tomb3decomp\specific\dxshell.cpp" />
     <ClCompile Include="tomb3decomp\specific\file.cpp" />
+    <ClCompile Include="tomb3decomp\specific\fmv.cpp" />
     <ClCompile Include="tomb3decomp\specific\frontend.cpp" />
     <ClCompile Include="tomb3decomp\specific\game.cpp" />
     <ClCompile Include="tomb3decomp\specific\hwrender.cpp" />
