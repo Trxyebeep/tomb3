@@ -1209,7 +1209,7 @@ tomb3decomp progress.
 0x0045E830	+	QuadBikeCollision
 0x0045E9E0	+	GetOnQuadBike
 0x0045EB20	+	QuadBikeDraw
-0x0045EE20		QuadBikeControl
+0x0045EE20	+	QuadBikeControl
 0x0045F3C0	+	QuadbikeExplode
 0x0045F490	+	SkidooCheckGetOff
 0x0045F640	+	TestHeight
