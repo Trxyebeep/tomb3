@@ -390,6 +390,28 @@ static long SkidooCheckGetOff()
 	return 1;
 }
 
+static long TestHeight(ITEM_INFO* item, long x, long z, PHD_VECTOR* pos)
+{
+	FLOOR_INFO* floor;
+	long s, c;
+	short room_number;
+
+	s = phd_sin(item->pos.y_rot);
+	c = phd_cos(item->pos.y_rot);
+	pos->x = item->pos.x_pos + ((z * c + x * s) >> W2V_SHIFT);
+	pos->y = item->pos.y_pos + ((z * phd_sin(item->pos.z_rot)) >> W2V_SHIFT) - ((x * phd_sin(item->pos.x_rot)) >> W2V_SHIFT);
+	pos->z = item->pos.z_pos + ((x * c - z * s) >> W2V_SHIFT);
+
+	room_number = item->room_number;
+	floor = GetFloor(pos->x, pos->y, pos->z, &room_number);
+	c = GetCeiling(floor, pos->x, pos->y, pos->z);
+
+	if (pos->y < c || c == NO_HEIGHT)
+		return NO_HEIGHT;
+
+	return GetHeight(floor, pos->x, pos->y, pos->z);
+}
+
 void inject_quadbike(bool replace)
 {
 	INJECT(0x0045EB20, QuadBikeDraw, replace);
@@ -398,4 +420,5 @@ void inject_quadbike(bool replace)
 	INJECT(0x0045E830, QuadBikeCollision, replace);
 	INJECT(0x0045F3C0, QuadbikeExplode, replace);
 	INJECT(0x0045F490, SkidooCheckGetOff, replace);
+	INJECT(0x0045F640, TestHeight, replace);
 }
