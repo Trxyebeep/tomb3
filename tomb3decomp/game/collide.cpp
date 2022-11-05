@@ -3,6 +3,7 @@
 #include "sphere.h"
 #include "control.h"
 #include "../3dsystem/phd_math.h"
+#include "items.h"
 
 void ShiftItem(ITEM_INFO* item, COLL_INFO* coll)
 {
@@ -729,6 +730,23 @@ void GetCollisionInfo(COLL_INFO* coll, long x, long y, long z, short room_number
 	}
 }
 
+void UpdateLaraRoom(ITEM_INFO* item, long height)
+{
+	FLOOR_INFO* floor;
+	long x, y, z;
+	short room_number;
+
+	x = item->pos.x_pos;
+	y = item->pos.y_pos + height;
+	z = item->pos.z_pos;
+	room_number = item->room_number;
+	floor = GetFloor(x, y, z, &room_number);
+	item->floor = GetHeight(floor, x, y, z);
+
+	if (item->room_number != room_number)
+		ItemNewRoom(lara.item_number, room_number);
+}
+
 void inject_collide(bool replace)
 {
 	INJECT(0x0041E690, ShiftItem, replace);
@@ -740,4 +758,5 @@ void inject_collide(bool replace)
 	INJECT(0x0041E170, CollideStaticObjects, replace);
 	INJECT(0x0041E140, FindGridShift, replace);
 	INJECT(0x0041D500, GetCollisionInfo, replace);
+	INJECT(0x0041E6D0, UpdateLaraRoom, replace);
 }
