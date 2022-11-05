@@ -17,6 +17,8 @@
 #include "missile.h"
 #include "items.h"
 #include "sound.h"
+#include "laraanim.h"
+#include "lara.h"
 
 void QuadBikeDraw(ITEM_INFO* item)
 {
@@ -322,6 +324,72 @@ static void QuadbikeExplode(ITEM_INFO* item)
 	lara.skidoo = NO_ITEM;
 }
 
+static long SkidooCheckGetOff()
+{
+	ITEM_INFO* item;
+	QUADINFO* quad;
+	PHD_VECTOR pos;
+
+	item = &items[lara.skidoo];
+
+	if ((lara_item->current_anim_state == 10 || lara_item->current_anim_state == 24) &&
+		lara_item->frame_number == anims[lara_item->anim_number].frame_end)
+	{
+		if (lara_item->current_anim_state == 24)
+			lara_item->pos.y_rot += 0x4000;
+		else
+			lara_item->pos.y_rot -= 0x4000;
+
+		lara_item->anim_number = ANIM_STOP;
+		lara_item->frame_number = anims[ANIM_STOP].frame_base;
+		lara_item->current_anim_state = 2;
+		lara_item->goal_anim_state = 2;
+		lara_item->pos.x_pos -= (512 * phd_sin(lara_item->pos.y_rot)) >> W2V_SHIFT;
+		lara_item->pos.z_pos -= (512 * phd_cos(lara_item->pos.y_rot)) >> W2V_SHIFT;
+		lara_item->pos.x_rot = 0;
+		lara_item->pos.z_rot = 0;
+		lara.skidoo = NO_ITEM;
+		lara.gun_status = LG_ARMLESS;
+	}
+	else if (lara_item->frame_number == anims[lara_item->anim_number].frame_end)
+	{
+		quad = (QUADINFO*)item->data;
+
+		if (lara_item->current_anim_state == 20)
+		{
+			lara_item->anim_number = ANIM_FASTFALL;
+			lara_item->frame_number = anims[ANIM_FASTFALL].frame_base;
+			lara_item->current_anim_state = AS_FASTFALL;
+			pos.x = 0;
+			pos.y = 0;
+			pos.z = 0;
+			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			lara_item->pos.x_pos = pos.x;
+			lara_item->pos.y_pos = pos.y;
+			lara_item->pos.z_pos = pos.z;
+			lara_item->gravity_status = 1;
+			lara_item->fallspeed = item->fallspeed;
+			lara_item->pos.x_rot = 0;
+			lara_item->pos.z_rot = 0;
+			lara_item->hit_points = 0;
+			lara.gun_status = LG_ARMLESS;
+			item->flags |= IFL_INVISIBLE;
+			return 0;
+		}
+
+		if (lara_item->current_anim_state == 19)
+		{
+			lara_item->goal_anim_state = 8;
+			lara_item->fallspeed = 154;
+			lara_item->speed = 0;
+			quad->Flags |= 0x80;
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
 void inject_quadbike(bool replace)
 {
 	INJECT(0x0045EB20, QuadBikeDraw, replace);
@@ -329,4 +397,5 @@ void inject_quadbike(bool replace)
 	INJECT(0x0045E9E0, GetOnQuadBike, replace);
 	INJECT(0x0045E830, QuadBikeCollision, replace);
 	INJECT(0x0045F3C0, QuadbikeExplode, replace);
+	INJECT(0x0045F490, SkidooCheckGetOff, replace);
 }
