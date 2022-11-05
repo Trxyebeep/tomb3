@@ -2075,6 +2075,35 @@ void DrawAnimatingItem(ITEM_INFO* item)
 				phd_PopMatrix_I();
 				item->fired_weapon--;
 			}
+
+#ifdef TROYESTUFF
+			if (i == (EnemyBites[obj->bite_offset].mesh_num - 1) && EnemyWeapon[obj->bite_offset] & 0x80)
+			{
+				if (item->hit_points > 0 || item->frame_number != anims[item->anim_number].frame_end)
+				{
+					bite = &EnemyBites[obj->bite_offset + 1];
+					pos.x = bite->x;
+					pos.y = bite->y;
+					pos.z = bite->z;
+					GetJointAbsPosition(item, &pos, bite->mesh_num);
+					src.x = pos.x;
+					src.y = pos.y;
+					src.z = pos.z;
+					src.room_number = item->room_number;
+
+					pos.x = bite->x;
+					pos.y = bite->y << 5;
+					pos.z = bite->z;
+					GetJointAbsPosition(item, &pos, bite->mesh_num);
+					dest.x = pos.x;
+					dest.y = pos.y;
+					dest.z = pos.z;
+
+					LOS(&src, &dest);
+					S_DrawLaserBeam(&src, &dest, 255, 2, 3);
+				}
+			}
+#endif
 		}
 	}
 	else

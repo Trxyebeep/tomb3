@@ -6,6 +6,7 @@
 
 - Make quadbike follow interpolated frames for smoother animations.
 - Restore missing wake effect on the UPV.
+- Fix guard gun lasers not appearing on interpolated frames.
 
 ### tomb3 additions
 
