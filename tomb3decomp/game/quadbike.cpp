@@ -482,6 +482,37 @@ static void TriggerExhaustSmoke(long x, long y, long z, short angle, long speed,
 	sptr->Height = sptr->dHeight >> 1;
 }
 
+static long CanGetOff(long lr)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	long x, y, z, h, c;
+	short angle, room_number;
+
+	item = &items[lara.skidoo];
+
+	if (lr >= 0)
+		angle = item->pos.y_rot + 0x4000;
+	else
+		angle = item->pos.y_rot - 0x4000;
+
+	x = item->pos.x_pos + ((512 * phd_sin(angle)) >> W2V_SHIFT);
+	y = item->pos.y_pos;
+	z = item->pos.z_pos + ((512 * phd_cos(angle)) >> W2V_SHIFT);
+
+	room_number = item->room_number;
+	floor = GetFloor(x, y, z, &room_number);
+	h = GetHeight(floor, x, y, z);
+	c = GetCeiling(floor, x, y, z);
+
+	if (height_type != BIG_SLOPE && height_type != DIAGONAL &&
+		h != NO_HEIGHT && abs(h - item->pos.y_pos) <= 512 &&
+		c - item->pos.y_pos <= -762 && h - c >= 762)
+		return 1;
+
+	return 0;
+}
+
 void inject_quadbike(bool replace)
 {
 	INJECT(0x0045EB20, QuadBikeDraw, replace);
@@ -492,4 +523,5 @@ void inject_quadbike(bool replace)
 	INJECT(0x0045F490, SkidooCheckGetOff, replace);
 	INJECT(0x0045F640, TestHeight, replace);
 	INJECT(0x00460BD0, TriggerExhaustSmoke, replace);
+	INJECT(0x004606A0, CanGetOff, replace);
 }
