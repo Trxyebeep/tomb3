@@ -320,8 +320,8 @@ static void QuadbikeExplode(ITEM_INFO* item)
 	ExplodingDeath(lara.skidoo, -2, 1);
 	KillItem(lara.skidoo);
 	item->status = ITEM_DEACTIVATED;
-	SoundEffect(SFX_EXPLOSION1, 0, 0);
-	SoundEffect(SFX_EXPLOSION2, 0, 0);
+	SoundEffect(SFX_EXPLOSION1, 0, SFX_DEFAULT);
+	SoundEffect(SFX_EXPLOSION2, 0, SFX_DEFAULT);
 	lara.skidoo = NO_ITEM;
 }
 
@@ -981,6 +981,180 @@ static long SkidooDynamics(ITEM_INFO* item)
 	return anim;
 }
 
+static void AnimateQuadBike(ITEM_INFO* item, long hitWall, long killed)
+{
+	QUADINFO* quad;
+	short state;
+
+	quad = (QUADINFO*)item->data;
+	state = lara_item->current_anim_state;
+
+	if (item->pos.y_pos != item->floor && state != 8 && state != 17 && state != 20 && !killed)
+	{
+		if (quad->Velocity < 0)
+			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 6;
+		else
+			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 25;
+
+		lara_item->frame_number = anims[lara_item->anim_number].frame_base;
+		lara_item->current_anim_state = 8;
+		lara_item->goal_anim_state = 8;
+	}
+	else if (hitWall && state != 12 && state != 11 && state != 13 && state != 14 && state != 20 && quad->Velocity > 0x3555 && !killed)
+	{
+		switch (hitWall)
+		{
+		case 13:
+			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 12;
+			lara_item->current_anim_state = 12;
+			lara_item->goal_anim_state = 12;
+			break;
+
+		case 14:
+			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 11;
+			lara_item->current_anim_state = 11;
+			lara_item->goal_anim_state = 11;
+			break;
+
+		case 11:
+			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 14;
+			lara_item->current_anim_state = 13;
+			lara_item->goal_anim_state = 13;
+			break;
+
+		default:
+			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 13;
+			lara_item->current_anim_state = 14;
+			lara_item->goal_anim_state = 14;
+			break;
+		}
+
+		lara_item->frame_number = anims[lara_item->anim_number].frame_base;
+		SoundEffect(SFX_QUAD_FRONT_IMPACT, &item->pos, SFX_DEFAULT);
+	}
+	else
+	{
+		switch (lara_item->current_anim_state)
+		{
+		case 1:
+
+			if (killed)
+			{
+				if (quad->Velocity <= 0x5000)
+					lara_item->goal_anim_state = 7;
+				else
+					lara_item->goal_anim_state = 19;
+			}
+			else if (!(quad->Velocity & 0xFFFFFF00) && !(input & (IN_JUMP | IN_ACTION)))
+				lara_item->goal_anim_state = 15;
+			else if (input & IN_LEFT && !HandbrakeStarting)
+				lara_item->goal_anim_state = 2;
+			else if (input & IN_RIGHT && !HandbrakeStarting)
+				lara_item->goal_anim_state = 22;
+			else if (input & IN_JUMP)
+			{
+				if (quad->Velocity <= 0x6AAA)
+					lara_item->goal_anim_state = 5;
+				else
+					lara_item->goal_anim_state = 6;
+			}
+
+			break;
+
+		case 2:
+
+			if (!(quad->Velocity & 0xFFFFFF00))
+				lara_item->goal_anim_state = 15;
+			else if (input & IN_RIGHT)
+			{
+				lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 20;
+				lara_item->frame_number = anims[lara_item->anim_number].frame_base;
+				lara_item->goal_anim_state = 22;
+				lara_item->current_anim_state = 22;
+			}
+			else if (!(input & IN_LEFT))
+				lara_item->goal_anim_state = 1;
+
+			break;
+
+		case 5:
+		case 6:
+		case 18:
+
+			if (!(quad->Velocity & 0xFFFFFF00))
+				lara_item->goal_anim_state = 15;
+			else if (input & IN_LEFT)
+				lara_item->goal_anim_state = 2;
+			else if (input & IN_RIGHT)
+				lara_item->goal_anim_state = 22;
+
+			break;
+
+		case 8:
+
+			if (item->pos.y_pos == item->floor)
+				lara_item->goal_anim_state = 17;
+			else if (item->fallspeed > 240 && CurrentLevel != LV_GYM)
+				quad->Flags |= 0x40;
+
+			break;
+
+		case 11:
+		case 12:
+		case 13:
+		case 14:
+
+			if (input & (IN_JUMP | IN_ACTION))
+				lara_item->goal_anim_state = 1;
+
+			break;
+
+		case 15:
+
+			if (killed)
+			{
+				lara_item->goal_anim_state = 7;
+				break;
+			}
+
+			if (input & IN_ROLL && !quad->Velocity && !dont_exit_quad)
+			{
+				if (input & IN_RIGHT && CanGetOff(1))
+					lara_item->goal_anim_state = 10;
+				else if (input & IN_LEFT && CanGetOff(-1))
+					lara_item->goal_anim_state = 24;
+			}
+			else if (input & (IN_JUMP | IN_ACTION))
+				lara_item->goal_anim_state = 1;
+
+			break;
+
+		case 22:
+
+			if (!(quad->Velocity & 0xFFFFFF00))
+				lara_item->goal_anim_state = 15;
+			else if (input & IN_LEFT)
+			{
+				lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 3;
+				lara_item->frame_number = anims[lara_item->anim_number].frame_base;
+				lara_item->current_anim_state = 2;
+				lara_item->goal_anim_state = 2;
+			}
+			else if (!(input & IN_RIGHT))
+				lara_item->goal_anim_state = 1;
+
+			break;
+		}
+	}
+
+	if (room[item->room_number].flags & (ROOM_UNDERWATER | ROOM_SWAMP))
+	{
+		lara_item->goal_anim_state = 20;
+		lara_item->hit_points = 0;
+		QuadbikeExplode(item);
+	}
+}
+
 void inject_quadbike(bool replace)
 {
 	INJECT(0x0045EB20, QuadBikeDraw, replace);
@@ -996,4 +1170,5 @@ void inject_quadbike(bool replace)
 	INJECT(0x0045F720, DoDynamics, replace);
 	INJECT(0x0045FFB0, SkidooBaddieCollision, replace);
 	INJECT(0x0045F780, SkidooDynamics, replace);
+	INJECT(0x00460230, AnimateQuadBike, replace);
 }

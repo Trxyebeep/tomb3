@@ -1217,7 +1217,7 @@ tomb3decomp progress.
 0x0045F780	+	SkidooDynamics
 0x0045FFB0	+	SkidooBaddieCollision
 0x004601A0	+	GetCollisionAnim
-0x00460230		AnimateQuadBike
+0x00460230	+	AnimateQuadBike
 0x004606A0	+	CanGetOff
 0x004607A0		UserControl
 0x00460BD0	+	TriggerExhaustSmoke
