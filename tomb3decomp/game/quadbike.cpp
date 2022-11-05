@@ -742,6 +742,245 @@ static void SkidooBaddieCollision(ITEM_INFO* quad)
 	}
 }
 
+static long SkidooDynamics(ITEM_INFO* item)
+{
+	QUADINFO* quad;
+	FLOOR_INFO* floor;
+	PHD_VECTOR oldPos, newPos;
+	PHD_VECTOR flPos, frPos, blPos, brPos, mlPos, mrPos, bmlPos, bmrPos, fmlPos, fmrPos;
+	PHD_VECTOR flPos2, bmlPos2, mlPos2, fmlPos2, blPos2, frPos2, bmrPos2, mrPos2, fmrPos2, brPos2;
+	long front_left, front_right, back_left, back_right, mid_left, mid_right, bm_left, bm_right, fm_left, fm_right;
+	long front_left2, bm_left2, mid_left2, fm_left2, back_left2, front_right2, bm_right2, mid_right2, fm_right2, back_right2;
+	long h, speed, slip, anim, dx, dz;
+	short vel, ang, room_number, shift, shift2;
+
+	dont_exit_quad = 0;
+	quad = (QUADINFO*)item->data;
+	oldPos.x = item->pos.x_pos;
+	oldPos.y = item->pos.y_pos;
+	oldPos.z = item->pos.z_pos;
+
+	front_left = TestHeight(item, 550, -260, &flPos);
+	front_right = TestHeight(item, 550, 260, &frPos);
+	back_left = TestHeight(item, -550, -260, &blPos);
+	back_right = TestHeight(item, -550, 260, &brPos);
+	mid_left = TestHeight(item, 0, -260, &mlPos);
+	mid_right = TestHeight(item, 0, 260, &mrPos);
+	bm_left = TestHeight(item, 275, -260, &bmlPos);
+	bm_right = TestHeight(item, 275, 260, &bmrPos);
+	fm_left = TestHeight(item, -275, -260, &fmlPos);
+	fm_right = TestHeight(item, -275, 260, &fmrPos);
+
+	if (blPos.y > back_left)
+		blPos.y = back_left;
+
+	if (brPos.y > back_right)
+		brPos.y = back_right;
+
+	if (flPos.y > front_left)
+		flPos.y = front_left;
+
+	if (frPos.y > front_right)
+		frPos.y = front_right;
+
+	if (fmlPos.y > fm_left)
+		fmlPos.y = fm_left;
+
+	if (fmrPos.y > fm_right)
+		fmrPos.y = fm_right;
+
+	if (bmlPos.y > bm_left)
+		bmlPos.y = bm_left;
+
+	if (bmrPos.y > bm_right)
+		bmrPos.y = bm_right;
+
+	if (mlPos.y > mid_left)
+		mlPos.y = mid_left;
+
+	if (mrPos.y > mid_right)
+		mrPos.y = mid_right;
+
+	if (item->pos.y_pos <= item->floor - 256)
+		item->pos.y_rot += short(quad->extra_rotation + quad->skidoo_turn);
+	else
+	{
+		if (quad->skidoo_turn < -364)
+			quad->skidoo_turn += 364;
+		else if (quad->skidoo_turn > 364)
+			quad->skidoo_turn -= 364;
+		else
+			quad->skidoo_turn = 0;
+
+		item->pos.y_rot += short(quad->extra_rotation + quad->skidoo_turn);
+		vel = short(546 - (quad->Velocity >> 8));
+		ang = item->pos.y_rot - quad->momentum_angle;
+
+		if (!(input & IN_ACTION) && quad->Velocity > 0)
+			vel += vel >> 2;
+
+		if (ang < -273)
+		{
+			if (ang >= -27300)
+				quad->momentum_angle -= vel;
+			else
+				quad->momentum_angle = item->pos.y_rot + 27300;
+		}
+		else if (ang > 273)
+		{
+			if (ang <= 27300)
+				quad->momentum_angle += vel;
+			else
+				quad->momentum_angle = item->pos.y_rot - 27300;
+		}
+		else
+			quad->momentum_angle = item->pos.y_rot;
+	}
+
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	h = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (item->pos.y_pos < h)
+		speed = item->speed;
+	else
+		speed = (item->speed * phd_cos(item->pos.x_rot)) >> W2V_SHIFT;
+
+	item->pos.x_pos += (speed * phd_sin(quad->momentum_angle)) >> W2V_SHIFT;
+	item->pos.z_pos += (speed * phd_cos(quad->momentum_angle)) >> W2V_SHIFT;
+
+	slip = (100 * phd_sin(item->pos.x_rot)) >> W2V_SHIFT;
+	
+	if (abs(slip) > 50)
+	{
+		dont_exit_quad = 1;
+
+		if (slip > 0)
+			slip -= 10;
+		else
+			slip += 10;
+
+		item->pos.x_pos -= (slip * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+		item->pos.z_pos -= (slip * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+	}
+
+	slip = (50 * phd_sin(item->pos.z_rot)) >> W2V_SHIFT;
+
+	if (abs(slip) > 25)
+	{
+		dont_exit_quad = 1;
+		item->pos.x_pos += (slip * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+		item->pos.z_pos -= (slip * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+	}
+
+	newPos.x = item->pos.x_pos;
+	newPos.z = item->pos.z_pos;
+
+	if (!(item->flags & IFL_INVISIBLE))
+		SkidooBaddieCollision(item);
+
+	shift = 0;
+
+	front_left2 = TestHeight(item, 550, -260, &flPos2);
+
+	if (front_left2 < flPos.y - 256)
+		shift = (short)DoShift(item, &flPos2, &flPos);
+
+	bm_left2 = TestHeight(item, 275, -260, &bmlPos2);
+
+	if (bm_left2 < bmlPos.y - 256)
+		DoShift(item, &bmlPos2, &bmlPos);
+
+	mid_left2 = TestHeight(item, 0, -260, &mlPos2);
+
+	if (mid_left2 < mlPos.y - 256)
+		DoShift(item, &mlPos2, &mlPos);
+
+	fm_left2 = TestHeight(item, -275, -260, &fmlPos2);
+
+	if (fm_left2 < fmlPos.y - 256)
+		DoShift(item, &fmlPos2, &fmlPos);
+
+	back_left2 = TestHeight(item, -550, -260, &blPos2);
+
+	if (back_left2 < blPos.y - 256)
+	{
+		shift2 = (short)DoShift(item, &blPos2, &blPos);
+
+		if ((shift2 > 0 && shift >= 0) || (shift2 < 0 && shift <= 0))
+			shift += shift2;
+	}
+
+	front_right2 = TestHeight(item, 550, 260, &frPos2);
+
+	if (front_right2 < frPos.y - 256)
+	{
+		shift2 = (short)DoShift(item, &frPos2, &frPos);
+
+		if ((shift2 > 0 && shift >= 0) || (shift2 < 0 && shift <= 0))
+			shift += shift2;
+	}
+
+	bm_right2 = TestHeight(item, 275, 260, &bmrPos2);
+
+	if (bm_right2 < bmrPos.y - 256)
+		DoShift(item, &bmrPos2, &bmrPos);
+
+	mid_right2 = TestHeight(item, 0, 260, &mrPos2);
+
+	if (mid_right2 < mrPos.y - 256)
+		DoShift(item, &mrPos2, &mrPos);
+
+	fm_right2 = TestHeight(item, -275, 260, &fmrPos2);
+
+	if (fm_right2 < fmrPos.y - 256)
+		DoShift(item, &fmrPos2, &fmrPos);
+
+	back_right2 = TestHeight(item, -550, 260, &brPos2);
+
+	if (back_right2 < brPos.y - 256)
+	{
+		shift2 = (short)DoShift(item, &brPos2, &brPos);
+
+		if ((shift2 > 0 && shift >= 0) || (shift2 < 0 && shift <= 0))
+			shift += shift2;
+	}
+
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	h = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (h < item->pos.y_pos - 256)
+		DoShift(item, (PHD_VECTOR*)&item->pos, &oldPos);
+
+	quad->extra_rotation = shift;
+	anim = GetCollisionAnim(item, &newPos);
+
+	if (anim)
+	{
+		dx = item->pos.x_pos - oldPos.x;
+		dz = item->pos.z_pos - oldPos.z;
+		speed = (dx * phd_sin(quad->momentum_angle) + dz * phd_cos(quad->momentum_angle)) >> W2V_SHIFT;
+		speed <<= 8;
+
+		if (&items[lara.skidoo] == item && quad->Velocity == 0xA000 && speed < 0x9FF6)
+		{
+			lara_item->hit_points -= short((0xA000 - speed) >> 7);
+			lara_item->hit_status = 1;
+		}
+
+		if (quad->Velocity > 0 && speed < quad->Velocity)
+			quad->Velocity = speed < 0 ? 0 : speed;
+		else if (quad->Velocity < 0 && speed > quad->Velocity)
+			quad->Velocity = speed > 0 ? 0 : speed;
+
+		if (quad->Velocity < -0x3000)
+			quad->Velocity = -0x3000;
+	}
+
+	return anim;
+}
+
 void inject_quadbike(bool replace)
 {
 	INJECT(0x0045EB20, QuadBikeDraw, replace);
@@ -756,4 +995,5 @@ void inject_quadbike(bool replace)
 	INJECT(0x004601A0, GetCollisionAnim, replace);
 	INJECT(0x0045F720, DoDynamics, replace);
 	INJECT(0x0045FFB0, SkidooBaddieCollision, replace);
+	INJECT(0x0045F780, SkidooDynamics, replace);
 }
