@@ -576,6 +576,111 @@ static long DoDynamics(long height, long fallspeed, long* ypos)
 	return fallspeed;
 }
 
+static long DoShift(ITEM_INFO* item, PHD_VECTOR* newPos, PHD_VECTOR* oldPos)	//from boat.cpp
+{
+	FLOOR_INFO* floor;
+	long x, z, nX, nZ, oX, oZ, sX, sZ, h;
+	short room_number;
+
+	nX = newPos->x >> WALL_SHIFT;
+	nZ = newPos->z >> WALL_SHIFT;
+	oX = oldPos->x >> WALL_SHIFT;
+	oZ = oldPos->z >> WALL_SHIFT;
+	sX = newPos->x & (WALL_SIZE - 1);
+	sZ = newPos->z & (WALL_SIZE - 1);
+
+	if (nX == oX)
+	{
+		if (nZ == oZ)
+		{
+			item->pos.z_pos += (oldPos->z - newPos->z);
+			item->pos.x_pos += (oldPos->x - newPos->x);
+			return 0;
+		}
+		else if (nZ <= oZ)
+		{
+			item->pos.z_pos += WALL_SIZE - sZ;
+			return item->pos.x_pos - newPos->x;
+		}
+		else
+		{
+			item->pos.z_pos -= 1 + sZ;
+			return newPos->x - item->pos.x_pos;
+		}
+	}
+
+	if (nZ == oZ)
+	{
+		if (nX <= oX)
+		{
+			item->pos.x_pos += WALL_SIZE - sX;
+			return newPos->z - item->pos.z_pos;
+		}
+		else
+		{
+			item->pos.x_pos -= 1 + sX;
+			return item->pos.z_pos - newPos->z;
+		}
+	}
+
+	x = 0;
+	z = 0;
+	room_number = item->room_number;
+	floor = GetFloor(oldPos->x, newPos->y, newPos->z, &room_number);
+	h = GetHeight(floor, oldPos->x, newPos->y, newPos->z);
+
+	if (h < oldPos->y - 256)
+	{
+		if (newPos->z > oldPos->z)
+			z = -1 - sZ;
+		else
+			z = WALL_SIZE - sZ;
+	}
+
+	room_number = item->room_number;
+	floor = GetFloor(newPos->x, newPos->y, oldPos->z, &room_number);
+	h = GetHeight(floor, newPos->x, newPos->y, oldPos->z);
+
+	if (h < oldPos->y - 256)
+	{
+		if (newPos->x > oldPos->x)
+			x = -1 - sX;
+		else
+			x = WALL_SIZE - sX;
+	}
+
+	if (x && z)
+	{
+		item->pos.x_pos += x;
+		item->pos.z_pos += z;
+		return 0;
+	}
+
+	if (z)
+	{
+		item->pos.z_pos += z;
+
+		if (z > 0)
+			return item->pos.x_pos - newPos->x;
+		else
+			return newPos->x - item->pos.x_pos;
+	}
+
+	if (x)
+	{
+		item->pos.x_pos += x;
+
+		if (x > 0)
+			return newPos->z - item->pos.z_pos;
+		else
+			return item->pos.z_pos - newPos->z;
+	}
+
+	item->pos.x_pos += oldPos->x - newPos->x;
+	item->pos.z_pos += oldPos->z - newPos->z;
+	return 0;
+}
+
 void inject_quadbike(bool replace)
 {
 	INJECT(0x0045EB20, QuadBikeDraw, replace);
