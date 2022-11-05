@@ -544,6 +544,38 @@ static long GetCollisionAnim(ITEM_INFO* item, PHD_VECTOR* pos)
 	}
 }
 
+static long DoDynamics(long height, long fallspeed, long* ypos)
+{
+	long bounce;
+
+	if (height <= *ypos)
+	{
+		bounce = (height - *ypos) << 2;
+
+		if (bounce < -80)
+			bounce = -80;
+
+		fallspeed += ((bounce - fallspeed) >> 3);
+
+		if (*ypos > height)
+			*ypos = height;
+	}
+	else
+	{
+		*ypos += fallspeed;
+
+		if (*ypos <= height - 80)
+				fallspeed += 6;
+		else
+		{
+			*ypos = height;
+			fallspeed = 0;
+		}
+	}
+
+	return fallspeed;
+}
+
 void inject_quadbike(bool replace)
 {
 	INJECT(0x0045EB20, QuadBikeDraw, replace);
@@ -556,4 +588,5 @@ void inject_quadbike(bool replace)
 	INJECT(0x00460BD0, TriggerExhaustSmoke, replace);
 	INJECT(0x004606A0, CanGetOff, replace);
 	INJECT(0x004601A0, GetCollisionAnim, replace);
+	INJECT(0x0045F720, DoDynamics, replace);
 }

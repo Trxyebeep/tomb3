@@ -1213,7 +1213,7 @@ tomb3decomp progress.
 0x0045F3C0	+	QuadbikeExplode
 0x0045F490	+	SkidooCheckGetOff
 0x0045F640	+	TestHeight
-0x0045F720		DoDynamics
+0x0045F720	+	DoDynamics
 0x0045F780		SkidooDynamics
 0x0045FFB0		SkidooBaddieCollision
 0x004601A0	+	GetCollisionAnim
