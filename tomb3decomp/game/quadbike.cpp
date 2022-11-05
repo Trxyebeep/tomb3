@@ -12,6 +12,11 @@
 #include "gameflow.h"
 #include "../specific/game.h"
 #include "../specific/specific.h"
+#include "lara1gun.h"
+#include "effect2.h"
+#include "missile.h"
+#include "items.h"
+#include "sound.h"
 
 void QuadBikeDraw(ITEM_INFO* item)
 {
@@ -297,10 +302,31 @@ void QuadBikeCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	quad->Revs = 0;
 }
 
+static void QuadbikeExplode(ITEM_INFO* item)
+{
+	if (room[item->room_number].flags & ROOM_UNDERWATER)
+		TriggerUnderwaterExplosion(item);
+	else
+	{
+		TriggerExplosionSparks(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 3, -2, 0, item->room_number);
+
+		for (int i = 0; i < 3; i++)
+			TriggerExplosionSparks(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 3, -1, 0, item->room_number);
+	}
+
+	ExplodingDeath(lara.skidoo, -2, 1);
+	KillItem(lara.skidoo);
+	item->status = ITEM_DEACTIVATED;
+	SoundEffect(SFX_EXPLOSION1, 0, 0);
+	SoundEffect(SFX_EXPLOSION2, 0, 0);
+	lara.skidoo = NO_ITEM;
+}
+
 void inject_quadbike(bool replace)
 {
 	INJECT(0x0045EB20, QuadBikeDraw, replace);
 	INJECT(0x0045E7E0, InitialiseQuadBike, replace);
 	INJECT(0x0045E9E0, GetOnQuadBike, replace);
 	INJECT(0x0045E830, QuadBikeCollision, replace);
+	INJECT(0x0045F3C0, QuadbikeExplode, replace);
 }
