@@ -2161,10 +2161,6 @@ void DrawAnimatingItem(ITEM_INFO* item)
 				dest.z = pos.z;
 
 				LOS(&src, &dest);
-
-#ifdef TROYESTUFF
-				dest.box_number = 0x1FFF;	//bite me
-#endif
 				S_DrawLaserBeam(&src, &dest, 255, 2, 3);
 			}
 		}

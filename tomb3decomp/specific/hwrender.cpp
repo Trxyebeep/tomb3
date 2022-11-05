@@ -259,6 +259,16 @@ void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage)
 		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
 
+#ifdef TROYESTUFF
+	case DT_LINE_ALPHA:
+		HWR_SetCurrentTexture(0);
+		HWR_EnableAlphaBlend(1);
+		HWR_EnableColorKey(1);
+		HWR_EnableColorAddition(1);
+		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+		return;
+#endif
+
 	case DT_POLY_GA:
 		HWR_SetCurrentTexture(0);
 		HWR_EnableAlphaBlend(1);
@@ -329,6 +339,15 @@ void HWR_DrawRoutinesStippledAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, 
 		HWR_EnableColorKey(0);
 		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
+
+#ifdef TROYESTUFF
+	case DT_LINE_ALPHA:
+		HWR_SetCurrentTexture(0);
+		HWR_EnableAlphaBlend(1);
+		HWR_EnableColorKey(1);
+		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+		return;
+#endif
 
 	case DT_POLY_GA:
 		HWR_SetCurrentTexture(0);
@@ -403,6 +422,15 @@ void HWR_DrawRoutinesNoAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long T
 		HWR_EnableAlphaBlend(1);
 		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
+
+#ifdef TROYESTUFF
+	case DT_LINE_ALPHA:
+		HWR_SetCurrentTexture(0);
+		HWR_EnableAlphaBlend(1);
+		HWR_EnableColorKey(1);
+		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+		return;
+#endif
 
 	case DT_POLY_GA:
 		HWR_SetCurrentTexture(0);
@@ -644,7 +672,11 @@ void HWR_DrawPolyListBF(long num, long* pSort)
 			nURVtx = 0;
 		}
 
+#ifdef TROYESTUFF
+		if (nDrawType1 == DT_LINE_SOLID || nDrawType1 == DT_LINE_ALPHA)
+#else
 		if (nDrawType1 == DT_LINE_SOLID)
+#endif
 		{
 			URvtx = &UnRollBuffer[nURVtx];
 			URvtx->sx = vtx->sx;

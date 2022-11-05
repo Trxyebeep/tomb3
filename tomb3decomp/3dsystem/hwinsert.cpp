@@ -5,6 +5,16 @@
 #include "../tomb3/tomb3.h"
 #endif
 
+static __inline bool CheckDrawType(long nDrawType)
+{
+#ifdef TROYESTUFF
+	return nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_GA || nDrawType == DT_POLY_GTA ||
+		nDrawType == DT_LINE_SOLID || nDrawType == DT_LINE_ALPHA;
+#else
+	return nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_GA || nDrawType == DT_LINE_SOLID || nDrawType == DT_POLY_GTA;
+#endif
+}
+
 #define	SetBufferPtrs(sort, info, nDrawType, pass)\
 {\
 	if(CurrentTLVertex - VertexBuffer > MAX_TLVERTICES - 32)\
@@ -19,7 +29,7 @@
 		sort3dptrbf += 3;\
 		info3dptrbf += 5;\
 	}\
-	else if (pass || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_GA || nDrawType == DT_LINE_SOLID || nDrawType == DT_POLY_GTA)\
+	else if (pass || CheckDrawType(nDrawType))\
 	{\
 		sort = sort3dptrfb;\
 		info = info3dptrfb;\
@@ -962,7 +972,17 @@ void HWI_InsertLine_Sorted(long x1, long y1, long x2, long y2, long z, long c0, 
 	SetBufferPtrs(sort, info, 0, 1);
 	sort[0] = (long)info;
 	sort[1] = z;
-	info[0] = DT_LINE_SOLID;
+
+#ifdef TROYESTUFF
+	if (GlobalAlpha == 0xDEADBEEF)
+	{
+		info[0] = DT_LINE_ALPHA;
+		GlobalAlpha = 0xFF000000;
+	}
+	else
+#endif
+		info[0] = DT_LINE_SOLID;
+
 	info[1] = 0;
 	info[2] = 2;
 	v = CurrentTLVertex;

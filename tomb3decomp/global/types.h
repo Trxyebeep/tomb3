@@ -165,7 +165,10 @@ enum draw_types
 #ifdef TROYESTUFF
 	DT_POLY_COLSUB = 15,		//colsub
 #endif
-	DT_POLY_GTA = 16			//Gouraud + Textured + Alpha
+	DT_POLY_GTA = 16,			//Gouraud + Textured + Alpha
+#ifdef TROYESTUFF
+	DT_LINE_ALPHA = 17,			//line + color key + alpha
+#endif
 };
 
 enum T_flags
