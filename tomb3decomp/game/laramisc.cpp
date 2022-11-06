@@ -873,6 +873,173 @@ void LaraControl(short item_number)
 	savegame.distance_travelled += phd_sqrt(SQUARE(dx) + SQUARE(dy) + SQUARE(dz));
 }
 
+void AnimateLara(ITEM_INFO* item)
+{
+	ANIM_STRUCT* anim;
+	short* cmd;
+	long speed;
+	ushort type;
+
+	item->frame_number++;
+	anim = &anims[item->anim_number];
+
+	if (anim->number_changes > 0 && GetChange(item, anim))
+	{
+		anim = &anims[item->anim_number];
+		item->current_anim_state = anim->current_anim_state;
+	}
+
+	if (item->frame_number > anim->frame_end)
+	{
+		if (anim->number_commands)
+		{
+			cmd = &commands[anim->command_index];
+
+			for (int i = anim->number_commands; i > 0; i--)
+			{
+				switch (*cmd++)
+				{
+				case COMMAND_MOVE_ORIGIN:
+					TranslateItem(item, cmd[0], cmd[1], cmd[2]);
+					cmd += 3;
+					break;
+
+				case COMMAND_JUMP_VELOCITY:
+					item->fallspeed = cmd[0];
+					item->speed = cmd[1];
+					item->gravity_status = 1;
+
+					if (lara.calc_fallspeed)
+					{
+						item->fallspeed = lara.calc_fallspeed;
+						lara.calc_fallspeed = 0;
+					}
+
+					cmd += 2;
+					break;
+
+				case COMMAND_ATTACK_READY:
+
+					if (lara.gun_status != LG_SPECIAL)
+						lara.gun_status = LG_ARMLESS;
+
+					break;
+
+				case COMMAND_SOUND_FX:
+				case COMMAND_EFFECT:
+					cmd += 2;
+					break;
+				}
+			}
+		}
+
+		item->anim_number = anim->jump_anim_num;
+		item->frame_number = anim->jump_frame_num;
+		anim = &anims[item->anim_number];
+		item->current_anim_state = anim->current_anim_state;
+	}
+
+	if (anim->number_commands > 0)
+	{
+		cmd = &commands[anim->command_index];
+
+		for (int i = anim->number_commands; i > 0; i--)
+		{
+			switch (*cmd++)
+			{
+			case COMMAND_MOVE_ORIGIN:
+				cmd += 3;
+				break;
+
+			case COMMAND_JUMP_VELOCITY:
+				cmd += 2;
+				break;
+
+			case COMMAND_SOUND_FX:
+
+				if (item->frame_number == cmd[0])
+				{
+					type = cmd[1] & 0xC000;
+
+					if (type == SFX_LANDANDWATER ||
+						(type == SFX_LANDONLY && (lara.water_surface_dist >= 0 || lara.water_surface_dist == NO_HEIGHT)) ||
+						(type == SFX_WATERONLY && lara.water_surface_dist < 0 &&
+							lara.water_surface_dist != NO_HEIGHT && !(room[item->room_number].flags & ROOM_SWAMP)))
+						SoundEffect(cmd[1] & 0x3FFF, &item->pos, SFX_ALWAYS);
+				}
+
+				cmd += 2;
+				break;
+
+			case COMMAND_EFFECT:
+
+				if (item->frame_number == cmd[0])
+				{
+					FXType = cmd[1] & 0xC000;
+					effect_routines[cmd[1] & 0x3FFF](item);
+				}
+
+				cmd += 2;
+				break;
+			}
+		}
+	}
+
+	if (!item->gravity_status)
+	{
+		if (lara.water_status == LARA_WADE && room[item->room_number].flags & ROOM_SWAMP)
+		{
+			speed = anim->velocity >> 1;
+
+			if (anim->acceleration)
+				speed += (anim->acceleration * (item->frame_number - anim->frame_base)) >> 2;
+		}
+		else
+		{
+			speed = anim->velocity;
+
+			if (anim->acceleration)
+				speed += anim->acceleration * (item->frame_number - anim->frame_base);
+		}
+
+		item->speed = speed >> 16;
+	}
+	else
+	{
+		if (room[item->room_number].flags & ROOM_SWAMP)
+		{
+			item->speed -= item->speed >> 3;
+
+			if (abs(item->speed) < 8)
+			{
+				item->speed = 0;
+				item->gravity_status = 0;
+			}
+
+			if (item->fallspeed > 128)
+				item->fallspeed >>= 1;
+
+			item->fallspeed -= item->fallspeed >> 2;
+
+			if (item->fallspeed < 4)
+				item->fallspeed = 4;
+		}
+		else
+		{
+			speed = anim->velocity + anim->acceleration * (item->frame_number - anim->frame_base - 1);
+			item->speed -= speed >> 16;
+			speed += anim->acceleration;
+			item->speed += speed >> 16;
+			item->fallspeed += item->fallspeed < 128 ? 6 : 1;
+		}
+
+		item->pos.y_pos += item->fallspeed;
+	}
+
+	item->pos.x_pos += (item->speed * phd_sin(lara.move_angle)) >> W2V_SHIFT;
+	item->pos.z_pos += (item->speed * phd_cos(lara.move_angle)) >> W2V_SHIFT;
+}
+
 void inject_laramisc(bool replace)
 {
 	INJECT(0x0044C630, LaraCheatGetStuff, replace);
@@ -880,4 +1047,5 @@ void inject_laramisc(bool replace)
 	INJECT(0x0044CFC0, LaraCheat, replace);
 	INJECT(0x0044D060, LaraInitialiseMeshes, replace);
 	INJECT(0x0044C6F0, LaraControl, inject_rando ? 1 : replace);
+	INJECT(0x0044D2A0, AnimateLara, replace);
 }
