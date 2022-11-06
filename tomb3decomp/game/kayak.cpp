@@ -10,7 +10,6 @@
 #include "../specific/game.h"
 #include "effect2.h"
 #include "lara.h"
-#include "laraanim.h"
 #include "camera.h"
 #include "effects.h"
 #include "../3dsystem/3d_gen.h"
@@ -24,8 +23,8 @@ void LaraRapidsDrown()
 {
 	lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 25;
 	lara_item->frame_number = anims[lara_item->anim_number].frame_base;
-	lara_item->current_anim_state = 12;
-	lara_item->goal_anim_state = 12;
+	lara_item->current_anim_state = EXTRA_RAPIDSDROWN;
+	lara_item->goal_anim_state = EXTRA_RAPIDSDROWN;
 	lara_item->gravity_status = 0;
 	lara_item->hit_points = 0;
 	lara_item->fallspeed = 0;

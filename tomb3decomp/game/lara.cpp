@@ -2,7 +2,6 @@
 #include "lara.h"
 #include "control.h"
 #include "collide.h"
-#include "laraanim.h"
 #include "laraclmb.h"
 #include "../3dsystem/phd_math.h"
 #include "laramisc.h"

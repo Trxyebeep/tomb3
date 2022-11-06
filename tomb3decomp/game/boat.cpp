@@ -14,7 +14,6 @@
 #include "sound.h"
 #include "effect2.h"
 #include "../specific/game.h"
-#include "laraanim.h"
 
 void InitialiseBoat(short item_number)
 {

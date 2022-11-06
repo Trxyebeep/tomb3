@@ -17,7 +17,6 @@
 #include "missile.h"
 #include "items.h"
 #include "sound.h"
-#include "laraanim.h"
 #include "lara.h"
 #include "effects.h"
 #include "sphere.h"

@@ -206,7 +206,6 @@
     <ClInclude Include="tomb3decomp\game\kayak.h" />
     <ClInclude Include="tomb3decomp\game\lara1gun.h" />
     <ClInclude Include="tomb3decomp\game\lara2gun.h" />
-    <ClInclude Include="tomb3decomp\game\laraanim.h" />
     <ClInclude Include="tomb3decomp\game\armysmg.h" />
     <ClInclude Include="tomb3decomp\game\collide.h" />
     <ClInclude Include="tomb3decomp\game\control.h" />

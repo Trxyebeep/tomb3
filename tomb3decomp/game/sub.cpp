@@ -5,7 +5,6 @@
 #include "collide.h"
 #include "laraflar.h"
 #include "objects.h"
-#include "laraanim.h"
 #include "draw.h"
 #include "../specific/output.h"
 #include "../3dsystem/3d_gen.h"

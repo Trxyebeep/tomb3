@@ -11,7 +11,6 @@
 #include "sound.h"
 #include "items.h"
 #include "control.h"
-#include "laraanim.h"
 #include "invfunc.h"
 #include "larafire.h"
 #include "../3dsystem/phd_math.h"

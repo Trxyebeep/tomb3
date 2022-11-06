@@ -10,7 +10,6 @@
 #include "hair.h"
 #include "lara.h"
 #include "effect2.h"
-#include "laraanim.h"
 #include "control.h"
 #include "sphere.h"
 #include "../specific/draweffects.h"

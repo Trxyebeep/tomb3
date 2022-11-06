@@ -229,9 +229,6 @@
     <ClInclude Include="tomb3decomp\game\lara2gun.h">
       <Filter>game</Filter>
     </ClInclude>
-    <ClInclude Include="tomb3decomp\game\laraanim.h">
-      <Filter>game</Filter>
-    </ClInclude>
     <ClInclude Include="tomb3decomp\game\laraclmb.h">
       <Filter>game</Filter>
     </ClInclude>

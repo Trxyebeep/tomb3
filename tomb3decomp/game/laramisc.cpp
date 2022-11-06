@@ -4,7 +4,6 @@
 #include "laraclmb.h"
 #include "larasurf.h"
 #include "laraswim.h"
-#include "laraanim.h"
 #include "invfunc.h"
 #include "objects.h"
 #include "control.h"

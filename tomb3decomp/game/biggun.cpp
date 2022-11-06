@@ -2,7 +2,6 @@
 #include "biggun.h"
 #include "../specific/init.h"
 #include "laraflar.h"
-#include "laraanim.h"
 #include "objects.h"
 #include "collide.h"
 #include "draw.h"
@@ -14,6 +13,7 @@
 #include "effect2.h"
 #include "../specific/game.h"
 #include "control.h"
+#include "lara.h"
 
 void BigGunInitialise(short item_number)
 {

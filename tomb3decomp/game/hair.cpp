@@ -2,11 +2,11 @@
 #include "hair.h"
 #include "objects.h"
 #include "draw.h"
-#include "laraanim.h"
 #include "../3dsystem/3d_gen.h"
 #include "control.h"
 #include "../specific/game.h"
 #include "../3dsystem/phd_math.h"
+#include "lara.h"
 
 static PHD_3DPOS hair[7];
 static PHD_VECTOR hvel[7];

@@ -1,7 +1,6 @@
 #include "../tomb3/pch.h"
 #include "pickup.h"
 #include "collide.h"
-#include "laraanim.h"
 #include "objects.h"
 #include "laramisc.h"
 #include "larafire.h"
@@ -13,6 +12,7 @@
 #include "../specific/smain.h"
 #include "effect2.h"
 #include "sound.h"
+#include "lara.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif

@@ -1,6 +1,5 @@
 #include "../tomb3/pch.h"
 #include "effects.h"
-#include "laraanim.h"
 #include "lara.h"
 #include "../specific/game.h"
 #include "effect2.h"
