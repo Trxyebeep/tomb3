@@ -141,8 +141,8 @@ void BoatCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	l->speed = 0;
 	l->fallspeed = 0;
 	l->frame_number = anims[l->anim_number].frame_base;
-	l->current_anim_state = 0;
-	l->goal_anim_state = 0;
+	l->current_anim_state = BOAT_GETON;
+	l->goal_anim_state = BOAT_GETON;
 
 	if (l->room_number != item->room_number)
 		ItemNewRoom(lara.item_number, item->room_number);
@@ -293,83 +293,83 @@ static void BoatAnimation(ITEM_INFO* item, long collide)
 
 	if (lara_item->hit_points <= 0)
 	{
-		if (lara_item->current_anim_state != 8)
+		if (lara_item->current_anim_state != BOAT_DEATH)
 		{
 			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 18;
 			lara_item->frame_number = anims[lara_item->anim_number].frame_base;
-			lara_item->current_anim_state = 8;
-			lara_item->goal_anim_state = 8;
+			lara_item->current_anim_state = BOAT_DEATH;
+			lara_item->goal_anim_state = BOAT_DEATH;
 		}
 	}
 	else if (item->pos.y_pos < boat->water - 128 && item->fallspeed > 0)
 	{
-		if (lara_item->current_anim_state != 6)
+		if (lara_item->current_anim_state != BOAT_FALL)
 		{
 			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 15;
 			lara_item->frame_number = anims[lara_item->anim_number].frame_base;
-			lara_item->current_anim_state = 6;
-			lara_item->goal_anim_state = 6;
+			lara_item->current_anim_state = BOAT_FALL;
+			lara_item->goal_anim_state = BOAT_FALL;
 		}
 	}
 	else if (collide)
 	{
-		if (lara_item->current_anim_state != 5)
+		if (lara_item->current_anim_state != BOAT_HIT)
 		{
 			lara_item->anim_number = short(objects[VEHICLE_ANIM].anim_index + collide);
 			lara_item->frame_number = anims[lara_item->anim_number].frame_base;
-			lara_item->current_anim_state = 5;
-			lara_item->goal_anim_state = 5;
+			lara_item->current_anim_state = BOAT_HIT;
+			lara_item->goal_anim_state = BOAT_HIT;
 		}
 	}
 	else
 	{
 		switch (lara_item->current_anim_state)
 		{
-		case 1:
+		case BOAT_STILL:
 
 			if (input & IN_ROLL && !item->speed)
 			{
 				if (input & (IN_RSTEP | IN_RIGHT) && CanGetOff(item->pos.y_rot + 0x4000))
-					lara_item->goal_anim_state = 3;
+					lara_item->goal_anim_state = BOAT_JUMPR;
 				else if (input & (IN_LSTEP | IN_LEFT) && CanGetOff(item->pos.y_rot - 0x4000))
-					lara_item->goal_anim_state = 4;
+					lara_item->goal_anim_state = BOAT_JUMPL;
 			}
 
 			if (item->speed > 0)
-				lara_item->goal_anim_state = 2;
+				lara_item->goal_anim_state = BOAT_MOVING;
 
 			break;
 
-		case 2:
+		case BOAT_MOVING:
 
 			if (item->speed <= 0)
-				lara_item->goal_anim_state = 1;
+				lara_item->goal_anim_state = BOAT_STILL;
 			else if (input & (IN_RSTEP | IN_RIGHT))
-				lara_item->goal_anim_state = 7;
+				lara_item->goal_anim_state = BOAT_TURNR;
 			else if (input & (IN_LSTEP | IN_LEFT))
-				lara_item->goal_anim_state = 9;
+				lara_item->goal_anim_state = BOAT_TURNL;
 
 			break;
 
-		case 6:
-			lara_item->goal_anim_state = 2;
+		case BOAT_FALL:
+			lara_item->goal_anim_state = BOAT_MOVING;
 			break;
 
-		case 7:
+		case BOAT_TURNR:
 
 			if (item->speed <= 0)
-				lara_item->goal_anim_state = 1;
+				lara_item->goal_anim_state = BOAT_STILL;
 			else if (!(input & (IN_RSTEP | IN_RIGHT)))
-				lara_item->goal_anim_state = 2;
+				lara_item->goal_anim_state = BOAT_MOVING;
 
 			break;
 
-		case 9:
+		case BOAT_TURNL:
 
 			if (item->speed <= 0)
-				lara_item->goal_anim_state = 1;
+				lara_item->goal_anim_state = BOAT_STILL;
 			else if (!(input & (IN_LSTEP | IN_LEFT)))
-				lara_item->goal_anim_state = 2;
+				lara_item->goal_anim_state = BOAT_MOVING;
 
 			break;
 		}
@@ -966,7 +966,7 @@ void BoatControl(short item_number)
 
 	if (lara.skidoo == item_number && lara_item->hit_points > 0)
 	{
-		if (lara_item->current_anim_state && (lara_item->current_anim_state <= 2 || lara_item->current_anim_state > 4))
+		if (lara_item->current_anim_state && (lara_item->current_anim_state <= BOAT_MOVING || lara_item->current_anim_state > BOAT_JUMPL))
 		{
 			driving = 1;
 			no_turn = BoatUserControl(item);
@@ -1068,10 +1068,10 @@ void BoatControl(short item_number)
 	if (lara.skidoo != item_number)
 		return;
 
-	if ((lara_item->current_anim_state == 3 || lara_item->current_anim_state == 4) &&
+	if ((lara_item->current_anim_state == BOAT_JUMPR || lara_item->current_anim_state == BOAT_JUMPL) &&
 		lara_item->frame_number == anims[lara_item->anim_number].frame_end)
 	{
-		if (lara_item->current_anim_state == 4)
+		if (lara_item->current_anim_state == BOAT_JUMPL)
 			lara_item->pos.y_rot -= 0x4000;
 		else
 			lara_item->pos.y_rot += 0x4000;
@@ -1111,7 +1111,7 @@ void BoatControl(short item_number)
 	GetFloor(item->pos.x_pos, item->pos.y_pos + 128, item->pos.z_pos, &room_number);
 	wh = GetWaterHeight(item->pos.x_pos, item->pos.y_pos + 128, item->pos.z_pos, room_number);
 	wh = wh <= item->pos.y_pos + 32 && wh != NO_HEIGHT;
-	leaving = lara_item->current_anim_state == 3 || lara_item->current_anim_state == 4;
+	leaving = lara_item->current_anim_state == BOAT_JUMPR || lara_item->current_anim_state == BOAT_JUMPL;
 
 	if (!(wibble & 0xF) && wh && !leaving)
 	{
