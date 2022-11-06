@@ -1048,7 +1048,11 @@ void DefaultConflict()
 	}
 }
 
+#ifdef TROYESTUFF
+#define CONTROL_NLINES		8
+#else
 #define CONTROL_NLINES		7
+#endif
 #define CONTROL_Y_BOX		-55
 #define CONTROL_Y_TITLE		(CONTROL_Y_BOX + 5)
 #define CONTROL_STARTY		(CONTROL_Y_BOX + 30)
@@ -1060,59 +1064,65 @@ void DefaultConflict()
 
 static void S_ShowControls()
 {
-	long mid, x, y, s;
+	long mid, n, x, y, s;
 
 	mid = GetRenderWidth() / 2;
 	s = CONTROL_SPACE;
 
 	if (!btext[0])
 	{
+		n = 0;
 		x = mid < 320 ? mid - 150 : mid - 200;	//left column key binds
 		y = CONTROL_STARTY;
 
-		btext[0] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][0]]);
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][0]]);
 		y += s;
 
-		btext[1] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][1]]);
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][1]]);
 		y += s;
 
-		btext[2] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][2]]);
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][2]]);
 		y += s;
 
-		btext[3] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][3]]);
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][3]]);
 		y += s;
 
-		btext[4] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][4]]);
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][4]]);
 		y += s;
 
-		btext[5] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][5]]);
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][5]]);
 		y += s;
 
-		btext[6] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][6]]);
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][6]]);
 		y += s;
+
+#ifdef TROYESTUFF
+		btext[14] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][14]]);
+		y += s;
+#endif
 
 		x = mid < 320 ? mid - 20 : mid + 10;	//right column key binds
 		y = CONTROL_STARTY;
 
-		btext[7] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][7]]);
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][7]]);
 		y += s;
 
-		btext[8] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][8]]);
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][8]]);
 		y += s;
 
-		btext[9] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][9]]);
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][9]]);
 		y += s;
 
-		btext[10] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][10]]);
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][10]]);
 		y += s;
 
-		btext[11] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][11]]);
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][11]]);
 		y += s;
 
-		btext[12] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][12]]);
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][12]]);
 		y += s;
 
-		btext[13] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][13]]);
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][13]]);
 		y += s;
 
 		for (int i = 0; i < NLAYOUTKEYS ; i++)
@@ -1123,52 +1133,58 @@ static void S_ShowControls()
 
 	if (!ctext[0])
 	{
+		n = 0;
 		x = mid < 320 ? mid - 78 : mid - 120;	//left column key names
 		y = CONTROL_STARTY;
 
-		ctext[0] = T_Print(x, y, 0, GF_GameStrings[GT_RUN]);
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_RUN]);
 		y += s;
 
-		ctext[1] = T_Print(x, y, 0, GF_GameStrings[GT_BACK]);
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_BACK]);
 		y += s;
 
-		ctext[2] = T_Print(x, y, 0, GF_GameStrings[GT_LEFT]);
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_LEFT]);
 		y += s;
 
-		ctext[3] = T_Print(x, y, 0, GF_GameStrings[GT_RIGHT]);
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_RIGHT]);
 		y += s;
 
-		ctext[4] = T_Print(x, y, 0, GF_GameStrings[GT_STEPLEFT1]);
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_STEPLEFT1]);
 		y += s;
 
-		ctext[5] = T_Print(x, y, 0, GF_GameStrings[GT_STEPRIGHT1]);
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_STEPRIGHT1]);
 		y += s;
 
-		ctext[6] = T_Print(x, y, 0, GF_GameStrings[GT_WALK]);
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_WALK]);
 		y += s;
+
+#ifdef TROYESTUFF
+		ctext[14] = T_Print(x, y, 0, "Pause");
+		y += s;
+#endif
 
 		x = mid < 320 ? mid + 55 : mid + 90;	//right column key names
 		y = CONTROL_STARTY;
 
-		ctext[7] = T_Print(x, y, 0, GF_GameStrings[GT_JUMP]);
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_JUMP]);
 		y += s;
 
-		ctext[8] = T_Print(x, y, 0, GF_GameStrings[GT_ACTION]);
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_ACTION]);
 		y += s;
 
-		ctext[9] = T_Print(x, y, 0, GF_GameStrings[GT_DRAWWEAPON1]);
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_DRAWWEAPON1]);
 		y += s;
 
-		ctext[10] = T_Print(x, y, 0, GF_GameStrings[GT_USEFLARE]);
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_USEFLARE]);
 		y += s;
 
-		ctext[11] = T_Print(x, y, 0, GF_GameStrings[GT_LOOK]);
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_LOOK]);
 		y += s;
 
-		ctext[12] = T_Print(x, y, 0, GF_GameStrings[GT_ROLL]);
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_ROLL]);
 		y += s;
 
-		ctext[13] = T_Print(x, y, 0, GF_GameStrings[GT_INVENTORY]);
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_INVENTORY]);
 		y += s;
 
 		for (int i = 0; i < NLAYOUTKEYS; i++)
@@ -1318,7 +1334,7 @@ void do_control_option(INVENTORY_ITEM* item)
 				keychange--;
 
 				if (keychange < -1)
-					keychange = 13;
+					keychange = NLAYOUTKEYS - 1;
 
 				if (keychange == -1)
 				{
@@ -1348,7 +1364,7 @@ void do_control_option(INVENTORY_ITEM* item)
 
 				keychange++;
 
-				if (keychange > 13)
+				if (keychange > NLAYOUTKEYS - 1)
 					keychange = -1;
 
 				if (keychange == -1)
