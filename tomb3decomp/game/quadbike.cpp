@@ -278,14 +278,14 @@ void QuadBikeCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	if (ang > -0x1FFE && ang < 0x5FFA)
 	{
 		l->anim_number = objects[VEHICLE_ANIM].anim_index + 23;
-		l->current_anim_state = 23;
-		l->goal_anim_state = 23;
+		l->current_anim_state = QS_GETONL;
+		l->goal_anim_state = QS_GETONL;
 	}
 	else
 	{
 		l->anim_number = objects[VEHICLE_ANIM].anim_index + 9;
-		l->current_anim_state = 9;
-		l->goal_anim_state = 9;
+		l->current_anim_state = QS_GETONR;
+		l->goal_anim_state = QS_GETONR;
 	}
 
 	l->frame_number = anims[l->anim_number].frame_base;
@@ -344,18 +344,18 @@ static long SkidooCheckGetOff()
 
 	item = &items[lara.skidoo];
 
-	if ((lara_item->current_anim_state == 10 || lara_item->current_anim_state == 24) &&
+	if ((lara_item->current_anim_state == QS_GETOFFR || lara_item->current_anim_state == QS_GETOFFL) &&
 		lara_item->frame_number == anims[lara_item->anim_number].frame_end)
 	{
-		if (lara_item->current_anim_state == 24)
+		if (lara_item->current_anim_state == QS_GETOFFL)
 			lara_item->pos.y_rot += 0x4000;
 		else
 			lara_item->pos.y_rot -= 0x4000;
 
 		lara_item->anim_number = ANIM_STOP;
 		lara_item->frame_number = anims[ANIM_STOP].frame_base;
-		lara_item->current_anim_state = 2;
-		lara_item->goal_anim_state = 2;
+		lara_item->current_anim_state = AS_STOP;
+		lara_item->goal_anim_state = AS_STOP;
 		lara_item->pos.x_pos -= (512 * phd_sin(lara_item->pos.y_rot)) >> W2V_SHIFT;
 		lara_item->pos.z_pos -= (512 * phd_cos(lara_item->pos.y_rot)) >> W2V_SHIFT;
 		lara_item->pos.x_rot = 0;
@@ -367,7 +367,7 @@ static long SkidooCheckGetOff()
 	{
 		quad = (QUADINFO*)item->data;
 
-		if (lara_item->current_anim_state == 20)
+		if (lara_item->current_anim_state == QS_FALLOFF)
 		{
 			lara_item->anim_number = ANIM_FASTFALL;
 			lara_item->frame_number = anims[ANIM_FASTFALL].frame_base;
@@ -389,7 +389,7 @@ static long SkidooCheckGetOff()
 			return 0;
 		}
 
-		if (lara_item->current_anim_state == 19)
+		if (lara_item->current_anim_state == QS_FALLDEATH)
 		{
 			lara_item->goal_anim_state = 8;
 			lara_item->fallspeed = 154;
@@ -1000,7 +1000,7 @@ static void AnimateQuadBike(ITEM_INFO* item, long hitWall, long killed)
 	quad = (QUADINFO*)item->data;
 	state = lara_item->current_anim_state;
 
-	if (item->pos.y_pos != item->floor && state != 8 && state != 17 && state != 20 && !killed)
+	if (item->pos.y_pos != item->floor && state != QS_FALL && state != QS_LAND && state != QS_FALLOFF && !killed)
 	{
 		if (quad->Velocity < 0)
 			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 6;
@@ -1011,32 +1011,34 @@ static void AnimateQuadBike(ITEM_INFO* item, long hitWall, long killed)
 		lara_item->current_anim_state = 8;
 		lara_item->goal_anim_state = 8;
 	}
-	else if (hitWall && state != 12 && state != 11 && state != 13 && state != 14 && state != 20 && quad->Velocity > 0x3555 && !killed)
+	else if (hitWall &&
+		state != QS_HITFRONT && state != QS_HITBACK && state != QS_HITLEFT && state != QS_HITRIGHT && state != QS_FALLOFF &&
+		quad->Velocity > 0x3555 && !killed)
 	{
 		switch (hitWall)
 		{
 		case 13:
 			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 12;
-			lara_item->current_anim_state = 12;
-			lara_item->goal_anim_state = 12;
+			lara_item->current_anim_state = QS_HITFRONT;
+			lara_item->goal_anim_state = QS_HITFRONT;
 			break;
 
 		case 14:
 			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 11;
-			lara_item->current_anim_state = 11;
-			lara_item->goal_anim_state = 11;
+			lara_item->current_anim_state = QS_HITBACK;
+			lara_item->goal_anim_state = QS_HITBACK;
 			break;
 
 		case 11:
 			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 14;
-			lara_item->current_anim_state = 13;
-			lara_item->goal_anim_state = 13;
+			lara_item->current_anim_state = QS_HITLEFT;
+			lara_item->goal_anim_state = QS_HITLEFT;
 			break;
 
 		default:
 			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 13;
-			lara_item->current_anim_state = 14;
-			lara_item->goal_anim_state = 14;
+			lara_item->current_anim_state = QS_HITRIGHT;
+			lara_item->goal_anim_state = QS_HITRIGHT;
 			break;
 		}
 
@@ -1047,27 +1049,27 @@ static void AnimateQuadBike(ITEM_INFO* item, long hitWall, long killed)
 	{
 		switch (lara_item->current_anim_state)
 		{
-		case 1:
+		case QS_DRIVE:
 
 			if (killed)
 			{
 				if (quad->Velocity <= 0x5000)
-					lara_item->goal_anim_state = 7;
+					lara_item->goal_anim_state = QS_BIKEDEATH;
 				else
-					lara_item->goal_anim_state = 19;
+					lara_item->goal_anim_state = QS_FALLDEATH;
 			}
 			else if (!(quad->Velocity & 0xFFFFFF00) && !(input & (IN_JUMP | IN_ACTION)))
-				lara_item->goal_anim_state = 15;
+				lara_item->goal_anim_state = QS_STOP;
 			else if (input & IN_LEFT && !HandbrakeStarting)
-				lara_item->goal_anim_state = 2;
+				lara_item->goal_anim_state = QS_TURNL;
 			else if (input & IN_RIGHT && !HandbrakeStarting)
-				lara_item->goal_anim_state = 22;
+				lara_item->goal_anim_state = QS_TURNR;
 			else if (input & IN_JUMP)
 			{
 				if (quad->Velocity <= 0x6AAA)
-					lara_item->goal_anim_state = 5;
+					lara_item->goal_anim_state = QS_SLOW;
 				else
-					lara_item->goal_anim_state = 6;
+					lara_item->goal_anim_state = QS_BRAKE;
 			}
 
 			break;
@@ -1075,16 +1077,16 @@ static void AnimateQuadBike(ITEM_INFO* item, long hitWall, long killed)
 		case 2:
 
 			if (!(quad->Velocity & 0xFFFFFF00))
-				lara_item->goal_anim_state = 15;
+				lara_item->goal_anim_state = QS_STOP;
 			else if (input & IN_RIGHT)
 			{
 				lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 20;
 				lara_item->frame_number = anims[lara_item->anim_number].frame_base;
-				lara_item->goal_anim_state = 22;
-				lara_item->current_anim_state = 22;
+				lara_item->current_anim_state = QS_TURNR;
+				lara_item->goal_anim_state = QS_TURNR;
 			}
 			else if (!(input & IN_LEFT))
-				lara_item->goal_anim_state = 1;
+				lara_item->goal_anim_state = QS_DRIVE;
 
 			break;
 
@@ -1093,18 +1095,18 @@ static void AnimateQuadBike(ITEM_INFO* item, long hitWall, long killed)
 		case 18:
 
 			if (!(quad->Velocity & 0xFFFFFF00))
-				lara_item->goal_anim_state = 15;
+				lara_item->goal_anim_state = QS_STOP;
 			else if (input & IN_LEFT)
-				lara_item->goal_anim_state = 2;
+				lara_item->goal_anim_state = QS_TURNL;
 			else if (input & IN_RIGHT)
-				lara_item->goal_anim_state = 22;
+				lara_item->goal_anim_state = QS_TURNR;
 
 			break;
 
 		case 8:
 
 			if (item->pos.y_pos == item->floor)
-				lara_item->goal_anim_state = 17;
+				lara_item->goal_anim_state = QS_LAND;
 			else if (item->fallspeed > 240 && CurrentLevel != LV_GYM)
 				quad->Flags |= 0x40;
 
@@ -1116,7 +1118,7 @@ static void AnimateQuadBike(ITEM_INFO* item, long hitWall, long killed)
 		case 14:
 
 			if (input & (IN_JUMP | IN_ACTION))
-				lara_item->goal_anim_state = 1;
+				lara_item->goal_anim_state = QS_DRIVE;
 
 			break;
 
@@ -1124,35 +1126,35 @@ static void AnimateQuadBike(ITEM_INFO* item, long hitWall, long killed)
 
 			if (killed)
 			{
-				lara_item->goal_anim_state = 7;
+				lara_item->goal_anim_state = QS_BIKEDEATH;
 				break;
 			}
 
 			if (input & IN_ROLL && !quad->Velocity && !dont_exit_quad)
 			{
 				if (input & IN_RIGHT && CanGetOff(1))
-					lara_item->goal_anim_state = 10;
+					lara_item->goal_anim_state = QS_GETOFFR;
 				else if (input & IN_LEFT && CanGetOff(-1))
-					lara_item->goal_anim_state = 24;
+					lara_item->goal_anim_state = QS_GETOFFL;
 			}
 			else if (input & (IN_JUMP | IN_ACTION))
-				lara_item->goal_anim_state = 1;
+				lara_item->goal_anim_state = QS_DRIVE;
 
 			break;
 
 		case 22:
 
 			if (!(quad->Velocity & 0xFFFFFF00))
-				lara_item->goal_anim_state = 15;
+				lara_item->goal_anim_state = QS_STOP;
 			else if (input & IN_LEFT)
 			{
 				lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 3;
 				lara_item->frame_number = anims[lara_item->anim_number].frame_base;
-				lara_item->current_anim_state = 2;
-				lara_item->goal_anim_state = 2;
+				lara_item->current_anim_state = QS_TURNL;
+				lara_item->goal_anim_state = QS_TURNL;
 			}
 			else if (!(input & IN_RIGHT))
-				lara_item->goal_anim_state = 1;
+				lara_item->goal_anim_state = QS_DRIVE;
 
 			break;
 		}
@@ -1160,7 +1162,7 @@ static void AnimateQuadBike(ITEM_INFO* item, long hitWall, long killed)
 
 	if (room[item->room_number].flags & (ROOM_UNDERWATER | ROOM_SWAMP))
 	{
-		lara_item->goal_anim_state = 20;
+		lara_item->goal_anim_state = QS_FALLOFF;
 		lara_item->hit_points = 0;
 		QuadbikeExplode(item);
 	}
@@ -1398,10 +1400,10 @@ long QuadBikeControl()
 	{
 		switch (lara_item->current_anim_state)
 		{
-		case 9:
-		case 10:
-		case 23:
-		case 24:
+		case QS_GETONR:
+		case QS_GETOFFR:
+		case QS_GETONL:
+		case QS_GETOFFL:
 			driving = -1;
 			hitWall = 0;
 			break;
@@ -1477,7 +1479,7 @@ long QuadBikeControl()
 
 	state = lara_item->current_anim_state;
 
-	if (state != 9 && state != 23 && state != 10 && state != 24)
+	if (state != QS_GETONR && state != QS_GETONL && state != QS_GETOFFR && state != QS_GETOFFL)
 	{
 		for (int i = 0; i < 2; i++)
 		{
