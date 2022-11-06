@@ -1048,39 +1048,72 @@ void DefaultConflict()
 	}
 }
 
+#define CONTROL_NLINES		7
+#define CONTROL_Y_BOX		-55
+#define CONTROL_Y_TITLE		(CONTROL_Y_BOX + 5)
+#define CONTROL_STARTY		(CONTROL_Y_BOX + 30)
+#define CONTROL_SPACE		16
+#define CONTROL_WIDTH_HIGH	420
+#define CONTROL_HEIGHT_HIGH	((CONTROL_SPACE - 1) * CONTROL_NLINES + 45)
+#define CONTROL_WIDTH_LOW	308
+#define CONTROL_HEIGHT_LOW	((CONTROL_SPACE - 1) * CONTROL_NLINES + 35)
+
 static void S_ShowControls()
 {
-	long mid, x;
+	long mid, x, y, s;
 
 	mid = GetRenderWidth() / 2;
+	s = CONTROL_SPACE;
 
 	if (!btext[0])
 	{
-		if (mid >= 320)
-			x = mid - 200;
-		else
-			x = mid - 150;
+		x = mid < 320 ? mid - 150 : mid - 200;	//left column key binds
+		y = CONTROL_STARTY;
 
-		btext[0] = T_Print(x, -25, 0, KeyboardButtons[layout[iconfig][0]]);
-		btext[1] = T_Print(x, -9, 0, KeyboardButtons[layout[iconfig][1]]);
-		btext[2] = T_Print(x, 7, 0, KeyboardButtons[layout[iconfig][2]]);
-		btext[3] = T_Print(x, 23, 0, KeyboardButtons[layout[iconfig][3]]);
-		btext[4] = T_Print(x, 39, 0, KeyboardButtons[layout[iconfig][4]]);
-		btext[5] = T_Print(x, 55, 0, KeyboardButtons[layout[iconfig][5]]);
-		btext[6] = T_Print(x, 71, 0, KeyboardButtons[layout[iconfig][6]]);
+		btext[0] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][0]]);
+		y += s;
 
-		if (mid >= 320)
-			x = mid + 10;
-		else
-			x = mid - 20;
+		btext[1] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][1]]);
+		y += s;
 
-		btext[7] = T_Print(x, -25, 0, KeyboardButtons[layout[iconfig][7]]);
-		btext[8] = T_Print(x, -9, 0, KeyboardButtons[layout[iconfig][8]]);
-		btext[9] = T_Print(x, 7, 0, KeyboardButtons[layout[iconfig][9]]);
-		btext[10] = T_Print(x, 23, 0, KeyboardButtons[layout[iconfig][10]]);
-		btext[11] = T_Print(x, 39, 0, KeyboardButtons[layout[iconfig][11]]);
-		btext[12] = T_Print(x, 55, 0, KeyboardButtons[layout[iconfig][12]]);
-		btext[13] = T_Print(x, 71, 0, KeyboardButtons[layout[iconfig][13]]);
+		btext[2] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][2]]);
+		y += s;
+
+		btext[3] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][3]]);
+		y += s;
+
+		btext[4] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][4]]);
+		y += s;
+
+		btext[5] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][5]]);
+		y += s;
+
+		btext[6] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][6]]);
+		y += s;
+
+		x = mid < 320 ? mid - 20 : mid + 10;	//right column key binds
+		y = CONTROL_STARTY;
+
+		btext[7] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][7]]);
+		y += s;
+
+		btext[8] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][8]]);
+		y += s;
+
+		btext[9] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][9]]);
+		y += s;
+
+		btext[10] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][10]]);
+		y += s;
+
+		btext[11] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][11]]);
+		y += s;
+
+		btext[12] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][12]]);
+		y += s;
+
+		btext[13] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][13]]);
+		y += s;
 
 		for (int i = 0; i < 14; i++)
 			T_CentreV(btext[i], 1);
@@ -1090,45 +1123,67 @@ static void S_ShowControls()
 
 	if (!ctext[0])
 	{
-		if (mid >= 320)
-			x = mid - 120;
-		else
-			x = mid - 78;
+		x = mid < 320 ? mid - 78 : mid - 120;	//left column key names
+		y = CONTROL_STARTY;
 
-		ctext[0] = T_Print(x, -25, 0, GF_GameStrings[GT_RUN]);
-		ctext[1] = T_Print(x, -9, 0, GF_GameStrings[GT_BACK]);
-		ctext[2] = T_Print(x, 7, 0, GF_GameStrings[GT_LEFT]);
-		ctext[3] = T_Print(x, 23, 0, GF_GameStrings[GT_RIGHT]);
-		ctext[4] = T_Print(x, 39, 0, GF_GameStrings[GT_STEPLEFT1]);
-		ctext[5] = T_Print(x, 55, 0, GF_GameStrings[GT_STEPRIGHT1]);
-		ctext[6] = T_Print(x, 71, 0, GF_GameStrings[GT_WALK]);
+		ctext[0] = T_Print(x, y, 0, GF_GameStrings[GT_RUN]);
+		y += s;
 
-		if (mid >= 320)
-			x = mid + 90;
-		else
-			x = mid + 55;
+		ctext[1] = T_Print(x, y, 0, GF_GameStrings[GT_BACK]);
+		y += s;
 
-		ctext[7] = T_Print(x, -25, 0, GF_GameStrings[GT_JUMP]);
-		ctext[8] = T_Print(x, -9, 0, GF_GameStrings[GT_ACTION]);
-		ctext[9] = T_Print(x, 7, 0, GF_GameStrings[GT_DRAWWEAPON1]);
-		ctext[10] = T_Print(x, 23, 0, GF_GameStrings[GT_USEFLARE]);
-		ctext[11] = T_Print(x, 39, 0, GF_GameStrings[GT_LOOK]);
-		ctext[12] = T_Print(x, 55, 0, GF_GameStrings[GT_ROLL]);
-		ctext[13] = T_Print(x, 71, 0, GF_GameStrings[GT_INVENTORY]);
+		ctext[2] = T_Print(x, y, 0, GF_GameStrings[GT_LEFT]);
+		y += s;
+
+		ctext[3] = T_Print(x, y, 0, GF_GameStrings[GT_RIGHT]);
+		y += s;
+
+		ctext[4] = T_Print(x, y, 0, GF_GameStrings[GT_STEPLEFT1]);
+		y += s;
+
+		ctext[5] = T_Print(x, y, 0, GF_GameStrings[GT_STEPRIGHT1]);
+		y += s;
+
+		ctext[6] = T_Print(x, y, 0, GF_GameStrings[GT_WALK]);
+		y += s;
+
+		x = mid < 320 ? mid + 55 : mid + 90;	//right column key names
+		y = CONTROL_STARTY;
+
+		ctext[7] = T_Print(x, y, 0, GF_GameStrings[GT_JUMP]);
+		y += s;
+
+		ctext[8] = T_Print(x, y, 0, GF_GameStrings[GT_ACTION]);
+		y += s;
+
+		ctext[9] = T_Print(x, y, 0, GF_GameStrings[GT_DRAWWEAPON1]);
+		y += s;
+
+		ctext[10] = T_Print(x, y, 0, GF_GameStrings[GT_USEFLARE]);
+		y += s;
+
+		ctext[11] = T_Print(x, y, 0, GF_GameStrings[GT_LOOK]);
+		y += s;
+
+		ctext[12] = T_Print(x, y, 0, GF_GameStrings[GT_ROLL]);
+		y += s;
+
+		ctext[13] = T_Print(x, y, 0, GF_GameStrings[GT_INVENTORY]);
+		y += s;
 
 		for (int i = 0; i < 14; i++)
 			T_CentreV(ctext[i], 1);
 	}
 
-	ctrltext[1] = T_Print(0, -55, 0, " ");
+	ctrltext[1] = T_Print(0, CONTROL_Y_BOX, 0, " ");
 	T_CentreV(ctrltext[1], 1);
 	T_CentreH(ctrltext[1], 1);
 	T_AddOutline(ctrltext[1], 1, 15, 0, 0);
 
-	if (mid >= 320)
-		T_AddBackground(ctrltext[1], 420, 150, 0, 0, 48, 0, 0, 0);
+	if (mid < 320)
+		T_AddBackground(ctrltext[1], CONTROL_WIDTH_LOW, CONTROL_HEIGHT_LOW, 0, 0, 48, 0, 0, 0);
 	else
-		T_AddBackground(ctrltext[1], 308, 145, 0, 0, 48, 0, 0, 0);
+		T_AddBackground(ctrltext[1], CONTROL_WIDTH_HIGH, CONTROL_HEIGHT_HIGH, 0, 0, 48, 0, 0, 0);
 }
 
 static void S_ChangeCtrlText()
@@ -1176,9 +1231,9 @@ void do_control_option(INVENTORY_ITEM* item)
 	if (!ctrltext[0])
 	{
 		if (iconfig)
-			ctrltext[0] = T_Print(0, -50, 0, GF_PCStrings[PCSTR_USERKEYS]);
+			ctrltext[0] = T_Print(0, CONTROL_Y_TITLE, 0, GF_PCStrings[PCSTR_USERKEYS]);
 		else
-			ctrltext[0] = T_Print(0, -50, 0, GF_PCStrings[PCSTR_DEFAULTKEYS]);
+			ctrltext[0] = T_Print(0, CONTROL_Y_TITLE, 0, GF_PCStrings[PCSTR_DEFAULTKEYS]);
 
 		ctrltext[0]->zpos = 16;
 		T_CentreH(ctrltext[0], 1);
