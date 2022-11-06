@@ -23,6 +23,9 @@
 #include "items.h"
 #include "lot.h"
 #include "pickup.h"
+#ifdef TROYESTUFF
+#include "../newstuff/pausemenu.h"
+#endif
 
 long ControlPhase(long nframes, long demo_mode)
 {
@@ -141,6 +144,14 @@ long ControlPhase(long nframes, long demo_mode)
 				}
 			}
 		}
+
+#ifdef TROYESTUFF
+		if (input & IN_PAUSE && !lara.death_count && !lara.extra_anim)
+		{
+			if (S_Pause())
+				return 1;
+		}
+#endif
 
 		ClearDynamics();
 		item_number = next_item_active;

@@ -14,6 +14,7 @@
 - Add option for PSX text colors.
 - Add option for PSX bar positions.
 - Double the amount of vertices/polygons that can be drawn at a time.
+- Add pause menu.
 
 ### tomb3 bug fixes
 

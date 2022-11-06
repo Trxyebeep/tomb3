@@ -589,10 +589,6 @@ long AddQuadbikeTime(ulong time)	//same as above for quad times
 	return 0;
 }
 
-#define Stats_Requester	VAR_(0x00626490, REQUEST_INFO)
-#define Valid_Level_Strings	ARRAY_(0x006D62E0, char, [24][50])
-#define Valid_Level_Strings2	ARRAY_(0x006D7220, char, [24][50])
-
 void ShowGymStatsText(const char* time, long type)
 {
 	ulong t;

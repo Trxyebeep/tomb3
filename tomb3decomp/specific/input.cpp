@@ -34,6 +34,25 @@ const char* KeyboardButtons[272] =
 	"JOY9", "JOY10", "JOY11", "JOY12", "JOY13", "JOY14", "JOY15", "JOY16"
 };
 
+short layout[2][NLAYOUTKEYS] =
+{
+	{DIK_UP, DIK_DOWN, DIK_LEFT, DIK_RIGHT, DIK_PERIOD, DIK_SLASH, DIK_RSHIFT,
+	DIK_RMENU, DIK_RCONTROL, DIK_SPACE, DIK_COMMA, DIK_NUMPAD0, DIK_END, DIK_ESCAPE
+#ifdef TROYESTUFF
+	, DIK_P},
+#else
+	},
+#endif
+
+	{ DIK_NUMPAD8, DIK_NUMPAD2, DIK_NUMPAD4, DIK_NUMPAD6, DIK_DECIMAL, DIK_NUMPAD1, DIK_RSHIFT,
+	DIK_RMENU, DIK_RCONTROL, DIK_SPACE, DIK_NUMPAD5, DIK_NUMPAD0, DIK_END, DIK_ESCAPE
+#ifdef TROYESTUFF
+	, DIK_P }
+#else
+	}
+#endif
+};
+
 long Key(long number)
 {
 	short key;
@@ -105,6 +124,9 @@ long S_UpdateInput()
 {
 	long linput;
 	static long med_debounce = 0;
+#ifdef TROYESTUFF
+	static bool pause_debounce = 0;
+#endif
 
 	DD_SpinMessageLoop(0);
 	DI_ReadKeyboard(keymap);
@@ -159,6 +181,19 @@ long S_UpdateInput()
 
 	if (Key(12))
 		linput |= IN_ROLL;
+
+#ifdef TROYESTUFF
+	if (Key(14) && !pictureFading)
+	{
+		if (!pause_debounce)
+		{
+			pause_debounce = 1;
+			linput |= IN_PAUSE;
+		}
+	}
+	else
+		pause_debounce = 0;
+#endif
 
 	if (linput & IN_WALK && !(linput & (IN_FORWARD | IN_BACK)))
 	{

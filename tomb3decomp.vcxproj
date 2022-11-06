@@ -262,6 +262,7 @@
     <ClInclude Include="tomb3decomp\global\math_tbls.h" />
     <ClInclude Include="tomb3decomp\global\types.h" />
     <ClInclude Include="tomb3decomp\global\vars.h" />
+    <ClInclude Include="tomb3decomp\newstuff\pausemenu.h" />
     <ClInclude Include="tomb3decomp\specific\audio.h" />
     <ClInclude Include="tomb3decomp\specific\dd.h" />
     <ClInclude Include="tomb3decomp\specific\di.h" />
@@ -396,6 +397,7 @@
     <ClCompile Include="tomb3decomp\game\willboss.cpp" />
     <ClCompile Include="tomb3decomp\game\wingmute.cpp" />
     <ClCompile Include="tomb3decomp\game\winston.cpp" />
+    <ClCompile Include="tomb3decomp\newstuff\pausemenu.cpp" />
     <ClCompile Include="tomb3decomp\specific\audio.cpp" />
     <ClCompile Include="tomb3decomp\specific\dd.cpp" />
     <ClCompile Include="tomb3decomp\specific\di.cpp" />

@@ -3,6 +3,7 @@
 #include "registry.h"
 #include "../specific/specific.h"
 #include "../specific/option.h"
+#include "../specific/input.h"
 
 TOMB3_OPTIONS tomb3;
 

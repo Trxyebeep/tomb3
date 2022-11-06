@@ -310,6 +310,7 @@
 #define DXPalette	VAR_(0x006CED58, LPDIRECTDRAWPALETTE)
 #define dont_exit_quad	VAR_(0x006267BC, char)
 #define HandbrakeStarting	VAR_(0x006267C8, char)
+#define Stats_Requester	VAR_(0x00626490, REQUEST_INFO)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -411,7 +412,6 @@
 #define LightCol	ARRAY_(0x0069FE28, long, [12])
 #define lead_info	ARRAY_(0x006D86E0, LEADER_INFO, [8])
 #define fish	ARRAY_(0x006D7BE0, FISH_INFO, [200])
-#define layout	ARRAY_(0x004CDCA0, short, [2][14])
 #define conflict	ARRAY_(0x0069FCB0, long, [15])
 #define keymap	ARRAY_(0x0069FCF0, uchar, [256])
 #define sparks	ARRAY_(0x006D8880, SPARKS, [192])
@@ -491,3 +491,5 @@
 #define DS_Samples	ARRAY_(0x00632B50, LPDIRECTSOUNDBUFFER, [32])
 #define SqrtTable	ARRAY_(0x006588D0, long, [1024])
 #define LaSlot	ARRAY_(0x006267E0, SOUND_SLOT, [32])
+#define Valid_Level_Strings	ARRAY_(0x006D62E0, char, [24][50])
+#define Valid_Level_Strings2	ARRAY_(0x006D7220, char, [24][50])

@@ -31,6 +31,8 @@ static GLOBE_LEVEL GlobeLevelAngles[7] =
 
 static TEXTSTRING* dtext[DT_NUMT];
 static TEXTSTRING* stext[4];
+static TEXTSTRING* btext[NLAYOUTKEYS];
+static TEXTSTRING* ctext[NLAYOUTKEYS];
 
 long GetRenderWidth()
 {
@@ -1004,20 +1006,18 @@ void do_sound_option(INVENTORY_ITEM* item)
 
 #define iconfig	VAR_(0x006A0130, long)
 #define keychange	VAR_(0x006A0128, long)
-#define btext	ARRAY_(0x006A0170, TEXTSTRING*, [14])
-#define ctext	ARRAY_(0x006A0138, TEXTSTRING*, [14])
 #define ctrltext	ARRAY_(0x006A0218, TEXTSTRING*, [2])
 
 static void FlashConflicts()
 {
 	short c;
 
-	for (int i = 0; i < 14; i++)
+	for (int i = 0; i < NLAYOUTKEYS; i++)
 	{
 		c = layout[iconfig][i];
 		T_FlashText(btext[i], 0, 0);
 
-		for (int j = 0; j < 14; j++)
+		for (int j = 0; j < NLAYOUTKEYS; j++)
 		{
 			if (i != j && c == layout[iconfig][j])
 			{
@@ -1032,12 +1032,12 @@ void DefaultConflict()
 {
 	short c;
 
-	for (int i = 0; i < 14; i++)
+	for (int i = 0; i < NLAYOUTKEYS; i++)
 	{
 		c = layout[0][i];
 		conflict[i] = 0;
 
-		for (int j = 0; j < 14; j++)
+		for (int j = 0; j < NLAYOUTKEYS; j++)
 		{
 			if (c == layout[1][j])
 			{
@@ -1115,7 +1115,7 @@ static void S_ShowControls()
 		btext[13] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][13]]);
 		y += s;
 
-		for (int i = 0; i < 14; i++)
+		for (int i = 0; i < NLAYOUTKEYS ; i++)
 			T_CentreV(btext[i], 1);
 
 		keychange = 0;
@@ -1171,7 +1171,7 @@ static void S_ShowControls()
 		ctext[13] = T_Print(x, y, 0, GF_GameStrings[GT_INVENTORY]);
 		y += s;
 
-		for (int i = 0; i < 14; i++)
+		for (int i = 0; i < NLAYOUTKEYS; i++)
 			T_CentreV(ctext[i], 1);
 	}
 
@@ -1198,7 +1198,7 @@ static void S_ChangeCtrlText()
 	else
 		T_ChangeText(ctrltext[0], GF_PCStrings[PCSTR_DEFAULTKEYS]);
 
-	for (int i = 0; i < 14; i++)
+	for (int i = 0; i < NLAYOUTKEYS; i++)
 	{
 		if (KeyboardButtons[layout[iconfig][i]])
 			T_ChangeText(btext[i], (char*)KeyboardButtons[layout[iconfig][i]]);
@@ -1209,7 +1209,7 @@ static void S_ChangeCtrlText()
 
 static void S_RemoveCtrlText()
 {
-	for (int i = 0; i < 14; i++)
+	for (int i = 0; i < NLAYOUTKEYS; i++)
 	{
 		if (ctext[i])
 			T_RemovePrint(ctext[i]);
@@ -1264,7 +1264,7 @@ void do_control_option(INVENTORY_ITEM* item)
 
 				if (keychange <= 6)
 					keychange += 7;
-				else if (keychange == 14)
+				else if (keychange == NLAYOUTKEYS)
 					keychange = 7;
 				else
 					keychange -= 7;

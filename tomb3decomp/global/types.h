@@ -100,6 +100,12 @@ do \
 #define MAX_TPAGES	32
 #define MAX_TINFOS	4096
 
+#ifdef TROYESTUFF
+#define NLAYOUTKEYS		15
+#else
+#define NLAYOUTKEYS		14
+#endif
+
 #define NO_ROOM	255
 #define WALL_SHIFT	10
 #define WALL_SIZE	(1 << WALL_SHIFT)
