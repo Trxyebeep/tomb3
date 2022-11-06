@@ -357,7 +357,7 @@ void LaraCheatyBits()
 	}
 
 #ifdef _DEBUG
-	if (key_pressed(DIK_F3))
+	if (key_pressed(DIK_F3) && !pictureFading)
 		FinishLevelCheat = 1;
 
 	if (key_pressed(DIK_F4))

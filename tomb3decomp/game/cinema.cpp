@@ -358,10 +358,18 @@ long DoCinematic(long nframes)
 		if (S_UpdateInput())
 			return 3;
 
+#ifdef TROYESTUFF
+		if (input & IN_ACTION && !pictureFading)
+#else
 		if (input & IN_ACTION)
+#endif
 			return 1;
 
+#ifdef TROYESTUFF
+		if (input & IN_OPTION && !pictureFading)
+#else
 		if (input & IN_OPTION)
+#endif
 			return 2;
 
 		ClearDynamics();

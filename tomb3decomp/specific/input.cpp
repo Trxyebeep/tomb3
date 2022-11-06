@@ -292,7 +292,11 @@ long S_UpdateInput()
 		FinishLevelCheat = 0;
 	}
 
+#ifdef TROYESTUFF
+	if (!gameflow.loadsave_disabled && !pictureFading)
+#else
 	if (!gameflow.loadsave_disabled)
+#endif
 	{
 		if (key_pressed(DIK_F5))
 			linput |= IN_SAVE;
