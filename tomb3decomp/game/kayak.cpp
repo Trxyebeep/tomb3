@@ -140,8 +140,8 @@ void KayakCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 		l->anim_number = objects[VEHICLE_ANIM].anim_index + 28;
 
 	l->frame_number = anims[l->anim_number].frame_base;
-	l->current_anim_state = 4;
-	l->goal_anim_state = 4;
+	l->current_anim_state = KS_CLIMBIN;
+	l->goal_anim_state = KS_CLIMBIN;
 	lara.water_status = LARA_ABOVEWATER;
 	l->pos.x_pos = item->pos.x_pos;
 	l->pos.y_pos = item->pos.y_pos;
@@ -228,22 +228,22 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 	short frame;
 	static char lr;
 
-	if (l->hit_points <= 0 && l->current_anim_state != 5)
+	if (l->hit_points <= 0 && l->current_anim_state != KS_DEATHIN)
 	{
 		l->anim_number = objects[VEHICLE_ANIM].anim_index + 5;
 		l->frame_number = anims[l->anim_number].frame_base;
-		l->current_anim_state = 5;
-		l->goal_anim_state = 5;
+		l->current_anim_state = KS_DEATHIN;
+		l->goal_anim_state = KS_DEATHIN;
 	}
 
 	frame = l->frame_number - anims[l->anim_number].frame_base;
 
 	switch (l->current_anim_state)
 	{
-	case 0:
+	case KS_BACK:
 
 		if (!(input & IN_BACK))
-			l->goal_anim_state = 1;
+			l->goal_anim_state = KS_POSE;
 
 		if (l->anim_number - objects[VEHICLE_ANIM].anim_index == 2)
 		{
@@ -267,32 +267,32 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 
 		break;
 
-	case 1:
+	case KS_POSE:
 
 		if (input & IN_ROLL && !lara.current_active && !lara.current_xvel && !lara.current_zvel)
 		{
 			if (input & IN_LEFT && CanGetOut(item, -1))
 			{
-				l->goal_anim_state = 9;
-				l->required_anim_state = 13;
+				l->goal_anim_state = KS_JUMPOUT;
+				l->required_anim_state = KS_CLIMBOUTL;
 			}
 			else if (input & IN_RIGHT && CanGetOut(item, 1))
 			{
-				l->goal_anim_state = 9;
-				l->required_anim_state = 14;
+				l->goal_anim_state = KS_JUMPOUT;
+				l->required_anim_state = KS_CLIMBOUTR;
 			}
 		}
 		else if (input & IN_FORWARD)
 		{
-			l->goal_anim_state = 3;
+			l->goal_anim_state = KS_RIGHT;
 			kayak->Turn = 0;
 			kayak->Forward = 1;
 		}
 		else if (input & IN_BACK)
-			l->goal_anim_state = 0;
+			l->goal_anim_state = KS_BACK;
 		else if (input & IN_LEFT)
 		{
-			l->goal_anim_state = 2;
+			l->goal_anim_state = KS_LEFT;
 
 			if (kayak->Vel)
 				kayak->Turn = 0;
@@ -303,7 +303,7 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 		}
 		else if (input & IN_RIGHT)
 		{
-			l->goal_anim_state = 3;
+			l->goal_anim_state = KS_RIGHT;
 
 			if (kayak->Vel)
 				kayak->Turn = 0;
@@ -313,18 +313,18 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 			kayak->Forward = 0;
 		}
 		else if (input & IN_LSTEP && (kayak->Vel || lara.current_xvel || lara.current_zvel))
-			l->goal_anim_state = 10;
+			l->goal_anim_state = KS_TURNL;
 		else if (input & IN_RSTEP && (kayak->Vel || lara.current_xvel || lara.current_zvel))
-			l->goal_anim_state = 11;
+			l->goal_anim_state = KS_TURNR;
 
 		break;
 
-	case 2:
+	case KS_LEFT:
 
 		if (!kayak->Forward)
 		{
 			if (!(input & IN_LEFT))
-				l->goal_anim_state = 1;
+				l->goal_anim_state = KS_POSE;
 		}
 		else
 		{
@@ -341,13 +341,13 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 				if (input & IN_LEFT)
 				{
 					if ((lr & ~0x80) >= 2)
-						l->goal_anim_state = 3;
+						l->goal_anim_state = KS_RIGHT;
 				}
 				else
-					l->goal_anim_state = 3;
+					l->goal_anim_state = KS_RIGHT;
 			}
 			else
-				l->goal_anim_state = 1;
+				l->goal_anim_state = KS_POSE;
 		}
 
 		if (frame == 7)
@@ -384,12 +384,12 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 
 		break;
 
-	case 3:
+	case KS_RIGHT:
 
 		if (!kayak->Forward)
 		{
 			if (!(input & IN_RIGHT))
-				l->goal_anim_state = 1;
+				l->goal_anim_state = KS_POSE;
 		}
 		else
 		{
@@ -406,13 +406,13 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 				if (input & IN_RIGHT)
 				{
 					if ((lr & ~0x80) >= 2)
-						l->goal_anim_state = 2;
+						l->goal_anim_state = KS_LEFT;
 				}
 				else
-					l->goal_anim_state = 2;
+					l->goal_anim_state = KS_LEFT;
 			}
 			else
-				l->goal_anim_state = 1;
+				l->goal_anim_state = KS_POSE;
 		}
 
 		if (frame == 7)
@@ -449,7 +449,7 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 
 		break;
 
-	case 4:
+	case KS_CLIMBIN:
 
 		if (l->anim_number == objects[VEHICLE_ANIM].anim_index + 4 && frame == 24 && !(kayak->Flags & 0x80))
 		{
@@ -462,7 +462,7 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 
 		break;
 
-	case 9:
+	case KS_JUMPOUT:
 
 		if (l->anim_number == objects[VEHICLE_ANIM].anim_index + 14 && frame == 27 && kayak->Flags & 0x80)
 		{
@@ -476,10 +476,10 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 		l->goal_anim_state = l->required_anim_state;
 		break;
 
-	case 10:
+	case KS_TURNL:
 
 		if (!(input & IN_LSTEP) || (!kayak->Vel && !lara.current_xvel && !lara.current_zvel))
-			l->goal_anim_state = 1;
+			l->goal_anim_state = KS_POSE;
 		else if (l->anim_number - objects[VEHICLE_ANIM].anim_index == 26)
 		{
 			if (kayak->Vel >= 0)
@@ -510,10 +510,10 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 
 		break;
 
-	case 11:
+	case KS_TURNR:
 
 		if (!(input & IN_RSTEP) || (!kayak->Vel && !lara.current_xvel && !lara.current_zvel))
-			l->goal_anim_state = 1;
+			l->goal_anim_state = KS_POSE;
 		else if (l->anim_number - objects[VEHICLE_ANIM].anim_index == 27)
 		{
 			if (kayak->Vel >= 0)
@@ -544,7 +544,7 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 
 		break;
 
-	case 13:
+	case KS_CLIMBOUTL:
 
 		if (l->anim_number == objects[VEHICLE_ANIM].anim_index + 24 && frame == 83)
 		{
@@ -560,8 +560,8 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 			l->pos.z_rot = 0;
 			l->anim_number = ANIM_FASTFALL;
 			l->frame_number = anims[ANIM_FASTFALL].frame_base;
-			l->current_anim_state = 9;
-			l->goal_anim_state = 9;
+			l->current_anim_state = KS_JUMPOUT;
+			l->goal_anim_state = KS_JUMPOUT;
 			l->gravity_status = 1;
 			l->fallspeed = 0;
 			lara.gun_status = 0;
@@ -570,7 +570,7 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 
 		break;
 
-	case 14:
+	case KS_CLIMBOUTR:
 
 		if (l->anim_number == objects[VEHICLE_ANIM].anim_index + 32 && frame == 83)
 		{
@@ -586,8 +586,8 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 			l->pos.z_rot = 0;
 			l->anim_number = ANIM_FASTFALL;
 			l->frame_number = anims[ANIM_FASTFALL].frame_base;
-			l->current_anim_state = 9;
-			l->goal_anim_state = 9;
+			l->current_anim_state = KS_JUMPOUT;
+			l->goal_anim_state = KS_JUMPOUT;
 			l->gravity_status = 1;
 			l->fallspeed = 0;
 			lara.gun_status = 0;
