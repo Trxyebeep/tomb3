@@ -2009,6 +2009,8 @@ struct TOMB3_OPTIONS
 	long bar_pos;		//t3_bar_pos enum
 	float GUI_Scale;
 	float INV_Scale;
+	float unwater_music_mute;
+	float inv_music_mute;
 };
 #endif
 #pragma pack(pop)

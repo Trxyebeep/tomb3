@@ -180,7 +180,12 @@ long ACMGetTrackLocation()
 
 void ACMSetVolume(long volume)
 {
-	acm_volume = long(float(volume * 1.5625F - 400.0F) * 6.0F);
+#ifdef TROYESTUFF
+	if (!volume)
+		acm_volume = DSBVOLUME_MIN;
+	else
+#endif
+		acm_volume = long(float(volume * 1.5625F - 400.0F) * 6.0F);
 
 	if (DSBuffer)
 		DSBuffer->SetVolume(acm_volume);

@@ -81,6 +81,8 @@ static void T3_InitSettings()
 	tomb3.bar_pos = BPOS_ORIGINAL;
 	tomb3.GUI_Scale = 1.0F;
 	tomb3.INV_Scale = 1.0F;
+	tomb3.unwater_music_mute = 0.8F;
+	tomb3.inv_music_mute = 0.8F;
 }
 
 void T3_SaveSettings()
@@ -140,6 +142,8 @@ void T3_SaveSettings()
 	REG_WriteLong((char*)"bar_pos", tomb3.bar_pos);
 	REG_WriteFloat((char*)"GUI_Scale", tomb3.GUI_Scale);
 	REG_WriteFloat((char*)"INV_Scale", tomb3.INV_Scale);
+	REG_WriteFloat((char*)"unwater_music_mute", tomb3.unwater_music_mute);
+	REG_WriteFloat((char*)"inv_music_mute", tomb3.inv_music_mute);
 
 	CloseRegistry();
 }
@@ -206,6 +210,8 @@ bool T3_LoadSettings()
 	REG_ReadLong((char*)"bar_pos", (ulong&)tomb3.bar_pos, BPOS_ORIGINAL);
 	REG_ReadFloat((char*)"GUI_Scale", tomb3.GUI_Scale, 1.0F);
 	REG_ReadFloat((char*)"INV_Scale", tomb3.INV_Scale, 1.0F);
+	REG_ReadFloat((char*)"unwater_music_mute", tomb3.unwater_music_mute, 0.8F);
+	REG_ReadFloat((char*)"inv_music_mute", tomb3.inv_music_mute, 0.8F);
 
 	S_CDVolume(25 * Option_Music_Volume + 5);
 	S_SoundSetMasterVolume(6 * Option_SFX_Volume + 4);

@@ -9,6 +9,7 @@
 - Fix guard gun lasers not appearing on interpolated frames.
 - Prevent save/load hotkeys during picture fade.
 - Prevent skipping cutscenes during picture fade.
+- Fix bug that prevented music from being completely muted.
 
 ### tomb3 additions
 
@@ -17,6 +18,7 @@
 - Add option for PSX bar positions.
 - Double the amount of vertices/polygons that can be drawn at a time.
 - Add pause menu.
+- Add option to control inventory/underwater music mute.
 
 ### tomb3 bug fixes
 
