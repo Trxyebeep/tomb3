@@ -838,7 +838,7 @@ long SubControl()
 
 	if (lara.skidoo == NO_ITEM)
 	{
-		if (sub->Flags & 8)
+		if (!(sub->Flags & 8))
 			return 0;
 	}
 	else if (!(sub->Flags & 8))
