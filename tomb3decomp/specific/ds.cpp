@@ -1,9 +1,13 @@
 #include "../tomb3/pch.h"
 #include "ds.h"
+#include <list>
 
 #define DS_Buffers	ARRAY_(0x006326C8, LPDIRECTSOUNDBUFFER, [256])
 #define DS_SamplesPlaying	ARRAY_(0x00632AD0, long, [32])
 #define DS_SampleFrequencies	ARRAY_(0x006322B8, ulong, [256])
+
+std::list<DXDIRECTSOUNDINFO> DS_AdapterList;
+std::list<DXDIRECTSOUNDINFO>::iterator PrimaryAdapter;
 
 bool DS_IsChannelPlaying(long num)
 {
@@ -215,6 +219,56 @@ void DS_Finish()
 	}
 }
 
+BOOL CALLBACK DS_EnumCallback(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext)
+{
+	std::list<DXDIRECTSOUNDINFO>* pAdapter;
+	DXDIRECTSOUNDINFO adapter;
+
+	pAdapter = static_cast<std::list<DXDIRECTSOUNDINFO>*>(lpContext);
+	pAdapter->insert(pAdapter->end(), adapter);
+
+	if (lpGuid)
+	{
+		adapter.Guid = *lpGuid;
+		adapter.lpGuid = &adapter.Guid;
+	}
+	else
+	{
+		memset(&adapter.Guid, 0, sizeof(GUID));
+		adapter.lpGuid = 0;
+	}
+
+	strcpy(adapter.Name, lpcstrModule);
+	strcpy(adapter.About, lpcstrDescription);
+	return 1;
+}
+
+bool DS_EnumerateDevices(LPVOID lpContext)
+{
+	return SUCCEEDED(DirectSoundEnumerate(DS_EnumCallback, lpContext));
+}
+
+bool DS_MakeAdapterList()
+{
+	DS_AdapterList.clear();
+
+	if (!DS_EnumerateDevices(&DS_AdapterList))
+		return 0;
+
+	for (PrimaryAdapter = DS_AdapterList.begin(); PrimaryAdapter != DS_AdapterList.end(); PrimaryAdapter++)
+	{
+		if (!PrimaryAdapter->lpGuid)
+			break;
+	}
+
+	return 1;
+}
+
+void DS_Init()
+{
+	DS_MakeAdapterList();
+}
+
 void inject_ds(bool replace)
 {
 	INJECT(0x00480740, DS_IsChannelPlaying, replace);
@@ -230,4 +284,8 @@ void inject_ds(bool replace)
 	INJECT(0x00480C40, DS_SetOutputFormat, replace);
 	INJECT(0x00480B80, DS_Start, replace);
 	INJECT(0x00480D10, DS_Finish, replace);
+	INJECT(0x00480A90, DS_EnumCallback, replace);
+	INJECT(0x00480A70, DS_EnumerateDevices, replace);
+	INJECT(0x004809D0, DS_MakeAdapterList, replace);
+	INJECT(0x004809C0, DS_Init, replace);
 }
