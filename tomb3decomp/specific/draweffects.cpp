@@ -4697,6 +4697,9 @@ void S_DrawSubWakeFX(ITEM_INFO* item)
 	short XY[128];
 	uchar rgbs[128];
 
+	if (!tomb3.upv_wake)
+		return;
+
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
