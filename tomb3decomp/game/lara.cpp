@@ -4161,6 +4161,20 @@ void lara_col_duckroll(ITEM_INFO* item, COLL_INFO* coll)
 }
 #endif
 
+static void AddJointPos(ITEM_INFO* item, long mesh)
+{
+	long x, y, z;
+	short room_number;
+
+	x = item->pos.x_pos + (phd_mxptr[M03] >> W2V_SHIFT);
+	y = item->pos.y_pos + (phd_mxptr[M13] >> W2V_SHIFT);
+	z = item->pos.z_pos + (phd_mxptr[M23] >> W2V_SHIFT);
+	room_number = item->room_number;
+	GetFloor(x, y, z, &room_number);
+	IsJointUnderwater[mesh] = room[room_number].flags & ROOM_UNDERWATER;
+	GotJointPos[mesh] = 1;
+}
+
 void inject_lara(bool replace)
 {
 	INJECT(0x0043E800, LaraAboveWater, replace);
@@ -4301,4 +4315,5 @@ void inject_lara(bool replace)
 	INJECT(0x00443040, lara_col_fastdive, replace);
 	INJECT(0x004430C0, lara_col_wade, replace);
 	INJECT(0x0043E1C0, LaraHangTest, replace);
+	INJECT(0x00443C10, AddJointPos, replace);
 }
