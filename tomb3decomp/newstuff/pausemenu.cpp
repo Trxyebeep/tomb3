@@ -11,6 +11,7 @@
 #include "../specific/picture.h"
 #include "../game/health.h"
 #include "../game/objects.h"
+#include "../tomb3/tomb3.h"
 
 static TEXTSTRING* pause_text;
 static REQUEST_INFO Pause_Requester = {0};
@@ -84,16 +85,17 @@ static long DoPauseRequester()
 
 	case 1:
 
-		p = ShowPauseRequester("Exit to title?", "Continue", "Quit", 0);
+		p = ShowPauseRequester("Exit to Title?", "Yes", "No", 1);
 
 		if (p == 1)
 		{
-			selected = 1;
+			page = 2;
 			break;
+			
 		}
 		else if (p == 2)
 		{
-			page = 2;
+			selected = 1;
 			break;
 		}
 
@@ -126,6 +128,7 @@ static long DoPauseRequester()
 
 long S_Pause()
 {
+	float vol;
 	long flag, selected;
 
 	flag = overlay_flag;
@@ -150,7 +153,7 @@ long S_Pause()
 
 		if (!pause_text)
 		{
-			pause_text = T_Print(0, -24, 5, "Paused");
+			pause_text = T_Print(0, -24, 5, "PAUSED");
 			T_CentreH(pause_text, 1);
 			T_BottomAlign(pause_text, 1);
 		}
@@ -169,7 +172,19 @@ long S_Pause()
 
 	VidSizeLocked = 0;
 	TempVideoRemove();
-	S_CDVolume(25 * Option_Music_Volume + 5);
+
+	if (camera.underwater)
+	{
+		vol = (1.0F - tomb3.unwater_music_mute) * float(25 * Option_Music_Volume + 5);
+
+		if (vol >= 1)
+			S_CDVolume((long)vol);
+		else
+			S_CDVolume(0);
+	}
+	else
+		S_CDVolume(25 * Option_Music_Volume + 5);
+
 	S_FadeOutInventory(1);
 	Inventory_Chosen = PASSPORT_OPTION;
 	Inventory_ExtraData[0] = 2;
