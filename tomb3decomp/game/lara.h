@@ -147,6 +147,7 @@ void LaraHangTest(ITEM_INFO* item, COLL_INFO* coll);
 void lara_as_duckroll(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_duckroll(ITEM_INFO* item, COLL_INFO* coll);
 #endif
+void GetLHAInt(ITEM_INFO* item, PHD_VECTOR* vec, short* frame1, short* frame2, long frac, long rate, long lr);
 
 #define LookUpDown	( (void(__cdecl*)()) 0x004446E0 )
 #define LookLeftRight	( (void(__cdecl*)()) 0x00444770 )
