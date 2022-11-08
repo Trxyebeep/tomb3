@@ -151,8 +151,8 @@ void GetLHAInt(ITEM_INFO* item, PHD_VECTOR* vec, short* frame1, short* frame2, l
 void GetLaraHandAbsPosition(PHD_VECTOR* vec, long lr);
 void LookUpDown();
 void LookLeftRight();
+void ResetLook();
 
-#define ResetLook	( (void(__cdecl*)()) 0x00444800 )
 #define GetStaticObjects	( (long(__cdecl*)(ITEM_INFO*, short, long, long, long)) 0x00445020 )
 
 enum lara_extras

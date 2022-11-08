@@ -851,7 +851,7 @@ tomb3decomp progress.
 0x00443CA0	+	GetLHAInt
 0x004446E0	+	LookUpDown
 0x00444770	+	LookLeftRight
-0x00444800		ResetLook
+0x00444800	+	ResetLook
 0x004448A0		DeathSlideCollision
 0x00444980		ControlDeathSlide
 0x00444C20	+	LaraLandedBad

@@ -4752,6 +4752,28 @@ void LookLeftRight()
 		lara.torso_y_rot = lara.head_y_rot;
 }
 
+void ResetLook()
+{
+	if (camera.type != LOOK_CAMERA)
+	{
+		if (lara.head_x_rot > -364 && lara.head_x_rot < 364)
+			lara.head_x_rot = 0;
+		else
+			lara.head_x_rot -= lara.head_x_rot / 8;
+
+		if (lara.head_y_rot > -364 && lara.head_y_rot < 364)
+			lara.head_y_rot = 0;
+		else
+			lara.head_y_rot -= lara.head_y_rot / 8;
+
+		if (lara.gun_status != LG_HANDSBUSY && lara.skidoo == NO_ITEM)
+		{
+			lara.torso_x_rot = lara.head_x_rot;
+			lara.torso_y_rot = lara.head_y_rot;
+		}
+	}
+}
+
 void inject_lara(bool replace)
 {
 	INJECT(0x0043E800, LaraAboveWater, replace);
@@ -4897,4 +4919,5 @@ void inject_lara(bool replace)
 	INJECT(0x00443360, GetLaraHandAbsPosition, replace);
 	INJECT(0x004446E0, LookUpDown, replace);
 	INJECT(0x00444770, LookLeftRight, replace);
+	INJECT(0x00444800, ResetLook, replace);
 }
