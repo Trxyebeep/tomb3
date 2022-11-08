@@ -964,7 +964,7 @@ tomb3decomp progress.
 0x0044D690	+	UseItem
 0x0044D880	+	ControlLaraExtra
 0x0044D8A0	+	InitialiseLaraLoad
-0x0044D8D0		InitialiseLara
+0x0044D8D0	+	InitialiseLara
 0x0044DC00		InitialiseLaraInventory
 
 

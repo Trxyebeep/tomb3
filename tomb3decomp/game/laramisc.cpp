@@ -1140,6 +1140,117 @@ void InitialiseLaraLoad(short item_number)
 	lara_item = &items[item_number];
 }
 
+void InitialiseLara(long type)
+{
+	ITEM_INFO* item;
+	short* tmp;
+
+	item = lara_item;
+	item->collidable = 0;
+	item->data = &lara;
+	item->hit_points = 1000;
+
+	lara.hit_direction = -1;
+	lara.skidoo = NO_ITEM;
+	lara.weapon_item = NO_ITEM;
+	lara.flare_control_left = 0;
+	lara.flare_control_right = 0;
+	lara.extra_anim = 0;
+	lara.look = 1;
+	lara.burn = 0;
+	lara.BurnGreen = 0;
+	lara.calc_fallspeed = 0;
+	lara.climb_status = 0;
+	lara.pose_count = 0;
+	lara.hit_frame = 0;
+	lara.air = 1800;
+	lara.dive_count = 0;
+	lara.death_count = 0;
+	lara.current_active = 0;
+	lara.spaz_effect_count = 0;
+	lara.flare_age = 0;
+	lara.back_gun = 0;
+	lara.flare_frame = 0;
+	lara.water_surface_dist = 100;
+	lara.last_pos.x = item->pos.x_pos;
+	lara.last_pos.y = item->pos.y_pos;
+	lara.last_pos.z = item->pos.z_pos;
+	lara.spaz_effect = 0;
+	lara.mesh_effects = 0;
+	lara.target = 0;
+	lara.turn_rate = 0;
+	lara.move_angle = 0;
+	lara.head_x_rot = 0;
+	lara.head_y_rot = 0;
+	lara.head_z_rot = 0;
+	lara.torso_x_rot = 0;
+	lara.torso_y_rot = 0;
+	lara.torso_z_rot = 0;
+	lara.right_arm.flash_gun = 0;
+	lara.left_arm.flash_gun = 0;
+	lara.right_arm.lock = 0;
+	lara.left_arm.lock = 0;
+	lara.poisoned = 0;
+	lara.creature = 0;
+	lara.electric = 0;
+
+	if (type == 1 && GF_LaraStartAnim)
+	{
+		lara.gun_status = LG_HANDSBUSY;
+		lara.water_status = LARA_ABOVEWATER;
+		item->anim_number = objects[LARA_EXTRA].anim_index;
+		item->frame_number = anims[item->anim_number].frame_base;
+		item->current_anim_state = 0;
+		item->goal_anim_state = (short)GF_LaraStartAnim;
+		AnimateLara(item);
+		lara.extra_anim = 1;
+		camera.type = CINEMATIC_CAMERA;
+		cine_frame = 0;
+		cinematic_pos = item->pos;
+	}
+	else if (room[item->room_number].flags & ROOM_UNDERWATER)
+	{
+		lara.water_status = LARA_UNDERWATER;
+		item->fallspeed = 0;
+		item->anim_number = ANIM_TREAD;
+		item->frame_number = anims[ANIM_TREAD].frame_base;
+		item->current_anim_state = AS_TREAD;
+		item->goal_anim_state = AS_TREAD;
+	}
+	else
+	{
+		lara.water_status = LARA_ABOVEWATER;
+		item->anim_number = ANIM_STOP;
+		item->frame_number = anims[ANIM_STOP].frame_base;
+		item->current_anim_state = AS_STOP;
+		item->goal_anim_state = AS_STOP;
+	}
+
+	if (type == 4)
+	{
+		for (int i = 0; i < 15; i++)
+		{
+			meshes[objects[LARA].mesh_index + i] = meshes[objects[LARA_SKIN].mesh_index + i];
+			lara.mesh_ptrs[i] = meshes[objects[LARA].mesh_index + i];
+		}
+
+		tmp = lara.mesh_ptrs[THIGH_L];
+		lara.mesh_ptrs[THIGH_L] = meshes[objects[PISTOLS].mesh_index + THIGH_L];
+		meshes[objects[PISTOLS].mesh_index + THIGH_L] = tmp;
+
+		tmp = lara.mesh_ptrs[THIGH_R];
+		lara.mesh_ptrs[THIGH_R] = meshes[objects[PISTOLS].mesh_index + THIGH_R];
+		meshes[objects[PISTOLS].mesh_index + THIGH_R] = tmp;
+
+		lara.gun_status = LG_ARMLESS;
+	}
+	else
+		InitialiseLaraInventory(CurrentLevel);
+
+	DashTimer = 120;
+	ExposureMeter = 600;
+}
+
 void inject_laramisc(bool replace)
 {
 	INJECT(0x0044C630, LaraCheatGetStuff, replace);
@@ -1151,4 +1262,5 @@ void inject_laramisc(bool replace)
 	INJECT(0x0044D690, UseItem, replace);
 	INJECT(0x0044D880, ControlLaraExtra, replace);
 	INJECT(0x0044D8A0, InitialiseLaraLoad, replace);
+	INJECT(0x0044D8D0, InitialiseLara, replace);
 }
