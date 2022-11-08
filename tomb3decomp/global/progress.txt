@@ -861,7 +861,7 @@ tomb3decomp progress.
 0x00444E80	+	LaraFallen
 0x00444EE0	+	LaraTestEdgeCatch
 0x00444F90	+	LaraDeflectEdge
-0x00445020		GetStaticObjects
+0x00445020	+	GetStaticObjects
 
 
 		game/lara1gun.cpp

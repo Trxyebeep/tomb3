@@ -152,8 +152,7 @@ void GetLaraHandAbsPosition(PHD_VECTOR* vec, long lr);
 void LookUpDown();
 void LookLeftRight();
 void ResetLook();
-
-#define GetStaticObjects	( (long(__cdecl*)(ITEM_INFO*, short, long, long, long)) 0x00445020 )
+long GetStaticObjects(ITEM_INFO* item, short ang, long hite, long rad, long dist);
 
 enum lara_extras
 {

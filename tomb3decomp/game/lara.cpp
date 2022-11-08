@@ -4774,6 +4774,81 @@ void ResetLook()
 	}
 }
 
+long GetStaticObjects(ITEM_INFO* item, short ang, long hite, long rad, long dist)
+{
+	ROOM_INFO* r;
+	MESH_INFO* mesh;
+	STATIC_INFO* sinfo;
+	long x, y, z;
+	long xmin, xmax, ymin, ymax, zmin, zmax;
+	long inxmin, inxmax, inymin, inymax, inzmin, inzmax;
+
+	x = item->pos.x_pos + ((dist * phd_sin(ang)) >> W2V_SHIFT);
+	y = item->pos.y_pos;
+	z = item->pos.z_pos + ((dist * phd_cos(ang)) >> W2V_SHIFT);
+
+	inxmin = x - rad;
+	inxmax = x + rad;
+	inymin = y - hite;
+	inymax = y;
+	inzmin = z - rad;
+	inzmax = z + rad;
+	GetNearByRooms(x, y, z, rad + 50, hite + 50, item->room_number);
+
+	for (int i = 0; i < number_draw_rooms; i++)
+	{
+		r = &room[draw_rooms[i]];
+
+		for (int j = 0; j < r->num_meshes; j++)
+		{
+			mesh = &r->mesh[j];
+			sinfo = &static_objects[mesh->static_number];
+
+			if (sinfo->flags & 1)
+				continue;
+
+			ymin = mesh->y + sinfo->y_minc;
+			ymax = mesh->y + sinfo->y_maxc;
+
+			switch (mesh->y_rot)
+			{
+			case 0x4000:
+				xmin = mesh->x + sinfo->z_minc;
+				xmax = mesh->x + sinfo->z_maxc;
+				zmin = mesh->z - sinfo->x_maxc;
+				zmax = mesh->z - sinfo->x_minc;
+				break;
+
+			case -0x4000:
+				xmin = mesh->x - sinfo->z_maxc;
+				xmax = mesh->x - sinfo->z_minc;
+				zmin = mesh->z + sinfo->x_minc;
+				zmax = mesh->z + sinfo->x_maxc;
+				break;
+
+			case -0x8000:
+				xmin = mesh->x - sinfo->x_maxc;
+				xmax = mesh->x - sinfo->x_minc;
+				zmin = mesh->z - sinfo->z_maxc;
+				zmax = mesh->z - sinfo->z_minc;
+				break;
+
+			default:
+				xmin = mesh->x + sinfo->x_minc;
+				xmax = mesh->x + sinfo->x_maxc;
+				zmin = mesh->z + sinfo->z_minc;
+				zmax = mesh->z + sinfo->z_maxc;
+				break;
+			}
+
+			if (inxmax > xmin && inxmin < xmax && inymax > ymin && inymin < ymax && inzmax > zmin && inzmin < zmax)
+				return 1;
+		}
+	}
+
+	return 0;
+}
+
 void inject_lara(bool replace)
 {
 	INJECT(0x0043E800, LaraAboveWater, replace);
@@ -4920,4 +4995,5 @@ void inject_lara(bool replace)
 	INJECT(0x004446E0, LookUpDown, replace);
 	INJECT(0x00444770, LookLeftRight, replace);
 	INJECT(0x00444800, ResetLook, replace);
+	INJECT(0x00445020, GetStaticObjects, replace);
 }
