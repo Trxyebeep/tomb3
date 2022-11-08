@@ -9,6 +9,8 @@
 #include "objects.h"
 #include "../specific/specific.h"
 #include "../3dsystem/phd_math.h"
+#include "effects.h"
+#include "sound.h"
 
 void MineCartInitialise(short item_number)
 {
@@ -123,10 +125,82 @@ static long CanGetOut(long lr)
 	return 0;
 }
 
+static void CartToBaddieCollision(ITEM_INFO* cart)
+{
+	ITEM_INFO* item;
+	OBJECT_INFO* obj;
+	FLOOR_INFO* floor;
+	short* doors;
+	long dx, dy, dz;
+	short roomies[20];
+	short room_count, item_number, frame, room_number;
+
+	room_count = 1;
+	roomies[0] = cart->room_number;
+	doors = room[cart->room_number].door;
+
+	if (doors)
+	{
+		for (int i = *doors++; i > 0; i--, doors += 16)
+		{
+			roomies[room_count] = *doors;
+			room_count++;
+		}
+	}
+
+	for (int i = 0; i < room_count; i++)
+	{
+		for (item_number = room[roomies[i]].item_number; item_number != NO_ITEM; item_number = item->next_item)
+		{
+			item = &items[item_number];
+
+			if (!item->collidable || item->status == ITEM_INVISIBLE)
+				continue;
+			
+			obj = &objects[item->object_number];
+
+			if (obj->collision && (obj->intelligent || item->object_number == ANIMATING2))
+			{
+				dx = cart->pos.x_pos - item->pos.x_pos;
+				dy = cart->pos.y_pos - item->pos.y_pos;
+				dz = cart->pos.z_pos - item->pos.z_pos;
+
+				if (dx > -2048 && dx < 2048 && dz > -2048 && dz < 2048 && dy > -2048 && dy < 2048 && TestBoundsCollide(item, cart, 256))
+				{
+					if (item->object_number == ANIMATING2)
+					{
+						if (item->frame_number == anims[item->anim_number].frame_base && lara_item->current_anim_state == 18 &&
+							lara_item->anim_number == objects[VEHICLE_ANIM].anim_index + 6)
+						{
+							frame = lara_item->frame_number - anims[lara_item->anim_number].frame_base;
+
+							if (frame >= 12 && frame <= 22)
+							{
+								SoundEffect(SFX_SPANNER, &item->pos, SFX_ALWAYS);
+								room_number = item->room_number;
+								floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+								GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+								TestTriggers(trigger_index, 1);
+								item->frame_number++;
+							}
+						}
+
+						continue;
+					}
+
+					DoLotsOfBlood(item->pos.x_pos, cart->pos.y_pos - 256, item->pos.z_pos, cart->speed, cart->pos.y_rot, item->room_number, 3);
+					item->hit_points = 0;
+				}
+			}
+		}
+	}
+}
+
 void inject_minecart(bool replace)
 {
 	INJECT(0x00453930, MineCartInitialise, replace);
 	INJECT(0x00453AB0, GetInMineCart, replace);
 	INJECT(0x00453960, MineCartCollision, replace);
 	INJECT(0x00454C00, CanGetOut, replace);
+	INJECT(0x00454D10, CartToBaddieCollision, replace);
 }
