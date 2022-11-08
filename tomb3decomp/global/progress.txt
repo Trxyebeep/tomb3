@@ -1064,7 +1064,7 @@ tomb3decomp progress.
 0x00453B80		MineCartControl
 0x00453CA0		MoveCart
 0x004541F0	+	TestHeight
-0x004542A0		DoUserInput
+0x004542A0	+	DoUserInput
 0x00454C00	+	CanGetOut
 0x00454D10	+	CartToBaddieCollision
 

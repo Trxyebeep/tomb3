@@ -11,6 +11,7 @@
 #include "../3dsystem/phd_math.h"
 #include "effects.h"
 #include "sound.h"
+#include "lara.h"
 
 void MineCartInitialise(short item_number)
 {
@@ -234,6 +235,346 @@ static long TestHeight(ITEM_INFO* item, long x, long z)
 	return h;
 }
 
+static void DoUserInput(ITEM_INFO* item, ITEM_INFO* l, CARTINFO* cart)
+{
+	PHD_VECTOR pos;
+	COLL_INFO coll;
+	short* tmp;
+	long damage;
+	short h, c;
+
+	switch (l->current_anim_state)
+	{
+	case 0:
+
+		if (l->anim_number == objects[VEHICLE_ANIM].anim_index + 5 && l->frame_number == anims[l->anim_number].frame_base + 20 &&
+			!cart->Flags)
+		{
+			tmp = lara.mesh_ptrs[HAND_R];
+			lara.mesh_ptrs[HAND_R] = meshes[objects[VEHICLE_ANIM].mesh_index + HAND_R];
+			meshes[objects[VEHICLE_ANIM].mesh_index + HAND_R] = tmp;
+			cart->Flags |= 1;
+		}
+
+		break;
+
+	case 1:
+
+		if (l->anim_number == objects[VEHICLE_ANIM].anim_index + 7)
+		{
+			if (l->frame_number == anims[objects[VEHICLE_ANIM].anim_index + 7].frame_base + 20 && cart->Flags & 1)
+			{
+				tmp = lara.mesh_ptrs[HAND_R];
+				lara.mesh_ptrs[HAND_R] = meshes[objects[VEHICLE_ANIM].mesh_index + HAND_R];
+				meshes[objects[VEHICLE_ANIM].mesh_index + HAND_R] = tmp;
+				cart->Flags &= ~1;
+			}
+
+			if (cart->Flags & 8)
+				l->goal_anim_state = 3;
+			else
+				l->goal_anim_state = 2;
+		}
+
+		break;
+
+	case 2:
+
+		if (l->anim_number == objects[VEHICLE_ANIM].anim_index + 1 && l->frame_number == anims[l->anim_number].frame_end)
+		{
+			pos.x = 0;
+			pos.y = 640;
+			pos.z = 0;
+			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			l->pos.x_pos = pos.x;
+			l->pos.y_pos = pos.y;
+			l->pos.z_pos = pos.z;
+			l->pos.x_rot = 0;
+			l->pos.y_rot = item->pos.y_rot + 0x4000;
+			l->pos.z_rot = 0;
+			l->anim_number = 11;
+			l->frame_number = anims[VEHICLE_ANIM].frame_base;
+			l->current_anim_state = 2;
+			l->goal_anim_state = 2;
+			lara.skidoo = NO_ITEM;
+			lara.gun_status = LG_ARMLESS;
+		}
+
+		break;
+
+	case 3:
+
+		if (l->anim_number == objects[VEHICLE_ANIM].anim_index + 47 && l->frame_number == anims[l->anim_number].frame_end)
+		{
+			pos.x = 0;
+			pos.y = 640;
+			pos.z = 0;
+			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			l->pos.x_pos = pos.x;
+			l->pos.y_pos = pos.y;
+			l->pos.z_pos = pos.z;
+			l->pos.x_rot = 0;
+			l->pos.y_rot = item->pos.y_rot - 0x4000;
+			l->pos.z_rot = 0;
+			l->anim_number = 11;
+			l->frame_number = anims[VEHICLE_ANIM].frame_base;
+			l->current_anim_state = 2;
+			l->goal_anim_state = 2;
+			lara.skidoo = NO_ITEM;
+			lara.gun_status = LG_ARMLESS;
+		}
+
+		break;
+
+	case 4:
+
+		if (!(cart->Flags & 0x10))
+		{
+			SoundEffect(SFX_MINE_CART_CLUNK_START, &item->pos, SFX_ALWAYS);
+			cart->StopDelay = 64;
+			cart->Flags |= 0x10;
+		}
+
+		if (input & IN_ROLL && cart->Flags & 0x20)
+		{
+			if (input & IN_LEFT && CanGetOut(-1))
+			{
+				l->goal_anim_state = 1;
+				cart->Flags &= ~8;
+			}
+			else if (input & IN_RIGHT && CanGetOut(1))
+			{
+				l->goal_anim_state = 1;
+				cart->Flags |= 8;
+			}
+		}
+
+		if (input & IN_DUCK)
+			l->goal_anim_state = 5;
+		else if (cart->Speed > 32)
+			l->goal_anim_state = 6;
+
+		break;
+
+	case 5:
+
+		if (input & IN_ACTION)
+			l->goal_anim_state = 18;
+		else if (input & IN_JUMP)
+			l->goal_anim_state = 11;
+		else if (!(input & IN_DUCK))
+			l->goal_anim_state = 4;
+
+		break;
+
+	case 6:
+
+		if (input & IN_ACTION)
+			l->goal_anim_state = 18;
+		else if (input & IN_DUCK)
+			l->goal_anim_state = 5;
+		else if (input & IN_JUMP)
+			l->goal_anim_state = 11;
+		else if (cart->Speed == 32 || cart->Flags & 0x20)
+			l->goal_anim_state = 4;
+		else if (cart->Gradient < -128)
+			l->goal_anim_state = 12;
+		else if (cart->Gradient > 128)
+			l->goal_anim_state = 13;
+		else if (input & IN_LEFT)
+			l->goal_anim_state = 9;
+		else if (input & IN_RIGHT)
+			l->goal_anim_state = 7;
+
+		break;
+
+	case 7:
+
+		if (input & IN_ACTION)
+			l->goal_anim_state = 18;
+		else if (input & IN_DUCK)
+			l->goal_anim_state = 5;
+		else if (input & IN_JUMP)
+			l->goal_anim_state = 11;
+
+		if (!(input & IN_RIGHT))
+			l->goal_anim_state = 6;
+
+		break;
+
+	case 9:
+
+		if (input & IN_ACTION)
+			l->goal_anim_state = 18;
+		else if (input & IN_DUCK)
+			l->goal_anim_state = 5;
+		else if (input & IN_JUMP)
+			l->goal_anim_state = 11;
+
+		if (!(input & IN_LEFT))
+			l->goal_anim_state = 6;
+
+		break;
+
+	case 11:
+		l->goal_anim_state = 19;
+		break;
+
+	case 12:
+
+		if (input & IN_ACTION)
+			l->goal_anim_state = 18;
+		else if (input & IN_DUCK)
+			l->goal_anim_state = 5;
+		else if (input & IN_JUMP)
+			l->goal_anim_state = 11;
+		else if (cart->Gradient > -128)
+			l->goal_anim_state = 6;
+
+		break;
+
+	case 13:
+
+		if (input & IN_ACTION)
+			l->goal_anim_state = 18;
+		else if (input & IN_DUCK)
+			l->goal_anim_state = 5;
+		else if (input & IN_JUMP)
+			l->goal_anim_state = 11;
+		else if (cart->Gradient < 128)
+			l->goal_anim_state = 6;
+
+		break;
+
+	case 14:
+		camera.target_elevation = -8190;
+		camera.target_distance = 2048;
+		h = GetCollision(item, item->pos.y_rot, 512, &c);
+
+		if (h > -256 && h < 256)
+		{
+			if (!(wibble & 7))
+				SoundEffect(SFX_QUAD_FRONT_IMPACT, &item->pos, SFX_ALWAYS);
+
+			item->pos.x_pos += 128 * phd_sin(item->pos.y_rot) >> W2V_SHIFT;
+			item->pos.z_pos += 128 * phd_cos(item->pos.y_rot) >> W2V_SHIFT;
+		}
+		else if (l->anim_number == objects[VEHICLE_ANIM].anim_index + 30)
+		{
+			cart->Flags |= 0x40;
+			l->hit_points = -1;
+		}
+
+		break;
+
+	case 16:
+		camera.target_elevation = -4550;
+		camera.target_distance = 4096;
+		break;
+
+	case 17:
+
+		if (l->hit_points <= 0 && l->frame_number == anims[objects[VEHICLE_ANIM].anim_index + 34].frame_base + 28)
+		{
+			l->frame_number = anims[objects[VEHICLE_ANIM].anim_index + 34].frame_base + 28;
+			cart->Flags = cart->Flags & ~0x50 | 0x40;
+			item->speed = 0;
+			cart->Speed = 0;
+		}
+
+		break;
+
+	case 18:
+		l->goal_anim_state = 6;
+		break;
+
+	case 19:
+
+		if (input & IN_DUCK)
+		{
+			l->goal_anim_state = 5;
+			StopSoundEffect(SFX_MINE_CART_SREECH_BRAKE);
+		}
+		else if (!(input & IN_JUMP) || cart->Flags & 0x20)
+		{
+			l->goal_anim_state = 6;
+			StopSoundEffect(SFX_MINE_CART_SREECH_BRAKE);
+		}
+		else
+		{
+			cart->Speed -= 1536;
+			SoundEffect(SFX_MINE_CART_SREECH_BRAKE, &l->pos, SFX_ALWAYS);
+		}
+
+		break;
+	}
+
+	if (lara.skidoo != NO_ITEM && !(cart->Flags & 0x40))
+	{
+		AnimateItem(l);
+		item->anim_number = l->anim_number + objects[MINECART].anim_index - objects[VEHICLE_ANIM].anim_index;
+		item->frame_number = l->frame_number + anims[item->anim_number].frame_base - anims[l->anim_number].frame_base;
+	}
+
+	if (l->current_anim_state == 14 || l->current_anim_state == 16 || l->hit_points <= 0)
+		return;
+
+	if (item->pos.z_rot > 4096 || item->pos.z_rot < -4096)
+	{
+		l->anim_number = objects[VEHICLE_ANIM].anim_index + 31;
+		l->frame_number = anims[l->anim_number].frame_base;
+		l->current_anim_state = 14;
+		l->goal_anim_state = 14;
+		cart->Flags = cart->Flags & 0x4F | 0xA0;
+		item->speed = 0;
+		cart->Speed = 0;
+		return;
+	}
+
+	h = GetCollision(item, item->pos.y_rot, 512, &c);
+
+	if (h < -512)
+	{
+		l->anim_number = objects[VEHICLE_ANIM].anim_index + 23;
+		l->frame_number = anims[l->anim_number].frame_base;
+		l->current_anim_state = 16;
+		l->goal_anim_state = 16;
+		cart->Flags = cart->Flags & ~0xB0 | 0xA0;
+		item->speed = 0;
+		cart->Speed = 0;
+		l->hit_points = -1;
+		return;
+	}
+
+	if (l->current_anim_state != 5 && l->current_anim_state != 17)
+	{
+		coll.radius = 100;
+		coll.quadrant = ushort(item->pos.y_rot + 0x2000) / 0x4000;
+
+		if (CollideStaticObjects(&coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 768))
+		{
+			l->anim_number = objects[VEHICLE_ANIM].anim_index + 34;
+			l->frame_number = anims[l->anim_number].frame_base;
+			l->current_anim_state = 17;
+			l->goal_anim_state = 17;
+			DoLotsOfBlood(l->pos.x_pos, l->pos.y_pos - 768, l->pos.z_pos, item->speed, item->pos.y_rot, l->room_number, 3);
+
+			damage = 25 * ((ushort)cart->Speed >> 11);
+
+			if (damage < 20)
+				damage = 20;
+
+			l->hit_points -= (short)damage;
+			return;
+		}
+	}
+
+	if (h > 576 && !cart->YVel)
+		cart->YVel = -1024;
+
+	CartToBaddieCollision(item);
+}
+
 void inject_minecart(bool replace)
 {
 	INJECT(0x00453930, MineCartInitialise, replace);
@@ -243,4 +584,5 @@ void inject_minecart(bool replace)
 	INJECT(0x00454D10, CartToBaddieCollision, replace);
 	INJECT(0x00453890, GetCollision, replace);
 	INJECT(0x004541F0, TestHeight, replace);
+	INJECT(0x004542A0, DoUserInput, replace);
 }
