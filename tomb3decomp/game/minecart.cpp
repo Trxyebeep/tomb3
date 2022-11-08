@@ -216,6 +216,24 @@ static short GetCollision(ITEM_INFO* item, short ang, long dist, short* c)
 	return (short)h;
 }
 
+static long TestHeight(ITEM_INFO* item, long x, long z)
+{
+	PHD_VECTOR pos;
+	FLOOR_INFO* floor;
+	long s, c, h;
+	short room_number;
+
+	s = phd_sin(item->pos.y_rot);
+	c = phd_cos(item->pos.y_rot);
+	pos.x = item->pos.x_pos + ((x * c + z * s) >> W2V_SHIFT);
+	pos.y = (item->pos.y_pos + ((x * phd_sin(item->pos.z_rot)) >> W2V_SHIFT)) - ((z * phd_sin(item->pos.x_rot)) >> W2V_SHIFT);
+	pos.z = item->pos.z_pos + ((z * c - x * s) >> W2V_SHIFT);
+	room_number = item->room_number;
+	floor = GetFloor(pos.x, pos.y, pos.z, &room_number);
+	h = GetHeight(floor, pos.x, pos.y, pos.z);
+	return h;
+}
+
 void inject_minecart(bool replace)
 {
 	INJECT(0x00453930, MineCartInitialise, replace);
@@ -224,4 +242,5 @@ void inject_minecart(bool replace)
 	INJECT(0x00454C00, CanGetOut, replace);
 	INJECT(0x00454D10, CartToBaddieCollision, replace);
 	INJECT(0x00453890, GetCollision, replace);
+	INJECT(0x004541F0, TestHeight, replace);
 }
