@@ -4706,6 +4706,29 @@ void GetLaraHandAbsPosition(PHD_VECTOR* vec, long lr)
 	phd_PopMatrix();
 }
 
+void LookUpDown()
+{
+	camera.type = LOOK_CAMERA;
+
+	if (input & IN_FORWARD)
+	{
+		input -= IN_FORWARD;
+
+		if (lara.head_x_rot > -6370)
+			lara.head_x_rot -= 364;
+	}
+	else if (input & IN_BACK)
+	{
+		input -= IN_BACK;
+
+		if (lara.head_x_rot < 5460)
+			lara.head_x_rot += 364;
+	}
+
+	if (lara.gun_status != LG_HANDSBUSY && lara.skidoo == NO_ITEM && !lara.left_arm.lock && !lara.right_arm.lock)
+		lara.torso_x_rot = lara.head_x_rot;
+}
+
 void inject_lara(bool replace)
 {
 	INJECT(0x0043E800, LaraAboveWater, replace);
@@ -4849,4 +4872,5 @@ void inject_lara(bool replace)
 	INJECT(0x00443C10, AddJointPos, replace);
 	INJECT(0x00443CA0, GetLHAInt, replace);
 	INJECT(0x00443360, GetLaraHandAbsPosition, replace);
+	INJECT(0x004446E0, LookUpDown, replace);
 }
