@@ -1039,6 +1039,96 @@ void AnimateLara(ITEM_INFO* item)
 	item->pos.z_pos += (item->speed * phd_cos(lara.move_angle)) >> W2V_SHIFT;
 }
 
+void UseItem(short object_number)
+{
+	if (object_number < 0 || object_number >= NUMBER_OBJECTS)
+		return;
+
+	switch (object_number)
+	{
+	case GUN_ITEM:
+	case GUN_OPTION:
+		lara.request_gun_type = LG_PISTOLS;
+		break;
+
+	case SHOTGUN_ITEM:
+	case SHOTGUN_OPTION:
+		lara.request_gun_type = LG_SHOTGUN;
+		break;
+
+	case MAGNUM_ITEM:
+	case MAGNUM_OPTION:
+		lara.request_gun_type = LG_MAGNUMS;
+		break;
+
+	case UZI_ITEM:
+	case UZI_OPTION:
+		lara.request_gun_type = LG_UZIS;
+		break;
+
+	case HARPOON_ITEM:
+	case HARPOON_OPTION:
+		lara.request_gun_type = LG_HARPOON;
+		break;
+
+	case M16_ITEM:
+	case M16_OPTION:
+		lara.request_gun_type = LG_M16;
+		break;
+
+	case ROCKET_GUN_ITEM:
+	case ROCKET_OPTION:
+		lara.request_gun_type = LG_ROCKET;
+		break;
+
+	case GRENADE_GUN_ITEM:
+	case GRENADE_OPTION:
+		lara.request_gun_type = LG_GRENADE;
+		break;
+
+	case MEDI_ITEM:
+	case MEDI_OPTION:
+
+		if (lara_item->hit_points > 0 && lara_item->hit_points < 1000 || lara.poisoned)
+		{
+			lara.poisoned = 0;
+			lara_item->hit_points += 500;
+
+			if (lara_item->hit_points > 1000)
+				lara_item->hit_points = 1000;
+
+			Inv_RemoveItem(MEDI_ITEM);
+			SoundEffect(SFX_MENU_MEDI, 0, 2);
+			savegame.health_used++;
+		}
+
+		break;
+
+	case BIGMEDI_ITEM:
+	case BIGMEDI_OPTION:
+
+		if (lara_item->hit_points > 0 && lara_item->hit_points < 1000 || lara.poisoned)
+		{
+			lara.poisoned = 0;
+			lara_item->hit_points += 1000;
+
+			if (lara_item->hit_points > 1000)
+				lara_item->hit_points = 1000;
+
+			Inv_RemoveItem(BIGMEDI_ITEM);
+			SoundEffect(SFX_MENU_MEDI, 0, 2);
+			savegame.health_used += 2;
+		}
+
+		break;
+
+	case FLAREBOX_ITEM:
+	case FLAREBOX_OPTION:
+		lara.request_gun_type = LG_FLARE;
+		break;
+	}
+}
+
 void inject_laramisc(bool replace)
 {
 	INJECT(0x0044C630, LaraCheatGetStuff, replace);
@@ -1047,4 +1137,5 @@ void inject_laramisc(bool replace)
 	INJECT(0x0044D060, LaraInitialiseMeshes, replace);
 	INJECT(0x0044C6F0, LaraControl, inject_rando ? 1 : replace);
 	INJECT(0x0044D2A0, AnimateLara, replace);
+	INJECT(0x0044D690, UseItem, replace);
 }
