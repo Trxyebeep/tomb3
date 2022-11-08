@@ -14,6 +14,8 @@
 #include "../3dsystem/phd_math.h"
 #include "gameflow.h"
 #include "../specific/smain.h"
+#include "items.h"
+#include "larafire.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
@@ -1251,6 +1253,199 @@ void InitialiseLara(long type)
 	ExposureMeter = 600;
 }
 
+void InitialiseLaraInventory(long level)
+{
+	START_INFO* start;
+	long ammo;
+
+	Inv_RemoveAllItems();
+	start = &savegame.start[level];
+
+	if (GF_RemoveWeapons)
+	{
+		start->got_pistols = 0;
+		start->got_magnums = 0;
+		start->got_uzis = 0;
+		start->got_shotgun = 0;
+		start->got_m16 = 0;
+		start->got_rocket = 0;
+		start->got_grenade = 0;
+		start->got_harpoon = 0;
+		start->gun_type = LG_UNARMED;
+		start->gun_status = LG_ARMLESS;
+		GF_RemoveWeapons = 0;
+	}
+
+	if (GF_RemoveAmmo)
+	{
+		start->pistol_ammo = 0;
+		start->magnum_ammo = 0;
+		start->uzi_ammo = 0;
+		start->shotgun_ammo = 0;
+		start->m16_ammo = 0;
+		start->rocket_ammo = 0;
+		start->harpoon_ammo = 0;
+		start->grenade_ammo = 0;
+		start->num_flares = 0;
+		start->num_big_medis = 0;
+		start->num_medis = 1;
+		GF_RemoveAmmo = 0;
+	}
+
+	Inv_AddItem(MAP_CLOSED);
+	lara.pistols.ammo = 1000;
+
+	if (start->got_pistols)
+		Inv_AddItem(GUN_ITEM);
+
+	if (start->got_magnums)
+	{
+		Inv_AddItem(MAGNUM_ITEM);
+		lara.magnums.ammo = start->magnum_ammo;
+		GlobalItemReplace(MAGNUM_ITEM, MAG_AMMO_ITEM);
+	}
+	else
+	{
+		ammo = start->magnum_ammo / 10;
+
+		for (int i = 0; i < ammo; i++)
+			Inv_AddItem(MAG_AMMO_ITEM);
+
+		lara.magnums.ammo = 0;
+	}
+
+	if (start->got_uzis)
+	{
+		Inv_AddItem(UZI_ITEM);
+		lara.uzis.ammo = start->uzi_ammo;
+		GlobalItemReplace(UZI_ITEM, UZI_AMMO_ITEM);
+	}
+	else
+	{
+		ammo = start->uzi_ammo / 40;
+
+		for (int i = 0; i < ammo; i++)
+			Inv_AddItem(UZI_AMMO_ITEM);
+
+		lara.uzis.ammo = 0;
+	}
+
+	if (start->got_shotgun)
+	{
+		Inv_AddItem(SHOTGUN_ITEM);
+		lara.shotgun.ammo = start->shotgun_ammo;
+		GlobalItemReplace(SHOTGUN_ITEM, SG_AMMO_ITEM);
+	}
+	else
+	{
+		ammo = start->shotgun_ammo / 12;
+
+		for (int i = 0; i < ammo; i++)
+			Inv_AddItem(SG_AMMO_ITEM);
+
+		lara.shotgun.ammo = 0;
+	}
+
+	if (start->got_rocket)
+	{
+		Inv_AddItem(ROCKET_GUN_ITEM);
+		lara.rocket.ammo = start->rocket_ammo;
+		GlobalItemReplace(ROCKET_GUN_ITEM, ROCKET_AMMO_ITEM);
+	}
+	else
+	{
+		ammo = start->rocket_ammo;
+
+		for (int i = 0; i < ammo; i++)
+			Inv_AddItem(ROCKET_AMMO_ITEM);
+
+		lara.rocket.ammo = 0;
+	}
+
+	if (start->got_grenade)
+	{
+		Inv_AddItem(GRENADE_GUN_ITEM);
+		lara.grenade.ammo = start->grenade_ammo;
+		GlobalItemReplace(GRENADE_GUN_ITEM, GRENADE_AMMO_ITEM);
+	}
+	else
+	{
+		ammo = start->grenade_ammo / 2;
+
+		for (int i = 0; i < ammo; i++)
+			Inv_AddItem(GRENADE_AMMO_ITEM);
+
+		lara.grenade.ammo = 0;
+	}
+
+	if (start->got_m16)
+	{
+		Inv_AddItem(M16_ITEM);
+		lara.m16.ammo = start->m16_ammo;
+		GlobalItemReplace(M16_ITEM, M16_AMMO_ITEM);
+	}
+	else
+	{
+		ammo = start->m16_ammo / 60;
+
+		for (int i = 0; i < ammo; i++)
+			Inv_AddItem(M16_AMMO_ITEM);
+
+		lara.m16.ammo = 0;
+	}
+
+	if (start->got_harpoon)
+	{
+		Inv_AddItem(HARPOON_ITEM);
+		lara.harpoon.ammo = start->harpoon_ammo;
+		GlobalItemReplace(HARPOON_ITEM, HARPOON_AMMO_ITEM);
+	}
+	else
+	{
+		lara.harpoon.ammo = 0;
+		ammo = start->harpoon_ammo / 3;
+
+		for (int i = 0; i < ammo; i++)
+		{
+			if (!i)
+				Inv_AddItem(HARPOON_AMMO_ITEM);
+
+			lara.harpoon.ammo += 3;
+		}
+	}
+
+	for (int i = 0; i < start->num_flares; i++)
+		Inv_AddItem(FLARE_ITEM);
+
+	for (int i = 0; i < start->num_medis; i++)
+		Inv_AddItem(MEDI_ITEM);
+
+	for (int i = 0; i < start->num_big_medis; i++)
+		Inv_AddItem(BIGMEDI_ITEM);
+
+	for (int i = 0; i < start->num_sgcrystals; i++)
+		Inv_AddItem(SAVEGAME_CRYSTAL_ITEM);
+
+	if (start->num_icon1)
+		Inv_AddItem(ICON_PICKUP1_ITEM);
+
+	if (start->num_icon2)
+		Inv_AddItem(ICON_PICKUP2_ITEM);
+
+	if (start->num_icon3)
+		Inv_AddItem(ICON_PICKUP3_ITEM);
+
+	if (start->num_icon4)
+		Inv_AddItem(ICON_PICKUP4_ITEM);
+
+	lara.gun_status = LG_ARMLESS;
+	lara.last_gun_type = start->gun_type;
+	lara.gun_type = lara.last_gun_type;
+	lara.request_gun_type = lara.last_gun_type;
+	LaraInitialiseMeshes(level);
+	InitialiseNewWeapon();
+}
+
 void inject_laramisc(bool replace)
 {
 	INJECT(0x0044C630, LaraCheatGetStuff, replace);
@@ -1263,4 +1458,5 @@ void inject_laramisc(bool replace)
 	INJECT(0x0044D880, ControlLaraExtra, replace);
 	INJECT(0x0044D8A0, InitialiseLaraLoad, replace);
 	INJECT(0x0044D8D0, InitialiseLara, replace);
+	INJECT(0x0044DC00, InitialiseLaraInventory, replace);
 }
