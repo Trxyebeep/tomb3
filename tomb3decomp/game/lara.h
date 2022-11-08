@@ -148,12 +148,12 @@ void lara_as_duckroll(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_duckroll(ITEM_INFO* item, COLL_INFO* coll);
 #endif
 void GetLHAInt(ITEM_INFO* item, PHD_VECTOR* vec, short* frame1, short* frame2, long frac, long rate, long lr);
+void GetLaraHandAbsPosition(PHD_VECTOR* vec, long lr);
 
 #define LookUpDown	( (void(__cdecl*)()) 0x004446E0 )
 #define LookLeftRight	( (void(__cdecl*)()) 0x00444770 )
 #define ResetLook	( (void(__cdecl*)()) 0x00444800 )
 #define GetStaticObjects	( (long(__cdecl*)(ITEM_INFO*, short, long, long, long)) 0x00445020 )
-#define GetLaraHandAbsPosition	( (void(__cdecl*)(PHD_VECTOR*, long)) 0x00443360 )
 
 enum lara_extras
 {

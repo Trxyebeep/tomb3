@@ -4444,6 +4444,268 @@ void GetLHAInt(ITEM_INFO* item, PHD_VECTOR* vec, short* frame1, short* frame2, l
 	phd_PopMatrix();
 }
 
+void GetLaraHandAbsPosition(PHD_VECTOR* vec, long lr)
+{
+	ITEM_INFO* item;
+	long* bone;
+	short* frm[2];
+	short* frame;
+	short* rot;
+	long frac, rate, gun;
+	short spaz;
+	
+	item = lara_item;
+
+	if (lara.hit_direction < 0)
+	{
+		frac = GetFrames(item, frm, &rate);
+
+		if (frac)
+			return GetLHAInt(item, vec, frm[0], frm[1], frac, rate, lr);
+
+		frame = frm[0];
+	}
+	else
+	{
+		switch (lara.hit_direction)
+		{
+		case EAST:
+			spaz = ANIM_SPAZ_RIGHT;
+			break;
+
+		case SOUTH:
+			spaz = ANIM_SPAZ_BACK;
+			break;
+
+		case WEST:
+			spaz = ANIM_SPAZ_LEFT;
+			break;
+
+		default:
+			spaz = ANIM_SPAZ_FORWARD;
+			break;
+		}
+
+		frame = &anims[spaz].frame_ptr[lara.hit_frame * (anims[spaz].interpolation >> 8)];
+	}
+
+	bone = &bones[objects[item->object_number].bone_index];
+	rot = frame + 9;
+
+	phd_PushUnitMatrix();
+	phd_mxptr[M03] = 0;
+	phd_mxptr[M13] = 0;
+	phd_mxptr[M23] = 0;
+	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+
+	phd_PushMatrix();
+	phd_TranslateRel(frame[6], frame[7], frame[8]);
+	gar_RotYXZsuperpack(&rot, 0);
+
+	if (!GotJointPos[HIPS])
+		AddJointPos(item, HIPS);
+
+	if (lr == LEFT_FOOT)
+	{
+		phd_TranslateRel(bone[1], bone[2], bone[3]);
+		gar_RotYXZsuperpack(&rot, 0);
+
+		if (!GotJointPos[THIGH_L])
+			AddJointPos(item, THIGH_L);
+
+		phd_TranslateRel(bone[5], bone[6], bone[7]);
+		gar_RotYXZsuperpack(&rot, 0);
+
+		if (!GotJointPos[CALF_L])
+			AddJointPos(item, CALF_L);
+
+		phd_TranslateRel(bone[9], bone[10], bone[11]);
+		gar_RotYXZsuperpack(&rot, 0);
+
+		if (!GotJointPos[FOOT_L])
+			AddJointPos(item, FOOT_L);
+	}
+	else if (lr == RIGHT_FOOT)
+	{
+		phd_TranslateRel(bone[13], bone[14], bone[15]);
+		gar_RotYXZsuperpack(&rot, 3);
+
+		if (!GotJointPos[THIGH_R])
+			AddJointPos(item, THIGH_R);
+
+		phd_TranslateRel(bone[17], bone[18], bone[19]);
+		gar_RotYXZsuperpack(&rot, 0);
+
+		if (!GotJointPos[CALF_R])
+			AddJointPos(item, CALF_R);
+
+		phd_TranslateRel(bone[21], bone[22], bone[23]);
+		gar_RotYXZsuperpack(&rot, 0);
+
+		if (!GotJointPos[FOOT_R])
+			AddJointPos(item, FOOT_R);
+	}
+	else if (lr != LARA_HIPS)
+	{
+		phd_TranslateRel(bone[25], bone[26], bone[27]);
+
+		if (lara.weapon_item != NO_ITEM && lara.gun_type == LG_M16 &&
+			(items[lara.weapon_item].current_anim_state == 0 ||
+				items[lara.weapon_item].current_anim_state == 2 ||
+				items[lara.weapon_item].current_anim_state == 4))
+		{
+			rot = &lara.right_arm.frame_base[lara.right_arm.frame_number * (anims[lara.right_arm.anim_number].interpolation >> 8) + 9];
+			gar_RotYXZsuperpack(&rot, 7);
+		}
+		else
+			gar_RotYXZsuperpack(&rot, 6);
+
+		phd_RotYXZ(lara.torso_y_rot, lara.torso_x_rot, lara.torso_z_rot);
+
+		if (!GotJointPos[TORSO])
+			AddJointPos(item, TORSO);
+
+		if (lr == LARA_HEAD)
+		{
+			phd_TranslateRel(bone[53], bone[54], bone[55]);
+			gar_RotYXZsuperpack(&rot, 6);
+			phd_RotYXZ(lara.head_y_rot, lara.head_x_rot, lara.head_z_rot);
+
+			if (!GotJointPos[HEAD])
+				AddJointPos(item, HEAD);
+		}
+
+		if (lr == LEFT_HAND || lr == RIGHT_HAND)
+		{
+			if (lara.gun_status == LG_READY || lara.gun_status == LG_SPECIAL || lara.gun_status == LG_DRAW || lara.gun_status == LG_UNDRAW)
+				gun = lara.gun_type;
+			else
+				gun = 0;
+
+			if (lr == LEFT_HAND)
+			{
+				phd_TranslateRel(bone[41], bone[42], bone[43]);
+
+				switch (gun)
+				{
+				case LG_UNARMED:
+				case LG_FLARE:
+
+					if (lara.flare_control_left)
+					{
+						rot = &lara.left_arm.frame_base[(anims[lara.left_arm.anim_number].interpolation >> 8) *
+							(lara.left_arm.frame_number - anims[lara.left_arm.anim_number].frame_base) + 9];
+						gar_RotYXZsuperpack(&rot, 11);
+					}
+					else
+						gar_RotYXZsuperpack(&rot, 3);
+
+					break;
+
+				case LG_PISTOLS:
+				case LG_MAGNUMS:
+				case LG_UZIS:
+					phd_mxptr[M00] = phd_mxptr[M00 - indices_count];
+					phd_mxptr[M01] = phd_mxptr[M01 - indices_count];
+					phd_mxptr[M02] = phd_mxptr[M02 - indices_count];
+					phd_mxptr[M10] = phd_mxptr[M10 - indices_count];
+					phd_mxptr[M11] = phd_mxptr[M11 - indices_count];
+					phd_mxptr[M12] = phd_mxptr[M12 - indices_count];
+					phd_mxptr[M20] = phd_mxptr[M20 - indices_count];
+					phd_mxptr[M21] = phd_mxptr[M21 - indices_count];
+					phd_mxptr[M22] = phd_mxptr[M22 - indices_count];
+					phd_RotYXZ(lara.left_arm.y_rot, lara.left_arm.x_rot, lara.left_arm.z_rot);
+					rot = &lara.left_arm.frame_base[(anims[lara.left_arm.anim_number].interpolation >> 8) *
+						(lara.left_arm.frame_number - anims[lara.left_arm.anim_number].frame_base) + 9];
+					gar_RotYXZsuperpack(&rot, 11);
+					break;
+
+				default:
+					gar_RotYXZsuperpack(&rot, 3);
+					break;
+				}
+
+				if (!GotJointPos[UARM_L])
+					AddJointPos(item, UARM_L);
+
+				phd_TranslateRel(bone[45], bone[46], bone[47]);
+				gar_RotYXZsuperpack(&rot, 0);
+
+				if (!GotJointPos[LARM_L])
+					AddJointPos(item, LARM_L);
+
+				phd_TranslateRel(bone[49], bone[50], bone[51]);
+				gar_RotYXZsuperpack(&rot, 0);
+
+				if (!GotJointPos[HAND_L])
+					AddJointPos(item, HAND_L);
+			}
+			else
+			{
+				phd_TranslateRel(bone[29], bone[30], bone[31]);
+
+				switch (gun)
+				{
+				case LG_UNARMED:
+				case LG_FLARE:
+					gar_RotYXZsuperpack(&rot, 0);
+					break;
+
+				case LG_PISTOLS:
+				case LG_MAGNUMS:
+				case LG_UZIS:
+					phd_mxptr[M00] = phd_mxptr[M00 - indices_count];
+					phd_mxptr[M01] = phd_mxptr[M01 - indices_count];
+					phd_mxptr[M02] = phd_mxptr[M02 - indices_count];
+					phd_mxptr[M10] = phd_mxptr[M10 - indices_count];
+					phd_mxptr[M11] = phd_mxptr[M11 - indices_count];
+					phd_mxptr[M12] = phd_mxptr[M12 - indices_count];
+					phd_mxptr[M20] = phd_mxptr[M20 - indices_count];
+					phd_mxptr[M21] = phd_mxptr[M21 - indices_count];
+					phd_mxptr[M22] = phd_mxptr[M22 - indices_count];
+					phd_RotYXZ(lara.right_arm.y_rot, lara.right_arm.x_rot, lara.right_arm.z_rot);
+					rot = &lara.right_arm.frame_base[(anims[lara.right_arm.anim_number].interpolation >> 8) *
+						(lara.right_arm.frame_number - anims[lara.right_arm.anim_number].frame_base) + 9];
+					gar_RotYXZsuperpack(&rot, 8);
+					break;
+
+				case LG_SHOTGUN:
+				case LG_M16:
+				case LG_ROCKET:
+				case LG_GRENADE:
+				case LG_HARPOON:
+					rot = &lara.right_arm.frame_base[lara.right_arm.frame_number * (anims[lara.right_arm.anim_number].interpolation >> 8) + 9];
+					gar_RotYXZsuperpack(&rot, 8);
+					break;
+				}
+
+				if (!GotJointPos[UARM_R])
+					AddJointPos(item, UARM_R);
+
+				phd_TranslateRel(bone[33], bone[34], bone[35]);
+				gar_RotYXZsuperpack(&rot, 0);
+
+				if (!GotJointPos[LARM_R])
+					AddJointPos(item, LARM_R);
+
+				phd_TranslateRel(bone[37], bone[38], bone[39]);
+				gar_RotYXZsuperpack(&rot, 0);
+
+				if (!GotJointPos[HAND_R])
+					AddJointPos(item, HAND_R);
+			}
+		}
+	}
+
+	phd_TranslateRel(vec->x, vec->y, vec->z);
+	vec->x = item->pos.x_pos + (phd_mxptr[M03] >> W2V_SHIFT);
+	vec->y = item->pos.y_pos + (phd_mxptr[M13] >> W2V_SHIFT);
+	vec->z = item->pos.z_pos + (phd_mxptr[M23] >> W2V_SHIFT);
+
+	phd_PopMatrix();
+	phd_PopMatrix();
+}
+
 void inject_lara(bool replace)
 {
 	INJECT(0x0043E800, LaraAboveWater, replace);
@@ -4586,4 +4848,5 @@ void inject_lara(bool replace)
 	INJECT(0x0043E1C0, LaraHangTest, replace);
 	INJECT(0x00443C10, AddJointPos, replace);
 	INJECT(0x00443CA0, GetLHAInt, replace);
+	INJECT(0x00443360, GetLaraHandAbsPosition, replace);
 }
