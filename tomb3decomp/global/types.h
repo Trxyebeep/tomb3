@@ -1945,6 +1945,21 @@ struct QUADINFO
 	uchar Flags;
 };
 
+struct CARTINFO
+{
+	long Speed;
+	long MidPos;
+	long FrontPos;
+	long TurnX;
+	long TurnZ;
+	short TurnLen;
+	short TurnRot;
+	short YVel;
+	short Gradient;
+	char Flags;
+	char StopDelay;
+};
+
 #ifdef TROYESTUFF
 struct FVECTOR
 {
