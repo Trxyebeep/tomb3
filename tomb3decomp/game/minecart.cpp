@@ -196,6 +196,26 @@ static void CartToBaddieCollision(ITEM_INFO* cart)
 	}
 }
 
+static short GetCollision(ITEM_INFO* item, short ang, long dist, short* c)
+{
+	FLOOR_INFO* floor;
+	long x, y, z, h;
+	short room_number;
+
+	x = item->pos.x_pos + ((dist * phd_sin(ang)) >> W2V_SHIFT);
+	y = item->pos.y_pos - 762;
+	z = item->pos.z_pos + ((dist * phd_cos(ang)) >> W2V_SHIFT);
+	room_number = item->room_number;
+	floor = GetFloor(x, y, z, &room_number);
+	h = GetHeight(floor, x, y, z);
+	*c = (short)GetCeiling(floor, x, y, z);
+
+	if (h != NO_HEIGHT)
+		h -= item->pos.y_pos;
+
+	return (short)h;
+}
+
 void inject_minecart(bool replace)
 {
 	INJECT(0x00453930, MineCartInitialise, replace);
@@ -203,4 +223,5 @@ void inject_minecart(bool replace)
 	INJECT(0x00453960, MineCartCollision, replace);
 	INJECT(0x00454C00, CanGetOut, replace);
 	INJECT(0x00454D10, CartToBaddieCollision, replace);
+	INJECT(0x00453890, GetCollision, replace);
 }
