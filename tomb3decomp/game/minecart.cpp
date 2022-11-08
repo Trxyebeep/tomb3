@@ -8,6 +8,7 @@
 #include "../specific/game.h"
 #include "objects.h"
 #include "../specific/specific.h"
+#include "../3dsystem/phd_math.h"
 
 void MineCartInitialise(short item_number)
 {
@@ -90,9 +91,42 @@ void MineCartCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	S_CDPlay(12, 0);
 }
 
+static long CanGetOut(long lr)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	long x, y, z, h, c;
+	short ang, room_number;
+
+	item = &items[lara.skidoo];
+
+	if (lr < 0)
+		ang = item->pos.y_rot + 0x4000;
+	else
+		ang = item->pos.y_rot - 0x4000;
+
+	x = item->pos.x_pos - ((330 * phd_sin(ang)) >> W2V_SHIFT);
+	y = item->pos.y_pos;
+	z = item->pos.z_pos - ((330 * phd_cos(ang)) >> W2V_SHIFT);
+	room_number = item->room_number;
+	floor = GetFloor(x, y, z, &room_number);
+	h = GetHeight(floor, x, y, z);
+
+	if (height_type != BIG_SLOPE && height_type != DIAGONAL && h != NO_HEIGHT && abs(h) > 512)
+	{
+		c = GetCeiling(floor, x, y, z);
+
+		if (c - item->pos.y_pos <= -762 && h - c >= 762)
+			return 1;
+	}
+
+	return 0;
+}
+
 void inject_minecart(bool replace)
 {
 	INJECT(0x00453930, MineCartInitialise, replace);
 	INJECT(0x00453AB0, GetInMineCart, replace);
 	INJECT(0x00453960, MineCartCollision, replace);
+	INJECT(0x00454C00, CanGetOut, replace);
 }
