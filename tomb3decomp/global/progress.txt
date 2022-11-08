@@ -1059,7 +1059,7 @@ tomb3decomp progress.
 
 0x00453890		GetCollision
 0x00453930	+	MineCartInitialise
-0x00453960		MineCartCollision
+0x00453960	+	MineCartCollision
 0x00453AB0	+	GetInMineCart
 0x00453B80		MineCartControl
 0x00453CA0		MoveCart

@@ -4,6 +4,10 @@
 #include "collide.h"
 #include "sphere.h"
 #include "control.h"
+#include "laraflar.h"
+#include "../specific/game.h"
+#include "objects.h"
+#include "../specific/specific.h"
 
 void MineCartInitialise(short item_number)
 {
@@ -40,8 +44,55 @@ static long GetInMineCart(ITEM_INFO* item, ITEM_INFO* l, COLL_INFO* coll)
 	return 1;
 }
 
+void MineCartCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+	CARTINFO* cart;
+	short ang;
+
+	if (l->hit_points < 0 || lara.skidoo != NO_ITEM)
+		return;
+
+	item = &items[item_number];
+
+	if (!GetInMineCart(item, l, coll))
+		return ObjectCollision(item_number, l, coll);
+
+	lara.skidoo = item_number;
+
+	if (lara.gun_type == LG_FLARE)
+	{
+		CreateFlare(0);
+		undraw_flare_meshes();
+		lara.flare_control_left = 0;
+		lara.gun_type = LG_UNARMED;
+		lara.request_gun_type = LG_UNARMED;
+	}
+
+	lara.gun_status = LG_HANDSBUSY;
+	ang = short(mGetAngle(item->pos.x_pos, item->pos.z_pos, l->pos.x_pos, l->pos.z_pos) - item->pos.y_rot);
+
+	if (ang > -0x1FFE && ang < 0x5FFA)
+		l->anim_number = objects[VEHICLE_ANIM].anim_index + 46;
+	else
+		l->anim_number = objects[VEHICLE_ANIM].anim_index;
+
+	l->frame_number = anims[l->anim_number].frame_base;
+	l->current_anim_state = 0;
+	l->goal_anim_state = 0;
+	l->pos = item->pos;
+
+	cart = (CARTINFO*)item->data;
+	cart->Flags = 0;
+	cart->Speed = 0;
+	cart->YVel = 0;
+	cart->Gradient = 0;
+	S_CDPlay(12, 0);
+}
+
 void inject_minecart(bool replace)
 {
 	INJECT(0x00453930, MineCartInitialise, replace);
 	INJECT(0x00453AB0, GetInMineCart, replace);
+	INJECT(0x00453960, MineCartCollision, replace);
 }
