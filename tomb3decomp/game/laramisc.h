@@ -11,6 +11,7 @@ void LaraControl(short item_number);
 void AnimateLara(ITEM_INFO* item);
 void UseItem(short object_number);
 void ControlLaraExtra(short item_number);
+void InitialiseLaraLoad(short item_number);
 
 extern void (*extra_control_routines[13])(ITEM_INFO* item, COLL_INFO* coll);
 extern void (*lara_control_routines[89])(ITEM_INFO* item, COLL_INFO* coll);

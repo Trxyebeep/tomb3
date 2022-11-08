@@ -1134,6 +1134,12 @@ void ControlLaraExtra(short item_number)
 	AnimateItem(&items[item_number]);
 }
 
+void InitialiseLaraLoad(short item_number)
+{
+	lara.item_number = item_number;
+	lara_item = &items[item_number];
+}
+
 void inject_laramisc(bool replace)
 {
 	INJECT(0x0044C630, LaraCheatGetStuff, replace);
@@ -1144,4 +1150,5 @@ void inject_laramisc(bool replace)
 	INJECT(0x0044D2A0, AnimateLara, replace);
 	INJECT(0x0044D690, UseItem, replace);
 	INJECT(0x0044D880, ControlLaraExtra, replace);
+	INJECT(0x0044D8A0, InitialiseLaraLoad, replace);
 }
