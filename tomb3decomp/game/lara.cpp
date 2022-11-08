@@ -22,6 +22,9 @@
 #include "../tomb3/tomb3.h"
 #endif
 
+static short DeathSlideBounds[12] = { -256, 256, -100, 100, 256, 512, 0, 0, -4550, 4550, 0, 0 };
+static PHD_VECTOR DeathSlidePosition = { 0, 0, 371 };
+
 #ifdef TROYESTUFF
 static void TiltHer(ITEM_INFO* item, long rad, long height)
 {
@@ -4937,6 +4940,34 @@ void ControlDeathSlide(short item_number)
 	}
 }
 
+void DeathSlideCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+
+	if (input & IN_ACTION && !l->gravity_status && lara.gun_status == LG_ARMLESS && l->current_anim_state == AS_STOP)
+	{
+		item = &items[item_number];
+
+		if (item->status == ITEM_INACTIVE)
+		{
+			if (TestLaraPosition(DeathSlideBounds, item, l))
+			{
+				AlignLaraPosition(&DeathSlidePosition, item, l);
+				lara.gun_status = LG_HANDSBUSY;
+				l->goal_anim_state = AS_DEATHSLIDE;
+
+				do AnimateLara(l); while (l->current_anim_state != AS_NULL);
+
+				if (!item->active)
+					AddActiveItem(item_number);
+
+				item->status = ITEM_ACTIVE;
+				item->flags |= IFL_INVISIBLE;
+			}
+		}
+	}
+}
+
 void inject_lara(bool replace)
 {
 	INJECT(0x0043E800, LaraAboveWater, replace);
@@ -5085,4 +5116,5 @@ void inject_lara(bool replace)
 	INJECT(0x00444800, ResetLook, replace);
 	INJECT(0x00445020, GetStaticObjects, replace);
 	INJECT(0x00444980, ControlDeathSlide, replace);
+	INJECT(0x004448A0, DeathSlideCollision, replace);
 }

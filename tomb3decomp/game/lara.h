@@ -154,6 +154,7 @@ void LookLeftRight();
 void ResetLook();
 long GetStaticObjects(ITEM_INFO* item, short ang, long hite, long rad, long dist);
 void ControlDeathSlide(short item_number);
+void DeathSlideCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
 
 enum lara_extras
 {
