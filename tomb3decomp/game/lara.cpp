@@ -17,6 +17,7 @@
 #include "biggun.h"
 #include "minecart.h"
 #include "larafire.h"
+#include "items.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
@@ -4849,6 +4850,93 @@ long GetStaticObjects(ITEM_INFO* item, short ang, long hite, long rad, long dist
 	return 0;
 }
 
+void ControlDeathSlide(short item_number)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	GAME_VECTOR* old;
+	long x, y, z, h, c;
+	short room_number;
+
+	item = &items[item_number];
+
+	if (item->status != ITEM_ACTIVE)
+		return;
+
+	if (item->flags & IFL_INVISIBLE)
+	{
+		if (item->current_anim_state == 1)
+		{
+			AnimateItem(item);
+			return;
+		}
+
+		AnimateItem(item);
+
+		if (item->fallspeed < 100)
+			item->fallspeed += 5;
+
+		item->pos.x_pos += item->fallspeed * phd_sin(item->pos.y_rot) >> W2V_SHIFT;
+		item->pos.y_pos += item->fallspeed >> 2;
+		item->pos.z_pos += item->fallspeed * phd_cos(item->pos.y_rot) >> W2V_SHIFT;
+		room_number = item->room_number;
+		GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+
+		if (room_number != item->room_number)
+			ItemNewRoom(item_number, room_number);
+
+		if (lara_item->current_anim_state == AS_DEATHSLIDE)
+		{
+			lara_item->pos.x_pos = item->pos.x_pos;
+			lara_item->pos.y_pos = item->pos.y_pos;
+			lara_item->pos.z_pos = item->pos.z_pos;
+		}
+
+		x = item->pos.x_pos + (phd_sin(item->pos.y_rot) >> 4);
+		y = item->pos.y_pos + 64;
+		z = item->pos.z_pos + (phd_cos(item->pos.y_rot) >> 4);
+		floor = GetFloor(x, y, z, &room_number);
+		h = GetHeight(floor, x, y, z);
+		c = GetCeiling(floor, x, y, z);
+
+		if (h <= y + 256 || c >= y - 256)
+		{
+			if (lara_item->current_anim_state == AS_DEATHSLIDE)
+			{
+				lara_item->goal_anim_state = 3;
+				AnimateLara(lara_item);
+				lara_item->gravity_status = 1;
+				lara_item->speed = item->fallspeed;
+				lara_item->fallspeed = item->fallspeed >> 2;
+			}
+
+			SoundEffect(SFX_DEATH_SLIDE_STOP, &item->pos, SFX_DEFAULT);
+			RemoveActiveItem(item_number);
+			item->status = ITEM_INACTIVE;
+			item->flags -= IFL_INVISIBLE;
+		}
+		else
+			SoundEffect(SFX_DEATH_SLIDE_GO, &item->pos, SFX_DEFAULT);
+	}
+	else
+	{
+		old = (GAME_VECTOR*)item->data;
+		item->pos.x_pos = old->x;
+		item->pos.y_pos = old->y;
+		item->pos.z_pos = old->z;
+
+		if (old->room_number != item->room_number)
+			ItemNewRoom(item_number, old->room_number);
+
+		item->status = ITEM_INACTIVE;
+		item->anim_number = objects[item->object_number].anim_index;
+		item->frame_number = anims[item->anim_number].frame_base;
+		item->current_anim_state = 1;
+		item->goal_anim_state = 1;
+		RemoveActiveItem(item_number);
+	}
+}
+
 void inject_lara(bool replace)
 {
 	INJECT(0x0043E800, LaraAboveWater, replace);
@@ -4996,4 +5084,5 @@ void inject_lara(bool replace)
 	INJECT(0x00444770, LookLeftRight, replace);
 	INJECT(0x00444800, ResetLook, replace);
 	INJECT(0x00445020, GetStaticObjects, replace);
+	INJECT(0x00444980, ControlDeathSlide, replace);
 }

@@ -153,6 +153,7 @@ void LookUpDown();
 void LookLeftRight();
 void ResetLook();
 long GetStaticObjects(ITEM_INFO* item, short ang, long hite, long rad, long dist);
+void ControlDeathSlide(short item_number);
 
 enum lara_extras
 {
