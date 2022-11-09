@@ -1339,6 +1339,29 @@ void TestTriggers(short* data, long heavy)
 	}
 }
 
+long TriggerActive(ITEM_INFO* item)
+{
+	long reverse;
+
+	reverse = (item->flags & IFL_REVERSE) ? 0 : 1;
+
+	if ((item->flags & IFL_CODEBITS) != IFL_CODEBITS)
+		return !reverse;
+
+	if (!item->timer)
+		return reverse;
+
+	if (item->timer == -1)
+		return !reverse;
+
+	item->timer--;
+
+	if (!item->timer)
+		item->timer = -1;
+
+	return reverse;
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, inject_rando ? 1 : replace);
@@ -1350,4 +1373,5 @@ void inject_control(bool replace)
 	INJECT(0x00420E10, GetHeight, replace);
 	INJECT(0x00421370, RefreshCamera, replace);
 	INJECT(0x00421460, TestTriggers, replace);
+	INJECT(0x00421D80, TriggerActive, replace);
 }
