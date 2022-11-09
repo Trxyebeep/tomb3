@@ -575,6 +575,216 @@ static void DoUserInput(ITEM_INFO* item, ITEM_INFO* l, CARTINFO* cart)
 	CartToBaddieCollision(item);
 }
 
+static void MoveCart(ITEM_INFO* item, ITEM_INFO* l, CARTINFO* cart)
+{
+	long x, z;
+	ushort rot, quad, deg;
+	short ang;
+
+	if (cart->StopDelay)
+		cart->StopDelay--;
+
+	if (lara.MineL && lara.MineR && !cart->StopDelay && ((item->pos.x_pos & 0x380) == 512 || (item->pos.z_pos & 0x380) == 512))
+	{
+		if (cart->Speed < 0xF000)
+		{
+			cart->Flags |= 0x30;
+			item->speed = 0;
+			cart->Speed = 0;
+			return;
+		}
+
+		cart->StopDelay = 16;
+	}
+
+	if ((lara.MineL || lara.MineR) && !(lara.MineL && lara.MineR) && !cart->StopDelay && !(cart->Flags & 6))
+	{
+		rot = ushort((lara.MineL << 2) | ((ushort)item->pos.y_rot >> 14));
+
+		switch (rot)
+		{
+		case 0:
+			cart->TurnX = (item->pos.x_pos + 4096) & ~0x3FF;
+			cart->TurnZ = item->pos.z_pos & ~0x3FF;
+			break;
+
+		case 1:
+			cart->TurnX = item->pos.x_pos & ~0x3FF;
+			cart->TurnZ = (item->pos.z_pos - 4096) | 0x3FF;
+			break;
+
+		case 2:
+			cart->TurnX = (item->pos.x_pos - 4096) | 0x3FF;
+			cart->TurnZ = item->pos.z_pos | 0x3FF;
+			break;
+
+		case 3:
+			cart->TurnX = item->pos.x_pos | 0x3FF;
+			cart->TurnZ = (item->pos.z_pos + 4096) & ~0x3FF;
+			break;
+
+		case 4:
+			cart->TurnX = (item->pos.x_pos - 4096) | 0x3FF;
+			cart->TurnZ = item->pos.z_pos & ~0x3FF;
+			break;
+
+		case 5:
+			cart->TurnX = item->pos.x_pos & ~0x3FF;
+			cart->TurnZ = (item->pos.z_pos + 4096) & ~0x3FF;
+			break;
+
+		case 6:
+			cart->TurnX = (item->pos.x_pos + 4096) & ~0x3FF;
+			cart->TurnZ = item->pos.z_pos | 0x3FF;
+			break;
+
+		case 7:
+			cart->TurnX = item->pos.x_pos | 0x3FF;
+			cart->TurnZ = (item->pos.z_pos - 4096) | 0x3FF;
+			break;
+		}
+
+		ang = mGetAngle(item->pos.x_pos, item->pos.z_pos, cart->TurnX, cart->TurnZ) & 0x3FFF;
+
+		if (rot >= 4 && ang)
+			ang = 0x4000 - ang;
+
+		cart->TurnRot = item->pos.y_rot;
+		cart->TurnLen = ang;
+		cart->Flags |= lara.MineL ? 2 : 4;
+	}
+
+	if (cart->Speed < 2560)
+		cart->Speed = 2560;
+
+	cart->Speed += -4 * cart->Gradient;
+	item->speed = short(cart->Speed >> 8);
+
+	if (item->speed < 32)
+	{
+		item->speed = 32;
+		StopSoundEffect(SFX_MINE_CART_TRACK_LOOP);
+
+		if (cart->YVel)
+			StopSoundEffect(SFX_MINE_CART_PULLY_LOOP);
+		else
+			SoundEffect(SFX_MINE_CART_PULLY_LOOP, &item->pos, SFX_ALWAYS);
+	}
+	else
+	{
+		StopSoundEffect(SFX_MINE_CART_PULLY_LOOP);
+
+		if (cart->YVel)
+			StopSoundEffect(SFX_MINE_CART_TRACK_LOOP);
+		else
+			SoundEffect(SFX_MINE_CART_TRACK_LOOP, &item->pos, (item->speed << 15) + 0x1000000 | SFX_SETPITCH | SFX_ALWAYS);
+	}
+
+	if (cart->Flags & 6)
+	{
+		cart->TurnLen += 3 * item->speed;
+
+		if (cart->TurnLen > 0x3FFC)
+		{
+			if (cart->Flags & 2)
+				item->pos.y_rot = cart->TurnRot - 0x4000;
+			else
+				item->pos.y_rot = cart->TurnRot + 0x4000;
+
+			cart->Flags &= ~6;
+		}
+		else
+		{
+			if (cart->Flags & 2)
+				item->pos.y_rot = cart->TurnRot - cart->TurnLen;
+			else
+				item->pos.y_rot = cart->TurnRot + cart->TurnLen;
+		}
+
+		if (cart->Flags & 6)
+		{
+			quad = (ushort)item->pos.y_rot >> W2V_SHIFT;
+			deg = item->pos.y_rot & 0x3FFF;
+
+			switch (quad)
+			{
+			case 0:
+				x = -phd_cos(deg);
+				z = phd_sin(deg);
+				break;
+
+			case 1:
+				x = phd_sin(deg);
+				z = phd_cos(deg);
+				break;
+
+			case 2:
+				x = phd_cos(deg);
+				z = -phd_sin(deg);
+				break;
+
+			default:
+				x = -phd_sin(deg);
+				z = -phd_cos(deg);
+				break;
+			}
+
+			if (cart->Flags & 2)
+			{
+				x = -x;
+				z = -z;
+			}
+
+			item->pos.x_pos = cart->TurnX + ((3584 * x) >> W2V_SHIFT);
+			item->pos.z_pos = cart->TurnZ + ((3584 * z) >> W2V_SHIFT);
+		}
+	}
+	else
+	{
+		item->pos.x_pos += (item->speed * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+		item->pos.z_pos += (item->speed * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+	}
+
+	cart->MidPos = TestHeight(item, 0, 0);
+
+	if (!cart->YVel)
+	{
+		cart->FrontPos = TestHeight(item, 0, 256);
+		cart->Gradient = short(cart->MidPos - cart->FrontPos);
+		item->pos.y_pos = cart->MidPos;
+	}
+	else if (item->pos.y_pos > cart->MidPos)
+	{
+		if (cart->YVel > 0)
+			SoundEffect(SFX_QUAD_FRONT_IMPACT, &item->pos, SFX_ALWAYS);
+
+		item->pos.y_pos = cart->MidPos;
+		cart->YVel = 0;
+	}
+	else
+	{
+		cart->YVel += 1025;
+
+		if (cart->YVel > 0x3F00)
+			cart->YVel = 0x3F00;
+
+		item->pos.y_pos += cart->YVel >> 8;
+	}
+
+	item->pos.x_rot = cart->Gradient << 5;
+	ang = item->pos.y_rot & 0x3FFF;
+
+	if (cart->Flags & 6)
+	{
+		if (cart->Flags & 4)
+			item->pos.z_rot = -(item->speed * ang) >> 9;
+		else
+			item->pos.z_rot = (item->speed * (0x4000 - ang)) >> 9;
+	}
+	else
+		item->pos.z_rot -= item->pos.z_rot >> 3;
+}
+
 void inject_minecart(bool replace)
 {
 	INJECT(0x00453930, MineCartInitialise, replace);
@@ -585,4 +795,5 @@ void inject_minecart(bool replace)
 	INJECT(0x00453890, GetCollision, replace);
 	INJECT(0x004541F0, TestHeight, replace);
 	INJECT(0x004542A0, DoUserInput, replace);
+	INJECT(0x00453CA0, MoveCart, replace);
 }

@@ -909,12 +909,12 @@ void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 			{
 			case NORTH:
 				item->pos.y_rot = 0;
-				item->pos.z_pos = (item->pos.z_pos & ~1023) + 225;
+				item->pos.z_pos = (item->pos.z_pos & ~0x3FF) + 225;
 				break;
 
 			case EAST:
 				item->pos.y_rot = 0x4000;
-				item->pos.x_pos = (item->pos.x_pos & ~1023) + 225;
+				item->pos.x_pos = (item->pos.x_pos & ~0x3FF) + 225;
 				break;
 
 			case SOUTH:
