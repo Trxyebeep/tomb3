@@ -12,6 +12,7 @@
 #include "effects.h"
 #include "sound.h"
 #include "lara.h"
+#include "items.h"
 
 void MineCartInitialise(short item_number)
 {
@@ -785,6 +786,53 @@ static void MoveCart(ITEM_INFO* item, ITEM_INFO* l, CARTINFO* cart)
 		item->pos.z_rot -= item->pos.z_rot >> 3;
 }
 
+long MineCartControl()
+{
+	ITEM_INFO* item;
+	ITEM_INFO* l;
+	CARTINFO* cart;
+	FLOOR_INFO* floor;
+	short room_number;
+
+	l = lara_item;
+	item = &items[lara.skidoo];
+	cart = (CARTINFO*)item->data;
+	DoUserInput(item, l, cart);
+
+	if (cart->Flags & 0x10)
+		MoveCart(item, l, cart);
+
+	if (lara.skidoo != -1)
+	{
+		l->pos.x_pos = item->pos.x_pos;
+		l->pos.y_pos = item->pos.y_pos;
+		l->pos.z_pos = item->pos.z_pos;
+		l->pos.x_rot = item->pos.x_rot;
+		l->pos.y_rot = item->pos.y_rot;
+		l->pos.z_rot = item->pos.z_rot;
+	}
+
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (room_number != item->room_number)
+	{
+		ItemNewRoom(lara.skidoo, room_number);
+		ItemNewRoom(lara.item_number, room_number);
+	}
+
+	TestTriggers(trigger_index, 0);
+
+	if (!(cart->Flags & 0x80))
+	{
+		camera.target_elevation = -8190;
+		camera.target_distance = 2048;
+	}
+
+	return lara.skidoo != NO_ITEM;
+}
+
 void inject_minecart(bool replace)
 {
 	INJECT(0x00453930, MineCartInitialise, replace);
@@ -796,4 +844,5 @@ void inject_minecart(bool replace)
 	INJECT(0x004541F0, TestHeight, replace);
 	INJECT(0x004542A0, DoUserInput, replace);
 	INJECT(0x00453CA0, MoveCart, replace);
+	INJECT(0x00453B80, MineCartControl, replace);
 }
