@@ -13,6 +13,7 @@ void TriggerFireSmoke(long x, long y, long z, long body_part, long type);
 void TriggerStaticFlame(long x, long y, long z, long size);
 void TriggerSideFlame(long x, long y, long z, long angle, long speed, long pilot);
 void TriggerRocketSmoke(long x, long y, long z, long c);
+void TriggerRicochetSpark(GAME_VECTOR* pos, long angle, long size);
 
 #define TriggerWaterfallMist	( (void(__cdecl*)(long, long, long, long)) 0x0042D1F0 )
 #define TriggerGunSmoke	( (void(__cdecl*)(long, long, long, long, long, long, long, long, long)) 0x0042B4F0 )
@@ -28,4 +29,3 @@ void TriggerRocketSmoke(long x, long y, long z, long c);
 #define UpdateBats	( (void(__cdecl*)()) 0x0042D3D0 )
 #define SetupRipple	( (RIPPLE_STRUCT*(__cdecl*)(long, long, long, long, long)) 0x0042D080 )
 #define SetupSplash	( (void(__cdecl*)(SPLASH_SETUP*)) 0x0042CAC0 )
-#define TriggerRicochetSpark	( (void(__cdecl*)(GAME_VECTOR*, short)) 0x0042A680 )

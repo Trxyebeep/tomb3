@@ -567,6 +567,81 @@ void TriggerRocketSmoke(long x, long y, long z, long c)
 	sptr->dHeight = size;
 }
 
+void TriggerRicochetSpark(GAME_VECTOR* pos, long angle, long size)
+{
+	SPARKS* sptr;
+	long ang;
+	uchar c;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 255;
+	sptr->sG = (GetRandomControl() & 0x1F) + 32;
+	sptr->sB = 0;
+	sptr->dR = 192;
+	sptr->dG = (GetRandomControl() & 0x3F) + 96;
+	sptr->dB = 0;
+	sptr->ColFadeSpeed = 8;
+	sptr->FadeToBlack = 8;
+	sptr->Life = 24;
+	sptr->sLife = 24;
+	sptr->TransType = 2;
+	sptr->Dynamic = -1;
+	sptr->x = pos->x;
+	sptr->y = pos->y;
+	sptr->z = pos->z;
+	ang = ((GetRandomControl() & 0x7FF) + angle - 1024) & 0xFFF;
+	sptr->Xvel = -rcossin_tbl[ang << 1] >> 1;
+	sptr->Yvel = 2 * (GetRandomControl() & 0x1FF) - 768;
+	sptr->Zvel = rcossin_tbl[(ang << 1) + 1] >> 1;
+	sptr->Friction = 1;
+	sptr->Flags = 2;
+	sptr->Scalar = 3;
+	sptr->Gravity = short(abs(sptr->Yvel >> 6) + (GetRandomControl() & 0x1F));
+	sptr->Width = (GetRandomControl() & 3) + 4;
+	sptr->sWidth = sptr->Width;
+	sptr->dWidth = (GetRandomControl() & 1) + 1;
+	sptr->Height = (GetRandomControl() & 3) + 4;
+	sptr->sHeight = sptr->Height;
+	sptr->dHeight = (GetRandomControl() & 1) + 1;
+	sptr->MaxYvel = 0;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	c = uchar((GetRandomControl() & 0x3F) + 128);
+	sptr->sR = c;
+	sptr->sG = c;
+	sptr->sB = c;
+	c >>= 1;
+	sptr->dR = c;
+	sptr->dG = c;
+	sptr->dB = c;
+	sptr->TransType = 3;
+	sptr->ColFadeSpeed = 8;
+	sptr->FadeToBlack = 16;
+	sptr->Life = 28;
+	sptr->sLife = 28;
+	sptr->Dynamic = -1;
+	sptr->x = pos->x;
+	sptr->y = pos->y;
+	sptr->z = pos->z;
+	ang = ((GetRandomControl() & 0x7FF) + angle - 1023) & 0xFFF;
+	sptr->Xvel = -rcossin_tbl[ang << 1] >> 1;
+	sptr->Yvel = (GetRandomControl() & 0x1FF) - 384;
+	sptr->Zvel = rcossin_tbl[(ang << 1) + 1] >> 1;
+	sptr->Friction = 33;
+	sptr->Flags = 2;
+	sptr->Scalar = 3;
+	sptr->Gravity = (GetRandomControl() & 7) + 4;
+	sptr->Width = (GetRandomControl() & 3) + 4;
+	sptr->sWidth = sptr->Width;
+	sptr->dWidth = (GetRandomControl() & 1) + 1;
+	sptr->Height = (GetRandomControl() & 3) + 4;
+	sptr->sHeight = sptr->Height;
+	sptr->dHeight = (GetRandomControl() & 1) + 1;
+	sptr->MaxYvel = 0;
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -579,4 +654,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042D640, TriggerStaticFlame, replace);
 	INJECT(0x0042BBC0, TriggerSideFlame, replace);
 	INJECT(0x0042C670, TriggerRocketSmoke, replace);
+	INJECT(0x0042A680, TriggerRicochetSpark, replace);
 }
