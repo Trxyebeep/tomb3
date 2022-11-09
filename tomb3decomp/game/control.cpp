@@ -1362,6 +1362,239 @@ long TriggerActive(ITEM_INFO* item)
 	return reverse;
 }
 
+long GetCeiling(FLOOR_INFO* floor, long x, long y, long z)
+{
+	ITEM_INFO* item;
+	ROOM_INFO* r;
+	FLOOR_INFO* f;
+	long xoff, yoff, height, h1, h2, ch1, ch2;
+	short* data, type, trigger, dx, dz, t0, t1, t2, t3, hadj, ended;
+
+	f = floor;
+
+	while (f->sky_room != 255)
+	{
+		if (CheckNoColCeilingTriangle(floor, x, z) == 1)
+			break;
+
+		r = &room[f->sky_room];
+		xoff = (z - r->z) >> WALL_SHIFT;
+		yoff = (x - r->x) >> WALL_SHIFT;
+		f = &r->floor[xoff + r->x_size * yoff];
+	}
+
+	height = f->ceiling << 8;
+
+	if (height == NO_HEIGHT)
+		return NO_HEIGHT;
+
+	if (f->index)
+	{
+		data = &floor_data[f->index];
+		type = *data++;
+		ended = 0;
+
+		if ((type & 0x1F) == TILT_TYPE || (type & 0x1F) == SPLIT1 || (type & 0x1F) == SPLIT2 || (type & 0x1F) == NOCOLF1T || (type & 0x1F) == NOCOLF1B || (type & 0x1F) == NOCOLF2T || (type & 0x1F) == NOCOLF2B)
+		{
+			data++;
+
+			if (type & 0x8000)
+				ended = 1;
+
+			type = *data++;
+		}
+
+		if (!ended)
+		{
+			h1 = 0;
+			h2 = 0;
+
+			if ((type & 0x1F) != ROOF_TYPE)
+			{
+				if ((type & 0x1F) == SPLIT3 || (type & 0x1F) == SPLIT4 || (type & 0x1F) == NOCOLC1T || (type & 0x1F) == NOCOLC1B || (type & 0x1F) == NOCOLC2T || (type & 0x1F) == NOCOLC2B)
+				{
+					dx = x & 0x3FF;
+					dz = z & 0x3FF;
+					t0 = -(*data & 0xF);
+					t1 = -(*data >> 4 & 0xF);
+					t2 = -(*data >> 8 & 0xF);
+					t3 = -(*data >> 12 & 0xF);
+
+					if ((type & 0x1F) == SPLIT3 || (type & 0x1F) == NOCOLC1T || (type & 0x1F) == NOCOLC1B)
+					{
+						if (dx <= 1024 - dz)
+						{
+							hadj = type >> 10 & 0x1F;
+
+							if (hadj & 0x10)
+								hadj |= 0xFFF0;
+
+							height += hadj << 8;
+							h1 = t2 - t1;
+							h2 = t3 - t2;
+						}
+						else
+						{
+							hadj = type >> 5 & 0x1F;
+
+							if (hadj & 0x10)
+								hadj |= 0xFFF0;
+
+							height += hadj << 8;
+							h1 = t3 - t0;
+							h2 = t0 - t1;
+						}
+					}
+					else
+					{
+						if (dx <= dz)
+						{
+							hadj = type >> 10 & 0x1F;
+
+							if (hadj & 0x10)
+								hadj |= 0xFFF0;
+
+							height += hadj << 8;
+							h1 = t2 - t1;
+							h2 = t0 - t1;
+						}
+						else
+						{
+							hadj = type >> 5 & 0x1F;
+
+							if (hadj & 0x10)
+								hadj |= 0xFFF0;
+
+							height += hadj << 8;
+							h1 = t3 - t0;
+							h2 = t3 - t2;
+						}
+					}
+
+					if (chunky_flag)
+					{
+						hadj = hadj >> 10 & 0x1F;
+
+						if (hadj & 0x10)
+							hadj |= 0xFFF0;
+
+						ch2 = f->ceiling << 8;
+						ch1 = ch2 + (hadj << 8);
+
+						hadj = hadj >> 5 & 0x1F;
+
+						if (hadj & 0x10)
+							hadj |= 0xFFF0;
+
+						ch2 += hadj << 8;
+
+						if (ch1 > ch2)
+							height = ch1;
+						else
+							height = ch2;
+					}
+				}
+			}
+			else
+			{
+				h1 = *data >> 8;
+				h2 = *(char*)data;
+			}
+
+			if (!chunky_flag)
+			{
+				if (h1 < 0)
+					height += (z & 0x3FF) * h1 >> 2;
+				else
+					height -= (-1 - z & 0x3FF) * h1 >> 2;
+
+				if (h2 < 0)
+					height += (-1 - x & 0x3FF) * h2 >> 2;
+				else
+					height -= (x & 0x3FF) * h2 >> 2;
+			}
+		}
+	}
+
+	while (floor->pit_room != 255)
+	{
+		if (CheckNoColFloorTriangle(floor, x, z) == 1)
+			break;
+
+		r = &room[floor->pit_room];
+		xoff = (z - r->z) >> 10;
+		yoff = (x - r->x) >> 10;
+		floor = &r->floor[xoff + r->x_size * yoff];
+	}
+
+	if (floor->index)
+	{
+		data = &floor_data[floor->index];
+
+		do
+		{
+			type = *data++;
+
+			switch (type & 0x1F)
+			{
+			case DOOR_TYPE:
+			case TILT_TYPE:
+			case ROOF_TYPE:
+			case SPLIT1:
+			case SPLIT2:
+			case SPLIT3:
+			case SPLIT4:
+			case NOCOLF1T:
+			case NOCOLF1B:
+			case NOCOLF2T:
+			case NOCOLF2B:
+			case NOCOLC1T:
+			case NOCOLC1B:
+			case NOCOLC2T:
+			case NOCOLC2B:
+				data++;
+				break;
+
+			case TRIGGER_TYPE:
+				data++;
+
+				do
+				{
+					trigger = *data++;
+
+					if ((trigger & 0x3C00) != (TO_OBJECT << 10))
+					{
+						if ((trigger & 0x3C00) == (TO_CAMERA << 10))
+							trigger = *data++;
+					}
+					else
+					{
+						item = &items[trigger & 0x3FF];
+
+						if (objects[item->object_number].ceiling && !(item->flags & 0x8000))
+							objects[item->object_number].ceiling(item, x, y, z, &height);
+					}
+
+				} while (!(trigger & 0x8000));
+				break;
+
+			case LAVA_TYPE:
+			case CLIMB_TYPE:
+			case MONKEY_TYPE:
+			case MINEL_TYPE:
+			case MINER_TYPE:
+				break;
+
+			default:
+				S_ExitSystem("GetCeiling(): Unknown type");
+				break;
+			}
+		} while (!(type & 0x8000));
+	}
+
+	return height;
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, inject_rando ? 1 : replace);
@@ -1374,4 +1607,5 @@ void inject_control(bool replace)
 	INJECT(0x00421370, RefreshCamera, replace);
 	INJECT(0x00421460, TestTriggers, replace);
 	INJECT(0x00421D80, TriggerActive, replace);
+	INJECT(0x00421DE0, GetCeiling, replace);
 }
