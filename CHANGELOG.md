@@ -11,6 +11,7 @@
 - Prevent skipping cutscenes during picture fade.
 - Fix bug that prevented music from being completely muted.
 - Fix Lara's torso getting the water tint in wade deep water.
+- Fix Lara's hair becoming stiff while using the UPV.
 
 ### tomb3 additions
 

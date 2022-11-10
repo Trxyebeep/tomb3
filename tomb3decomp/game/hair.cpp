@@ -388,6 +388,12 @@ void HairControl(long in_cutscene)
 			hair[i].z_pos += SmokeWindZ;
 		}
 
+		if (lara.skidoo != NO_ITEM && items[lara.skidoo].object_number == UPV)
+		{
+			spaz = lara.water_status;
+			lara.water_status = LARA_UNDERWATER;
+		}
+
 		switch (lara.water_status)
 		{
 		case LARA_ABOVEWATER:
@@ -418,6 +424,9 @@ void HairControl(long in_cutscene)
 
 			break;
 		}
+
+		if (lara.skidoo != NO_ITEM && items[lara.skidoo].object_number == UPV)
+			lara.water_status = spaz;
 
 		for (int j = 0; j < 5; j++)
 		{
