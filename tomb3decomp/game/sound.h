@@ -5,10 +5,10 @@ void inject_sound(bool replace);
 
 void SOUND_Init();
 void SOUND_Stop();
+void SOUND_EndScene();
 
 #define StopSoundEffect	( (void(__cdecl*)(long)) 0x00467D00 )
 #define SoundEffect	( (long(__cdecl*)(long, PHD_3DPOS*, long)) 0x00467840 )
-#define SOUND_EndScene	( (void(__cdecl*)()) 0x00467D60 )
 
 enum sound_effect_names
 {
