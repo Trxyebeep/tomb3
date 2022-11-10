@@ -105,8 +105,61 @@ long GetSpheres(ITEM_INFO* item, SPHERE* ptr, long WorldSpace)
 	return obj->nmeshes;
 }
 
+long TestCollision(ITEM_INFO* item, ITEM_INFO* l)
+{
+	SPHERE* itemSpheres;
+	SPHERE* laraSpheres;
+	SPHERE slist_baddie[34];
+	SPHERE slist_lara[34];
+	PHD_VECTOR ip;
+	PHD_VECTOR lp;
+	ulong touch_bits;
+	long nItemSpheres, nLaraSpheres, ir, lr;
+
+	touch_bits = 0;
+	nItemSpheres = GetSpheres(item, slist_baddie, 1);
+	nLaraSpheres = GetSpheres(l, slist_lara, 1);
+
+	for (int i = 0; i < nItemSpheres; i++)
+	{
+		itemSpheres = &slist_baddie[i];
+		ir = itemSpheres->r;
+
+		if (ir > 0)
+		{
+			ip.x = itemSpheres->x;
+			ip.y = itemSpheres->y;
+			ip.z = itemSpheres->z;
+
+			for (int j = 0; j < nLaraSpheres; j++)
+			{
+				laraSpheres = &slist_lara[j];
+				lr = laraSpheres->r;
+
+				if (lr > 0)
+				{
+					lp.x = laraSpheres->x - ip.x;
+					lp.y = laraSpheres->y - ip.y;
+					lp.z = laraSpheres->z - ip.z;
+					lr += ir;
+
+					if (SQUARE(lp.x) + SQUARE(lp.y) + SQUARE(lp.z) < SQUARE(lr))
+					{
+						touch_bits |= 1 << i;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	item->touch_bits = touch_bits;
+	return touch_bits;
+}
+
 void inject_sphere(bool replace)
 {
 	INJECT(0x00468580, InitInterpolate2, replace);
 	INJECT(0x00467F70, GetSpheres, replace);
+	INJECT(0x00467E40, TestCollision, replace);
 }
