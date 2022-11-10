@@ -12,6 +12,8 @@
 - Fix bug that prevented music from being completely muted.
 - Fix Lara's torso getting the water tint in wade deep water.
 - Fix Lara's hair becoming stiff while using the UPV.
+- Fix flares going through the floor when thrown.
+- Fix flare sparks detaching after restarting the game.
 
 ### tomb3 additions
 
