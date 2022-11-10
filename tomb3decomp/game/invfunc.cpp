@@ -80,8 +80,13 @@ void Init_Requester(REQUEST_INFO* req)
 
 	req->itemtexts1_flags = RequesterFlags1;
 	req->itemtexts2_flags = RequesterFlags2;
+#ifdef TROYESTUFF
+	req->original_render_width = GetRenderWidthDownscaled();
+	req->original_render_height = GetRenderHeightDownscaled();
+#else
 	req->original_render_width = GetRenderWidth();
 	req->original_render_height = GetRenderHeight();
+#endif
 }
 
 void Remove_Requester(REQUEST_INFO* req)
@@ -123,12 +128,18 @@ void ReqItemCentreAlign(REQUEST_INFO* req, TEXTSTRING* txt)
 void ReqItemLeftalign(REQUEST_INFO* req, TEXTSTRING* txt)
 {
 	ulong h;
+	short bgndOffX;
 
 	h = GetTextScaleH(txt->scaleH);
+#ifdef TROYESTUFF
+	bgndOffX = short((req->pixwidth - T_GetTextWidth(txt)) / 2 - 8);
+#else
+	bgndOffX = short(((h * req->pixwidth) >> 17) - ((8 * h) >> 16) - T_GetTextWidth(txt) / 2);
+#endif
 
 	if (txt)
 	{
-		txt->bgndOffX = short(((h * req->pixwidth) >> 17) - ((8 * h) >> 16) - T_GetTextWidth(txt) / 2);
+		txt->bgndOffX = bgndOffX;
 		txt->xpos = req->xpos - txt->bgndOffX;
 	}
 }
@@ -136,12 +147,18 @@ void ReqItemLeftalign(REQUEST_INFO* req, TEXTSTRING* txt)
 void ReqItemRightalign(REQUEST_INFO* req, TEXTSTRING* txt)
 {
 	ulong h;
+	short bgndOffX;
 
 	h = GetTextScaleH(txt->scaleH);
+#ifdef TROYESTUFF
+	bgndOffX = short((req->pixwidth - T_GetTextWidth(txt)) / 2 - 8);
+#else
+	bgndOffX = short(((h * req->pixwidth) >> 17) - ((8 * h) >> 16) - T_GetTextWidth(txt) / 2);
+#endif
 
 	if (txt)
 	{
-		txt->bgndOffX = -short(((h * req->pixwidth) >> 17) - ((8 * h) >> 16) - T_GetTextWidth(txt) / 2);
+		txt->bgndOffX = -bgndOffX;
 		txt->xpos = req->xpos - txt->bgndOffX;
 	}
 }
@@ -154,8 +171,13 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 
 	lHeight = req->vis_lines * req->line_height + 10;
 	lOff = req->ypos - lHeight;
+#ifdef TROYESTUFF
+	rw = GetRenderWidthDownscaled();
+	rh = GetRenderHeightDownscaled();
+#else
 	rw = GetRenderWidth();
 	rh = GetRenderHeight();
+#endif
 
 	if (rw != req->original_render_width || rh != req->original_render_height)
 	{
@@ -534,7 +556,11 @@ void SetPCRequesterSize(REQUEST_INFO* req, long nLines, long y)
 {
 	long h;
 
+#ifdef TROYESTUFF
+	h = GetRenderHeightDownscaled() / 2 / REQ_LN_HEIGHT;
+#else
 	h = GetRenderHeight() / 2 / REQ_LN_HEIGHT;
+#endif
 
 	if (h > nLines)
 		h = nLines;
