@@ -857,10 +857,7 @@ void NewDrawLara(ITEM_INFO* item)
 	}
 
 	phd_PopMatrix();
-
 	DrawHair();
-
-	phd_PushMatrix();
 
 	if (lara.back_gun)
 	{
@@ -890,7 +887,6 @@ void NewDrawLara(ITEM_INFO* item)
 	}
 
 	bBlueEffect = blue;
-	phd_PopMatrix();
 
 	if (FlareOn)
 	{
