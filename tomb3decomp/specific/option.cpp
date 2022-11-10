@@ -45,6 +45,16 @@ long GetRenderHeight()
 }
 
 #ifdef TROYESTUFF
+long GetRenderWidthDownscaled()
+{
+	return phd_winwidth * 0x10000 / GetRenderScale(0x10000);
+}
+
+long GetRenderHeightDownscaled()
+{
+	return phd_winheight * 0x10000 / GetRenderScale(0x10000);
+}
+
 void do_detail_option(INVENTORY_ITEM* item)
 {
 	DIRECT3DINFO* dinfo;
