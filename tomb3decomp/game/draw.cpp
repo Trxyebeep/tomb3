@@ -18,6 +18,9 @@
 #include "health.h"
 #include "items.h"
 #include "../specific/smain.h"
+#ifdef TROYESTUFF
+#include "../newstuff/LaraDraw.h"
+#endif
 
 short null_rotations[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 static uchar EnemyWeapon[16] = { 0, 1, 129, 0, 1, 1,  1 };
@@ -1900,7 +1903,11 @@ void DrawRooms(short current_room)
 		nPolyType = 2;
 
 		if (bLaraOn)
+#ifdef TROYESTUFF
+			NewDrawLara(lara_item);
+#else
 			DrawLara(lara_item);
+#endif
 	}
 
 	if (bRoomOn)
@@ -1959,6 +1966,15 @@ void DrawRooms(short current_room)
 
 long DrawPhaseGame()
 {
+#ifdef TROYESTUFF
+	CalcLaraMatrices(0);
+	phd_PushUnitMatrix();
+	CalcLaraMatrices(1);
+	phd_PopMatrix();
+
+	SetLaraUnderwaterNodes();
+#endif
+
 	DrawRooms(camera.pos.room_number);
 	DrawGameInfo(1);
 	S_OutputPolyList();

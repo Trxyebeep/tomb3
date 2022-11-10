@@ -19,6 +19,7 @@
 #include "larafire.h"
 #include "items.h"
 #ifdef TROYESTUFF
+#include "../newstuff/LaraDraw.h"
 #include "../tomb3/tomb3.h"
 #endif
 
@@ -4458,6 +4459,25 @@ void GetLaraHandAbsPosition(PHD_VECTOR* vec, long lr)
 	long frac, rate, gun;
 	short spaz;
 	
+#ifdef TROYESTUFF		//forgive me..
+	if (lr == LEFT_HAND)
+		lr = LMX_HAND_L;
+	else if (lr == RIGHT_HAND)
+		lr = LMX_HAND_R;
+	else if (lr == LARA_HIPS)
+		lr = LMX_HIPS;
+	else if (lr == LARA_TORSO)
+		lr = LMX_TORSO;
+	else if (lr == LARA_HEAD)
+		lr = LMX_HEAD;
+	else if (lr == LEFT_FOOT)
+		lr = LMX_FOOT_L;
+	else if (lr == RIGHT_FOOT)
+		lr = LMX_FOOT_R;
+
+	return GetLaraMeshPos(vec, lr);
+#endif
+
 	item = lara_item;
 
 	if (lara.hit_direction < 0)

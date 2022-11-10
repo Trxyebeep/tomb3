@@ -10,6 +10,7 @@
 - Prevent save/load hotkeys during picture fade.
 - Prevent skipping cutscenes during picture fade.
 - Fix bug that prevented music from being completely muted.
+- Fix Lara's torso getting the water tint in wade deep water.
 
 ### tomb3 additions
 
@@ -19,6 +20,7 @@
 - Double the amount of vertices/polygons that can be drawn at a time.
 - Add pause menu.
 - Add option to control inventory/underwater music mute.
+- Completely refactor Lara drawing to stop recalculating her matrices multiple times every frame. Only once per frame now.
 
 ### tomb3 bug fixes
 

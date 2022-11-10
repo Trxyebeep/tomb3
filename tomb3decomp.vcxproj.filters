@@ -428,6 +428,9 @@
     <ClInclude Include="tomb3decomp\newstuff\pausemenu.h">
       <Filter>specific</Filter>
     </ClInclude>
+    <ClInclude Include="tomb3decomp\newstuff\LaraDraw.h">
+      <Filter>specific</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tomb3decomp\game\51baton.cpp">
@@ -823,6 +826,7 @@
     <ClCompile Include="tomb3decomp\specific\mmx.cpp" />
     <ClCompile Include="tomb3decomp\specific\fmv.cpp" />
     <ClCompile Include="tomb3decomp\newstuff\pausemenu.cpp" />
+    <ClCompile Include="tomb3decomp\newstuff\LaraDraw.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="tomb3decomp.rc" />
