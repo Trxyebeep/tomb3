@@ -52,6 +52,10 @@ void InitColours()
 
 /************Requester stuff************/
 
+#define STATS_Y_POS		-32
+#define STATS_LN_COUNT	7
+#define REQ_LN_HEIGHT	18
+
 void Init_Requester(REQUEST_INFO* req)
 {
 	req->background_flags = 1;
@@ -530,7 +534,7 @@ void SetPCRequesterSize(REQUEST_INFO* req, long nLines, long y)
 {
 	long h;
 
-	h = GetRenderHeight() / 2 / 18;	//HMMMM
+	h = GetRenderHeight() / 2 / REQ_LN_HEIGHT;
 
 	if (h > nLines)
 		h = nLines;
@@ -610,8 +614,8 @@ void ShowGymStatsText(const char* time, long type)
 	}
 
 	Stats_Requester.noselector = 1;
-	SetPCRequesterSize(&Stats_Requester, 7, -32);
-	Stats_Requester.line_height = 18;
+	SetPCRequesterSize(&Stats_Requester, STATS_LN_COUNT, STATS_Y_POS);
+	Stats_Requester.line_height = REQ_LN_HEIGHT;
 	Stats_Requester.item = 0;
 	Stats_Requester.selected = 0;
 	Stats_Requester.line_offset = 0;
@@ -736,8 +740,8 @@ void ShowStatsText(const char* time, long type)
 	}
 
 	Stats_Requester.noselector = 1;
-	SetPCRequesterSize(&Stats_Requester, 7, -32);
-	Stats_Requester.line_height = 18;
+	SetPCRequesterSize(&Stats_Requester, STATS_LN_COUNT, STATS_Y_POS);
+	Stats_Requester.line_height = REQ_LN_HEIGHT;
 	Stats_Requester.item = 0;
 	Stats_Requester.selected = 0;
 	Stats_Requester.line_offset = 0;
@@ -817,8 +821,8 @@ void ShowEndStatsText()
 	}
 
 	Stats_Requester.noselector = 1;
-	SetPCRequesterSize(&Stats_Requester, 7, -32);
-	Stats_Requester.line_height = 18;
+	SetPCRequesterSize(&Stats_Requester, STATS_LN_COUNT, STATS_Y_POS);
+	Stats_Requester.line_height = REQ_LN_HEIGHT;
 	Stats_Requester.item = 0;
 	Stats_Requester.selected = 0;
 	Stats_Requester.line_offset = 0;
