@@ -206,6 +206,15 @@ static void CalcLaraMatricesN(short* frame, long* bone, long flag)
 		if (lara.gun_type == LG_FLARE && lara.left_arm.flash_gun)
 			FlareOn = 1;
 
+		if (GnGameMode == GAMEMODE_IN_CUTSCENE)
+		{
+			if (lara.left_arm.flash_gun)
+				LeftFlash = 1;
+
+			if (lara.right_arm.flash_gun)
+				RightFlash = 1;
+		}
+
 		break;
 
 	case LG_PISTOLS:
@@ -566,6 +575,15 @@ static void CalcLaraMatrices_I(short* frame1, short* frame2, long frac, long rat
 		if (lara.gun_type == LG_FLARE && lara.left_arm.flash_gun)
 			FlareOn = 1;
 
+		if (GnGameMode == GAMEMODE_IN_CUTSCENE)
+		{
+			if (lara.left_arm.flash_gun)
+				LeftFlash = 1;
+
+			if (lara.right_arm.flash_gun)
+				RightFlash = 1;
+		}
+
 		break;
 
 	case LG_PISTOLS:
@@ -921,7 +939,12 @@ void NewDrawLara(ITEM_INFO* item)
 		phd_mxptr[M21] = lara_matrices[indices_count * LMX_HAND_L + M21];
 		phd_mxptr[M22] = lara_matrices[indices_count * LMX_HAND_L + M22];
 		phd_mxptr[M23] = lara_matrices[indices_count * LMX_HAND_L + M23];
-		DrawGunFlash(lara.gun_type, 0);
+
+		if (GnGameMode == GAMEMODE_IN_CUTSCENE)
+			DrawGunFlash(LG_PISTOLS, 0);
+		else
+			DrawGunFlash(lara.gun_type, 0);
+
 		phd_PopMatrix();
 	}
 
@@ -940,7 +963,12 @@ void NewDrawLara(ITEM_INFO* item)
 		phd_mxptr[M21] = lara_matrices[indices_count * LMX_HAND_R + M21];
 		phd_mxptr[M22] = lara_matrices[indices_count * LMX_HAND_R + M22];
 		phd_mxptr[M23] = lara_matrices[indices_count * LMX_HAND_R + M23];
-		DrawGunFlash(lara.gun_type, 0);
+
+		if (GnGameMode == GAMEMODE_IN_CUTSCENE)
+			DrawGunFlash(LG_PISTOLS, 0);
+		else
+			DrawGunFlash(lara.gun_type, 0);
+
 		phd_PopMatrix();
 	}
 
