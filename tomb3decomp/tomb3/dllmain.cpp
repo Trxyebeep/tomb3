@@ -46,6 +46,7 @@
 #include "../game/boat.h"
 #include "../game/quadbike.h"
 #include "../game/minecart.h"
+#include "../game/sphere.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -155,6 +156,7 @@ void inject_all(bool replace)
 	inject_boat(replace);
 	inject_quadbike(replace);
 	inject_minecart(replace);
+	inject_sphere(replace);
 
 	//specific
 	inject_drawbars(replace);
