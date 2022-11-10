@@ -1506,6 +1506,29 @@ void do_compass_option(INVENTORY_ITEM* item)
 	SoundEffect(SFX_MENU_STOPWATCH, 0, SFX_ALWAYS);
 }
 
+#define PASSPORT_LINE_COUNT	10
+#define PASSPORT_Y_BOX		-32
+#define PASSPORT_Y_TITLE	-16
+
+#ifdef TROYESTUFF
+static void SetPassportRequesterSize(REQUEST_INFO* req)
+{
+	float scale;
+	long nLines, adjust;
+
+	scale = (float)GetRenderHeight() / (float)GetRenderScale(480);
+	adjust = (scale > 1.0F) ? 5 : 0;
+	nLines = long((PASSPORT_LINE_COUNT + adjust) * scale - adjust);
+
+	if (nLines < 5)
+		nLines = 5;
+	else if (nLines > 16)
+		nLines = 16;
+
+	SetPCRequesterSize(req, nLines, PASSPORT_Y_BOX);
+}
+#endif
+
 void do_passport_option(INVENTORY_ITEM* item)
 {
 	static long mode;
@@ -1529,7 +1552,11 @@ void do_passport_option(INVENTORY_ITEM* item)
 			inputDB = IN_RIGHT;
 		else if (mode == 1)
 		{
-			SetPCRequesterSize(&Load_Game_Requester, 10, -32);
+#ifdef TROYESTUFF
+			SetPassportRequesterSize(&Load_Game_Requester);
+#else
+			SetPCRequesterSize(&Load_Game_Requester, PASSPORT_LINE_COUNT, PASSPORT_Y_BOX);
+#endif
 			select = Display_Requester(&Load_Game_Requester, 1, 1);
 
 			if (select)
@@ -1558,7 +1585,7 @@ void do_passport_option(INVENTORY_ITEM* item)
 			{
 				if (!passport_text1)
 				{
-					passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_LOADGAME]);
+					passport_text1 = T_Print(0, PASSPORT_Y_TITLE, 5, GF_GameStrings[GT_LOADGAME]);
 					T_BottomAlign(passport_text1, 1);
 					T_CentreH(passport_text1, 1);
 				}
@@ -1591,12 +1618,20 @@ void do_passport_option(INVENTORY_ITEM* item)
 		{
 			if (mode == 1)
 			{
-				SetPCRequesterSize(&Load_Game_Requester, 10, -32);
+#ifdef TROYESTUFF
+				SetPassportRequesterSize(&Load_Game_Requester);
+#else
+				SetPCRequesterSize(&Load_Game_Requester, PASSPORT_LINE_COUNT, PASSPORT_Y_BOX);
+#endif
 				select = Display_Requester(&Load_Game_Requester, 1, 1);
 			}
 			else
 			{
-				SetPCRequesterSize(&Level_Select_Requester, 10, -32);
+#ifdef TROYESTUFF
+				SetPassportRequesterSize(&Level_Select_Requester);
+#else
+				SetPCRequesterSize(&Level_Select_Requester, PASSPORT_LINE_COUNT, PASSPORT_Y_BOX);
+#endif
 				select = Display_Requester(&Level_Select_Requester, 1, 1);
 			}
 
@@ -1631,9 +1666,9 @@ void do_passport_option(INVENTORY_ITEM* item)
 				if (!passport_text1)
 				{
 					if (Inventory_Mode == INV_TITLE_MODE || CurrentLevel == LV_GYM)
-						passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_STARTGAME]);
+						passport_text1 = T_Print(0, PASSPORT_Y_TITLE, 5, GF_GameStrings[GT_STARTGAME]);
 					else
-						passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_SAVEGAME]);
+						passport_text1 = T_Print(0, PASSPORT_Y_TITLE, 5, GF_GameStrings[GT_SAVEGAME]);
 
 					T_BottomAlign(passport_text1, 1);
 					T_CentreH(passport_text1, 1);
@@ -1687,11 +1722,11 @@ void do_passport_option(INVENTORY_ITEM* item)
 		if (!passport_text1)
 		{
 			if (Inventory_Mode == INV_TITLE_MODE)
-				passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_EXITGAME]);
+				passport_text1 = T_Print(0, PASSPORT_Y_TITLE, 5, GF_GameStrings[GT_EXITGAME]);
 			else if (gameflow.demoversion)
-				passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_EXITDEMO]);
+				passport_text1 = T_Print(0, PASSPORT_Y_TITLE, 5, GF_GameStrings[GT_EXITDEMO]);
 			else
-				passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_EXIT2TITLE]);
+				passport_text1 = T_Print(0, PASSPORT_Y_TITLE, 5, GF_GameStrings[GT_EXIT2TITLE]);
 
 			T_BottomAlign(passport_text1, 1);
 			T_CentreH(passport_text1, 1);
