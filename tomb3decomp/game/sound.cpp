@@ -53,9 +53,29 @@ void SOUND_EndScene()
 	}
 }
 
+void StopSoundEffect(long sfx)
+{
+	long lut;
+
+	if (sound_active)
+	{
+		lut = sample_lut[sfx];
+
+		for (int i = 0; i < 32; i++)
+		{
+			if (LaSlot[i].nSampleInfo >= lut && LaSlot[i].nSampleInfo < (lut + ((sample_infos[lut].flags >> 2) & 0xF)))
+			{
+				S_SoundStopSample(i);
+				LaSlot[i].nSampleInfo = -1;
+			}
+		}
+	}
+}
+
 void inject_sound(bool replace)
 {
 	INJECT(0x00467E20, SOUND_Init, replace);
 	INJECT(0x00467DF0, SOUND_Stop, replace);
 	INJECT(0x00467D60, SOUND_EndScene, replace);
+	INJECT(0x00467D00, StopSoundEffect, replace);
 }

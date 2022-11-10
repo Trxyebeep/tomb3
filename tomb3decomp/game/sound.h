@@ -6,8 +6,8 @@ void inject_sound(bool replace);
 void SOUND_Init();
 void SOUND_Stop();
 void SOUND_EndScene();
+void StopSoundEffect(long sfx);
 
-#define StopSoundEffect	( (void(__cdecl*)(long)) 0x00467D00 )
 #define SoundEffect	( (long(__cdecl*)(long, PHD_3DPOS*, long)) 0x00467840 )
 
 enum sound_effect_names
