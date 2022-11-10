@@ -1286,7 +1286,7 @@ tomb3decomp progress.
 0x00467840		SoundEffect
 0x00467D00		StopSoundEffect
 0x00467D60		SOUND_EndScene
-0x00467DF0		SOUND_Stop
+0x00467DF0	+	SOUND_Stop
 0x00467E20	+	SOUND_Init
 
 
