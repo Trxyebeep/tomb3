@@ -16,9 +16,21 @@
 #include "../specific/input.h"
 #include "hair.h"
 #include "../specific/specific.h"
+#ifdef TROYESTUFF
+#include "../newstuff/LaraDraw.h"
+#endif
 
 long DrawPhaseCinematic()
 {
+#ifdef TROYESTUFF
+	CalcLaraMatrices(0);
+	phd_PushUnitMatrix();
+	CalcLaraMatrices(1);
+	phd_PopMatrix();
+
+	SetLaraUnderwaterNodes();
+#endif
+
 	camera_underwater = 0;
 	DrawRooms(camera.pos.room_number);
 	S_DrawSparks();
