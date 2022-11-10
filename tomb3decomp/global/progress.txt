@@ -1294,7 +1294,7 @@ tomb3decomp progress.
 
 0x00467E40	+	TestCollision
 0x00467F70	+	GetSpheres
-0x00468250		GetJointAbsPosition
+0x00468250	+	GetJointAbsPosition
 0x00468580	+	InitInterpolate2
 
 

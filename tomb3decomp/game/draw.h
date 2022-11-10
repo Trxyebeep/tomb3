@@ -37,3 +37,5 @@ void DrawAnimatingItem(ITEM_INFO* item);
 
 #define dummyDrawFunc	( (void(__cdecl*)(ITEM_INFO*)) 0x004837C0 )
 //because DrawEffect tests against an address. when ObjectObjects etc. are done, make an empty draw function and replace this with it.
+
+extern short null_rotations[12];
