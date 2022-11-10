@@ -19,18 +19,27 @@ void S_DrawScreenLine(long x, long y, long z, long w, long h, long c, ushort* gr
 
 void S_DrawScreenBox(long x, long y, long z, long w, long h, long sprnum, ushort* grdptr, ushort f)
 {
-	S_DrawScreenLine(x, y - 1, z, w + 1, 0, 15, 0, f);
-	S_DrawScreenLine(x + 1, y, z, w - 1, 0, 31, 0, f);
-	S_DrawScreenLine(x + w, y + 1, z, 0, h - 1, 15, 0, f);
-	S_DrawScreenLine(x + w + 1, y, z, 0, h + 1, 31, 0, f);
-	S_DrawScreenLine(x - 1, y - 1, z, 0, h + 1, 15, 0, f);
-	S_DrawScreenLine(x, y, z, 0, h - 1, 31, 0, f);
-	S_DrawScreenLine(x, h + y, z, w - 1, 0, 15, 0, f);
-	S_DrawScreenLine(x - 1, h + y + 1, z, w + 1, 0, 31, 0, f);
+	long sx, sy;
+
+	sx = x + w;
+	sy = y + h;
+	S_DrawScreenLine(x,			y - 1,	z, w + 1,	0,		15, 0, f);
+	S_DrawScreenLine(x + 1,		y,		z, w - 1,	0,		31, 0, f);
+	S_DrawScreenLine(sx,		y + 1,	z, 0,		h - 1,	15, 0, f);
+	S_DrawScreenLine(sx + 1,	y,		z, 0,		h + 1,	31, 0, f);
+	S_DrawScreenLine(x - 1,		y - 1,	z, 0,		h + 1,	15, 0, f);
+	S_DrawScreenLine(x,			y,		z, 0,		h - 1,	31, 0, f);
+	S_DrawScreenLine(x,			sy,		z, w - 1,	0,		15, 0, f);
+	S_DrawScreenLine(x - 1,		sy + 1, z, w + 1,	0,		31, 0, f);
 }
 
 void S_DrawScreenFBox(long x, long y, long z, long w, long h, long c, ushort* grdptr, ushort f)
 {
+	long adder;
+
+	adder = 1;
+	w += adder;
+	h += adder;
 	InsertTransQuad(phd_winxmin + x, phd_winymin + y, w + 1, h + 1, phd_znear + 0x50000);
 }
 
