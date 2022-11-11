@@ -221,7 +221,7 @@ void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACEX surf)
 	desc.dwSize = sizeof(DDSURFACEDESCX);
 	surf->Lock(0, &desc, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, 0);
 	source = (char*)desc.lpSurface;
-	dest = (char*)malloc(desc.ddpfPixelFormat.dwRGBBitCount >> 3 << 16);	//fix me
+	dest = (char*)malloc((256 * 256) * (desc.ddpfPixelFormat.dwRGBBitCount >> 3));
 	DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwRBitMask, &rshift, &rcount);
 	DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwGBitMask, &gshift, &gcount);
 	DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwBBitMask, &bshift, &bcount);
