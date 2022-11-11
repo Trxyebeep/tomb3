@@ -11,6 +11,12 @@
 #include "../tomb3/tomb3.h"
 #endif
 
+#define AMMO_XPOS_PC	-10
+#define AMMO_YPOS_PC	50
+
+#define AMMO_XPOS_PS	-24
+#define AMMO_YPOS_PS	220
+
 #ifndef TROYESTUFF
 DISPLAYPU pickups[1];
 #else
@@ -433,10 +439,13 @@ void DrawAmmoInfo()
 	RemoveAmmoText();
 
 #ifdef TROYESTUFF
-	ammotext = T_Print(-10, 30, 0, txt);
-	T_TopAlign(ammotext, 1);
+	if (tomb3.bar_pos == BPOS_PSX)
+		ammotext = T_Print(AMMO_XPOS_PS, AMMO_YPOS_PS, 3, txt);
+	else
+		ammotext = T_Print(AMMO_XPOS_PC, AMMO_YPOS_PC, 0, txt);
+
 #else
-	ammotext = T_Print(-10, 50, 0, txt);
+	ammotext = T_Print(AMMO_XPOS_PC, AMMO_YPOS_PC, 0, txt);
 #endif
 
 	T_RightAlign(ammotext, 1);

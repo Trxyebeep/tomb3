@@ -345,7 +345,11 @@ void S_DrawDashBar(long percent)
 	else
 	{
 		xs = GetRenderScale(8);
-		ys = GetRenderScale(25);
+
+		if (tomb3.bar_pos == BPOS_IMPROVED)
+			ys = GetRenderScale(8);
+		else
+			ys = GetRenderScale(25);
 	}
 
 	p = GetRenderScale(1);
@@ -436,7 +440,11 @@ void S_DrawAirBar(long percent)
 	else
 	{
 		xs = GetRenderScale(8);
-		ys = GetRenderScale(8);
+
+		if (tomb3.bar_pos == BPOS_IMPROVED)
+			ys = GetRenderScale(25);
+		else
+			ys = GetRenderScale(8);
 	}
 
 	p = GetRenderScale(1);

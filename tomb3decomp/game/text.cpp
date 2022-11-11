@@ -57,19 +57,6 @@ void T_RightAlign(TEXTSTRING* string, short flag)
 		string->flags &= ~T_RIGHTALIGN;
 }
 
-#ifdef TROYESTUFF
-void T_TopAlign(TEXTSTRING* string, short flag)
-{
-	if (!string)
-		return;
-
-	if (flag)
-		string->flags |= T_TOPALIGN;
-	else
-		string->flags &= ~T_TOPALIGN;
-}
-#endif
-
 void T_CentreV(TEXTSTRING* string, short flag)
 {
 	if (!string)
@@ -415,8 +402,6 @@ void T_DrawThisText(TEXTSTRING* string)
 		y += GetRenderHeightDownscaled() / 2;
 	else if (string->flags & T_BOTTOMALIGN)
 		y += GetRenderHeightDownscaled();
-	else if (string->flags & T_TOPALIGN)	//new
-		y += GetRenderScale(y);
 #else
 	if (string->flags & T_CENTRE_H)
 		x += (GetRenderWidth() - w) / 2;
