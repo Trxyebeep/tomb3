@@ -38,7 +38,7 @@ static long ShowPauseRequester(const char* txt, const char* opt1, const char* op
 
 	Pause_Requester.noselector = 0;
 	SetPCRequesterSize(&Pause_Requester, 2, -48);
-	Pause_Requester.line_height = 18;
+	Pause_Requester.line_height = 19;
 	Pause_Requester.item = 0;
 	Pause_Requester.selected = selected;
 	Pause_Requester.line_offset = 0;

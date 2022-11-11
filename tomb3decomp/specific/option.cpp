@@ -102,13 +102,13 @@ void do_detail_option(INVENTORY_ITEM* item)
 		dtext[DT_TRUEALPHA] = T_Print(w, 35, 0, GF_PCStrings[PCSTR_TRUEALPHA]);
 		dtext[DT_GAMMA] = T_Print(w, 55, 0, GF_PCStrings[PCSTR_SKY]);
 		
-		T_AddBackground(dtext[DT_EMPTY], 240, 150, 0, 0, 48, 0, 0, 0);
-		T_AddOutline(dtext[DT_EMPTY], 1, 15, 0, 0);
+		T_AddBackground(dtext[DT_EMPTY], 240, 150, 0, 0, 48, 0, &req_bgnd_gour1, 2);
+		T_AddOutline(dtext[DT_EMPTY], 1, 15, &req_bgnd_gour2, 0);
 		T_CentreH(dtext[DT_EMPTY], 1);
 		T_CentreV(dtext[DT_EMPTY], 1);
 
-		T_AddBackground(dtext[DT_VIDEOTITLE], 236, 0, 0, 0, 48, 0, 0, 0);
-		T_AddOutline(dtext[DT_VIDEOTITLE], 1, 4, 0, 0);
+		T_AddBackground(dtext[DT_VIDEOTITLE], 236, 0, 0, 0, 48, 0, &req_main_gour1, 2);
+		T_AddOutline(dtext[DT_VIDEOTITLE], 1, 4, &req_main_gour2, 0);
 		T_CentreH(dtext[DT_VIDEOTITLE], 1);
 		T_CentreV(dtext[DT_VIDEOTITLE], 1);
 
@@ -186,8 +186,8 @@ void do_detail_option(INVENTORY_ITEM* item)
 			GammaOption = 2.5F;
 		}
 
-		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, 0, 0);
-		T_AddOutline(dtext[selection + nSel], 1, 4, 0, 0);
+		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, &req_sel_gour1, 1);
+		T_AddOutline(dtext[selection + nSel], 1, 4, &req_sel_gour2, 0);
 		free(resolutions);
 	}
 
@@ -348,8 +348,8 @@ void do_detail_option(INVENTORY_ITEM* item)
 		save = 1;
 		T_RemoveOutline(dtext[selection + nSel]);
 		T_RemoveBackground(dtext[selection + nSel]);
-		T_AddOutline(dtext[selection + nSel], 1, 4, 0, 0);
-		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, 0, 0);
+		T_AddOutline(dtext[selection + nSel], 1, 4, &req_sel_gour2, 0);
+		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, &req_sel_gour1, 1);
 	}
 
 	if (inputDB & IN_BACK && selection > 0)
@@ -369,8 +369,8 @@ void do_detail_option(INVENTORY_ITEM* item)
 			}
 		}
 
-		T_AddOutline(dtext[selection + nSel], 1, 4, 0, 0);
-		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, 0, 0);
+		T_AddOutline(dtext[selection + nSel], 1, 4, &req_sel_gour2, 0);
+		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, &req_sel_gour1, 1);
 	}
 
 	if (inputDB & IN_FORWARD && selection <= DOP_NOPTS - 2)
@@ -381,8 +381,8 @@ void do_detail_option(INVENTORY_ITEM* item)
 
 		while (!available[selection] && selection <= DOP_NOPTS - 1) selection++;
 
-		T_AddOutline(dtext[selection + nSel], 1, 4, 0, 0);
-		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, 0, 0);
+		T_AddOutline(dtext[selection + nSel], 1, 4, &req_sel_gour2, 0);
+		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, &req_sel_gour1, 1);
 	}
 
 	if (inputDB & (IN_SELECT | IN_DESELECT))
@@ -888,8 +888,13 @@ void do_sound_option(INVENTORY_ITEM* item)
 
 		wsprintf(buf, "| %2d", Option_Music_Volume);
 		stext[0] = T_Print(0, 0, 0, buf);
+#ifdef TROYESTUFF
+		T_AddBackground(stext[0], 168, 0, 0, 0, 8, 0, &req_bgnd_gour1, 2);
+		T_AddOutline(stext[0], 1, 4, &req_bgnd_gour2, 0);
+#else
 		T_AddBackground(stext[0], 168, 0, 0, 0, 8, 0, 0, 0);
 		T_AddOutline(stext[0], 1, 4, 0, 0);
+#endif
 
 		if (Option_SFX_Volume > 10)
 			Option_SFX_Volume = 10;
@@ -898,12 +903,22 @@ void do_sound_option(INVENTORY_ITEM* item)
 		stext[1] = T_Print(0, 25, 0, buf);
 
 		stext[2] = T_Print(0, -32, 0, " ");
+#ifdef TROYESTUFF
+		T_AddBackground(stext[2], 180, 85, 0, 0, 48, 0, &req_bgnd_gour1, 2);
+		T_AddOutline(stext[2], 1, 15, &req_bgnd_gour2, 0);
+#else
 		T_AddBackground(stext[2], 180, 85, 0, 0, 48, 0, 0, 0);
 		T_AddOutline(stext[2], 1, 15, 0, 0);
+#endif
 
 		stext[3] = T_Print(0, -30, 0, GF_PCStrings[PCSTR_SETVOLUME]);
+#ifdef TROYESTUFF
+		T_AddBackground(stext[3], 176, 0, 0, 0, 8, 0, &req_main_gour1, 2);
+		T_AddOutline(stext[3], 1, 15, &req_main_gour2, 0);
+#else
 		T_AddBackground(stext[3], 176, 0, 0, 0, 8, 0, 0, 0);
 		T_AddOutline(stext[3], 1, 15, 0, 0);
+#endif
 
 		for (int i = 0; i < 4; i++)
 		{
@@ -917,8 +932,13 @@ void do_sound_option(INVENTORY_ITEM* item)
 		T_RemoveOutline(stext[item_data]);
 		T_RemoveBackground(stext[item_data]);
 		item_data--;
+#ifdef TROYESTUFF
+		T_AddBackground(stext[item_data], 168, 0, 0, 0, 8, 0, &req_sel_gour1, 1);
+		T_AddOutline(stext[item_data], 1, 4, &req_sel_gour2, 0);
+#else
 		T_AddBackground(stext[item_data], 168, 0, 0, 0, 8, 0, 0, 0);
 		T_AddOutline(stext[item_data], 1, 4, 0, 0);
+#endif
 	}
 
 	if (inputDB & IN_BACK && item_data < 1)
@@ -926,8 +946,13 @@ void do_sound_option(INVENTORY_ITEM* item)
 		T_RemoveOutline(stext[item_data]);
 		T_RemoveBackground(stext[item_data]);
 		item_data++;
+#ifdef TROYESTUFF
+		T_AddBackground(stext[item_data], 168, 0, 0, 0, 8, 0, &req_sel_gour1, 1);
+		T_AddOutline(stext[item_data], 1, 4, &req_sel_gour2, 0);
+#else
 		T_AddBackground(stext[item_data], 168, 0, 0, 0, 8, 0, 0, 0);
 		T_AddOutline(stext[item_data], 1, 4, 0, 0);
+#endif
 	}
 
 	goin = 0;
@@ -1217,12 +1242,22 @@ static void S_ShowControls()
 	ctrltext[1] = T_Print(0, CONTROL_Y_BOX, 0, " ");
 	T_CentreV(ctrltext[1], 1);
 	T_CentreH(ctrltext[1], 1);
+#ifdef TROYESTUFF
+	T_AddOutline(ctrltext[1], 1, 15, &req_bgnd_gour2, 0);
+
+	if (mid < 320)
+		T_AddBackground(ctrltext[1], CONTROL_WIDTH_LOW, CONTROL_HEIGHT_LOW, 0, 0, 48, 0, &req_bgnd_gour1, 2);
+	else
+		T_AddBackground(ctrltext[1], CONTROL_WIDTH_HIGH, CONTROL_HEIGHT_HIGH, 0, 0, 48, 0, &req_bgnd_gour1, 2);
+
+#else
 	T_AddOutline(ctrltext[1], 1, 15, 0, 0);
 
 	if (mid < 320)
 		T_AddBackground(ctrltext[1], CONTROL_WIDTH_LOW, CONTROL_HEIGHT_LOW, 0, 0, 48, 0, 0, 0);
 	else
 		T_AddBackground(ctrltext[1], CONTROL_WIDTH_HIGH, CONTROL_HEIGHT_HIGH, 0, 0, 48, 0, 0, 0);
+#endif
 }
 
 static void S_ChangeCtrlText()
@@ -1279,8 +1314,14 @@ void do_control_option(INVENTORY_ITEM* item)
 		T_CentreV(ctrltext[0], 1);
 		S_ShowControls();
 		keychange = -1;
+
+#ifdef TROYESTUFF
+		T_AddBackground(ctrltext[0], 0, 0, 0, 0, 48, 0, &req_sel_gour1, 1);
+		T_AddOutline(ctrltext[0], 1, 15, &req_sel_gour2, 0);
+#else
 		T_AddBackground(ctrltext[0], 0, 0, 0, 0, 48, 0, 0, 0);
 		T_AddOutline(ctrltext[0], 1, 15, 0, 0);
+#endif
 	}
 
 	switch (sel)
@@ -1309,8 +1350,13 @@ void do_control_option(INVENTORY_ITEM* item)
 					keychange -= 7;
 
 				ctext[keychange]->zpos = 16;
+#ifdef TROYESTUFF
+				T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, &req_sel_gour1, 1);
+				T_AddOutline(ctext[keychange], 1, 15, &req_sel_gour2, 0);
+#else
 				T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, 0, 0);
 				T_AddOutline(ctext[keychange], 1, 15, 0, 0);
+#endif
 			}
 		}
 		else if (inputDB & IN_DESELECT || (inputDB & IN_SELECT && keychange == -1))
@@ -1337,8 +1383,13 @@ void do_control_option(INVENTORY_ITEM* item)
 				T_RemoveOutline(ctext[keychange]);
 
 				btext[keychange]->zpos = 16;
+#ifdef TROYESTUFF
+				T_AddBackground(btext[keychange], 0, 0, 0, 0, 0, 0, &req_sel_gour1, 1);
+				T_AddOutline(btext[keychange], 1, 15, &req_sel_gour2, 0);
+#else
 				T_AddBackground(btext[keychange], 0, 0, 0, 0, 0, 0, 0, 0);
 				T_AddOutline(btext[keychange], 1, 15, 0, 0);
+#endif
 			}
 			else if (inputDB & IN_FORWARD)
 			{
@@ -1359,6 +1410,19 @@ void do_control_option(INVENTORY_ITEM* item)
 				if (keychange < -1)
 					keychange = NLAYOUTKEYS - 1;
 
+#ifdef TROYESTUFF
+				if (keychange == -1)
+				{
+					T_AddBackground(ctrltext[0], 0, 0, 0, 0, 0, 0, &req_sel_gour1, 1);
+					T_AddOutline(ctrltext[0], 1, 15, &req_sel_gour2, 0);
+				}
+				else
+				{
+					ctext[keychange]->zpos = 16;
+					T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, &req_sel_gour1, 1);
+					T_AddOutline(ctext[keychange], 1, 15, &req_sel_gour2, 0);
+				}
+#else
 				if (keychange == -1)
 				{
 					T_AddBackground(ctrltext[0], 0, 0, 0, 0, 0, 0, 0, 0);
@@ -1370,6 +1434,7 @@ void do_control_option(INVENTORY_ITEM* item)
 					T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, 0, 0);
 					T_AddOutline(ctext[keychange], 1, 15, 0, 0);
 				}
+#endif
 			}
 			else if (inputDB & IN_BACK)
 			{
@@ -1390,6 +1455,19 @@ void do_control_option(INVENTORY_ITEM* item)
 				if (keychange > NLAYOUTKEYS - 1)
 					keychange = -1;
 
+#ifdef TROYESTUFF
+				if (keychange == -1)
+				{
+					T_AddBackground(ctrltext[0], 0, 0, 0, 0, 0, 0, &req_sel_gour1, 1);
+					T_AddOutline(ctrltext[0], 1, 15, &req_sel_gour2, 0);
+				}
+				else
+				{
+					ctext[keychange]->zpos = 16;
+					T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, &req_sel_gour1, 1);
+					T_AddOutline(ctext[keychange], 1, 15, &req_sel_gour2, 0);
+				}
+#else
 				if (keychange == -1)
 				{
 					T_AddBackground(ctrltext[0], 0, 0, 0, 0, 0, 0, 0, 0);
@@ -1401,6 +1479,7 @@ void do_control_option(INVENTORY_ITEM* item)
 					T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, 0, 0);
 					T_AddOutline(ctext[keychange], 1, 15, 0, 0);
 				}
+#endif
 			}
 		}
 
@@ -1454,8 +1533,13 @@ void do_control_option(INVENTORY_ITEM* item)
 		T_RemoveOutline(btext[keychange]);
 
 		ctext[keychange]->zpos = 16;
+#ifdef TROYESTUFF
+		T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, &req_sel_gour1, 1);
+		T_AddOutline(ctext[keychange], 1, 15, &req_sel_gour2, 0);
+#else
 		T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, 0, 0);
 		T_AddOutline(ctext[keychange], 1, 15, 0, 0);
+#endif
 
 		sel = 3;
 		FlashConflicts();

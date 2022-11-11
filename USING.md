@@ -81,6 +81,8 @@ Note: Selecting PSX bar position overrides this setting and forces the PSX ammo 
 
 #### Pickup Display: Toggles the pickup display on/off.
 
+#### PSX boxes: Toggles PSX text boxes.
+
 #### PSX text colors: Toggles PSX text colors.
 
 #### Shadow:
