@@ -17,13 +17,14 @@
 
 ### tomb3 additions
 
-- Add scale for some UI elements (bars and home timers).
+- Add scale for UI elements, including text and requester boxes.
 - Add option for PSX text colors.
 - Add option for PSX bar positions.
 - Double the amount of vertices/polygons that can be drawn at a time.
 - Add pause menu.
 - Add option to control inventory/underwater music mute.
 - Completely refactor Lara drawing to stop recalculating her matrices multiple times every frame. Only once per frame now.
+- Add option for PSX FOV.
 
 ### tomb3 bug fixes
 

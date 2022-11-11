@@ -2019,6 +2019,7 @@ struct TOMB3_OPTIONS
 	bool psx_crystal_sfx;
 	bool psx_text_colors;
 	bool upv_wake;
+	bool psx_fov;
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum
 	long sophia_rings;	//t3_summon_ring_style

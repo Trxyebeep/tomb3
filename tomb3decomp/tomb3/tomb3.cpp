@@ -76,6 +76,7 @@ static void T3_InitSettings()
 	tomb3.psx_crystal_sfx = 0;
 	tomb3.psx_text_colors = 0;
 	tomb3.upv_wake = 1;
+	tomb3.psx_fov = 0;
 	tomb3.shadow_mode = SHADOW_PSX;
 	tomb3.bar_mode = BAR_PSX;
 	tomb3.sophia_rings = SRINGS_PSX;
@@ -138,6 +139,7 @@ void T3_SaveSettings()
 	REG_WriteBool((char*)"psx_crystal_sfx", tomb3.psx_crystal_sfx);
 	REG_WriteBool((char*)"psx_text_colors", tomb3.psx_text_colors);
 	REG_WriteBool((char*)"upv_wake", tomb3.upv_wake);
+	REG_WriteBool((char*)"psx_fov", tomb3.psx_fov);
 	REG_WriteLong((char*)"shadow_mode", tomb3.shadow_mode);
 	REG_WriteLong((char*)"bar_mode", tomb3.bar_mode);
 	REG_WriteLong((char*)"sophia_rings", tomb3.sophia_rings);
@@ -207,6 +209,7 @@ bool T3_LoadSettings()
 	REG_ReadBool((char*)"psx_crystal_sfx", tomb3.psx_crystal_sfx, 0);
 	REG_ReadBool((char*)"psx_text_colors", tomb3.psx_text_colors, 0);
 	REG_ReadBool((char*)"upv_wake", tomb3.upv_wake, 1);
+	REG_ReadBool((char*)"psx_fov", tomb3.psx_fov, 0);
 	REG_ReadLong((char*)"shadow_mode", (ulong&)tomb3.shadow_mode, SHADOW_PSX);
 	REG_ReadLong((char*)"bar_mode", (ulong&)tomb3.bar_mode, BAR_PSX);
 	REG_ReadLong((char*)"sophia_rings", (ulong&)tomb3.sophia_rings, SRINGS_PSX);

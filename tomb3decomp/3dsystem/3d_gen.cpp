@@ -11,6 +11,7 @@
 #include "../specific/smain.h"
 #ifdef TROYESTUFF
 #include "../specific/hwrender.h"
+#include "../tomb3/tomb3.h"
 #endif
 
 long sort3d_bufferbf[MAX_SORTLISTS];
@@ -295,7 +296,12 @@ void AlterFOV(short fov)
 	long fov_width;
 
 	fov /= 2;
-	fov_width = phd_winheight * 320 / 240;
+
+	if (tomb3.psx_fov)
+		fov_width = phd_winheight * 320 / 200;
+	else
+		fov_width = phd_winheight * 320 / 240;
+
 	LfAspectCorrection = 1.0F; // must always be 1.0 for unstretched view
 	phd_persp = (fov_width / 2) * phd_cos(fov) / phd_sin(fov);
 #else
