@@ -7,6 +7,9 @@
 #include "../specific/frontend.h"
 #include "health.h"
 #include "../specific/output.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
 
 short T_GetStringLen(const char* string)
 {
@@ -523,7 +526,12 @@ void T_DrawThisText(TEXTSTRING* string)
 	}
 
 	if (string->flags & T_ADDOUTLINE)
-		draw_border(sx, sy, 0, sh, sv);
+	{
+		if (tomb3.psx_boxes)
+			S_DrawBorder(sx, sy, string->bgndOffZ + z + 2, sh, sv, (char)string->outlColour, string->outlGour, string->outlflags);
+		else
+			draw_border(sx, sy, 0, sh, sv);
+	}
 #else
 	if (string->flags & T_ADDBACKGROUND)
 	{

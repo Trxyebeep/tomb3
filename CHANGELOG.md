@@ -18,7 +18,7 @@
 
 ### tomb3 additions
 
-- Add scale for UI elements, including text and requester boxes.
+- Add scale for UI elements, including text and boxes.
 - Add option for PSX text colors.
 - Add options for PSX and improved PC bar positions.
 - Double the amount of vertices/polygons that can be drawn at a time.
@@ -27,6 +27,7 @@
 - Completely refactor Lara drawing to stop recalculating her matrices multiple times every frame. Only once per frame now.
 - Add option for PSX FOV.
 - Add option for PSX ammo counter.
+- Add option for PSX style boxes.
 
 ### tomb3 bug fixes
 

@@ -22,6 +22,90 @@ void S_DrawScreenLine(long x, long y, long z, long w, long h, long c, GOURAUD_FI
 	InsertLine(x, y, x + w, y + h, phd_znear + 8 * z, (char)c, c);
 }
 
+#ifdef TROYESTUFF
+ulong flat_cols[17] =	//inv_colors but 32bit color!
+{
+	0xFF000000,
+	0xFF404040,
+	0xFFFFFFFF,
+	0xFFFF0000,
+	0xFFFF8000,
+	0xFFFFFF00,
+
+	0, 0, 0, 0, 0, 0,
+
+	0xFF008000,
+	0xFF00FF00,
+	0xFF00FFFF,
+	0xFF0000FF,
+	0xFFFF00FF
+};
+
+static void MakeFlatGour(char c, GOURAUD_OUTLINE* grdptr)
+{
+	ulong col;
+
+	col = flat_cols[c];
+
+	for (int i = 0; i < 9; i++)
+		grdptr->clr[i] = col;
+}
+
+void S_DrawBorder(long x, long y, long z, long w, long h, char c, GOURAUD_OUTLINE* grdptr, ushort flags)
+{
+	GOURAUD_OUTLINE flat = { 0 };
+	long p;
+	long bx[3];
+	long by[3];
+
+	if (!grdptr)
+	{
+		grdptr = &flat;
+		MakeFlatGour(c, grdptr);
+	}
+
+	p = GetRenderScale(1);
+	x += p;
+	y += p;
+	w += p;
+	h += p;
+	bx[0] = x;
+	by[0] = y;
+	bx[2] = x + w;
+	by[2] = y + h;
+	bx[1] = (bx[0] + bx[2]) / 2;
+	by[1] = (by[0] + by[2]) / 2;
+
+	HWI_InsertGourQuad_Sorted(bx[0] - p, by[0] - p, bx[1], by[0], phd_znear + 0x50000,
+		grdptr->clr[0], grdptr->clr[1],
+		grdptr->clr[1], grdptr->clr[0]);
+	HWI_InsertGourQuad_Sorted(bx[1], by[0] - p, bx[2], by[0], phd_znear + 0x50000,
+		grdptr->clr[1], grdptr->clr[2],
+		grdptr->clr[2], grdptr->clr[1]);
+
+	HWI_InsertGourQuad_Sorted(bx[2], by[0] - p, bx[2] + p, by[1], phd_znear + 0x50000,
+		grdptr->clr[2], grdptr->clr[2],
+		grdptr->clr[3], grdptr->clr[3]);
+	HWI_InsertGourQuad_Sorted(bx[2], by[1], bx[2] + p, by[2], phd_znear + 0x50000,
+		grdptr->clr[3], grdptr->clr[3],
+		grdptr->clr[4], grdptr->clr[4]);
+
+	HWI_InsertGourQuad_Sorted(bx[1], by[2], bx[2] + p, by[2] + p, phd_znear + 0x50000,
+		grdptr->clr[5], grdptr->clr[4],
+		grdptr->clr[4], grdptr->clr[5]);
+	HWI_InsertGourQuad_Sorted(bx[0], by[2], bx[1], by[2] + p, phd_znear + 0x50000,
+		grdptr->clr[6], grdptr->clr[5],
+		grdptr->clr[5], grdptr->clr[6]);
+
+	HWI_InsertGourQuad_Sorted(bx[0] - p, by[1], bx[0], by[2] + p, phd_znear + 0x50000,
+		grdptr->clr[7], grdptr->clr[7],
+		grdptr->clr[6], grdptr->clr[6]);
+	HWI_InsertGourQuad_Sorted(bx[0] - p, by[0], bx[0], by[1], phd_znear + 0x50000,
+		grdptr->clr[8], grdptr->clr[8],
+		grdptr->clr[7], grdptr->clr[7]);
+}
+#endif
+
 void S_DrawScreenBox(long x, long y, long z, long w, long h, long sprnum, GOURAUD_FILL* grdptr, ushort f)
 {
 	long sx, sy;
