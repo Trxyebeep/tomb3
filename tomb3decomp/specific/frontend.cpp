@@ -40,7 +40,7 @@ void S_DrawScreenFBox(long x, long y, long z, long w, long h, long c, ushort* gr
 	adder = 1;
 	w += adder;
 	h += adder;
-	InsertTransQuad(phd_winxmin + x, phd_winymin + y, w + 1, h + 1, phd_znear + 0x50000);
+	InsertTransQuad(phd_winxmin + x, phd_winymin + y, w, h, phd_znear + 0x50000);
 }
 
 void S_FinishInventory()

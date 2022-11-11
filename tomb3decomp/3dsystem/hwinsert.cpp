@@ -390,6 +390,52 @@ void HWI_InsertTransQuad_Sorted(long x, long y, long w, long h, long z)
 	CurrentTLVertex = v + 4;
 }
 
+#ifdef TROYESTUFF
+void HWI_InsertGourQuad_Sorted(long x0, long y0, long x1, long y1, long z, ulong c0, ulong c1, ulong c2, ulong c3)
+{
+	D3DTLVERTEX* v;
+	long* sort;
+	short* info;
+	float zv;
+
+	SetBufferPtrs(sort, info, 0, 1);
+	sort[0] = (long)info;
+	sort[1] = z;
+	info[0] = DT_POLY_GA;
+	info[1] = 0;
+	info[2] = 4;
+
+	v = CurrentTLVertex;
+	*((D3DTLVERTEX**)(info + 3)) = CurrentTLVertex;
+	zv = one / (float)z;
+
+	v[0].sx = (float)x1;
+	v[0].sy = (float)y0;
+	v[0].sz = f_a - zv * f_boo;
+	v[0].rhw = zv;
+	v[0].color = c1;
+
+	v[1].sx = (float)x1;
+	v[1].sy = (float)y1;
+	v[1].sz = f_a - zv * f_boo;
+	v[1].rhw = zv;
+	v[1].color = c2;
+
+	v[2].sx = (float)x0;
+	v[2].sy = (float)y1;
+	v[2].sz = f_a - zv * f_boo;
+	v[2].rhw = zv;
+	v[2].color = c3;
+
+	v[3].sx = (float)x0;
+	v[3].sy = (float)y0;
+	v[3].sz = f_a - zv * f_boo;
+	v[3].rhw = zv;
+	v[3].color = c0;
+	CurrentTLVertex = v + 4;
+}
+#endif
+
 void InitUVTable()
 {
 	for (int i = 0; i < 65536; i++)
