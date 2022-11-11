@@ -1869,7 +1869,13 @@ void DrawRooms(short current_room)
 			phd_mxptr[M23] = 0;
 			rot = anims[obj->anim_index].frame_ptr + 9;
 			gar_RotYXZsuperpack(&rot, 0);
+
+#ifdef TROYESTUFF
+			S_InitialisePolyList(1);
+#else
 			S_InitialisePolyList(0);
+#endif
+
 			S_InsertBackground(meshes[obj->mesh_index]);
 			phd_PopMatrix();
 		}
