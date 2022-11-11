@@ -81,6 +81,7 @@ static void T3_InitSettings()
 	tomb3.bar_mode = BAR_PSX;
 	tomb3.sophia_rings = SRINGS_PSX;
 	tomb3.bar_pos = BPOS_ORIGINAL;
+	tomb3.ammo_counter = ACTR_PC;
 	tomb3.GUI_Scale = 1.0F;
 	tomb3.INV_Scale = 0.5F;
 	tomb3.unwater_music_mute = 0.8F;
@@ -144,6 +145,7 @@ void T3_SaveSettings()
 	REG_WriteLong((char*)"bar_mode", tomb3.bar_mode);
 	REG_WriteLong((char*)"sophia_rings", tomb3.sophia_rings);
 	REG_WriteLong((char*)"bar_pos", tomb3.bar_pos);
+	REG_WriteLong((char*)"ammo_counter", tomb3.ammo_counter);
 	REG_WriteFloat((char*)"GUI_Scale", tomb3.GUI_Scale);
 	REG_WriteFloat((char*)"INV_Scale", tomb3.INV_Scale);
 	REG_WriteFloat((char*)"unwater_music_mute", tomb3.unwater_music_mute);
@@ -214,6 +216,7 @@ bool T3_LoadSettings()
 	REG_ReadLong((char*)"bar_mode", (ulong&)tomb3.bar_mode, BAR_PSX);
 	REG_ReadLong((char*)"sophia_rings", (ulong&)tomb3.sophia_rings, SRINGS_PSX);
 	REG_ReadLong((char*)"bar_pos", (ulong&)tomb3.bar_pos, BPOS_ORIGINAL);
+	REG_ReadLong((char*)"ammo_counter", (ulong&)tomb3.ammo_counter, ACTR_PC);
 	REG_ReadFloat((char*)"GUI_Scale", tomb3.GUI_Scale, 1.0F);
 	REG_ReadFloat((char*)"INV_Scale", tomb3.INV_Scale, 1.0F);
 	REG_ReadFloat((char*)"unwater_music_mute", tomb3.unwater_music_mute, 0.8F);

@@ -26,7 +26,7 @@
 - Add option to control inventory/underwater music mute.
 - Completely refactor Lara drawing to stop recalculating her matrices multiple times every frame. Only once per frame now.
 - Add option for PSX FOV.
-- Add PSX ammo counter.
+- Add option for PSX ammo counter.
 
 ### tomb3 bug fixes
 

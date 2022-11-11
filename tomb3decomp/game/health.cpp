@@ -15,7 +15,7 @@
 #define AMMO_YPOS_PC	50
 
 #define AMMO_XPOS_PS	-24
-#define AMMO_YPOS_PS	220
+#define AMMO_YPOS_PS	-24
 
 #ifndef TROYESTUFF
 DISPLAYPU pickups[1];
@@ -439,8 +439,11 @@ void DrawAmmoInfo()
 	RemoveAmmoText();
 
 #ifdef TROYESTUFF
-	if (tomb3.bar_pos == BPOS_PSX)
+	if (tomb3.ammo_counter == ACTR_PSX || tomb3.bar_pos == BPOS_PSX)	//PSX bar pos forces the PSX ammo counter.
+	{
 		ammotext = T_Print(AMMO_XPOS_PS, AMMO_YPOS_PS, 3, txt);
+		T_BottomAlign(ammotext, 1);
+	}
 	else
 		ammotext = T_Print(AMMO_XPOS_PC, AMMO_YPOS_PC, 0, txt);
 

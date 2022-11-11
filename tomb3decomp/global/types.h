@@ -1993,6 +1993,13 @@ enum t3_bar_pos
 	NBAR_POS
 };
 
+enum t3_ammo_counter
+{
+	ACTR_PC,
+	ACTR_PSX,
+	NACTR_MODES
+};
+
 struct TOMB3_OPTIONS
 {
 	bool footprints;
@@ -2019,6 +2026,7 @@ struct TOMB3_OPTIONS
 	long bar_mode;		//t3_bar_mode enum
 	long sophia_rings;	//t3_summon_ring_style
 	long bar_pos;		//t3_bar_pos enum
+	long ammo_counter;	//t3_ammo_counter
 	float GUI_Scale;
 	float INV_Scale;
 	float unwater_music_mute;

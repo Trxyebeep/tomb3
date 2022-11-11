@@ -62,6 +62,12 @@
 #### InvGuiScale: Scale modifiers for in-inventory UI elements, such as text boxes.
 
 ### GUI Style:
+#### Ammo counter:
+1. PC: Original PC ammo counter.
+2. PSX: PSX ammo counter.
+
+Note: Selecting PSX bar position overrides this setting and forces the PSX ammo counter.
+
 #### Bar Positions:
 1. PC: original PC positions.
 2. PSX: PSX positions.
