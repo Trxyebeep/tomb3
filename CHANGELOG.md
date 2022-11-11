@@ -14,6 +14,7 @@
 - Fix Lara's hair becoming stiff while using the UPV.
 - Fix flares going through the floor when thrown.
 - Fix flare sparks detaching after restarting the game.
+- Prevent DOZY while using a vehicle.
 
 ### tomb3 additions
 

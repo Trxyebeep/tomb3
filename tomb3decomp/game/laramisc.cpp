@@ -337,24 +337,27 @@ void LaraCheatyBits()
 	if (tomb3.dozy && key_pressed(DIK_D) && key_pressed(DIK_O) && key_pressed(DIK_Z) && key_pressed(DIK_Y))
 #endif	//_DEBUG
 	{
-		lara_item->pos.y_pos -= 128;
-
-		if (lara.water_status != LARA_CHEAT)
+		if (lara.skidoo == NO_ITEM)
 		{
-			lara_item->anim_number = ANIM_SWIMCHEAT;
-			lara_item->frame_number = anims[ANIM_SWIMCHEAT].frame_base;
-			lara_item->current_anim_state = AS_SWIM;
-			lara_item->goal_anim_state = AS_SWIM;
-			lara_item->gravity_status = 0;
-			lara_item->pos.x_rot = 0;
-			lara_item->fallspeed = 0;
-			lara.water_status = LARA_CHEAT;
-			lara.air = 1800;
-			lara.death_count = 0;
-			lara.torso_x_rot = 0;
-			lara.torso_y_rot = 0;
-			lara.head_x_rot = 0;
-			lara.head_y_rot = 0;
+			lara_item->pos.y_pos -= 128;
+
+			if (lara.water_status != LARA_CHEAT)
+			{
+				lara_item->anim_number = ANIM_SWIMCHEAT;
+				lara_item->frame_number = anims[ANIM_SWIMCHEAT].frame_base;
+				lara_item->current_anim_state = AS_SWIM;
+				lara_item->goal_anim_state = AS_SWIM;
+				lara_item->gravity_status = 0;
+				lara_item->pos.x_rot = 0;
+				lara_item->fallspeed = 0;
+				lara.water_status = LARA_CHEAT;
+				lara.air = 1800;
+				lara.death_count = 0;
+				lara.torso_x_rot = 0;
+				lara.torso_y_rot = 0;
+				lara.head_x_rot = 0;
+				lara.head_y_rot = 0;
+			}
 		}
 	}
 
