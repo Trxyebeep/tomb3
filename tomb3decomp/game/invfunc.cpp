@@ -52,9 +52,15 @@ void InitColours()
 
 /************Requester stuff************/
 
-#define STATS_Y_POS		-32
 #define STATS_LN_COUNT	7
+
+#ifdef TROYESTUFF
+#define STATS_Y_POS		-44
+#define REQ_LN_HEIGHT	15
+#else
+#define STATS_Y_POS		-32
 #define REQ_LN_HEIGHT	18
+#endif
 
 void Init_Requester(REQUEST_INFO* req)
 {
