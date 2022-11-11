@@ -82,7 +82,7 @@ static void T3_InitSettings()
 	tomb3.sophia_rings = SRINGS_PSX;
 	tomb3.bar_pos = BPOS_ORIGINAL;
 	tomb3.GUI_Scale = 1.0F;
-	tomb3.INV_Scale = 1.0F;
+	tomb3.INV_Scale = 0.5F;
 	tomb3.unwater_music_mute = 0.8F;
 	tomb3.inv_music_mute = 0.8F;
 }
