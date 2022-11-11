@@ -71,7 +71,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 	save = 0;
 	nSel = DT_NUMT - DOP_NOPTS;
 	tW = 130;
-	w = GetRenderWidth() / 2 - 115;
+	w = GetRenderWidthDownscaled() / 2 - 115;
 	dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
 
 	if (!dtext[DT_GAMMA])
@@ -1060,9 +1060,16 @@ void DefaultConflict()
 
 #ifdef TROYESTUFF
 #define CONTROL_NLINES		8
+#define CONTROL_Y_BOX		-70
+#define CONTROL_Y_TITLE		(CONTROL_Y_BOX + 4)
+#define CONTROL_STARTY		(CONTROL_Y_BOX + 30)
+#define CONTROL_SPACE		16
+#define CONTROL_WIDTH_HIGH	420
+#define CONTROL_HEIGHT_HIGH	(CONTROL_SPACE * CONTROL_NLINES + 45)
+#define CONTROL_WIDTH_LOW	308
+#define CONTROL_HEIGHT_LOW	(CONTROL_SPACE * CONTROL_NLINES + 35)
 #else
 #define CONTROL_NLINES		7
-#endif
 #define CONTROL_Y_BOX		-55
 #define CONTROL_Y_TITLE		(CONTROL_Y_BOX + 5)
 #define CONTROL_STARTY		(CONTROL_Y_BOX + 30)
@@ -1071,12 +1078,18 @@ void DefaultConflict()
 #define CONTROL_HEIGHT_HIGH	((CONTROL_SPACE - 1) * CONTROL_NLINES + 45)
 #define CONTROL_WIDTH_LOW	308
 #define CONTROL_HEIGHT_LOW	((CONTROL_SPACE - 1) * CONTROL_NLINES + 35)
+#endif
+
 
 static void S_ShowControls()
 {
 	long mid, n, x, y, s;
 
+#ifdef TROYESTUFF
+	mid = GetRenderWidthDownscaled() / 2;
+#else
 	mid = GetRenderWidth() / 2;
+#endif
 	s = CONTROL_SPACE;
 
 	if (!btext[0])
