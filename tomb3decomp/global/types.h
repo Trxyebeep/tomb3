@@ -507,6 +507,16 @@ enum sfx_types
 };
 
 /*structs*/
+struct GOURAUD_FILL	//not og
+{
+	ulong clr[4][4];
+};
+
+struct GOURAUD_OUTLINE
+{
+	ulong clr[9];
+};
+
 struct PHD_VECTOR
 {
 	long x;
@@ -1127,9 +1137,9 @@ struct TEXTSTRING
 	short flashRate;
 	short flashCount;
 	short bgndColour;
-	ushort* bgndGour;
+	GOURAUD_FILL* bgndGour;
 	short outlColour;
-	ushort* outlGour;
+	GOURAUD_OUTLINE* outlGour;
 	short bgndSizeX;
 	short bgndSizeY;
 	short bgndOffX;
@@ -1774,7 +1784,7 @@ struct INVENTORY_SPRITE
 	short z;
 	long param1;
 	long param2;
-	ushort* grdptr;
+	GOURAUD_FILL* grdptr;
 	short sprnum;
 };
 
@@ -2022,6 +2032,7 @@ struct TOMB3_OPTIONS
 	bool psx_text_colors;
 	bool upv_wake;
 	bool psx_fov;
+	bool psx_boxes;
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum
 	long sophia_rings;	//t3_summon_ring_style

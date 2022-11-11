@@ -87,7 +87,7 @@ void T_RemoveOutline(TEXTSTRING* string)
 	string->flags &= ~T_ADDOUTLINE;
 }
 
-void T_AddOutline(TEXTSTRING* string, short unused, short colour, ushort* gourptr, ushort flags)
+void T_AddOutline(TEXTSTRING* string, short unused, short colour, GOURAUD_OUTLINE* gourptr, ushort flags)
 {
 	if (!string)
 		return;
@@ -106,7 +106,7 @@ void T_RemoveBackground(TEXTSTRING* string)
 	string->flags &= ~T_ADDBACKGROUND;
 }
 
-void T_AddBackground(TEXTSTRING* string, short xsize, short ysize, short x, short y, short z, short color, ushort* gourptr, ushort flags)
+void T_AddBackground(TEXTSTRING* string, short xsize, short ysize, short x, short y, short z, short color, GOURAUD_FILL* gourptr, ushort flags)
 {
 	ulong h, v;
 
@@ -358,7 +358,7 @@ void T_InitPrint()
 
 void T_DrawThisText(TEXTSTRING* string)
 {
-	ushort* bgndGour;
+	GOURAUD_FILL* bgndGour;
 	char* pStr;
 	ulong h, v, letter;
 	long x, y, z, w, bX, bY, bW, bH, sprite;

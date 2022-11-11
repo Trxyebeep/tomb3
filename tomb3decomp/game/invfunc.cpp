@@ -11,6 +11,58 @@
 #include "health.h"
 #include "items.h"
 
+#ifdef TROYESTUFF
+GOURAUD_FILL req_main_gour1 =
+{
+	{
+	{0x80000000, 0x80000000, 0x80108038, 0x80000000},
+	{0x80000000, 0x80000000, 0x80000000, 0x80108038},
+	{0x80108038, 0x80000000, 0x80000000, 0x80000000},
+	{0x80000000, 0x80108038, 0x80000000, 0x80000000},
+	}
+};
+
+GOURAUD_OUTLINE req_main_gour2 =
+{
+	0xFF000000, 0xFF000000, 0xFF000000,
+	0xFF000000, 0xFF000000, 0xFF000000,
+	0xFF000000, 0xFF000000, 0xFF000000,
+};
+
+GOURAUD_FILL req_bgnd_gour1 =
+{ 
+	{
+	{0x80002000, 0x80002000, 0x80006000, 0x80002000},
+	{0x80002000, 0x80002000, 0x80002000, 0x80006000},
+	{0x80006000, 0x80002000, 0x80002000, 0x80002000},
+	{0x80002000, 0x80006000, 0x80002000, 0x80002000},
+	} 
+};
+
+GOURAUD_OUTLINE req_bgnd_gour2 =
+{
+	0xFF606060, 0xFF808080, 0xFF202020,
+	0xFF000000, 0xFF000000, 0xFF202020,
+	0xFF404040, 0xFF404040, 0xFF606060,
+};
+
+GOURAUD_FILL req_sel_gour1 =
+{
+	{
+	{0x80000000, 0x80000000, 0x801C7840, 0x80000000},
+	{0x80000000, 0x80000000, 0x80000000, 0x801C7840},
+	{0x801C7840, 0x80000000, 0x80000000, 0x80000000},
+	{0x80000000, 0x801C7840, 0x80000000, 0x80000000},
+	}
+};
+
+GOURAUD_OUTLINE req_sel_gour2 =
+{
+	0xFF000000, 0xFFFFFFFF, 0xFF000000,
+	0xFF38F080, 0xFF000000, 0xFFFFFFFF,
+	0xFF000000, 0xFF38F080, 0xFF000000,
+};
+#else
 static ushort req_bgnd_gour1[16] =
 {
 	0x1E00, 0x1E00, 0x1A00, 0x1E00, 0x1E00, 0x1E00, 0x1E00, 0x1A00,
@@ -27,13 +79,14 @@ static ushort req_main_gour1[16] =
 
 static ushort req_main_gour2[9] = { 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x2000 };
 
-static ushort req_unsel_gour1[16] =
+static ushort req_sel_gour1[16] =
 {
 	0x2000, 0x2000, 0x1A00, 0x2000, 0x2000, 0x2000, 0x2000, 0x1A00,
 	0x1A00, 0x2000, 0x2000, 0x2000, 0x2000, 0x1A00, 0x2000, 0x2000
 };
 
 static ushort req_sel_gour2[9] = { 0x2000, 0x1010, 0x2000, 0x1400, 0x2000, 0x1010, 0x2000, 0x1400, 0x2000 };
+#endif
 
 void InitColours()
 {
@@ -238,8 +291,8 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 
 			if (backgrounds)
 			{
-				T_AddBackground(req->heading1text, req->pixwidth - 4, 0, 0, 0, 8, 0, req_main_gour1, 2);
-				T_AddOutline(req->heading1text, 1, 4, req_main_gour2, 0);
+				T_AddBackground(req->heading1text, req->pixwidth - 4, 0, 0, 0, 8, 0, &req_main_gour1, 2);
+				T_AddOutline(req->heading1text, 1, 4, &req_main_gour2, 0);
 			}
 		}
 
@@ -262,8 +315,8 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 
 			if (backgrounds)
 			{
-				T_AddBackground(req->heading2text, req->pixwidth - 4, 0, 0, 0, 8, 0, req_main_gour1, 2);
-				T_AddOutline(req->heading2text, 1, 4, req_main_gour2, 0);
+				T_AddBackground(req->heading2text, req->pixwidth - 4, 0, 0, 0, 8, 0, &req_main_gour1, 2);
+				T_AddOutline(req->heading2text, 1, 4, &req_main_gour2, 0);
 			}
 		}
 
@@ -279,8 +332,8 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 		req->backgroundtext = T_Print(req->xpos, lOff - req->line_height - 12, 0, " ");
 		T_CentreH(req->backgroundtext, 1);
 		T_BottomAlign(req->backgroundtext, 1);
-		T_AddBackground(req->backgroundtext, req->pixwidth, short(req->line_height + lHeight + 12), 0, 0, 48, 0, req_bgnd_gour1, 1);
-		T_AddOutline(req->backgroundtext, 1, 15, req_bgnd_gour2, 0);
+		T_AddBackground(req->backgroundtext, req->pixwidth, short(req->line_height + lHeight + 12), 0, 0, 48, 0, &req_bgnd_gour1, 1);
+		T_AddOutline(req->backgroundtext, 1, 15, &req_bgnd_gour2, 0);
 	}
 
 	if (!req->line_offset)
@@ -336,8 +389,8 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 			}
 			else
 			{
-				T_AddBackground(req->texts1[i], req->pixwidth - 12, 19, 0, 0, 16, 0, req_unsel_gour1, 1);
-				T_AddOutline(req->texts1[i], 1, 4, req_sel_gour2, 0);
+				T_AddBackground(req->texts1[i], req->pixwidth - 12, 19, 0, 0, 16, 0, &req_sel_gour1, 1);
+				T_AddOutline(req->texts1[i], 1, 4, &req_sel_gour2, 0);
 			}
 
 			if (flags & R_LEFTALIGN)
