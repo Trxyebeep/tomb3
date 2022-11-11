@@ -262,6 +262,10 @@ void GetGlobeMeshFlags()
 void Construct_Inventory()
 {
 	INVENTORY_ITEM* item;
+#ifdef TROYESTUFF
+	float scale;
+#endif
+
 	S_SetupAboveWater(0);
 
 	if (Inventory_Mode != INV_TITLE_MODE)
@@ -326,6 +330,17 @@ void Construct_Inventory()
 	}
 
 	item_data = 0;
+
+#ifdef TROYESTUFF
+	scale = (float)GetRenderScale(480) / (float)GetRenderHeight();
+
+	if (scale < 1.5F)
+		icompass_option.ytrans_sel = tomb3.psx_fov ? -140 : -170;
+	else if (scale < 1.7F)
+		icompass_option.ytrans_sel = long(-15 - (scale - 1.5F) * 35.0F);
+	else
+		icompass_option.ytrans_sel = long(-22 - (scale - 1.7F) / 0.0075F);
+#endif
 }
 
 long Display_Inventory(long mode)
