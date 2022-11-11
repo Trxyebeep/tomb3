@@ -828,6 +828,12 @@ void SetLaraUnderwaterNodes()
 	}
 }
 
+void ResetLaraUnderwaterNodes()
+{
+	for (int i = 14; i >= 0; i--)
+		IsJointUnderwater[i] = 0;
+}
+
 void NewDrawLara(ITEM_INFO* item)
 {
 	OBJECT_INFO* obj;

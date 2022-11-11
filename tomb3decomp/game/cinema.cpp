@@ -28,7 +28,7 @@ long DrawPhaseCinematic()
 	CalcLaraMatrices(1);
 	phd_PopMatrix();
 
-	SetLaraUnderwaterNodes();
+	ResetLaraUnderwaterNodes();
 #endif
 
 	camera_underwater = 0;

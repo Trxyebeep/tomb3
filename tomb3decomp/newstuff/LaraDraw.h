@@ -4,6 +4,7 @@
 void CalcLaraMatrices(long flag);
 void GetLaraMeshPos(PHD_VECTOR* pos, long node);
 void SetLaraUnderwaterNodes();
+void ResetLaraUnderwaterNodes();
 void NewDrawLara(ITEM_INFO* item);
 
 enum lara_matrices_order
