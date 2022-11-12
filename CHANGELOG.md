@@ -1,6 +1,6 @@
 # tomb3 changelog
 
-## [1.2.0](https://github.com/Trxyebeep/tomb3decomp/tree/V1.2.0) (Nov. 11 2022)
+## [1.2.0](https://github.com/Trxyebeep/tomb3decomp/tree/V1.2.0) (Nov. 12 2022)
 
 ### Original bug fixes
 
