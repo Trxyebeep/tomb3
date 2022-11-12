@@ -21,5 +21,4 @@ void S_FadeToBlack();
 void DrawMonoScreen(long a, long b, long c);
 void RemoveMonoScreen(long fade);
 void DoInventoryPicture();
-
-#define FreePictureTextures	( (void(__cdecl*)(long*)) 0x0048B190 )
+void FreePictureTextures(long* indices);

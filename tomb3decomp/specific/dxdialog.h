@@ -5,8 +5,10 @@ void inject_dxdialog(bool replace);
 
 BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lParam);
 bool DXUserDialog(DEVICEINFO* device, DXCONFIG* config, HINSTANCE hinstance);
-
-#define DXInitDialogBox	( (void(__cdecl*)(HWND)) 0x00497530 )
-#define DXInitD3DDrivers	( (void(__cdecl*)(HWND, long)) 0x004977D0 )
-#define DXInitVideoModes	( (void(__cdecl*)(HWND, long, long)) 0x00497C20 )
-#define DXInitTextures	( (void(__cdecl*)(HWND, long, long)) 0x00497FE0 )
+void DXInitD3DDrivers(HWND hwnd, long nDrivers);
+void DXInitVideoModes(HWND hwnd, long nDD, long nD3D);
+void DXInitTextures(HWND hwnd, long nDD, long nD3D);
+void DXInitDSAdapters(HWND hwnd);
+void DXInitJoystickAdapter(HWND hwnd);
+void DXCheckMMXTechnology(HWND hwnd);
+void DXInitDialogBox(HWND hwnd);

@@ -31,6 +31,8 @@ static GLOBE_LEVEL GlobeLevelAngles[7] =
 
 static TEXTSTRING* dtext[DT_NUMT];
 static TEXTSTRING* stext[4];
+static TEXTSTRING* btext[NLAYOUTKEYS];
+static TEXTSTRING* ctext[NLAYOUTKEYS];
 
 long GetRenderWidth()
 {
@@ -43,6 +45,16 @@ long GetRenderHeight()
 }
 
 #ifdef TROYESTUFF
+long GetRenderWidthDownscaled()
+{
+	return phd_winwidth * 0x10000 / GetRenderScale(0x10000);
+}
+
+long GetRenderHeightDownscaled()
+{
+	return phd_winheight * 0x10000 / GetRenderScale(0x10000);
+}
+
 void do_detail_option(INVENTORY_ITEM* item)
 {
 	DIRECT3DINFO* dinfo;
@@ -59,7 +71,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 	save = 0;
 	nSel = DT_NUMT - DOP_NOPTS;
 	tW = 130;
-	w = GetRenderWidth() / 2 - 115;
+	w = GetRenderWidthDownscaled() / 2 - 115;
 	dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
 
 	if (!dtext[DT_GAMMA])
@@ -90,13 +102,13 @@ void do_detail_option(INVENTORY_ITEM* item)
 		dtext[DT_TRUEALPHA] = T_Print(w, 35, 0, GF_PCStrings[PCSTR_TRUEALPHA]);
 		dtext[DT_GAMMA] = T_Print(w, 55, 0, GF_PCStrings[PCSTR_SKY]);
 		
-		T_AddBackground(dtext[DT_EMPTY], 240, 150, 0, 0, 48, 0, 0, 0);
-		T_AddOutline(dtext[DT_EMPTY], 1, 15, 0, 0);
+		T_AddBackground(dtext[DT_EMPTY], 240, 150, 0, 0, 48, 0, &req_bgnd_gour1, 2);
+		T_AddOutline(dtext[DT_EMPTY], 1, 15, &req_bgnd_gour2, 0);
 		T_CentreH(dtext[DT_EMPTY], 1);
 		T_CentreV(dtext[DT_EMPTY], 1);
 
-		T_AddBackground(dtext[DT_VIDEOTITLE], 236, 0, 0, 0, 48, 0, 0, 0);
-		T_AddOutline(dtext[DT_VIDEOTITLE], 1, 4, 0, 0);
+		T_AddBackground(dtext[DT_VIDEOTITLE], 236, 0, 0, 0, 48, 0, &req_main_gour1, 2);
+		T_AddOutline(dtext[DT_VIDEOTITLE], 1, 4, &req_main_gour2, 0);
 		T_CentreH(dtext[DT_VIDEOTITLE], 1);
 		T_CentreV(dtext[DT_VIDEOTITLE], 1);
 
@@ -174,8 +186,8 @@ void do_detail_option(INVENTORY_ITEM* item)
 			GammaOption = 2.5F;
 		}
 
-		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, 0, 0);
-		T_AddOutline(dtext[selection + nSel], 1, 4, 0, 0);
+		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, &req_sel_gour1, 1);
+		T_AddOutline(dtext[selection + nSel], 1, 4, &req_sel_gour2, 0);
 		free(resolutions);
 	}
 
@@ -336,8 +348,8 @@ void do_detail_option(INVENTORY_ITEM* item)
 		save = 1;
 		T_RemoveOutline(dtext[selection + nSel]);
 		T_RemoveBackground(dtext[selection + nSel]);
-		T_AddOutline(dtext[selection + nSel], 1, 4, 0, 0);
-		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, 0, 0);
+		T_AddOutline(dtext[selection + nSel], 1, 4, &req_sel_gour2, 0);
+		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, &req_sel_gour1, 1);
 	}
 
 	if (inputDB & IN_BACK && selection > 0)
@@ -357,8 +369,8 @@ void do_detail_option(INVENTORY_ITEM* item)
 			}
 		}
 
-		T_AddOutline(dtext[selection + nSel], 1, 4, 0, 0);
-		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, 0, 0);
+		T_AddOutline(dtext[selection + nSel], 1, 4, &req_sel_gour2, 0);
+		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, &req_sel_gour1, 1);
 	}
 
 	if (inputDB & IN_FORWARD && selection <= DOP_NOPTS - 2)
@@ -369,8 +381,8 @@ void do_detail_option(INVENTORY_ITEM* item)
 
 		while (!available[selection] && selection <= DOP_NOPTS - 1) selection++;
 
-		T_AddOutline(dtext[selection + nSel], 1, 4, 0, 0);
-		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, 0, 0);
+		T_AddOutline(dtext[selection + nSel], 1, 4, &req_sel_gour2, 0);
+		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, &req_sel_gour1, 1);
 	}
 
 	if (inputDB & (IN_SELECT | IN_DESELECT))
@@ -820,7 +832,11 @@ void do_levelselect_option(INVENTORY_ITEM* item)
 
 		if (axes == 3 && nAvailable > 1)
 		{
+#ifdef TROYESTUFF
+			w = GetRenderWidthDownscaled();
+#else
 			w = App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode].w;
+#endif
 			w -= w >> 1;
 
 			LeftArrow = T_Print(w - 120, -16, 2, left_arrow);
@@ -876,8 +892,13 @@ void do_sound_option(INVENTORY_ITEM* item)
 
 		wsprintf(buf, "| %2d", Option_Music_Volume);
 		stext[0] = T_Print(0, 0, 0, buf);
+#ifdef TROYESTUFF
+		T_AddBackground(stext[0], 168, 0, 0, 0, 8, 0, &req_bgnd_gour1, 2);
+		T_AddOutline(stext[0], 1, 4, &req_bgnd_gour2, 0);
+#else
 		T_AddBackground(stext[0], 168, 0, 0, 0, 8, 0, 0, 0);
 		T_AddOutline(stext[0], 1, 4, 0, 0);
+#endif
 
 		if (Option_SFX_Volume > 10)
 			Option_SFX_Volume = 10;
@@ -886,12 +907,22 @@ void do_sound_option(INVENTORY_ITEM* item)
 		stext[1] = T_Print(0, 25, 0, buf);
 
 		stext[2] = T_Print(0, -32, 0, " ");
+#ifdef TROYESTUFF
+		T_AddBackground(stext[2], 180, 85, 0, 0, 48, 0, &req_bgnd_gour1, 2);
+		T_AddOutline(stext[2], 1, 15, &req_bgnd_gour2, 0);
+#else
 		T_AddBackground(stext[2], 180, 85, 0, 0, 48, 0, 0, 0);
 		T_AddOutline(stext[2], 1, 15, 0, 0);
+#endif
 
 		stext[3] = T_Print(0, -30, 0, GF_PCStrings[PCSTR_SETVOLUME]);
+#ifdef TROYESTUFF
+		T_AddBackground(stext[3], 176, 0, 0, 0, 8, 0, &req_main_gour1, 2);
+		T_AddOutline(stext[3], 1, 15, &req_main_gour2, 0);
+#else
 		T_AddBackground(stext[3], 176, 0, 0, 0, 8, 0, 0, 0);
 		T_AddOutline(stext[3], 1, 15, 0, 0);
+#endif
 
 		for (int i = 0; i < 4; i++)
 		{
@@ -905,8 +936,13 @@ void do_sound_option(INVENTORY_ITEM* item)
 		T_RemoveOutline(stext[item_data]);
 		T_RemoveBackground(stext[item_data]);
 		item_data--;
+#ifdef TROYESTUFF
+		T_AddBackground(stext[item_data], 168, 0, 0, 0, 8, 0, &req_sel_gour1, 1);
+		T_AddOutline(stext[item_data], 1, 4, &req_sel_gour2, 0);
+#else
 		T_AddBackground(stext[item_data], 168, 0, 0, 0, 8, 0, 0, 0);
 		T_AddOutline(stext[item_data], 1, 4, 0, 0);
+#endif
 	}
 
 	if (inputDB & IN_BACK && item_data < 1)
@@ -914,8 +950,13 @@ void do_sound_option(INVENTORY_ITEM* item)
 		T_RemoveOutline(stext[item_data]);
 		T_RemoveBackground(stext[item_data]);
 		item_data++;
+#ifdef TROYESTUFF
+		T_AddBackground(stext[item_data], 168, 0, 0, 0, 8, 0, &req_sel_gour1, 1);
+		T_AddOutline(stext[item_data], 1, 4, &req_sel_gour2, 0);
+#else
 		T_AddBackground(stext[item_data], 168, 0, 0, 0, 8, 0, 0, 0);
 		T_AddOutline(stext[item_data], 1, 4, 0, 0);
+#endif
 	}
 
 	goin = 0;
@@ -1004,20 +1045,18 @@ void do_sound_option(INVENTORY_ITEM* item)
 
 #define iconfig	VAR_(0x006A0130, long)
 #define keychange	VAR_(0x006A0128, long)
-#define btext	ARRAY_(0x006A0170, TEXTSTRING*, [14])
-#define ctext	ARRAY_(0x006A0138, TEXTSTRING*, [14])
 #define ctrltext	ARRAY_(0x006A0218, TEXTSTRING*, [2])
 
 static void FlashConflicts()
 {
 	short c;
 
-	for (int i = 0; i < 14; i++)
+	for (int i = 0; i < NLAYOUTKEYS; i++)
 	{
 		c = layout[iconfig][i];
 		T_FlashText(btext[i], 0, 0);
 
-		for (int j = 0; j < 14; j++)
+		for (int j = 0; j < NLAYOUTKEYS; j++)
 		{
 			if (i != j && c == layout[iconfig][j])
 			{
@@ -1032,12 +1071,12 @@ void DefaultConflict()
 {
 	short c;
 
-	for (int i = 0; i < 14; i++)
+	for (int i = 0; i < NLAYOUTKEYS; i++)
 	{
 		c = layout[0][i];
 		conflict[i] = 0;
 
-		for (int j = 0; j < 14; j++)
+		for (int j = 0; j < NLAYOUTKEYS; j++)
 		{
 			if (c == layout[1][j])
 			{
@@ -1048,41 +1087,97 @@ void DefaultConflict()
 	}
 }
 
+#ifdef TROYESTUFF
+#define CONTROL_NLINES		8
+#define CONTROL_Y_BOX		-70
+#define CONTROL_Y_TITLE		(CONTROL_Y_BOX + 4)
+#define CONTROL_STARTY		(CONTROL_Y_BOX + 30)
+#define CONTROL_SPACE		16
+#define CONTROL_WIDTH_HIGH	420
+#define CONTROL_HEIGHT_HIGH	(CONTROL_SPACE * CONTROL_NLINES + 45)
+#define CONTROL_WIDTH_LOW	308
+#define CONTROL_HEIGHT_LOW	(CONTROL_SPACE * CONTROL_NLINES + 35)
+#else
+#define CONTROL_NLINES		7
+#define CONTROL_Y_BOX		-55
+#define CONTROL_Y_TITLE		(CONTROL_Y_BOX + 5)
+#define CONTROL_STARTY		(CONTROL_Y_BOX + 30)
+#define CONTROL_SPACE		16
+#define CONTROL_WIDTH_HIGH	420
+#define CONTROL_HEIGHT_HIGH	((CONTROL_SPACE - 1) * CONTROL_NLINES + 45)
+#define CONTROL_WIDTH_LOW	308
+#define CONTROL_HEIGHT_LOW	((CONTROL_SPACE - 1) * CONTROL_NLINES + 35)
+#endif
+
+
 static void S_ShowControls()
 {
-	long mid, x;
+	long mid, n, x, y, s;
 
+#ifdef TROYESTUFF
+	mid = GetRenderWidthDownscaled() / 2;
+#else
 	mid = GetRenderWidth() / 2;
+#endif
+	s = CONTROL_SPACE;
 
 	if (!btext[0])
 	{
-		if (mid >= 320)
-			x = mid - 200;
-		else
-			x = mid - 150;
+		n = 0;
+		x = mid < 320 ? mid - 150 : mid - 200;	//left column key binds
+		y = CONTROL_STARTY;
 
-		btext[0] = T_Print(x, -25, 0, KeyboardButtons[layout[iconfig][0]]);
-		btext[1] = T_Print(x, -9, 0, KeyboardButtons[layout[iconfig][1]]);
-		btext[2] = T_Print(x, 7, 0, KeyboardButtons[layout[iconfig][2]]);
-		btext[3] = T_Print(x, 23, 0, KeyboardButtons[layout[iconfig][3]]);
-		btext[4] = T_Print(x, 39, 0, KeyboardButtons[layout[iconfig][4]]);
-		btext[5] = T_Print(x, 55, 0, KeyboardButtons[layout[iconfig][5]]);
-		btext[6] = T_Print(x, 71, 0, KeyboardButtons[layout[iconfig][6]]);
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][0]]);
+		y += s;
 
-		if (mid >= 320)
-			x = mid + 10;
-		else
-			x = mid - 20;
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][1]]);
+		y += s;
 
-		btext[7] = T_Print(x, -25, 0, KeyboardButtons[layout[iconfig][7]]);
-		btext[8] = T_Print(x, -9, 0, KeyboardButtons[layout[iconfig][8]]);
-		btext[9] = T_Print(x, 7, 0, KeyboardButtons[layout[iconfig][9]]);
-		btext[10] = T_Print(x, 23, 0, KeyboardButtons[layout[iconfig][10]]);
-		btext[11] = T_Print(x, 39, 0, KeyboardButtons[layout[iconfig][11]]);
-		btext[12] = T_Print(x, 55, 0, KeyboardButtons[layout[iconfig][12]]);
-		btext[13] = T_Print(x, 71, 0, KeyboardButtons[layout[iconfig][13]]);
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][2]]);
+		y += s;
 
-		for (int i = 0; i < 14; i++)
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][3]]);
+		y += s;
+
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][4]]);
+		y += s;
+
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][5]]);
+		y += s;
+
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][6]]);
+		y += s;
+
+#ifdef TROYESTUFF
+		btext[14] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][14]]);
+		y += s;
+#endif
+
+		x = mid < 320 ? mid - 20 : mid + 10;	//right column key binds
+		y = CONTROL_STARTY;
+
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][7]]);
+		y += s;
+
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][8]]);
+		y += s;
+
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][9]]);
+		y += s;
+
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][10]]);
+		y += s;
+
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][11]]);
+		y += s;
+
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][12]]);
+		y += s;
+
+		btext[n++] = T_Print(x, y, 0, KeyboardButtons[layout[iconfig][13]]);
+		y += s;
+
+		for (int i = 0; i < NLAYOUTKEYS ; i++)
 			T_CentreV(btext[i], 1);
 
 		keychange = 0;
@@ -1090,45 +1185,83 @@ static void S_ShowControls()
 
 	if (!ctext[0])
 	{
-		if (mid >= 320)
-			x = mid - 120;
-		else
-			x = mid - 78;
+		n = 0;
+		x = mid < 320 ? mid - 78 : mid - 120;	//left column key names
+		y = CONTROL_STARTY;
 
-		ctext[0] = T_Print(x, -25, 0, GF_GameStrings[GT_RUN]);
-		ctext[1] = T_Print(x, -9, 0, GF_GameStrings[GT_BACK]);
-		ctext[2] = T_Print(x, 7, 0, GF_GameStrings[GT_LEFT]);
-		ctext[3] = T_Print(x, 23, 0, GF_GameStrings[GT_RIGHT]);
-		ctext[4] = T_Print(x, 39, 0, GF_GameStrings[GT_STEPLEFT1]);
-		ctext[5] = T_Print(x, 55, 0, GF_GameStrings[GT_STEPRIGHT1]);
-		ctext[6] = T_Print(x, 71, 0, GF_GameStrings[GT_WALK]);
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_RUN]);
+		y += s;
 
-		if (mid >= 320)
-			x = mid + 90;
-		else
-			x = mid + 55;
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_BACK]);
+		y += s;
 
-		ctext[7] = T_Print(x, -25, 0, GF_GameStrings[GT_JUMP]);
-		ctext[8] = T_Print(x, -9, 0, GF_GameStrings[GT_ACTION]);
-		ctext[9] = T_Print(x, 7, 0, GF_GameStrings[GT_DRAWWEAPON1]);
-		ctext[10] = T_Print(x, 23, 0, GF_GameStrings[GT_USEFLARE]);
-		ctext[11] = T_Print(x, 39, 0, GF_GameStrings[GT_LOOK]);
-		ctext[12] = T_Print(x, 55, 0, GF_GameStrings[GT_ROLL]);
-		ctext[13] = T_Print(x, 71, 0, GF_GameStrings[GT_INVENTORY]);
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_LEFT]);
+		y += s;
 
-		for (int i = 0; i < 14; i++)
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_RIGHT]);
+		y += s;
+
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_STEPLEFT1]);
+		y += s;
+
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_STEPRIGHT1]);
+		y += s;
+
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_WALK]);
+		y += s;
+
+#ifdef TROYESTUFF
+		ctext[14] = T_Print(x, y, 0, "Pause");
+		y += s;
+#endif
+
+		x = mid < 320 ? mid + 55 : mid + 90;	//right column key names
+		y = CONTROL_STARTY;
+
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_JUMP]);
+		y += s;
+
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_ACTION]);
+		y += s;
+
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_DRAWWEAPON1]);
+		y += s;
+
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_USEFLARE]);
+		y += s;
+
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_LOOK]);
+		y += s;
+
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_ROLL]);
+		y += s;
+
+		ctext[n++] = T_Print(x, y, 0, GF_GameStrings[GT_INVENTORY]);
+		y += s;
+
+		for (int i = 0; i < NLAYOUTKEYS; i++)
 			T_CentreV(ctext[i], 1);
 	}
 
-	ctrltext[1] = T_Print(0, -55, 0, " ");
+	ctrltext[1] = T_Print(0, CONTROL_Y_BOX, 0, " ");
 	T_CentreV(ctrltext[1], 1);
 	T_CentreH(ctrltext[1], 1);
+#ifdef TROYESTUFF
+	T_AddOutline(ctrltext[1], 1, 15, &req_bgnd_gour2, 0);
+
+	if (mid < 320)
+		T_AddBackground(ctrltext[1], CONTROL_WIDTH_LOW, CONTROL_HEIGHT_LOW, 0, 0, 48, 0, &req_bgnd_gour1, 2);
+	else
+		T_AddBackground(ctrltext[1], CONTROL_WIDTH_HIGH, CONTROL_HEIGHT_HIGH, 0, 0, 48, 0, &req_bgnd_gour1, 2);
+
+#else
 	T_AddOutline(ctrltext[1], 1, 15, 0, 0);
 
-	if (mid >= 320)
-		T_AddBackground(ctrltext[1], 420, 150, 0, 0, 48, 0, 0, 0);
+	if (mid < 320)
+		T_AddBackground(ctrltext[1], CONTROL_WIDTH_LOW, CONTROL_HEIGHT_LOW, 0, 0, 48, 0, 0, 0);
 	else
-		T_AddBackground(ctrltext[1], 308, 145, 0, 0, 48, 0, 0, 0);
+		T_AddBackground(ctrltext[1], CONTROL_WIDTH_HIGH, CONTROL_HEIGHT_HIGH, 0, 0, 48, 0, 0, 0);
+#endif
 }
 
 static void S_ChangeCtrlText()
@@ -1143,7 +1276,7 @@ static void S_ChangeCtrlText()
 	else
 		T_ChangeText(ctrltext[0], GF_PCStrings[PCSTR_DEFAULTKEYS]);
 
-	for (int i = 0; i < 14; i++)
+	for (int i = 0; i < NLAYOUTKEYS; i++)
 	{
 		if (KeyboardButtons[layout[iconfig][i]])
 			T_ChangeText(btext[i], (char*)KeyboardButtons[layout[iconfig][i]]);
@@ -1154,7 +1287,7 @@ static void S_ChangeCtrlText()
 
 static void S_RemoveCtrlText()
 {
-	for (int i = 0; i < 14; i++)
+	for (int i = 0; i < NLAYOUTKEYS; i++)
 	{
 		if (ctext[i])
 			T_RemovePrint(ctext[i]);
@@ -1176,17 +1309,23 @@ void do_control_option(INVENTORY_ITEM* item)
 	if (!ctrltext[0])
 	{
 		if (iconfig)
-			ctrltext[0] = T_Print(0, -50, 0, GF_PCStrings[PCSTR_USERKEYS]);
+			ctrltext[0] = T_Print(0, CONTROL_Y_TITLE, 0, GF_PCStrings[PCSTR_USERKEYS]);
 		else
-			ctrltext[0] = T_Print(0, -50, 0, GF_PCStrings[PCSTR_DEFAULTKEYS]);
+			ctrltext[0] = T_Print(0, CONTROL_Y_TITLE, 0, GF_PCStrings[PCSTR_DEFAULTKEYS]);
 
 		ctrltext[0]->zpos = 16;
 		T_CentreH(ctrltext[0], 1);
 		T_CentreV(ctrltext[0], 1);
 		S_ShowControls();
 		keychange = -1;
+
+#ifdef TROYESTUFF
+		T_AddBackground(ctrltext[0], 0, 0, 0, 0, 48, 0, &req_sel_gour1, 1);
+		T_AddOutline(ctrltext[0], 1, 15, &req_sel_gour2, 0);
+#else
 		T_AddBackground(ctrltext[0], 0, 0, 0, 0, 48, 0, 0, 0);
 		T_AddOutline(ctrltext[0], 1, 15, 0, 0);
+#endif
 	}
 
 	switch (sel)
@@ -1209,14 +1348,19 @@ void do_control_option(INVENTORY_ITEM* item)
 
 				if (keychange <= 6)
 					keychange += 7;
-				else if (keychange == 14)
+				else if (keychange == NLAYOUTKEYS)
 					keychange = 7;
 				else
 					keychange -= 7;
 
 				ctext[keychange]->zpos = 16;
+#ifdef TROYESTUFF
+				T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, &req_sel_gour1, 1);
+				T_AddOutline(ctext[keychange], 1, 15, &req_sel_gour2, 0);
+#else
 				T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, 0, 0);
 				T_AddOutline(ctext[keychange], 1, 15, 0, 0);
+#endif
 			}
 		}
 		else if (inputDB & IN_DESELECT || (inputDB & IN_SELECT && keychange == -1))
@@ -1243,8 +1387,13 @@ void do_control_option(INVENTORY_ITEM* item)
 				T_RemoveOutline(ctext[keychange]);
 
 				btext[keychange]->zpos = 16;
+#ifdef TROYESTUFF
+				T_AddBackground(btext[keychange], 0, 0, 0, 0, 0, 0, &req_sel_gour1, 1);
+				T_AddOutline(btext[keychange], 1, 15, &req_sel_gour2, 0);
+#else
 				T_AddBackground(btext[keychange], 0, 0, 0, 0, 0, 0, 0, 0);
 				T_AddOutline(btext[keychange], 1, 15, 0, 0);
+#endif
 			}
 			else if (inputDB & IN_FORWARD)
 			{
@@ -1263,8 +1412,21 @@ void do_control_option(INVENTORY_ITEM* item)
 				keychange--;
 
 				if (keychange < -1)
-					keychange = 13;
+					keychange = NLAYOUTKEYS - 1;
 
+#ifdef TROYESTUFF
+				if (keychange == -1)
+				{
+					T_AddBackground(ctrltext[0], 0, 0, 0, 0, 0, 0, &req_sel_gour1, 1);
+					T_AddOutline(ctrltext[0], 1, 15, &req_sel_gour2, 0);
+				}
+				else
+				{
+					ctext[keychange]->zpos = 16;
+					T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, &req_sel_gour1, 1);
+					T_AddOutline(ctext[keychange], 1, 15, &req_sel_gour2, 0);
+				}
+#else
 				if (keychange == -1)
 				{
 					T_AddBackground(ctrltext[0], 0, 0, 0, 0, 0, 0, 0, 0);
@@ -1276,6 +1438,7 @@ void do_control_option(INVENTORY_ITEM* item)
 					T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, 0, 0);
 					T_AddOutline(ctext[keychange], 1, 15, 0, 0);
 				}
+#endif
 			}
 			else if (inputDB & IN_BACK)
 			{
@@ -1293,9 +1456,22 @@ void do_control_option(INVENTORY_ITEM* item)
 
 				keychange++;
 
-				if (keychange > 13)
+				if (keychange > NLAYOUTKEYS - 1)
 					keychange = -1;
 
+#ifdef TROYESTUFF
+				if (keychange == -1)
+				{
+					T_AddBackground(ctrltext[0], 0, 0, 0, 0, 0, 0, &req_sel_gour1, 1);
+					T_AddOutline(ctrltext[0], 1, 15, &req_sel_gour2, 0);
+				}
+				else
+				{
+					ctext[keychange]->zpos = 16;
+					T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, &req_sel_gour1, 1);
+					T_AddOutline(ctext[keychange], 1, 15, &req_sel_gour2, 0);
+				}
+#else
 				if (keychange == -1)
 				{
 					T_AddBackground(ctrltext[0], 0, 0, 0, 0, 0, 0, 0, 0);
@@ -1307,6 +1483,7 @@ void do_control_option(INVENTORY_ITEM* item)
 					T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, 0, 0);
 					T_AddOutline(ctext[keychange], 1, 15, 0, 0);
 				}
+#endif
 			}
 		}
 
@@ -1360,8 +1537,13 @@ void do_control_option(INVENTORY_ITEM* item)
 		T_RemoveOutline(btext[keychange]);
 
 		ctext[keychange]->zpos = 16;
+#ifdef TROYESTUFF
+		T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, &req_sel_gour1, 1);
+		T_AddOutline(ctext[keychange], 1, 15, &req_sel_gour2, 0);
+#else
 		T_AddBackground(ctext[keychange], 0, 0, 0, 0, 0, 0, 0, 0);
 		T_AddOutline(ctext[keychange], 1, 15, 0, 0);
+#endif
 
 		sel = 3;
 		FlashConflicts();
@@ -1425,6 +1607,29 @@ void do_compass_option(INVENTORY_ITEM* item)
 	SoundEffect(SFX_MENU_STOPWATCH, 0, SFX_ALWAYS);
 }
 
+#define PASSPORT_LINE_COUNT	10
+#define PASSPORT_Y_BOX		-32
+#define PASSPORT_Y_TITLE	-16
+
+#ifdef TROYESTUFF
+static void SetPassportRequesterSize(REQUEST_INFO* req)
+{
+	float scale;
+	long nLines, adjust;
+
+	scale = (float)GetRenderHeight() / (float)GetRenderScale(480);
+	adjust = (scale > 1.0F) ? 5 : 0;
+	nLines = long((PASSPORT_LINE_COUNT + adjust) * scale - adjust);
+
+	if (nLines < 5)
+		nLines = 5;
+	else if (nLines > 16)
+		nLines = 16;
+
+	SetPCRequesterSize(req, nLines, PASSPORT_Y_BOX);
+}
+#endif
+
 void do_passport_option(INVENTORY_ITEM* item)
 {
 	static long mode;
@@ -1448,7 +1653,11 @@ void do_passport_option(INVENTORY_ITEM* item)
 			inputDB = IN_RIGHT;
 		else if (mode == 1)
 		{
-			SetPCRequesterSize(&Load_Game_Requester, 10, -32);
+#ifdef TROYESTUFF
+			SetPassportRequesterSize(&Load_Game_Requester);
+#else
+			SetPCRequesterSize(&Load_Game_Requester, PASSPORT_LINE_COUNT, PASSPORT_Y_BOX);
+#endif
 			select = Display_Requester(&Load_Game_Requester, 1, 1);
 
 			if (select)
@@ -1477,7 +1686,7 @@ void do_passport_option(INVENTORY_ITEM* item)
 			{
 				if (!passport_text1)
 				{
-					passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_LOADGAME]);
+					passport_text1 = T_Print(0, PASSPORT_Y_TITLE, 5, GF_GameStrings[GT_LOADGAME]);
 					T_BottomAlign(passport_text1, 1);
 					T_CentreH(passport_text1, 1);
 				}
@@ -1510,12 +1719,20 @@ void do_passport_option(INVENTORY_ITEM* item)
 		{
 			if (mode == 1)
 			{
-				SetPCRequesterSize(&Load_Game_Requester, 10, -32);
+#ifdef TROYESTUFF
+				SetPassportRequesterSize(&Load_Game_Requester);
+#else
+				SetPCRequesterSize(&Load_Game_Requester, PASSPORT_LINE_COUNT, PASSPORT_Y_BOX);
+#endif
 				select = Display_Requester(&Load_Game_Requester, 1, 1);
 			}
 			else
 			{
-				SetPCRequesterSize(&Level_Select_Requester, 10, -32);
+#ifdef TROYESTUFF
+				SetPassportRequesterSize(&Level_Select_Requester);
+#else
+				SetPCRequesterSize(&Level_Select_Requester, PASSPORT_LINE_COUNT, PASSPORT_Y_BOX);
+#endif
 				select = Display_Requester(&Level_Select_Requester, 1, 1);
 			}
 
@@ -1550,9 +1767,9 @@ void do_passport_option(INVENTORY_ITEM* item)
 				if (!passport_text1)
 				{
 					if (Inventory_Mode == INV_TITLE_MODE || CurrentLevel == LV_GYM)
-						passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_STARTGAME]);
+						passport_text1 = T_Print(0, PASSPORT_Y_TITLE, 5, GF_GameStrings[GT_STARTGAME]);
 					else
-						passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_SAVEGAME]);
+						passport_text1 = T_Print(0, PASSPORT_Y_TITLE, 5, GF_GameStrings[GT_SAVEGAME]);
 
 					T_BottomAlign(passport_text1, 1);
 					T_CentreH(passport_text1, 1);
@@ -1606,11 +1823,11 @@ void do_passport_option(INVENTORY_ITEM* item)
 		if (!passport_text1)
 		{
 			if (Inventory_Mode == INV_TITLE_MODE)
-				passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_EXITGAME]);
+				passport_text1 = T_Print(0, PASSPORT_Y_TITLE, 5, GF_GameStrings[GT_EXITGAME]);
 			else if (gameflow.demoversion)
-				passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_EXITDEMO]);
+				passport_text1 = T_Print(0, PASSPORT_Y_TITLE, 5, GF_GameStrings[GT_EXITDEMO]);
 			else
-				passport_text1 = T_Print(0, -16, 5, GF_GameStrings[GT_EXIT2TITLE]);
+				passport_text1 = T_Print(0, PASSPORT_Y_TITLE, 5, GF_GameStrings[GT_EXIT2TITLE]);
 
 			T_BottomAlign(passport_text1, 1);
 			T_CentreH(passport_text1, 1);

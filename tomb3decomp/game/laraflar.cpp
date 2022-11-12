@@ -11,7 +11,6 @@
 #include "sound.h"
 #include "items.h"
 #include "control.h"
-#include "laraanim.h"
 #include "invfunc.h"
 #include "larafire.h"
 #include "../3dsystem/phd_math.h"
@@ -23,7 +22,13 @@ void DrawFlareInAir(ITEM_INFO* item)
 
 	GetFrames(item, frame, &rate);
 	phd_PushMatrix();
+
+#ifdef TROYESTUFF
+	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos - GetBoundsAccurate(item)[3], item->pos.z_pos);
+#else
 	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+#endif
+
 	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 	clip = S_GetObjectBounds(frame[0]);
 
@@ -39,6 +44,11 @@ void DrawFlareInAir(ITEM_INFO* item)
 			S_CalculateStaticLight(2048);
 
 			phd_PushUnitMatrix();
+#ifdef TROYESTUFF					//fixes the sparks detaching after restarting the game
+			phd_mxptr[M03] = 0;
+			phd_mxptr[M13] = 0;
+			phd_mxptr[M23] = 0;
+#endif
 			phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 
 			phd_PushMatrix();

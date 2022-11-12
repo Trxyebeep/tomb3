@@ -44,6 +44,9 @@
 #include "../game/sound.h"
 #include "../game/savegame.h"
 #include "../game/boat.h"
+#include "../game/quadbike.h"
+#include "../game/minecart.h"
+#include "../game/sphere.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -75,6 +78,9 @@
 #include "../specific/di.h"
 #include "../specific/audio.h"
 #include "../specific/ds.h"
+#include "../specific/texture.h"
+#include "../specific/mmx.h"
+#include "../specific/fmv.h"
 
 HINSTANCE hinstance = 0;
 
@@ -148,6 +154,9 @@ void inject_all(bool replace)
 	inject_sound(replace);
 	inject_savegame(replace);
 	inject_boat(replace);
+	inject_quadbike(replace);
+	inject_minecart(replace);
+	inject_sphere(replace);
 
 	//specific
 	inject_drawbars(replace);
@@ -175,6 +184,9 @@ void inject_all(bool replace)
 	inject_di(replace);
 	inject_audio(replace);
 	inject_ds(replace);
+	inject_texture(replace);
+	inject_mmx(replace);
+	inject_fmv(replace);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)

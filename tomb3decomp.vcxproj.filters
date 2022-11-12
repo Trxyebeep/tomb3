@@ -229,9 +229,6 @@
     <ClInclude Include="tomb3decomp\game\lara2gun.h">
       <Filter>game</Filter>
     </ClInclude>
-    <ClInclude Include="tomb3decomp\game\laraanim.h">
-      <Filter>game</Filter>
-    </ClInclude>
     <ClInclude Include="tomb3decomp\game\laraclmb.h">
       <Filter>game</Filter>
     </ClInclude>
@@ -423,6 +420,15 @@
       <Filter>specific</Filter>
     </ClInclude>
     <ClInclude Include="tomb3decomp\specific\mmx.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3decomp\specific\fmv.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3decomp\newstuff\pausemenu.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3decomp\newstuff\LaraDraw.h">
       <Filter>specific</Filter>
     </ClInclude>
   </ItemGroup>
@@ -818,6 +824,9 @@
       <Filter>specific</Filter>
     </ClCompile>
     <ClCompile Include="tomb3decomp\specific\mmx.cpp" />
+    <ClCompile Include="tomb3decomp\specific\fmv.cpp" />
+    <ClCompile Include="tomb3decomp\newstuff\pausemenu.cpp" />
+    <ClCompile Include="tomb3decomp\newstuff\LaraDraw.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="tomb3decomp.rc" />

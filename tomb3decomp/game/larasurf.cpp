@@ -1,6 +1,5 @@
 #include "../tomb3/pch.h"
 #include "larasurf.h"
-#include "laraanim.h"
 #include "lara.h"
 #include "laramisc.h"
 #include "../3dsystem/phd_math.h"

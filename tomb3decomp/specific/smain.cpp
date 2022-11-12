@@ -2,7 +2,6 @@
 #include "smain.h"
 #include "specific.h"
 #include "../game/gameflow.h"
-#include "../game/laraanim.h"
 #include "../game/invfunc.h"
 #include "../game/objects.h"
 #include "../game/sound.h"
@@ -20,6 +19,7 @@
 #include "frontend.h"
 #include "../game/cinema.h"
 #include "../game/demo.h"
+#include "../game/lara.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #include "init.h"

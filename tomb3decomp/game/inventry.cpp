@@ -17,6 +17,9 @@
 #include "demo.h"
 #include "health.h"
 #include "../specific/option.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
 
 long GetDebouncedInput(long in)
 {
@@ -259,6 +262,10 @@ void GetGlobeMeshFlags()
 void Construct_Inventory()
 {
 	INVENTORY_ITEM* item;
+#ifdef TROYESTUFF
+	float scale;
+#endif
+
 	S_SetupAboveWater(0);
 
 	if (Inventory_Mode != INV_TITLE_MODE)
@@ -323,6 +330,17 @@ void Construct_Inventory()
 	}
 
 	item_data = 0;
+
+#ifdef TROYESTUFF
+	scale = (float)GetRenderScale(480) / (float)GetRenderHeight();
+
+	if (scale < 1.5F)
+		icompass_option.ytrans_sel = tomb3.psx_fov ? -140 : -170;
+	else if (scale < 1.7F)
+		icompass_option.ytrans_sel = long(-15 - (scale - 1.5F) * 35.0F);
+	else
+		icompass_option.ytrans_sel = long(-22 - (scale - 1.7F) / 0.0075F);
+#endif
 }
 
 long Display_Inventory(long mode)
@@ -331,6 +349,9 @@ long Display_Inventory(long mode)
 	RING_INFO ring;
 	IMOTION_INFO imo;
 	PHD_3DPOS viewer;
+#ifdef TROYESTUFF
+	float vol;
+#endif
 	static long nframes;
 	long demo_needed, pass_open, dy, busy;
 	static short JustSaved;
@@ -378,7 +399,16 @@ long Display_Inventory(long mode)
 	SOUND_Stop();
 
 	if (mode != INV_TITLE_MODE && mode != INV_LEVELSELECT_MODE)
-		S_CDVolume(0);
+	{
+#ifdef TROYESTUFF
+		vol = (1.0F - tomb3.inv_music_mute) * float(25 * Option_Music_Volume + 5);
+
+		if (vol >= 1)
+			S_CDVolume((long)vol);
+		else
+#endif
+			S_CDVolume(0);
+	}
 
 	switch (mode)
 	{
@@ -946,7 +976,21 @@ long Display_Inventory(long mode)
 	if (Inventory_Chosen == NO_ITEM)
 	{
 		if (mode != INV_TITLE_MODE && Option_Music_Volume)
-			S_CDVolume(25 * Option_Music_Volume + 5);
+		{
+#ifdef TROYESTUFF
+			if (camera.underwater)
+			{
+				vol = (1.0F - tomb3.unwater_music_mute) * float(25 * Option_Music_Volume + 5);
+
+				if (vol >= 1)
+					S_CDVolume((long)vol);
+				else
+					S_CDVolume(0);
+			}
+			else
+#endif
+				S_CDVolume(25 * Option_Music_Volume + 5);
+		}
 
 		return 0;
 	}
@@ -985,7 +1029,21 @@ long Display_Inventory(long mode)
 	}
 
 	if (mode != INV_TITLE_MODE && mode != INV_LEVELSELECT_MODE && Option_Music_Volume)
-		S_CDVolume(25 * Option_Music_Volume + 5);
+	{
+#ifdef TROYESTUFF
+		if (camera.underwater)
+		{
+			vol = (1.0F - tomb3.unwater_music_mute) * float(25 * Option_Music_Volume + 5);
+
+			if (vol >= 1)
+				S_CDVolume((long)vol);
+			else
+				S_CDVolume(0);
+		}
+		else
+#endif
+			S_CDVolume(25 * Option_Music_Volume + 5);
+	}
 
 	return 0;
 }

@@ -10,7 +10,6 @@
 #include "hair.h"
 #include "lara.h"
 #include "effect2.h"
-#include "laraanim.h"
 #include "control.h"
 #include "sphere.h"
 #include "../specific/draweffects.h"
@@ -19,6 +18,9 @@
 #include "health.h"
 #include "items.h"
 #include "../specific/smain.h"
+#ifdef TROYESTUFF
+#include "../newstuff/LaraDraw.h"
+#endif
 
 short null_rotations[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 static uchar EnemyWeapon[16] = { 0, 1, 129, 0, 1, 1,  1 };
@@ -1867,7 +1869,13 @@ void DrawRooms(short current_room)
 			phd_mxptr[M23] = 0;
 			rot = anims[obj->anim_index].frame_ptr + 9;
 			gar_RotYXZsuperpack(&rot, 0);
+
+#ifdef TROYESTUFF
+			S_InitialisePolyList(1);
+#else
 			S_InitialisePolyList(0);
+#endif
+
 			S_InsertBackground(meshes[obj->mesh_index]);
 			phd_PopMatrix();
 		}
@@ -1901,7 +1909,11 @@ void DrawRooms(short current_room)
 		nPolyType = 2;
 
 		if (bLaraOn)
+#ifdef TROYESTUFF
+			NewDrawLara(lara_item);
+#else
 			DrawLara(lara_item);
+#endif
 	}
 
 	if (bRoomOn)
@@ -1960,6 +1972,15 @@ void DrawRooms(short current_room)
 
 long DrawPhaseGame()
 {
+#ifdef TROYESTUFF
+	CalcLaraMatrices(0);
+	phd_PushUnitMatrix();
+	CalcLaraMatrices(1);
+	phd_PopMatrix();
+
+	SetLaraUnderwaterNodes();
+#endif
+
 	DrawRooms(camera.pos.room_number);
 	DrawGameInfo(1);
 	S_OutputPolyList();
@@ -2075,6 +2096,35 @@ void DrawAnimatingItem(ITEM_INFO* item)
 				phd_PopMatrix_I();
 				item->fired_weapon--;
 			}
+
+#ifdef TROYESTUFF
+			if (i == (EnemyBites[obj->bite_offset].mesh_num - 1) && EnemyWeapon[obj->bite_offset] & 0x80)
+			{
+				if (item->hit_points > 0 || item->frame_number != anims[item->anim_number].frame_end)
+				{
+					bite = &EnemyBites[obj->bite_offset + 1];
+					pos.x = bite->x;
+					pos.y = bite->y;
+					pos.z = bite->z;
+					GetJointAbsPosition(item, &pos, bite->mesh_num);
+					src.x = pos.x;
+					src.y = pos.y;
+					src.z = pos.z;
+					src.room_number = item->room_number;
+
+					pos.x = bite->x;
+					pos.y = bite->y << 5;
+					pos.z = bite->z;
+					GetJointAbsPosition(item, &pos, bite->mesh_num);
+					dest.x = pos.x;
+					dest.y = pos.y;
+					dest.z = pos.z;
+
+					LOS(&src, &dest);
+					S_DrawLaserBeam(&src, &dest, 255, 2, 3);
+				}
+			}
+#endif
 		}
 	}
 	else
@@ -2161,10 +2211,6 @@ void DrawAnimatingItem(ITEM_INFO* item)
 				dest.z = pos.z;
 
 				LOS(&src, &dest);
-
-#ifdef TROYESTUFF
-				dest.box_number = 0x1FFF;	//bite me
-#endif
 				S_DrawLaserBeam(&src, &dest, 255, 2, 3);
 			}
 		}

@@ -221,7 +221,7 @@ void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACEX surf)
 	desc.dwSize = sizeof(DDSURFACEDESCX);
 	surf->Lock(0, &desc, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, 0);
 	source = (char*)desc.lpSurface;
-	dest = (char*)malloc(desc.ddpfPixelFormat.dwRGBBitCount >> 3 << 16);	//fix me
+	dest = (char*)malloc((256 * 256) * (desc.ddpfPixelFormat.dwRGBBitCount >> 3));
 	DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwRBitMask, &rshift, &rcount);
 	DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwGBitMask, &gshift, &gcount);
 	DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwBBitMask, &bshift, &bcount);
@@ -234,7 +234,7 @@ void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACEX surf)
 	memcpy(&desc2, &desc, sizeof(DDSURFACEDESC));
 	MemBlt(dest, 0, 0, 256, 256, 256, source, 0, 0, desc2);
 	surf->Unlock(0);
-	pIndices[0] = DXTextureAdd(256, 256, (ushort*)dest, PictureTextures, bitcnt, 16);
+	pIndices[0] = DXTextureAdd(256, 256, (uchar*)dest, PictureTextures, bitcnt, 16);
 
 	memset(&desc, 0, sizeof(DDSURFACEDESCX));
 	desc.dwSize = sizeof(DDSURFACEDESCX);
@@ -243,7 +243,7 @@ void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACEX surf)
 	source = (char*)desc.lpSurface;
 	MemBlt(dest, 0, 0, 256, 256, 256, source, 256, 0, desc2);
 	surf->Unlock(0);
-	pIndices[1] = DXTextureAdd(256, 256, (ushort*)dest, PictureTextures, bitcnt, 16);
+	pIndices[1] = DXTextureAdd(256, 256, (uchar*)dest, PictureTextures, bitcnt, 16);
 
 	memset(&desc, 0, sizeof(DDSURFACEDESCX));
 	desc.dwSize = sizeof(DDSURFACEDESCX);
@@ -254,7 +254,7 @@ void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACEX surf)
 	memcpy(&desc2, &desc, sizeof(DDSURFACEDESCX));
 	MemBlt(dest, 128, 0, 128, 224, 256, source, 512, 256, desc2);
 	surf->Unlock(0);
-	pIndices[2] = DXTextureAdd(256, 256, (ushort*)dest, PictureTextures, bitcnt, 16);
+	pIndices[2] = DXTextureAdd(256, 256, (uchar*)dest, PictureTextures, bitcnt, 16);
 
 	memset(&desc, 0, sizeof(DDSURFACEDESCX));
 	desc.dwSize = sizeof(DDSURFACEDESCX);
@@ -263,7 +263,7 @@ void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACEX surf)
 	source = (char*)desc.lpSurface;
 	MemBlt(dest, 0, 0, 256, 224, 256, source, 0, 256, desc2);
 	surf->Unlock(0);
-	pIndices[3] = DXTextureAdd(256, 256, (ushort*)dest, PictureTextures, bitcnt, 16);
+	pIndices[3] = DXTextureAdd(256, 256, (uchar*)dest, PictureTextures, bitcnt, 16);
 
 	memset(&desc, 0, sizeof(DDSURFACEDESCX));
 	desc.dwSize = sizeof(DDSURFACEDESCX);
@@ -272,7 +272,7 @@ void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACEX surf)
 	source = (char*)desc.lpSurface;
 	MemBlt(dest, 0, 0, 256, 224, 256, source, 256, 256, desc2);
 	surf->Unlock(0);
-	pIndices[4] = DXTextureAdd(256, 256, (ushort*)dest, PictureTextures, bitcnt, 16);
+	pIndices[4] = DXTextureAdd(256, 256, (uchar*)dest, PictureTextures, bitcnt, 16);
 
 	free(dest);
 }
@@ -454,6 +454,26 @@ void DoInventoryPicture()
 	TRDrawPicture(0, CurPicTexIndices, f_zfar);
 }
 
+void FreePictureTextures(long* indices)
+{
+	DXTextureCleanup(indices[0], PictureTextures);
+	DXTextureCleanup(indices[1], PictureTextures);
+	DXTextureCleanup(indices[2], PictureTextures);
+	DXTextureCleanup(indices[3], PictureTextures);
+	DXTextureCleanup(indices[4], PictureTextures);
+
+	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bPalette)
+	{
+		DXFreeTPages();
+		DXCreateMaxTPages(0);
+	}
+
+	HWR_GetAllTextureHandles();
+
+	for (int i = 0; i < nTPages; i++)
+		HWR_SetCurrentTexture(TPages[i]);
+}
+
 void inject_picture(bool replace)
 {
 	INJECT(0x0048AFD0, CrossFadePicture, replace);
@@ -474,4 +494,5 @@ void inject_picture(bool replace)
 	INJECT(0x0048C010, DrawMonoScreen, replace);
 	INJECT(0x0048C030, RemoveMonoScreen, replace);
 	INJECT(0x0048C070, DoInventoryPicture, replace);
+	INJECT(0x0048B190, FreePictureTextures, replace);
 }

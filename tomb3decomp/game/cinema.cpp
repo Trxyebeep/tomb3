@@ -16,9 +16,21 @@
 #include "../specific/input.h"
 #include "hair.h"
 #include "../specific/specific.h"
+#ifdef TROYESTUFF
+#include "../newstuff/LaraDraw.h"
+#endif
 
 long DrawPhaseCinematic()
 {
+#ifdef TROYESTUFF
+	CalcLaraMatrices(0);
+	phd_PushUnitMatrix();
+	CalcLaraMatrices(1);
+	phd_PopMatrix();
+
+	ResetLaraUnderwaterNodes();
+#endif
+
 	camera_underwater = 0;
 	DrawRooms(camera.pos.room_number);
 	S_DrawSparks();
@@ -358,10 +370,18 @@ long DoCinematic(long nframes)
 		if (S_UpdateInput())
 			return 3;
 
+#ifdef TROYESTUFF
+		if (input & IN_ACTION && !pictureFading)
+#else
 		if (input & IN_ACTION)
+#endif
 			return 1;
 
+#ifdef TROYESTUFF
+		if (input & IN_OPTION && !pictureFading)
+#else
 		if (input & IN_OPTION)
+#endif
 			return 2;
 
 		ClearDynamics();

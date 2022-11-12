@@ -2,7 +2,6 @@
 #include "biggun.h"
 #include "../specific/init.h"
 #include "laraflar.h"
-#include "laraanim.h"
 #include "objects.h"
 #include "collide.h"
 #include "draw.h"
@@ -14,6 +13,7 @@
 #include "effect2.h"
 #include "../specific/game.h"
 #include "control.h"
+#include "lara.h"
 
 void BigGunInitialise(short item_number)
 {
@@ -74,8 +74,8 @@ void BigGunCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 		l->pos = item->pos;
 		l->anim_number = objects[VEHICLE_ANIM].anim_index;
 		l->frame_number = anims[objects[BIGGUN].anim_index].frame_base;
-		l->current_anim_state = 0;
-		l->goal_anim_state = 0;
+		l->current_anim_state = BGUNS_GETON;
+		l->goal_anim_state = BGUNS_GETON;
 		gun = (BIGGUNINFO*)item->data;
 		gun->Flags = 0;
 		gun->RotX = 30;
@@ -303,16 +303,16 @@ long BigGunControl(COLL_INFO* coll)
 		{
 			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 1;
 			lara_item->frame_number = anims[objects[BIGGUN].anim_index + 1].frame_base;
-			lara_item->current_anim_state = 1;
-			lara_item->goal_anim_state = 1;
+			lara_item->current_anim_state = BGUNS_GETOFF;
+			lara_item->goal_anim_state = BGUNS_GETOFF;
 			gun->Flags = 4;
 		}
 	}
 
 	switch (lara_item->current_anim_state)
 	{
-	case 0:
-	case 1:
+	case BGUNS_GETON:
+	case BGUNS_GETOFF:
 		AnimateItem(lara_item);
 		item->anim_number = lara_item->anim_number + objects[BIGGUN].anim_index - objects[VEHICLE_ANIM].anim_index;
 		item->frame_number = lara_item->frame_number + anims[item->anim_number].frame_base - anims[lara_item->anim_number].frame_base;
@@ -329,7 +329,7 @@ long BigGunControl(COLL_INFO* coll)
 
 		break;
 
-	case 2:
+	case BGUNS_UPDOWN:
 		lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 2;
 		lara_item->frame_number = gun->RotX + anims[objects[BIGGUN].anim_index + 2].frame_base;
 		item->anim_number = lara_item->anim_number + objects[BIGGUN].anim_index - objects[VEHICLE_ANIM].anim_index;

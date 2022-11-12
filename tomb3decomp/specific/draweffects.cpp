@@ -12,6 +12,7 @@
 #include "../game/londboss.h"
 #include "output.h"
 #ifdef TROYESTUFF
+#include "../game/sub.h"
 #include "../tomb3/tomb3.h"
 #endif
 
@@ -602,7 +603,7 @@ void DoRain()
 #ifdef TROYESTUFF
 			if (tomb3.improved_rain)
 			{
-				tx = GetRenderScale(1);
+				tx = GetFixedScale(1);
 				rptr->yv = uchar((GetRandomDraw() & 7) + (tx * 8));
 			}
 			else
@@ -715,7 +716,7 @@ void DoRain()
 #ifdef TROYESTUFF
 			if (tomb3.improved_rain)
 			{
-				rnd = GetRenderScale(1);	//width
+				rnd = GetFixedScale(1);	//width
 
 				v[0].xs = (float)x1;
 				v[0].ys = (float)y1;
@@ -912,7 +913,7 @@ void DoSnow()
 		size = (size * 0x2AAB) >> 15;
 
 #ifdef TROYESTUFF
-		size = GetRenderScale(size);
+		size = GetFixedScale(size);
 #endif
 
 		v[0].xs = float(x + size);
@@ -3604,16 +3605,12 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 	long cols[600];
 	long XYZ[3];
 
-	UpdateLaserShades();
-
 #ifdef TROYESTUFF
-	if (dest->box_number != 0x1FFF)	//BITE. ME.
-	{
-		if (tomb3.improved_lasers)
-			return DrawBetterLasers(src, dest, cr, cg, cb);
-	}
+	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+		tomb3.improved_lasers = 0;
 #endif
 
+	UpdateLaserShades();
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
@@ -3681,28 +3678,47 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 		r2 = *c++;
 		g2 = *c++;
 		b2 = *c++;
-		r2 <<= 1;
-		g2 <<= 1;
-		b2 <<= 1;
 
-		if (r2 > 255)
-			r2 = 255;
+#ifdef TROYESTUFF
+		if (!tomb3.improved_lasers)
+#endif
+		{
+			r2 <<= 1;
+			g2 <<= 1;
+			b2 <<= 1;
 
-		if (g2 > 255)
-			g2 = 255;
+			if (r2 > 255)
+				r2 = 255;
 
-		if (b2 > 255)
-			b2 = 255;
+			if (g2 > 255)
+				g2 = 255;
+
+			if (b2 > 255)
+				b2 = 255;
+		}
 
 		if (z1 > 32 && z2 > 32 && ClipLine(x1, y1, x2, y2, w, h))
 		{
 			c1 = (r1 << 16) | (g1 << 8) | b1;
 			c2 = (r2 << 16) | (g2 << 8) | b2;
 
-			alpha = GlobalAlpha;
-			GlobalAlpha = 0xB0000000;
-			HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z1 << W2V_SHIFT, c1, c2);
-			GlobalAlpha = alpha;
+#ifdef TROYESTUFF
+			if (tomb3.improved_lasers)
+			{
+				for (int j = 0; j < GetRenderScale(2); j++)
+				{
+					GlobalAlpha = 0xDEADBEEF;
+					HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin - j, x2 - phd_winxmin, y2 - phd_winymin - j, z1 << W2V_SHIFT, c1, c2);
+				}
+			}
+#endif
+			else
+			{
+				alpha = GlobalAlpha;
+				GlobalAlpha = 0xB0000000;
+				HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z1 << W2V_SHIFT, c1, c2);
+				GlobalAlpha = alpha;
+			}
 		}
 
 		y1 = y2;
@@ -3759,7 +3775,7 @@ void S_DrawBat()
 			else
 				y = (rcossin_tbl[bat->WingYoff << 7] >> 4) + BatMesh[j][1] - 512;
 
-			z = BatMesh[j][3];
+			z = BatMesh[j][2];
 
 			pos.x = phd_mxptr[M00] * x + phd_mxptr[M01] * y + phd_mxptr[M02] * z + phd_mxptr[M03];
 			pos.y = phd_mxptr[M10] * x + phd_mxptr[M11] * y + phd_mxptr[M12] * z + phd_mxptr[M13];
@@ -3871,7 +3887,7 @@ void S_DrawBat()
 			tex.drawtype = 1;
 			tex.tpage = sprite->tpage;
 
-			if (!i)
+			if (!j)
 			{
 				v[0].u = u1;
 				v[0].v = v1 + (ushort)App.nUVAdd;
@@ -3881,7 +3897,7 @@ void S_DrawBat()
 			}
 			else
 			{
-				if (i == 1)
+				if (j == 1)
 				{
 					v[0].u = u2;
 					v[0].v = v1;
@@ -4578,7 +4594,7 @@ void DoUwEffect()
 			size = 16;
 
 		size = (size * 0x2AAB) >> 15;
-		size = GetRenderScale(size) >> 1;
+		size = GetFixedScale(size) >> 1;
 
 		v[0].xs = float(x + size);
 		v[0].ys = float(y - (size << 1));
@@ -4665,134 +4681,168 @@ void DoUwEffect()
 	phd_PopMatrix();
 }
 
-void DrawBetterLasers(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uchar cb)
+void S_DrawSubWakeFX(ITEM_INFO* item)
 {
-	PHD_VBUF v[4];
-	FVECTOR pos;
-	PHDTEXTURESTRUCT tex;
-	long dx, dy, dz, dist, nSegments, x, y, z, s;
-	long r, g, b;
-	short c;
-	short angles[2];
+	DISPLAYMODE* dm;
+	SUB_WAKE_PTS* pt;
+	BITE_INFO* bite;
+	PHD_VECTOR pos;
+	long* pZ;
+	short* pXY;
+	uchar* pRGBs;
+	float zv;
+	long w, h, current, nw, s1, s2, s3, s4;
+	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c12, c34, cval;
+	long Z[64];
+	short XY[128];
+	uchar rgbs[128];
 
-	dx = src->x - dest->x;
-	dz = src->z - dest->z;
-	dist = phd_sqrt(SQUARE(dx) + SQUARE(dz));
-	nSegments = dist >> 9;
+	if (!tomb3.upv_wake)
+		return;
 
-	if (nSegments < 8)
-		nSegments = 8;
-	else if (nSegments > 32)
-		nSegments = 32;
-
-	dx = (dest->x - src->x) / nSegments;
-	dy = (dest->y - src->y) / nSegments;
-	dz = (dest->z - src->z) / nSegments;
-	x = 0;
-	y = 0;
-	z = 0;
-
-	memset(&tex, 0, sizeof(PHDTEXTURESTRUCT));
-	tex.drawtype = 2;
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w - 1;
+	h = dm->h - 1;
 
 	phd_PushMatrix();
-	phd_TranslateAbs(src->x, src->y, src->z);
-	phd_GetVectorAngles(dest->x - src->x, dest->y - src->y, dest->z - src->z, angles);
-	phd_RotY(angles[1]);
+	phd_TranslateAbs(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos);
 
-	for (int i = 0; i < nSegments; i++)
+	for (int i = 0; i < 2; i++)
 	{
-		phd_TranslateRel(x, y, z);
+		pXY = XY;
+		pZ = Z;
+		pRGBs = rgbs;
 
-		if (i)
+		for (int j = 0; j < 2; j++)
 		{
-			x -= dx;
-			y -= dy;
-			z -= dz;
+			bite = &sub_bites[(i << 1) + 2 + j];
+			pos.x = bite->x;
+			pos.y = bite->y;
+			pos.z = bite->z;
+			GetJointAbsPosition(item, &pos, bite->mesh_num);
+			x1 = pos.x - lara_item->pos.x_pos;
+			y1 = pos.y + 128 - lara_item->pos.y_pos;
+			z1 = pos.z - lara_item->pos.z_pos;
+
+			pos.x = phd_mxptr[M00] * x1 + phd_mxptr[M01] * y1 + phd_mxptr[M02] * z1 + phd_mxptr[M03];
+			pos.y = phd_mxptr[M10] * x1 + phd_mxptr[M11] * y1 + phd_mxptr[M12] * z1 + phd_mxptr[M13];
+			pos.z = phd_mxptr[M20] * x1 + phd_mxptr[M21] * y1 + phd_mxptr[M22] * z1 + phd_mxptr[M23];
+
+			zv = f_persp / (float)pos.z;
+			pos.x = short(float(pos.x * zv + f_centerx));
+			pos.y = short(float(pos.y * zv + f_centery));
+
+			pXY[0] = (short)pos.x;
+			pXY[1] = (short)pos.y;
+			pXY += 2;
+			*pZ++ = pos.z;
 		}
 
-		if (!i)
+		*pRGBs++ = 0;
+		current = (SubCurrentStartWake - 1) & 0x1F;
+
+		for (nw = 0; nw < 32; nw++)
 		{
-			r = 0;
-			g = 0;
-			b = 0;
-		}
-		else
-		{
-			s = LaserShades[i];
-			r = cr == 0xFF ? s + 32 : s >> cr;
-			g = cg == 0xFF ? s + 32 : s >> cg;
-			b = cb == 0xFF ? s + 32 : s >> cb;
+			pt = &SubWakePts[current][i];
 
-			r <<= 1;
-			g <<= 1;
-			b <<= 1;
+			if (pt->life)
+			{
+				for (int k = 0; k < 2; k++)
+				{
+					x1 = pt->x[k] - lara_item->pos.x_pos;
+					y1 = pt->y[k] - lara_item->pos.y_pos;
+					z1 = pt->z[k] - lara_item->pos.z_pos;
+					pos.x = phd_mxptr[M00] * x1 + phd_mxptr[M01] * y1 + phd_mxptr[M02] * z1 + phd_mxptr[M03];
+					pos.y = phd_mxptr[M10] * x1 + phd_mxptr[M11] * y1 + phd_mxptr[M12] * z1 + phd_mxptr[M13];
+					pos.z = phd_mxptr[M20] * x1 + phd_mxptr[M21] * y1 + phd_mxptr[M22] * z1 + phd_mxptr[M23];
 
-			if (r > 255)
-				r = 255;
+					zv = f_persp / (float)pos.z;
+					pos.x = short(float(pos.x * zv + f_centerx));
+					pos.y = short(float(pos.y * zv + f_centery));
 
-			if (g > 255)
-				g = 255;
+					pXY[0] = (short)pos.x;
+					pXY[1] = (short)pos.y;
+					pXY += 2;
+					*pZ++ = pos.z;
+				}
 
-			if (b > 255)
-				b = 255;
-		}
+				*pRGBs++ = pt->life >> 2;
+			}
+			else
+			{
+				*pZ = -5555;
+				break;
+			}
 
-		r >>= 3;
-		g >>= 3;
-		b >>= 3;
-		c = short(r << 10 | g << 5 | b);
-
-		pos.x = (float)x;
-		pos.y = (float)y;
-		pos.z = (float)z;
-		ProjectPHDVBuf(&pos, &v[0], c, 1);
-
-		x += dx;
-		y += dy;
-		z += dz;
-
-		if (i == nSegments - 1)
-			c = 0;
-		else
-		{
-			s = LaserShades[i + 1];
-			r = cr == 0xFF ? s + 32 : s >> cr;
-			g = cg == 0xFF ? s + 32 : s >> cg;
-			b = cb == 0xFF ? s + 32 : s >> cb;
-
-			r <<= 1;
-			g <<= 1;
-			b <<= 1;
-
-			if (r > 255)
-				r = 255;
-
-			if (g > 255)
-				g = 255;
-
-			if (b > 255)
-				b = 255;
-
-			r >>= 3;
-			g >>= 3;
-			b >>= 3;
-			c = short(r << 10 | g << 5 | b);
+			current = (current - 1) & 0x1F;
 		}
 
-		pos.x = (float)x;
-		pos.y = (float)y;
-		pos.z = (float)z;
-		ProjectPHDVBuf(&pos, &v[1], c, 1);
+		if (!nw)
+			break;
 
-		v[2] = v[1];
-		v[3] = v[0];
+		pXY = XY;
+		pZ = Z;
+		pRGBs = rgbs;
 
-		s = GetRenderScale(2);
+		x2 = *pXY++;
+		y2 = *pXY++;
+		x1 = *pXY++;
+		y1 = *pXY++;
+		z2 = *pZ++;
+		z1 = *pZ++;
+		c12 = *pRGBs++;
 
-		v[2].ys -= s;
-		v[3].ys -= s;
-		HWI_InsertGT4_Poly(&v[0], &v[1], &v[2], &v[3], &tex, MID_SORT, 1);
+		if (SubWakeShade < 16)
+			c12 = (c12 * SubWakeShade) >> 4;
+
+		for (;;)
+		{
+			z3 = *pZ++;
+
+			if (z3 == -5555)
+				break;
+
+			x3 = *pXY++;
+			y3 = *pXY++;
+			x4 = *pXY++;
+			y4 = *pXY++;
+			z4 = *pZ++;
+			c34 = *pRGBs++;
+
+			if (SubWakeShade < 16)
+				c34 = (c34 * SubWakeShade) >> 4;
+
+			z1 = (z1 + z2 + z3 + z4) >> 2;
+
+			if ((z1 >> W2V_SHIFT) > 32 &&
+				x1 > -512 && x2 > -512 && x3 > -512 && x4 > -512 &&
+				x1 < w + 512 && x2 < w + 512 && x3 < w + 512 && x4 < w + 512 &&
+				y1 > -512 && y2 > -512 && y3 > -512 && y4 > -512 &&
+				y1 < h + 512 && y2 < h + 512 && y3 < h + 512 && y4 < h + 512)
+			{
+				cval = 0;
+				s1 = cval << 10 | cval << 5 | cval;
+
+				cval = c12 >> 1;
+				s2 = cval << 10 | cval << 5 | cval;
+
+				cval = c34 >> 1;
+				s3 = cval << 10 | cval << 5 | cval;
+
+				cval = 0;
+				s4 = cval << 10 | cval << 5 | cval;
+
+				HWI_InsertAlphaSprite_Sorted(x1, y1, z1, s1, x2, y2, z2, s2, x3, y3, z3, s3, x4, y4, z4, s4, -1, 16, 1);
+			}
+
+			x1 = x4;
+			y1 = y4;
+			z1 = z4;
+			x2 = x3;
+			y2 = y3;
+			z2 = z3;
+			c12 = c34;
+		}
 	}
 
 	phd_PopMatrix();

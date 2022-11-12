@@ -182,7 +182,7 @@ long FireWeapon(long weapon_type, ITEM_INFO* target, ITEM_INFO* source, short* a
 		target->hit_status = 1;
 		target->hit_points--;
 		angle = (short)mGetAngle(lara_item->pos.z_pos, lara_item->pos.x_pos, target->pos.z_pos, target->pos.x_pos);
-		TriggerRicochetSpark(&dest, (angle >> 4) & 0xFFF);
+		TriggerRicochetSpark(&dest, (angle >> 4) & 0xFFF, 16);
 		SoundEffect(SFX_LARA_RICOCHET, &target->pos, SFX_DEFAULT);
 	}
 	else
@@ -195,7 +195,7 @@ long FireWeapon(long weapon_type, ITEM_INFO* target, ITEM_INFO* source, short* a
 		{
 			target->hit_status = 1;
 			angle = (short)mGetAngle(lara_item->pos.z_pos, lara_item->pos.x_pos, target->pos.z_pos, target->pos.x_pos);
-			TriggerRicochetSpark(&dest, (angle >> 4) & 0xFFF);
+			TriggerRicochetSpark(&dest, (angle >> 4) & 0xFFF, 16);
 		}
 		else
 			HitTarget(target, &dest, wep->damage);

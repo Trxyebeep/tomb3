@@ -60,6 +60,32 @@ void REG_WriteBlock(char* SubKeyName, LPVOID block, long size)
 		RegDeleteValue(phkResult, SubKeyName);
 }
 
+void REG_WriteString(char* SubKeyName, char* string, long length)
+{
+	long checkLength;
+
+	if (string)
+	{
+		if (length < 0)
+			checkLength = strlen(string);
+		else
+			checkLength = length;
+
+		RegSetValueEx(phkResult, SubKeyName, 0, REG_SZ, (CONST BYTE*)string, checkLength + 1);
+	}
+	else
+		RegDeleteValue(phkResult, SubKeyName);
+}
+
+void REG_WriteFloat(char* SubKeyName, float value)
+{
+	long length;
+	char buf[64];
+
+	length = sprintf(buf, "%.5f", value);
+	REG_WriteString(SubKeyName, buf, length);
+}
+
 bool REG_ReadLong(char* SubKeyName, ulong& value, ulong defaultValue)
 {
 	ulong type;
@@ -109,6 +135,51 @@ bool REG_ReadBlock(char* SubKeyName, LPVOID block, long size, LPVOID dBlock)
 	else
 		RegDeleteValue(phkResult, SubKeyName);
 
+	return 0;
+}
+
+bool REG_ReadString(char* SubKeyName, char* value, long length, char* defaultValue)
+{
+	ulong type;
+	ulong cbData;
+	long len;
+
+	cbData = length;
+
+	if (RegQueryValueEx(phkResult, SubKeyName, 0, &type, (LPBYTE)value, (LPDWORD)&cbData) == ERROR_SUCCESS && type == REG_SZ)
+		return 1;
+
+	if (defaultValue)
+	{
+		REG_WriteString(SubKeyName, defaultValue, -1);
+		len = strlen(defaultValue) + 1;
+
+		if (len > length)
+		{
+			len = length - 1;
+			value[len] = 0;
+		}
+
+		memcpy(value, defaultValue, len);
+	}
+	else
+		RegDeleteValue(phkResult, SubKeyName);
+
+	return 0;
+}
+
+bool REG_ReadFloat(char* SubKeyName, float& value, float defaultValue)
+{
+	char buf[64];
+
+	if (REG_ReadString(SubKeyName, buf, sizeof(buf), 0))
+	{
+		value = (float)atof(buf);
+		return 1;
+	}
+
+	REG_WriteFloat(SubKeyName, defaultValue);
+	value = defaultValue;
 	return 0;
 }
 

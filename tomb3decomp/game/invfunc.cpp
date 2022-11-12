@@ -11,6 +11,58 @@
 #include "health.h"
 #include "items.h"
 
+#ifdef TROYESTUFF
+GOURAUD_FILL req_main_gour1 =
+{
+	{
+	{0x80000000, 0x80000000, 0x80108038, 0x80000000},
+	{0x80000000, 0x80000000, 0x80000000, 0x80108038},
+	{0x80108038, 0x80000000, 0x80000000, 0x80000000},
+	{0x80000000, 0x80108038, 0x80000000, 0x80000000},
+	}
+};
+
+GOURAUD_OUTLINE req_main_gour2 =
+{
+	0xFF000000, 0xFF000000, 0xFF000000,
+	0xFF000000, 0xFF000000, 0xFF000000,
+	0xFF000000, 0xFF000000, 0xFF000000,
+};
+
+GOURAUD_FILL req_bgnd_gour1 =
+{ 
+	{
+	{0x80002000, 0x80002000, 0x80006000, 0x80002000},
+	{0x80002000, 0x80002000, 0x80002000, 0x80006000},
+	{0x80006000, 0x80002000, 0x80002000, 0x80002000},
+	{0x80002000, 0x80006000, 0x80002000, 0x80002000},
+	} 
+};
+
+GOURAUD_OUTLINE req_bgnd_gour2 =
+{
+	0xFF606060, 0xFF808080, 0xFF202020,
+	0xFF000000, 0xFF000000, 0xFF202020,
+	0xFF404040, 0xFF404040, 0xFF606060,
+};
+
+GOURAUD_FILL req_sel_gour1 =
+{
+	{
+	{0x80000000, 0x80000000, 0x801C7840, 0x80000000},
+	{0x80000000, 0x80000000, 0x80000000, 0x801C7840},
+	{0x801C7840, 0x80000000, 0x80000000, 0x80000000},
+	{0x80000000, 0x801C7840, 0x80000000, 0x80000000},
+	}
+};
+
+GOURAUD_OUTLINE req_sel_gour2 =
+{
+	0xFF000000, 0xFFFFFFFF, 0xFF000000,
+	0xFF38F080, 0xFF000000, 0xFFFFFFFF,
+	0xFF000000, 0xFF38F080, 0xFF000000,
+};
+#else
 static ushort req_bgnd_gour1[16] =
 {
 	0x1E00, 0x1E00, 0x1A00, 0x1E00, 0x1E00, 0x1E00, 0x1E00, 0x1A00,
@@ -27,13 +79,14 @@ static ushort req_main_gour1[16] =
 
 static ushort req_main_gour2[9] = { 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x2000 };
 
-static ushort req_unsel_gour1[16] =
+static ushort req_sel_gour1[16] =
 {
 	0x2000, 0x2000, 0x1A00, 0x2000, 0x2000, 0x2000, 0x2000, 0x1A00,
 	0x1A00, 0x2000, 0x2000, 0x2000, 0x2000, 0x1A00, 0x2000, 0x2000
 };
 
 static ushort req_sel_gour2[9] = { 0x2000, 0x1010, 0x2000, 0x1400, 0x2000, 0x1010, 0x2000, 0x1400, 0x2000 };
+#endif
 
 void InitColours()
 {
@@ -51,6 +104,16 @@ void InitColours()
 }
 
 /************Requester stuff************/
+
+#define STATS_LN_COUNT	7
+
+#ifdef TROYESTUFF
+#define STATS_Y_POS		-44
+#define REQ_LN_HEIGHT	15
+#else
+#define STATS_Y_POS		-32
+#define REQ_LN_HEIGHT	18
+#endif
 
 void Init_Requester(REQUEST_INFO* req)
 {
@@ -76,8 +139,13 @@ void Init_Requester(REQUEST_INFO* req)
 
 	req->itemtexts1_flags = RequesterFlags1;
 	req->itemtexts2_flags = RequesterFlags2;
+#ifdef TROYESTUFF
+	req->original_render_width = GetRenderWidthDownscaled();
+	req->original_render_height = GetRenderHeightDownscaled();
+#else
 	req->original_render_width = GetRenderWidth();
 	req->original_render_height = GetRenderHeight();
+#endif
 }
 
 void Remove_Requester(REQUEST_INFO* req)
@@ -119,12 +187,18 @@ void ReqItemCentreAlign(REQUEST_INFO* req, TEXTSTRING* txt)
 void ReqItemLeftalign(REQUEST_INFO* req, TEXTSTRING* txt)
 {
 	ulong h;
+	short bgndOffX;
 
 	h = GetTextScaleH(txt->scaleH);
+#ifdef TROYESTUFF
+	bgndOffX = short((req->pixwidth - T_GetTextWidth(txt)) / 2 - 8);
+#else
+	bgndOffX = short(((h * req->pixwidth) >> 17) - ((8 * h) >> 16) - T_GetTextWidth(txt) / 2);
+#endif
 
 	if (txt)
 	{
-		txt->bgndOffX = short(((h * req->pixwidth) >> 17) - ((8 * h) >> 16) - T_GetTextWidth(txt) / 2);
+		txt->bgndOffX = bgndOffX;
 		txt->xpos = req->xpos - txt->bgndOffX;
 	}
 }
@@ -132,12 +206,18 @@ void ReqItemLeftalign(REQUEST_INFO* req, TEXTSTRING* txt)
 void ReqItemRightalign(REQUEST_INFO* req, TEXTSTRING* txt)
 {
 	ulong h;
+	short bgndOffX;
 
 	h = GetTextScaleH(txt->scaleH);
+#ifdef TROYESTUFF
+	bgndOffX = short((req->pixwidth - T_GetTextWidth(txt)) / 2 - 8);
+#else
+	bgndOffX = short(((h * req->pixwidth) >> 17) - ((8 * h) >> 16) - T_GetTextWidth(txt) / 2);
+#endif
 
 	if (txt)
 	{
-		txt->bgndOffX = -short(((h * req->pixwidth) >> 17) - ((8 * h) >> 16) - T_GetTextWidth(txt) / 2);
+		txt->bgndOffX = -bgndOffX;
 		txt->xpos = req->xpos - txt->bgndOffX;
 	}
 }
@@ -150,8 +230,13 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 
 	lHeight = req->vis_lines * req->line_height + 10;
 	lOff = req->ypos - lHeight;
+#ifdef TROYESTUFF
+	rw = GetRenderWidthDownscaled();
+	rh = GetRenderHeightDownscaled();
+#else
 	rw = GetRenderWidth();
 	rh = GetRenderHeight();
+#endif
 
 	if (rw != req->original_render_width || rh != req->original_render_height)
 	{
@@ -206,8 +291,8 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 
 			if (backgrounds)
 			{
-				T_AddBackground(req->heading1text, req->pixwidth - 4, 0, 0, 0, 8, 0, req_main_gour1, 2);
-				T_AddOutline(req->heading1text, 1, 4, req_main_gour2, 0);
+				T_AddBackground(req->heading1text, req->pixwidth - 4, 0, 0, 0, 8, 0, &req_main_gour1, 2);
+				T_AddOutline(req->heading1text, 1, 4, &req_main_gour2, 0);
 			}
 		}
 
@@ -230,8 +315,8 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 
 			if (backgrounds)
 			{
-				T_AddBackground(req->heading2text, req->pixwidth - 4, 0, 0, 0, 8, 0, req_main_gour1, 2);
-				T_AddOutline(req->heading2text, 1, 4, req_main_gour2, 0);
+				T_AddBackground(req->heading2text, req->pixwidth - 4, 0, 0, 0, 8, 0, &req_main_gour1, 2);
+				T_AddOutline(req->heading2text, 1, 4, &req_main_gour2, 0);
 			}
 		}
 
@@ -247,8 +332,8 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 		req->backgroundtext = T_Print(req->xpos, lOff - req->line_height - 12, 0, " ");
 		T_CentreH(req->backgroundtext, 1);
 		T_BottomAlign(req->backgroundtext, 1);
-		T_AddBackground(req->backgroundtext, req->pixwidth, short(req->line_height + lHeight + 12), 0, 0, 48, 0, req_bgnd_gour1, 1);
-		T_AddOutline(req->backgroundtext, 1, 15, req_bgnd_gour2, 0);
+		T_AddBackground(req->backgroundtext, req->pixwidth, short(req->line_height + lHeight + 12), 0, 0, 48, 0, &req_bgnd_gour1, 1);
+		T_AddOutline(req->backgroundtext, 1, 15, &req_bgnd_gour2, 0);
 	}
 
 	if (!req->line_offset)
@@ -304,8 +389,8 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 			}
 			else
 			{
-				T_AddBackground(req->texts1[i], req->pixwidth - 12, 19, 0, 0, 16, 0, req_unsel_gour1, 1);
-				T_AddOutline(req->texts1[i], 1, 4, req_sel_gour2, 0);
+				T_AddBackground(req->texts1[i], req->pixwidth - 12, 19, 0, 0, 16, 0, &req_sel_gour1, 1);
+				T_AddOutline(req->texts1[i], 1, 4, &req_sel_gour2, 0);
 			}
 
 			if (flags & R_LEFTALIGN)
@@ -530,7 +615,11 @@ void SetPCRequesterSize(REQUEST_INFO* req, long nLines, long y)
 {
 	long h;
 
-	h = GetRenderHeight() / 2 / 18;	//HMMMM
+#ifdef TROYESTUFF
+	h = GetRenderHeightDownscaled() / 2 / REQ_LN_HEIGHT;
+#else
+	h = GetRenderHeight() / 2 / REQ_LN_HEIGHT;
+#endif
 
 	if (h > nLines)
 		h = nLines;
@@ -589,10 +678,6 @@ long AddQuadbikeTime(ulong time)	//same as above for quad times
 	return 0;
 }
 
-#define Stats_Requester	VAR_(0x00626490, REQUEST_INFO)
-#define Valid_Level_Strings	ARRAY_(0x006D62E0, char, [24][50])
-#define Valid_Level_Strings2	ARRAY_(0x006D7220, char, [24][50])
-
 void ShowGymStatsText(const char* time, long type)
 {
 	ulong t;
@@ -614,8 +699,8 @@ void ShowGymStatsText(const char* time, long type)
 	}
 
 	Stats_Requester.noselector = 1;
-	SetPCRequesterSize(&Stats_Requester, 7, -32);
-	Stats_Requester.line_height = 18;
+	SetPCRequesterSize(&Stats_Requester, STATS_LN_COUNT, STATS_Y_POS);
+	Stats_Requester.line_height = REQ_LN_HEIGHT;
 	Stats_Requester.item = 0;
 	Stats_Requester.selected = 0;
 	Stats_Requester.line_offset = 0;
@@ -740,8 +825,8 @@ void ShowStatsText(const char* time, long type)
 	}
 
 	Stats_Requester.noselector = 1;
-	SetPCRequesterSize(&Stats_Requester, 7, -32);
-	Stats_Requester.line_height = 18;
+	SetPCRequesterSize(&Stats_Requester, STATS_LN_COUNT, STATS_Y_POS);
+	Stats_Requester.line_height = REQ_LN_HEIGHT;
 	Stats_Requester.item = 0;
 	Stats_Requester.selected = 0;
 	Stats_Requester.line_offset = 0;
@@ -821,8 +906,8 @@ void ShowEndStatsText()
 	}
 
 	Stats_Requester.noselector = 1;
-	SetPCRequesterSize(&Stats_Requester, 7, -32);
-	Stats_Requester.line_height = 18;
+	SetPCRequesterSize(&Stats_Requester, STATS_LN_COUNT, STATS_Y_POS);
+	Stats_Requester.line_height = REQ_LN_HEIGHT;
 	Stats_Requester.item = 0;
 	Stats_Requester.selected = 0;
 	Stats_Requester.line_offset = 0;

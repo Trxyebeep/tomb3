@@ -5,6 +5,16 @@
 #include "../tomb3/tomb3.h"
 #endif
 
+static __inline bool CheckDrawType(long nDrawType)
+{
+#ifdef TROYESTUFF
+	return nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_GA || nDrawType == DT_POLY_GTA ||
+		nDrawType == DT_LINE_SOLID || nDrawType == DT_LINE_ALPHA;
+#else
+	return nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_GA || nDrawType == DT_LINE_SOLID || nDrawType == DT_POLY_GTA;
+#endif
+}
+
 #define	SetBufferPtrs(sort, info, nDrawType, pass)\
 {\
 	if(CurrentTLVertex - VertexBuffer > MAX_TLVERTICES - 32)\
@@ -19,7 +29,7 @@
 		sort3dptrbf += 3;\
 		info3dptrbf += 5;\
 	}\
-	else if (pass || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_GA || nDrawType == DT_LINE_SOLID || nDrawType == DT_POLY_GTA)\
+	else if (pass || CheckDrawType(nDrawType))\
 	{\
 		sort = sort3dptrfb;\
 		info = info3dptrfb;\
@@ -379,6 +389,52 @@ void HWI_InsertTransQuad_Sorted(long x, long y, long w, long h, long z)
 	v[3].color = 0x50003F1F;
 	CurrentTLVertex = v + 4;
 }
+
+#ifdef TROYESTUFF
+void HWI_InsertGourQuad_Sorted(long x0, long y0, long x1, long y1, long z, ulong c0, ulong c1, ulong c2, ulong c3)
+{
+	D3DTLVERTEX* v;
+	long* sort;
+	short* info;
+	float zv;
+
+	SetBufferPtrs(sort, info, 0, 1);
+	sort[0] = (long)info;
+	sort[1] = z;
+	info[0] = DT_POLY_GA;
+	info[1] = 0;
+	info[2] = 4;
+
+	v = CurrentTLVertex;
+	*((D3DTLVERTEX**)(info + 3)) = CurrentTLVertex;
+	zv = one / (float)z;
+
+	v[0].sx = (float)x1;
+	v[0].sy = (float)y0;
+	v[0].sz = f_a - zv * f_boo;
+	v[0].rhw = zv;
+	v[0].color = c1;
+
+	v[1].sx = (float)x1;
+	v[1].sy = (float)y1;
+	v[1].sz = f_a - zv * f_boo;
+	v[1].rhw = zv;
+	v[1].color = c2;
+
+	v[2].sx = (float)x0;
+	v[2].sy = (float)y1;
+	v[2].sz = f_a - zv * f_boo;
+	v[2].rhw = zv;
+	v[2].color = c3;
+
+	v[3].sx = (float)x0;
+	v[3].sy = (float)y0;
+	v[3].sz = f_a - zv * f_boo;
+	v[3].rhw = zv;
+	v[3].color = c0;
+	CurrentTLVertex = v + 4;
+}
+#endif
 
 void InitUVTable()
 {
@@ -789,12 +845,17 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 		if (!nPoints)
 			return;
 
+#ifdef TROYESTUFF
+	drawtextured:
+#endif
 		phd_leftfloat = (float)phd_winxmin;
 		phd_rightfloat = float(phd_winxmin + phd_winwidth);
 		phd_topfloat = (float)phd_winymin;
 		phd_bottomfloat = float(phd_winymin + phd_winheight);
 
+#ifndef TROYESTUFF
 	drawtextured:
+#endif
 		nPoints = RoomXYGUVClipper(nPoints, v_buffer);
 
 		if (nPoints)
@@ -957,7 +1018,17 @@ void HWI_InsertLine_Sorted(long x1, long y1, long x2, long y2, long z, long c0, 
 	SetBufferPtrs(sort, info, 0, 1);
 	sort[0] = (long)info;
 	sort[1] = z;
-	info[0] = DT_LINE_SOLID;
+
+#ifdef TROYESTUFF
+	if (GlobalAlpha == 0xDEADBEEF)
+	{
+		info[0] = DT_LINE_ALPHA;
+		GlobalAlpha = 0xFF000000;
+	}
+	else
+#endif
+		info[0] = DT_LINE_SOLID;
+
 	info[1] = 0;
 	info[2] = 2;
 	v = CurrentTLVertex;
@@ -2146,6 +2217,474 @@ short* HWI_InsertObjectGT4_Sorted(short* pFaceInfo, long nFaces, sort_type nSort
 	return pFaceInfo;
 }
 
+long RoomZedClipper(long n, POINT_INFO* in, VERTEX_INFO* out)
+{
+	POINT_INFO* last;
+	POINT_INFO* pIn;
+	float lastZ, inZ, dz;
+	long nPoints;
+
+	pIn = in;
+	last = &in[n - 1];
+
+	for (nPoints = 0; n--; last = pIn++)
+	{
+		inZ = f_znear - pIn->zv;
+		lastZ = f_znear - last->zv;
+
+		if (((*(long*)&lastZ) | (*(long*)&inZ)) >= 0)
+			continue;
+
+		if (((*(long*)&lastZ) ^ (*(long*)&inZ)) < 0)
+		{
+			dz = inZ / (last->zv - pIn->zv);
+			out->x = ((last->xv - pIn->xv) * dz + pIn->xv) * f_perspoznear + f_centerx;
+			out->y = ((last->yv - pIn->yv) * dz + pIn->yv) * f_perspoznear + f_centery;
+			out->ooz = f_oneoznear;
+			out->u = ((last->u - pIn->u) * dz + pIn->u) * f_oneoznear;
+			out->v = ((last->v - pIn->v) * dz + pIn->v) * f_oneoznear;
+			out->vr = long((last->vr - pIn->vr) * dz + pIn->vr);
+			out->vg = long((last->vg - pIn->vg) * dz + pIn->vg);
+			out->vb = long((last->vb - pIn->vb) * dz + pIn->vb);
+			out++;
+			nPoints++;
+		}
+
+		if ((*(long*)&inZ) < 0)
+		{
+			out->x = pIn->xs;
+			out->y = pIn->ys;
+			out->ooz = pIn->ooz;
+			out->u = pIn->u * pIn->ooz;
+			out->v = pIn->v * pIn->ooz;
+			out->vr = pIn->vr;
+			out->vg = pIn->vg;
+			out->vb = pIn->vb;
+			out++;
+			nPoints++;
+		}
+	}
+
+	if (nPoints < 3)
+		nPoints = 0;
+
+	return nPoints;
+}
+
+static inline void DoClip(VERTEX_INFO* vtx, VERTEX_INFO* v1, VERTEX_INFO* v2, float clipper)
+{
+	vtx->ooz = (v2->ooz - v1->ooz) * clipper + v1->ooz;
+	vtx->u = (v2->u - v1->u) * clipper + v1->u;
+	vtx->v = (v2->v - v1->v) * clipper + v1->v;
+	vtx->vr = long((v2->vr - v1->vr) * clipper + v1->vr);
+	vtx->vg = long((v2->vg - v1->vg) * clipper + v1->vg);
+	vtx->vb = long((v2->vb - v1->vb) * clipper + v1->vb);
+}
+
+long RoomXYGUVClipper(long n, VERTEX_INFO* in)
+{
+	VERTEX_INFO* v1;
+	VERTEX_INFO* v2;
+	static VERTEX_INFO output[8];
+	float clipper;
+	long nPoints;
+
+	v2 = &in[n - 1];
+	nPoints = 0;
+
+	for (int i = 0; i < n; i++)
+	{
+		v1 = v2;
+		v2 = &in[i];
+
+		if (v1->x < phd_leftfloat)
+		{
+			if (v2->x < phd_leftfloat)
+				continue;
+
+			clipper = (phd_leftfloat - v2->x) / (v1->x - v2->x);
+			DoClip(&output[nPoints], v2, v1, clipper);
+			output[nPoints].x = phd_leftfloat;
+			output[nPoints].y = (v1->y - v2->y) * clipper + v2->y;
+			nPoints++;
+		}
+		else if (v1->x > phd_rightfloat)
+		{
+			if (v2->x > phd_rightfloat)
+				continue;
+
+			clipper = (phd_rightfloat - v2->x) / (v1->x - v2->x);
+			DoClip(&output[nPoints], v2, v1, clipper);
+			output[nPoints].x = phd_rightfloat;
+			output[nPoints].y = (v1->y - v2->y) * clipper + v2->y;
+			nPoints++;
+		}
+
+		if (v2->x < phd_leftfloat)
+		{
+			clipper = (phd_leftfloat - v2->x) / (v1->x - v2->x);
+			DoClip(&output[nPoints], v2, v1, clipper);
+			output[nPoints].x = phd_leftfloat;
+			output[nPoints].y = (v1->y - v2->y) * clipper + v2->y;
+			nPoints++;
+		}
+		else if (v2->x > phd_rightfloat)
+		{
+			clipper = (phd_rightfloat - v2->x) / (v1->x - v2->x);
+			DoClip(&output[nPoints], v2, v1, clipper);
+			output[nPoints].x = phd_rightfloat;
+			output[nPoints].y = (v1->y - v2->y) * clipper + v2->y;
+			nPoints++;
+		}
+		else
+		{
+			output[nPoints].x = v2->x;
+			output[nPoints].y = v2->y;
+			output[nPoints].ooz = v2->ooz;
+			output[nPoints].u = v2->u;
+			output[nPoints].v = v2->v;
+			output[nPoints].vr = v2->vr;
+			output[nPoints].vg = v2->vg;
+			output[nPoints].vb = v2->vb;
+			nPoints++;
+		}
+	}
+
+	if (nPoints < 3)
+		return 0;
+
+	n = nPoints;
+	v2 = &output[n - 1];
+	nPoints = 0;
+
+	for (int i = 0; i < n; i++)
+	{
+		v1 = v2;
+		v2 = &output[i];
+
+		if (v1->y < phd_topfloat)
+		{
+			if (v2->y < phd_topfloat)
+				continue;
+
+			clipper = (phd_topfloat - v2->y) / (v1->y - v2->y);
+			DoClip(&in[nPoints], v2, v1, clipper);
+			in[nPoints].x = (v1->x - v2->x) * clipper + v2->x;
+			in[nPoints].y = phd_topfloat;
+			nPoints++;
+		}
+		else if (v1->y > phd_bottomfloat)
+		{
+			if (v2->y > phd_bottomfloat)
+				continue;
+
+			clipper = (phd_bottomfloat - v2->y) / (v1->y - v2->y);
+			DoClip(&in[nPoints], v2, v1, clipper);
+			in[nPoints].x = (v1->x - v2->x) * clipper + v2->x;
+			in[nPoints].y = phd_bottomfloat;
+			nPoints++;
+		}
+
+		if (v2->y < phd_topfloat)
+		{
+			clipper = (phd_topfloat - v2->y) / (v1->y - v2->y);
+			DoClip(&in[nPoints], v2, v1, clipper);
+			in[nPoints].x = (v1->x - v2->x) * clipper + v2->x;
+			in[nPoints].y = phd_topfloat;
+			nPoints++;
+		}
+		else if (v2->y > phd_bottomfloat)
+		{
+			clipper = (phd_bottomfloat - v2->y) / (v1->y - v2->y);
+			DoClip(&in[nPoints], v2, v1, clipper);
+			in[nPoints].x = (v1->x - v2->x) * clipper + v2->x;
+			in[nPoints].y = phd_bottomfloat;
+			nPoints++;
+		}
+		else
+		{
+			in[nPoints].x = v2->x;
+			in[nPoints].y = v2->y;
+			in[nPoints].ooz = v2->ooz;
+			in[nPoints].u = v2->u;
+			in[nPoints].v = v2->v;
+			in[nPoints].vr = v2->vr;
+			in[nPoints].vg = v2->vg;
+			in[nPoints].vb = v2->vb;
+			nPoints++;
+		}
+	}
+
+	if (nPoints < 3)
+		nPoints = 0;
+
+	return nPoints;
+}
+
+static inline void DoClipNoUV(VERTEX_INFO* vtx, VERTEX_INFO* v1, VERTEX_INFO* v2, float clipper)
+{
+	vtx->ooz = (v2->ooz - v1->ooz) * clipper + v1->ooz;
+	vtx->vr = long((v2->vr - v1->vr) * clipper + v1->vr);
+	vtx->vg = long((v2->vg - v1->vg) * clipper + v1->vg);
+	vtx->vb = long((v2->vb - v1->vb) * clipper + v1->vb);
+}
+
+long XYGClipper(long n, VERTEX_INFO* in)
+{
+	VERTEX_INFO* v1;
+	VERTEX_INFO* v2;
+	static VERTEX_INFO output[8];
+	float clipper;
+	long nPoints;
+
+	v2 = &in[n - 1];
+	nPoints = 0;
+
+	for (int i = 0; i < n; i++)
+	{
+		v1 = v2;
+		v2 = &in[i];
+
+		if (v1->x < phd_leftfloat)
+		{
+			if (v2->x < phd_leftfloat)
+				continue;
+
+			clipper = (phd_leftfloat - v2->x) / (v1->x - v2->x);
+			DoClipNoUV(&output[nPoints], v2, v1, clipper);
+			output[nPoints].x = phd_leftfloat;
+			output[nPoints].y = (v1->y - v2->y) * clipper + v2->y;
+			nPoints++;
+		}
+		else if (v1->x > phd_rightfloat)
+		{
+			if (v2->x > phd_rightfloat)
+				continue;
+
+			clipper = (phd_rightfloat - v2->x) / (v1->x - v2->x);
+			DoClipNoUV(&output[nPoints], v2, v1, clipper);
+			output[nPoints].x = phd_rightfloat;
+			output[nPoints].y = (v1->y - v2->y) * clipper + v2->y;
+			nPoints++;
+		}
+
+		if (v2->x < phd_leftfloat)
+		{
+			clipper = (phd_leftfloat - v2->x) / (v1->x - v2->x);
+			DoClipNoUV(&output[nPoints], v2, v1, clipper);
+			output[nPoints].x = phd_leftfloat;
+			output[nPoints].y = (v1->y - v2->y) * clipper + v2->y;
+			nPoints++;
+		}
+		else if (v2->x > phd_rightfloat)
+		{
+			clipper = (phd_rightfloat - v2->x) / (v1->x - v2->x);
+			DoClipNoUV(&output[nPoints], v2, v1, clipper);
+			output[nPoints].x = phd_rightfloat;
+			output[nPoints].y = (v1->y - v2->y) * clipper + v2->y;
+			nPoints++;
+		}
+		else
+		{
+			output[nPoints].x = v2->x;
+			output[nPoints].y = v2->y;
+			output[nPoints].ooz = v2->ooz;
+			output[nPoints].vr = v2->vr;
+			output[nPoints].vg = v2->vg;
+			output[nPoints].vb = v2->vb;
+			nPoints++;
+		}
+	}
+
+	if (nPoints < 3)
+		return 0;
+
+	n = nPoints;
+	v2 = &output[n - 1];
+	nPoints = 0;
+
+	for (int i = 0; i < n; i++)
+	{
+		v1 = v2;
+		v2 = &output[i];
+
+		if (v1->y < phd_topfloat)
+		{
+			if (v2->y < phd_topfloat)
+				continue;
+
+			clipper = (phd_topfloat - v2->y) / (v1->y - v2->y);
+			DoClipNoUV(&in[nPoints], v2, v1, clipper);
+			in[nPoints].x = (v1->x - v2->x) * clipper + v2->x;
+			in[nPoints].y = phd_topfloat;
+			nPoints++;
+		}
+		else if (v1->y > phd_bottomfloat)
+		{
+			if (v2->y > phd_bottomfloat)
+				continue;
+
+			clipper = (phd_bottomfloat - v2->y) / (v1->y - v2->y);
+			DoClipNoUV(&in[nPoints], v2, v1, clipper);
+			in[nPoints].x = (v1->x - v2->x) * clipper + v2->x;
+			in[nPoints].y = phd_bottomfloat;
+			nPoints++;
+		}
+
+		if (v2->y < phd_topfloat)
+		{
+			clipper = (phd_topfloat - v2->y) / (v1->y - v2->y);
+			DoClipNoUV(&in[nPoints], v2, v1, clipper);
+			in[nPoints].x = (v1->x - v2->x) * clipper + v2->x;
+			in[nPoints].y = phd_topfloat;
+			nPoints++;
+		}
+		else if (v2->y > phd_bottomfloat)
+		{
+			clipper = (phd_bottomfloat - v2->y) / (v1->y - v2->y);
+			DoClipNoUV(&in[nPoints], v2, v1, clipper);
+			in[nPoints].x = (v1->x - v2->x) * clipper + v2->x;
+			in[nPoints].y = phd_bottomfloat;
+			nPoints++;
+		}
+		else
+		{
+			in[nPoints].x = v2->x;
+			in[nPoints].y = v2->y;
+			in[nPoints].ooz = v2->ooz;
+			in[nPoints].vr = v2->vr;
+			in[nPoints].vg = v2->vg;
+			in[nPoints].vb = v2->vb;
+			nPoints++;
+		}
+	}
+
+	if (nPoints < 3)
+		nPoints = 0;
+
+	return nPoints;
+}
+
+long XYClipper(long n, VERTEX_INFO* in)
+{
+	VERTEX_INFO* v1;
+	VERTEX_INFO* v2;
+	VERTEX_INFO output[20];
+	float clipper;
+	long nPoints;
+
+	v2 = &in[n - 1];
+	nPoints = 0;
+
+	for (int i = 0; i < n; i++)
+	{
+		v1 = v2;
+		v2 = &in[i];
+
+		if (v1->x < phd_leftfloat)
+		{
+			if (v2->x < phd_leftfloat)
+				continue;
+
+			clipper = (phd_leftfloat - v2->x) / (v1->x - v2->x);
+			output[nPoints].x = phd_leftfloat;
+			output[nPoints].y = (v1->y - v2->y) * clipper + v2->y;
+			nPoints++;
+		}
+		else if (v1->x > phd_rightfloat)
+		{
+			if (v2->x > phd_rightfloat)
+				continue;
+
+			clipper = (phd_rightfloat - v2->x) / (v1->x - v2->x);
+			output[nPoints].x = phd_rightfloat;
+			output[nPoints].y = (v1->y - v2->y) * clipper + v2->y;
+			nPoints++;
+		}
+
+		if (v2->x < phd_leftfloat)
+		{
+			clipper = (phd_leftfloat - v2->x) / (v1->x - v2->x);
+			output[nPoints].x = phd_leftfloat;
+			output[nPoints].y = (v1->y - v2->y) * clipper + v2->y;
+			nPoints++;
+		}
+		else if (v2->x > phd_rightfloat)
+		{
+			clipper = (phd_rightfloat - v2->x) / (v1->x - v2->x);
+			output[nPoints].x = phd_rightfloat;
+			output[nPoints].y = (v1->y - v2->y) * clipper + v2->y;
+			nPoints++;
+		}
+		else
+		{
+			output[nPoints].x = v2->x;
+			output[nPoints].y = v2->y;
+			nPoints++;
+		}
+	}
+
+	if (nPoints < 3)
+		return 0;
+
+	n = nPoints;
+	v2 = &output[n - 1];
+	nPoints = 0;
+
+	for (int i = 0; i < n; i++)
+	{
+		v1 = v2;
+		v2 = &output[i];
+
+		if (v1->y < phd_topfloat)
+		{
+			if (v2->y < phd_topfloat)
+				continue;
+
+			clipper = (phd_topfloat - v2->y) / (v1->y - v2->y);
+			in[nPoints].x = (v1->x - v2->x) * clipper + v2->x;
+			in[nPoints].y = phd_topfloat;
+			nPoints++;
+		}
+		else if (v1->y > phd_bottomfloat)
+		{
+			if (v2->y > phd_bottomfloat)
+				continue;
+
+			clipper = (phd_bottomfloat - v2->y) / (v1->y - v2->y);
+			in[nPoints].x = (v1->x - v2->x) * clipper + v2->x;
+			in[nPoints].y = phd_bottomfloat;
+			nPoints++;
+		}
+
+		if (v2->y < phd_topfloat)
+		{
+			clipper = (phd_topfloat - v2->y) / (v1->y - v2->y);
+			in[nPoints].x = (v1->x - v2->x) * clipper + v2->x;
+			in[nPoints].y = phd_topfloat;
+			nPoints++;
+		}
+		else if (v2->y > phd_bottomfloat)
+		{
+			clipper = (phd_bottomfloat - v2->y) / (v1->y - v2->y);
+			in[nPoints].x = (v1->x - v2->x) * clipper + v2->x;
+			in[nPoints].y = phd_bottomfloat;
+			nPoints++;
+		}
+		else
+		{
+			in[nPoints].x = v2->x;
+			in[nPoints].y = v2->y;
+			nPoints++;
+		}
+	}
+
+	if (nPoints < 3)
+		nPoints = 0;
+
+	return nPoints;
+}
+
 void inject_hwinsert(bool replace)
 {
 	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
@@ -2176,4 +2715,8 @@ void inject_hwinsert(bool replace)
 	INJECT(0x00408800, HWI_InsertObjectGT3_Sorted, replace);
 	INJECT(0x00408DA0, HWI_InsertObjectG4_Sorted, replace);
 	INJECT(0x004086B0, HWI_InsertObjectGT4_Sorted, replace);
+	INJECT(0x0040AA00, RoomZedClipper, replace);
+	INJECT(0x0040ABE0, RoomXYGUVClipper, replace);
+	INJECT(0x0040C0B0, XYGClipper, replace);
+	INJECT(0x0040CA50, XYClipper, replace);
 }

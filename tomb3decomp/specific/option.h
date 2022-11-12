@@ -5,6 +5,10 @@ void inject_option(bool replace);
 
 long GetRenderWidth();
 long GetRenderHeight();
+#ifdef TROYESTUFF
+long GetRenderWidthDownscaled();
+long GetRenderHeightDownscaled();
+#endif
 void do_detail_option(INVENTORY_ITEM* item);
 void do_levelselect_option(INVENTORY_ITEM* item);
 void do_pickup_option(INVENTORY_ITEM* item);

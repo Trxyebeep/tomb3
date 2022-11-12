@@ -3,6 +3,7 @@
 #include "registry.h"
 #include "../specific/specific.h"
 #include "../specific/option.h"
+#include "../specific/input.h"
 
 TOMB3_OPTIONS tomb3;
 
@@ -73,15 +74,23 @@ static void T3_InitSettings()
 	tomb3.improved_poison_bar = 1;
 	tomb3.custom_water_color = 1;
 	tomb3.psx_crystal_sfx = 0;
+	tomb3.psx_text_colors = 0;
+	tomb3.upv_wake = 1;
+	tomb3.psx_fov = 0;
+	tomb3.psx_boxes = 0;
 	tomb3.shadow_mode = SHADOW_PSX;
 	tomb3.bar_mode = BAR_PSX;
 	tomb3.sophia_rings = SRINGS_PSX;
+	tomb3.bar_pos = BPOS_ORIGINAL;
+	tomb3.ammo_counter = ACTR_PC;
+	tomb3.GUI_Scale = 1.0F;
+	tomb3.INV_Scale = 0.5F;
+	tomb3.unwater_music_mute = 0.8F;
+	tomb3.inv_music_mute = 0.8F;
 }
 
 void T3_SaveSettings()
 {
-	ulong gamma;
-
 	OpenRegistry(SUB_KEY);
 
 	if (App.DeviceInfoPtr->nDDInfo)
@@ -109,9 +118,7 @@ void T3_SaveSettings()
 	REG_WriteLong((char*)"MMX", App.DXConfigPtr->MMX);
 	REG_WriteLong((char*)"SFXVolume", Option_SFX_Volume);
 	REG_WriteLong((char*)"MusicVolume", Option_Music_Volume);
-
-	gamma = (ulong)GammaOption;
-	REG_WriteLong((char*)"Gamma", gamma);
+	REG_WriteFloat((char*)"Gamma", GammaOption);
 	REG_WriteBlock((char*)"keyLayout", &layout[1][0], sizeof(layout) / 2);
 
 	//new settings :)
@@ -132,17 +139,25 @@ void T3_SaveSettings()
 	REG_WriteBool((char*)"improved_poison_bar", tomb3.improved_poison_bar);
 	REG_WriteBool((char*)"custom_water_color", tomb3.custom_water_color);
 	REG_WriteBool((char*)"psx_crystal_sfx", tomb3.psx_crystal_sfx);
+	REG_WriteBool((char*)"psx_text_colors", tomb3.psx_text_colors);
+	REG_WriteBool((char*)"upv_wake", tomb3.upv_wake);
+	REG_WriteBool((char*)"psx_fov", tomb3.psx_fov);
+	REG_WriteBool((char*)"psx_boxes", tomb3.psx_boxes);
 	REG_WriteLong((char*)"shadow_mode", tomb3.shadow_mode);
 	REG_WriteLong((char*)"bar_mode", tomb3.bar_mode);
 	REG_WriteLong((char*)"sophia_rings", tomb3.sophia_rings);
+	REG_WriteLong((char*)"bar_pos", tomb3.bar_pos);
+	REG_WriteLong((char*)"ammo_counter", tomb3.ammo_counter);
+	REG_WriteFloat((char*)"GUI_Scale", tomb3.GUI_Scale);
+	REG_WriteFloat((char*)"INV_Scale", tomb3.INV_Scale);
+	REG_WriteFloat((char*)"unwater_music_mute", tomb3.unwater_music_mute);
+	REG_WriteFloat((char*)"inv_music_mute", tomb3.inv_music_mute);
 
 	CloseRegistry();
 }
 
 bool T3_LoadSettings()
 {
-	ulong gamma;
-
 	if (!OpenRegistry(SUB_KEY))
 	{
 		T3_InitSettings();
@@ -174,8 +189,7 @@ bool T3_LoadSettings()
 	REG_ReadLong((char*)"MMX", (ulong&)App.DXConfigPtr->MMX, 0);
 	REG_ReadLong((char*)"SFXVolume", (ulong&)Option_SFX_Volume, 0);
 	REG_ReadLong((char*)"MusicVolume", (ulong&)Option_Music_Volume, 0);
-	REG_ReadLong((char*)"Gamma", gamma, 0);
-	GammaOption = (float)gamma;
+	REG_ReadFloat((char*)"Gamma", GammaOption, 0);
 
 	REG_ReadBlock((char*)"keyLayout", &layout[1][0], sizeof(layout) / 2, 0);
 	DefaultConflict();	//fix having to open the control options to set conflicts;
@@ -197,9 +211,19 @@ bool T3_LoadSettings()
 	REG_ReadBool((char*)"improved_poison_bar", tomb3.improved_poison_bar, 1);
 	REG_ReadBool((char*)"custom_water_color", tomb3.custom_water_color, 1);
 	REG_ReadBool((char*)"psx_crystal_sfx", tomb3.psx_crystal_sfx, 0);
+	REG_ReadBool((char*)"psx_text_colors", tomb3.psx_text_colors, 0);
+	REG_ReadBool((char*)"upv_wake", tomb3.upv_wake, 1);
+	REG_ReadBool((char*)"psx_fov", tomb3.psx_fov, 0);
+	REG_ReadBool((char*)"psx_boxes", tomb3.psx_boxes, 0);
 	REG_ReadLong((char*)"shadow_mode", (ulong&)tomb3.shadow_mode, SHADOW_PSX);
 	REG_ReadLong((char*)"bar_mode", (ulong&)tomb3.bar_mode, BAR_PSX);
 	REG_ReadLong((char*)"sophia_rings", (ulong&)tomb3.sophia_rings, SRINGS_PSX);
+	REG_ReadLong((char*)"bar_pos", (ulong&)tomb3.bar_pos, BPOS_ORIGINAL);
+	REG_ReadLong((char*)"ammo_counter", (ulong&)tomb3.ammo_counter, ACTR_PC);
+	REG_ReadFloat((char*)"GUI_Scale", tomb3.GUI_Scale, 1.0F);
+	REG_ReadFloat((char*)"INV_Scale", tomb3.INV_Scale, 1.0F);
+	REG_ReadFloat((char*)"unwater_music_mute", tomb3.unwater_music_mute, 0.8F);
+	REG_ReadFloat((char*)"inv_music_mute", tomb3.inv_music_mute, 0.8F);
 
 	S_CDVolume(25 * Option_Music_Volume + 5);
 	S_SoundSetMasterVolume(6 * Option_SFX_Volume + 4);

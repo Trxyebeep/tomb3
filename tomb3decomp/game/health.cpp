@@ -7,8 +7,15 @@
 #include "../specific/specific.h"
 #include "gameflow.h"
 #ifdef TROYESTUFF
+#include "../specific/output.h"
 #include "../tomb3/tomb3.h"
 #endif
+
+#define AMMO_XPOS_PC	-10
+#define AMMO_YPOS_PC	50
+
+#define AMMO_XPOS_PS	-24
+#define AMMO_YPOS_PS	-24
 
 #ifndef TROYESTUFF
 DISPLAYPU pickups[1];
@@ -81,7 +88,7 @@ long FlashIt()
 void DrawAssaultTimer()
 {
 	char* txt;
-	long timer, x;
+	long timer, x, y, h, v, d0, d1, d2;
 	char buffer[8];
 
 	if (CurrentLevel == LV_GYM && assault_timer_display && !QuadbikeLapTimeDisplayTimer)
@@ -95,26 +102,43 @@ void DrawAssaultTimer()
 			timer = 0;
 
 		sprintf(buffer, "%d:%02d.%02d", timer / 30 / 60, timer / 30 % 60, 334 * (timer % 30) / 100);
+
+#ifdef TROYESTUFF
+		x = (phd_winxmax >> 1) - GetRenderScale(50);
+		y = GetRenderScale(36);
+		h = GetRenderScale(0x10000);
+		v = GetRenderScale(0x10000);
+		d0 = GetRenderScale(-6);
+		d1 = GetRenderScale(14);
+		d2 = GetRenderScale(20);
+#else
 		x = (phd_winxmax >> 1) - 50;
+		y = 36;
+		h = 0x10000;
+		v = 0x10000;
+		d0 = -6;
+		d1 = 14;
+		d2 = 20;
+#endif
 
 		for (txt = buffer; *txt; txt++)
 		{
 			if (*txt == ':')
 			{
-				x -= 6;
-				S_DrawScreenSprite2d(x, 36, 0, 0x10000, 0x10000, objects[ASSAULT_NUMBERS].mesh_index + 10, 2, 0);
-				x += 14;
+				x += d0;
+				S_DrawScreenSprite2d(x, y, 0, h, v, objects[ASSAULT_NUMBERS].mesh_index + 10, 2, 0);
+				x += d1;
 			}
 			else if (*txt == '.')
 			{
-				x -= 6;
-				S_DrawScreenSprite2d(x, 36, 0, 0x10000, 0x10000, objects[ASSAULT_NUMBERS].mesh_index + 11, 2, 0);
-				x += 14;
+				x += d0;
+				S_DrawScreenSprite2d(x, y, 0, h, v, objects[ASSAULT_NUMBERS].mesh_index + 11, 2, 0);
+				x += d1;
 			}
 			else
 			{
-				S_DrawScreenSprite2d(x, 36, 0, 0x10000, 0x10000, *txt + objects[ASSAULT_NUMBERS].mesh_index - '0', 2, 0);
-				x += 20;
+				S_DrawScreenSprite2d(x, y, 0, h, v, *txt + objects[ASSAULT_NUMBERS].mesh_index - '0', 2, 0);
+				x += d2;
 			}
 		}
 	}
@@ -123,7 +147,7 @@ void DrawAssaultTimer()
 void DrawAssaultPenalties(long type)
 {
 	char* txt;
-	long timer, x, y;
+	long timer, x, y, h, v, p, d0, d1, d2, d3;
 	char buffer[12];
 
 	if (CurrentLevel == LV_GYM && assault_penalty_display_timer && assault_timer_display)
@@ -136,8 +160,13 @@ void DrawAssaultPenalties(long type)
 			if (assault_target_penalties > 0x1A5DD)
 				assault_target_penalties = 0x1A5DD;
 
+#ifdef TROYESTUFF
+			x = (phd_winxmax >> 1) - GetRenderScale(193);
+			y = !assault_penalties ? GetRenderScale(36) : GetRenderScale(64);
+#else
 			x = (phd_winxmax >> 1) - 193;
 			y = !assault_penalties ? 36 : 64;
+#endif
 			timer = assault_target_penalties;
 			sprintf(buffer, "T %d:%02d s", timer / 30 / 60, timer / 30 % 60);
 		}
@@ -149,44 +178,67 @@ void DrawAssaultPenalties(long type)
 			if (assault_penalties > 0x1A5DD)
 				assault_penalties = 0x1A5DD;
 
+#ifdef TROYESTUFF
+			x = (phd_winxmax >> 1) - GetRenderScale(175);
+			y = GetRenderScale(36);
+#else
 			x = (phd_winxmax >> 1) - 175;
 			y = 36;
+#endif
 			timer = assault_penalties;
 			sprintf(buffer, "%d:%02d s", timer / 30 / 60, timer / 30 % 60);
 		}
 
+#ifdef TROYESTUFF
+		h = GetRenderScale(0x10000);
+		v = GetRenderScale(0x10000);
+		p = GetRenderScale(1);
+		d0 = GetRenderScale(-6);
+		d1 = GetRenderScale(14);
+		d2 = GetRenderScale(20);
+		d3 = GetRenderScale(8);
+#else
+		h = 0x10000;
+		v = 0x10000;
+		p = 1;
+		d0 = -6;
+		d1 = 14;
+		d2 = 20;
+		d3 = 8;
+#endif
+
 		for (txt = buffer; *txt; txt++)
 		{
 			if (*txt == ' ')
-				x += 8;
+				x += d3;
 			else if (*txt == 'T')
 			{
-				x -= 6;
-				S_DrawScreenSprite2d(x, y + 1, 0, 0x10000, 0x10000, objects[ASSAULT_NUMBERS].mesh_index + 12, 0, 0);
-				x += 16;
+				x += d0;
+				S_DrawScreenSprite2d(x, y + p, 0, h, v, objects[ASSAULT_NUMBERS].mesh_index + 12, 0, 0);
+				x += d1 + (p * 2);
 			}
 			else if (*txt == 's')
 			{
-				x -= 6;
-				S_DrawScreenSprite2d(x - 4, y, 0, 0x10000, 0x10000, objects[ASSAULT_NUMBERS].mesh_index + 13, 9, 0);
-				x += 14;
+				x += d0;
+				S_DrawScreenSprite2d(x - (p * 4), y, 0, h, v, objects[ASSAULT_NUMBERS].mesh_index + 13, 9, 0);
+				x += d1;
 			}
 			else if (*txt == ':')
 			{
-				x -= 6;
-				S_DrawScreenSprite2d(x, y, 0, 0x10000, 0x10000, objects[ASSAULT_NUMBERS].mesh_index + 10, 9, 0);
-				x += 14;
+				x += d0;
+				S_DrawScreenSprite2d(x, y, 0, h, v, objects[ASSAULT_NUMBERS].mesh_index + 10, 9, 0);
+				x += d1;
 			}
 			else if (*txt == '.')
 			{
-				x -= 6;
-				S_DrawScreenSprite2d(x, y, 0, 0x10000, 0x10000, objects[ASSAULT_NUMBERS].mesh_index + 11, 9, 0);
-				x += 14;
+				x += d0;
+				S_DrawScreenSprite2d(x, y, 0, h, v, objects[ASSAULT_NUMBERS].mesh_index + 11, 9, 0);
+				x += d1;
 			}
 			else
 			{
-				S_DrawScreenSprite2d(x, y, 0, 0x10000, 0x10000, *txt + objects[ASSAULT_NUMBERS].mesh_index - '0', 9, 0);
-				x += 20;
+				S_DrawScreenSprite2d(x, y, 0, h, v, *txt + objects[ASSAULT_NUMBERS].mesh_index - '0', 9, 0);
+				x += d2;
 			}
 		}
 	}
@@ -195,7 +247,7 @@ void DrawAssaultPenalties(long type)
 void DrawQuadbikeLapTime()
 {
 	char* txt;
-	long timer, x, hundredth;
+	long timer, x, y, h, v, d0, d1, d2, hundredth;
 	short col;
 	char buffer[8];
 
@@ -208,15 +260,39 @@ void DrawQuadbikeLapTime()
 				timer = savegame.best_quadbike_times[0] / 0x1E;
 				col = 10;
 				hundredth = 334 * (savegame.best_quadbike_times[0] % 0x1E) / 0x64;
+#ifdef TROYESTUFF
+				x = (phd_winxmax >> 1) + GetRenderScale(100);
+#else
 				x = (phd_winxmax >> 1) + 100;
+#endif
 			}
 			else
 			{
 				col = 9;
 				timer = QuadbikeLapTime / 30;
 				hundredth = 334 * (QuadbikeLapTime % 30) / 100;
+#ifdef TROYESTUFF
+				x = (phd_winxmax >> 1) - GetRenderScale(50);
+#else
 				x = (phd_winxmax >> 1) - 50;
+#endif
 			}
+
+#ifdef TROYESTUFF
+			y = GetRenderScale(36);
+			h = GetRenderScale(0x10000);
+			v = GetRenderScale(0x10000);
+			d0 = GetRenderScale(-6);
+			d1 = GetRenderScale(14);
+			d2 = GetRenderScale(20);
+#else
+			y = 36;
+			h = 0x10000;
+			v = 0x10000;
+			d0 = -6;
+			d1 = 14;
+			d2 = 20;
+#endif
 
 			sprintf(buffer, "%d:%02d.%02d", timer / 60, timer % 60, hundredth);
 
@@ -224,20 +300,20 @@ void DrawQuadbikeLapTime()
 			{
 				if (*txt == ':')
 				{
-					x -= 6;
-					S_DrawScreenSprite2d(x, 36, 0, 0x10000, 0x10000, objects[ASSAULT_NUMBERS].mesh_index + 10, col, 0);
-					x += 14;
+					x += d0;
+					S_DrawScreenSprite2d(x, y, 0, h, v, objects[ASSAULT_NUMBERS].mesh_index + 10, col, 0);
+					x += d1;
 				}
 				else if (*txt == '.')
 				{
-					x -= 6;
-					S_DrawScreenSprite2d(x, 36, 0, 0x10000, 0x10000, objects[ASSAULT_NUMBERS].mesh_index + 11, col, 0);
-					x += 14;
+					x += d0;
+					S_DrawScreenSprite2d(x, y, 0, h, v, objects[ASSAULT_NUMBERS].mesh_index + 11, col, 0);
+					x += d1;
 				}
 				else
 				{
-					S_DrawScreenSprite2d(x, 36, 0, 0x10000, 0x10000, *txt + objects[ASSAULT_NUMBERS].mesh_index - '0', col, 0);
-					x += 20;
+					S_DrawScreenSprite2d(x, y, 0, h, v, *txt + objects[ASSAULT_NUMBERS].mesh_index - '0', col, 0);
+					x += d2;
 				}
 			}
 		}
@@ -363,10 +439,16 @@ void DrawAmmoInfo()
 	RemoveAmmoText();
 
 #ifdef TROYESTUFF
-	ammotext = T_Print(-10, 30, 0, txt);
-	T_TopAlign(ammotext, 1);
+	if (tomb3.ammo_counter == ACTR_PSX || tomb3.bar_pos == BPOS_PSX)	//PSX bar pos forces the PSX ammo counter.
+	{
+		ammotext = T_Print(AMMO_XPOS_PS, AMMO_YPOS_PS, 3, txt);
+		T_BottomAlign(ammotext, 1);
+	}
+	else
+		ammotext = T_Print(AMMO_XPOS_PC, AMMO_YPOS_PC, 0, txt);
+
 #else
-	ammotext = T_Print(-10, 50, 0, txt);
+	ammotext = T_Print(AMMO_XPOS_PC, AMMO_YPOS_PC, 0, txt);
 #endif
 
 	T_RightAlign(ammotext, 1);

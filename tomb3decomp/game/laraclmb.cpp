@@ -1,6 +1,5 @@
 #include "../tomb3/pch.h"
 #include "laraclmb.h"
-#include "laraanim.h"
 #include "lara.h"
 #include "control.h"
 #include "laramisc.h"

@@ -33,6 +33,11 @@ __inline void phd_PopMatrix()
 	phd_mxptr -= indices_count;
 }
 
+extern long sort3d_bufferbf[MAX_SORTLISTS];
+extern long sort3d_bufferfb[MAX_SORTLISTS];
+extern short info3d_bufferbf[MAX_SORTLISTS];
+extern short info3d_bufferfb[MAX_SORTLISTS];
+
 #define InsertLine	( *(void(__cdecl**)(long x1, long y1, long x2, long y2, long z, long c0, long c1)) 0x005A6AF8 )
 #define InsertObjectGT4	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005A6A34 )
 #define InsertObjectGT3	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005A6A30 )

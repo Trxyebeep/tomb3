@@ -74,9 +74,41 @@ do \
 #define DDSGUID					IID_IDirectDrawSurface3
 #define DDGUID					IID_IDirectDraw2
 #define D3DGUID					IID_IDirect3D2
+#define D3DTEXGUID				IID_IDirect3DTexture2
 #define DIGUID					IID_IDirectInput8
 #define DSNGUID					IID_IDirectSoundNotify
 /***********************************************/
+
+//constants
+#define NO_HEIGHT -32512
+#define NO_TARGET	-16384
+#define NO_ITEM	-1
+#define W2V_SHIFT	14
+
+#ifdef TROYESTUFF	//*4
+#define MAX_TLVERTICES	0x9000
+#else
+#define MAX_TLVERTICES	0x2400
+#endif
+
+#ifdef TROYESTUFF	//*4
+#define MAX_SORTLISTS	0xBB80
+#else
+#define MAX_SORTLISTS	0x2EE0
+#endif
+
+#define MAX_TPAGES	32
+#define MAX_TINFOS	4096
+
+#ifdef TROYESTUFF
+#define NLAYOUTKEYS		15
+#else
+#define NLAYOUTKEYS		14
+#endif
+
+#define NO_ROOM	255
+#define WALL_SHIFT	10
+#define WALL_SIZE	(1 << WALL_SHIFT)
 
 /*enums*/
 enum status_codes
@@ -139,14 +171,15 @@ enum draw_types
 #ifdef TROYESTUFF
 	DT_POLY_COLSUB = 15,		//colsub
 #endif
-	DT_POLY_GTA = 16			//Gouraud + Textured + Alpha
+	DT_POLY_GTA = 16,			//Gouraud + Textured + Alpha
+#ifdef TROYESTUFF
+	DT_LINE_ALPHA = 17,			//line + color key + alpha
+#endif
 };
 
 enum T_flags
 {
-#ifndef TROYESTUFF
 	T_TOPALIGN,
-#endif
 	T_LEFTALIGN = 0,
 	T_ACTIVE = 1 << 0,
 	T_FLASH = 1 << 1,
@@ -159,9 +192,6 @@ enum T_flags
 	T_ADDBACKGROUND = 1 << 9,
 	T_ADDOUTLINE = 1 << 10,
 	T_RIGHTJUSTIFY = 1 << 11,
-#ifdef TROYESTUFF
-	T_TOPALIGN = 1 << 12
-#endif
 };
 
 enum R_flags	//requester flags
@@ -477,6 +507,16 @@ enum sfx_types
 };
 
 /*structs*/
+struct GOURAUD_FILL	//not og
+{
+	ulong clr[4][4];
+};
+
+struct GOURAUD_OUTLINE
+{
+	ulong clr[9];
+};
+
 struct PHD_VECTOR
 {
 	long x;
@@ -1097,9 +1137,9 @@ struct TEXTSTRING
 	short flashRate;
 	short flashCount;
 	short bgndColour;
-	ushort* bgndGour;
+	GOURAUD_FILL* bgndGour;
 	short outlColour;
-	ushort* outlGour;
+	GOURAUD_OUTLINE* outlGour;
 	short bgndSizeX;
 	short bgndSizeY;
 	short bgndOffX;
@@ -1245,7 +1285,7 @@ struct DIRECT3DINFO
 	D3DDEVICEDESC DeviceDesc;
 	bool bAlpha;
 	bool bHardware;
-	bool bUnk;
+	bool bAGP;
 	long nDisplayMode;
 	DISPLAYMODE* DisplayMode;
 	long nTexture;
@@ -1324,7 +1364,7 @@ struct WINAPP
 	bool bFocus;
 	long nRenderMode;
 	long nUVAdd;
-	long SomeCounter;
+	ulong nFrames;
 	float fps;
 };
 
@@ -1412,16 +1452,28 @@ struct SPARKS
 	uchar pad;
 };
 
+struct TEXTURE
+{
+	LPVOID DXTex;	//DXTEXTURE*
+	LPDIRECTDRAWSURFACEX pSurf;
+	LPDIRECTDRAWPALETTE pPalette;
+	LPDIRECT3DTEXTUREX pTexture;
+	D3DTEXTUREHANDLE handle;
+	long num;
+	ulong nFrames;
+	ulong bpp;
+};
+
 struct DXTEXTURE
 {
-	LPDIRECTDRAWSURFACEX pSystemSurface;		//yes
-	LPDIRECTDRAWPALETTE pPalette;				//yes
-	long nWidth;								//yes
-	long nHeight;								//yes
-	LPDIRECT3DTEXTUREX pTexture;				//maybe
-	ulong dwFlags;								//yes
-	ushort* pSoftwareSurface;					//no idea
-	D3DTEXTUREHANDLE hTexture;					//no idea
+	LPDIRECTDRAWSURFACEX pSystemSurface;
+	LPDIRECTDRAWPALETTE pPalette;
+	long nWidth;
+	long nHeight;
+	ulong dwFlags;
+	ulong* pData;
+	TEXTURE* tex;
+	ulong bpp;
 };
 
 struct TEXTUREBUCKET
@@ -1732,7 +1784,7 @@ struct INVENTORY_SPRITE
 	short z;
 	long param1;
 	long param2;
-	ushort* grdptr;
+	GOURAUD_FILL* grdptr;
 	short sprnum;
 };
 
@@ -1881,6 +1933,38 @@ struct BOAT_INFO
 	short prop_rot;
 };
 
+struct QUADINFO
+{
+	long Velocity;
+	short FrontRot;
+	short RearRot;
+	long Revs;
+	long EngineRevs;
+	short track_mesh;
+	long skidoo_turn;
+	long left_fallspeed;
+	long right_fallspeed;
+	short momentum_angle;
+	short extra_rotation;
+	long pitch;
+	uchar Flags;
+};
+
+struct CARTINFO
+{
+	long Speed;
+	long MidPos;
+	long FrontPos;
+	long TurnX;
+	long TurnZ;
+	short TurnLen;
+	short TurnRot;
+	short YVel;
+	short Gradient;
+	char Flags;
+	char StopDelay;
+};
+
 #ifdef TROYESTUFF
 struct FVECTOR
 {
@@ -1911,6 +1995,21 @@ enum t3_summon_ring_style
 	NSRING_STYLES
 };
 
+enum t3_bar_pos
+{
+	BPOS_ORIGINAL,
+	BPOS_IMPROVED,
+	BPOS_PSX,
+	NBAR_POS
+};
+
+enum t3_ammo_counter
+{
+	ACTR_PC,
+	ACTR_PSX,
+	NACTR_MODES
+};
+
 struct TOMB3_OPTIONS
 {
 	bool footprints;
@@ -1930,9 +2029,19 @@ struct TOMB3_OPTIONS
 	bool improved_poison_bar;
 	bool custom_water_color;
 	bool psx_crystal_sfx;
+	bool psx_text_colors;
+	bool upv_wake;
+	bool psx_fov;
+	bool psx_boxes;
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum
 	long sophia_rings;	//t3_summon_ring_style
+	long bar_pos;		//t3_bar_pos enum
+	long ammo_counter;	//t3_ammo_counter
+	float GUI_Scale;
+	float INV_Scale;
+	float unwater_music_mute;
+	float inv_music_mute;
 };
 #endif
 #pragma pack(pop)

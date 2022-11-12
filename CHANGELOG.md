@@ -1,14 +1,40 @@
 # tomb3 changelog
 
-## Unreleased
+## [1.2.0](https://github.com/Trxyebeep/tomb3decomp/tree/V1.2.0) (Nov. 12 2022)
 
 ### Original bug fixes
 
+- Make quadbike follow interpolated frames for smoother animations.
+- Restore missing wake effect on the UPV.
+- Fix guard gun lasers not appearing on interpolated frames.
+- Prevent save/load hotkeys during picture fade.
+- Prevent skipping cutscenes during picture fade.
+- Fix bug that prevented music from being completely muted.
+- Fix Lara's torso getting the water tint in wade deep water.
+- Fix Lara's hair becoming stiff while using the UPV.
+- Fix flares going through the floor when thrown.
+- Fix flare sparks detaching after restarting the game.
+- Prevent DOZY while using a vehicle.
+
 ### tomb3 additions
+
+- Add scale for UI elements, including text and boxes.
+- Add option for PSX text colors.
+- Add options for PSX and improved PC bar positions.
+- Double the amount of vertices/polygons that can be drawn at a time.
+- Add pause menu.
+- Add option to control inventory/underwater music mute.
+- Completely refactor Lara drawing to stop recalculating her matrices multiple times every frame. Only once per frame now.
+- Add option for PSX FOV.
+- Add option for PSX ammo counter.
+- Add option for PSX style boxes.
 
 ### tomb3 bug fixes
 
 - Fix footstep sfx being wrong in some rooms.
+- Fix bats shape.
+- Fix Lasers disappearing in some areas, and restore them for guard guns.
+- Fix UPV displacement after getting off.
 
 
 ## [1.1.0](https://github.com/Trxyebeep/tomb3decomp/tree/V1.1.0) (Oct. 29 2022)

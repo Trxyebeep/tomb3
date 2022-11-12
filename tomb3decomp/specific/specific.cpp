@@ -131,6 +131,11 @@ bool CD_Init()
 
 long CalcVolume(long volume)
 {
+#ifdef TROYESTUFF
+	if (!volume)
+		return DSBVOLUME_MIN;
+#endif
+
 	return long((float(MasterVolume * volume) * 0.00019074068F - 400.0F) * 6.0F);
 }
 

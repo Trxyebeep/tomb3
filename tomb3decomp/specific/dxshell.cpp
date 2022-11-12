@@ -577,7 +577,7 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 	uchar* dest;
 	ulong w;
 
-	App.SomeCounter++;
+	App.nFrames++;
 	DXCheckForLostSurfaces();
 	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
 	w = d3dinfo->DisplayMode[App.DXConfigPtr->nVMode].w;
@@ -715,7 +715,7 @@ void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance)
 		and eax, 4
 		sete byte ptr unk2
 
-		end:
+	end:
 		popad
 	}
 
@@ -809,7 +809,7 @@ HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LP
 	}
 
 	d3dinfo->bAlpha = d3dinfo->DeviceDesc.dpcTriCaps.dwShadeCaps & D3DPSHADECAPS_ALPHAFLATBLEND;
-	d3dinfo->bUnk = d3dinfo->DeviceDesc.dwDevCaps & D3DDEVCAPS_TEXTURENONLOCALVIDMEM;
+	d3dinfo->bAGP = d3dinfo->DeviceDesc.dwDevCaps & D3DDEVCAPS_TEXTURENONLOCALVIDMEM;
 
 	if (SoftwareRenderer)
 	{
@@ -960,8 +960,8 @@ bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer)
 
 	DXSurfBlt(App.lpFrontBuffer, 0, 0);
 
-	for (int i = 0; i < 32; i++)
-		PictureTextures[i].pSoftwareSurface = 0;
+	for (int i = 0; i < MAX_TPAGES; i++)
+		PictureTextures[i].tex = 0;
 
 	if (!d3dinfo->bHardware)
 		CloseDrawPrimitive();

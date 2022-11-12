@@ -221,10 +221,10 @@ long S_InitialiseSystem()
 	InitZTable();
 	InitUVTable();
 
-	TLVertexBuffer = (D3DTLVERTEX*)GLOBALALLOC(GMEM_FIXED, 0x2400 * sizeof(D3DTLVERTEX));
+	TLVertexBuffer = (D3DTLVERTEX*)GLOBALALLOC(GMEM_FIXED, MAX_TLVERTICES * sizeof(D3DTLVERTEX));
 	VertexBuffer = (D3DTLVERTEX*)(((long)TLVertexBuffer + 32) & 0xFFFFFFE0);
 
-	TLUnRollBuffer = (D3DTLVERTEX*)GLOBALALLOC(GMEM_FIXED, 0x2400 * sizeof(D3DTLVERTEX));
+	TLUnRollBuffer = (D3DTLVERTEX*)GLOBALALLOC(GMEM_FIXED, MAX_TLVERTICES * sizeof(D3DTLVERTEX));
 	UnRollBuffer = (D3DTLVERTEX*)(((long)TLUnRollBuffer + 32) & 0xFFFFFFE0);
 
 	for (int i = 0; i < 1024; i++)

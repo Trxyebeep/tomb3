@@ -16,5 +16,7 @@ bool DS_IsSoundEnabled();
 bool DS_SetOutputFormat();
 void DS_Start(HWND hwnd);
 void DS_Finish();
-
-#define DS_Init	( (void(__cdecl*)()) 0x004809C0 )
+BOOL CALLBACK DS_EnumCallback(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext);
+bool DS_EnumerateDevices(LPVOID lpContext);
+bool DS_MakeAdapterList();
+void DS_Init();

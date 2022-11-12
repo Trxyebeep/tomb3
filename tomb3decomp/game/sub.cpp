@@ -5,7 +5,6 @@
 #include "collide.h"
 #include "laraflar.h"
 #include "objects.h"
-#include "laraanim.h"
 #include "draw.h"
 #include "../specific/output.h"
 #include "../3dsystem/3d_gen.h"
@@ -230,7 +229,11 @@ void SubDraw(ITEM_INFO* item)
 	phd_PopMatrix();
 
 	if (TriggerActive(item))
+#ifdef TROYESTUFF
+		S_DrawSubWakeFX(item);
+#else
 		S_DrawWakeFX(item);
+#endif
 }
 
 static long CanGetOff(ITEM_INFO* item)
@@ -835,7 +838,7 @@ long SubControl()
 
 	if (lara.skidoo == NO_ITEM)
 	{
-		if (sub->Flags & 8)
+		if (!(sub->Flags & 8))
 			return 0;
 	}
 	else if (!(sub->Flags & 8))
@@ -949,7 +952,11 @@ static void DoWake(ITEM_INFO* item, short lr)
 
 	if (TriggerActive(item) && !SubWakePts[SubCurrentStartWake][lr].life)
 	{
+#ifdef TROYESTUFF
+		SubWakePts[SubCurrentStartWake][lr].life = 64;
+#else
 		SubWakePts[SubCurrentStartWake][lr].life = 32;
+#endif
 
 		for (int i = 0; i < 2; i++)
 		{
@@ -1060,7 +1067,11 @@ void SubEffects(short item_number)
 			SubWakeShade--;
 	}
 	else if (SubWakeShade < 16)
+#ifdef TROYESTUFF
+		SubWakeShade += 2;
+#else
 		SubWakeShade++;
+#endif
 
 	if (sub->WeaponTimer)
 		sub->WeaponTimer--;

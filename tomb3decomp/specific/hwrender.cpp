@@ -1,5 +1,7 @@
 #include "../tomb3/pch.h"
+#include "../tomb3/pch.h"
 #include "hwrender.h"
+#include "texture.h"
 #ifdef TROYESTUFF
 #include "drawbars.h"
 #include "../tomb3/tomb3.h"
@@ -257,6 +259,16 @@ void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage)
 		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
 
+#ifdef TROYESTUFF
+	case DT_LINE_ALPHA:
+		HWR_SetCurrentTexture(0);
+		HWR_EnableAlphaBlend(1);
+		HWR_EnableColorKey(1);
+		HWR_EnableColorAddition(1);
+		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+		return;
+#endif
+
 	case DT_POLY_GA:
 		HWR_SetCurrentTexture(0);
 		HWR_EnableAlphaBlend(1);
@@ -327,6 +339,15 @@ void HWR_DrawRoutinesStippledAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, 
 		HWR_EnableColorKey(0);
 		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
+
+#ifdef TROYESTUFF
+	case DT_LINE_ALPHA:
+		HWR_SetCurrentTexture(0);
+		HWR_EnableAlphaBlend(1);
+		HWR_EnableColorKey(1);
+		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+		return;
+#endif
 
 	case DT_POLY_GA:
 		HWR_SetCurrentTexture(0);
@@ -401,6 +422,15 @@ void HWR_DrawRoutinesNoAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long T
 		HWR_EnableAlphaBlend(1);
 		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
+
+#ifdef TROYESTUFF
+	case DT_LINE_ALPHA:
+		HWR_SetCurrentTexture(0);
+		HWR_EnableAlphaBlend(1);
+		HWR_EnableColorKey(1);
+		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+		return;
+#endif
 
 	case DT_POLY_GA:
 		HWR_SetCurrentTexture(0);
@@ -642,7 +672,11 @@ void HWR_DrawPolyListBF(long num, long* pSort)
 			nURVtx = 0;
 		}
 
+#ifdef TROYESTUFF
+		if (nDrawType1 == DT_LINE_SOLID || nDrawType1 == DT_LINE_ALPHA)
+#else
 		if (nDrawType1 == DT_LINE_SOLID)
+#endif
 		{
 			URvtx = &UnRollBuffer[nURVtx];
 			URvtx->sx = vtx->sx;
@@ -753,6 +787,170 @@ void HWR_DrawPolyListBF(long num, long* pSort)
 		DrawRoutine(nURVtx, UnRollBuffer, nDrawType1, TPage1);
 }
 
+void HWR_FreeTexturePages()
+{
+	for (int i = 0; i < MAX_TPAGES; i++)
+	{
+		if (PictureTextures[i].dwFlags & 8)
+			DXTextureCleanup(i, PictureTextures);
+	}
+
+	if (DXPalette)
+	{
+		DXPalette->Release();
+		DXPalette = 0;
+	}
+}
+
+void HWR_GetAllTextureHandles()
+{
+	DXTEXTURE* tex;
+	long n;
+
+	memset(TPages, 0, sizeof(TPages));
+	n = 0;
+
+	for (int i = 0; i < MAX_TPAGES; i++)
+	{
+		tex = DXRestoreSurfaceIfLost(i, PictureTextures);
+
+		if (tex->dwFlags & 8)
+		{
+			TPages[n] = tex;
+			n++;
+		}
+	}
+
+	for (int i = 0; i < MAX_TPAGES; i++)
+	{
+		tex = DXRestoreSurfaceIfLost(i, PictureTextures);
+
+		if (tex->dwFlags & 16)
+		{
+			TPages[n] = tex;
+			n++;
+		}
+	}
+}
+
+void HWR_LoadTexturePages(long nPages, uchar* src, uchar* palette)
+{
+	HWR_FreeTexturePages();
+
+	if (palette)
+	{
+		DXTextureNewPalette(palette);
+		DXFreeTPages();
+		DXCreateMaxTPages(1);
+	}
+
+	for (int i = 0; i < nPages; i++)
+	{
+		if (palette)
+		{
+			DXTextureAddPal(256, 256, src, PictureTextures, 8);
+			src += 0x10000;
+		}
+		else
+		{
+			DXTextureAdd(256, 256, src, PictureTextures, 555, 8);
+			src += 0x20000;
+		}
+	}
+
+	HWR_GetAllTextureHandles();
+
+	for (int i = 0; i < nTPages; i++)
+		HWR_SetCurrentTexture(TPages[i]);
+}
+
+void HWR_SetCurrentTexture(DXTEXTURE* tex)
+{
+	TEXTURE* tdata;
+	TEXTURE* temp;
+	LPDIRECT3DTEXTUREX d3dtex;
+	D3DTEXTUREHANDLE handle;
+	static D3DTEXTUREHANDLE lastTextureHandle;
+	ulong n;
+
+	handle = 0;
+
+	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+	{
+		if (!nTPages)
+			return;
+
+		if (tex)
+		{
+			for (int i = 0; i < MAX_TPAGES; i++)
+			{
+				if (Textures[i].DXTex == tex)
+				{
+					handle = Textures[i].handle;
+					Textures[i].nFrames = App.nFrames;
+					break;
+				}
+			}
+
+			if (!handle)
+			{
+				n = 0;
+				tdata = (TEXTURE*)tex;
+
+				for (int i = 0; i < nTPages; i++)
+				{
+					temp = &Textures[i];
+
+					if (!temp->DXTex && tex->bpp == temp->bpp)
+					{
+						tdata = temp;
+						break;
+					}
+
+					if (App.nFrames - temp->nFrames >= n && tex->bpp == temp->bpp)
+					{
+						n = App.nFrames - temp->nFrames;
+						tdata = &temp[-1];
+					}
+				}
+
+				handle = tdata->handle;
+
+				if (!n)
+					SetRenderState(D3DRENDERSTATE_FLUSHBATCH, 0);
+
+				if (tdata->pSurf->IsLost() == DDERR_SURFACELOST)
+					tdata->pSurf->Restore();
+
+				if (tex->pSystemSurface)
+				{
+					d3dtex = DXTextureGetInterface(tex->pSystemSurface);
+
+					if (tdata->pTexture->Load(d3dtex) != D3D_OK)
+					{
+						d3dtex = DXTextureGetInterface(tex->pSystemSurface);
+						tdata->pTexture->Load(d3dtex);
+					}
+				}
+
+				tdata->DXTex = tex;
+				tdata->nFrames = App.nFrames;
+				tex->tex = tdata;
+			}
+		}
+	}
+	else if (tex)
+		SetRenderState(D3DRENDERSTATE_TEXTUREHANDLE, (ulong)tex->pData);
+	else
+		SetRenderState(D3DRENDERSTATE_TEXTUREHANDLE, 0);
+
+	if (handle != lastTextureHandle)
+	{
+		SetRenderState(D3DRENDERSTATE_TEXTUREHANDLE, handle);
+		lastTextureHandle = handle;
+	}
+}
+
 void inject_hwrender(bool replace)
 {
 	INJECT(0x00484E20, HWR_EnableZBuffer, replace);
@@ -773,4 +971,8 @@ void inject_hwrender(bool replace)
 	INJECT(0x00485A90, HWR_Init, replace);
 	INJECT(0x004854C0, HWR_DrawPolyList, replace);
 	INJECT(0x004855C0, HWR_DrawPolyListBF, replace);
+	INJECT(0x004859C0, HWR_FreeTexturePages, replace);
+	INJECT(0x00485A10, HWR_GetAllTextureHandles, replace);
+	INJECT(0x00485900, HWR_LoadTexturePages, replace);
+	INJECT(0x00484C30, HWR_SetCurrentTexture, replace);
 }

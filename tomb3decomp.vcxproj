@@ -206,7 +206,6 @@
     <ClInclude Include="tomb3decomp\game\kayak.h" />
     <ClInclude Include="tomb3decomp\game\lara1gun.h" />
     <ClInclude Include="tomb3decomp\game\lara2gun.h" />
-    <ClInclude Include="tomb3decomp\game\laraanim.h" />
     <ClInclude Include="tomb3decomp\game\armysmg.h" />
     <ClInclude Include="tomb3decomp\game\collide.h" />
     <ClInclude Include="tomb3decomp\game\control.h" />
@@ -263,6 +262,8 @@
     <ClInclude Include="tomb3decomp\global\math_tbls.h" />
     <ClInclude Include="tomb3decomp\global\types.h" />
     <ClInclude Include="tomb3decomp\global\vars.h" />
+    <ClInclude Include="tomb3decomp\newstuff\LaraDraw.h" />
+    <ClInclude Include="tomb3decomp\newstuff\pausemenu.h" />
     <ClInclude Include="tomb3decomp\specific\audio.h" />
     <ClInclude Include="tomb3decomp\specific\dd.h" />
     <ClInclude Include="tomb3decomp\specific\di.h" />
@@ -274,6 +275,7 @@
     <ClInclude Include="tomb3decomp\specific\dxdialog.h" />
     <ClInclude Include="tomb3decomp\specific\dxshell.h" />
     <ClInclude Include="tomb3decomp\specific\file.h" />
+    <ClInclude Include="tomb3decomp\specific\fmv.h" />
     <ClInclude Include="tomb3decomp\specific\frontend.h" />
     <ClInclude Include="tomb3decomp\specific\game.h" />
     <ClInclude Include="tomb3decomp\specific\hwrender.h" />
@@ -396,6 +398,8 @@
     <ClCompile Include="tomb3decomp\game\willboss.cpp" />
     <ClCompile Include="tomb3decomp\game\wingmute.cpp" />
     <ClCompile Include="tomb3decomp\game\winston.cpp" />
+    <ClCompile Include="tomb3decomp\newstuff\LaraDraw.cpp" />
+    <ClCompile Include="tomb3decomp\newstuff\pausemenu.cpp" />
     <ClCompile Include="tomb3decomp\specific\audio.cpp" />
     <ClCompile Include="tomb3decomp\specific\dd.cpp" />
     <ClCompile Include="tomb3decomp\specific\di.cpp" />
@@ -407,6 +411,7 @@
     <ClCompile Include="tomb3decomp\specific\dxdialog.cpp" />
     <ClCompile Include="tomb3decomp\specific\dxshell.cpp" />
     <ClCompile Include="tomb3decomp\specific\file.cpp" />
+    <ClCompile Include="tomb3decomp\specific\fmv.cpp" />
     <ClCompile Include="tomb3decomp\specific\frontend.cpp" />
     <ClCompile Include="tomb3decomp\specific\game.cpp" />
     <ClCompile Include="tomb3decomp\specific\hwrender.cpp" />

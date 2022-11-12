@@ -52,3 +52,10 @@ void Inv_RemoveAllItems();
 long Inv_AddItem(long item_number);
 
 void RemoveInventoryText();
+
+extern GOURAUD_FILL req_main_gour1;
+extern GOURAUD_OUTLINE req_main_gour2;
+extern GOURAUD_FILL req_bgnd_gour1;
+extern GOURAUD_OUTLINE req_bgnd_gour2;
+extern GOURAUD_FILL req_sel_gour1;
+extern GOURAUD_OUTLINE req_sel_gour2;

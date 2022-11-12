@@ -77,12 +77,12 @@ tomb3decomp progress.
 0x0040A510	+	HWI_InsertLine_Sorted
 0x0040A690	+	HWI_InsertTransQuad_Sorted
 0x0040A850	+	HWI_InsertTrans8_Sorted
-0x0040AA00		RoomZedClipper
-0x0040ABE0		RoomXYGUVClipper
+0x0040AA00	+	RoomZedClipper
+0x0040ABE0	+	RoomXYGUVClipper
 0x0040B6F0	+	HWI_InsertAlphaSprite_Sorted
 0x0040BCD0	+	HWI_InsertPoly_GouraudRGB
-0x0040C0B0		XYGClipper
-0x0040CA50		XYClipper
+0x0040C0B0	+	XYGClipper
+0x0040CA50	+	XYClipper
 
 
 		3dsystem/phd_math.cpp
@@ -174,17 +174,17 @@ tomb3decomp progress.
 0x00412330	+	BoatUserControl
 0x00412500	+	BoatAnimation
 0x00412730	+	CanGetOff
-0x00412820		BoatControl
-0x004130C0		DoWake
+0x00412820	+	BoatControl
+0x004130C0	+	DoWake
 0x00413290	+	TestWaterHeight
 0x00413390	+	DoBoatDynamics
-0x004133E0		BoatDynamics
+0x004133E0	+	BoatDynamics
 0x00413900	+	DoShift
 0x00413B80	+	GetCollisionAnim
 0x00413C10	+	DoBoatShift
 0x00413CF0	+	DrawBoat
-0x00413D20		TriggerBoatMist
-0x00413F00		BoatSplash
+0x00413D20	+	TriggerBoatMist
+0x00413F00	+	BoatSplash
 
 
 		game/boomute.cpp
@@ -286,7 +286,7 @@ tomb3decomp progress.
 0x0041E560	+	GetNearByRooms
 0x0041E630	+	GetNewRoom
 0x0041E690	+	ShiftItem
-0x0041E6D0		UpdateLaraRoom
+0x0041E6D0	+	UpdateLaraRoom
 0x0041E730	+	GetTiltType
 0x0041E8D0		LaraBaddieCollision
 0x0041EA60		CreatureCollision
@@ -320,9 +320,9 @@ tomb3decomp progress.
 0x00420E10	+	GetHeight
 0x00421370	+	RefreshCamera
 0x00421460	+	TestTriggers
-0x00421D80		TriggerActive
-0x00421DE0		GetCeiling
-0x004222B0		GetDoor
+0x00421D80	+	TriggerActive
+0x00421DE0	+	GetCeiling
+0x004222B0	+	GetDoor
 0x00422370		LOS
 0x00422410		zLOS
 0x00422700		xLOS
@@ -413,7 +413,7 @@ tomb3decomp progress.
 0x00429FE0		GetFreeSpark
 0x0042A080		InitialiseSparks
 0x0042A0D0		UpdateSparks
-0x0042A680		TriggerRicochetSpark
+0x0042A680	+	TriggerRicochetSpark
 0x0042A8B0		TriggerFlareSparks
 0x0042AB80		TriggerExplosionSparks
 0x0042AF20		TriggerExplosionSmokeEnd
@@ -846,14 +846,14 @@ tomb3decomp progress.
 0x004430C0	+	lara_col_wade
 0x00443290	+	lara_default_col
 0x004432E0	+	lara_col_jumper
-0x00443360		GetLaraHandAbsPosition
-0x00443C10		AddJointPos
-0x00443CA0		GetLHAInt
-0x004446E0		LookUpDown
-0x00444770		LookLeftRight
-0x00444800		ResetLook
-0x004448A0		DeathSlideCollision
-0x00444980		ControlDeathSlide
+0x00443360	+	GetLaraHandAbsPosition
+0x00443C10	+	AddJointPos
+0x00443CA0	+	GetLHAInt
+0x004446E0	+	LookUpDown
+0x00444770	+	LookLeftRight
+0x00444800	+	ResetLook
+0x004448A0	+	DeathSlideCollision
+0x00444980	+	ControlDeathSlide
 0x00444C20	+	LaraLandedBad
 0x00444D10	+	LaraHitCeiling
 0x00444D80	+	LaraFloorFront
@@ -861,7 +861,7 @@ tomb3decomp progress.
 0x00444E80	+	LaraFallen
 0x00444EE0	+	LaraTestEdgeCatch
 0x00444F90	+	LaraDeflectEdge
-0x00445020		GetStaticObjects
+0x00445020	+	GetStaticObjects
 
 
 		game/lara1gun.cpp
@@ -960,12 +960,12 @@ tomb3decomp progress.
 0x0044CFC0	+	LaraCheat
 0x0044D060	+	LaraInitialiseMeshes
 0x0044D1A0	+	LaraCheatyBits
-0x0044D2A0		AnimateLara
-0x0044D690		UseItem
-0x0044D880		ControlLaraExtra
-0x0044D8A0		InitialiseLaraLoad
-0x0044D8D0		InitialiseLara
-0x0044DC00		InitialiseLaraInventory
+0x0044D2A0	+	AnimateLara
+0x0044D690	+	UseItem
+0x0044D880	+	ControlLaraExtra
+0x0044D8A0	+	InitialiseLaraLoad
+0x0044D8D0	+	InitialiseLara
+0x0044DC00	+	InitialiseLaraInventory
 
 
 		game/larasurf.cpp
@@ -1057,16 +1057,16 @@ tomb3decomp progress.
 
 		game/minecart.cpp
 
-0x00453890		GetCollision
-0x00453930		MineCartInitialise
-0x00453960		MineCartCollision
-0x00453AB0		GetInMineCart
-0x00453B80		MineCartControl
-0x00453CA0		MoveCart
-0x004541F0		TestHeight
-0x004542A0		DoUserInput
-0x00454C00		CanGetOut
-0x00454D10		CartToBaddieCollision
+0x00453890	+	GetCollision
+0x00453930	+	MineCartInitialise
+0x00453960	+	MineCartCollision
+0x00453AB0	+	GetInMineCart
+0x00453B80	+	MineCartControl
+0x00453CA0	+	MoveCart
+0x004541F0	+	TestHeight
+0x004542A0	+	DoUserInput
+0x00454C00	+	CanGetOut
+0x00454D10	+	CartToBaddieCollision
 
 
 		game/missile.cpp
@@ -1205,22 +1205,22 @@ tomb3decomp progress.
 
 		game/quadbike.cpp
 
-0x0045E7E0		InitialiseQuadBike
-0x0045E830		QuadBikeCollision
-0x0045E9E0		GetOnQuadBike
-0x0045EB20		QuadBikeDraw
-0x0045EE20		QuadBikeControl
-0x0045F3C0		QuadbikeExplode
-0x0045F490		SkidooCheckGetOff
-0x0045F640		TestHeight
-0x0045F720		DoDynamics
-0x0045F780		SkidooDynamics
-0x0045FFB0		SkidooBaddieCollision
-0x004601A0		GetCollisionAnim
-0x00460230		AnimateQuadBike
-0x004606A0		CanGetOff
-0x004607A0		UserControl
-0x00460BD0		TriggerExhaustSmoke
+0x0045E7E0	+	InitialiseQuadBike
+0x0045E830	+	QuadBikeCollision
+0x0045E9E0	+	GetOnQuadBike
+0x0045EB20	+	QuadBikeDraw
+0x0045EE20	+	QuadBikeControl
+0x0045F3C0	+	QuadbikeExplode
+0x0045F490	+	SkidooCheckGetOff
+0x0045F640	+	TestHeight
+0x0045F720	+	DoDynamics
+0x0045F780	+	SkidooDynamics
+0x0045FFB0	+	SkidooBaddieCollision
+0x004601A0	+	GetCollisionAnim
+0x00460230	+	AnimateQuadBike
+0x004606A0	+	CanGetOff
+0x004607A0	+	UserControl
+0x00460BD0	+	TriggerExhaustSmoke
 
 
 		game/rapmaker.cpp
@@ -1283,19 +1283,19 @@ tomb3decomp progress.
 
 		game/sound.cpp
 
-0x00467840		SoundEffect
-0x00467D00		StopSoundEffect
-0x00467D60		SOUND_EndScene
-0x00467DF0		SOUND_Stop
+0x00467840	+	SoundEffect
+0x00467D00	+	StopSoundEffect
+0x00467D60	+	SOUND_EndScene
+0x00467DF0	+	SOUND_Stop
 0x00467E20	+	SOUND_Init
 
 
 		game/sphere.cpp
 
-0x00467E40		TestCollision
-0x00467F70		GetSpheres
-0x00468250		GetJointAbsPosition
-0x00468580		InitInterpolate2
+0x00467E40	+	TestCollision
+0x00467F70	+	GetSpheres
+0x00468250	+	GetJointAbsPosition
+0x00468580	+	InitInterpolate2
 
 
 		game/sub.cpp
@@ -1562,10 +1562,10 @@ tomb3decomp progress.
 0x004808F0	+	DS_AdjustVolumeAndPan
 0x00480920	+	DS_AdjustPitch
 0x00480960	+	DS_StopSample
-0x004809C0		DS_Init
-0x004809D0		DS_MakeAdapterList
-0x00480A70		DS_EnumerateDevices
-0x00480A90		DS_EnumCallback
+0x004809C0	+	DS_Init
+0x004809D0	+	DS_MakeAdapterList
+0x00480A70	+	DS_EnumerateDevices
+0x00480A90	+	DS_EnumCallback
 0x00480B80	+	DS_Start
 0x00480C20	+	DS_Create
 0x00480C40	+	DS_SetOutputFormat
@@ -1577,13 +1577,13 @@ tomb3decomp progress.
 
 0x00496BB0	+	DXUserDialog
 0x00496C20	+	DXSetupDlgProc
-0x00497290		DXCheckMMXTechnology
-0x00497530		DXInitDialogBox
-0x00497630		DXInitDSAdapters
-0x00497700		DXInitJoystickAdapter
-0x004977D0		DXInitD3DDrivers
-0x00497C20		DXInitVideoModes
-0x00497FE0		DXInitTextures
+0x00497290	+	DXCheckMMXTechnology
+0x00497530	+	DXInitDialogBox
+0x00497630	+	DXInitDSAdapters
+0x00497700	+	DXInitJoystickAdapter
+0x004977D0	+	DXInitD3DDrivers
+0x00497C20	+	DXInitVideoModes
+0x00497FE0	+	DXInitTextures
 
 
 		specific/dxshell.cpp
@@ -1652,8 +1652,8 @@ tomb3decomp progress.
 
 0x00483170		WinPlayFMV
 0x00483470		WinStopFMV
-0x004834C0		FMV_Play
-0x00483540		FMV_PlayIntro
+0x004834C0	+	FMV_Play
+0x00483540	+	FMV_PlayIntro
 
 
 		specific/frontend.cpp
@@ -1664,8 +1664,8 @@ tomb3decomp progress.
 0x00483770	+	S_DrawScreenFBox
 0x004837B0	+	S_FinishInventory
 0x004837D0	+	S_Wait
-0x00483830		S_PlayFMV
-0x00483840		S_IntroFMV
+0x00483830	+	S_PlayFMV
+0x00483840	+	S_IntroFMV
 
 
 		specific/game.cpp
@@ -1701,7 +1701,7 @@ tomb3decomp progress.
 0x00484AE0	+	HWR_EnablePerspCorrect
 0x00484B70	+	HWR_EnableFilter
 0x00484BF0	+	HWR_EnableAlphaBlend
-0x00484C30		HWR_SetCurrentTexture
+0x00484C30	+	HWR_SetCurrentTexture
 0x00484DE0	+	HWR_EnableColorKey
 0x00484E20	+	HWR_EnableZBuffer
 0x00484EB0	+	HWR_BeginScene
@@ -1711,9 +1711,9 @@ tomb3decomp progress.
 0x00485350	+	HWR_DrawRoutinesNoAlpha
 0x004854C0	+	HWR_DrawPolyList
 0x004855C0	+	HWR_DrawPolyListBF
-0x00485900		HWR_LoadTexturePages
-0x004859C0		HWR_FreeTexturePages
-0x00485A10		HWR_GetAllTextureHandles
+0x00485900	+	HWR_LoadTexturePages
+0x004859C0	+	HWR_FreeTexturePages
+0x00485A10	+	HWR_GetAllTextureHandles
 0x00485A90	+	HWR_Init
 
 
@@ -1750,14 +1750,14 @@ tomb3decomp progress.
 0x00493530		MMXSetRenderState
 0x004937F0		MMXDrawPrimitive
 0x00493920		MMXDrawLine
-0x00493C70		MMXDrawTrianglePFog
-0x004946B0		MMXDrawTriangleP
-0x00494E30		MMXDrawTriangleGouraud
+0x00493C70		MMXDrawTriangleP
+0x004946B0		MMXDrawTriangle
+0x00494E30		MMXDrawTriangleFog
 0x004952E0		DrawSpansGouraud
 0x004953B0		DrawSpansAlpha
-0x00496930		MMXBlit32to15
-0x00496A70		MMXBlit32to16
-0x00496B20		MMXBlit32to24
+0x00496930	+	MMXBlit32to15
+0x00496A70	+	MMXBlit32to16
+0x00496B20	+	MMXBlit32to24
 
 
 		specific/option.cpp
@@ -1808,7 +1808,7 @@ tomb3decomp progress.
 0x0048ADA0	+	DrawPictureAlpha
 0x0048AFD0	+	CrossFadePicture
 0x0048B0D0	+	LoadPicture
-0x0048B190		FreePictureTextures
+0x0048B190	+	FreePictureTextures
 0x0048B270	+	MemBlt
 0x0048B300	+	ConvertSurfaceToTextures
 0x0048B370	+	ConvertSurfaceToTextures16Bit
@@ -1853,6 +1853,26 @@ tomb3decomp progress.
 0x0048D4E0	+	S_CDGetLoc
 0x0048D4F0	+	S_CDVolume
 0x0048D500	+	SWR_FindNearestPaletteEntry	
+
+
+		specific/texture.cpp
+
+0x004B1B70	+	DXTextureSetGreyScale
+0x004B1B80	+	DXTextureNewPalette
+0x004B1BF0	+	DXCreateTextureSurface
+0x004B1D90	+	DXCreateMaxTPages
+0x004B1F10	+	DXFreeTPages
+0x004B1FB0	+	DXResetPalette
+0x004B1FD0	+	DXTextureGetInterface
+0x004B2000	+	DXTextureFindTextureSlot
+0x004B2020	+	DXTextureMakeSystemSurface
+0x004B20C0	+	DXTextureMakeDeviceSurface
+0x004B2180	+	DXTextureCleanup
+0x004B21F0	+	DXClearAllTextures
+0x004B2230	+	DXRestoreSurfaceIfLost
+0x004B2280	+	DXTextureAddPal
+0x004B2370	+	MMXTextureCopy
+0x004B23D0	x	DXTextureAdd
 
 
 		specific/time.cpp

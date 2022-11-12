@@ -1,4 +1,8 @@
 #pragma once
 #include "../global/vars.h"
 
-#define MineCartControl	( (long(__cdecl*)()) 0x00453B80 )
+void inject_minecart(bool replace);
+
+void MineCartInitialise(short item_number);
+void MineCartCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
+long MineCartControl();

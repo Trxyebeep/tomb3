@@ -4,8 +4,8 @@
 #include "../specific/game.h"
 #include "objects.h"
 #include "../3dsystem/phd_math.h"
-#include "laraanim.h"
 #include "effect2.h"
+#include "lara.h"
 
 static void TriggerPlasmaBall(ITEM_INFO* item, long type, PHD_VECTOR* pos, short room_number, short angle)
 {

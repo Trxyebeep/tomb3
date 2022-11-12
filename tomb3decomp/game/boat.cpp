@@ -11,6 +11,9 @@
 #include "draw.h"
 #include "../specific/draweffects.h"
 #include "lara.h"
+#include "sound.h"
+#include "effect2.h"
+#include "../specific/game.h"
 
 void InitialiseBoat(short item_number)
 {
@@ -137,8 +140,8 @@ void BoatCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	l->speed = 0;
 	l->fallspeed = 0;
 	l->frame_number = anims[l->anim_number].frame_base;
-	l->current_anim_state = 0;
-	l->goal_anim_state = 0;
+	l->current_anim_state = BOAT_GETON;
+	l->goal_anim_state = BOAT_GETON;
 
 	if (l->room_number != item->room_number)
 		ItemNewRoom(lara.item_number, item->room_number);
@@ -289,83 +292,83 @@ static void BoatAnimation(ITEM_INFO* item, long collide)
 
 	if (lara_item->hit_points <= 0)
 	{
-		if (lara_item->current_anim_state != 8)
+		if (lara_item->current_anim_state != BOAT_DEATH)
 		{
 			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 18;
 			lara_item->frame_number = anims[lara_item->anim_number].frame_base;
-			lara_item->current_anim_state = 8;
-			lara_item->goal_anim_state = 8;
+			lara_item->current_anim_state = BOAT_DEATH;
+			lara_item->goal_anim_state = BOAT_DEATH;
 		}
 	}
 	else if (item->pos.y_pos < boat->water - 128 && item->fallspeed > 0)
 	{
-		if (lara_item->current_anim_state != 6)
+		if (lara_item->current_anim_state != BOAT_FALL)
 		{
 			lara_item->anim_number = objects[VEHICLE_ANIM].anim_index + 15;
 			lara_item->frame_number = anims[lara_item->anim_number].frame_base;
-			lara_item->current_anim_state = 6;
-			lara_item->goal_anim_state = 6;
+			lara_item->current_anim_state = BOAT_FALL;
+			lara_item->goal_anim_state = BOAT_FALL;
 		}
 	}
 	else if (collide)
 	{
-		if (lara_item->current_anim_state != 5)
+		if (lara_item->current_anim_state != BOAT_HIT)
 		{
 			lara_item->anim_number = short(objects[VEHICLE_ANIM].anim_index + collide);
 			lara_item->frame_number = anims[lara_item->anim_number].frame_base;
-			lara_item->current_anim_state = 5;
-			lara_item->goal_anim_state = 5;
+			lara_item->current_anim_state = BOAT_HIT;
+			lara_item->goal_anim_state = BOAT_HIT;
 		}
 	}
 	else
 	{
 		switch (lara_item->current_anim_state)
 		{
-		case 1:
+		case BOAT_STILL:
 
 			if (input & IN_ROLL && !item->speed)
 			{
 				if (input & (IN_RSTEP | IN_RIGHT) && CanGetOff(item->pos.y_rot + 0x4000))
-					lara_item->goal_anim_state = 3;
+					lara_item->goal_anim_state = BOAT_JUMPR;
 				else if (input & (IN_LSTEP | IN_LEFT) && CanGetOff(item->pos.y_rot - 0x4000))
-					lara_item->goal_anim_state = 4;
+					lara_item->goal_anim_state = BOAT_JUMPL;
 			}
 
 			if (item->speed > 0)
-				lara_item->goal_anim_state = 2;
+				lara_item->goal_anim_state = BOAT_MOVING;
 
 			break;
 
-		case 2:
+		case BOAT_MOVING:
 
 			if (item->speed <= 0)
-				lara_item->goal_anim_state = 1;
+				lara_item->goal_anim_state = BOAT_STILL;
 			else if (input & (IN_RSTEP | IN_RIGHT))
-				lara_item->goal_anim_state = 7;
+				lara_item->goal_anim_state = BOAT_TURNR;
 			else if (input & (IN_LSTEP | IN_LEFT))
-				lara_item->goal_anim_state = 9;
+				lara_item->goal_anim_state = BOAT_TURNL;
 
 			break;
 
-		case 6:
-			lara_item->goal_anim_state = 2;
+		case BOAT_FALL:
+			lara_item->goal_anim_state = BOAT_MOVING;
 			break;
 
-		case 7:
+		case BOAT_TURNR:
 
 			if (item->speed <= 0)
-				lara_item->goal_anim_state = 1;
+				lara_item->goal_anim_state = BOAT_STILL;
 			else if (!(input & (IN_RSTEP | IN_RIGHT)))
-				lara_item->goal_anim_state = 2;
+				lara_item->goal_anim_state = BOAT_MOVING;
 
 			break;
 
-		case 9:
+		case BOAT_TURNL:
 
 			if (item->speed <= 0)
-				lara_item->goal_anim_state = 1;
+				lara_item->goal_anim_state = BOAT_STILL;
 			else if (!(input & (IN_LSTEP | IN_LEFT)))
-				lara_item->goal_anim_state = 2;
+				lara_item->goal_anim_state = BOAT_MOVING;
 
 			break;
 		}
@@ -590,6 +593,578 @@ static long DoBoatDynamics(long height, long fallspeed, long* ypos)
 	return fallspeed;
 }
 
+static long BoatDynamics(short item_number)
+{
+	ITEM_INFO* item;
+	BOAT_INFO* boat;
+	FLOOR_INFO* floor;
+	PHD_VECTOR pos, newPos;
+	PHD_VECTOR flPos, frPos, blPos, brPos, fmPos, flPos2, frPos2, blPos2, brPos2, fmPos2;
+	long front_left, front_right, back_left, back_right, front_mid, front_left2, front_right2, back_left2, back_right2, front_mid2;
+	long slip, shift, h, anim, dx, dz, speed;
+	short room_number;
+
+	item = &items[item_number];
+	boat = (BOAT_INFO*)item->data;
+	item->pos.z_rot -= boat->tilt_angle;
+
+	front_left = TestWaterHeight(item, 750, -300, &flPos);
+	front_right = TestWaterHeight(item, 750, 300, &frPos);
+	back_left = TestWaterHeight(item, -750, -300, &blPos);
+	back_right = TestWaterHeight(item, -750, 300, &brPos);
+	front_mid = TestWaterHeight(item, 1000, 0, &fmPos);
+	pos.x = item->pos.x_pos;
+	pos.y = item->pos.y_pos;
+	pos.z = item->pos.z_pos;
+
+	if (blPos.y > back_left)
+		blPos.y = back_left;
+
+	if (brPos.y > back_right)
+		brPos.y = back_right;
+
+	if (flPos.y > front_left)
+		flPos.y = front_left;
+
+	if (frPos.y > front_right)
+		frPos.y = front_right;
+
+	if (fmPos.y > front_mid)
+		fmPos.y = front_mid;
+
+	item->pos.y_rot += short(boat->extra_rotation + boat->boat_turn);
+	boat->tilt_angle = short(6 * boat->boat_turn);
+
+	item->pos.x_pos += (item->speed * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+	item->pos.z_pos += (item->speed * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+
+	if (item->speed < 0)
+		boat->prop_rot += 6006;
+	else
+		boat->prop_rot += 546 * item->speed + 364;
+
+	slip = (30 * phd_sin(item->pos.z_rot)) >> W2V_SHIFT;
+
+	if (!slip && item->pos.z_rot)
+		slip = item->pos.z_rot <= 0 ? -1 : 1;
+
+	item->pos.x_pos += (slip * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+	item->pos.z_pos -= (slip * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+
+	slip = (10 * phd_sin(item->pos.x_rot)) >> W2V_SHIFT;
+
+	if (!slip && item->pos.x_rot)
+		slip = item->pos.x_rot <= 0 ? -1 : 1;
+
+	item->pos.x_pos -= (slip * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+	item->pos.z_pos -= (slip * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+
+	newPos.x = item->pos.x_pos;
+	newPos.z = item->pos.z_pos;
+	DoBoatShift(item_number);
+
+	shift = 0;
+	back_left2 = TestWaterHeight(item, -750, -300, &blPos2);
+
+	if (back_left2 < blPos.y - 128)
+		shift = DoShift(item, &blPos2, &blPos);
+
+	back_right2 = TestWaterHeight(item, -750, 300, &brPos2);
+
+	if (back_right2 < brPos.y - 128)
+		shift += DoShift(item, &brPos2, &brPos);
+
+	front_left2 = TestWaterHeight(item, 750, -300, &flPos2);
+
+	if (front_left2 < flPos.y - 128)
+		shift += DoShift(item, &flPos2, &flPos);
+
+	front_right2 = TestWaterHeight(item, 750, 300, &frPos2);
+
+	if (front_right2 < frPos.y - 128)
+		shift += DoShift(item, &frPos2, &frPos);
+
+	if (!slip)
+	{
+		front_mid2 = TestWaterHeight(item, 1000, 0, &fmPos2);
+
+		if (front_mid2 < fmPos.y - 128)
+			DoShift(item, &fmPos2, &fmPos);
+	}
+
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	h = GetWaterHeight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, room_number);
+
+	if (h == NO_HEIGHT)
+		h = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (h < item->pos.y_pos - 128)
+		DoShift(item, (PHD_VECTOR*)&item->pos, &pos);
+
+	boat->extra_rotation = (short)shift;
+	anim = GetCollisionAnim(item, &newPos);
+
+	if (slip || anim)
+	{
+		dx = item->pos.x_pos - pos.x;
+		dz = item->pos.z_pos - pos.z;
+		speed = (dx * phd_sin(item->pos.y_rot) + dz * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+
+		if (lara.skidoo == item_number && item->speed > 115 && speed < item->speed - 10)
+		{
+			lara_item->hit_points -= item->speed;
+			lara_item->hit_status = 1;
+			SoundEffect(SFX_LARA_INJURY, &lara_item->pos, SFX_DEFAULT);
+			speed >>= 1;
+			item->speed >>= 1;
+		}
+
+		if (slip)
+		{
+			if (item->speed <= 120)
+				item->speed = (short)speed;
+		}
+		else if (item->speed > 0 && speed < item->speed)
+			item->speed = (short)speed;
+		else if (item->speed < 0 && speed > item->speed)
+			item->speed = (short)speed;
+
+		if (item->speed < -20)
+			item->speed = -20;
+	}
+
+	return anim;
+}
+
+static void BoatSplash(ITEM_INFO* item, long fallspeed, long h)
+{
+	splash_setup.x = item->pos.x_pos;
+	splash_setup.y = h;
+	splash_setup.z = item->pos.z_pos;
+	splash_setup.InnerYvel = short(-128 * fallspeed);
+	splash_setup.InnerXZoff = 64;
+	splash_setup.InnerXZsize = 48;
+	splash_setup.InnerYsize = -384;
+	splash_setup.InnerXZvel = 160;
+	splash_setup.InnerGravity = 128;
+	splash_setup.InnerFriction = 7;
+	splash_setup.MiddleXZoff = 96;
+	splash_setup.MiddleXZsize = 96;
+	splash_setup.MiddleYsize = -256;
+	splash_setup.MiddleXZvel = 224;
+	splash_setup.MiddleYvel = short(-64 * fallspeed);
+	splash_setup.MiddleGravity = 72;
+	splash_setup.MiddleFriction = 8;
+	splash_setup.OuterXZoff = 128;
+	splash_setup.OuterXZsize = 128;
+	splash_setup.OuterXZvel = 272;
+	splash_setup.OuterFriction = 9;
+	SetupSplash(&splash_setup);
+	SplashCount = 16;
+}
+
+static void TriggerBoatMist(long x, long y, long z, long speed, short angle, long snow)
+{
+	SPARKS* sptr;
+	long size;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 0;
+	sptr->sG = 0;
+	sptr->sB = 0;
+
+	if (snow)
+	{
+		sptr->dR = 255;
+		sptr->dG = 255;
+		sptr->dB = 255;
+	}
+	else
+	{
+		sptr->dR = 64;
+		sptr->dG = 64;
+		sptr->dB = 64;
+	}
+
+	sptr->ColFadeSpeed = (GetRandomControl() & 3) + 4;
+	sptr->FadeToBlack = uchar(12 - (snow << 3));
+	sptr->TransType = 2;
+	sptr->extras = 0;
+	sptr->Life = (GetRandomControl() & 3) + 20;
+	sptr->sLife = sptr->Life;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 0xF) + x - 8;
+	sptr->y = (GetRandomControl() & 0xF) + y - 8;
+	sptr->z = (GetRandomControl() & 0xF) + z - 8;
+	sptr->Xvel = (GetRandomControl() & 0x7F) + ((speed * phd_sin(angle)) >> (W2V_SHIFT + 2)) - 64;
+	sptr->Yvel = short(12 * speed);
+	sptr->Zvel = (GetRandomControl() & 0x7F) + ((speed * phd_cos(angle)) >> (W2V_SHIFT + 2)) - 64;
+	sptr->Friction = 3;
+
+	if (GetRandomControl() & 1)
+	{
+		sptr->Flags = 538;
+		sptr->RotAng = GetRandomControl() & 0xFFF;
+
+		if (GetRandomControl() & 1)
+			sptr->RotAdd = -16 - (GetRandomControl() & 0xF);
+		else
+			sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
+	}
+	else
+		sptr->Flags = 522;
+
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+
+	if (snow)
+	{
+		sptr->Friction = 0;
+		sptr->Scalar = 3;
+		sptr->Yvel = -sptr->Yvel >> 5;
+		sptr->MaxYvel = 0;
+		sptr->Gravity = (GetRandomControl() & 0x1F) + 32;
+		size = (GetRandomControl() & 7) + 16;
+		sptr->Width = (uchar)size;
+		sptr->sWidth = sptr->Width;
+		sptr->dWidth = sptr->Width;
+		sptr->Height = (uchar)size;
+		sptr->sHeight = sptr->Height;
+		sptr->dHeight = sptr->Height;
+	}
+	else
+	{
+		sptr->Scalar = 4;
+		sptr->MaxYvel = 0;
+		sptr->Gravity = 0;
+		size = (GetRandomControl() & 7) + (speed >> 1) + 16;
+		sptr->dWidth = (uchar)size;
+		sptr->Width = sptr->dWidth >> 2;
+		sptr->sWidth = sptr->dWidth >> 2;
+		sptr->dHeight = (uchar)size;
+		sptr->sHeight = sptr->dHeight >> 2;
+		sptr->Height = sptr->dHeight >> 2;
+	}
+}
+
+static void DoWake(ITEM_INFO* item, long xoff, long zoff, short rotate)
+{
+	long s, c, x, y, z;
+	long xv[2];
+	long zv[2];
+	short room_number, angle1, angle2;
+
+	if (WakePts[CurrentStartWake][rotate].life)
+		return;
+
+	s = phd_sin(item->pos.y_rot);
+	c = phd_cos(item->pos.y_rot);
+	x = item->pos.x_pos + ((zoff * s + xoff * c) >> W2V_SHIFT);
+	y = item->pos.y_pos + 128;
+	z = item->pos.z_pos + ((zoff * c - xoff * s) >> W2V_SHIFT);
+	room_number = item->room_number;
+	GetFloor(x, y, z, &room_number);
+	GetWaterHeight(x, y, z, room_number);
+
+	if (item->speed >= 0)
+	{
+		if (rotate)
+		{
+			angle1 = item->pos.y_rot + 29120;
+			angle2 = item->pos.y_rot + 25480;
+		}
+		else
+		{
+			angle1 = item->pos.y_rot - 29120;
+			angle2 = item->pos.y_rot - 25480;
+		}
+	}
+	else
+	{
+		if (rotate)
+		{
+			angle1 = item->pos.y_rot + 3640;
+			angle2 = item->pos.y_rot + 7280;
+		}
+		else
+		{
+			angle1 = item->pos.y_rot - 3640;
+			angle2 = item->pos.y_rot - 7280;
+		}
+	}
+
+	xv[0] = (4 * phd_sin(angle1)) >> W2V_SHIFT;
+	xv[1] = (10 * phd_sin(angle2)) >> W2V_SHIFT;
+	zv[0] = (4 * phd_cos(angle1)) >> W2V_SHIFT;
+	zv[1] = (10 * phd_cos(angle2)) >> W2V_SHIFT;
+	WakePts[CurrentStartWake][rotate].y = item->pos.y_pos + 32;
+	WakePts[CurrentStartWake][rotate].life = 64;
+
+	for (int i = 0; i < 2; i++)
+	{
+		WakePts[CurrentStartWake][rotate].x[i] = x;
+		WakePts[CurrentStartWake][rotate].z[i] = z;
+		WakePts[CurrentStartWake][rotate].xvel[i] = (short)xv[i];
+		WakePts[CurrentStartWake][rotate].zvel[i] = (short)zv[i];
+	}
+
+	if (rotate == 1)
+		CurrentStartWake = (CurrentStartWake + 1) & 0x1F;
+}
+
+static void UpdateWakeFX()
+{
+	for (int i = 0; i < 2; i++)
+	{
+		for (int j = 0; j < 32; j++)
+		{
+			if (WakePts[j][i].life)
+			{
+				WakePts[j][i].life--;
+				WakePts[j][i].x[0] += WakePts[j][i].xvel[0];
+				WakePts[j][i].z[0] += WakePts[j][i].zvel[0];
+				WakePts[j][i].x[1] += WakePts[j][i].xvel[1];
+				WakePts[j][i].z[1] += WakePts[j][i].zvel[1];
+			}
+		}
+	}
+}
+
+void BoatControl(short item_number)
+{
+	ITEM_INFO* item;
+	BOAT_INFO* boat;
+	FLOOR_INFO* floor;
+	PHD_3DPOS bubble;
+	PHD_VECTOR flPos, frPos, pos;
+	long hitWall, driving, no_turn, front_left, front_right, h, wh, x, y, z, leaving;
+	short room_number, fallspeed, x_rot, z_rot, ang;
+
+	item = &items[item_number];
+	boat = (BOAT_INFO*)item->data;
+	no_turn = 1;
+	driving = 0;
+	hitWall = BoatDynamics(item_number);
+	front_left = TestWaterHeight(item, 750, -300, &flPos);
+	front_right = TestWaterHeight(item, 750, 300, &frPos);
+
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	h = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+	GetCeiling(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (lara.skidoo == item_number)
+	{
+		TestTriggers(trigger_index, 0);
+		TestTriggers(trigger_index, 1);
+	}
+
+	boat->water = GetWaterHeight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, room_number);
+	wh = boat->water;
+
+	if (lara.skidoo == item_number && lara_item->hit_points > 0)
+	{
+		if (lara_item->current_anim_state && (lara_item->current_anim_state <= BOAT_MOVING || lara_item->current_anim_state > BOAT_JUMPL))
+		{
+			driving = 1;
+			no_turn = BoatUserControl(item);
+		}
+	}
+	else if (item->speed > 1)
+		item->speed--;
+	else
+		item->speed = 0;
+
+	if (no_turn)
+	{
+		if (boat->boat_turn < -45)
+			boat->boat_turn += 45;
+		else if (boat->boat_turn > 45)
+			boat->boat_turn -= 45;
+		else
+			boat->boat_turn = 0;
+	}
+
+	item->floor = h - 5;
+
+	if (boat->water == NO_HEIGHT)
+		boat->water = h;
+	else
+		boat->water -= 5;
+
+	boat->left_fallspeed = DoBoatDynamics(front_left, boat->left_fallspeed, &flPos.y);
+	boat->right_fallspeed = DoBoatDynamics(front_right, boat->right_fallspeed, &frPos.y);
+
+	fallspeed = item->fallspeed;
+	item->fallspeed = (short)DoBoatDynamics(boat->water, item->fallspeed, &item->pos.y_pos);
+
+	if (fallspeed - item->fallspeed > 32 && !item->fallspeed && wh != NO_HEIGHT)
+		BoatSplash(item, fallspeed - item->fallspeed, wh);
+
+	h = frPos.y + flPos.y;
+
+	if (h >= 0)
+		h >>= 1;
+	else
+		h = -abs(h) >> 1;
+
+	x_rot = (short)phd_atan(750, item->pos.y_pos - h);
+	z_rot = (short)phd_atan(300, h - flPos.y);
+
+	item->pos.x_rot += (x_rot - item->pos.x_rot) >> 1;
+	item->pos.z_rot += (z_rot - item->pos.z_rot) >> 1;
+
+	if (!x_rot && abs(item->pos.x_rot) < 4)
+		item->pos.x_rot = 0;
+
+	if (!z_rot && abs(item->pos.z_rot) < 4)
+		item->pos.z_rot = 0;
+
+	if (lara.skidoo == item_number)
+	{
+		BoatAnimation(item, hitWall);
+
+		if (room_number != item->room_number)
+		{
+			ItemNewRoom(item_number, room_number);
+			ItemNewRoom(lara.item_number, room_number);
+		}
+
+		item->pos.z_rot += boat->tilt_angle;
+		lara_item->pos.x_pos = item->pos.x_pos;
+		lara_item->pos.y_pos = item->pos.y_pos;
+		lara_item->pos.z_pos = item->pos.z_pos;
+		lara_item->pos.x_rot = item->pos.x_rot;
+		lara_item->pos.y_rot = item->pos.y_rot;
+		lara_item->pos.z_rot = item->pos.z_rot;
+		AnimateItem(lara_item);
+
+		if (lara_item->hit_points > 0)
+		{
+			item->anim_number = objects[BOAT].anim_index + lara_item->anim_number - objects[VEHICLE_ANIM].anim_index;
+			item->frame_number = lara_item->frame_number + anims[item->anim_number].frame_base - anims[lara_item->anim_number].frame_base;
+		}
+
+		camera.target_elevation = -3640;
+		camera.target_distance = 2048;
+	}
+	else
+	{
+		if (room_number != item->room_number)
+			ItemNewRoom(item_number, room_number);
+
+		item->pos.z_rot += boat->tilt_angle;
+	}
+
+	boat->pitch += (item->speed - boat->pitch) >> 2;
+
+	if (item->speed > 8)
+		SoundEffect(SFX_BOAT_MOVING, &item->pos, 25600 * boat->pitch + 0xD50804);	//uhhh todo figure this out
+	else if (driving)
+		SoundEffect(SFX_BOAT_IDLE, &item->pos, 25600 * boat->pitch + 0xD50804);
+
+	if (lara.skidoo != item_number)
+		return;
+
+	if ((lara_item->current_anim_state == BOAT_JUMPR || lara_item->current_anim_state == BOAT_JUMPL) &&
+		lara_item->frame_number == anims[lara_item->anim_number].frame_end)
+	{
+		if (lara_item->current_anim_state == BOAT_JUMPL)
+			lara_item->pos.y_rot -= 0x4000;
+		else
+			lara_item->pos.y_rot += 0x4000;
+
+		lara_item->anim_number = 77;
+		lara_item->frame_number = anims[lara_item->anim_number].frame_base;
+		lara_item->current_anim_state = AS_FORWARDJUMP;
+		lara_item->goal_anim_state = AS_FORWARDJUMP;
+		lara_item->gravity_status = 1;
+		lara_item->fallspeed = -40;
+		lara_item->speed = 20;
+		lara_item->pos.x_rot = 0;
+		lara_item->pos.z_rot = 0;
+		lara.skidoo = NO_ITEM;
+
+		room_number = lara_item->room_number;
+		x = lara_item->pos.x_pos + ((360 * phd_sin(lara_item->pos.y_rot)) >> W2V_SHIFT);
+		y = lara_item->pos.y_pos - 90;
+		z = lara_item->pos.z_pos + ((360 * phd_cos(lara_item->pos.y_rot)) >> W2V_SHIFT);
+		floor = GetFloor(x, y, z, &room_number);
+
+		if (GetHeight(floor, x, y, z) >= y - 256)
+		{
+			lara_item->pos.x_pos = x;
+			lara_item->pos.z_pos = z;
+
+			if (room_number != lara_item->room_number)
+				ItemNewRoom(lara.item_number, room_number);
+		}
+
+		lara_item->pos.y_pos = y;
+		item->anim_number = objects[BOAT].anim_index;
+		item->frame_number = anims[item->anim_number].frame_base;
+	}
+
+	room_number = item->room_number;
+	GetFloor(item->pos.x_pos, item->pos.y_pos + 128, item->pos.z_pos, &room_number);
+	wh = GetWaterHeight(item->pos.x_pos, item->pos.y_pos + 128, item->pos.z_pos, room_number);
+	wh = wh <= item->pos.y_pos + 32 && wh != NO_HEIGHT;
+	leaving = lara_item->current_anim_state == BOAT_JUMPR || lara_item->current_anim_state == BOAT_JUMPL;
+
+	if (!(wibble & 0xF) && wh && !leaving)
+	{
+		DoWake(item, -384, 0, 0);
+		DoWake(item, 384, 0, 1);
+	}
+
+	if (!item->speed || !wh || leaving)
+	{
+		if (WakeShade)
+			WakeShade--;
+	}
+	else if (WakeShade < 16)
+		WakeShade++;
+
+	pos.x = 0;
+	pos.y = 0;
+	pos.z = -80;
+	GetJointAbsPosition(item, &pos, 2);
+	room_number = item->room_number;
+	floor=GetFloor(pos.x, pos.y, pos.z, &room_number);
+	wh = GetWaterHeight(pos.x, pos.y, pos.z, room_number);
+
+	if (!item->speed || wh >= pos.y || wh == NO_HEIGHT)
+	{
+		h = GetHeight(floor, pos.x, pos.y, pos.z);
+
+		if (pos.y > h && !(room[room_number].flags & ROOM_UNDERWATER))
+		{
+			for (int i = (GetRandomControl() & 3) + 3; i > 0; i--)
+			{
+				ang = short(item->pos.y_rot + GetRandomControl() + 0x4000);
+				TriggerBoatMist(pos.x, pos.y, pos.z, ((GetRandomControl() & 0xF) + 96) << 4, ang, 1);
+			}
+		}
+	}
+	else
+	{
+		TriggerBoatMist(pos.x, pos.y, pos.z, abs(item->speed), item->pos.y_rot + 0x8000, 0);
+
+		if (!(GetRandomControl() & 1))
+		{
+			bubble.x_pos = (GetRandomControl() & 0x3F) + pos.x - 32;
+			bubble.y_pos = pos.y + (GetRandomControl() & 0xF);
+			bubble.z_pos = (GetRandomControl() & 0x3F) + pos.z - 32;
+			room_number = item->room_number;
+			GetFloor(bubble.x_pos, bubble.y_pos, bubble.z_pos, &room_number);
+			CreateBubble(&bubble, room_number, 16, 8);
+		}
+	}
+
+	UpdateWakeFX();
+}
+
 void inject_boat(bool replace)
 {
 	INJECT(0x00411FE0, InitialiseBoat, replace);
@@ -604,4 +1179,9 @@ void inject_boat(bool replace)
 	INJECT(0x00413B80, GetCollisionAnim, replace);
 	INJECT(0x00413C10, DoBoatShift, replace);
 	INJECT(0x00413390, DoBoatDynamics, replace);
+	INJECT(0x004133E0, BoatDynamics, replace);
+	INJECT(0x00413F00, BoatSplash, replace);
+	INJECT(0x00413D20, TriggerBoatMist, replace);
+	INJECT(0x004130C0, DoWake, replace);
+	INJECT(0x00412820, BoatControl, replace);
 }

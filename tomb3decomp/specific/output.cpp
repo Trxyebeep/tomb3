@@ -116,12 +116,23 @@ void S_SetupBelowWater(long underwater)
 }
 
 #ifdef TROYESTUFF
-long GetRenderScale(long unit)
+long GetFixedScale(long unit)	//some things require fixed scale to look proper all the time. mostly effects, like snow and rain etc.
 {
 	long w, h, x, y;
 
 	w = 640;
 	h = 480;
+	x = (phd_winwidth > w) ? MulDiv(phd_winwidth, unit, w) : unit;
+	y = (phd_winheight > h) ? MulDiv(phd_winheight, unit, h) : unit;
+	return x < y ? x : y;
+}
+
+long GetRenderScale(long unit)	//User selected scale
+{
+	long w, h, x, y;
+
+	w = long(640.0F / (VidSizeLocked ? tomb3.INV_Scale : tomb3.GUI_Scale));
+	h = long(480.0F / (VidSizeLocked ? tomb3.INV_Scale : tomb3.GUI_Scale));
 	x = (phd_winwidth > w) ? MulDiv(phd_winwidth, unit, w) : unit;
 	y = (phd_winheight > h) ? MulDiv(phd_winheight, unit, h) : unit;
 	return x < y ? x : y;
