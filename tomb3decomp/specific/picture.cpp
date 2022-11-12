@@ -429,7 +429,7 @@ void S_FadeToBlack()
 	TIME_Init();
 }
 
-void DrawMonoScreen(long a, long b, long c)
+void DrawMonoScreen(long r, long g, long b)
 {
 	TRDrawPicture(0, CurPicTexIndices, f_zfar);
 }

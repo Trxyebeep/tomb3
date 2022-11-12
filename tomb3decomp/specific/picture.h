@@ -18,7 +18,7 @@ bool LoadPicture(const char* name, LPDIRECTDRAWSURFACEX surf, long a);
 void FadePictureUp(long steps);
 void FadePictureDown(long steps);
 void S_FadeToBlack();
-void DrawMonoScreen(long a, long b, long c);
+void DrawMonoScreen(long r, long g, long b);
 void RemoveMonoScreen(long fade);
 void DoInventoryPicture();
 void FreePictureTextures(long* indices);

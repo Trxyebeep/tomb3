@@ -298,13 +298,6 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 
 	dest = (char*)desc.lpSurface;
 
-#ifdef TROYESTUFF	//uninitialized
-	r = 0;
-	g = 0;
-	b = 0;
-	a = 0;
-#endif
-
 	while (h)
 	{
 		udest = (uchar*)dest;
@@ -363,7 +356,7 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 				r = (col >> 7) & 0xF8;
 				g = (col >> 2) & 0xF8;
 				b = (col << 3) & 0xF8;
-				a = (ushort)col >> 15;
+				a = (short)col >> 15;
 				break;
 			}
 
@@ -548,7 +541,7 @@ void inject_texture(bool replace)
 	INJECT(0x004B2230, DXRestoreSurfaceIfLost, replace);
 	INJECT(0x004B2280, DXTextureAddPal, replace);
 	INJECT(0x004B2370, MMXTextureCopy, replace);
-	INJECT(0x004B23D0, DXTextureAdd, 0);	//breaks alpha textures
+	INJECT(0x004B23D0, DXTextureAdd, replace);
 	INJECT(0x004B1D90, DXCreateMaxTPages, replace);
 	INJECT(0x004B1F10, DXFreeTPages, replace);
 }
