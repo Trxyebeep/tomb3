@@ -832,7 +832,11 @@ void do_levelselect_option(INVENTORY_ITEM* item)
 
 		if (axes == 3 && nAvailable > 1)
 		{
+#ifdef TROYESTUFF
+			w = GetRenderWidthDownscaled();
+#else
 			w = App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode].w;
+#endif
 			w -= w >> 1;
 
 			LeftArrow = T_Print(w - 120, -16, 2, left_arrow);
