@@ -122,8 +122,8 @@ void DrawTile(long x, long y, long w, long h, long tpage, long tU, long tV, long
 	HWR_EnableColorKey(0);
 	HWR_EnableColorAddition(0);
 	HWR_EnableZBuffer(0, 0);
-	SetRenderState(D3DRENDERSTATE_TEXTUREMAG, 1);
-	SetRenderState(D3DRENDERSTATE_TEXTUREMIN, 1);
+	SetRenderState(D3DRENDERSTATE_TEXTUREMAG, D3DFILTER_NEAREST);
+	SetRenderState(D3DRENDERSTATE_TEXTUREMIN, D3DFILTER_NEAREST);
 	DrawPrimitive(D3DPT_TRIANGLEFAN, D3DVT_TLVERTEX, v, 4, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 	SetRenderState(D3DRENDERSTATE_TEXTUREMAG, HWConfig.nFilter);
 	SetRenderState(D3DRENDERSTATE_TEXTUREMIN, HWConfig.nFilter);
