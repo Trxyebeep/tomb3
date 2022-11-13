@@ -18,6 +18,9 @@
 #include "../game/camera.h"
 #include "../game/control.h"
 #include "../game/draw.h"
+#ifdef TROYESTUFF
+#include "option.h"
+#endif
 
 static long rand_1 = 0xD371F947;
 static long rand_2 = 0xD371F947;
@@ -347,7 +350,11 @@ void GetValidLevelsList(REQUEST_INFO* req)
 
 void GetSavedGamesList(REQUEST_INFO* req)
 {
+#ifdef TROYESTUFF
+	SetPassportRequesterSize(req);
+#else
 	SetPCRequesterSize(req, 10, -32);
+#endif
 
 	if (req->selected >= req->vis_lines)
 		req->line_offset = req->selected - req->vis_lines + 1;

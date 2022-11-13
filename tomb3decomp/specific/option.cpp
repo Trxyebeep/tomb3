@@ -1612,7 +1612,7 @@ void do_compass_option(INVENTORY_ITEM* item)
 #define PASSPORT_Y_TITLE	-16
 
 #ifdef TROYESTUFF
-static void SetPassportRequesterSize(REQUEST_INFO* req)
+void SetPassportRequesterSize(REQUEST_INFO* req)
 {
 	float scale;
 	long nLines, adjust;

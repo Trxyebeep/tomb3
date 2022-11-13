@@ -1,5 +1,20 @@
 # tomb3 changelog
 
+## Unreleased
+
+### Original bug fixes
+
+
+
+### tomb3 additions
+
+
+
+### tomb3 bug fixes
+
+- Fix passport selection crash.
+
+
 ## [1.2.0](https://github.com/Trxyebeep/tomb3decomp/tree/V1.2.0) (Nov. 12 2022)
 
 ### Original bug fixes

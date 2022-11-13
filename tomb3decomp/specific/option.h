@@ -16,6 +16,9 @@ void do_sound_option(INVENTORY_ITEM* item);
 void DefaultConflict();
 void do_control_option(INVENTORY_ITEM* item);
 void do_compass_option(INVENTORY_ITEM* item);
+#ifdef TROYESTUFF
+void SetPassportRequesterSize(REQUEST_INFO* req);
+#endif
 void do_passport_option(INVENTORY_ITEM* item);
 void do_inventory_options(INVENTORY_ITEM* item);
 
