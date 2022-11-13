@@ -2033,6 +2033,7 @@ struct TOMB3_OPTIONS
 	bool upv_wake;
 	bool psx_fov;
 	bool psx_boxes;
+	bool psx_mono;
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum
 	long sophia_rings;	//t3_summon_ring_style

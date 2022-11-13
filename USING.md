@@ -83,6 +83,8 @@ Note: Selecting PSX bar position overrides this setting and forces the PSX ammo 
 
 #### PSX boxes: Toggles PSX text boxes.
 
+#### PSX mono screens: Toggles PSX mono screen colors.
+
 #### PSX text colors: Toggles PSX text colors.
 
 #### Shadow:

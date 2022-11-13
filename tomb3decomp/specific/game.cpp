@@ -180,7 +180,12 @@ long LevelStats(long level)
 	T_InitPrint();
 
 	if (!GF_PlayingFMV || CurrentLevel == LV_ANTARC || CurrentLevel == LV_STPAULS)
+	{
+#ifdef TROYESTUFF
+		bDontGreyOut = 1;
+#endif
 		CreateMonoScreen();
+	}
 	else
 	{
 		DXTextureSetGreyScale(1);
@@ -198,7 +203,7 @@ long LevelStats(long level)
 	{
 		S_InitialisePolyList(0);
 		S_UpdateInput();
-		DrawMonoScreen(0, 0, 0);
+		DrawMonoScreen(48, 48, 48);
 
 		if (reset_flag)
 			input = IN_SELECT;

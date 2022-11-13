@@ -8,7 +8,7 @@
 
 ### tomb3 additions
 
-
+- Add option for PSX mono screen colors.
 
 ### tomb3 bug fixes
 

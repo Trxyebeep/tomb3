@@ -22,3 +22,7 @@ void DrawMonoScreen(long r, long g, long b);
 void RemoveMonoScreen(long fade);
 void DoInventoryPicture();
 void FreePictureTextures(long* indices);
+
+#ifdef TROYESTUFF
+extern bool bDontGreyOut;
+#endif
