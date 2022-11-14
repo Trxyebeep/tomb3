@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by tomb3decomp.rc
+// Used by tomb3.rc
 
 // Next default values for new objects
 // 

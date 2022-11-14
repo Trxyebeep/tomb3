@@ -15,7 +15,7 @@
 - Fix passport selection crash.
 
 
-## [1.2.0](https://github.com/Trxyebeep/tomb3decomp/tree/V1.2.0) (Nov. 12 2022)
+## [1.2.0](https://github.com/Trxyebeep/tomb3/tree/V1.2.0) (Nov. 12 2022)
 
 ### Original bug fixes
 
@@ -52,7 +52,7 @@
 - Fix UPV displacement after getting off.
 
 
-## [1.1.0](https://github.com/Trxyebeep/tomb3decomp/tree/V1.1.0) (Oct. 29 2022)
+## [1.1.0](https://github.com/Trxyebeep/tomb3/tree/V1.1.0) (Oct. 29 2022)
 
 ### Original bug fixes
 
@@ -79,7 +79,7 @@
 - Fix skybox drawing (fixes Lara's Home crash when using the no crystals patch).
 
 
-## [1.0.0](https://github.com/Trxyebeep/tomb3decomp/tree/V1.0.0) (Oct. 15 2022)
+## [1.0.0](https://github.com/Trxyebeep/tomb3/tree/V1.0.0) (Oct. 15 2022)
 
 ### Original bug fixes
 

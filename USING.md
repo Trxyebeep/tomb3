@@ -2,7 +2,7 @@
 
 ## Installing:
 
-## [Releases page](https://github.com/Trxyebeep/tomb3decomp/releases)
+## [Releases page](https://github.com/Trxyebeep/tomb3/releases)
 
 ### *first time installs:*
 
