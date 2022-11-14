@@ -57,12 +57,18 @@ void S_DrawBorder(long x, long y, long z, long w, long h, char c, GOURAUD_OUTLIN
 	long p;
 	long bx[3];
 	long by[3];
+	bool add;
 
 	if (!grdptr)
 	{
 		grdptr = &flat;
 		MakeFlatGour(c, grdptr);
 	}
+
+	add = 0;
+
+	if (flags)
+		add = 1;
 
 	p = GetRenderScale(1);
 	x += p;
@@ -78,31 +84,31 @@ void S_DrawBorder(long x, long y, long z, long w, long h, char c, GOURAUD_OUTLIN
 
 	HWI_InsertGourQuad_Sorted(bx[0] - p, by[0] - p, bx[1], by[0], phd_znear + 0x50000,
 		grdptr->clr[0], grdptr->clr[1],
-		grdptr->clr[1], grdptr->clr[0]);
+		grdptr->clr[1], grdptr->clr[0], add);
 	HWI_InsertGourQuad_Sorted(bx[1], by[0] - p, bx[2], by[0], phd_znear + 0x50000,
 		grdptr->clr[1], grdptr->clr[2],
-		grdptr->clr[2], grdptr->clr[1]);
+		grdptr->clr[2], grdptr->clr[1], add);
 
 	HWI_InsertGourQuad_Sorted(bx[2], by[0] - p, bx[2] + p, by[1], phd_znear + 0x50000,
 		grdptr->clr[2], grdptr->clr[2],
-		grdptr->clr[3], grdptr->clr[3]);
+		grdptr->clr[3], grdptr->clr[3], add);
 	HWI_InsertGourQuad_Sorted(bx[2], by[1], bx[2] + p, by[2], phd_znear + 0x50000,
 		grdptr->clr[3], grdptr->clr[3],
-		grdptr->clr[4], grdptr->clr[4]);
+		grdptr->clr[4], grdptr->clr[4], add);
 
 	HWI_InsertGourQuad_Sorted(bx[1], by[2], bx[2] + p, by[2] + p, phd_znear + 0x50000,
 		grdptr->clr[5], grdptr->clr[4],
-		grdptr->clr[4], grdptr->clr[5]);
+		grdptr->clr[4], grdptr->clr[5], add);
 	HWI_InsertGourQuad_Sorted(bx[0], by[2], bx[1], by[2] + p, phd_znear + 0x50000,
 		grdptr->clr[6], grdptr->clr[5],
-		grdptr->clr[5], grdptr->clr[6]);
+		grdptr->clr[5], grdptr->clr[6], add);
 
 	HWI_InsertGourQuad_Sorted(bx[0] - p, by[1], bx[0], by[2] + p, phd_znear + 0x50000,
 		grdptr->clr[7], grdptr->clr[7],
-		grdptr->clr[6], grdptr->clr[6]);
+		grdptr->clr[6], grdptr->clr[6], add);
 	HWI_InsertGourQuad_Sorted(bx[0] - p, by[0], bx[0], by[1], phd_znear + 0x50000,
 		grdptr->clr[8], grdptr->clr[8],
-		grdptr->clr[7], grdptr->clr[7]);
+		grdptr->clr[7], grdptr->clr[7], add);
 }
 #endif
 
@@ -128,6 +134,7 @@ void S_DrawScreenFBox(long x, long y, long z, long w, long h, long c, GOURAUD_FI
 #ifdef TROYESTUFF
 	long bx[3];
 	long by[3];
+	bool add;
 
 	if (tomb3.psx_boxes)
 	{
@@ -147,6 +154,11 @@ void S_DrawScreenFBox(long x, long y, long z, long w, long h, long c, GOURAUD_FI
 #ifdef TROYESTUFF
 	if (tomb3.psx_boxes && grdptr)
 	{
+		add = 0;
+
+		if (f)
+			add = 1;
+
 		bx[0] = x;
 		by[0] = y;
 		bx[2] = x + w;
@@ -155,16 +167,16 @@ void S_DrawScreenFBox(long x, long y, long z, long w, long h, long c, GOURAUD_FI
 		by[1] = (by[0] + by[2]) / 2;
 		HWI_InsertGourQuad_Sorted(bx[0], by[0], bx[1], by[1], phd_znear + 0x50000,
 			grdptr->clr[0][0], grdptr->clr[0][1],
-			grdptr->clr[0][2], grdptr->clr[0][3]);
+			grdptr->clr[0][2], grdptr->clr[0][3], add);
 		HWI_InsertGourQuad_Sorted(bx[1], by[0], bx[2], by[1], phd_znear + 0x50000,
 			grdptr->clr[1][0], grdptr->clr[1][1],
-			grdptr->clr[1][2], grdptr->clr[1][3]);
+			grdptr->clr[1][2], grdptr->clr[1][3], add);
 		HWI_InsertGourQuad_Sorted(bx[1], by[1], bx[2], by[2], phd_znear + 0x50000,
 			grdptr->clr[2][0], grdptr->clr[2][1],
-			grdptr->clr[2][2], grdptr->clr[2][3]);
+			grdptr->clr[2][2], grdptr->clr[2][3], add);
 		HWI_InsertGourQuad_Sorted(bx[0], by[1], bx[1], by[2], phd_znear + 0x50000,
 			grdptr->clr[3][0], grdptr->clr[3][1],
-			grdptr->clr[3][2], grdptr->clr[3][3]);
+			grdptr->clr[3][2], grdptr->clr[3][3], add);
 
 		return;
 	}

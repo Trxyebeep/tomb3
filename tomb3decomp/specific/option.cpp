@@ -102,12 +102,12 @@ void do_detail_option(INVENTORY_ITEM* item)
 		dtext[DT_TRUEALPHA] = T_Print(w, 35, 0, GF_PCStrings[PCSTR_TRUEALPHA]);
 		dtext[DT_GAMMA] = T_Print(w, 55, 0, GF_PCStrings[PCSTR_SKY]);
 		
-		T_AddBackground(dtext[DT_EMPTY], 240, 150, 0, 0, 48, 0, &req_bgnd_gour1, 2);
+		T_AddBackground(dtext[DT_EMPTY], 240, 150, 0, 0, 48, 0, &req_bgnd_gour1, 0);
 		T_AddOutline(dtext[DT_EMPTY], 1, 15, &req_bgnd_gour2, 0);
 		T_CentreH(dtext[DT_EMPTY], 1);
 		T_CentreV(dtext[DT_EMPTY], 1);
 
-		T_AddBackground(dtext[DT_VIDEOTITLE], 236, 0, 0, 0, 48, 0, &req_main_gour1, 2);
+		T_AddBackground(dtext[DT_VIDEOTITLE], 236, 0, 0, 0, 48, 0, &req_main_gour1, 0);
 		T_AddOutline(dtext[DT_VIDEOTITLE], 1, 4, &req_main_gour2, 0);
 		T_CentreH(dtext[DT_VIDEOTITLE], 1);
 		T_CentreV(dtext[DT_VIDEOTITLE], 1);
@@ -893,7 +893,7 @@ void do_sound_option(INVENTORY_ITEM* item)
 		wsprintf(buf, "| %2d", Option_Music_Volume);
 		stext[0] = T_Print(0, 0, 0, buf);
 #ifdef TROYESTUFF
-		T_AddBackground(stext[0], 168, 0, 0, 0, 8, 0, &req_bgnd_gour1, 2);
+		T_AddBackground(stext[0], 168, 0, 0, 0, 8, 0, &req_bgnd_gour1, 0);
 		T_AddOutline(stext[0], 1, 4, &req_bgnd_gour2, 0);
 #else
 		T_AddBackground(stext[0], 168, 0, 0, 0, 8, 0, 0, 0);
@@ -908,7 +908,7 @@ void do_sound_option(INVENTORY_ITEM* item)
 
 		stext[2] = T_Print(0, -32, 0, " ");
 #ifdef TROYESTUFF
-		T_AddBackground(stext[2], 180, 85, 0, 0, 48, 0, &req_bgnd_gour1, 2);
+		T_AddBackground(stext[2], 180, 85, 0, 0, 48, 0, &req_bgnd_gour1, 0);
 		T_AddOutline(stext[2], 1, 15, &req_bgnd_gour2, 0);
 #else
 		T_AddBackground(stext[2], 180, 85, 0, 0, 48, 0, 0, 0);
@@ -917,7 +917,7 @@ void do_sound_option(INVENTORY_ITEM* item)
 
 		stext[3] = T_Print(0, -30, 0, GF_PCStrings[PCSTR_SETVOLUME]);
 #ifdef TROYESTUFF
-		T_AddBackground(stext[3], 176, 0, 0, 0, 8, 0, &req_main_gour1, 2);
+		T_AddBackground(stext[3], 176, 0, 0, 0, 8, 0, &req_main_gour1, 0);
 		T_AddOutline(stext[3], 1, 15, &req_main_gour2, 0);
 #else
 		T_AddBackground(stext[3], 176, 0, 0, 0, 8, 0, 0, 0);
@@ -1250,9 +1250,9 @@ static void S_ShowControls()
 	T_AddOutline(ctrltext[1], 1, 15, &req_bgnd_gour2, 0);
 
 	if (mid < 320)
-		T_AddBackground(ctrltext[1], CONTROL_WIDTH_LOW, CONTROL_HEIGHT_LOW, 0, 0, 48, 0, &req_bgnd_gour1, 2);
+		T_AddBackground(ctrltext[1], CONTROL_WIDTH_LOW, CONTROL_HEIGHT_LOW, 0, 0, 48, 0, &req_bgnd_gour1, 0);
 	else
-		T_AddBackground(ctrltext[1], CONTROL_WIDTH_HIGH, CONTROL_HEIGHT_HIGH, 0, 0, 48, 0, &req_bgnd_gour1, 2);
+		T_AddBackground(ctrltext[1], CONTROL_WIDTH_HIGH, CONTROL_HEIGHT_HIGH, 0, 0, 48, 0, &req_bgnd_gour1, 0);
 
 #else
 	T_AddOutline(ctrltext[1], 1, 15, 0, 0);

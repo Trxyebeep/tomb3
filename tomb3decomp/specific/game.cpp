@@ -209,7 +209,13 @@ long LevelStats(long level)
 			input = IN_SELECT;
 
 		inputDB = GetDebouncedInput(input);
+#ifdef TROYESTUFF
+		noAdditiveBG = 1;
 		ShowStatsText(buf, 0);
+		noAdditiveBG = 0;
+#else
+		ShowStatsText(buf, 0);
+#endif
 		T_DrawText();
 		S_OutputPolyList();
 		S_DumpScreen();

@@ -115,6 +115,14 @@ void InitColours()
 #define REQ_LN_HEIGHT	18
 #endif
 
+#ifdef TROYESTUFF
+bool noAdditiveBG;
+
+#define bgFlag	noAdditiveBG ? 0 : 1
+#else
+#define bgFlag	1
+#endif
+
 void Init_Requester(REQUEST_INFO* req)
 {
 	req->background_flags = 1;
@@ -291,7 +299,7 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 
 			if (backgrounds)
 			{
-				T_AddBackground(req->heading1text, req->pixwidth - 4, 0, 0, 0, 8, 0, &req_main_gour1, 2);
+				T_AddBackground(req->heading1text, req->pixwidth - 4, 0, 0, 0, 8, 0, &req_main_gour1, bgFlag);
 				T_AddOutline(req->heading1text, 1, 4, &req_main_gour2, 0);
 			}
 		}
@@ -315,7 +323,7 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 
 			if (backgrounds)
 			{
-				T_AddBackground(req->heading2text, req->pixwidth - 4, 0, 0, 0, 8, 0, &req_main_gour1, 2);
+				T_AddBackground(req->heading2text, req->pixwidth - 4, 0, 0, 0, 8, 0, &req_main_gour1, bgFlag);
 				T_AddOutline(req->heading2text, 1, 4, &req_main_gour2, 0);
 			}
 		}
@@ -332,7 +340,7 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 		req->backgroundtext = T_Print(req->xpos, lOff - req->line_height - 12, 0, " ");
 		T_CentreH(req->backgroundtext, 1);
 		T_BottomAlign(req->backgroundtext, 1);
-		T_AddBackground(req->backgroundtext, req->pixwidth, short(req->line_height + lHeight + 12), 0, 0, 48, 0, &req_bgnd_gour1, 1);
+		T_AddBackground(req->backgroundtext, req->pixwidth, short(req->line_height + lHeight + 12), 0, 0, 48, 0, &req_bgnd_gour1, bgFlag);
 		T_AddOutline(req->backgroundtext, 1, 15, &req_bgnd_gour2, 0);
 	}
 
@@ -389,7 +397,7 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 			}
 			else
 			{
-				T_AddBackground(req->texts1[i], req->pixwidth - 12, 19, 0, 0, 16, 0, &req_sel_gour1, 1);
+				T_AddBackground(req->texts1[i], req->pixwidth - 12, 19, 0, 0, 16, 0, &req_sel_gour1, bgFlag);
 				T_AddOutline(req->texts1[i], 1, 4, &req_sel_gour2, 0);
 			}
 
@@ -687,6 +695,10 @@ void ShowGymStatsText(const char* time, long type)
 
 	if (mode == 1)
 	{
+#ifdef TROYESTUFF
+		noAdditiveBG = 1;
+#endif
+
 		if (Display_Requester(&Stats_Requester, 1, 1))
 			mode = 0;
 		else
@@ -695,6 +707,9 @@ void ShowGymStatsText(const char* time, long type)
 			input = 0;
 		}
 
+#ifdef TROYESTUFF
+		noAdditiveBG = 0;
+#endif
 		return;
 	}
 
@@ -894,6 +909,9 @@ void ShowEndStatsText()
 
 	if (mode == 1)
 	{
+#ifdef TROYESTUFF
+		noAdditiveBG = 1;
+#endif
 		if (Display_Requester(&Stats_Requester, 0, 1))
 			mode = 0;
 		else
@@ -902,6 +920,9 @@ void ShowEndStatsText()
 			input = 0;
 		}
 
+#ifdef TROYESTUFF
+		noAdditiveBG = 0;
+#endif
 		return;
 	}
 
