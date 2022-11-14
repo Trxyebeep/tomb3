@@ -13,84 +13,14 @@
     <Filter Include="global">
       <UniqueIdentifier>{bab0db94-eb02-45db-aa8d-5dc0ef7bc6bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="newstuff">
+      <UniqueIdentifier>{ee9907b0-b3a2-4921-95b4-a060b78a587c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="specific">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+      <UniqueIdentifier>{553eeac3-3fba-4566-b320-5f07b46ec650}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tomb3\specific\specific.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\drawbars.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\hwrender.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\transform.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\litesrc.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\output.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\smain.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\picture.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\game.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\draweffects.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\init.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\time.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\input.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\option.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\frontend.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\di.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\dd.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\ds.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\dxshell.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\texture.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\utils.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\drawprimitive.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\dxdialog.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\winmain.h">
-      <Filter>specific</Filter>
-    </ClInclude>
     <ClInclude Include="tomb3\game\51baton.h">
       <Filter>game</Filter>
     </ClInclude>
@@ -376,9 +306,6 @@
     <ClInclude Include="tomb3\game\lizman.h">
       <Filter>game</Filter>
     </ClInclude>
-    <ClInclude Include="tomb3\specific\file.h">
-      <Filter>specific</Filter>
-    </ClInclude>
     <ClInclude Include="tomb3\3dsystem\3d_gen.h">
       <Filter>3dsystem</Filter>
     </ClInclude>
@@ -416,19 +343,94 @@
       <Filter>global</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="tomb3\newstuff\LaraDraw.h">
+      <Filter>newstuff</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\newstuff\pausemenu.h">
+      <Filter>newstuff</Filter>
+    </ClInclude>
     <ClInclude Include="tomb3\specific\audio.h">
       <Filter>specific</Filter>
     </ClInclude>
-    <ClInclude Include="tomb3\specific\mmx.h">
+    <ClInclude Include="tomb3\specific\dd.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\di.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\drawbars.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\draweffects.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\drawprimitive.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\ds.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\dxdialog.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\dxshell.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\file.h">
       <Filter>specific</Filter>
     </ClInclude>
     <ClInclude Include="tomb3\specific\fmv.h">
       <Filter>specific</Filter>
     </ClInclude>
-    <ClInclude Include="tomb3\newstuff\pausemenu.h">
+    <ClInclude Include="tomb3\specific\frontend.h">
       <Filter>specific</Filter>
     </ClInclude>
-    <ClInclude Include="tomb3\newstuff\LaraDraw.h">
+    <ClInclude Include="tomb3\specific\game.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\hwrender.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\init.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\input.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\litesrc.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\mmx.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\option.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\output.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\picture.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\smain.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\specific.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\texture.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\time.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\transform.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\utils.h">
+      <Filter>specific</Filter>
+    </ClInclude>
+    <ClInclude Include="tomb3\specific\winmain.h">
       <Filter>specific</Filter>
     </ClInclude>
   </ItemGroup>
@@ -742,6 +744,15 @@
     <ClCompile Include="tomb3\tomb3\dllmain.cpp">
       <Filter>tomb3</Filter>
     </ClCompile>
+    <ClCompile Include="tomb3\newstuff\LaraDraw.cpp">
+      <Filter>newstuff</Filter>
+    </ClCompile>
+    <ClCompile Include="tomb3\newstuff\pausemenu.cpp">
+      <Filter>newstuff</Filter>
+    </ClCompile>
+    <ClCompile Include="tomb3\specific\audio.cpp">
+      <Filter>specific</Filter>
+    </ClCompile>
     <ClCompile Include="tomb3\specific\dd.cpp">
       <Filter>specific</Filter>
     </ClCompile>
@@ -772,6 +783,9 @@
     <ClCompile Include="tomb3\specific\file.cpp">
       <Filter>specific</Filter>
     </ClCompile>
+    <ClCompile Include="tomb3\specific\fmv.cpp">
+      <Filter>specific</Filter>
+    </ClCompile>
     <ClCompile Include="tomb3\specific\frontend.cpp">
       <Filter>specific</Filter>
     </ClCompile>
@@ -788,6 +802,9 @@
       <Filter>specific</Filter>
     </ClCompile>
     <ClCompile Include="tomb3\specific\litesrc.cpp">
+      <Filter>specific</Filter>
+    </ClCompile>
+    <ClCompile Include="tomb3\specific\mmx.cpp">
       <Filter>specific</Filter>
     </ClCompile>
     <ClCompile Include="tomb3\specific\option.cpp">
@@ -820,16 +837,9 @@
     <ClCompile Include="tomb3\specific\winmain.cpp">
       <Filter>specific</Filter>
     </ClCompile>
-    <ClCompile Include="tomb3\specific\audio.cpp">
-      <Filter>specific</Filter>
-    </ClCompile>
-    <ClCompile Include="tomb3\specific\mmx.cpp" />
-    <ClCompile Include="tomb3\specific\fmv.cpp" />
-    <ClCompile Include="tomb3\newstuff\pausemenu.cpp" />
-    <ClCompile Include="tomb3\newstuff\LaraDraw.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="tomb3decomp.rc" />
+    <ResourceCompile Include="tomb3.rc" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="tomb3\global\progress.txt">

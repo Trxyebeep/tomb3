@@ -69,9 +69,9 @@ BEGIN
         BEGIN
             VALUE "FileDescription", "Tomb Raider III Community Edition"
             VALUE "FileVersion", "1.2.0.0"
-            VALUE "InternalName", "tomb3decomp.dll"
+            VALUE "InternalName", "tomb3.dll"
             VALUE "LegalCopyright", "Copyright (C) 2022"
-            VALUE "OriginalFilename", "tomb3decomp.dll"
+            VALUE "OriginalFilename", "tomb3.dll"
             VALUE "ProductName", "Tomb Raider III Community Edition"
             VALUE "ProductVersion", "1.2.0.0"
         END

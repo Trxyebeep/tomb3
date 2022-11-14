@@ -1,4 +1,4 @@
-tomb3decomp progress.
+tomb3 progress.
 
 // ======================================
 // 3DSYSTEM

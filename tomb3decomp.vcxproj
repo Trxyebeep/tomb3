@@ -444,7 +444,7 @@
     <Text Include="tomb3\global\progress.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="tomb3decomp.rc" />
+    <ResourceCompile Include="tomb3.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
