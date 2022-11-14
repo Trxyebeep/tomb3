@@ -18,6 +18,9 @@
 #include "../game/camera.h"
 #include "../game/control.h"
 #include "../game/draw.h"
+#ifdef TROYESTUFF
+#include "option.h"
+#endif
 
 static long rand_1 = 0xD371F947;
 static long rand_2 = 0xD371F947;
@@ -177,7 +180,12 @@ long LevelStats(long level)
 	T_InitPrint();
 
 	if (!GF_PlayingFMV || CurrentLevel == LV_ANTARC || CurrentLevel == LV_STPAULS)
+	{
+#ifdef TROYESTUFF
+		bDontGreyOut = 1;
+#endif
 		CreateMonoScreen();
+	}
 	else
 	{
 		DXTextureSetGreyScale(1);
@@ -195,13 +203,19 @@ long LevelStats(long level)
 	{
 		S_InitialisePolyList(0);
 		S_UpdateInput();
-		DrawMonoScreen(0, 0, 0);
+		DrawMonoScreen(48, 48, 48);
 
 		if (reset_flag)
 			input = IN_SELECT;
 
 		inputDB = GetDebouncedInput(input);
+#ifdef TROYESTUFF
+		noAdditiveBG = 1;
 		ShowStatsText(buf, 0);
+		noAdditiveBG = 0;
+#else
+		ShowStatsText(buf, 0);
+#endif
 		T_DrawText();
 		S_OutputPolyList();
 		S_DumpScreen();
@@ -347,7 +361,11 @@ void GetValidLevelsList(REQUEST_INFO* req)
 
 void GetSavedGamesList(REQUEST_INFO* req)
 {
+#ifdef TROYESTUFF
+	SetPassportRequesterSize(req);
+#else
 	SetPCRequesterSize(req, 10, -32);
+#endif
 
 	if (req->selected >= req->vis_lines)
 		req->line_offset = req->selected - req->vis_lines + 1;

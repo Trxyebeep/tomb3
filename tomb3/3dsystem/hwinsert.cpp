@@ -391,7 +391,7 @@ void HWI_InsertTransQuad_Sorted(long x, long y, long w, long h, long z)
 }
 
 #ifdef TROYESTUFF
-void HWI_InsertGourQuad_Sorted(long x0, long y0, long x1, long y1, long z, ulong c0, ulong c1, ulong c2, ulong c3)
+void HWI_InsertGourQuad_Sorted(long x0, long y0, long x1, long y1, long z, ulong c0, ulong c1, ulong c2, ulong c3, bool add)
 {
 	D3DTLVERTEX* v;
 	long* sort;
@@ -401,7 +401,7 @@ void HWI_InsertGourQuad_Sorted(long x0, long y0, long x1, long y1, long z, ulong
 	SetBufferPtrs(sort, info, 0, 1);
 	sort[0] = (long)info;
 	sort[1] = z;
-	info[0] = DT_POLY_GA;
+	info[0] = add ? DT_POLY_GTA : DT_POLY_GA;
 	info[1] = 0;
 	info[2] = 4;
 

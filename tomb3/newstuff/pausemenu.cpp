@@ -149,7 +149,7 @@ long S_Pause()
 	do
 	{
 		S_InitialisePolyList(0);
-		DrawMonoScreen(0, 0, 0);
+		DrawMonoScreen(112, 80, 80);
 
 		if (!pause_text)
 		{
