@@ -2883,7 +2883,7 @@ void DrawTribeBossShield(ITEM_INFO* item)
 	pZ0 = Z;
 	shield_active = 0;
 
-	for (int i = 0; i < 40; i++, s0++)
+	for (int i = 0; i < 40; i++)
 	{
 		s0 = &TribeBossShield[i];
 		x1 = s0->x;
@@ -3130,7 +3130,7 @@ void DrawLondonBossShield(ITEM_INFO* item)
 	pXY0 = XY;
 	pZ0 = Z;
 
-	for (int i = 0; i < 40; i++, s0++)
+	for (int i = 0; i < 40; i++)
 	{
 		s0 = &LondonBossShield[i];
 		x1 = s0->x;
@@ -3377,7 +3377,7 @@ void DrawWillBossShield(ITEM_INFO* item)
 	pXY0 = XY;
 	pZ0 = Z;
 
-	for (int i = 0; i < 40; i++, s0++)
+	for (int i = 0; i < 40; i++)
 	{
 		s0 = &WillBossShield[i];
 		x1 = s0->x;

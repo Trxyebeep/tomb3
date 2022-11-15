@@ -1872,7 +1872,7 @@ tomb3 progress.
 0x004B2230	+	DXRestoreSurfaceIfLost
 0x004B2280	+	DXTextureAddPal
 0x004B2370	+	MMXTextureCopy
-0x004B23D0	x	DXTextureAdd
+0x004B23D0	+	DXTextureAdd
 
 
 		specific/time.cpp
