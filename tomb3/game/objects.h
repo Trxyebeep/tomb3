@@ -2,6 +2,7 @@
 #include "../global/vars.h"
 
 #define SmashWindow	( (void(__cdecl*)(short)) 0x00458C20 )
+#define InitialiseFinalLevel	( (void(__cdecl*)()) 0x00458840 )
 
 enum object_types
 {
