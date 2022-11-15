@@ -409,6 +409,13 @@ long LevelCompleteSequence()
 	return EXIT_TO_TITLE;
 }
 
+#ifdef TROYESTUFF
+static void SetSaveDir(char* dest, long size, long slot)
+{
+	snprintf(dest, size, ".\\saves\\savegame.%d", slot);
+}
+#endif
+
 long S_FrontEndCheck(SAVEGAME_INFO* pData, long nBytes)
 {
 	HANDLE handle;
@@ -422,7 +429,11 @@ long S_FrontEndCheck(SAVEGAME_INFO* pData, long nBytes)
 
 	for (int i = 0; i < 16; i++)
 	{
+#ifdef TROYESTUFF
+		SetSaveDir(name, sizeof(name), i);
+#else
 		wsprintf(name, "savegame.%d", i);
+#endif
 		handle = CreateFile(name, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 		if (handle == INVALID_HANDLE_VALUE)
@@ -462,7 +473,11 @@ long S_LoadGame(LPVOID data, long size, long slot)
 	long value;
 	char buffer[80];
 
+#ifdef TROYESTUFF
+	SetSaveDir(buffer, sizeof(buffer), slot);
+#else
 	wsprintf(buffer, "savegame.%d", slot);
+#endif
 	file = CreateFile(buffer, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (file != INVALID_HANDLE_VALUE)
@@ -483,7 +498,11 @@ long S_SaveGame(LPVOID data, long size, long slot)
 	ulong bytes;
 	char buffer[80], counter[16];
 
+#ifdef TROYESTUFF
+	SetSaveDir(buffer, sizeof(buffer), slot);
+#else
 	wsprintf(buffer, "savegame.%d", slot);
+#endif
 	file = CreateFile(buffer, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (file != INVALID_HANDLE_VALUE)
