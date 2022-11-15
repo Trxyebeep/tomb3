@@ -1261,7 +1261,7 @@ tomb3 progress.
 		game/setup.cpp
 
 0x004638F0		InitialiseLevel
-0x00463B00		InitialiseGameFlags
+0x00463B00	+	InitialiseGameFlags
 0x00463B70	+	InitialiseLevelFlags
 0x00463BC0		InitialiseObjects
 0x00463C30		BaddyObjects

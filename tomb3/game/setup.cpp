@@ -73,8 +73,26 @@ void InitialiseLevelFlags()
 #endif
 }
 
+void InitialiseGameFlags()
+{
+	flip_status = 0;
+	memset(flipmap, 0, sizeof(flipmap));
+	memset(cd_flags, 0, sizeof(cd_flags));
+
+	for (int i = 0; i < NUMBER_OBJECTS; i++)
+		objects[i].loaded = 0;
+
+	SunsetTimer = 0;
+	ammotext = 0;
+	level_complete = 0;
+	flipeffect = -1;
+	CarcassItem = NO_ITEM;
+	compys_attack_lara = 0;
+}
+
 void inject_setup(bool replace)
 {
 	INJECT(0x00466590, GetAIPickups, inject_rando ? 1 : replace);
 	INJECT(0x00463B70, InitialiseLevelFlags, replace);
+	INJECT(0x00463B00, InitialiseGameFlags, replace);
 }

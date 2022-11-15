@@ -490,6 +490,7 @@
 #define bats	ARRAY_(0x006DB8A0, BAT_STRUCT, [32])
 #define saved_levels	ARRAY_(0x004CD878, short, [24])
 #define flipmap	ARRAY_(0x006E2980, long, [10])
+#define cd_flags	ARRAY_(0x006E28E0, char, [128])
 #define TrackInfos	ARRAY_(0x00627480, TRACK_INFO, [130])
 #define DS_Samples	ARRAY_(0x00632B50, LPDIRECTSOUNDBUFFER, [32])
 #define SqrtTable	ARRAY_(0x006588D0, long, [1024])
