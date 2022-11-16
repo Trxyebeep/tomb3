@@ -233,3 +233,38 @@ bool T3_LoadSettings()
 	CloseRegistry();
 	return 1;
 }
+
+void T3_GoldifyString(char* string)
+{
+	char str[128];
+	char buf[4];
+
+	buf[0] = string[0];
+	buf[1] = string[1];
+	buf[2] = string[2];
+
+	if (strstr(buf, "pix"))	//pix
+	{
+		strcpy(&str[4], &string[3]);	//the rest of the string
+		str[0] = 'p';
+		str[1] = 'i';
+		str[2] = 'x';
+		str[3] = 'g';
+		strcpy(string, str);	//becomes pixg
+		return;
+	}
+
+	buf[3] = string[3];
+
+	if (strstr(buf, "data"))	//data
+	{
+		strcpy(&str[5], &string[4]);
+		str[0] = 'd';
+		str[1] = 'a';
+		str[2] = 't';
+		str[3] = 'a';
+		str[4] = 'g';
+		strcpy(string, str);	//becomes datag
+		return;
+	}
+}

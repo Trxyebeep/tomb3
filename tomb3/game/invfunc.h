@@ -61,5 +61,10 @@ extern GOURAUD_FILL req_sel_gour1;
 extern GOURAUD_OUTLINE req_sel_gour2;
 
 #ifdef TROYESTUFF
+extern short gLevelSecrets[21];
+#endif
+extern short LevelSecrets[21];
+
+#ifdef TROYESTUFF
 extern bool noAdditiveBG;
 #endif

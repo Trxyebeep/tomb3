@@ -14,6 +14,10 @@
 #include "di.h"
 #include "audio.h"
 #include "display.h"
+#ifdef TROYESTUFF
+#include "../game/invfunc.h"
+#include "../tomb3/tomb3.h"
+#endif
 
 #ifdef DO_LOG
 FILE* logF = 0;
@@ -337,6 +341,13 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	DXGetDeviceInfo(&App.DeviceInfo, App.WindowHandle, App.hInstance);
 	App.DXConfigPtr = &App.DXConfig;
 	App.DeviceInfoPtr = &App.DeviceInfo;
+
+#ifdef TROYESTUFF
+	tomb3.gold = UT_FindArg("gold");
+
+	if (tomb3.gold)
+		memcpy(LevelSecrets, gLevelSecrets, sizeof(LevelSecrets));
+#endif
 
 	if ((!S_LoadSettings() || UT_FindArg("setup")) && !DXUserDialog(&App.DeviceInfo, &App.DXConfig, App.hInstance))
 	{

@@ -20,6 +20,7 @@
 #include "../specific/smain.h"
 #ifdef TROYESTUFF
 #include "../newstuff/LaraDraw.h"
+#include "../tomb3/tomb3.h"
 #endif
 
 short null_rotations[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -1815,6 +1816,9 @@ void DrawRooms(short current_room)
 	ROOM_INFO* r;
 	OBJECT_INFO* obj;
 	short* rot;
+#ifdef TROYESTUFF
+	bool fx = 0;
+#endif
 
 	CurrentRoom = current_room;
 	r = &room[current_room];
@@ -1827,7 +1831,7 @@ void DrawRooms(short current_room)
 	phd_right = phd_winxmax;
 	phd_bottom = phd_winymax;
 	outside = r->flags & ROOM_OUTSIDE;
-	camera_underwater = r->flags & 1;
+	camera_underwater = r->flags & ROOM_UNDERWATER;
 	r->bound_active = 2;
 	bound_list[0] = current_room;
 	bound_start = 0;
@@ -1944,8 +1948,13 @@ void DrawRooms(short current_room)
 #ifdef RANDO_STUFF
 		if (rando.levels[RANDOLEVEL].hasRain)
 #elif TROYESTUFF
-		if (CurrentLevel == LV_JUNGLE || CurrentLevel == LV_QUADBIKE || CurrentLevel == LV_ROOFTOPS ||
-			CurrentLevel == LV_OFFICE || CurrentLevel == LV_STPAULS)
+		if (tomb3.gold)
+			fx = CurrentLevel == LV_JUNGLE || CurrentLevel == LV_ROOFTOPS;
+		else
+			fx = CurrentLevel == LV_JUNGLE || CurrentLevel == LV_QUADBIKE || CurrentLevel == LV_ROOFTOPS ||
+			CurrentLevel == LV_OFFICE || CurrentLevel == LV_STPAULS;
+
+		if (fx)
 #else
 		if (CurrentLevel == LV_JUNGLE || CurrentLevel == LV_ROOFTOPS)
 #endif
@@ -1954,8 +1963,11 @@ void DrawRooms(short current_room)
 #ifdef TROYESTUFF
 		S_DrawFootPrints();
 
-		if (CurrentLevel == LV_RAPIDS || CurrentLevel == LV_SEWER || CurrentLevel == LV_TOWER)
-			DoUwEffect();
+		if (!tomb3.gold)
+		{
+			if (CurrentLevel == LV_RAPIDS || CurrentLevel == LV_SEWER || CurrentLevel == LV_TOWER)
+				DoUwEffect();
+		}
 #endif
 	}
 

@@ -475,7 +475,6 @@
 #define GF_level_sequence_list	ARRAY_(0x006D78C0, short*, [24])
 #define GF_valid_demos	ARRAY_(0x006D7940, short, [24])
 #define GF_CDtracks	ARRAY_(0x004C55F8, short, [16])
-#define LevelSecrets	ARRAY_(0x004C70B8, short, [21])
 #define RequesterFlags1	ARRAY_(0x006D6800, ulong, [24])
 #define RequesterFlags2	ARRAY_(0x006D67A0, ulong, [24])
 #define SaveGameReqFlags1	ARRAY_(0x006D7740, ulong, [24])

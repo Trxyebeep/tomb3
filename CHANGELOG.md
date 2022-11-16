@@ -9,6 +9,8 @@
 ### tomb3 additions
 
 - Add option for PSX mono screen colors.
+- Move saves to a designated folder.
+- Add support for The Lost Artifact.
 
 ### tomb3 bug fixes
 

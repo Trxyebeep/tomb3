@@ -15,6 +15,7 @@
 #include "../specific/specific.h"
 #include "lot.h"
 #include "savegame.h"
+#include "../tomb3/tomb3.h"
 
 void GetAIPickups()
 {
@@ -101,6 +102,28 @@ void InitialiseGameFlags()
 	compys_attack_lara = 0;
 }
 
+#ifdef TROYESTUFF
+static long DoLevelLoad(long level, long type)
+{
+	char name[128];
+
+	if (!type)
+		strcpy(name, GF_titlefilenames[0]);
+	else if (type == 2 || type != 4)
+		strcpy(name, GF_levelfilenames[level]);
+	else
+		strcpy(name, GF_cutscenefilenames[level]);
+
+	if (tomb3.gold && type != 4)
+		T3_GoldifyString(name);
+
+	if (!S_LoadLevelFile(name, level, type))
+		return 0;
+
+	return 1;
+}
+#endif
+
 long InitialiseLevel(long level, long type)
 {
 	ITEM_INFO* item;
@@ -119,6 +142,10 @@ long InitialiseLevel(long level, long type)
 	lara.item_number = NO_ITEM;
 	title_loaded = 0;
 
+#ifdef TROYESTUFF
+	if (!DoLevelLoad(level, type))
+		return 0;
+#else
 	if (!type)
 	{
 		if (!S_LoadLevelFile(GF_titlefilenames[0], level, 0))
@@ -134,6 +161,7 @@ long InitialiseLevel(long level, long type)
 		if (!S_LoadLevelFile(GF_cutscenefilenames[level], level, 4))
 			return 0;
 	}
+#endif
 
 	if (lara.item_number != NO_ITEM)
 		InitialiseLara(type);
