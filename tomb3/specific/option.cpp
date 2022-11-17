@@ -893,8 +893,8 @@ void do_sound_option(INVENTORY_ITEM* item)
 		wsprintf(buf, "| %2d", Option_Music_Volume);
 		stext[0] = T_Print(0, 0, 0, buf);
 #ifdef TROYESTUFF
-		T_AddBackground(stext[0], 168, 0, 0, 0, 8, 0, &req_bgnd_gour1, 0);
-		T_AddOutline(stext[0], 1, 4, &req_bgnd_gour2, 0);
+		T_AddBackground(stext[0], 168, 0, 0, 0, 8, 0, &req_sel_gour1, 1);
+		T_AddOutline(stext[0], 1, 4, &req_sel_gour2, 0);
 #else
 		T_AddBackground(stext[0], 168, 0, 0, 0, 8, 0, 0, 0);
 		T_AddOutline(stext[0], 1, 4, 0, 0);
@@ -908,8 +908,8 @@ void do_sound_option(INVENTORY_ITEM* item)
 
 		stext[2] = T_Print(0, -32, 0, " ");
 #ifdef TROYESTUFF
-		T_AddBackground(stext[2], 180, 85, 0, 0, 48, 0, &req_bgnd_gour1, 0);
-		T_AddOutline(stext[2], 1, 15, &req_bgnd_gour2, 0);
+		T_AddBackground(stext[2], 180, 85, 0, 0, 48, 0, &req_sel_gour1, 1);
+		T_AddOutline(stext[2], 1, 15, &req_sel_gour2, 0);
 #else
 		T_AddBackground(stext[2], 180, 85, 0, 0, 48, 0, 0, 0);
 		T_AddOutline(stext[2], 1, 15, 0, 0);
