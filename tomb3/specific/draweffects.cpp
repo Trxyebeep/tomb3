@@ -4076,10 +4076,10 @@ void S_DrawSparks()
 				y3 = y + sy2 + cx2;
 				y4 = y + sy2 + cx1;
 
-				r = sptr->R >> 3;
-				g = sptr->G >> 3;
-				b = sptr->B >> 3;
-				c = r << 10 | g << 5 | b;
+				r = sptr->R;
+				g = sptr->G;
+				b = sptr->B;
+				c = (r >> 3) << 10 | (g >> 3) << 5 | (b >> 3);
 
 				if (z > distanceFogValue << W2V_SHIFT)
 				{
@@ -4134,6 +4134,8 @@ void S_DrawSparks()
 
 				HWI_InsertAlphaSprite_Sorted(x1, y1, z, c, x2, y2, z, c, x3, y3, z, c, x4, y4, z, c, sptr->Def, drawType, 0);
 #endif
+
+				sptr->RotAng = (sptr->RotAng + sptr->RotAdd) & 0xFFF;
 			}
 			else
 			{
@@ -4142,10 +4144,10 @@ void S_DrawSparks()
 				x2 = x1 + sw;
 				y2 = y1 + sh;
 
-				r = sptr->R >> 3;
-				g = sptr->G >> 3;
-				b = sptr->B >> 3;
-				c = r << 10 | g << 5 | b;
+				r = sptr->R;
+				g = sptr->G;
+				b = sptr->B;
+				c = (r >> 3) << 10 | (g >> 3) << 5 | (b >> 3);
 
 				if (z > distanceFogValue << W2V_SHIFT)
 				{
@@ -4246,10 +4248,10 @@ void S_DrawSparks()
 			x2 = x1 + sw;
 			y2 = y1 + sh;
 
-			r = sptr->R >> 3;
-			g = sptr->G >> 3;
-			b = sptr->B >> 3;
-			c = r << 10 | g << 5 | b;
+			r = sptr->R;
+			g = sptr->G;
+			b = sptr->B;
+			c = (r >> 3) << 10 | (g >> 3) << 5 | (b >> 3);
 
 			if (z > distanceFogValue << W2V_SHIFT)
 			{

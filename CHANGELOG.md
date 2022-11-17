@@ -17,6 +17,7 @@
 - Fix passport selection crash.
 - Fix full music mute causing the track to play silently in the background.
 - Fix some text boxes not using additive blending.
+- Fix some effects disappearing closer than possible.
 
 
 ## [1.2.0](https://github.com/Trxyebeep/tomb3/tree/V1.2.0) (Nov. 12 2022)
