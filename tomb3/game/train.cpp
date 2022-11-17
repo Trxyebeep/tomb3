@@ -8,6 +8,8 @@
 #include "objects.h"
 #include "effects.h"
 #include "lara.h"
+#include "items.h"
+#include "effect2.h"
 
 static long TestHeight(ITEM_INFO* item, long x, long z, short* room_number)
 {
@@ -60,8 +62,79 @@ void TrainCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	DoLotsOfBlood(x, y, z, 1024, item->pos.y_rot, l->room_number, 15);
 }
 
+void TrainControl(short item_number)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	long s, c, mid, front, x, y, z;
+	short room_number;
+
+	item = &items[item_number];
+
+	if (!TriggerActive(item))
+		return;
+
+	if (!item->item_flags[0])
+	{
+		item->item_flags[1] = 260;
+		item->item_flags[0] = 260;
+	}
+
+	s = phd_sin(item->pos.y_rot);
+	c = phd_cos(item->pos.y_rot);
+	item->pos.x_pos += (item->item_flags[1] * s) >> W2V_SHIFT;
+	item->pos.z_pos += (item->item_flags[1] * c) >> W2V_SHIFT;
+	front = TestHeight(item, 0, 5120, &room_number);
+	mid = TestHeight(item, 0, 0, &room_number);
+	item->pos.y_pos = mid;
+
+	if (item->pos.y_pos == NO_HEIGHT)
+	{
+		KillItem(item_number);
+		return;
+	}
+
+	item->pos.y_pos -= 32;
+	room_number = item->room_number;
+	GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+
+	if (room_number != item->room_number)
+		ItemNewRoom(item_number, room_number);
+
+	item->pos.x_rot = short((mid - front) << 1);
+
+	x = item->pos.x_pos + ((3072 * s) >> W2V_SHIFT);
+	y = item->pos.y_pos;
+	z = item->pos.z_pos + ((3072 * c) >> W2V_SHIFT);
+	TriggerDynamic(x, y, z, 16, 31, 31, 31);
+
+	if (item->item_flags[1] == 260)
+	{
+		SoundEffect(SFX_TUBE_LOOP, &item->pos, SFX_ALWAYS);
+		return;
+	}
+
+	//not full speed means train hit lara
+	item->item_flags[1] -= 48;
+
+	if (item->item_flags[1] < 0)
+		item->item_flags[1] = 0;
+
+	if (!UseForcedFixedCamera)
+	{
+		ForcedFixedCamera.x = item->pos.x_pos + (0x2000 * s >> W2V_SHIFT);
+		ForcedFixedCamera.z = item->pos.z_pos + (0x2000 * c >> W2V_SHIFT);
+		room_number = item->room_number;
+		floor = GetFloor(ForcedFixedCamera.x, item->pos.y_pos - 512, ForcedFixedCamera.z, &room_number);
+		ForcedFixedCamera.y = GetHeight(floor, ForcedFixedCamera.x, item->pos.y_pos - 512, ForcedFixedCamera.z);
+		ForcedFixedCamera.room_number = room_number;
+		UseForcedFixedCamera = 1;
+	}
+}
+
 void inject_train(bool replace)
 {
 	INJECT(0x0046D150, TestHeight, replace);
 	INJECT(0x0046D1F0, TrainCollision, replace);
+	INJECT(0x0046CF40, TrainControl, replace);
 }
