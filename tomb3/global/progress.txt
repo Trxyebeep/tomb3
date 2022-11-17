@@ -1373,7 +1373,7 @@ tomb3 progress.
 		game/train.cpp
 
 0x0046CF40		TrainControl
-0x0046D150		TestHeight
+0x0046D150	+	TestHeight
 0x0046D1F0		TrainCollision
 
 
