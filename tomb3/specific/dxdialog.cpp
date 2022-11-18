@@ -106,22 +106,9 @@ BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lPara
 
 			break;
 
-		case IDC_HARDWARE:
-
-			if (!HIWORD(wParam))
-			{
-				SendMessage(output_setting, CB_SETCURSEL, 1, 0);
-				DXInitD3DDrivers(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0));
-				DXInitVideoModes(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
-					SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
-				DXInitTextures(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
-					SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
-			}
-
-			break;
-
 		case IDC_SOFTWARE:
 
+#ifndef TROYESTUFF
 			if (!HIWORD(wParam))
 			{
 				SendMessage(output_setting, CB_SETCURSEL, 0, 0);
@@ -132,6 +119,21 @@ BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lPara
 				DXInitTextures(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
 					SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
 				EnableWindow(GetDlgItem(dlg, IDC_8BIT_TEXTURES), 0);
+			}
+
+			break;
+#endif
+
+		case IDC_HARDWARE:
+
+			if (!HIWORD(wParam))
+			{
+				SendMessage(output_setting, CB_SETCURSEL, 1, 0);
+				DXInitD3DDrivers(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0));
+				DXInitVideoModes(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
+					SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
+				DXInitTextures(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
+					SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
 			}
 
 			break;
@@ -739,6 +741,11 @@ void DXInitDialogBox(HWND hwnd)
 		nDD = 0;
 	else
 		nDD = G_DeviceInfo->nDDInfo - 1;
+
+#ifdef TROYESTUFF
+	SendMessage(GetDlgItem(hwnd, IDC_SOFTWARE), BM_SETCHECK, 0, 0);
+	EnableWindow(GetDlgItem(hwnd, IDC_SOFTWARE), 0);
+#endif
 
 	SendMessage(gfx, CB_SETCURSEL, nDD, 0);
 	DXCheckMMXTechnology(hwnd);

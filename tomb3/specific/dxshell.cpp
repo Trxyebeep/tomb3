@@ -761,9 +761,15 @@ HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LP
 	if (!lpHWDesc->dwFlags)
 	{
 		if (lpHELDesc->dcmColorModel & D3DCOLOR_MONO || SoftwareRenderer == 1)
-			return 1;
+			return D3DENUMRET_OK;
 	}
 
+#ifdef TROYESTUFF
+	SoftwareRenderer = 0;
+
+	if (!lpHWDesc->dwFlags)		//disable software
+		return D3DENUMRET_OK;
+#else
 	if (!lpHWDesc->dwFlags)
 	{
 		SoftwareRenderer = 1;
@@ -779,6 +785,7 @@ HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LP
 			strcpy(name, "RGB Emulation");
 		}
 	}
+#endif
 
 	if (lpHWDesc->dwFlags && !lpHWDesc->dpcTriCaps.dwTextureCaps)
 		return D3DENUMRET_OK;
