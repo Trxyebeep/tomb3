@@ -1552,6 +1552,16 @@ tomb3 progress.
 0x0047FC30	+	DrawWillBossShield
 
 
+		specific/drawprimitive.cpp
+
+0x00490400	+	InitDrawPrimitive
+0x00490700	+	CloseDrawPrimitive
+0x00490970	+	HWBeginScene
+0x00490990	+	HWEndScene
+0x00490A00	+	HWSetRenderState
+0x00490AE0	+	HWDrawPrimitive
+
+
 		specific/ds.cpp
 
 0x00480600	+	DS_FreeAllSamples
