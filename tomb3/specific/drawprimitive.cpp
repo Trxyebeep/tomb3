@@ -20,9 +20,15 @@ HRESULT HWEndScene()
 	return D3DDev->EndScene();
 }
 
+HRESULT HWSetRenderState(D3DRENDERSTATETYPE dwRenderStateType, ulong dwRenderState)
+{
+	return D3DDev->SetRenderState(dwRenderStateType, dwRenderState);
+}
+
 void inject_drawprim(bool replace)
 {
 	INJECT(0x00490AE0, HWDrawPrimitive, replace);
 	INJECT(0x00490970, HWBeginScene, replace);
 	INJECT(0x00490990, HWEndScene, replace);
+	INJECT(0x00490A00, HWSetRenderState, replace);
 }
