@@ -574,7 +574,9 @@ void S_InitialiseScreen(long type)
 
 	//Empty function call here
 
+#ifndef TROYESTUFF
 	if (App.nRenderMode)
+#endif
 		HWR_InitState();
 }
 
@@ -682,9 +684,11 @@ void S_InitialisePolyList(bool clearBackBuffer)
 		clearBackBuffer = 0;
 	}
 
+#ifndef TROYESTUFF
 	if (!App.nRenderMode)
 		flags = 272;
 	else
+#endif
 	{
 		if (clearBackBuffer || HWConfig.nFillMode < D3DFILL_SOLID)
 			flags = 258;

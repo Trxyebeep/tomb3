@@ -315,12 +315,27 @@ void CreateMonoScreen()
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 
-	if (dm->w == 640 && dm->h == 480)
-		ConvertSurfaceToTextures(App.lpFrontBuffer);
-	else
+#ifdef TROYESTUFF
+	if (tomb3.Windowed)
 	{
-		App.lpPictureBuffer->Blt(0, App.lpFrontBuffer, 0, DDBLT_WAIT, 0);
-		ConvertSurfaceToTextures(App.lpPictureBuffer);
+		if (dm->w == 640 && dm->h == 480)
+			ConvertSurfaceToTextures(App.lpBackBuffer);
+		else
+		{
+			App.lpPictureBuffer->Blt(0, App.lpBackBuffer, 0, DDBLT_WAIT, 0);
+			ConvertSurfaceToTextures(App.lpPictureBuffer);
+		}
+	}
+	else
+#endif
+	{
+		if (dm->w == 640 && dm->h == 480)
+			ConvertSurfaceToTextures(App.lpFrontBuffer);
+		else
+		{
+			App.lpPictureBuffer->Blt(0, App.lpFrontBuffer, 0, DDBLT_WAIT, 0);
+			ConvertSurfaceToTextures(App.lpPictureBuffer);
+		}
 	}
 
 	HWR_GetAllTextureHandles();
@@ -432,12 +447,27 @@ void S_FadeToBlack()
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 
-	if (dm->w == 640 && dm->h == 480)
-		ConvertSurfaceToTextures(App.lpFrontBuffer);
+#ifdef TROYESTUFF
+	if (tomb3.Windowed)
+	{
+		if (dm->w == 640 && dm->h == 480)
+			ConvertSurfaceToTextures(App.lpBackBuffer);
+		else
+		{
+			App.lpPictureBuffer->Blt(0, App.lpBackBuffer, 0, DDBLT_WAIT, 0);
+			ConvertSurfaceToTextures(App.lpPictureBuffer);
+		}
+	}
+#endif
 	else
 	{
-		App.lpPictureBuffer->Blt(0, App.lpFrontBuffer, 0, DDBLT_WAIT, 0);
-		ConvertSurfaceToTextures(App.lpPictureBuffer);
+		if (dm->w == 640 && dm->h == 480)
+			ConvertSurfaceToTextures(App.lpFrontBuffer);
+		else
+		{
+			App.lpPictureBuffer->Blt(0, App.lpFrontBuffer, 0, DDBLT_WAIT, 0);
+			ConvertSurfaceToTextures(App.lpPictureBuffer);
+		}
 	}
 
 	HWR_GetAllTextureHandles();

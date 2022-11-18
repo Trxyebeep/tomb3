@@ -6,6 +6,9 @@
 #include "mmx.h"
 #include "drawprimitive.h"
 #include "display.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
 
 //statics
 #define G_ddraw	VAR_(0x006CA0F8, LPDIRECTDRAWX)
@@ -502,7 +505,11 @@ bool DXCheckForLostSurfaces()
 
 	pass = pass || SUCCEEDED(DD_EnsureSurfaceAvailable(App.lpPictureBuffer, 0, 0));
 
+#ifdef TROYESTUFF
+	if (pass && !GtWindowClosed)
+#else
 	if (pass && !GtWindowClosed && App.nRenderMode == 1)
+#endif
 		HWR_GetAllTextureHandles();
 
 	return pass;
@@ -522,7 +529,9 @@ void DXClearBuffers(ulong flags, ulong color)
 	r.right = dm->w;
 	r.bottom = dm->h;
 
+#ifndef TROYESTUFF
 	if (App.nRenderMode == 1)
+#endif
 	{
 		sflags = 0;
 
@@ -541,8 +550,10 @@ void DXClearBuffers(ulong flags, ulong color)
 			App.lpViewPort->Clear(1, &vr, sflags);
 		}
 	}
+#ifndef TROYESTUFF
 	else if (flags & 2)
 		DD_ClearSurface(App.lpBackBuffer, &r, color);
+#endif
 
 	if (flags & 1)
 		DD_ClearSurface(App.lpFrontBuffer, &r, color);
@@ -583,7 +594,14 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 	w = d3dinfo->DisplayMode[App.DXConfigPtr->nVMode].w;
 
 	if (d3dinfo->bHardware)
-		App.lpFrontBuffer->Flip(0, DDFLIP_WAIT);
+	{
+#ifdef TROYESTUFF
+		if (tomb3.Windowed)
+			App.lpFrontBuffer->Blt(&tomb3.rScreen, App.lpBackBuffer, &tomb3.rViewport, DDBLT_WAIT, 0);
+		else
+#endif
+			App.lpFrontBuffer->Flip(0, DDFLIP_WAIT);
+	}
 	else
 	{
 		memset(&desc, 0, sizeof(DDSURFACEDESCX));
@@ -998,6 +1016,51 @@ bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer)
 	setup_screen_size();
 	return change;
 }
+
+#ifdef TROYESTUFF
+long DXToggleFullScreen()
+{
+	if (tomb3.Windowed)
+	{
+		Log("DXToggleFullScreen: Switching to Fullscreen");
+		tomb3.Windowed = 0;
+	}
+	else
+	{
+		Log("DXToggleFullScreen: Switching to Windowed");
+		tomb3.Windowed = 1;
+	}
+
+	if (WinDXInit(&App.DeviceInfo, &App.DXConfig, 0))
+	{
+		Log("DXToggleFullScreen: Switched successfully");
+		return 1;
+	}
+
+	Log("DXToggleFullScreen: Switching failed, try to revert");
+	tomb3.Windowed = !tomb3.Windowed;
+
+	if (WinDXInit(&App.DeviceInfo, &App.DXConfig, 0))
+	{
+		Log("DXToggleFullScreen: reverted fine");
+		return 0;
+	}
+
+	S_ExitSystem("Failed to reinit DX after DXToggleFullScreen");
+	return -1;
+}
+
+void DXMove(long x, long y)
+{
+	DISPLAYMODE* dm;
+
+	if (!tomb3.Windowed)
+		return;
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	SetRect(&tomb3.rScreen, x, y, x + dm->w, y + dm->h);
+}
+#endif
 
 void inject_dxshell(bool replace)
 {

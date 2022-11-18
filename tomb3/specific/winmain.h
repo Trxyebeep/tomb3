@@ -7,7 +7,11 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew);
 void WinAppExit();
 LRESULT CALLBACK WinAppProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 long WinRegisterWindow(HINSTANCE hinstance);
+#ifdef TROYESTUFF
+HWND WinCreateWindow(HINSTANCE hinstance, long nCmdShow, RECT* r);
+#else
 HWND WinCreateWindow(HINSTANCE hinstance, long nCmdShow);
+#endif
 float WinFrameRate();
 void WinFreeDX(bool free_dd);
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nShowCmd);

@@ -31,9 +31,18 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 	D3DMATERIALX m;
 	DDSCAPSX caps;
 	D3DMATERIALHANDLE handle;
+#ifdef TROYESTUFF
+	LPDIRECTDRAWCLIPPER clipper;
+	RECT r;
+	HWND desktop;
+	DEVMODE dev;
+	HDC hDC;
+#endif
 
 	Log("Starting WinDXInit");
+#ifndef TROYESTUFF
 	App.nRenderMode = 1;
+#endif
 
 	if (createNew)
 	{
@@ -44,55 +53,142 @@ bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 		}
 	}
 
-	if (!DXSetCooperativeLevel(App.lpDD, App.WindowHandle, DDSCL_FULLSCREEN | DDSCL_EXCLUSIVE))
+#ifdef TROYESTUFF
+	if (tomb3.Windowed)
 	{
-		Log("DXSetCooperativeLevel failed: DDSCL_FULLSCREEN | DDSCL_EXCLUSIVE, exitting..");
-		return 0;
-	}
-
-	dm = &device->DDInfo[config->nDD].D3DInfo[config->nD3D].DisplayMode[config->nVMode];
-
-	if (!DXSetVideoMode(App.lpDD, dm->w, dm->h, dm->bpp))
-	{
-		Log("DXSetVideoMode failed, exitting..");
-		return 0;
-	}
-
-	memset(&desc, 0, sizeof(DDSURFACEDESCX));
-	desc.dwSize = sizeof(DDSURFACEDESCX);
-	desc.dwBackBufferCount = 1;
-	desc.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
-	desc.ddsCaps.dwCaps = DDSCAPS_COMPLEX | DDSCAPS_FLIP | DDSCAPS_PRIMARYSURFACE | DDSCAPS_3DDEVICE;
-
-	if (!DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACEX)&App.lpFrontBuffer))
-	{
-		Log("DXCreateSurface failed to create front buffer, exitting..");
-		return 0;
-	}
-
-	App.lpFrontBuffer->GetSurfaceDesc(&desc);
-	d3d = &device->DDInfo[config->nDD].D3DInfo[config->nD3D];
-	dm = &d3d->DisplayMode[config->nVMode];
-
-	DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwRBitMask, &dm->rshift, &dm->rbpp);
-	DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwGBitMask, &dm->gshift, &dm->gbpp);
-	DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwBBitMask, &dm->bshift, &dm->bbpp);
-
-	if (d3d->bHardware)
-	{
-		caps.dwCaps = DDSCAPS_BACKBUFFER;
-
-		if (!DXGetAttachedSurface(App.lpFrontBuffer, &caps, &App.lpBackBuffer))
+		if (!DXSetCooperativeLevel(App.lpDD, App.WindowHandle, DDSCL_NORMAL))
 		{
-			Log("DXGetAttachedSurface failed to get back buffer, exitting..");
+			Log("DXSetCooperativeLevel failed: DDSCL_NORMAL, exitting..");
 			return 0;
 		}
 	}
 	else
+#endif
 	{
-		App.unk = (ulong*)malloc(4 * dm->w * dm->h);
-		caps.dwCaps = DDSCAPS_BACKBUFFER;
-		DXGetAttachedSurface(App.lpFrontBuffer, &caps, &App.lpBackBuffer);
+		if (!DXSetCooperativeLevel(App.lpDD, App.WindowHandle, DDSCL_FULLSCREEN | DDSCL_EXCLUSIVE))
+		{
+			Log("DXSetCooperativeLevel failed: DDSCL_FULLSCREEN | DDSCL_EXCLUSIVE, exitting..");
+			return 0;
+		}
+	}
+
+	dm = &device->DDInfo[config->nDD].D3DInfo[config->nD3D].DisplayMode[config->nVMode];
+
+#ifdef TROYESTUFF
+	if (tomb3.Windowed)
+	{
+		desktop = GetDesktopWindow();
+		hDC = GetDC(desktop);
+		ReleaseDC(desktop, hDC);
+		dev.dmBitsPerPel = dm->bpp;
+		dev.dmSize = sizeof(DEVMODE);
+		dev.dmFields = DM_BITSPERPEL;
+		ChangeDisplaySettings(&dev, 0);
+	}
+	else
+#endif
+	{
+		if (!DXSetVideoMode(App.lpDD, dm->w, dm->h, dm->bpp))
+		{
+			Log("DXSetVideoMode failed, exitting..");
+			return 0;
+		}
+	}
+
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
+
+#ifdef TROYESTUFF
+	if (tomb3.Windowed)
+	{
+		Log("Creating windowed mode!");
+		d3d = &device->DDInfo[config->nDD].D3DInfo[config->nD3D];
+		dm = &d3d->DisplayMode[config->nVMode];
+		r.top = 0;
+		r.left = 0;
+		r.right = dm->w;
+		r.bottom = dm->h;
+		AdjustWindowRect(&r, tomb3.WindowStyle, 0);
+		SetWindowPos(App.WindowHandle, 0, 0, 0, r.right - r.left, r.bottom - r.top, SWP_NOMOVE | SWP_NOZORDER);
+		GetClientRect(App.WindowHandle, &tomb3.rViewport);
+		GetClientRect(App.WindowHandle, &tomb3.rScreen);
+		ClientToScreen(App.WindowHandle, (LPPOINT)&tomb3.rScreen);
+		ClientToScreen(App.WindowHandle, (LPPOINT)&tomb3.rScreen.right);
+		desc.dwFlags = DDSD_CAPS;
+		desc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
+
+		if (!DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACEX)&App.lpFrontBuffer))
+		{
+			Log("DXCreateSurface failed to create front buffer (windowed mode), exitting..");
+			return 0;
+		}
+
+		if (FAILED(App.lpDD->CreateClipper(0, &clipper, 0)))
+		{
+			Log("Failed to CreateClipper");
+			return 0;
+		}
+
+		clipper->SetHWnd(0, App.WindowHandle);
+		App.lpFrontBuffer->SetClipper(clipper);
+		clipper->Release();
+		clipper = 0;
+
+		desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH;
+		desc.dwWidth = dm->w;
+		desc.dwHeight = dm->h;
+		desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_3DDEVICE;
+
+		if (!DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACEX)&App.lpBackBuffer))
+		{
+			Log("DXCreateSurface failed to create back buffer (windowed mode), exitting..");
+			return 0;
+		}
+	}
+	else
+#endif
+	{
+		desc.dwBackBufferCount = 1;
+		desc.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
+		desc.ddsCaps.dwCaps = DDSCAPS_COMPLEX | DDSCAPS_FLIP | DDSCAPS_PRIMARYSURFACE | DDSCAPS_3DDEVICE;
+
+		if (!DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACEX)&App.lpFrontBuffer))
+		{
+			Log("DXCreateSurface failed to create front buffer, exitting..");
+			return 0;
+		}
+
+		App.lpFrontBuffer->GetSurfaceDesc(&desc);
+		d3d = &device->DDInfo[config->nDD].D3DInfo[config->nD3D];
+		dm = &d3d->DisplayMode[config->nVMode];
+
+		DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwRBitMask, &dm->rshift, &dm->rbpp);
+		DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwGBitMask, &dm->gshift, &dm->gbpp);
+		DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwBBitMask, &dm->bshift, &dm->bbpp);
+
+		if (d3d->bHardware)
+		{
+			caps.dwCaps = DDSCAPS_BACKBUFFER;
+
+			if (!DXGetAttachedSurface(App.lpFrontBuffer, &caps, &App.lpBackBuffer))
+			{
+				Log("DXGetAttachedSurface failed to get back buffer, exitting..");
+				return 0;
+			}
+		}
+		else
+		{
+			App.unk = (ulong*)malloc(4 * dm->w * dm->h);
+			caps.dwCaps = DDSCAPS_BACKBUFFER;
+			DXGetAttachedSurface(App.lpFrontBuffer, &caps, &App.lpBackBuffer);
+		}
+
+#ifdef TROYESTUFF
+		tomb3.rViewport.top = 0;
+		tomb3.rViewport.left = 0;
+		tomb3.rViewport.right = dm->w;
+		tomb3.rViewport.bottom = dm->h;
+#endif
 	}
 
 	if (!DXCreateZBuffer(device, config))
@@ -160,7 +256,9 @@ LRESULT CALLBACK WinAppProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 	case WM_CREATE:
+#ifndef TROYESTUFF
 		ShowCursor(0);
+#endif
 		break;
 
 	case WM_ACTIVATE:
@@ -183,6 +281,12 @@ LRESULT CALLBACK WinAppProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		WinAppExit();
 		PostQuitMessage(0);
 		break;
+
+#ifdef TROYESTUFF
+	case WM_MOVE:
+		DXMove(LOWORD(lParam), HIWORD(lParam));
+		break;
+#endif
 	}
 
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -199,14 +303,26 @@ long WinRegisterWindow(HINSTANCE hinstance)
 	App.WindowClass.lpfnWndProc = WinAppProc;
 	App.WindowClass.cbClsExtra = 0;
 	App.WindowClass.cbWndExtra = 0;
+#ifdef TROYESTUFF
+	App.WindowClass.hCursor = LoadCursor(0, IDC_ARROW);
+#endif
 	return RegisterClass(&App.WindowClass);
 }
 
+#ifdef TROYESTUFF
+HWND WinCreateWindow(HINSTANCE hinstance, long nCmdShow, RECT* r)
+#else
 HWND WinCreateWindow(HINSTANCE hinstance, long nCmdShow)
+#endif
 {
 	HWND hwnd;
 
+#ifdef TROYESTUFF
+	hwnd = CreateWindowEx(WS_EX_APPWINDOW, "Window Class", "Tomb Raider III", tomb3.WindowStyle,
+		CW_USEDEFAULT, CW_USEDEFAULT, r->right - r->left, r->bottom - r->top, 0, 0, hinstance, 0);
+#else
 	hwnd = CreateWindowEx(WS_EX_APPWINDOW, "Window Class", "Tomb Raider III", WS_POPUP, 0, 0, 0, 0, 0, 0, hinstance, 0);
+#endif
 
 	if (hwnd)
 	{
@@ -313,11 +429,18 @@ void WinFreeDX(bool free_dd)
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nShowCmd)
 {
 	DIRECT3DINFO* d3dinfo;
+#ifdef TROYESTUFF
+	RECT r;
+#endif
 	bool hw;
 
 	G_lpCmdLine = lpCmdLine;
 	memset(&App, 0, sizeof(WINAPP));
 	App.hInstance = hInstance;
+
+#ifdef TROYESTUFF
+	tomb3.WindowStyle = WS_OVERLAPPED | WS_BORDER | WS_CAPTION;
+#endif
 
 	if (!hPrevInstance && !WinRegisterWindow(hInstance))
 	{
@@ -325,7 +448,17 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 		return 0;
 	}
 
+#ifdef TROYESTUFF
+	r.left = 0;
+	r.top = 0;
+	r.right = 640;
+	r.bottom = 480;
+	AdjustWindowRect(&r, tomb3.WindowStyle, 0);
+	App.WindowHandle = WinCreateWindow(hInstance, nShowCmd, &r);
+#else
 	App.WindowHandle = WinCreateWindow(hInstance, nShowCmd);
+#endif
+	
 
 	if (!App.WindowHandle)
 	{
@@ -363,6 +496,19 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 		MessageBox(App.WindowHandle, "Tomb Raider 3 Failed To Initialise, Please Run Setup", "Error", MB_ICONEXCLAMATION);
 		return 0;
 	}
+
+#ifdef TROYESTUFF
+	if (!tomb3.Windowed)
+	{
+		SetWindowLongPtr(App.WindowHandle, GWL_STYLE, WS_POPUP);
+		SetWindowPos(App.WindowHandle, 0, tomb3.rScreen.left, tomb3.rScreen.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+		UpdateWindow(App.WindowHandle);
+		ShowWindow(App.WindowHandle, nShowCmd);
+
+		SetCursor(0);
+		ShowCursor(0);
+	}
+#endif
 
 	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
 
