@@ -4,7 +4,7 @@
 
 ### Original bug fixes
 
-
+- Fix underwater pickups rotating with Lara.
 
 ### tomb3 additions
 

@@ -86,9 +86,14 @@ void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
 					lara.gun_status = LG_SPECIAL;
 					lara.flare_age = (long)item->data & 0x7FFF;
 					KillItem(item_num);
+#ifdef TROYESTUFF
+					return;
+#endif
 				}
 
-				return;	//move to after KillItem^
+#ifndef TROYESTUFF
+				return;
+#endif
 			}
 			else if (input & IN_ACTION && l->current_anim_state == AS_ALL4S)
 				l->goal_anim_state = AS_DUCK;
@@ -140,10 +145,15 @@ void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
 
 						item->status = ITEM_INVISIBLE;
 						RemoveDrawnItem(item_num);
+#ifdef TROYESTUFF
+						return;
+#endif
 					}
 				}
 
-				return;	//move to after RemoveDrawnItem^
+#ifndef TROYESTUFF
+				return;
+#endif
 			}
 			else if (l->current_anim_state == AS_FLAREPICKUP)
 			{
@@ -156,9 +166,14 @@ void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
 					lara.flare_age = (long)item->data & 0x7FFF;
 					draw_flare_meshes();
 					KillItem(item_num);
+#ifdef TROYESTUFF
+					return;
+#endif
 				}
 
-				return;	//move to after KillItem^
+#ifndef TROYESTUFF
+				return;
+#endif
 			}
 			else if (input & IN_ACTION && l->current_anim_state == AS_TREAD && lara.gun_status == LG_ARMLESS && (lara.gun_type != LG_FLARE || item->object_number != FLARE_ITEM))
 			{
@@ -182,7 +197,9 @@ void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
 					}
 				}
 
-				return;	//remove
+#ifndef TROYESTUFF
+				return;
+#endif
 			}
 		}
 	}
