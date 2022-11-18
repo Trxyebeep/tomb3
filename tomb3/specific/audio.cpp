@@ -181,14 +181,32 @@ long ACMGetTrackLocation()
 void ACMSetVolume(long volume)
 {
 #ifdef TROYESTUFF
+	static bool paused;
+
 	if (!volume)
-		acm_volume = DSBVOLUME_MIN;
+	{
+		if (!paused)
+		{
+			DSBuffer->Stop();
+			paused = 1;
+		}
+	}
 	else
 #endif
+	{
+#ifdef TROYESTUFF
+		if (paused)
+		{
+			DSBuffer->Play(0, 0, 1);
+			paused = 0;
+		}
+#endif
+
 		acm_volume = long(float(volume * 1.5625F - 400.0F) * 6.0F);
 
-	if (DSBuffer)
-		DSBuffer->SetVolume(acm_volume);
+		if (DSBuffer)
+			DSBuffer->SetVolume(acm_volume);
+	}
 }
 
 long ACMHandleNotifications()

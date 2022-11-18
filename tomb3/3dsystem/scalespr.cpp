@@ -2,6 +2,7 @@
 #include "scalespr.h"
 #include "3d_gen.h"
 #ifdef TROYESTUFF
+#include "../specific/output.h"
 #include "../tomb3/tomb3.h"
 #endif
 
@@ -101,7 +102,7 @@ static void SetPSXTextColor()
 void S_DrawScreenSprite2d(long x, long y, long z, long scaleH, long scaleV, short sprnum, short shade, ushort flags)
 {
 	PHDSPRITESTRUCT* sprite;
-	long x1, y1, x2, y2, r, g, b, shade1, shade2;
+	long x1, y1, x2, y2, r, g, b, shade1, shade2, p;
 #ifdef TROYESTUFF
 	static bool set = 0;
 
@@ -136,8 +137,13 @@ void S_DrawScreenSprite2d(long x, long y, long z, long scaleH, long scaleV, shor
 			InsertSprite(phd_znear, x1, y1, x2, y2, sprnum, shade1, shade2, DT_POLY_WGT, 0);
 		else
 		{
+#ifdef TROYESTUFF
+			p = GetRenderScale(1);
+#else
+			p = 1;
+#endif
 			InsertSprite(phd_znear + 0x28000, x1, y1, x2, y2, sprnum, shade1, shade2, DT_POLY_WGT, 0);
-			InsertSprite(phd_znear + 0x3C000, x1 + 1, y1 + 1, x2 + 1, y2 + 1, sprnum, 0, 0, DT_POLY_WGT, 0);
+			InsertSprite(phd_znear + 0x3C000, x1 + p, y1 + p, x2 + p, y2 + p, sprnum, 0, 0, DT_POLY_WGT, 0);
 		}
 	}
 }

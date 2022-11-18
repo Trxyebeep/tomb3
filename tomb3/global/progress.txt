@@ -1260,8 +1260,8 @@ tomb3 progress.
 
 		game/setup.cpp
 
-0x004638F0		InitialiseLevel
-0x00463B00		InitialiseGameFlags
+0x004638F0	+	InitialiseLevel
+0x00463B00	+	InitialiseGameFlags
 0x00463B70	+	InitialiseLevelFlags
 0x00463BC0		InitialiseObjects
 0x00463C30		BaddyObjects
@@ -1372,9 +1372,9 @@ tomb3 progress.
 
 		game/train.cpp
 
-0x0046CF40		TrainControl
-0x0046D150		TestHeight
-0x0046D1F0		TrainCollision
+0x0046CF40	+	TrainControl
+0x0046D150	+	TestHeight
+0x0046D1F0	+	TrainCollision
 
 
 		game/traps.cpp
@@ -1550,6 +1550,16 @@ tomb3 progress.
 0x0047EC30	+	DrawTribeBossShield
 0x0047F4C0	+	S_DrawWakeFX
 0x0047FC30	+	DrawWillBossShield
+
+
+		specific/drawprimitive.cpp
+
+0x00490400	+	InitDrawPrimitive
+0x00490700	+	CloseDrawPrimitive
+0x00490970	+	HWBeginScene
+0x00490990	+	HWEndScene
+0x00490A00	+	HWSetRenderState
+0x00490AE0	+	HWDrawPrimitive
 
 
 		specific/ds.cpp
@@ -1872,7 +1882,7 @@ tomb3 progress.
 0x004B2230	+	DXRestoreSurfaceIfLost
 0x004B2280	+	DXTextureAddPal
 0x004B2370	+	MMXTextureCopy
-0x004B23D0	x	DXTextureAdd
+0x004B23D0	+	DXTextureAdd
 
 
 		specific/time.cpp

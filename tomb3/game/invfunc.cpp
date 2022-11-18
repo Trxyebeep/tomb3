@@ -88,6 +88,11 @@ static ushort req_sel_gour1[16] =
 static ushort req_sel_gour2[9] = { 0x2000, 0x1010, 0x2000, 0x1400, 0x2000, 0x1010, 0x2000, 0x1400, 0x2000 };
 #endif
 
+#ifdef TROYESTUFF
+short gLevelSecrets[21] = { 0, 3, 3, 3, 3, 3, 0, 3, 1, 5, 5, 6, 1, 3, 2, 3, 3, 3, 3, 0, 0 };
+#endif
+short LevelSecrets[21] = { 0, 6, 4, 5, 0, 3, 3, 3, 1, 5, 5, 6, 1, 3, 2, 3, 3, 3, 3, 0, 0 };
+
 void InitColours()
 {
 	inv_colours[0] = S_COLOUR(0, 0, 0);

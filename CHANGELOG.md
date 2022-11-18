@@ -4,15 +4,21 @@
 
 ### Original bug fixes
 
-
+- Fix underwater pickups rotating with Lara.
 
 ### tomb3 additions
 
 - Add option for PSX mono screen colors.
+- Move saves to a designated folder.
+- Add support for The Lost Artifact.
 
 ### tomb3 bug fixes
 
 - Fix passport selection crash.
+- Fix full music mute causing the track to play silently in the background.
+- Fix some text boxes not using additive blending.
+- Fix some effects disappearing closer than possible.
+- Fix text shadow drawing. ("Fixes" text being cut off at the bottom).
 
 
 ## [1.2.0](https://github.com/Trxyebeep/tomb3/tree/V1.2.0) (Nov. 12 2022)

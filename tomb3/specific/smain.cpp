@@ -454,11 +454,26 @@ void CheckCheatMode()
 
 long TitleSequence()
 {
+#ifdef TROYESTUFF
+	char name[128];
+#endif
+
 	T_InitPrint();
 	TempVideoAdjust(1, 1.0);
 	noinput_count = 0;
 	dontFadePicture = 1;
-	LoadPicture(GF_titlefilenames[1], App.lpPictureBuffer, 0);
+
+#ifdef TROYESTUFF
+	if (tomb3.gold)
+	{
+		strcpy(name, GF_titlefilenames[1]);
+		T3_GoldifyString(name);
+		LoadPicture(name, App.lpPictureBuffer, 0);
+	}
+	else
+#endif
+		LoadPicture(GF_titlefilenames[1], App.lpPictureBuffer, 0);
+
 	FadePictureUp(32);
 
 	if (!title_loaded)
@@ -523,8 +538,21 @@ long GameMain()
 	if (!S_InitialiseSystem())
 		return 0;
 
-	if (!GF_LoadScriptFile("data\\tombPC.dat"))
-		S_ExitSystem("GameMain: could not load script file");
+#ifdef TROYESTUFF
+	if (tomb3.gold)
+	{
+		if (!GF_LoadScriptFile("datag\\trtla.dat"))	//seems some CDs come with trtla.dat, others with tombPC.dat, others with both!
+		{
+			if (!GF_LoadScriptFile("datag\\tombPC.dat"))
+				S_ExitSystem("GameMain: could not load script file");
+		}
+	}
+	else
+#endif
+	{
+		if (!GF_LoadScriptFile("data\\tombPC.dat"))
+			S_ExitSystem("GameMain: could not load script file");
+	}
 
 	SOUND_Init();
 	InitialiseStartInfo();
@@ -541,7 +569,14 @@ long GameMain()
 	HiResFlag = 0;
 	TempVideoAdjust(1, 1.0F);
 	S_UpdateInput();
-	LoadPicture("pix\\legal.bmp", App.lpPictureBuffer, 1);
+
+#ifdef TROYESTUFF
+	if (tomb3.gold)
+		LoadPicture("pixg\\legal.bmp", App.lpPictureBuffer, 1);
+	else
+#endif
+		LoadPicture("pix\\legal.bmp", App.lpPictureBuffer, 1);
+
 	FadePictureUp(32);
 	S_Wait(300, 1);
 	ForceFadeDown(1);

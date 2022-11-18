@@ -14,3 +14,4 @@
 #define RemoveDrawnItem	( (void(__cdecl*)(short)) 0x0043AEE0 )
 #define GlobalItemReplace	( (void(__cdecl*)(long, long)) 0x0043B080 )
 #define ClearBodyBag	( (void(__cdecl*)()) 0x0043B330 )
+#define InitialiseFXArray	( (void(__cdecl*)()) 0x0043B100 )

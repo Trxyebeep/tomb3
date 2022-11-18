@@ -10,6 +10,9 @@
 #include "ds.h"
 #include "specific.h"
 #include "picture.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
 
 //gameflow loading checks
 #define LOAD_GF(main, allocSize, buffer, readSize)\
@@ -628,7 +631,12 @@ long LoadSamples(HANDLE file)
 
 	MyReadFile(file, used_samples, sizeof(long) * nSamples, &read, 0);
 
-	sfxFile = CreateFile(GetFullPath("data\\main.sfx"), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+#ifdef TROYESTUFF
+	if (tomb3.gold)
+		sfxFile = CreateFile(GetFullPath("datag\\main.sfx"), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	else
+#endif
+		sfxFile = CreateFile(GetFullPath("data\\main.sfx"), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (sfxFile == INVALID_HANDLE_VALUE)
 	{
@@ -773,6 +781,9 @@ long S_LoadLevelFile(char* name, long number, long type)
 {
 	long loaded;
 	bool fade;
+#ifdef TROYESTUFF
+	char buf[128];
+#endif
 
 	S_UnloadLevelFile();
 	S_CDStop();
@@ -780,7 +791,16 @@ long S_LoadLevelFile(char* name, long number, long type)
 
 	if (type && type != 6 && (type != 4 || GF_Playing_Story))
 	{
+#ifdef TROYESTUFF
+		strcpy(buf, GF_picfilenames[GF_LoadingPic]);
+		
+		if (tomb3.gold)
+			T3_GoldifyString(buf);
+
+		LoadPicture(buf, App.lpPictureBuffer, 1);
+#else
 		LoadPicture(GF_picfilenames[GF_LoadingPic], App.lpPictureBuffer, 1);
+#endif
 		FadePictureUp(32);
 		fade = 1;
 	}

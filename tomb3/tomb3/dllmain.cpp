@@ -47,6 +47,7 @@
 #include "../game/quadbike.h"
 #include "../game/minecart.h"
 #include "../game/sphere.h"
+#include "../game/train.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -81,6 +82,7 @@
 #include "../specific/texture.h"
 #include "../specific/mmx.h"
 #include "../specific/fmv.h"
+#include "../specific/drawprimitive.h"
 
 HINSTANCE hinstance = 0;
 
@@ -157,6 +159,7 @@ void inject_all(bool replace)
 	inject_quadbike(replace);
 	inject_minecart(replace);
 	inject_sphere(replace);
+	inject_train(replace);
 
 	//specific
 	inject_drawbars(replace);
@@ -187,6 +190,7 @@ void inject_all(bool replace)
 	inject_texture(replace);
 	inject_mmx(replace);
 	inject_fmv(replace);
+	inject_drawprim(replace);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)

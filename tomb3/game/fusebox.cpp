@@ -6,6 +6,9 @@
 #include "gameflow.h"
 #include "objects.h"
 #include "../specific/smain.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
 
 void ControlFusebox(short item_number)
 {
@@ -28,6 +31,13 @@ void ControlFusebox(short item_number)
 
 #ifdef RANDO_STUFF
 		if (rando.levels[RANDOLEVEL].original_id == LV_OFFICE)
+#elif TROYESTUFF
+		if (tomb3.gold)
+			room_num = 6;
+		else
+			room_num = LV_OFFICE;
+
+		if (CurrentLevel == room_num)
 #else
 		if (CurrentLevel == LV_OFFICE)
 #endif

@@ -36,6 +36,20 @@
 3. Enjoy!
 ------------------------
 
+### TR3: The Lost Artifact support:
+
+#### installation:
+1. Install the main patch following the steps above.
+2. Go to your tomb3 installation folder and create these new folders within it.
+- pixg
+- datag
+- savesg
+3. Go to your TR3 The Lost Artifact disc and
+- Copy the contents of its data folder into the new datag folder.
+- Copy the contents of its pix folder into the new pixg folder.
+4. To run tomb3 in gold mode, launch the included bat file.
+5. Enjoy!
+
 ## ExtraOptions folder:
 
 ### Effects:
