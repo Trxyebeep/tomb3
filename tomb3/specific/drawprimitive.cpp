@@ -15,8 +15,14 @@ HRESULT HWBeginScene()
 	return D3DDev->BeginScene();
 }
 
+HRESULT HWEndScene()
+{
+	return D3DDev->EndScene();
+}
+
 void inject_drawprim(bool replace)
 {
 	INJECT(0x00490AE0, HWDrawPrimitive, replace);
 	INJECT(0x00490970, HWBeginScene, replace);
+	INJECT(0x00490990, HWEndScene, replace);
 }
