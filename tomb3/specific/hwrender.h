@@ -32,8 +32,8 @@ void HWR_GetAllTextureHandles();
 void HWR_LoadTexturePages(long nPages, uchar* src, uchar* palette);
 void HWR_SetCurrentTexture(DXTEXTURE* tex);
 
-#define SetRenderState	( *(HRESULT(__cdecl**)(D3DRENDERSTATETYPE, long)) 0x006CA1B8 )	//here FOR NOW
-#define DrawPrimitive	( *(HRESULT(__cdecl**)(D3DPRIMITIVETYPE, D3DVERTEXTYPE, LPVOID, ulong, ulong)) 0x006CA1C0 )
-#define BeginScene	( *(HRESULT(__cdecl**)()) 0x006CA1C8 )
-#define EndScene	( *(HRESULT(__cdecl**)()) 0x006CA1A0 )
-#define DrawRoutine	( *(void(__cdecl**)(long, D3DTLVERTEX*, long, long)) 0x00633F68 )
+extern HRESULT (*DrawPrimitive)(D3DPRIMITIVETYPE, D3DVERTEXTYPE, LPVOID, ulong, ulong);
+extern HRESULT (*SetRenderState)(D3DRENDERSTATETYPE, ulong);
+extern HRESULT (*BeginScene)();
+extern HRESULT (*EndScene)();
+extern void (*DrawRoutine)(long, D3DTLVERTEX*, long, long);

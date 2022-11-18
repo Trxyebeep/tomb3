@@ -7,6 +7,6 @@ HRESULT HWDrawPrimitive(D3DPRIMITIVETYPE dptPrimitiveType, D3DVERTEXTYPE dwVerte
 HRESULT HWBeginScene();
 HRESULT HWEndScene();
 HRESULT HWSetRenderState(D3DRENDERSTATETYPE dwRenderStateType, ulong dwRenderState);
+void InitDrawPrimitive(LPDIRECT3DDEVICEX lpD3DDev, LPDIRECTDRAWSURFACEX surf, bool hw);
 
 #define CloseDrawPrimitive	( (void(__cdecl*)()) 0x00490700 )
-#define InitDrawPrimitive	( (void(__cdecl*)(LPDIRECT3DDEVICEX, LPDIRECTDRAWSURFACEX, bool)) 0x00490400 )

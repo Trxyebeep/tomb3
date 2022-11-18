@@ -7,6 +7,12 @@
 #include "../tomb3/tomb3.h"
 #endif
 
+HRESULT (*DrawPrimitive)(D3DPRIMITIVETYPE, D3DVERTEXTYPE, LPVOID, ulong, ulong);
+HRESULT (*SetRenderState)(D3DRENDERSTATETYPE, ulong);
+HRESULT (*BeginScene)();
+HRESULT (*EndScene)();
+void (*DrawRoutine)(long, D3DTLVERTEX*, long, long);
+
 bool zBufWriteEnabled;
 bool zBufCompareEnabled;
 
