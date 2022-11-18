@@ -8,5 +8,4 @@ HRESULT HWBeginScene();
 HRESULT HWEndScene();
 HRESULT HWSetRenderState(D3DRENDERSTATETYPE dwRenderStateType, ulong dwRenderState);
 void InitDrawPrimitive(LPDIRECT3DDEVICEX lpD3DDev, LPDIRECTDRAWSURFACEX surf, bool hw);
-
-#define CloseDrawPrimitive	( (void(__cdecl*)()) 0x00490700 )
+void CloseDrawPrimitive();
