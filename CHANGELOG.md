@@ -5,6 +5,7 @@
 ### Original bug fixes
 
 - Fix underwater pickups rotating with Lara.
+- Fix the wrong ambient track being played after reloading.
 
 ### tomb3 additions
 
