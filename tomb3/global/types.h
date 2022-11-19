@@ -2044,6 +2044,12 @@ struct TOMB3_OPTIONS
 	float INV_Scale;
 	float unwater_music_mute;
 	float inv_music_mute;
+
+	//windowed stuff, move to WINAPP when possible
+	RECT rScreen;
+	RECT rViewport;
+	ulong WindowStyle;
+	bool Windowed;
 };
 #endif
 #pragma pack(pop)

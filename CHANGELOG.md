@@ -5,12 +5,14 @@
 ### Original bug fixes
 
 - Fix underwater pickups rotating with Lara.
+- Fix the wrong ambient track being played after reloading.
 
 ### tomb3 additions
 
 - Add option for PSX mono screen colors.
 - Move saves to a designated folder.
 - Add support for The Lost Artifact.
+- Add experimental Windowed support.
 
 ### tomb3 bug fixes
 

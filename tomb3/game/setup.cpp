@@ -190,7 +190,12 @@ long InitialiseLevel(long level, long type)
 	if (objects[FINAL_LEVEL].loaded)
 		InitialiseFinalLevel();
 
+#ifdef TROYESTUFF
+	if (type == 2)	//mid_level_save is not used on PC (right now), on PSX it means any save that's NOT from the level stats prompt
+					//so on PC this check will never pass, although it should since PC cannot save other than "mid level".
+#else
 	if (type == 2 && savegame.mid_level_save)
+#endif
 	{
 		S_CDPlay(CurrentAtmosphere, 1);
 		IsAtmospherePlaying = 1;

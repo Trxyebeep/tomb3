@@ -3,11 +3,19 @@
 #include "specific.h"
 #include "winmain.h"
 #include "file.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
 
 long fmv_playing;
 
 long FMV_Play(char* name)
 {
+#ifdef TROYESTUFF
+	if (tomb3.Windowed)
+		return 0;
+#endif
+
 	fmv_playing = 1;
 	S_CDStop();
 	ShowCursor(0);
@@ -25,6 +33,11 @@ long FMV_Play(char* name)
 
 long FMV_PlayIntro(char* name1, char* name2)
 {
+#ifdef TROYESTUFF
+	if (tomb3.Windowed)
+		return 0;
+#endif
+
 	fmv_playing = 1;
 	ShowCursor(0);
 	WinFreeDX(0);

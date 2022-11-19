@@ -76,6 +76,7 @@ long LoadTexturePages(HANDLE file)
 
 	MyReadFile(file, &nPages, sizeof(long), &read, 0);
 
+#ifndef TROYESTUFF
 	if (!App.nRenderMode)
 	{
 		for (int i = 0; i < nPages; i++)
@@ -89,6 +90,7 @@ long LoadTexturePages(HANDLE file)
 		SetFilePointer(file, nPages << 17, 0, FILE_CURRENT);
 		return 1;
 	}
+#endif
 
 	_16bit = !App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bPalette;
 	size = _16bit ? 0x20000 : 0x10000;
@@ -769,7 +771,9 @@ long LoadLevel(const char* name, long number)
 
 void S_UnloadLevelFile()
 {
+#ifndef TROYESTUFF
 	if (App.nRenderMode == 1)
+#endif
 		HWR_FreeTexturePages();
 
 	LastLoadedLevelPath[0] = 0;

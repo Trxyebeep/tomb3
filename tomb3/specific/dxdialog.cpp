@@ -3,6 +3,7 @@
 #include "winmain.h"
 #ifdef TROYESTUFF
 #include "smain.h"
+#include "../tomb3/tomb3.h"
 #endif
 
 //these are the BOXES/BUTTONS not the text
@@ -14,8 +15,8 @@
 #define IDC_ZBUFFER				1004
 #define IDC_DITHER				1005
 #define IDC_BILINEAR			1006
-#define IDC_HARDWARE			1007
-#define IDC_SOFTWARE			1008
+#define IDC_HARDWARE			1007	//now "Fullscreen"
+#define IDC_SOFTWARE			1008	//now "Windowed"
 #define IDC_8BIT_TEXTURES		1009
 #define IDC_SOUND				1010
 #define IDC_JOYSTICK			1011
@@ -39,6 +40,14 @@ BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lPara
 		DXInitDialogBox(dlg);
 		output_setting = GetDlgItem(dlg, IDC_OUTPUT_SETTINGS);
 		resolution = GetDlgItem(dlg, IDC_RESOLUTION);
+#ifdef TROYESTUFF
+		SendMessage(output_setting, CB_SETCURSEL, 1, 0);
+		DXInitD3DDrivers(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0));
+		DXInitVideoModes(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
+			SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
+		DXInitTextures(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
+			SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
+#endif
 		return 1;
 	}
 
@@ -61,6 +70,9 @@ BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lPara
 			G_DXConfig->Filter = (bool)SendMessage(GetDlgItem(dlg, IDC_BILINEAR), BM_GETCHECK, 0, 0);
 			G_DXConfig->sound = !(bool)SendMessage(GetDlgItem(dlg, IDC_DISABLE_SOUND), BM_GETCHECK, 0, 0);
 			G_DXConfig->Joystick = !(bool)SendMessage(GetDlgItem(dlg, IDC_DISABLE_JOYSTICK), BM_GETCHECK, 0, 0);
+#ifdef TROYESTUFF
+			tomb3.Windowed = (bool)SendMessage(GetDlgItem(dlg, IDC_SOFTWARE), BM_GETCHECK, 0, 0);
+#endif
 
 			if ((ushort)wParam == IDOK)
 			{
@@ -78,6 +90,9 @@ BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lPara
 				pass = WinDXInit(&App.DeviceInfo, &App.DXConfig, 1);
 				WinFreeDX(1);
 				ShowWindow(App.WindowHandle, 0);
+#ifdef TROYESTUFF
+				UpdateWindow(dlg);
+#endif
 				ShowCursor(1);
 
 				if (pass)
@@ -106,24 +121,13 @@ BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lPara
 
 			break;
 
-		case IDC_HARDWARE:
-
-			if (!HIWORD(wParam))
-			{
-				SendMessage(output_setting, CB_SETCURSEL, 1, 0);
-				DXInitD3DDrivers(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0));
-				DXInitVideoModes(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
-					SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
-				DXInitTextures(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
-					SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
-			}
-
-			break;
-
 		case IDC_SOFTWARE:
 
 			if (!HIWORD(wParam))
 			{
+#ifdef TROYESTUFF
+				SendMessage(GetDlgItem(dlg, IDC_HARDWARE), BM_SETCHECK, 0, 0);
+#else
 				SendMessage(output_setting, CB_SETCURSEL, 0, 0);
 				SendMessage(resolution, CB_SETCURSEL, 0, 0);
 				DXInitD3DDrivers(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0));
@@ -132,6 +136,25 @@ BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lPara
 				DXInitTextures(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
 					SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
 				EnableWindow(GetDlgItem(dlg, IDC_8BIT_TEXTURES), 0);
+#endif
+			}
+
+			break;
+
+		case IDC_HARDWARE:
+
+			if (!HIWORD(wParam))
+			{
+#ifdef TROYESTUFF
+				SendMessage(GetDlgItem(dlg, IDC_SOFTWARE), BM_SETCHECK, 0, 0);
+#else
+				SendMessage(output_setting, CB_SETCURSEL, 1, 0);
+				DXInitD3DDrivers(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0));
+				DXInitVideoModes(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
+					SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
+				DXInitTextures(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
+					SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
+#endif
 			}
 
 			break;
@@ -265,8 +288,10 @@ void DXInitD3DDrivers(HWND hwnd, long nDrivers)
 			SendMessage(agp_mem, BM_SETCHECK, 1, 0);
 		}
 
+#ifndef TROYESTUFF
 		SendMessage(HWR, BM_SETCHECK, 1, 0);
 		SendMessage(SWR, BM_SETCHECK, 0, 0);
+#endif
 		SendMessage(zbuffer, BM_SETCHECK, 1, 0);
 		SendMessage(filter, BM_SETCHECK, 1, 0);
 		SendMessage(dither, BM_SETCHECK, 1, 0);
@@ -274,6 +299,7 @@ void DXInitD3DDrivers(HWND hwnd, long nDrivers)
 	}
 	else
 	{
+#ifndef TROYESTUFF
 		SendMessage(zbuffer, BM_SETCHECK, 0, 0);
 		SendMessage(filter, BM_SETCHECK, 0, 0);
 		SendMessage(dither, BM_SETCHECK, 0, 0);
@@ -299,6 +325,7 @@ void DXInitD3DDrivers(HWND hwnd, long nDrivers)
 			SendMessage(tex_8bit, BM_SETCHECK, 0, 0);
 
 		SendMessage(agp_mem, BM_SETCHECK, 0, 0);
+#endif
 	}
 }
 
@@ -464,6 +491,7 @@ void DXInitTextures(HWND hwnd, long nDD, long nD3D)
 	else
 		EnableWindow(GetDlgItem(hwnd, IDC_8BIT_TEXTURES), 0);
 
+#ifndef TROYESTUFF
 	if (G_DXConfig->MMX && SendMessage(GetDlgItem(hwnd, IDC_SOFTWARE), BM_GETCHECK, 0, 0))
 	{
 		if (!found)
@@ -483,6 +511,7 @@ void DXInitTextures(HWND hwnd, long nDD, long nD3D)
 			}
 		}
 	}
+#endif
 
 	if (!found)
 	{
@@ -739,6 +768,16 @@ void DXInitDialogBox(HWND hwnd)
 		nDD = 0;
 	else
 		nDD = G_DeviceInfo->nDDInfo - 1;
+
+#ifdef TROYESTUFF
+	SendMessage(GetDlgItem(hwnd, IDOK), WM_SETTEXT, 0, (LPARAM)("Save"));
+
+	SendMessage(GetDlgItem(hwnd, IDC_HARDWARE), WM_SETTEXT, 0, (LPARAM)("Fullscreen"));
+	SendMessage(GetDlgItem(hwnd, IDC_HARDWARE), BM_SETCHECK, 1, 0);
+
+	SendMessage(GetDlgItem(hwnd, IDC_SOFTWARE), WM_SETTEXT, 0, (LPARAM)("Windowed"));
+	SendMessage(GetDlgItem(hwnd, IDC_SOFTWARE), BM_SETCHECK, 0, 0);
+#endif
 
 	SendMessage(gfx, CB_SETCURSEL, nDD, 0);
 	DXCheckMMXTechnology(hwnd);

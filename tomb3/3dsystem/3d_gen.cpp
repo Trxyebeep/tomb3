@@ -489,7 +489,9 @@ void phd_InitWindow(long x, long y, long w, long h, long znear, long zfar, long 
 	phd_WindowRect.top = phd_winymin;
 	phd_WindowRect.right = phd_winxmin + phd_winwidth;
 
+#ifndef TROYESTUFF
 	if (!App.nRenderMode || App.nRenderMode == 1)
+#endif
 	{
 		InsertObjectGT3 = HWI_InsertObjectGT3_Sorted;
 		InsertObjectGT4 = HWI_InsertObjectGT4_Sorted;

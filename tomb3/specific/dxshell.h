@@ -32,3 +32,7 @@ void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance);
 void SWRBlit32to15(ulong* dest, ulong* src, ulong w);
 HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LPD3DDEVICEDESC lpHWDesc, LPD3DDEVICEDESC lpHELDesc, LPVOID lpContext);
 bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer);
+#ifdef TROYESTUFF
+long DXToggleFullScreen();
+void DXMove(long x, long y);
+#endif

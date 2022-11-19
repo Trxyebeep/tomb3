@@ -178,14 +178,32 @@ long ACMGetTrackLocation()
 	return long((float(timeGetTime() - acm_start_time) / (float)CLOCKS_PER_SEC) * 60.0F);
 }
 
+#ifdef TROYESTUFF
+static bool ACMIsTrackPlaying()
+{
+	ulong status;
+
+	if (DSBuffer->GetStatus(&status) == DS_OK)
+	{
+		if (status & DSBSTATUS_PLAYING)
+			return 1;
+	}
+
+	return 0;
+}
+#endif
+
 void ACMSetVolume(long volume)
 {
 #ifdef TROYESTUFF
 	static bool paused;
 
+	if (!DSBuffer)
+		return;
+
 	if (!volume)
 	{
-		if (!paused)
+		if (!paused && ACMIsTrackPlaying())
 		{
 			DSBuffer->Stop();
 			paused = 1;
