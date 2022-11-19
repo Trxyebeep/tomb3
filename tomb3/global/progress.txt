@@ -323,7 +323,7 @@ tomb3 progress.
 0x00421D80	+	TriggerActive
 0x00421DE0	+	GetCeiling
 0x004222B0	+	GetDoor
-0x00422370		LOS
+0x00422370	+	LOS
 0x00422410		zLOS
 0x00422700		xLOS
 0x004229F0		ClipTarget

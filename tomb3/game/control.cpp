@@ -1632,6 +1632,34 @@ short GetDoor(FLOOR_INFO* floor)
 	return 255;
 }
 
+long LOS(GAME_VECTOR* start, GAME_VECTOR* target)
+{
+	long los1, los2;
+
+	target->room_number = start->room_number;
+
+	if (abs(target->z - start->z) > abs(target->x - start->x))
+	{
+		los1 = xLOS(start, target);
+		los2 = zLOS(start, target);
+	}
+	else
+	{
+		los1 = zLOS(start, target);
+		los2 = xLOS(start, target);
+	}
+
+	if (los2)
+	{
+		GetFloor(target->x, target->y, target->z, &target->room_number);
+
+		if (ClipTarget(start, target) && los1 == 1 && los2 == 1)
+			return 1;
+	}
+
+	return 0;
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, inject_rando ? 1 : replace);
@@ -1646,4 +1674,5 @@ void inject_control(bool replace)
 	INJECT(0x00421D80, TriggerActive, replace);
 	INJECT(0x00421DE0, GetCeiling, replace);
 	INJECT(0x004222B0, GetDoor, replace);
+	INJECT(0x00422370, LOS, replace);
 }
