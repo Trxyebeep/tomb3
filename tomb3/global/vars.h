@@ -314,6 +314,7 @@
 #define dont_exit_quad	VAR_(0x006267BC, char)
 #define HandbrakeStarting	VAR_(0x006267C8, char)
 #define Stats_Requester	VAR_(0x00626490, REQUEST_INFO)
+#define number_los_rooms	VAR_(0x00625F6C, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -497,3 +498,4 @@
 #define LaSlot	ARRAY_(0x006267E0, SOUND_SLOT, [32])
 #define Valid_Level_Strings	ARRAY_(0x006D62E0, char, [24][50])
 #define Valid_Level_Strings2	ARRAY_(0x006D7220, char, [24][50])
+#define los_rooms	ARRAY_(0x006E29C0, long, [20])
