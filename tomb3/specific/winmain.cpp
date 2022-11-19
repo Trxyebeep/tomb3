@@ -294,7 +294,7 @@ LRESULT CALLBACK WinAppProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 long WinRegisterWindow(HINSTANCE hinstance)
 {
-	App.WindowClass.hIcon = LoadIconA(hinstance, (LPCSTR)115);		//todo: icon resource define
+	App.WindowClass.hIcon = LoadIcon(hinstance, (LPCSTR)115);		//todo: icon resource define
 	App.WindowClass.lpszMenuName = 0;
 	App.WindowClass.lpszClassName = "Window Class";
 	App.WindowClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
@@ -315,14 +315,13 @@ HWND WinCreateWindow(HINSTANCE hinstance, long nCmdShow, RECT* r)
 HWND WinCreateWindow(HINSTANCE hinstance, long nCmdShow)
 #endif
 {
-	HWND hwnd;
-
 #ifdef TROYESTUFF
-	hwnd = CreateWindowEx(WS_EX_APPWINDOW, "Window Class", "Tomb Raider III", tomb3.WindowStyle,
+	return CreateWindowEx(WS_EX_APPWINDOW, "Window Class", "Tomb Raider III", tomb3.WindowStyle,
 		CW_USEDEFAULT, CW_USEDEFAULT, r->right - r->left, r->bottom - r->top, 0, 0, hinstance, 0);
 #else
+	HWND hwnd;
+
 	hwnd = CreateWindowEx(WS_EX_APPWINDOW, "Window Class", "Tomb Raider III", WS_POPUP, 0, 0, 0, 0, 0, 0, hinstance, 0);
-#endif
 
 	if (hwnd)
 	{
@@ -331,6 +330,7 @@ HWND WinCreateWindow(HINSTANCE hinstance, long nCmdShow)
 	}
 
 	return hwnd;
+#endif
 }
 
 float WinFrameRate()
@@ -431,6 +431,10 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	DIRECT3DINFO* d3dinfo;
 #ifdef TROYESTUFF
 	RECT r;
+	HWND desktop;
+	HDC hdc;
+	DEVMODE devmode;
+	static ulong bpp;
 #endif
 	bool hw;
 
@@ -488,6 +492,14 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 		return 0;
 	}
 
+#ifdef TROYESTUFF
+	SetWindowPos(App.WindowHandle, 0, tomb3.rScreen.left, tomb3.rScreen.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+	desktop = GetDesktopWindow();
+	hdc = GetDC(desktop);
+	bpp = GetDeviceCaps(hdc, BITSPIXEL);
+	ReleaseDC(desktop, hdc);
+#endif
+
 	if (!WinDXInit(&App.DeviceInfo, &App.DXConfig, 1))
 	{
 		WinFreeDX(1);
@@ -502,12 +514,18 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	{
 		SetWindowLongPtr(App.WindowHandle, GWL_STYLE, WS_POPUP);
 		SetWindowPos(App.WindowHandle, 0, tomb3.rScreen.left, tomb3.rScreen.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-		UpdateWindow(App.WindowHandle);
-		ShowWindow(App.WindowHandle, nShowCmd);
 
 		SetCursor(0);
 		ShowCursor(0);
 	}
+	else
+	{
+		SetCursor(LoadCursor(0, IDC_ARROW));
+		ShowCursor(1);
+	}
+
+	UpdateWindow(App.WindowHandle);
+	ShowWindow(App.WindowHandle, nShowCmd);
 #endif
 
 	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
@@ -541,6 +559,17 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	GtWindowClosed = 0;
 	GtFullScreenClearNeeded = 0;
 	GameMain();
+
+#ifdef TROYESTUFF
+	desktop = GetDesktopWindow();
+	hdc = GetDC(desktop);
+	devmode.dmSize = sizeof(DEVMODE);
+	devmode.dmBitsPerPel = bpp;
+	ReleaseDC(desktop, hdc);
+	devmode.dmFields = DM_BITSPERPEL;
+	ChangeDisplaySettings(&devmode, 0);
+#endif
+
 	return 0;
 }
 
