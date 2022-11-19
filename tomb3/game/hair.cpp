@@ -13,6 +13,7 @@ static PHD_VECTOR hvel[7];
 static long wind = 0;
 static long wind_angle = 2048;
 static long dwind_angle = 2048;
+static long first_hair;
 
 void InitialiseHair()
 {
@@ -353,7 +354,7 @@ void HairControl(long in_cutscene)
 	else if (wind >= 9)
 		wind--;
 
-	dwind_angle = (dwind_angle + (((GetRandomControl() & 63) - 32) << 1)) & 0x1FFE;
+	dwind_angle = (dwind_angle + (((GetRandomControl() & 0x3F) - 32) << 1)) & 0x1FFE;
 
 	if (dwind_angle < 1024)
 		dwind_angle += (1024 - dwind_angle) << 1;
@@ -449,7 +450,7 @@ void HairControl(long in_cutscene)
 		}
 
 		dist = phd_sqrt(SQUARE(hair[i].z_pos - hair[i - 1].z_pos) + SQUARE(hair[i].x_pos - hair[i - 1].x_pos));
-		hair[i - 1].y_rot = (short)phd_atan((hair[i].z_pos - hair[i - 1].z_pos), (hair[i].x_pos - hair[i - 1].x_pos));
+		hair[i - 1].y_rot = (short)phd_atan(hair[i].z_pos - hair[i - 1].z_pos, hair[i].x_pos - hair[i - 1].x_pos);
 		hair[i - 1].x_rot = (short)-phd_atan(dist, hair[i].y_pos - hair[i - 1].y_pos);
 
 		phd_PushUnitMatrix();

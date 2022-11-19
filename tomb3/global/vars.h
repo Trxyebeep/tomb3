@@ -69,7 +69,6 @@
 #define Option_Music_Volume	VAR_(0x004C70B0, short)
 #define Option_SFX_Volume	VAR_(0x004C70AC, short)
 #define chunky_flag	VAR_(0x006E2A10, long)
-#define first_hair	VAR_(0x00626310, long)
 #define bones	VAR_(0x006E22E8, long*)
 #define SmokeWindX	VAR_(0x006DB880, long)
 #define SmokeWindZ	VAR_(0x006DB884, long)
