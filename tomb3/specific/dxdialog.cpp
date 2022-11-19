@@ -90,6 +90,9 @@ BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lPara
 				pass = WinDXInit(&App.DeviceInfo, &App.DXConfig, 1);
 				WinFreeDX(1);
 				ShowWindow(App.WindowHandle, 0);
+#ifdef TROYESTUFF
+				UpdateWindow(dlg);
+#endif
 				ShowCursor(1);
 
 				if (pass)
@@ -767,8 +770,11 @@ void DXInitDialogBox(HWND hwnd)
 		nDD = G_DeviceInfo->nDDInfo - 1;
 
 #ifdef TROYESTUFF
+	SendMessage(GetDlgItem(hwnd, IDOK), WM_SETTEXT, 0, (LPARAM)("Save"));
+
 	SendMessage(GetDlgItem(hwnd, IDC_HARDWARE), WM_SETTEXT, 0, (LPARAM)("Fullscreen"));
 	SendMessage(GetDlgItem(hwnd, IDC_HARDWARE), BM_SETCHECK, 1, 0);
+
 	SendMessage(GetDlgItem(hwnd, IDC_SOFTWARE), WM_SETTEXT, 0, (LPARAM)("Windowed"));
 	SendMessage(GetDlgItem(hwnd, IDC_SOFTWARE), BM_SETCHECK, 0, 0);
 #endif

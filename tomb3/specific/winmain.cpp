@@ -486,11 +486,33 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 		memcpy(LevelSecrets, gLevelSecrets, sizeof(LevelSecrets));
 #endif
 
+#ifdef TROYESTUFF
+	if ((!S_LoadSettings() || UT_FindArg("setup")))
+	{
+		DXUserDialog(&App.DeviceInfo, &App.DXConfig, App.hInstance);
+		DXFreeDeviceInfo(&App.DeviceInfo);
+
+		desktop = GetDesktopWindow();
+		hdc = GetDC(desktop);
+		bpp = GetDeviceCaps(hdc, BITSPIXEL);
+		ReleaseDC(desktop, hdc);
+
+		desktop = GetDesktopWindow();
+		hdc = GetDC(desktop);
+		devmode.dmSize = sizeof(DEVMODE);
+		devmode.dmBitsPerPel = bpp;
+		ReleaseDC(desktop, hdc);
+		devmode.dmFields = DM_BITSPERPEL;
+		ChangeDisplaySettings(&devmode, 0);
+		return 0;
+	}
+#else
 	if ((!S_LoadSettings() || UT_FindArg("setup")) && !DXUserDialog(&App.DeviceInfo, &App.DXConfig, App.hInstance))
 	{
 		DXFreeDeviceInfo(&App.DeviceInfo);
 		return 0;
 	}
+#endif
 
 #ifdef TROYESTUFF
 	SetWindowPos(App.WindowHandle, 0, tomb3.rScreen.left, tomb3.rScreen.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
