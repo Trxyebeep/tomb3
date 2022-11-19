@@ -15,8 +15,8 @@
 #define IDC_ZBUFFER				1004
 #define IDC_DITHER				1005
 #define IDC_BILINEAR			1006
-#define IDC_HARDWARE			1007
-#define IDC_SOFTWARE			1008
+#define IDC_HARDWARE			1007	//now "Fullscreen"
+#define IDC_SOFTWARE			1008	//now "Windowed"
 #define IDC_8BIT_TEXTURES		1009
 #define IDC_SOUND				1010
 #define IDC_JOYSTICK			1011
