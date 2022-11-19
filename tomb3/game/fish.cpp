@@ -229,7 +229,6 @@ void ControlFish(short item_number)
 		return;
 
 	leader = item->hit_points;
-
 	pLeader = &lead_info[leader];
 
 	if (!pLeader->on)
@@ -267,7 +266,7 @@ void ControlFish(short item_number)
 		if (pirahna_attack != 1)
 			enemy = &items[CarcassItem];
 
-		pFish->angle = (-((long)mGetAngle(pFish->x + item->pos.x_pos, pFish->z + item->pos.z_pos, enemy->pos.x_pos, enemy->pos.z_pos) + 0x4000) >> 4) & 0xFFF;
+		pFish->angle = ((-(long)mGetAngle(pFish->x + item->pos.x_pos, pFish->z + item->pos.z_pos, enemy->pos.x_pos, enemy->pos.z_pos) - 0x4000) >> 4) & 0xFFF;
 		pLeader->angle = pFish->angle;
 		pLeader->speed = (GetRandomControl() & 0x3F) - 64;
 	}
@@ -431,7 +430,7 @@ void ControlFish(short item_number)
 	fx = x;
 	fz = z;
 
-	for (int i = 0; i < 24; i++)
+	for (int i = 0, j = 32; i < 24; i++, j += 2)
 	{
 		pFish = &fish[(leader * 24) + 8 + i];
 
@@ -455,11 +454,9 @@ void ControlFish(short item_number)
 			}
 		}
 
-		angle = (-((long)mGetAngle(pFish->x, pFish->z, fx, fz) + 0x4000) >> 4) & 0xFFF;
-		dx = pFish->x - fx + ((24 - i) << 7);
-		dz = pFish->z - fz - ((24 - i) << 7);
-		dx *= dx;
-		dz *= dz;
+		angle = ((-(long)mGetAngle(pFish->x, pFish->z, fx, fz) - 0x4000) >> 4) & 0xFFF;
+		dx = SQUARE(pFish->x - fx + ((24 - i) << 7));
+		dz = SQUARE(pFish->z - fz - ((24 - i) << 7));
 		diff = pFish->angle - angle;
 
 		if (diff > 2048)
@@ -478,8 +475,8 @@ void ControlFish(short item_number)
 		{
 			pFish->angadd += 4;
 
-			if (pFish->angadd > 92 + (i >> 1))
-				pFish->angadd = 92 + (i >> 1);
+			if (pFish->angadd > (i >> 1) + 92)
+				pFish->angadd = (i >> 1) + 92;
 		}
 		else
 		{
@@ -498,16 +495,16 @@ void ControlFish(short item_number)
 
 		if (dx + dz < SQUARE(i << 7) + 0x100000)
 		{
-			if (pFish->speed > 32 + (i << 1))
+			if (pFish->speed > j)
 				pFish->speed -= pFish->speed >> 5;
 		}
 		else
 		{
-			if (pFish->speed < 160 + (i >> 1))
-				pFish->speed += uchar((GetRandomControl() & 3) + 1 + (i >> 1));
+			if (pFish->speed < (i >> 1) + 160)
+				pFish->speed += uchar((i >> 1) + (GetRandomControl() & 3) + 1);
 
-			if (pFish->speed > 160 + (i >> 1) - (i << 2))
-				pFish->speed = 160 + (i >> 1) - (i << 2);
+			if (pFish->speed > (i >> 1) - (i << 2) + 160)
+				pFish->speed = (i >> 1) - (i << 2) + 160;
 		}
 
 		if (GetRandomControl() & 1)
@@ -525,30 +522,28 @@ void ControlFish(short item_number)
 		x = pFish->x - ((pFish->speed * rcossin_tbl[pFish->angle << 1]) >> 13);
 		z = pFish->z + ((pFish->speed * rcossin_tbl[(pFish->angle << 1) + 1]) >> 13);
 
-		if (z < -32000)
-			z = -32000;
-		else if (z > 32000)
-			z = 32000;
-		if (x < -32000)
-			x = -32000;
-		else if (x > 32000)
-			x = 32000;
+		if (z < -0x7D00)
+			z = -0x7D00;
+		else if (z > 0x7D00)
+			z = 0x7D00;
+
+		if (x < -0x7D00)
+			x = -0x7D00;
+		else if (x > 0x7D00)
+			x = 0x7D00;
 
 		pFish->x = (short)x;
 		pFish->z = (short)z;
 
-		if (!pirahna_attack)
-		{
-			if (abs(pFish->y - pFish->desty) < 16)
-				pFish->desty = GetRandomControl() % lead_info[leader].Yrange;
-		}
-		else
+		if (pirahna_attack)
 		{
 			diff = enemy->pos.y_pos - item->pos.y_pos;
 
 			if (abs(pFish->y - pFish->desty) < 16)
 				pFish->desty = short(diff + (GetRandomControl() & 0xFF));
 		}
+		else if (abs(pFish->y - pFish->desty) < 16)
+			pFish->desty = GetRandomControl() % lead_info[leader].Yrange;
 
 		pFish->y += (pFish->desty - pFish->y) >> 4;
 	}
