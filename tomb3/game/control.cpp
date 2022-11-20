@@ -1902,6 +1902,65 @@ long xLOS(GAME_VECTOR* start, GAME_VECTOR* target)
 	return 1;
 }
 
+long ClipTarget(GAME_VECTOR* start, GAME_VECTOR* target)
+{
+	GAME_VECTOR src;
+	long dx, dy, dz;
+	short room_no;
+
+	room_no = target->room_number;
+
+	if (target->y > GetHeight(GetFloor(target->x, target->y, target->z, &room_no), target->x, target->y, target->z))
+	{
+		src.x = start->x + (7 * (target->x - start->x) >> 3);
+		src.y = start->y + (7 * (target->y - start->y) >> 3);
+		src.z = start->z + (7 * (target->z - start->z) >> 3);
+
+		for (int i = 3; i > 0; i--)
+		{
+			dx = src.x + (i * (target->x - src.x) >> 2);
+			dy = src.y + (i * (target->y - src.y) >> 2);
+			dz = src.z + (i * (target->z - src.z) >> 2);
+
+			if (dy < GetHeight(GetFloor(dx, dy, dz, &room_no), dx, dy, dz))
+				break;
+		}
+
+		target->x = dx;
+		target->y = dy;
+		target->z = dz;
+		target->room_number = room_no;
+		return 0;
+	}
+
+	room_no = target->room_number;
+
+	if (target->y < GetCeiling(GetFloor(target->x, target->y, target->z, &room_no), target->x, target->y, target->z))
+	{
+		src.x = start->x + (7 * (target->x - start->x) >> 3);
+		src.y = start->y + (7 * (target->y - start->y) >> 3);
+		src.z = start->z + (7 * (target->z - start->z) >> 3);
+
+		for (int i = 3; i > 0; i--)
+		{
+			dx = src.x + (i * (target->x - src.x) >> 2);
+			dy = src.y + (i * (target->y - src.y) >> 2);
+			dz = src.z + (i * (target->z - src.z) >> 2);
+
+			if (dy > GetCeiling(GetFloor(dx, dy, dz, &room_no), dx, dy, dz))
+				break;
+		}
+
+		target->x = dx;
+		target->y = dy;
+		target->z = dz;
+		target->room_number = room_no;
+		return 0;
+	}
+
+	return 1;
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, inject_rando ? 1 : replace);
@@ -1919,4 +1978,5 @@ void inject_control(bool replace)
 	INJECT(0x00422370, LOS, replace);
 	INJECT(0x00422410, zLOS, replace);
 	INJECT(0x00422700, xLOS, replace);
+	INJECT(0x004229F0, ClipTarget, replace);
 }
