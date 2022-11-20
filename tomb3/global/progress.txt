@@ -327,7 +327,7 @@ tomb3 progress.
 0x00422410	+	zLOS
 0x00422700	+	xLOS
 0x004229F0	+	ClipTarget
-0x00422C30		ObjectOnLOS
+0x00422C30	+	ObjectOnLOS
 0x00422F40		FlipMap
 0x00423000		RemoveRoomFlipItems
 0x004230A0		AddRoomFlipItems

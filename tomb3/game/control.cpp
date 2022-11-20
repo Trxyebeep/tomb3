@@ -26,6 +26,7 @@
 #ifdef TROYESTUFF
 #include "../newstuff/pausemenu.h"
 #endif
+#include "draw.h"
 
 long ControlPhase(long nframes, long demo_mode)
 {
@@ -1961,6 +1962,116 @@ long ClipTarget(GAME_VECTOR* start, GAME_VECTOR* target)
 	return 1;
 }
 
+long ObjectOnLOS(GAME_VECTOR* start, GAME_VECTOR* target)
+{
+	ROOM_INFO* r;
+	ITEM_INFO* item;
+	short* bounds;
+	short* xextent;
+	short* zextent;
+	long dx, dy, dz, dist, pass, x, y, z;
+	short item_number, objnum;
+
+	dx = target->x - start->x;
+	dy = target->y - start->y;
+	dz = target->z - start->z;
+
+	for (int i = 0; i < number_los_rooms; i++)
+	{
+		r = &room[los_rooms[i]];
+
+		for (item_number = r->item_number; item_number != NO_ITEM; item_number = item->next_item)
+		{
+			item = &items[item_number];
+
+			if (item->status == ITEM_DEACTIVATED)
+				continue;
+
+			objnum = item->object_number;
+
+			if (objnum != SMASH_WINDOW && objnum != SMASH_OBJECT1 && objnum != SMASH_OBJECT2 &&		//ok
+				objnum != SMASH_OBJECT3 && objnum != CARCASS && objnum != EXTRAFX6)
+				continue;
+
+			bounds = GetBoundsAccurate(item);
+
+			if ((item->pos.y_rot + 0x2000) & 0x4000)
+			{
+				xextent = &bounds[4];
+				zextent = bounds;
+			}
+			else
+			{
+				xextent = bounds;
+				zextent = &bounds[4];
+			}
+
+			pass = 0;
+
+			if (abs(dz) > abs(dx))
+			{
+				dist = item->pos.z_pos - start->z + zextent[0];
+
+				for (int j = 0; j < 2; j++)
+				{
+					if (!((dz ^ dist) & 0x80000000))
+					{
+						y = dy * dist / dz;
+
+						if (y > item->pos.y_pos - start->y + bounds[2] && y < item->pos.y_pos - start->y + bounds[3])
+						{
+							x = dx * dist / dz;
+
+							if (x < item->pos.x_pos + xextent[0] - start->x)
+								pass |= 1;
+							else if (x > item->pos.x_pos + xextent[1] - start->x)
+								pass |= 2;
+							else
+								return item_number;
+						}
+					}
+
+					dist = item->pos.z_pos - start->z + zextent[1];
+				}
+
+				if (pass == 3)
+					return item_number;
+			}
+			else
+			{
+				dist = item->pos.x_pos + xextent[0] - start->x;
+
+				for (int j = 0; j < 2; j++)
+				{
+					if (!((dx ^ dist) & 0x80000000))
+					{
+						y = dy * dist / dx;
+
+						if (y > item->pos.y_pos - start->y + bounds[2] && y < item->pos.y_pos - start->y + bounds[3])
+						{
+							z = dz * dist / dx;
+
+							if (z < item->pos.z_pos - start->z + zextent[0])
+								pass |= 1;
+							else if (z > item->pos.z_pos - start->z + zextent[1])
+								pass |= 2;
+							else
+								return item_number;
+						}
+					}
+
+					dist = item->pos.x_pos + xextent[1] - start->x;
+				}
+
+				if (pass == 3)
+					return item_number;
+			}
+		}
+	}
+
+	return NO_ITEM;
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, inject_rando ? 1 : replace);
@@ -1979,4 +2090,5 @@ void inject_control(bool replace)
 	INJECT(0x00422410, zLOS, replace);
 	INJECT(0x00422700, xLOS, replace);
 	INJECT(0x004229F0, ClipTarget, replace);
+	INJECT(0x00422C30, ObjectOnLOS, replace);
 }
