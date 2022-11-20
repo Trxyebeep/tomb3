@@ -69,7 +69,6 @@
 #define Option_Music_Volume	VAR_(0x004C70B0, short)
 #define Option_SFX_Volume	VAR_(0x004C70AC, short)
 #define chunky_flag	VAR_(0x006E2A10, long)
-#define first_hair	VAR_(0x00626310, long)
 #define bones	VAR_(0x006E22E8, long*)
 #define SmokeWindX	VAR_(0x006DB880, long)
 #define SmokeWindZ	VAR_(0x006DB884, long)
@@ -315,6 +314,7 @@
 #define dont_exit_quad	VAR_(0x006267BC, char)
 #define HandbrakeStarting	VAR_(0x006267C8, char)
 #define Stats_Requester	VAR_(0x00626490, REQUEST_INFO)
+#define number_los_rooms	VAR_(0x00625F6C, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
@@ -498,3 +498,4 @@
 #define LaSlot	ARRAY_(0x006267E0, SOUND_SLOT, [32])
 #define Valid_Level_Strings	ARRAY_(0x006D62E0, char, [24][50])
 #define Valid_Level_Strings2	ARRAY_(0x006D7220, char, [24][50])
+#define los_rooms	ARRAY_(0x006E29C0, long, [20])

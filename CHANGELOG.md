@@ -1,6 +1,8 @@
 # tomb3 changelog
 
-## Unreleased
+## [1.3.0](https://github.com/Trxyebeep/tomb3/tree/V1.3.0) (Nov. 20 2022)
+
+#### the project was officially renamed from tomb3decomp to tomb3 for this release.
 
 ### Original bug fixes
 
