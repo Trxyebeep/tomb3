@@ -3,11 +3,11 @@
 #include "winmain.h"
 #include "hwrender.h"
 
-#define D3DDev	VAR_(0x006CA124, LPDIRECT3DDEVICEX)
+static LPDIRECT3DDEVICEX D3DDev;
 
 HRESULT HWDrawPrimitive(D3DPRIMITIVETYPE dptPrimitiveType, D3DVERTEXTYPE dwVertexTypeDesc, LPVOID lpvVertices, ulong dwVertexCount, ulong dwFlags)
 {
-	return	D3DDev->DrawPrimitive(dptPrimitiveType, dwVertexTypeDesc, lpvVertices, dwVertexCount, dwFlags);
+	return D3DDev->DrawPrimitive(dptPrimitiveType, dwVertexTypeDesc, lpvVertices, dwVertexCount, dwFlags);
 }
 
 HRESULT HWBeginScene()
@@ -37,13 +37,16 @@ void InitDrawPrimitive(LPDIRECT3DDEVICEX lpD3DDev, LPDIRECTDRAWSURFACEX surf, bo
 		EndScene = HWEndScene;
 		SetRenderState = HWSetRenderState;
 	}
-	else if (App.DXConfig.MMX)
+	else	//obv software isn't empty in the original codebase.
 	{
+		if (App.DXConfig.MMX)
+		{
 
-	}
-	else
-	{
+		}
+		else
+		{
 
+		}
 	}
 }
 
