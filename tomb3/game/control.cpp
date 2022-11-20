@@ -2135,6 +2135,12 @@ void AddRoomFlipItems(ROOM_INFO* r)
 	}
 }
 
+void TriggerCDTrack(short value, short flags, short type)
+{
+	if (value > 1 && value < 128)
+		TriggerNormalCDTrack(value, flags, type);
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, inject_rando ? 1 : replace);
@@ -2157,4 +2163,5 @@ void inject_control(bool replace)
 	INJECT(0x00422F40, FlipMap, replace);
 	INJECT(0x00423000, RemoveRoomFlipItems, replace);
 	INJECT(0x004230A0, AddRoomFlipItems, replace);
+	INJECT(0x00423110, TriggerCDTrack, replace);
 }

@@ -331,7 +331,7 @@ tomb3 progress.
 0x00422F40	+	FlipMap
 0x00423000	+	RemoveRoomFlipItems
 0x004230A0	+	AddRoomFlipItems
-0x00423110		TriggerCDTrack
+0x00423110	+	TriggerCDTrack
 0x00423140		TriggerNormalCDTrack
 0x004231F0		CheckNoColFloorTriangle
 0x004232B0		CheckNoColCeilingTriangle
