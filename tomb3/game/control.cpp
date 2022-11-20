@@ -2072,6 +2072,35 @@ long ObjectOnLOS(GAME_VECTOR* start, GAME_VECTOR* target)
 	return NO_ITEM;
 }
 
+void FlipMap()
+{
+	ROOM_INFO* r;
+	ROOM_INFO* flipped;
+	ROOM_INFO temp;
+
+	for (int i = 0; i < number_rooms; i++)
+	{
+		r = &room[i];
+
+		if (r->flipped_room < 0)
+			continue;
+
+		flipped = &room[r->flipped_room];
+
+		RemoveRoomFlipItems(r);
+		memcpy(&temp, r, sizeof(ROOM_INFO));
+		memcpy(r, flipped, sizeof(ROOM_INFO));
+		memcpy(flipped, &temp, sizeof(ROOM_INFO));
+		r->flipped_room = flipped->flipped_room;
+		r->item_number = flipped->item_number;
+		r->fx_number = flipped->fx_number;
+		flipped->flipped_room = -1;
+		AddRoomFlipItems(r);
+	}
+
+	flip_status = !flip_status;
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, inject_rando ? 1 : replace);
@@ -2091,4 +2120,5 @@ void inject_control(bool replace)
 	INJECT(0x00422700, xLOS, replace);
 	INJECT(0x004229F0, ClipTarget, replace);
 	INJECT(0x00422C30, ObjectOnLOS, replace);
+	INJECT(0x00422F40, FlipMap, replace);
 }
