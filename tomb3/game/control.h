@@ -22,6 +22,7 @@ long ClipTarget(GAME_VECTOR* start, GAME_VECTOR* target);
 long ObjectOnLOS(GAME_VECTOR* start, GAME_VECTOR* target);
 void FlipMap();
 void RemoveRoomFlipItems(ROOM_INFO* r);
+void AddRoomFlipItems(ROOM_INFO* r);
 
 #define CheckNoColFloorTriangle	( (long(__cdecl*)(FLOOR_INFO*, long, long)) 0x004231F0 )
 #define CheckNoColCeilingTriangle	( (long(__cdecl*)(FLOOR_INFO*, long, long)) 0x004232B0 )

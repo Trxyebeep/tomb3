@@ -2121,6 +2121,20 @@ void RemoveRoomFlipItems(ROOM_INFO* r)
 	}
 }
 
+void AddRoomFlipItems(ROOM_INFO* r)
+{
+	ITEM_INFO* item;
+	short item_number;
+
+	for (item_number = r->item_number; item_number != NO_ITEM; item_number = item->next_item)
+	{
+		item = &items[item_number];
+
+		if (objects[item->object_number].control == MovableBlock)
+			AlterFloorHeight(item, -1024);
+	}
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, inject_rando ? 1 : replace);
@@ -2142,4 +2156,5 @@ void inject_control(bool replace)
 	INJECT(0x00422C30, ObjectOnLOS, replace);
 	INJECT(0x00422F40, FlipMap, replace);
 	INJECT(0x00423000, RemoveRoomFlipItems, replace);
+	INJECT(0x004230A0, AddRoomFlipItems, replace);
 }
