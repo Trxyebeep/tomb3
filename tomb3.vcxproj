@@ -265,6 +265,7 @@
     <ClInclude Include="tomb3\global\vars.h" />
     <ClInclude Include="tomb3\newstuff\LaraDraw.h" />
     <ClInclude Include="tomb3\newstuff\pausemenu.h" />
+    <ClInclude Include="tomb3\newstuff\psxsaves.h" />
     <ClInclude Include="tomb3\specific\audio.h" />
     <ClInclude Include="tomb3\specific\dd.h" />
     <ClInclude Include="tomb3\specific\di.h" />
@@ -401,6 +402,7 @@
     <ClCompile Include="tomb3\game\winston.cpp" />
     <ClCompile Include="tomb3\newstuff\LaraDraw.cpp" />
     <ClCompile Include="tomb3\newstuff\pausemenu.cpp" />
+    <ClCompile Include="tomb3\newstuff\psxsaves.cpp" />
     <ClCompile Include="tomb3\specific\audio.cpp" />
     <ClCompile Include="tomb3\specific\dd.cpp" />
     <ClCompile Include="tomb3\specific\di.cpp" />

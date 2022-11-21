@@ -433,6 +433,7 @@
     <ClInclude Include="tomb3\specific\winmain.h">
       <Filter>specific</Filter>
     </ClInclude>
+    <ClInclude Include="tomb3\newstuff\psxsaves.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tomb3\game\51baton.cpp">
@@ -837,6 +838,7 @@
     <ClCompile Include="tomb3\specific\winmain.cpp">
       <Filter>specific</Filter>
     </ClCompile>
+    <ClCompile Include="tomb3\newstuff\psxsaves.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="tomb3.rc" />

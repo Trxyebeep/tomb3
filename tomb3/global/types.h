@@ -2028,12 +2028,12 @@ struct TOMB3_OPTIONS
 	bool crawl_tilt;
 	bool improved_poison_bar;
 	bool custom_water_color;
-	bool psx_crystal_sfx;
 	bool psx_text_colors;
 	bool upv_wake;
 	bool psx_fov;
 	bool psx_boxes;
 	bool psx_mono;
+	bool psx_saving;
 	bool gold;
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum

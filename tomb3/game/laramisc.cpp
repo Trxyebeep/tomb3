@@ -286,6 +286,9 @@ void LaraCheatGetStuff()
 
 		if (objects[BIGMEDI_ITEM].loaded)
 			Inv_AddItem(BIGMEDI_ITEM);
+
+		if (objects[SAVEGAME_CRYSTAL_ITEM].loaded)
+			Inv_AddItem(SAVEGAME_CRYSTAL_ITEM);
 	}
 
 	lara.magnums.ammo = 1000;

@@ -13,9 +13,10 @@
 #include "game.h"
 
 #ifdef TROYESTUFF
-#include "../tomb3/tomb3.h"
 #include "output.h"
 #include "smain.h"
+#include "../newstuff/psxsaves.h"
+#include "../tomb3/tomb3.h"
 #endif
 
 static GLOBE_LEVEL GlobeLevelAngles[7] =
@@ -1713,6 +1714,16 @@ void do_passport_option(INVENTORY_ITEM* item)
 	}
 	else if (page == 1)
 	{
+#ifdef TROYESTUFF
+		if (tomb3.psx_saving && Inventory_Mode != INV_TITLE_MODE)
+		{
+			if (item->anim_direction == -1)
+				inputDB = IN_LEFT;
+			else
+				inputDB = IN_RIGHT;
+		}
+		else
+#endif
 		if (CurrentLevel == LV_GYM && Inventory_Mode != INV_TITLE_MODE || gameflow.loadsave_disabled)
 			inputDB = IN_RIGHT;
 		else if (mode == 1 || mode == 2)
@@ -1985,6 +1996,13 @@ void do_inventory_options(INVENTORY_ITEM* item)
 	case PICKUP_OPTION1:
 	case PICKUP_OPTION2:
 		return do_pickup_option(item);
+
+#ifdef TROYESTUFF
+	case SAVEGAME_CRYSTAL_OPTION:
+
+		if (tomb3.psx_saving)
+			return do_crystal_option(item);
+#endif
 
 	default:
 

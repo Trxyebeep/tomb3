@@ -262,19 +262,24 @@ void AnimatingPickUp(short item_number)
 
 		if (dx < 256 && dy < 1024 && dz < 256)
 		{
-			lara.poisoned = 0;
-			lara_item->hit_points += 500;
-
-			if (lara_item->hit_points > 1000)
-				lara_item->hit_points = 1000;
-			
 #ifdef TROYESTUFF
-			if (tomb3.psx_crystal_sfx)
+			if (tomb3.psx_saving)
+			{
+				Inv_AddItem(SAVEGAME_CRYSTAL_ITEM);
 				SoundEffect(SFX_SAVE_CRYSTAL, &lara_item->pos, SFX_DEFAULT);
+			}
 			else
 #endif
+			{
+				lara.poisoned = 0;
+				lara_item->hit_points += 500;
+
+				if (lara_item->hit_points > 1000)
+					lara_item->hit_points = 1000;
+
 				SoundEffect(SFX_MENU_MEDI, &lara_item->pos, SFX_DEFAULT);
-			
+			}
+
 			KillItem(item_number);
 		}
 	}
