@@ -292,7 +292,7 @@ tomb3 progress.
 0x0041EA60		CreatureCollision
 0x0041EBD0	+	ObjectCollision
 0x0041EC30	+	ObjectCollisionSub
-0x0041EC90		DoorCollision
+0x0041EC90	+	DoorCollision
 0x0041ED10		TrapCollision
 0x0041EDA0		ItemPushLara
 0x0041F0E0		TestBoundsCollide

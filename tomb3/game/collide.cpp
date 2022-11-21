@@ -747,6 +747,24 @@ void UpdateLaraRoom(ITEM_INFO* item, long height)
 		ItemNewRoom(lara.item_number, room_number);
 }
 
+void DoorCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (TestBoundsCollide(item, l, coll->radius) && TestCollision(item, l))
+	{
+		if (coll->enable_baddie_push)
+		{
+			if (item->current_anim_state == item->goal_anim_state)
+				ItemPushLara(item, l, coll, 0, 1);
+			else
+				ItemPushLara(item, l, coll, coll->enable_spaz, 1);
+		}
+	}
+}
+
 void inject_collide(bool replace)
 {
 	INJECT(0x0041E690, ShiftItem, replace);
@@ -759,4 +777,5 @@ void inject_collide(bool replace)
 	INJECT(0x0041E140, FindGridShift, replace);
 	INJECT(0x0041D500, GetCollisionInfo, replace);
 	INJECT(0x0041E6D0, UpdateLaraRoom, replace);
+	INJECT(0x0041EC90, DoorCollision, replace);
 }

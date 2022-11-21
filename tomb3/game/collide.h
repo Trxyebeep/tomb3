@@ -13,6 +13,7 @@ long CollideStaticObjects(COLL_INFO* coll, long x, long y, long z, short room_nu
 long FindGridShift(long src, long dst);
 void GetCollisionInfo(COLL_INFO* coll, long x, long y, long z, short room_number, long hite);
 void UpdateLaraRoom(ITEM_INFO* item, long height);
+void DoorCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
 
 #define LaraBaddieCollision	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x0041E8D0 )
 #define TestBoundsCollide	( (long(__cdecl*)(ITEM_INFO*, ITEM_INFO*, long)) 0x0041F0E0 )
