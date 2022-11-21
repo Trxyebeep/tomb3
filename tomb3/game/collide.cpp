@@ -4,6 +4,7 @@
 #include "control.h"
 #include "../3dsystem/phd_math.h"
 #include "items.h"
+#include "objects.h"
 
 void ShiftItem(ITEM_INFO* item, COLL_INFO* coll)
 {
@@ -765,6 +766,26 @@ void DoorCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	}
 }
 
+void TrapCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (item->status == ITEM_ACTIVE)
+	{
+		if (!TestBoundsCollide(item, l, coll->radius))
+			return;
+
+		TestCollision(item, l);
+
+		if (item->object_number == FAN && item->current_anim_state == 1)
+			ObjectCollision(item_number, l, coll);
+	}
+	else if (item->status != ITEM_INVISIBLE)
+		ObjectCollision(item_number, l, coll);
+}
+
 void inject_collide(bool replace)
 {
 	INJECT(0x0041E690, ShiftItem, replace);
@@ -778,4 +799,5 @@ void inject_collide(bool replace)
 	INJECT(0x0041D500, GetCollisionInfo, replace);
 	INJECT(0x0041E6D0, UpdateLaraRoom, replace);
 	INJECT(0x0041EC90, DoorCollision, replace);
+	INJECT(0x0041ED10, TrapCollision, replace);
 }
