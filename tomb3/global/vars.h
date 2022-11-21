@@ -501,3 +501,5 @@
 #define Valid_Level_Strings2	ARRAY_(0x006D7220, char, [24][50])
 #define los_rooms	ARRAY_(0x006E29C0, long, [20])
 #define OutsideRoomOffsets	ARRAY_(0x006E2A40, short, [729])
+#define splashes	ARRAY_(0x006DBB20, SPLASH_STRUCT, [4])
+#define ripples	ARRAY_(0x006D8780, RIPPLE_STRUCT, [16])

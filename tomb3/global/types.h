@@ -1635,6 +1635,31 @@ struct RIPPLE_STRUCT
 	uchar init;
 };
 
+struct SPLASH_VERTS
+{
+	short wx;
+	short wy;
+	short wz;
+	short xv;
+	long yv;
+	short zv;
+	short oxv;
+	short ozv;
+	uchar friction;
+	uchar gravity;
+};
+
+struct SPLASH_STRUCT
+{
+	long x;
+	long y;
+	long z;
+	char flags;
+	uchar life;
+	char pad[2];
+	SPLASH_VERTS sv[48];
+};
+
 struct SPLASH_SETUP
 {
 	int x;

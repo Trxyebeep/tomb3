@@ -45,6 +45,18 @@ static short BatMesh[5][3] =
 	{-144, 0, 192}
 };
 
+static uchar SplashLinks[32]
+{
+	32, 36, 0, 4,
+	36, 40, 4, 8,
+	40, 44, 8, 12,
+	44, 48, 12, 16,
+	48, 52, 16, 20,
+	52, 56, 20, 24,
+	56, 60, 24, 28,
+	60, 32, 28, 0
+};
+
 static uchar BatLinks[9] = { 0, 2, 4, 6, 0, 4, 2, 8, 4 };
 
 static RAINDROP raindrops[256];
@@ -4310,6 +4322,220 @@ void S_DrawSparks()
 	}
 }
 
+void S_DrawSplashes()
+{
+	DISPLAYMODE* dm;
+	SPLASH_STRUCT* splash;
+	RIPPLE_STRUCT* ripple;
+	SPLASH_VERTS* sv;
+	long* p;
+	uchar* links;
+	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c, c1, c2;
+	long w, h, nSprite, linkNum, n;
+	long coords[192];
+	long XYZ[3];
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w;
+	h = dm->h;
+
+	for (int i = 0; i < 4; i++)
+	{
+		splash = &splashes[i];
+
+		if (!(splash->flags & 1))
+			continue;
+
+		p = coords;
+
+		for (int j = 0; j < 48; j++)
+		{
+			sv = &splash->sv[j];
+			mCalcPoint(splash->x + (sv->wx >> 4), splash->y + sv->wy, splash->z + (sv->wz >> 4), XYZ);
+			ProjectPCoord(XYZ[0], XYZ[1], XYZ[2], p, w >> 1, h >> 1, phd_persp);
+			p += 4;
+		}
+
+		p = coords;
+
+		for (int j = 0; j < 3; j++)
+		{
+			if (j == 2 || !j && splash->flags & 4 || j == 1 && splash->flags & 8)
+				nSprite = ((wibble >> 4) & 3) + objects[EXPLOSION1].mesh_index + 4;
+			else
+				nSprite = objects[EXPLOSION1].mesh_index + 8;
+
+			links = SplashLinks;
+			linkNum = j << 6;
+
+			for (int k = 0; k < 8; k++)
+			{
+				n = *links++ + linkNum;
+				x1 = p[n];
+				y1 = p[n + 1];
+				z1 = p[n + 2];
+
+				n = *links++ + linkNum;
+				x2 = p[n];
+				y2 = p[n + 1];
+				z2 = p[n + 2];
+
+				n = *links++ + linkNum;
+				x3 = p[n];
+				y3 = p[n + 1];
+				z3 = p[n + 2];
+
+				n = *links++ + linkNum;
+				x4 = p[n];
+				y4 = p[n + 1];
+				z4 = p[n + 2];
+
+				if ((x1 < 0 && x2 < 0 && x3 < 0 && x4 < 0) || (x1 >= w && x2 >= w && x3 >= w && x4 >= w) ||
+					(y1 < 0 && y2 < 0 && y3 < 0 && y4 < 0) || (y1 >= h || y2 >= h || y3 >= h || y4 >= h))
+					continue;
+
+				z1 <<= W2V_SHIFT;
+
+				if (z1 < phd_znear || z1 > phd_zfar)
+					continue;
+
+				z2 <<= W2V_SHIFT;
+
+				if (z2 < phd_znear || z2 > phd_zfar)
+					continue;
+
+				z3 <<= W2V_SHIFT;
+
+				if (z3 < phd_znear || z3 > phd_zfar)
+					continue;
+
+				z4 <<= W2V_SHIFT;
+
+				if (z4 < phd_znear || z4 > phd_zfar)
+					continue;
+
+				c = splash->life >> 2;
+				c1 = c << 10 | c << 5 | c;
+
+				c -= splash->life >> 4;
+				c2 = c << 10 | c << 5 | c;
+
+				if ((x3 - x2) * (y1 - y2) - (y3 - y2) * (x1 - x2) >= 0)
+					HWI_InsertAlphaSprite_Sorted(x1, y1, z1, c1, x2, y2, z2, c1, x4, y4, z4, c2, x3, y3, z3, c2, nSprite, DT_POLY_WGTA, 0);
+				else
+					HWI_InsertAlphaSprite_Sorted(x1, y1, z1, c1, x3, y3, z3, c2, x4, y4, z4, c2, x2, y2, z2, c1, nSprite, DT_POLY_WGTA, 1);
+			}
+		}
+	}
+
+	for (int i = 0; i < 16; i++)
+	{
+		ripple = &ripples[i];
+
+		if (!(ripple->flags & 1))
+			continue;
+
+		p = coords;
+		n = ripple->size << 2;
+		nSprite = objects[EXPLOSION1].mesh_index + 9;
+
+		mCalcPoint(ripple->x - n, ripple->y, ripple->z - n, XYZ);
+		ProjectPCoord(XYZ[0], XYZ[1], XYZ[2], p, w >> 1, h >> 1, phd_persp);
+		p += 3;
+
+		mCalcPoint(ripple->x + n, ripple->y, ripple->z - n, XYZ);
+		ProjectPCoord(XYZ[0], XYZ[1], XYZ[2], p, w >> 1, h >> 1, phd_persp);
+		p += 3;
+
+		mCalcPoint(ripple->x - n, ripple->y, ripple->z + n, XYZ);
+		ProjectPCoord(XYZ[0], XYZ[1], XYZ[2], p, w >> 1, h >> 1, phd_persp);
+		p += 3;
+
+		mCalcPoint(ripple->x + n, ripple->y, ripple->z + n, XYZ);
+		ProjectPCoord(XYZ[0], XYZ[1], XYZ[2], p, w >> 1, h >> 1, phd_persp);
+
+		p -= 9;	//back to the start
+
+		x1 = *p++;
+		y1 = *p++;
+		z1 = *p++;
+
+		x2 = *p++;
+		y2 = *p++;
+		z2 = *p++;
+
+		x3 = *p++;
+		y3 = *p++;
+		z3 = *p++;
+
+		x4 = *p++;
+		y4 = *p++;
+		z4 = *p++;
+
+		if ((x1 < 0 && x2 < 0 && x3 < 0 && x4 < 0) || (x1 >= w && x2 >= w && x3 >= w && x4 >= w) ||
+			(y1 < 0 && y2 < 0 && y3 < 0 && y4 < 0) || (y1 >= h || y2 >= h || y3 >= h || y4 >= h))
+			continue;
+
+		z1 <<= W2V_SHIFT;
+
+		if (z1 < phd_znear || z1 > phd_zfar)
+			continue;
+
+		z2 <<= W2V_SHIFT;
+
+		if (z2 < phd_znear || z2 > phd_zfar)
+			continue;
+
+		z3 <<= W2V_SHIFT;
+
+		if (z3 < phd_znear || z3 > phd_zfar)
+			continue;
+
+		z4 <<= W2V_SHIFT;
+
+		if (z4 < phd_znear || z4 > phd_zfar)
+			continue;
+
+		if (ripple->flags & 0x10)
+		{
+			if (ripple->flags & 0x20)
+			{
+				nSprite = objects[EXPLOSION1].mesh_index;
+
+				if (ripple->init)
+					c1 = ripple->init >> 1;
+				else
+					c1 = ripple->life >> 1;
+
+				c = c1 << 10;	//only red
+			}
+			else
+			{
+				if (ripple->init)
+					c1 = ripple->init >> 2;
+				else
+					c1 = ripple->life >> 2;
+
+				c = c1 << 10 | c1 << 5 | c1;
+			}
+		}
+		else
+		{
+			if (ripple->init)
+				c1 = ripple->init >> 1;
+			else
+				c1 = ripple->life >> 1;
+
+			c = c1 << 10 | c1 << 5 | c1;
+		}
+
+		if ((x3 - x2) * (y1 - y2) - (y3 - y2) * (x1 - x2) >= 0)
+			HWI_InsertAlphaSprite_Sorted(x1, y1, z1, c, x2, y2, z2, c, x4, y4, z4, c, x3, y3, z3, c, nSprite, DT_POLY_WGTA, 0);
+		else
+			HWI_InsertAlphaSprite_Sorted(x1, y1, z1, c, x3, y3, z3, c, x4, y4, z4, c, x2, y2, z2, c, nSprite, DT_POLY_WGTA, 1);
+	}
+}
+
 #ifdef TROYESTUFF
 //New effects
 void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
@@ -4870,4 +5096,5 @@ void inject_draweffects(bool replace)
 	INJECT(0x00479810, S_DrawLaserBeam, replace);
 	INJECT(0x00476420, S_DrawBat, replace);
 	INJECT(0x0047B2C0, S_DrawSparks, replace);
+	INJECT(0x0047BAA0, S_DrawSplashes, replace);
 }
