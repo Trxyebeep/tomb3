@@ -2249,10 +2249,15 @@ long IsRoomOutside(long x, long y, long z)
 	ROOM_INFO* r;
 	FLOOR_INFO* floor;
 	uchar* p;
-	long h, c;
+	long h, c, offset;
 	short rn;
 
-	p = (uchar*)&OutsideRoomTable[OutsideRoomOffsets[27 * (x >> 12) + (z >> 12)]];
+	offset = (ushort)OutsideRoomOffsets[27 * (x >> 12) + (z >> 12)];
+
+	if (offset == -1)
+		return -2;
+
+	p = (uchar*)&OutsideRoomTable[offset];
 
 	while (*p != 255)
 	{
@@ -2265,9 +2270,13 @@ long IsRoomOutside(long x, long y, long z)
 		{
 			floor = GetFloor(x, y, z, &rn);
 			h = GetHeight(floor, x, y, z);
+
+			if (h == NO_HEIGHT || y > h)
+				return -2;
+
 			c = GetCeiling(floor, x, y, z);
 
-			if (h == NO_HEIGHT || y > h || y < c)
+			if (y < c)
 				return -2;
 
 			if (!(r->flags & (ROOM_UNDERWATER | ROOM_NOT_INSIDE)))
@@ -2309,5 +2318,5 @@ void inject_control(bool replace)
 	INJECT(0x00423140, TriggerNormalCDTrack, replace);
 	INJECT(0x004231F0, CheckNoColFloorTriangle, replace);
 	INJECT(0x004232B0, CheckNoColCeilingTriangle, replace);
-	INJECT(0x004233B0, IsRoomOutside, 0);
+	INJECT(0x004233B0, IsRoomOutside, replace);
 }
