@@ -2141,6 +2141,39 @@ void TriggerCDTrack(short value, short flags, short type)
 		TriggerNormalCDTrack(value, flags, type);
 }
 
+void TriggerNormalCDTrack(short value, short flags, short type)
+{
+	long code;
+
+	if (value >= 26 && value <= 36 || value >= 73 && value <= 78 || value == 117)
+	{
+		if (CurrentAtmosphere != value)
+		{
+			CurrentAtmosphere = (char)value;
+
+			if (IsAtmospherePlaying)
+				S_CDPlay(value, 1);
+
+			printf("Got new atmosphere %d\n", value);
+		}
+
+		return;
+	}
+
+	if (value != 2 || CurrentLevel != LV_GYM)
+	{
+		code = (flags >> 8) & 0x3F;		//(IFL_CODEBITS | IFL_INVISIBLE) = 0x3F00, then >> 8 = 0x3F
+
+		if ((cd_flags[value] & code) == code)
+			return;
+
+		cd_flags[value] |= code;
+	}
+
+	S_CDPlay(value, 0);
+	IsAtmospherePlaying = 0;
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, inject_rando ? 1 : replace);
@@ -2164,4 +2197,5 @@ void inject_control(bool replace)
 	INJECT(0x00423000, RemoveRoomFlipItems, replace);
 	INJECT(0x004230A0, AddRoomFlipItems, replace);
 	INJECT(0x00423110, TriggerCDTrack, replace);
+	INJECT(0x00423140, TriggerNormalCDTrack, replace);
 }
