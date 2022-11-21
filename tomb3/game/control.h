@@ -27,5 +27,4 @@ void TriggerCDTrack(short value, short flags, short type);
 void TriggerNormalCDTrack(short value, short flags, short type);
 long CheckNoColFloorTriangle(FLOOR_INFO* floor, long x, long z);
 long CheckNoColCeilingTriangle(FLOOR_INFO* floor, long x, long z);
-
-#define IsRoomOutside	( (long(__cdecl*)(long, long, long)) 0x004233B0 )
+long IsRoomOutside(long x, long y, long z);

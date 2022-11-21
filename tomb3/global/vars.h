@@ -289,6 +289,7 @@
 #define bossdata	VAR_(0x006D2240, BOSS_STRUCT)
 #define TribeBossItem	VAR_(0x006D2264, ITEM_INFO*)
 #define IsRoomOutsideNo	VAR_(0x006E2FFE, short)
+#define OutsideRoomTable	VAR_(0x006E2FF4, char*)
 #define nTPages	VAR_(0x006CED5C, long)
 #define game_closedown	VAR_(0x00625F70, long)
 #define GlobeLevel	VAR_(0x006D62CA, short)
@@ -499,3 +500,4 @@
 #define Valid_Level_Strings	ARRAY_(0x006D62E0, char, [24][50])
 #define Valid_Level_Strings2	ARRAY_(0x006D7220, char, [24][50])
 #define los_rooms	ARRAY_(0x006E29C0, long, [20])
+#define OutsideRoomOffsets	ARRAY_(0x006E2A40, short, [729])

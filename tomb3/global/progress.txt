@@ -335,7 +335,7 @@ tomb3 progress.
 0x00423140	+	TriggerNormalCDTrack
 0x004231F0	+	CheckNoColFloorTriangle
 0x004232B0	+	CheckNoColCeilingTriangle
-0x004233B0		IsRoomOutside
+0x004233B0	+	IsRoomOutside
 
 
 		game/croc.cpp

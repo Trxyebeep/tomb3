@@ -2244,6 +2244,45 @@ long CheckNoColCeilingTriangle(FLOOR_INFO* floor, long x, long z)
 	return 1;
 }
 
+long IsRoomOutside(long x, long y, long z)
+{
+	ROOM_INFO* r;
+	FLOOR_INFO* floor;
+	uchar* p;
+	long h, c;
+	short rn;
+
+	p = (uchar*)&OutsideRoomTable[OutsideRoomOffsets[27 * (x >> 12) + (z >> 12)]];
+
+	while (*p != 255)
+	{
+		rn = *p;
+		r = &room[rn];
+
+		if (y > r->maxceiling && y < r->minfloor &&
+			(z > r->z + WALL_SIZE && z < (r->x_size << WALL_SHIFT) + r->z - WALL_SIZE) &&
+			(x > r->x + WALL_SIZE && x < (r->y_size << WALL_SHIFT) + r->x - WALL_SIZE))
+		{
+			floor = GetFloor(x, y, z, &rn);
+			h = GetHeight(floor, x, y, z);
+			c = GetCeiling(floor, x, y, z);
+
+			if (h == NO_HEIGHT || y > h || y < c)
+				return -2;
+
+			if (!(r->flags & (ROOM_UNDERWATER | ROOM_NOT_INSIDE)))
+				return -3;
+
+			IsRoomOutsideNo = *p;
+			return 1;
+		}
+
+		p++;
+	}
+
+	return -2;
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, inject_rando ? 1 : replace);
@@ -2270,4 +2309,5 @@ void inject_control(bool replace)
 	INJECT(0x00423140, TriggerNormalCDTrack, replace);
 	INJECT(0x004231F0, CheckNoColFloorTriangle, replace);
 	INJECT(0x004232B0, CheckNoColCeilingTriangle, replace);
+	INJECT(0x004233B0, IsRoomOutside, 0);
 }
