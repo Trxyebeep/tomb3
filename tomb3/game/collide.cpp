@@ -837,6 +837,36 @@ long TestLaraPosition(short* bounds, ITEM_INFO* item, ITEM_INFO* l)
 	return x >= bounds[0] && x <= bounds[1] && y >= bounds[2] && y <= bounds[3] && z >= bounds[4] && z <= bounds[5];
 }
 
+void AlignLaraPosition(PHD_VECTOR* pos, ITEM_INFO* item, ITEM_INFO* l)
+{
+	FLOOR_INFO* floor;
+	long x, y, z, h, c;
+	short room_number;
+
+	l->pos.x_rot = item->pos.x_rot;
+	l->pos.y_rot = item->pos.y_rot;
+	l->pos.z_rot = item->pos.z_rot;
+
+	phd_PushUnitMatrix();
+	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+	x = item->pos.x_pos + ((pos->x * phd_mxptr[M00] + pos->y * phd_mxptr[M01] + pos->z * phd_mxptr[M02]) >> W2V_SHIFT);
+	y = item->pos.y_pos + ((pos->x * phd_mxptr[M10] + pos->y * phd_mxptr[M11] + pos->z * phd_mxptr[M12]) >> W2V_SHIFT);
+	z = item->pos.z_pos + ((pos->x * phd_mxptr[M20] + pos->y * phd_mxptr[M21] + pos->z * phd_mxptr[M22]) >> W2V_SHIFT);
+	phd_PopMatrix();
+
+	room_number = l->room_number;
+	floor = GetFloor(x, y, z, &room_number);
+	h = GetHeight(floor, x, y, z);
+	c = GetCeiling(floor, x, y, z);
+
+	if (abs(h - l->pos.y_pos) <= 256 && abs(c - l->pos.y_pos) >= 762)
+	{
+		l->pos.x_pos = x;
+		l->pos.y_pos = y;
+		l->pos.z_pos = z;
+	}
+}
+
 void inject_collide(bool replace)
 {
 	INJECT(0x0041E690, ShiftItem, replace);
@@ -853,4 +883,5 @@ void inject_collide(bool replace)
 	INJECT(0x0041ED10, TrapCollision, replace);
 	INJECT(0x0041F0E0, TestBoundsCollide, replace);
 	INJECT(0x0041F1B0, TestLaraPosition, replace);
+	INJECT(0x0041F2F0, AlignLaraPosition, replace);
 }
