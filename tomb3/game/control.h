@@ -26,6 +26,6 @@ void AddRoomFlipItems(ROOM_INFO* r);
 void TriggerCDTrack(short value, short flags, short type);
 void TriggerNormalCDTrack(short value, short flags, short type);
 long CheckNoColFloorTriangle(FLOOR_INFO* floor, long x, long z);
+long CheckNoColCeilingTriangle(FLOOR_INFO* floor, long x, long z);
 
-#define CheckNoColCeilingTriangle	( (long(__cdecl*)(FLOOR_INFO*, long, long)) 0x004232B0 )
 #define IsRoomOutside	( (long(__cdecl*)(long, long, long)) 0x004233B0 )

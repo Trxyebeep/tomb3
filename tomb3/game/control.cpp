@@ -2189,16 +2189,56 @@ long CheckNoColFloorTriangle(FLOOR_INFO* floor, long x, long z)
 	x &= 0x3FF;
 	z &= 0x3FF;
 
-	if (type == NOCOLF1T && x <= 1024 - z)
+	if (type == NOCOLF1T && x <= WALL_SIZE - z)
 		return -1;
 
-	if (type == NOCOLF1B && x > 1024 - z)
+	if (type == NOCOLF1B && x > WALL_SIZE - z)
 		return -1;
 
 	if (type == NOCOLF2T && x <= z)
 		return -1;
 
 	if (type == NOCOLF2B && x > z)
+		return -1;
+
+	return 1;
+}
+
+long CheckNoColCeilingTriangle(FLOOR_INFO* floor, long x, long z)
+{
+	short* data;
+	short type;
+
+	if (!floor->index)
+		return 0;
+
+	data = &floor_data[floor->index];
+	type = data[0] & 0x1F;
+
+	if (type == TILT_TYPE || type == SPLIT1 || type == SPLIT2 || type == NOCOLF1T || type == NOCOLF1B || type == NOCOLF2T || type == NOCOLF2B)
+	{
+		if (data[0] & 0x8000)
+			return 0;
+
+		type = data[2] & 0x1F;
+	}
+
+	if (type != NOCOLC1T && type != NOCOLC1B && type != NOCOLC2T && type != NOCOLC2B)
+		return 0;
+
+	x &= 0x3FF;
+	z &= 0x3FF;
+
+	if (type == NOCOLC1T && x <= WALL_SIZE - z)
+		return -1;
+
+	if (type == NOCOLC1B && x > WALL_SIZE - z)
+		return -1;
+
+	if (type == NOCOLC2T && x <= z)
+		return -1;
+
+	if (type == NOCOLC2B && x > z)
 		return -1;
 
 	return 1;
@@ -2229,4 +2269,5 @@ void inject_control(bool replace)
 	INJECT(0x00423110, TriggerCDTrack, replace);
 	INJECT(0x00423140, TriggerNormalCDTrack, replace);
 	INJECT(0x004231F0, CheckNoColFloorTriangle, replace);
+	INJECT(0x004232B0, CheckNoColCeilingTriangle, replace);
 }
