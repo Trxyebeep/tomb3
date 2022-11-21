@@ -867,6 +867,60 @@ void AlignLaraPosition(PHD_VECTOR* pos, ITEM_INFO* item, ITEM_INFO* l)
 	}
 }
 
+long Move3DPosTo3DPos(PHD_3DPOS* pos, PHD_3DPOS* dest, long speed, short rotation)
+{
+	long dx, dy, dz, distance;
+	short adiff;
+
+	dx = dest->x_pos - pos->x_pos;
+	dy = dest->y_pos - pos->y_pos;
+	dz = dest->z_pos - pos->z_pos;
+	distance = phd_sqrt(SQUARE(dx) + SQUARE(dy) + SQUARE(dz));
+
+	if (speed < distance)
+	{
+		pos->x_pos += speed * dx / distance;
+		pos->y_pos += speed * dy / distance;
+		pos->z_pos += speed * dz / distance;
+	}
+	else
+	{
+		pos->x_pos = dest->x_pos;
+		pos->y_pos = dest->y_pos;
+		pos->z_pos = dest->z_pos;
+	}
+
+	adiff = dest->x_rot - pos->x_rot;
+
+	if (adiff > rotation)
+		pos->x_rot += rotation;
+	else if (adiff < -rotation)
+		pos->x_rot -= rotation;
+	else
+		pos->x_rot = dest->x_rot;
+
+	adiff = dest->y_rot - pos->y_rot;
+
+	if (adiff > rotation)
+		pos->y_rot += rotation;
+	else if (adiff < -rotation)
+		pos->y_rot -= rotation;
+	else
+		pos->y_rot = dest->y_rot;
+
+	adiff = dest->z_rot - pos->z_rot;
+
+	if (adiff > rotation)
+		pos->z_rot += rotation;
+	else if (adiff < -rotation)
+		pos->z_rot -= rotation;
+	else
+		pos->z_rot = dest->z_rot;
+
+	return pos->x_pos == dest->x_pos && pos->y_pos == dest->y_pos && pos->z_pos == dest->z_pos &&
+		pos->x_rot == dest->x_rot && pos->y_rot == dest->y_rot && pos->z_rot == dest->z_rot;
+}
+
 void inject_collide(bool replace)
 {
 	INJECT(0x0041E690, ShiftItem, replace);
@@ -884,4 +938,5 @@ void inject_collide(bool replace)
 	INJECT(0x0041F0E0, TestBoundsCollide, replace);
 	INJECT(0x0041F1B0, TestLaraPosition, replace);
 	INJECT(0x0041F2F0, AlignLaraPosition, replace);
+	INJECT(0x0041F5C0, Move3DPosTo3DPos, replace);
 }
