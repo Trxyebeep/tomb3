@@ -2174,6 +2174,36 @@ void TriggerNormalCDTrack(short value, short flags, short type)
 	IsAtmospherePlaying = 0;
 }
 
+long CheckNoColFloorTriangle(FLOOR_INFO* floor, long x, long z)
+{
+	short type;
+
+	if (!floor->index)
+		return 0;
+
+	type = floor_data[floor->index] & 0x1F;
+
+	if (type != NOCOLF1T && type != NOCOLF1B && type != NOCOLF2T && type != NOCOLF2B)
+		return 0;
+
+	x &= 0x3FF;
+	z &= 0x3FF;
+
+	if (type == NOCOLF1T && x <= 1024 - z)
+		return -1;
+
+	if (type == NOCOLF1B && x > 1024 - z)
+		return -1;
+
+	if (type == NOCOLF2T && x <= z)
+		return -1;
+
+	if (type == NOCOLF2B && x > z)
+		return -1;
+
+	return 1;
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, inject_rando ? 1 : replace);
@@ -2198,4 +2228,5 @@ void inject_control(bool replace)
 	INJECT(0x004230A0, AddRoomFlipItems, replace);
 	INJECT(0x00423110, TriggerCDTrack, replace);
 	INJECT(0x00423140, TriggerNormalCDTrack, replace);
+	INJECT(0x004231F0, CheckNoColFloorTriangle, replace);
 }
