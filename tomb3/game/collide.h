@@ -15,9 +15,9 @@ void GetCollisionInfo(COLL_INFO* coll, long x, long y, long z, short room_number
 void UpdateLaraRoom(ITEM_INFO* item, long height);
 void DoorCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
 void TrapCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
+long TestBoundsCollide(ITEM_INFO* item, ITEM_INFO* l, long rad);
 
 #define LaraBaddieCollision	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x0041E8D0 )
-#define TestBoundsCollide	( (long(__cdecl*)(ITEM_INFO*, ITEM_INFO*, long)) 0x0041F0E0 )
 #define ItemPushLara	( (void(__cdecl*)(ITEM_INFO*, ITEM_INFO*, COLL_INFO*, long, long)) 0x0041EDA0 )
 #define TestLaraPosition	( (long(__cdecl*)(short*, ITEM_INFO*, ITEM_INFO*)) 0x0041F1B0 )
 #define MoveLaraPosition	( (long(__cdecl*)(PHD_VECTOR*, ITEM_INFO*, ITEM_INFO*)) 0x0041F430 )
