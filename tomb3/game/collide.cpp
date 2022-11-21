@@ -6,6 +6,7 @@
 #include "items.h"
 #include "objects.h"
 #include "draw.h"
+#include "../3dsystem/3d_gen.h"
 
 void ShiftItem(ITEM_INFO* item, COLL_INFO* coll)
 {
@@ -808,6 +809,34 @@ long TestBoundsCollide(ITEM_INFO* item, ITEM_INFO* l, long rad)
 	return x >= bounds[0] - rad && x <= rad + bounds[1] && z >= bounds[4] - rad && z <= rad + bounds[5];
 }
 
+long TestLaraPosition(short* bounds, ITEM_INFO* item, ITEM_INFO* l)
+{
+	PHD_VECTOR pos;
+	long x, y, z;
+	short xrot, yrot, zrot;
+
+	xrot = l->pos.x_rot - item->pos.x_rot;
+	yrot = l->pos.y_rot - item->pos.y_rot;
+	zrot = l->pos.z_rot - item->pos.z_rot;
+
+	if (xrot < bounds[6] || xrot > bounds[7] ||
+		yrot < bounds[8] || yrot > bounds[9] ||
+		zrot < bounds[10] || zrot > bounds[11])
+		return 0;
+
+	phd_PushUnitMatrix();
+	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+	pos.x = l->pos.x_pos - item->pos.x_pos;
+	pos.y = l->pos.y_pos - item->pos.y_pos;
+	pos.z = l->pos.z_pos - item->pos.z_pos;
+	x = (pos.x * phd_mxptr[M00] + pos.y * phd_mxptr[M10] + pos.z * phd_mxptr[M20]) >> W2V_SHIFT;
+	y = (pos.x * phd_mxptr[M01] + pos.y * phd_mxptr[M11] + pos.z * phd_mxptr[M21]) >> W2V_SHIFT;
+	z = (pos.x * phd_mxptr[M02] + pos.y * phd_mxptr[M12] + pos.z * phd_mxptr[M22]) >> W2V_SHIFT;
+	phd_PopMatrix();
+
+	return x >= bounds[0] && x <= bounds[1] && y >= bounds[2] && y <= bounds[3] && z >= bounds[4] && z <= bounds[5];
+}
+
 void inject_collide(bool replace)
 {
 	INJECT(0x0041E690, ShiftItem, replace);
@@ -823,4 +852,5 @@ void inject_collide(bool replace)
 	INJECT(0x0041EC90, DoorCollision, replace);
 	INJECT(0x0041ED10, TrapCollision, replace);
 	INJECT(0x0041F0E0, TestBoundsCollide, replace);
+	INJECT(0x0041F1B0, TestLaraPosition, replace);
 }

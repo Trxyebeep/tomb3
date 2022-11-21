@@ -296,7 +296,7 @@ tomb3 progress.
 0x0041ED10	+	TrapCollision
 0x0041EDA0		ItemPushLara
 0x0041F0E0	+	TestBoundsCollide
-0x0041F1B0		TestLaraPosition
+0x0041F1B0	+	TestLaraPosition
 0x0041F2F0		AlignLaraPosition
 0x0041F430		MoveLaraPosition
 0x0041F5C0		Move3DPosTo3DPos
