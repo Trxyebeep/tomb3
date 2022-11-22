@@ -3561,8 +3561,34 @@ long LaraTestHangJump(ITEM_INFO* item, COLL_INFO* coll)
 	else
 	{
 		item->pos.y_pos += coll->front_floor - bounds[2];
+
+#ifdef TROYESTUFF
+		switch (ushort(item->pos.y_rot + 0x2000) / 0x4000)
+		{
+		case NORTH:
+			item->pos.z_pos = (item->pos.z_pos | 0x3FF) - 100;
+			item->pos.x_pos += coll->shift.x;
+			break;
+
+		case EAST:
+			item->pos.x_pos = (item->pos.x_pos | 0x3FF) - 100;
+			item->pos.z_pos += coll->shift.z;
+			break;
+
+		case SOUTH:
+			item->pos.z_pos = (item->pos.z_pos & ~0x3FF) + 100;
+			item->pos.x_pos += coll->shift.x;
+			break;
+
+		case WEST:
+			item->pos.x_pos = (item->pos.x_pos & ~0x3FF) + 100;
+			item->pos.z_pos += coll->shift.z;
+			break;
+		}
+#else
 		item->pos.x_pos += coll->shift.x;
 		item->pos.z_pos += coll->shift.z;
+#endif
 	}
 
 	item->gravity_status = 1;
