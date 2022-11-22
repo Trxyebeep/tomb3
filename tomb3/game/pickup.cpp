@@ -255,7 +255,14 @@ void AnimatingPickUp(short item_number)
 	if (item->object_number == SAVEGAME_CRYSTAL_ITEM)
 	{
 		item->pos.y_pos = item->item_flags[2] - abs(ang >> 4) - 64;
-		TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 8, 0, c, 0);
+
+#ifdef TROYESTUFF
+		if (tomb3.blue_crystal_light)
+			TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 8, 0, c >> 2, c);
+		else
+#endif
+			TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 8, 0, c, 0);
+
 		dx = abs(item->pos.x_pos - lara_item->pos.x_pos);
 		dy = abs(item->pos.y_pos - lara_item->pos.y_pos);
 		dz = abs(item->pos.z_pos - lara_item->pos.z_pos);

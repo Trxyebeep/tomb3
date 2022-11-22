@@ -9,6 +9,7 @@
 ### tomb3 additions
 
 - Add PSX save crystal system.
+- Add option for blue crystal light.
 
 ### tomb3 bug fixes
 
