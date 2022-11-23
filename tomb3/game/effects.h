@@ -20,6 +20,7 @@ void lara_normal_effect(ITEM_INFO* item);
 void BoilerFX(ITEM_INFO* item);
 void FloodFX(ITEM_INFO* item);
 void RubbleFX(ITEM_INFO* item);
+void ChandelierFX(ITEM_INFO* item);
 
 #define effect_routines (*(void(__cdecl*(*)[60])(ITEM_INFO*)) 0x004C5478)
 

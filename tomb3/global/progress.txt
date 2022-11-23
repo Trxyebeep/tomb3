@@ -475,7 +475,7 @@ tomb3 progress.
 0x0042EDE0	+	BoilerFX
 0x0042EE00	+	FloodFX
 0x0042EEA0	+	RubbleFX
-0x0042EED0		ChandelierFX
+0x0042EED0	+	ChandelierFX
 0x0042EF00		ExplosionFX
 0x0042EF30		PistonFX
 0x0042EF50		CurtainFX

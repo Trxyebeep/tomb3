@@ -356,6 +356,15 @@ void RubbleFX(ITEM_INFO* item)
 	flipeffect = -1;
 }
 
+void ChandelierFX(ITEM_INFO* item)
+{
+	SoundEffect(SFX_SMALL_DOOR_SUBWAY, 0, SFX_DEFAULT);
+	fliptimer++;
+
+	if (fliptimer > 30)
+		flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -375,4 +384,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042EDE0, BoilerFX, replace);
 	INJECT(0x0042EE00, FloodFX, replace);
 	INJECT(0x0042EEA0, RubbleFX, replace);
+	INJECT(0x0042EED0, ChandelierFX, replace);
 }
