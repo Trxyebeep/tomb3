@@ -365,6 +365,13 @@ void ChandelierFX(ITEM_INFO* item)
 		flipeffect = -1;
 }
 
+void ExplosionFX(ITEM_INFO* item)
+{
+	SoundEffect(SFX_EXPLOSION1, 0, SFX_DEFAULT);
+	camera.bounce = -75;
+	flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -385,4 +392,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042EE00, FloodFX, replace);
 	INJECT(0x0042EEA0, RubbleFX, replace);
 	INJECT(0x0042EED0, ChandelierFX, replace);
+	INJECT(0x0042EF00, ExplosionFX, replace);
 }
