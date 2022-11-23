@@ -485,7 +485,7 @@ tomb3 progress.
 0x0042F000	+	ControlLaraAlarm
 0x0042F040	+	ControlBirdTweeter
 0x0042F0B0	+	DoChimeSound
-0x0042F110		ControlClockChimes
+0x0042F110	+	ControlClockChimes
 0x0042F180		lara_hands_free
 0x0042F190		flip_map_effect
 0x0042F1A0		draw_right_gun

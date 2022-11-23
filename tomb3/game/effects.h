@@ -30,6 +30,7 @@ void ControlDingDong(short item_number);
 void ControlLaraAlarm(short item_number);
 void ControlBirdTweeter(short item_number);
 void DoChimeSound(ITEM_INFO* item);
+void ControlClockChimes(short item_number);
 
 #define effect_routines (*(void(__cdecl*(*)[60])(ITEM_INFO*)) 0x004C5478)
 

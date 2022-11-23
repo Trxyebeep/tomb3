@@ -444,6 +444,30 @@ void DoChimeSound(ITEM_INFO* item)
 	SoundEffect(SFX_ALARM_1, &pos, SFX_DEFAULT);
 }
 
+void ControlClockChimes(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (item->timer)
+	{
+		if (item->timer % 60 == 59)
+			DoChimeSound(item);
+
+		item->timer--;
+
+		if (!item->timer)
+		{
+			DoChimeSound(item);
+			item->timer = -1;
+			RemoveActiveItem(item_number);
+			item->status = ITEM_INACTIVE;
+			item->flags &= ~IFL_CODEBITS;
+		}
+	}
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -473,4 +497,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F000, ControlLaraAlarm, replace);
 	INJECT(0x0042F040, ControlBirdTweeter, replace);
 	INJECT(0x0042F0B0, DoChimeSound, replace);
+	INJECT(0x0042F110, ControlClockChimes, replace);
 }
