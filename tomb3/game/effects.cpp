@@ -434,6 +434,16 @@ void ControlBirdTweeter(short item_number)
 		SoundEffect(SFX_DRIPS_REVERB, &item->pos, SFX_DEFAULT);
 }
 
+void DoChimeSound(ITEM_INFO* item)
+{
+	PHD_3DPOS pos;
+
+	pos.x_pos = lara_item->pos.x_pos + ((item->pos.x_pos - lara_item->pos.x_pos) >> 6);
+	pos.y_pos = lara_item->pos.y_pos + ((item->pos.y_pos - lara_item->pos.y_pos) >> 6);
+	pos.z_pos = lara_item->pos.z_pos + ((item->pos.z_pos - lara_item->pos.z_pos) >> 6);
+	SoundEffect(SFX_ALARM_1, &pos, SFX_DEFAULT);
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -462,4 +472,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042EFB0, ControlDingDong, replace);
 	INJECT(0x0042F000, ControlLaraAlarm, replace);
 	INJECT(0x0042F040, ControlBirdTweeter, replace);
+	INJECT(0x0042F0B0, DoChimeSound, replace);
 }
