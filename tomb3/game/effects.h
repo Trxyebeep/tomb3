@@ -16,6 +16,7 @@ void WaterFall(short item_number);
 void finish_level_effect(ITEM_INFO* item);
 void turn180_effect(ITEM_INFO* item);
 void floor_shake_effect(ITEM_INFO* item);
+void lara_normal_effect(ITEM_INFO* item);
 
 #define effect_routines (*(void(__cdecl*(*)[60])(ITEM_INFO*)) 0x004C5478)
 

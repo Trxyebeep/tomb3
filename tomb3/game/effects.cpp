@@ -10,6 +10,7 @@
 #include "objects.h"
 #include "../3dsystem/phd_math.h"
 #include "../specific/litesrc.h"
+#include "../3dsystem/3d_gen.h"
 
 void LaraBreath(ITEM_INFO* item)
 {
@@ -310,6 +311,16 @@ void floor_shake_effect(ITEM_INFO* item)
 		camera.bounce = 100 * ((SQUARE(x) + SQUARE(y) + SQUARE(z)) / 256 - 0x100000) / 0x100000;
 }
 
+void lara_normal_effect(ITEM_INFO* item)
+{
+	item->anim_number = ANIM_STOP;
+	item->frame_number = anims[ANIM_STOP].frame_base;
+	item->current_anim_state = AS_STOP;
+	item->goal_anim_state = AS_STOP;
+	camera.type = CHASE_CAMERA;
+	AlterFOV(14560);
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -325,4 +336,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042ECD0, finish_level_effect, replace);
 	INJECT(0x0042ECE0, turn180_effect, replace);
 	INJECT(0x0042ED00, floor_shake_effect, replace);
+	INJECT(0x0042EDA0, lara_normal_effect, replace);
 }
