@@ -292,6 +292,12 @@ void finish_level_effect(ITEM_INFO* item)
 	level_complete = 1;
 }
 
+void turn180_effect(ITEM_INFO* item)
+{
+	item->pos.y_rot += 0x8000;
+	item->pos.x_rot = -item->pos.x_rot;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -305,4 +311,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042E9F0, WadeSplash, replace);
 	INJECT(0x0042EBB0, WaterFall, replace);
 	INJECT(0x0042ECD0, finish_level_effect, replace);
+	INJECT(0x0042ECE0, turn180_effect, replace);
 }
