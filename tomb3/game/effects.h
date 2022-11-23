@@ -25,6 +25,7 @@ void ExplosionFX(ITEM_INFO* item);
 void PistonFX(ITEM_INFO* item);
 void CurtainFX(ITEM_INFO* item);
 void StatueFX(ITEM_INFO* item);
+void SetChangeFX(ITEM_INFO* item);
 
 #define effect_routines (*(void(__cdecl*(*)[60])(ITEM_INFO*)) 0x004C5478)
 
