@@ -321,6 +321,12 @@ void lara_normal_effect(ITEM_INFO* item)
 	AlterFOV(14560);
 }
 
+void BoilerFX(ITEM_INFO* item)
+{
+	SoundEffect(SFX_WILARD_FOOT_STEPS, 0, SFX_DEFAULT);
+	flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -337,4 +343,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042ECE0, turn180_effect, replace);
 	INJECT(0x0042ED00, floor_shake_effect, replace);
 	INJECT(0x0042EDA0, lara_normal_effect, replace);
+	INJECT(0x0042EDE0, BoilerFX, replace);
 }
