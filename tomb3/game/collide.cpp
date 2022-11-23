@@ -921,6 +921,37 @@ long Move3DPosTo3DPos(PHD_3DPOS* pos, PHD_3DPOS* dest, long speed, short rotatio
 		pos->x_rot == dest->x_rot && pos->y_rot == dest->y_rot && pos->z_rot == dest->z_rot;
 }
 
+long MoveLaraPosition(PHD_VECTOR* v, ITEM_INFO* item, ITEM_INFO* l)
+{
+	PHD_3DPOS pos;
+	long height;
+	short room_number;
+
+	pos.x_rot = item->pos.x_rot;
+	pos.y_rot = item->pos.y_rot;
+	pos.z_rot = item->pos.z_rot;
+	phd_PushUnitMatrix();
+	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+	pos.x_pos = item->pos.x_pos + ((v->x * phd_mxptr[M00] + v->y * phd_mxptr[M01] + v->z * phd_mxptr[M02]) >> W2V_SHIFT);
+	pos.y_pos = item->pos.y_pos + ((v->x * phd_mxptr[M10] + v->y * phd_mxptr[M11] + v->z * phd_mxptr[M12]) >> W2V_SHIFT);
+	pos.z_pos = item->pos.z_pos + ((v->x * phd_mxptr[M20] + v->y * phd_mxptr[M21] + v->z * phd_mxptr[M22]) >> W2V_SHIFT);
+	phd_PopMatrix();
+
+	if (item->object_number == FLARE_ITEM)
+	{
+		room_number = l->room_number;
+		height = GetHeight(GetFloor(pos.x_pos, pos.y_pos, pos.z_pos, &room_number), pos.x_pos, pos.y_pos, pos.z_pos);
+
+		if (abs(height - l->pos.y_pos) > 512)
+			return 0;
+
+		if (phd_sqrt(SQUARE(pos.x_pos - l->pos.x_pos) + SQUARE(pos.y_pos - l->pos.y_pos) + SQUARE(pos.z_pos - l->pos.z_pos)) < 128)
+			return 1;
+	}
+
+	return Move3DPosTo3DPos(&l->pos, &pos, 16, 364);
+}
+
 void inject_collide(bool replace)
 {
 	INJECT(0x0041E690, ShiftItem, replace);
@@ -939,4 +970,5 @@ void inject_collide(bool replace)
 	INJECT(0x0041F1B0, TestLaraPosition, replace);
 	INJECT(0x0041F2F0, AlignLaraPosition, replace);
 	INJECT(0x0041F5C0, Move3DPosTo3DPos, replace);
+	INJECT(0x0041F430, MoveLaraPosition, replace);
 }
