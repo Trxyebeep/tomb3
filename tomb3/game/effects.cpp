@@ -298,6 +298,18 @@ void turn180_effect(ITEM_INFO* item)
 	item->pos.x_rot = -item->pos.x_rot;
 }
 
+void floor_shake_effect(ITEM_INFO* item)
+{
+	long x, y, z;
+
+	x = item->pos.x_pos - camera.pos.x;
+	y = item->pos.y_pos - camera.pos.y;
+	z = item->pos.z_pos - camera.pos.z;
+
+	if ((abs(x) < 0x4000) && (abs(y) < 0x4000) && (abs(z) < 0x4000))
+		camera.bounce = 100 * ((SQUARE(x) + SQUARE(y) + SQUARE(z)) / 256 - 0x100000) / 0x100000;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -312,4 +324,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042EBB0, WaterFall, replace);
 	INJECT(0x0042ECD0, finish_level_effect, replace);
 	INJECT(0x0042ECE0, turn180_effect, replace);
+	INJECT(0x0042ED00, floor_shake_effect, replace);
 }
