@@ -372,6 +372,12 @@ void ExplosionFX(ITEM_INFO* item)
 	flipeffect = -1;
 }
 
+void PistonFX(ITEM_INFO* item)
+{
+	SoundEffect(SFX_LONDON_MERCENARY_DEATH, 0, SFX_DEFAULT);
+	flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -393,4 +399,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042EEA0, RubbleFX, replace);
 	INJECT(0x0042EED0, ChandelierFX, replace);
 	INJECT(0x0042EF00, ExplosionFX, replace);
+	INJECT(0x0042EF30, PistonFX, replace);
 }
