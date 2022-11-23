@@ -483,7 +483,7 @@ tomb3 progress.
 0x0042EF90	+	SetChangeFX
 0x0042EFB0	+	ControlDingDong
 0x0042F000	+	ControlLaraAlarm
-0x0042F040		ControlBirdTweeter
+0x0042F040	+	ControlBirdTweeter
 0x0042F0B0		DoChimeSound
 0x0042F110		ControlClockChimes
 0x0042F180		lara_hands_free

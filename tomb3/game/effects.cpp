@@ -419,6 +419,21 @@ void ControlLaraAlarm(short item_number)
 		SoundEffect(SFX_BURGLAR_ALARM, &item->pos, SFX_DEFAULT);
 }
 
+void ControlBirdTweeter(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (item->object_number == BIRD_TWEETER)
+	{
+		if (GetRandomControl() < 1024)
+			SoundEffect(SFX_WALL_BLADES, &item->pos, SFX_DEFAULT);
+	}
+	else if (GetRandomControl() < 256)
+		SoundEffect(SFX_DRIPS_REVERB, &item->pos, SFX_DEFAULT);
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -446,4 +461,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042EF90, SetChangeFX, replace);
 	INJECT(0x0042EFB0, ControlDingDong, replace);
 	INJECT(0x0042F000, ControlLaraAlarm, replace);
+	INJECT(0x0042F040, ControlBirdTweeter, replace);
 }
