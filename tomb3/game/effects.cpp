@@ -83,9 +83,16 @@ void SoundEffects()
 	SOUND_EndScene();
 }
 
+void Richochet(GAME_VECTOR* pos)
+{
+	TriggerRicochetSpark(pos, (mGetAngle(pos->z, pos->x, lara_item->pos.z_pos, lara_item->pos.x_pos) >> 4) & 0xFFF, 16);
+	SoundEffect(SFX_LARA_RICOCHET, (PHD_3DPOS*)pos, SFX_DEFAULT);
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
 	INJECT(0x0042E170, ItemNearLara, replace);
 	INJECT(0x0042E200, SoundEffects, replace);
+	INJECT(0x0042E270, Richochet, replace);
 }
