@@ -4,6 +4,7 @@
 #include "../specific/game.h"
 #include "effect2.h"
 #include "draw.h"
+#include "sound.h"
 
 void LaraBreath(ITEM_INFO* item)
 {
@@ -59,8 +60,32 @@ long ItemNearLara(PHD_3DPOS* pos, long rad)
 	return 0;
 }
 
+void SoundEffects()
+{
+	OBJECT_VECTOR* sfx;
+
+	for (int i = 0; i < number_sound_effects; i++)
+	{
+		sfx = &sound_effects[i];
+
+		if (flip_status)
+		{
+			if (sfx->flags & 0x40)
+				SoundEffect(sfx->data, (PHD_3DPOS*)sfx, 0);
+		}
+		else if (sfx->flags & 0x80)
+			SoundEffect(sfx->data, (PHD_3DPOS*)sfx, 0);
+	}
+
+	if (flipeffect != -1)
+		effect_routines[flipeffect](0);
+
+	SOUND_EndScene();
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
 	INJECT(0x0042E170, ItemNearLara, replace);
+	INJECT(0x0042E200, SoundEffects, replace);
 }
