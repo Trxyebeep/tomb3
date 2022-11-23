@@ -384,6 +384,12 @@ void CurtainFX(ITEM_INFO* item)
 	flipeffect = -1;
 }
 
+void StatueFX(ITEM_INFO* item)
+{
+	SoundEffect(SFX_BOO_MUTE, 0, SFX_DEFAULT);
+	flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -407,4 +413,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042EF00, ExplosionFX, replace);
 	INJECT(0x0042EF30, PistonFX, replace);
 	INJECT(0x0042EF50, CurtainFX, replace);
+	INJECT(0x0042EF70, StatueFX, replace);
 }
