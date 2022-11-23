@@ -396,6 +396,19 @@ void SetChangeFX(ITEM_INFO* item)
 	flipeffect = -1;
 }
 
+void ControlDingDong(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if ((item->flags & IFL_CODEBITS) == IFL_CODEBITS)
+	{
+		SoundEffect(SFX_DOORBELL, &item->pos, SFX_DEFAULT);
+		item->flags -= 0x3E00;
+	}
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -421,4 +434,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042EF50, CurtainFX, replace);
 	INJECT(0x0042EF70, StatueFX, replace);
 	INJECT(0x0042EF90, SetChangeFX, replace);
+	INJECT(0x0042EFB0, ControlDingDong, replace);
 }

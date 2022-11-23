@@ -26,6 +26,7 @@ void PistonFX(ITEM_INFO* item);
 void CurtainFX(ITEM_INFO* item);
 void StatueFX(ITEM_INFO* item);
 void SetChangeFX(ITEM_INFO* item);
+void ControlDingDong(short item_number);
 
 #define effect_routines (*(void(__cdecl*(*)[60])(ITEM_INFO*)) 0x004C5478)
 
