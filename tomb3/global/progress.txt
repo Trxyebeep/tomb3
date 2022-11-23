@@ -454,7 +454,7 @@ tomb3 progress.
 
 		game/effects.cpp
 
-0x0042E170		ItemNearLara
+0x0042E170	+	ItemNearLara
 0x0042E200		SoundEffects
 0x0042E270		Richochet
 0x0042E2C0		DoBloodSplat
