@@ -216,6 +216,52 @@ void Splash(ITEM_INFO* item)
 	}
 }
 
+void WadeSplash(ITEM_INFO* item, long water, long depth)
+{
+	short* bounds;
+	short room_number;
+
+	room_number = item->room_number;
+	GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+
+	if (!(room[room_number].flags & ROOM_UNDERWATER))
+		return;
+
+	bounds = GetBestFrame(item);
+
+	if (item->pos.y_pos + bounds[2] > water || item->pos.y_pos + bounds[3] < water)
+		return;
+
+	if (item->fallspeed > 0 && depth < 474 && !SplashCount)
+	{
+		splash_setup.x = item->pos.x_pos;
+		splash_setup.y = water;
+		splash_setup.z = item->pos.z_pos;
+		splash_setup.InnerXZoff = 16;
+		splash_setup.InnerXZsize = 12;
+		splash_setup.InnerYsize = -96;
+		splash_setup.InnerXZvel = 160;
+		splash_setup.InnerGravity = 128;
+		splash_setup.InnerYvel = -72 * item->fallspeed;
+		splash_setup.InnerFriction = 7;
+		splash_setup.MiddleXZoff = 24;
+		splash_setup.MiddleXZsize = 24;
+		splash_setup.MiddleYsize = -64;
+		splash_setup.MiddleXZvel = 224;
+		splash_setup.MiddleYvel = -36 * item->fallspeed;
+		splash_setup.MiddleGravity = 72;
+		splash_setup.MiddleFriction = 8;
+		splash_setup.OuterXZoff = 32;
+		splash_setup.OuterXZsize = 32;
+		splash_setup.OuterXZvel = 272;
+		splash_setup.OuterFriction = 9;
+		SetupSplash(&splash_setup);
+		SplashCount = 16;
+	}
+	else if (!(wibble & 0xF) && (!(GetRandomControl() & 0xF) || item->current_anim_state != AS_STOP))
+		SetupRipple(item->pos.x_pos, water, item->pos.z_pos, -16 - (GetRandomControl() & 0xF), item->current_anim_state == AS_STOP);
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -226,4 +272,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042E5C0, LaraBubbles, replace);
 	INJECT(0x0042E750, ControlBubble1, replace);
 	INJECT(0x0042E8C0, Splash, replace);
+	INJECT(0x0042E9F0, WadeSplash, replace);
 }
