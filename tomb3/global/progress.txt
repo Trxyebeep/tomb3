@@ -478,7 +478,7 @@ tomb3 progress.
 0x0042EED0	+	ChandelierFX
 0x0042EF00	+	ExplosionFX
 0x0042EF30	+	PistonFX
-0x0042EF50		CurtainFX
+0x0042EF50	+	CurtainFX
 0x0042EF70		StatueFX
 0x0042EF90		SetChangeFX
 0x0042EFB0		ControlDingDong
