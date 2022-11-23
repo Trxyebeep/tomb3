@@ -7,6 +7,7 @@
 #include "../specific/litesrc.h"
 #include "../specific/game.h"
 #include "effect2.h"
+#include "effects.h"
 #include "lara.h"
 #include "sound.h"
 #include "items.h"

@@ -5,6 +5,9 @@
 #include "effect2.h"
 #include "draw.h"
 #include "sound.h"
+#include "control.h"
+#include "items.h"
+#include "objects.h"
 
 void LaraBreath(ITEM_INFO* item)
 {
@@ -89,10 +92,39 @@ void Richochet(GAME_VECTOR* pos)
 	SoundEffect(SFX_LARA_RICOCHET, (PHD_3DPOS*)pos, SFX_DEFAULT);
 }
 
+void CreateBubble(PHD_3DPOS* pos, short room_number, long size, long sizerange)
+{
+	FX_INFO* fx;
+	short rn, fxnum;
+
+	rn = room_number;
+	GetFloor(pos->x_pos, pos->y_pos, pos->z_pos, &room_number);
+
+	if (room[room_number].flags & ROOM_UNDERWATER)
+	{
+		fxnum = CreateEffect(rn);
+
+		if (fxnum != NO_ITEM)
+		{
+			fx = &effects[fxnum];
+			fx->pos.x_pos = pos->x_pos;
+			fx->pos.y_pos = pos->y_pos;
+			fx->pos.z_pos = pos->z_pos;
+			fx->speed = (GetRandomControl() & 0xFF) + 64;
+			fx->object_number = BUBBLES1;
+			fx->flag1 = (GetRandomControl() & 0x1F) + 32;
+			fx->flag2 = 0;
+			fx->frame_number = 0;
+			TriggerBubble(pos->x_pos, pos->y_pos, pos->z_pos, size, sizerange, fxnum);
+		}
+	}
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
 	INJECT(0x0042E170, ItemNearLara, replace);
 	INJECT(0x0042E200, SoundEffects, replace);
 	INJECT(0x0042E270, Richochet, replace);
+	INJECT(0x0042E4F0, CreateBubble, replace);
 }
