@@ -468,7 +468,7 @@ tomb3 progress.
 0x0042E8C0	+	Splash
 0x0042E9F0	+	WadeSplash
 0x0042EBB0	+	WaterFall
-0x0042ECD0		finish_level_effect
+0x0042ECD0	+	finish_level_effect
 0x0042ECE0		turn180_effect
 0x0042ED00		floor_shake_effect
 0x0042EDA0		lara_normal_effect

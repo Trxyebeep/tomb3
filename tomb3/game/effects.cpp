@@ -287,6 +287,11 @@ void WaterFall(short item_number)
 	SoundEffect(SFX_WATERFALL_LOOP, &item->pos, SFX_DEFAULT);
 }
 
+void finish_level_effect(ITEM_INFO* item)
+{
+	level_complete = 1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -299,4 +304,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042E8C0, Splash, replace);
 	INJECT(0x0042E9F0, WadeSplash, replace);
 	INJECT(0x0042EBB0, WaterFall, replace);
+	INJECT(0x0042ECD0, finish_level_effect, replace);
 }
