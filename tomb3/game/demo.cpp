@@ -3,6 +3,10 @@
 #include "gameflow.h"
 #include "items.h"
 #include "control.h"
+#include "setup.h"
+#include "../specific/winmain.h"
+#include "text.h"
+#include "../specific/game.h"
 
 void GetDemoInput()
 {
@@ -58,9 +62,66 @@ void LoadLaraDemoPos()
 	democount += 8;
 }
 
+long StartDemo(long level)
+{
+	TEXTSTRING* demoText;
+	START_INFO* s;
+	START_INFO start;
+	long lp;
+	static long demo_level;
+	char buf[64];
+
+	if (level < 0 && !gameflow.num_demos)
+		return EXIT_TO_TITLE;
+
+	if (level >= 0)
+		demo_level = level;
+	else
+	{
+		if (demo_level >= gameflow.num_demos)
+			demo_level = 0;
+
+		level = GF_valid_demos[demo_level];
+		demo_level++;
+	}
+
+	s = &savegame.start[level];
+	memcpy(&start, s, sizeof(START_INFO));
+	s->available = 1;
+	s->pistol_ammo = 1000;
+	s->gun_status = LG_ARMLESS;
+	s->gun_type = LG_PISTOLS;
+	title_loaded = 0;
+
+	if (!InitialiseLevel(level, 3))
+		return EXITGAME;
+
+	level_complete = 0;
+
+	if (!demo_loaded)
+	{
+		sprintf(buf, "Level '%s' has no demo data!", GF_levelfilenames[level]);
+		S_ExitSystem(buf);
+	}
+
+	LoadLaraDemoPos();
+	demoText = T_Print(0, DumpHeight / 2 - 16, 0, GF_PCStrings[1]);
+	T_FlashText(demoText, 1, 20);
+	T_CentreV(demoText, 1);
+	T_CentreH(demoText, 1);
+	Inventory_DemoMode = 1;
+	lp = GameLoop(1);
+	Inventory_DemoMode = 0;
+	T_RemovePrint(demoText);
+	memcpy(s, &start, sizeof(START_INFO));
+	//empty function call here
+	return lp;
+}
+
 void inject_demo(bool replace)
 {
 	INJECT(0x00423970, GetDemoInput, replace);
 	INJECT(0x004236B0, DoDemoSequence, replace);
 	INJECT(0x004238A0, LoadLaraDemoPos, replace);
+	INJECT(0x00423710, StartDemo, replace);
 }

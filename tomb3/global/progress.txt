@@ -346,7 +346,7 @@ tomb3 progress.
 		game/demo.cpp
 
 0x004236B0	+	DoDemoSequence
-0x00423710		StartDemo
+0x00423710	+	StartDemo
 0x004238A0	+	LoadLaraDemoPos
 0x00423970	+	GetDemoInput
 
