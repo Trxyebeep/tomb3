@@ -465,7 +465,7 @@ tomb3 progress.
 0x0042E5C0	+	LaraBubbles
 0x0042E630	+	LaraBreath
 0x0042E750	+	ControlBubble1
-0x0042E8C0		Splash
+0x0042E8C0	+	Splash
 0x0042E9F0		WadeSplash
 0x0042EBB0		WaterFall
 0x0042ECD0		finish_level_effect

@@ -182,6 +182,40 @@ void ControlBubble1(short fx_number)
 	fx->pos.z_pos = z;
 }
 
+void Splash(ITEM_INFO* item)
+{
+	short room_number;
+
+	room_number = item->room_number;
+	GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+
+	if (room[room_number].flags & ROOM_UNDERWATER)
+	{
+		splash_setup.x = item->pos.x_pos;
+		splash_setup.y = GetWaterHeight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, room_number);
+		splash_setup.z = item->pos.z_pos;
+		splash_setup.InnerXZoff = 32;
+		splash_setup.InnerXZsize = 8;
+		splash_setup.InnerYsize = -128;
+		splash_setup.InnerXZvel = 320;
+		splash_setup.InnerYvel = -40 * item->fallspeed;
+		splash_setup.InnerGravity = 160;
+		splash_setup.InnerFriction = 7;
+		splash_setup.MiddleXZoff = 48;
+		splash_setup.MiddleXZsize = 32;
+		splash_setup.MiddleYsize = -64;
+		splash_setup.MiddleXZvel = 480;
+		splash_setup.MiddleYvel = -20 * item->fallspeed;
+		splash_setup.MiddleGravity = 96;
+		splash_setup.MiddleFriction = 8;
+		splash_setup.OuterXZoff = 32;
+		splash_setup.OuterXZsize = 128;
+		splash_setup.OuterXZvel = 544;
+		splash_setup.OuterFriction = 9;
+		SetupSplash(&splash_setup);
+	}
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -191,4 +225,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042E4F0, CreateBubble, replace);
 	INJECT(0x0042E5C0, LaraBubbles, replace);
 	INJECT(0x0042E750, ControlBubble1, replace);
+	INJECT(0x0042E8C0, Splash, replace);
 }
