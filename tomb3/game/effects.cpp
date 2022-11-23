@@ -327,6 +327,28 @@ void BoilerFX(ITEM_INFO* item)
 	flipeffect = -1;
 }
 
+void FloodFX(ITEM_INFO* item)
+{
+	PHD_3DPOS pos;
+
+	if (fliptimer > 120)
+		flipeffect = -1;
+	else
+	{
+		pos.x_pos = lara_item->pos.x_pos;
+
+		if (fliptimer >= 30)
+			pos.y_pos = camera.target.y + 100 * (fliptimer - 30);
+		else
+			pos.y_pos = camera.target.y + 100 * (30 - fliptimer);
+
+		pos.z_pos = lara_item->pos.z_pos;
+		SoundEffect(SFX_RESERVOIR_FLUSH, &pos, SFX_DEFAULT);
+	}
+
+	fliptimer++;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -344,4 +366,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042ED00, floor_shake_effect, replace);
 	INJECT(0x0042EDA0, lara_normal_effect, replace);
 	INJECT(0x0042EDE0, BoilerFX, replace);
+	INJECT(0x0042EE00, FloodFX, replace);
 }

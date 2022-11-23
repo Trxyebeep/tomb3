@@ -473,7 +473,7 @@ tomb3 progress.
 0x0042ED00	+	floor_shake_effect
 0x0042EDA0	+	lara_normal_effect
 0x0042EDE0	+	BoilerFX
-0x0042EE00		FloodFX
+0x0042EE00	+	FloodFX
 0x0042EEA0		RubbleFX
 0x0042EED0		ChandelierFX
 0x0042EF00		ExplosionFX
