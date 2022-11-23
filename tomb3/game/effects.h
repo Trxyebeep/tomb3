@@ -12,6 +12,7 @@ void LaraBubbles(ITEM_INFO* item);
 void ControlBubble1(short fx_number);
 void Splash(ITEM_INFO* item);
 void WadeSplash(ITEM_INFO* item, long water, long depth);
+void WaterFall(short item_number);
 
 #define effect_routines (*(void(__cdecl*(*)[60])(ITEM_INFO*)) 0x004C5478)
 

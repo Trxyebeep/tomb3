@@ -9,6 +9,7 @@
 #include "items.h"
 #include "objects.h"
 #include "../3dsystem/phd_math.h"
+#include "../specific/litesrc.h"
 
 void LaraBreath(ITEM_INFO* item)
 {
@@ -262,6 +263,30 @@ void WadeSplash(ITEM_INFO* item, long water, long depth)
 		SetupRipple(item->pos.x_pos, water, item->pos.z_pos, -16 - (GetRandomControl() & 0xF), item->current_anim_state == AS_STOP);
 }
 
+void WaterFall(short item_number)
+{
+	ITEM_INFO* item;
+	long dx, dy, dz, ang, s, c;
+
+	item = &items[item_number];
+	dx = item->pos.x_pos - lara_item->pos.x_pos;
+	dy = item->pos.y_pos - lara_item->pos.y_pos;
+	dz = item->pos.z_pos - lara_item->pos.z_pos;
+
+	if (dx < -0x4000 || dx > 0x4000 || dy < -0x4000 || dy > 0x4000 || dz < -0x4000 || dz > 0x4000)
+		return;
+
+	S_CalculateLight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, &item->il);	//why
+	ang = (item->pos.y_rot >> 3) & 0x1FFE;
+	s = (544 * rcossin_tbl[ang]) >> 12;
+	c = (544 * rcossin_tbl[ang + 1]) >> 12;
+
+	if (!(wibble & 0xC))
+		TriggerWaterfallMist(item->pos.x_pos + s, item->pos.y_pos, item->pos.z_pos + c, item->pos.y_rot >> 4);
+
+	SoundEffect(SFX_WATERFALL_LOOP, &item->pos, SFX_DEFAULT);
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -273,4 +298,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042E750, ControlBubble1, replace);
 	INJECT(0x0042E8C0, Splash, replace);
 	INJECT(0x0042E9F0, WadeSplash, replace);
+	INJECT(0x0042EBB0, WaterFall, replace);
 }
