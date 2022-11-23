@@ -409,6 +409,16 @@ void ControlDingDong(short item_number)
 	}
 }
 
+void ControlLaraAlarm(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if ((item->flags & IFL_CODEBITS) == IFL_CODEBITS)
+		SoundEffect(SFX_BURGLAR_ALARM, &item->pos, SFX_DEFAULT);
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -435,4 +445,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042EF70, StatueFX, replace);
 	INJECT(0x0042EF90, SetChangeFX, replace);
 	INJECT(0x0042EFB0, ControlDingDong, replace);
+	INJECT(0x0042F000, ControlLaraAlarm, replace);
 }
