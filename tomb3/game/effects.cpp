@@ -349,6 +349,13 @@ void FloodFX(ITEM_INFO* item)
 	fliptimer++;
 }
 
+void RubbleFX(ITEM_INFO* item)
+{
+	SoundEffect(SFX_LARA_KNEES_SHUFFLE, 0, SFX_DEFAULT);
+	camera.bounce = -350;
+	flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -367,4 +374,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042EDA0, lara_normal_effect, replace);
 	INJECT(0x0042EDE0, BoilerFX, replace);
 	INJECT(0x0042EE00, FloodFX, replace);
+	INJECT(0x0042EEA0, RubbleFX, replace);
 }
