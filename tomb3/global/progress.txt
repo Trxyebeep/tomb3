@@ -462,7 +462,7 @@ tomb3 progress.
 0x0042E3B0		DoLotsOfBlood
 0x0042E460		DoLotsOfBloodD
 0x0042E4F0	+	CreateBubble
-0x0042E5C0		LaraBubbles
+0x0042E5C0	+	LaraBubbles
 0x0042E630	+	LaraBreath
 0x0042E750		ControlBubble1
 0x0042E8C0		Splash

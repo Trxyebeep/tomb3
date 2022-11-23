@@ -8,6 +8,7 @@ long ItemNearLara(PHD_3DPOS* pos, long rad);
 void SoundEffects();
 void Richochet(GAME_VECTOR* pos);
 void CreateBubble(PHD_3DPOS* pos, short room_number, long size, long sizerange);
+void LaraBubbles(ITEM_INFO* item);
 
 #define effect_routines (*(void(__cdecl*(*)[60])(ITEM_INFO*)) 0x004C5478)
 

@@ -120,6 +120,19 @@ void CreateBubble(PHD_3DPOS* pos, short room_number, long size, long sizerange)
 	}
 }
 
+void LaraBubbles(ITEM_INFO* item)
+{
+	PHD_VECTOR pos;
+	SoundEffect(SFX_LARA_BUBBLES, &item->pos, SFX_WATER);
+	pos.x = 0;
+	pos.y = -4;
+	pos.z = 64;
+	GetLaraHandAbsPosition(&pos, LARA_HEAD);
+
+	for (int i = (GetRandomControl() & 3) + 2; i > 0; i--)
+		CreateBubble((PHD_3DPOS*)&pos, item->room_number, 8, 8);
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -127,4 +140,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042E200, SoundEffects, replace);
 	INJECT(0x0042E270, Richochet, replace);
 	INJECT(0x0042E4F0, CreateBubble, replace);
+	INJECT(0x0042E5C0, LaraBubbles, replace);
 }
