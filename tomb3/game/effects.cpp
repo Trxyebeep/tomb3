@@ -8,6 +8,7 @@
 #include "control.h"
 #include "items.h"
 #include "objects.h"
+#include "../3dsystem/phd_math.h"
 
 void LaraBreath(ITEM_INFO* item)
 {
@@ -123,6 +124,7 @@ void CreateBubble(PHD_3DPOS* pos, short room_number, long size, long sizerange)
 void LaraBubbles(ITEM_INFO* item)
 {
 	PHD_VECTOR pos;
+
 	SoundEffect(SFX_LARA_BUBBLES, &item->pos, SFX_WATER);
 	pos.x = 0;
 	pos.y = -4;
@@ -133,6 +135,53 @@ void LaraBubbles(ITEM_INFO* item)
 		CreateBubble((PHD_3DPOS*)&pos, item->room_number, 8, 8);
 }
 
+void ControlBubble1(short fx_number)
+{
+	FX_INFO* fx;
+	FLOOR_INFO* floor;
+	long x, y, z, h, c;
+	short room_number;
+
+	fx = &effects[fx_number];
+	fx->pos.y_rot += 1638;
+	fx->pos.x_rot += 2366;
+	fx->speed += fx->flag1;
+	x = fx->pos.x_pos + ((3 * phd_sin(fx->pos.y_rot)) >> W2V_SHIFT);
+	y = fx->pos.y_pos - (fx->speed >> 8);
+	z = fx->pos.z_pos + (phd_cos(fx->pos.x_rot) >> W2V_SHIFT);
+	room_number = fx->room_number;
+	floor = GetFloor(x, y, z, &room_number);
+	h = GetHeight(floor, x, y, z);
+
+	if (y > h || !floor)
+	{
+		KillEffect(fx_number);
+		return;
+	}
+
+	if (!(room[room_number].flags & ROOM_UNDERWATER))
+	{
+		SetupRipple(fx->pos.x_pos, room[fx->room_number].maxceiling, fx->pos.z_pos, -2 - (GetRandomControl() & 1), 1);
+		KillEffect(fx_number);
+		return;
+	}
+
+	c = GetCeiling(floor, x, y, z);
+
+	if (c == NO_HEIGHT || y <= c)
+	{
+		KillEffect(fx_number);
+		return;
+	}
+
+	if (fx->room_number != room_number)
+		EffectNewRoom(fx_number, room_number);
+
+	fx->pos.x_pos = x;
+	fx->pos.y_pos = y;
+	fx->pos.z_pos = z;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -141,4 +190,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042E270, Richochet, replace);
 	INJECT(0x0042E4F0, CreateBubble, replace);
 	INJECT(0x0042E5C0, LaraBubbles, replace);
+	INJECT(0x0042E750, ControlBubble1, replace);
 }
