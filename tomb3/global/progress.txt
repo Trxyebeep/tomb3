@@ -514,7 +514,7 @@ tomb3 progress.
 0x0042F6F0	+	Exercise2_112
 0x0042F720	+	Exercise2_83
 0x0042F750	+	Exercise3_115
-0x0042F780		Exercise3_107
+0x0042F780	+	Exercise3_107
 0x0042F7B0		Exercise3_79
 0x0042F7E0		Exercise4_110
 0x0042F810		Exercise4_111
