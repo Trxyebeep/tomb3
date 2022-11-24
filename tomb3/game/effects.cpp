@@ -573,6 +573,11 @@ void invisibility_off(ITEM_INFO* item)
 	item->status = ITEM_ACTIVE;
 }
 
+void dynamic_light_on(ITEM_INFO* item)
+{
+	item->dynamic_light = 1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -614,4 +619,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F340, swap_meshes_with_meshswap3, replace);
 	INJECT(0x0042F3F0, invisibility_on, replace);
 	INJECT(0x0042F400, invisibility_off, replace);
+	INJECT(0x0042F420, dynamic_light_on, replace);
 }
