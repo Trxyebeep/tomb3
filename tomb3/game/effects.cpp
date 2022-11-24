@@ -686,6 +686,22 @@ void QuadStop(ITEM_INFO* item)
 	flipeffect = -1;
 }
 
+void QuadFinished(ITEM_INFO* item)
+{
+	if (lara.skidoo != NO_ITEM && assault_timer_active)
+	{
+		if (savegame.timer > 0x1A5DD)
+			savegame.timer = 0x1A5DD;
+
+		QuadbikeLapTime = savegame.timer;
+		QuadbikeLapTimeDisplayTimer = 300;
+		AddQuadbikeTime(savegame.timer);
+		assault_timer_active = 0;
+	}
+
+	flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -738,4 +754,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F540, AssaultFinished, replace);
 	INJECT(0x0042F5D0, QuadStart, replace);
 	INJECT(0x0042F600, QuadStop, replace);
+	INJECT(0x0042F630, QuadFinished, replace);
 }

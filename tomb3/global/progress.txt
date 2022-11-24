@@ -508,7 +508,7 @@ tomb3 progress.
 0x0042F540	+	AssaultFinished
 0x0042F5D0	+	QuadStart
 0x0042F600	+	QuadStop
-0x0042F630		QuadFinished
+0x0042F630	+	QuadFinished
 0x0042F690		Exercise1_105
 0x0042F6C0		Exercise1_104
 0x0042F6F0		Exercise2_112
