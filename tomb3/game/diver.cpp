@@ -4,6 +4,8 @@
 #include "effect2.h"
 #include "../specific/game.h"
 #include "objects.h"
+#include "items.h"
+#include "missile.h"
 
 long GetWaterSurface(long x, long y, long z, short room_number)
 {
@@ -107,8 +109,37 @@ void ControlGhostGasEmitter(short item_number)
 	sptr->dHeight = sptr->Height;
 }
 
+static short Harpoon(long x, long y, long z, short speed, short ang, short room_number)
+{
+	FX_INFO* fx;
+	short fx_num;
+
+	fx_num = CreateEffect(room_number);
+
+	if (fx_num != NO_ITEM)
+	{
+		fx = &effects[fx_num];
+		fx->pos.x_pos = x;
+		fx->pos.y_pos = y;
+		fx->pos.z_pos = z;
+		fx->room_number = room_number;
+		fx->pos.x_rot = 0;
+		fx->pos.y_rot = ang;
+		fx->pos.z_rot = 0;
+		fx->speed = 150;
+		fx->fallspeed = 0;
+		fx->frame_number = 0;
+		fx->object_number = DIVER_HARPOON;
+		fx->shade = 0xE00;
+		ShootAtLara(fx);
+	}
+
+	return fx_num;
+}
+
 void inject_diver(bool replace)
 {
 	INJECT(0x00423D70, GetWaterSurface, replace);
 	INJECT(0x00423E80, ControlGhostGasEmitter, replace);
+	INJECT(0x00423CF0, Harpoon, replace);
 }
