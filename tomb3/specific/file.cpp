@@ -793,16 +793,18 @@ long S_LoadLevelFile(char* name, long number, long type)
 	S_CDStop();
 	fade = 0;
 
-	if (type && type != 6 && (type != 4 || GF_Playing_Story))
-	{
 #ifdef TROYESTUFF
+	if (type && type != 6 && type != 3 && (type != 4 || GF_Playing_Story))
+	{
 		strcpy(buf, GF_picfilenames[GF_LoadingPic]);
-		
+
 		if (tomb3.gold)
 			T3_GoldifyString(buf);
 
 		LoadPicture(buf, App.lpPictureBuffer, 1);
 #else
+	if (type && type != 6 && (type != 4 || GF_Playing_Story))
+	{
 		LoadPicture(GF_picfilenames[GF_LoadingPic], App.lpPictureBuffer, 1);
 #endif
 		FadePictureUp(32);
