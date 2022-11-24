@@ -602,6 +602,13 @@ void AssaultStart(ITEM_INFO* item)
 	flipeffect = -1;
 }
 
+void AssaultStop(ITEM_INFO* item)
+{
+	assault_timer_active = 0;
+	assault_timer_display = 1;
+	flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -647,4 +654,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F430, dynamic_light_off, replace);
 	INJECT(0x0042F440, reset_hair, replace);
 	INJECT(0x0042F450, AssaultStart, replace);
+	INJECT(0x0042F490, AssaultStop, replace);
 }
