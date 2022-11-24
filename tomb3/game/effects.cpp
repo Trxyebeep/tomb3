@@ -889,6 +889,17 @@ void Exercise8_93(ITEM_INFO* item)
 	flipeffect = -1;
 }
 
+void Exercise8_109Sp(ITEM_INFO* item)
+{
+	if (ExerciseNumber == 17 && lara.water_status == LARA_SURFACE)
+	{
+		S_CDPlay(112, 0);
+		ExerciseNumber++;
+	}
+
+	flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -959,4 +970,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F930, Exercise7_106, replace);
 	INJECT(0x0042F960, Exercise7_86, replace);
 	INJECT(0x0042F990, Exercise8_93, replace);
+	INJECT(0x0042F9C0, Exercise8_109Sp, replace);
 }
