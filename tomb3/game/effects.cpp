@@ -812,6 +812,17 @@ void Exercise5_116(ITEM_INFO* item)
 	flipeffect = -1;
 }
 
+void Exercise5_95(ITEM_INFO* item)
+{
+	if (ExerciseNumber == 10)
+	{
+		S_CDPlay(98, 0);
+		ExerciseNumber++;
+	}
+
+	flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -875,4 +886,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F7E0, Exercise4_110, replace);
 	INJECT(0x0042F810, Exercise4_111, replace);
 	INJECT(0x0042F840, Exercise5_116, replace);
+	INJECT(0x0042F870, Exercise5_95, replace);
 }
