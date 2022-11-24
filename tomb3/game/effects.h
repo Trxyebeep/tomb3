@@ -58,6 +58,7 @@ void Exercise1_105(ITEM_INFO* item);
 void Exercise1_104(ITEM_INFO* item);
 void Exercise2_112(ITEM_INFO* item);
 void Exercise2_83(ITEM_INFO* item);
+void Exercise3_115(ITEM_INFO* item);
 
 #define effect_routines (*(void(__cdecl*(*)[60])(ITEM_INFO*)) 0x004C5478)
 
