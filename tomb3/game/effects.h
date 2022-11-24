@@ -70,6 +70,7 @@ void Exercise6_114(ITEM_INFO* item);
 void Exercise6_80(ITEM_INFO* item);
 void Exercise7_106(ITEM_INFO* item);
 void Exercise7_86(ITEM_INFO* item);
+void Exercise8_93(ITEM_INFO* item);
 
 #define effect_routines (*(void(__cdecl*(*)[60])(ITEM_INFO*)) 0x004C5478)
 
