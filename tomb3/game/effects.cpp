@@ -911,6 +911,12 @@ void Exercise8_87(ITEM_INFO* item)
 	flipeffect = -1;
 }
 
+void ResetExercises(ITEM_INFO* item)
+{
+	ExerciseNumber = 0;
+	flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -983,4 +989,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F990, Exercise8_93, replace);
 	INJECT(0x0042F9C0, Exercise8_109Sp, replace);
 	INJECT(0x0042FA00, Exercise8_87, replace);
+	INJECT(0x0042FA30, ResetExercises, replace);
 }
