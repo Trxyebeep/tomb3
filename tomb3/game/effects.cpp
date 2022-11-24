@@ -11,6 +11,7 @@
 #include "../3dsystem/phd_math.h"
 #include "../specific/litesrc.h"
 #include "../3dsystem/3d_gen.h"
+#include "hair.h"
 
 void LaraBreath(ITEM_INFO* item)
 {
@@ -583,6 +584,11 @@ void dynamic_light_off(ITEM_INFO* item)
 	item->dynamic_light = 0;
 }
 
+void reset_hair(ITEM_INFO* item)
+{
+	InitialiseHair();
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -626,4 +632,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F400, invisibility_off, replace);
 	INJECT(0x0042F420, dynamic_light_on, replace);
 	INJECT(0x0042F430, dynamic_light_off, replace);
+	INJECT(0x0042F440, reset_hair, replace);
 }
