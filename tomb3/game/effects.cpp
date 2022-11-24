@@ -544,6 +544,25 @@ void swap_meshes_with_meshswap2(ITEM_INFO* item)
 	}
 }
 
+void swap_meshes_with_meshswap3(ITEM_INFO* item)
+{
+	OBJECT_INFO* obj;
+	short* tmp;
+
+	obj = &objects[item->object_number];
+
+	for (int i = 0; i < obj->nmeshes; i++)
+	{
+		tmp = meshes[obj->mesh_index + i];
+		meshes[obj->mesh_index + i] = meshes[objects[MESHSWAP3].mesh_index + i];
+
+		if (item == lara_item)
+			lara.mesh_ptrs[i] = meshes[objects[MESHSWAP3].mesh_index + i];
+
+		meshes[objects[MESHSWAP3].mesh_index + i] = tmp;
+	}
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -582,4 +601,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F250, shoot_left_gun, replace);
 	INJECT(0x0042F260, swap_meshes_with_meshswap1, replace);
 	INJECT(0x0042F2D0, swap_meshes_with_meshswap2, replace);
+	INJECT(0x0042F340, swap_meshes_with_meshswap3, replace);
 }
