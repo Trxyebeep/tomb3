@@ -491,6 +491,19 @@ void draw_right_gun(ITEM_INFO* item)
 	meshes[objects[PISTOLS].mesh_index + HAND_R] = tmp;
 }
 
+void draw_left_gun(ITEM_INFO* item)
+{
+	short* tmp;
+
+	tmp = lara.mesh_ptrs[THIGH_L];
+	lara.mesh_ptrs[THIGH_L] = meshes[objects[PISTOLS].mesh_index + THIGH_L];
+	meshes[objects[PISTOLS].mesh_index + THIGH_L] = tmp;
+
+	tmp = lara.mesh_ptrs[HAND_L];
+	lara.mesh_ptrs[HAND_L] = meshes[objects[PISTOLS].mesh_index + HAND_L];
+	meshes[objects[PISTOLS].mesh_index + HAND_L] = tmp;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -524,4 +537,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F180, lara_hands_free, replace);
 	INJECT(0x0042F190, flip_map_effect, replace);
 	INJECT(0x0042F1A0, draw_right_gun, replace);
+	INJECT(0x0042F1F0, draw_left_gun, replace);
 }
