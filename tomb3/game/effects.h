@@ -51,6 +51,7 @@ void AssaultReset(ITEM_INFO* item);
 void AssaultPenalty4(ITEM_INFO* item);
 void AssaultPenalty30(ITEM_INFO* item);
 void AssaultFinished(ITEM_INFO* item);
+void QuadStart(ITEM_INFO* item);
 
 #define effect_routines (*(void(__cdecl*(*)[60])(ITEM_INFO*)) 0x004C5478)
 
