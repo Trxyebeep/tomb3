@@ -618,6 +618,17 @@ void AssaultReset(ITEM_INFO* item)
 	flipeffect = -1;
 }
 
+void AssaultPenalty4(ITEM_INFO* item)
+{
+	if (assault_timer_active)
+	{
+		assault_penalty_display_timer = 120;
+		assault_penalties += 240;	//actually 8 seconds lol
+	}
+
+	flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -665,4 +676,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F450, AssaultStart, replace);
 	INJECT(0x0042F490, AssaultStop, replace);
 	INJECT(0x0042F4B0, AssaultReset, replace);
+	INJECT(0x0042F4E0, AssaultPenalty4, replace);
 }
