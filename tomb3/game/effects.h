@@ -76,6 +76,7 @@ void Exercise8_87(ITEM_INFO* item);
 void ResetExercises(ITEM_INFO* item);
 void TubeTrain(ITEM_INFO* item);
 void RumbleNoShake(ITEM_INFO* item);
+void BaddieBiteEffect(ITEM_INFO* item, BITE_INFO* bite);
 
 #define effect_routines (*(void(__cdecl*(*)[60])(ITEM_INFO*)) 0x004C5478)
 

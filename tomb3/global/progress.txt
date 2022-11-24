@@ -531,7 +531,7 @@ tomb3 progress.
 0x0042FA30	+	ResetExercises
 0x0042FA50	+	TubeTrain
 0x0042FA70	+	RumbleNoShake
-0x0042FA90		BaddieBiteEffect
+0x0042FA90	+	BaddieBiteEffect
 
 
 		game/firehead.cpp

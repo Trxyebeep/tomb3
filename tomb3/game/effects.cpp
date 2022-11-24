@@ -15,6 +15,7 @@
 #include "target.h"
 #include "invfunc.h"
 #include "../specific/specific.h"
+#include "sphere.h"
 
 void LaraBreath(ITEM_INFO* item)
 {
@@ -929,6 +930,17 @@ void RumbleNoShake(ITEM_INFO* item)
 	flipeffect = -1;
 }
 
+void BaddieBiteEffect(ITEM_INFO* item, BITE_INFO* bite)
+{
+	PHD_VECTOR pos;
+
+	pos.x = bite->x;
+	pos.y = bite->y;
+	pos.z = bite->z;
+	GetJointAbsPosition(item, &pos, bite->mesh_num);
+	DoBloodSplat(pos.x, pos.y, pos.z, item->speed, item->pos.y_rot, item->room_number);
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -1004,4 +1016,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042FA30, ResetExercises, replace);
 	INJECT(0x0042FA50, TubeTrain, replace);
 	INJECT(0x0042FA70, RumbleNoShake, replace);
+	INJECT(0x0042FA90, BaddieBiteEffect, replace);
 }
