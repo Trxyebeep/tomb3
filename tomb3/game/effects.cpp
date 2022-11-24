@@ -473,6 +473,11 @@ void lara_hands_free(ITEM_INFO* item)
 	lara.gun_status = LG_ARMLESS;
 }
 
+void flip_map_effect(ITEM_INFO* item)
+{
+	FlipMap();
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -504,4 +509,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F0B0, DoChimeSound, replace);
 	INJECT(0x0042F110, ControlClockChimes, replace);
 	INJECT(0x0042F180, lara_hands_free, replace);
+	INJECT(0x0042F190, flip_map_effect, replace);
 }

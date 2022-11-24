@@ -32,6 +32,7 @@ void ControlBirdTweeter(short item_number);
 void DoChimeSound(ITEM_INFO* item);
 void ControlClockChimes(short item_number);
 void lara_hands_free(ITEM_INFO* item);
+void flip_map_effect(ITEM_INFO* item);
 
 #define effect_routines (*(void(__cdecl*(*)[60])(ITEM_INFO*)) 0x004C5478)
 
