@@ -353,7 +353,7 @@ tomb3 progress.
 
 		game/diver.cpp
 
-0x004239A0		DiverControl
+0x004239A0	+	DiverControl
 0x00423CF0	+	Harpoon
 0x00423D70	+	GetWaterSurface
 0x00423E80	+	ControlGhostGasEmitter
