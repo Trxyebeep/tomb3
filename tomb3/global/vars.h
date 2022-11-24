@@ -308,6 +308,7 @@
 #define HeavyTriggered	VAR_(0x006E28CC, uchar)
 #define flip_status	VAR_(0x006E296C, long)
 #define flipeffect	VAR_(0x004C5200, long)
+#define ExerciseNumber	VAR_(0x006261B8, long)
 #define fliptimer	VAR_(0x00625F68, long)
 #define lpDirectSound	VAR_(0x00632AC8, LPDIRECTSOUND)
 #define acm_volume	VAR_(0x00627470, long)
