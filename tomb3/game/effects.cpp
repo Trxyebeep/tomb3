@@ -504,6 +504,11 @@ void draw_left_gun(ITEM_INFO* item)
 	meshes[objects[PISTOLS].mesh_index + HAND_L] = tmp;
 }
 
+void shoot_right_gun(ITEM_INFO* item)
+{
+	lara.right_arm.flash_gun = 3;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -538,4 +543,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F190, flip_map_effect, replace);
 	INJECT(0x0042F1A0, draw_right_gun, replace);
 	INJECT(0x0042F1F0, draw_left_gun, replace);
+	INJECT(0x0042F240, shoot_right_gun, replace);
 }
