@@ -13,6 +13,8 @@
 #include "../3dsystem/3d_gen.h"
 #include "hair.h"
 #include "target.h"
+#include "invfunc.h"
+#include "../specific/specific.h"
 
 void LaraBreath(ITEM_INFO* item)
 {
@@ -640,6 +642,27 @@ void AssaultPenalty30(ITEM_INFO* item)
 	flipeffect = -1;
 }
 
+void AssaultFinished(ITEM_INFO* item)
+{
+	if (assault_timer_active)
+	{
+		assault_penalty_display_timer = 300;
+		assault_target_penalties = 300 * assault_targets;	//10 seconds for each target
+		savegame.timer += assault_target_penalties + assault_penalties;
+
+		if (savegame.timer > 0x1A5DD)
+			savegame.timer = 0x1A5DD;
+
+		AddAssaultTime(savegame.timer);
+		assault_timer_active = 0;
+
+		if (savegame.timer < 5400)
+			S_CDPlay(95, 0);
+	}
+
+	flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -689,4 +712,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F4B0, AssaultReset, replace);
 	INJECT(0x0042F4E0, AssaultPenalty4, replace);
 	INJECT(0x0042F510, AssaultPenalty30, replace);
+	INJECT(0x0042F540, AssaultFinished, replace);
 }
