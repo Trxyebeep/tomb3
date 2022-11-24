@@ -923,6 +923,12 @@ void TubeTrain(ITEM_INFO* item)
 	flipeffect = -1;
 }
 
+void RumbleNoShake(ITEM_INFO* item)
+{
+	SoundEffect(SFX_RUMBLE_NEXTDOOR, 0, SFX_DEFAULT);
+	flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -997,4 +1003,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042FA00, Exercise8_87, replace);
 	INJECT(0x0042FA30, ResetExercises, replace);
 	INJECT(0x0042FA50, TubeTrain, replace);
+	INJECT(0x0042FA70, RumbleNoShake, replace);
 }
