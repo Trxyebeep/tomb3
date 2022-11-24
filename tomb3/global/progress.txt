@@ -496,7 +496,7 @@ tomb3 progress.
 0x0042F2D0	+	swap_meshes_with_meshswap2
 0x0042F340	+	swap_meshes_with_meshswap3
 0x0042F3F0	+	invisibility_on
-0x0042F400		invisibility_off
+0x0042F400	+	invisibility_off
 0x0042F420		dynamic_light_on
 0x0042F430		dynamic_light_off
 0x0042F440		reset_hair
