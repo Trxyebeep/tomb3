@@ -563,6 +563,11 @@ void swap_meshes_with_meshswap3(ITEM_INFO* item)
 	}
 }
 
+void invisibility_on(ITEM_INFO* item)
+{
+	item->status = ITEM_INVISIBLE;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -602,4 +607,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F260, swap_meshes_with_meshswap1, replace);
 	INJECT(0x0042F2D0, swap_meshes_with_meshswap2, replace);
 	INJECT(0x0042F340, swap_meshes_with_meshswap3, replace);
+	INJECT(0x0042F3F0, invisibility_on, replace);
 }

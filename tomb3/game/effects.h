@@ -40,6 +40,7 @@ void shoot_left_gun(ITEM_INFO* item);
 void swap_meshes_with_meshswap1(ITEM_INFO* item);
 void swap_meshes_with_meshswap2(ITEM_INFO* item);
 void swap_meshes_with_meshswap3(ITEM_INFO* item);
+void invisibility_on(ITEM_INFO* item);
 
 #define effect_routines (*(void(__cdecl*(*)[60])(ITEM_INFO*)) 0x004C5478)
 
