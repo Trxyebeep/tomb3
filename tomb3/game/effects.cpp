@@ -917,6 +917,12 @@ void ResetExercises(ITEM_INFO* item)
 	flipeffect = -1;
 }
 
+void TubeTrain(ITEM_INFO* item)
+{
+	camera.bounce = -350;
+	flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -990,4 +996,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F9C0, Exercise8_109Sp, replace);
 	INJECT(0x0042FA00, Exercise8_87, replace);
 	INJECT(0x0042FA30, ResetExercises, replace);
+	INJECT(0x0042FA50, TubeTrain, replace);
 }
