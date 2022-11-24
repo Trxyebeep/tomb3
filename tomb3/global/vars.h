@@ -36,6 +36,7 @@
 #define assault_timer_active	VAR_(0x006261C0, long)
 #define assault_target_penalties	VAR_(0x006D8760, long)
 #define assault_penalties	VAR_(0x006261C4, long)
+#define assault_targets	VAR_(0x006D8758, long)
 #define QuadbikeLapTime	VAR_(0x006261D0, long)
 #define GlobalAlpha	VAR_(0x00625DF0, long)
 #define bBlueEffect	VAR_(0x005BAB00, bool)

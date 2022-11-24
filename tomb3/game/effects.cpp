@@ -12,6 +12,7 @@
 #include "../specific/litesrc.h"
 #include "../3dsystem/3d_gen.h"
 #include "hair.h"
+#include "target.h"
 
 void LaraBreath(ITEM_INFO* item)
 {
@@ -589,6 +590,18 @@ void reset_hair(ITEM_INFO* item)
 	InitialiseHair();
 }
 
+void AssaultStart(ITEM_INFO* item)
+{
+	savegame.timer = 0;
+	assault_timer_active = 1;
+	assault_timer_display = 1;
+	assault_penalties = 0;
+	assault_penalty_display_timer = 0;
+	assault_targets = 7;
+	ResetTargets();
+	flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -633,4 +646,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F420, dynamic_light_on, replace);
 	INJECT(0x0042F430, dynamic_light_off, replace);
 	INJECT(0x0042F440, reset_hair, replace);
+	INJECT(0x0042F450, AssaultStart, replace);
 }
