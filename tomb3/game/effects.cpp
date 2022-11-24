@@ -675,6 +675,17 @@ void QuadStart(ITEM_INFO* item)
 	flipeffect = -1;
 }
 
+void QuadStop(ITEM_INFO* item)
+{
+	if (lara.skidoo != NO_ITEM)
+	{
+		assault_timer_active = 0;
+		assault_timer_display = 1;
+	}
+
+	flipeffect = -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -726,4 +737,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F510, AssaultPenalty30, replace);
 	INJECT(0x0042F540, AssaultFinished, replace);
 	INJECT(0x0042F5D0, QuadStart, replace);
+	INJECT(0x0042F600, QuadStop, replace);
 }
