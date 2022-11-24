@@ -78,8 +78,8 @@ void TubeTrain(ITEM_INFO* item);
 void RumbleNoShake(ITEM_INFO* item);
 void BaddieBiteEffect(ITEM_INFO* item, BITE_INFO* bite);
 
-#define effect_routines (*(void(__cdecl*(*)[60])(ITEM_INFO*)) 0x004C5478)
-
 #define DoBloodSplat	( (short(__cdecl*)(long, long, long, short, short, short)) 0x0042E2C0 )
 #define DoLotsOfBlood	( (void(__cdecl*)(long, long, long, short, short, short, long)) 0x0042E3B0 )
 #define DoLotsOfBloodD	( (void(__cdecl*)(long, long, long, short, short, short, long)) 0x0042E460 )
+
+extern void(*effect_routines[])(ITEM_INFO* item);
