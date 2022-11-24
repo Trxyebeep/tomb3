@@ -36,6 +36,7 @@ void flip_map_effect(ITEM_INFO* item);
 void draw_right_gun(ITEM_INFO* item);
 void draw_left_gun(ITEM_INFO* item);
 void shoot_right_gun(ITEM_INFO* item);
+void shoot_left_gun(ITEM_INFO* item);
 
 #define effect_routines (*(void(__cdecl*(*)[60])(ITEM_INFO*)) 0x004C5478)
 
