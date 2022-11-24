@@ -468,6 +468,11 @@ void ControlClockChimes(short item_number)
 	}
 }
 
+void lara_hands_free(ITEM_INFO* item)
+{
+	lara.gun_status = LG_ARMLESS;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -498,4 +503,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042F040, ControlBirdTweeter, replace);
 	INJECT(0x0042F0B0, DoChimeSound, replace);
 	INJECT(0x0042F110, ControlClockChimes, replace);
+	INJECT(0x0042F180, lara_hands_free, replace);
 }
