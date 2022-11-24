@@ -502,7 +502,7 @@ tomb3 progress.
 0x0042F440	+	reset_hair
 0x0042F450	+	AssaultStart
 0x0042F490	+	AssaultStop
-0x0042F4B0		AssaultReset
+0x0042F4B0	+	AssaultReset
 0x0042F4E0		AssaultPenalty4
 0x0042F510		AssaultPenalty30
 0x0042F540		AssaultFinished
