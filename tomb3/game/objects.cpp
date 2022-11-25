@@ -25,7 +25,20 @@ long OnDrawBridge(ITEM_INFO* item, long x, long z)
 	return 0;
 }
 
+void DrawBridgeFloor(ITEM_INFO* item, long x, long y, long z, long* h)
+{
+	if (item->current_anim_state == 1 && OnDrawBridge(item, z, x) && y <= item->pos.y_pos)
+	{
+		OnObject = 1;
+		*h = item->pos.y_pos;
+
+		if (item == lara_item)
+			lara_item->item_flags[0] = 1;
+	}
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
+	INJECT(0x004593F0, DrawBridgeFloor, replace);
 }
