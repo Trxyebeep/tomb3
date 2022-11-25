@@ -1071,7 +1071,7 @@ tomb3 progress.
 
 		game/missile.cpp
 
-0x00454FB0		ControlMissile
+0x00454FB0	+	ControlMissile
 0x004552C0		ShootAtLara
 0x00455370		ExplodingDeath
 0x004557A0		ControlBodyPart

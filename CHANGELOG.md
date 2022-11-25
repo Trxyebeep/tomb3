@@ -5,6 +5,7 @@
 ### Original bug fixes
 
 - Fix Lara letting go of some ledges.
+- Fix diver harpoons spamming gunshot SFX.
 
 ### tomb3 additions
 
