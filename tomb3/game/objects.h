@@ -1,6 +1,10 @@
 #pragma once
 #include "../global/vars.h"
 
+void inject_objects(bool replace);
+
+long OnDrawBridge(ITEM_INFO* item, long x, long z);
+
 #define SmashWindow	( (void(__cdecl*)(short)) 0x00458C20 )
 #define InitialiseFinalLevel	( (void(__cdecl*)()) 0x00458840 )
 

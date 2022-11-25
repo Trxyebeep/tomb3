@@ -50,6 +50,7 @@
 #include "../game/train.h"
 #include "../game/diver.h"
 #include "../game/missile.h"
+#include "../game/objects.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -164,6 +165,7 @@ void inject_all(bool replace)
 	inject_train(replace);
 	inject_diver(replace);
 	inject_missile(replace);
+	inject_objects(replace);
 
 	//specific
 	inject_drawbars(replace);
