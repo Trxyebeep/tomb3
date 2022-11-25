@@ -1120,7 +1120,7 @@ tomb3 progress.
 0x00459260		DoorControl
 0x00459330	+	OnDrawBridge
 0x004593F0	+	DrawBridgeFloor
-0x00459450		DrawBridgeCeiling
+0x00459450	+	DrawBridgeCeiling
 0x00459490		DrawBridgeCollision
 0x004594C0		InitialiseLift
 0x00459500		LiftControl

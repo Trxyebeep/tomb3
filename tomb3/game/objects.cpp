@@ -37,8 +37,15 @@ void DrawBridgeFloor(ITEM_INFO* item, long x, long y, long z, long* h)
 	}
 }
 
+void DrawBridgeCeiling(ITEM_INFO* item, long x, long y, long z, long* c)
+{
+	if (item->current_anim_state == 1 && OnDrawBridge(item, z, x) && y > item->pos.y_pos)
+		*c = item->pos.y_pos + 256;
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
 	INJECT(0x004593F0, DrawBridgeFloor, replace);
+	INJECT(0x00459450, DrawBridgeCeiling, replace);
 }
