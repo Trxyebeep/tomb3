@@ -1990,6 +1990,12 @@ struct CARTINFO
 	char StopDelay;
 };
 
+struct LIFT_INFO
+{
+	long start_height;
+	long wait_time;
+};
+
 #ifdef TROYESTUFF
 struct FVECTOR
 {

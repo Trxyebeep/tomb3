@@ -1,6 +1,7 @@
 #include "../tomb3/pch.h"
 #include "objects.h"
 #include "collide.h"
+#include "../specific/init.h"
 
 long OnDrawBridge(ITEM_INFO* item, long z, long x)
 {
@@ -54,10 +55,23 @@ void DrawBridgeCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 		DoorCollision(item_number, l, coll);
 }
 
+void InitialiseLift(short item_number)
+{
+	ITEM_INFO* item;
+	LIFT_INFO* lift;
+
+	item = &items[item_number];
+	lift = (LIFT_INFO*)game_malloc(sizeof(LIFT_INFO), 0);
+	item->data = lift;
+	lift->start_height = item->pos.y_pos;
+	lift->wait_time = 0;
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
 	INJECT(0x004593F0, DrawBridgeFloor, replace);
 	INJECT(0x00459450, DrawBridgeCeiling, replace);
 	INJECT(0x00459490, DrawBridgeCollision, replace);
+	INJECT(0x004594C0, InitialiseLift, replace);
 }
