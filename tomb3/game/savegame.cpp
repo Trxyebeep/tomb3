@@ -3,6 +3,10 @@
 #include "gameflow.h"
 #include "invfunc.h"
 #include "objects.h"
+#include "../specific/winmain.h"
+
+#define SGcount	VAR_(0x006D588C, long)
+#define SGpoint	VAR_(0x006D2268, char*)
 
 void ModifyStartInfo(long level)
 {
@@ -265,9 +269,30 @@ void CreateStartInfo(long level)
 	pInfo->gun_status = LG_ARMLESS;
 }
 
+void ResetSG()
+{
+	SGcount = 0;
+	SGpoint = savegame.buffer;
+}
+
+void WriteSG(void* pointer, long size)
+{
+	char* data;
+
+	SGcount += size;
+
+	if (SGcount >= 0x3080)
+		S_ExitSystem("FATAL: Savegame is too big to fit in buffer");
+
+	for (data = (char*)pointer; size > 0; size--)
+		*SGpoint++ = *data++;
+}
+
 void inject_savegame(bool replace)
 {
 	INJECT(0x00461A60, ModifyStartInfo, replace);
 	INJECT(0x00461950, InitialiseStartInfo, replace);
 	INJECT(0x00461B50, CreateStartInfo, replace);
+	INJECT(0x00462DF0, ResetSG, replace);
+	INJECT(0x00462E10, WriteSG, replace);
 }

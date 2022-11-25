@@ -1246,8 +1246,8 @@ tomb3 progress.
 0x00461B50	+	CreateStartInfo
 0x00461DD0		CreateSaveGameInfo
 0x004623F0		ExtractSaveGameInfo
-0x00462DF0		ResetSG
-0x00462E10		WriteSG
+0x00462DF0	+	ResetSG
+0x00462E10	+	WriteSG
 0x00462E60		ReadSG
 
 
