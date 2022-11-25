@@ -298,6 +298,196 @@ void ReadSG(void* pointer, long size)
 		*data++ = *SGpoint++;
 }
 
+void CreateSaveGameInfo()
+{
+	ITEM_INFO* item;
+	OBJECT_INFO* obj;
+	ulong flags;
+	long nFlares, age;
+	short objnum, explode_count;
+	char TonyExploding, flip;
+
+	TonyExploding = 0;
+	savegame.current_level = (short)CurrentLevel;
+	CreateStartInfo(CurrentLevel);
+	savegame.num_pickup1 = (uchar)Inv_RequestItem(PICKUP_ITEM1);
+	savegame.num_pickup2 = (uchar)Inv_RequestItem(PICKUP_ITEM2);
+	savegame.num_puzzle1 = (uchar)Inv_RequestItem(PUZZLE_ITEM1);
+	savegame.num_puzzle2 = (uchar)Inv_RequestItem(PUZZLE_ITEM2);
+	savegame.num_puzzle3 = (uchar)Inv_RequestItem(PUZZLE_ITEM3);
+	savegame.num_puzzle4 = (uchar)Inv_RequestItem(PUZZLE_ITEM4);
+	savegame.num_key1 = (uchar)Inv_RequestItem(KEY_ITEM1);
+	savegame.num_key2 = (uchar)Inv_RequestItem(KEY_ITEM2);
+	savegame.num_key3 = (uchar)Inv_RequestItem(KEY_ITEM3);
+	savegame.num_key4 = (uchar)Inv_RequestItem(KEY_ITEM4);
+
+	ResetSG();
+	memset(savegame.buffer, 0, sizeof(savegame.buffer));
+
+	WriteSG(&flip_status, sizeof(long));
+
+	for (int i = 0; i < 10; i++)
+	{
+		flip = char(flipmap[i] >> 8);
+		WriteSG(&flip, sizeof(char));
+	}
+
+	WriteSG(cd_flags, 128);
+
+	for (int i = 0; i < number_cameras; i++)
+		WriteSG(&camera.fixed[i].flags, sizeof(short));
+
+	for (int i = 0; i < level_items; i++)
+	{
+		item = &items[i];
+		objnum = item->object_number;
+		obj = &objects[objnum];
+
+		if (objnum == TONY && item->hit_points > 0 && bossdata.explode_count || bossdata.dead)
+			TonyExploding = 1;
+
+		if (obj->save_position)
+		{
+			WriteSG(&item->pos, sizeof(PHD_3DPOS));
+			WriteSG(&item->room_number, sizeof(short));
+			WriteSG(&item->speed, sizeof(short));
+			WriteSG(&item->fallspeed, sizeof(short));
+		}
+
+		if (obj->save_anim)
+		{
+			WriteSG(&item->current_anim_state, sizeof(short));
+			WriteSG(&item->goal_anim_state, sizeof(short));
+			WriteSG(&item->required_anim_state, sizeof(short));
+			WriteSG(&item->anim_number, sizeof(short));
+			WriteSG(&item->frame_number, sizeof(short));
+		}
+
+		if (obj->save_hitpoints)
+			WriteSG(&item->hit_points, sizeof(short));
+
+		if (obj->save_flags)
+		{
+			flags = (ushort)item->flags;
+			flags |= item->active << 16;
+			flags |= item->status << 17;
+			flags |= item->gravity_status << 19;
+			flags |= item->hit_status << 20;
+			flags |= item->collidable << 21;
+			flags |= item->looked_at << 22;
+			flags |= item->dynamic_light << 23;
+			flags |= item->clear_body << 24;
+			flags |= item->ai_bits << 25;
+			flags |= item->really_active << 30;
+
+			if (obj->intelligent && item->data)
+				flags |= 1 << 31;	//flag we will save creature data
+
+			WriteSG(&flags, sizeof(ulong));
+
+			if (obj->intelligent)
+				WriteSG(&item->carried_item, sizeof(short));
+
+			WriteSG(&item->timer, sizeof(short));
+
+			if (flags & (1 << 31))
+				WriteSG(item->data, 18);
+
+			WriteSG(item->item_flags, sizeof(short) * 4);
+		}
+
+		if (objnum == BIGGUN)
+			WriteSG(item->data, sizeof(BIGGUNINFO));
+
+		if (objnum == BOAT)
+			WriteSG(item->data, sizeof(BOAT_INFO));
+
+		if (objnum == KAYAK)
+			WriteSG(item->data, sizeof(KAYAKINFO));
+
+		if (objnum == MINECART)
+			WriteSG(item->data, sizeof(CARTINFO));
+
+		if (objnum == QUADBIKE)
+			WriteSG(item->data, sizeof(QUADINFO));
+
+		if (objnum == UPV)
+			WriteSG(item->data, sizeof(SUBINFO));
+
+		if (objnum == AREA51_LASER)
+			WriteSG(&item->shadeB, sizeof(short));
+	}
+
+	explode_count = bossdata.explode_count;
+
+	if (!TonyExploding)
+		bossdata.explode_count = 0;
+
+	WriteSG(&bossdata, sizeof(BOSS_STRUCT));
+	bossdata.explode_count = explode_count;
+
+	for (int i = 0; i < NUM_LARA_MESHES; i++)
+		lara.mesh_ptrs[i] = (short*)((long)lara.mesh_ptrs[i] - (long)mesh_base);
+
+	lara.left_arm.frame_base = (short*)((long)lara.left_arm.frame_base - (long)frames);
+	lara.right_arm.frame_base = (short*)((long)lara.right_arm.frame_base - (long)frames);
+
+	WriteSG(&lara, sizeof(LARA_INFO));
+
+	for (int i = 0; i < 15; i++)
+		lara.mesh_ptrs[i] = (short*)((long)lara.mesh_ptrs[i] + (long)mesh_base);
+
+	lara.left_arm.frame_base = (short*)((long)lara.left_arm.frame_base + (long)frames);
+	lara.right_arm.frame_base = (short*)((long)lara.right_arm.frame_base + (long)frames);
+
+	if (lara.weapon_item != NO_ITEM)
+	{
+		item = &items[lara.weapon_item];
+		WriteSG(&item->object_number, sizeof(short));
+		WriteSG(&item->anim_number, sizeof(short));
+		WriteSG(&item->frame_number, sizeof(short));
+		WriteSG(&item->current_anim_state, sizeof(short));
+		WriteSG(&item->goal_anim_state, sizeof(short));
+	}
+
+	WriteSG(&flipeffect, sizeof(long));
+	WriteSG(&fliptimer, sizeof(long));
+	WriteSG(&CurrentAtmosphere, sizeof(char));
+	WriteSG(&compy_scared_timer, sizeof(long));
+	WriteSG(&compys_attack_lara, sizeof(long));
+	WriteSG(&CarcassItem, sizeof(short));
+	WriteSG(&TribeBossShieldOn, sizeof(char));
+	WriteSG(&TribeBossItem, sizeof(long));
+	WriteSG(&lizard_man_active, sizeof(char));
+
+	nFlares = 0;
+
+	for (int i = level_items; i < MAX_ITEMS; i++)
+	{
+		item = &items[i];
+
+		if (item->active && item->object_number == FLARE_ITEM)
+			nFlares++;
+	}
+
+	WriteSG(&nFlares, sizeof(long));
+
+	for (int i = level_items; i < MAX_ITEMS; i++)
+	{
+		item = &items[i];
+
+		if (item->active && item->object_number == FLARE_ITEM)
+		{
+			WriteSG(&item->pos, sizeof(PHD_3DPOS));
+			WriteSG(&item->room_number, sizeof(short));
+			WriteSG(&item->speed, sizeof(short));
+			WriteSG(&item->fallspeed, sizeof(short));
+			age = (long)item->data;
+			WriteSG(&age, sizeof(long));
+		}
+	}
+}
+
 void inject_savegame(bool replace)
 {
 	INJECT(0x00461A60, ModifyStartInfo, replace);
@@ -306,4 +496,5 @@ void inject_savegame(bool replace)
 	INJECT(0x00462DF0, ResetSG, replace);
 	INJECT(0x00462E10, WriteSG, replace);
 	INJECT(0x00462E60, ReadSG, replace);
+	INJECT(0x00461DD0, CreateSaveGameInfo, replace);
 }

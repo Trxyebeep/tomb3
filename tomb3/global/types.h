@@ -100,6 +100,8 @@ do \
 #define MAX_TPAGES	32
 #define MAX_TINFOS	4096
 
+#define MAX_ITEMS	256
+
 #ifdef TROYESTUFF
 #define NLAYOUTKEYS		15
 #else

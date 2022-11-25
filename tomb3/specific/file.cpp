@@ -489,13 +489,13 @@ long LoadItems(HANDLE file)
 	if (!num)
 		return 1;
 
-	if (num > 256)
+	if (num > MAX_ITEMS)
 	{
 		lstrcpy(exit_message, "LoadItems(): Too Many Items being Loaded!!");
 		return 0;
 	}
 
-	items = (ITEM_INFO*)game_malloc(sizeof(ITEM_INFO) * 256, 18);
+	items = (ITEM_INFO*)game_malloc(sizeof(ITEM_INFO) * MAX_ITEMS, 18);
 
 	if (!items)
 	{
@@ -504,7 +504,7 @@ long LoadItems(HANDLE file)
 	}
 
 	level_items = num;
-	InitialiseItemArray(256);
+	InitialiseItemArray(MAX_ITEMS);
 
 	for (int i = 0; i < level_items; i++)
 	{
