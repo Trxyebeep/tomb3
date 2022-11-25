@@ -6,6 +6,7 @@
 
 - Fix Lara letting go of some ledges.
 - Fix diver harpoons spamming gunshot SFX.
+- Fix hypothetical crash when loading a demo.
 
 ### tomb3 additions
 
