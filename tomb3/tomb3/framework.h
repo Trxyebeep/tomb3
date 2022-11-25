@@ -1,14 +1,11 @@
 #pragma once
 
-#define DIRECTDRAW_VERSION	0x0500
 #define DIRECT3D_VERSION	0x0500
 // Windows Header Files
 #include <windows.h>
 #include <d3d.h>
-#include <d3dtypes.h>
 #include <cmath>
 #include <stdio.h>
-#include <process.h>
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #define DIRECTSOUND_VERSION	0x0500
