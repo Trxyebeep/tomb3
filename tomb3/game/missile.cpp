@@ -9,6 +9,7 @@
 #include "effects.h"
 #include "traps.h"
 #include "../specific/game.h"
+#include "draw.h"
 
 void ControlMissile(short fx_number)
 {
@@ -99,7 +100,27 @@ void ControlMissile(short fx_number)
 		fx->pos.z_rot += 5460;
 }
 
+void ShootAtLara(FX_INFO* fx)
+{
+	short* bounds;
+	long x, z, dx, dy, dz;
+
+	dx = lara_item->pos.x_pos - fx->pos.x_pos;
+	dy = lara_item->pos.y_pos - fx->pos.y_pos;
+	dz = lara_item->pos.z_pos - fx->pos.z_pos;
+
+	bounds = GetBoundsAccurate(lara_item);
+	x = bounds[3] + 3 * (bounds[2] - bounds[3]) / 4 + dy;
+	z = phd_sqrt(SQUARE(dx) + SQUARE(dz));
+
+	fx->pos.x_rot = -(short)phd_atan(z, x);
+	fx->pos.y_rot = (short)phd_atan(dz, dx);
+	fx->pos.x_rot += short((GetRandomControl() - 0x4000) / 64);
+	fx->pos.y_rot += short((GetRandomControl() - 0x4000) / 64);
+}
+
 void inject_missile(bool replace)
 {
 	INJECT(0x00454FB0, ControlMissile, replace);
+	INJECT(0x004552C0, ShootAtLara, replace);
 }
