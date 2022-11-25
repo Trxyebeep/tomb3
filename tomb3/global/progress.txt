@@ -1126,7 +1126,7 @@ tomb3 progress.
 0x00459500	+	LiftControl
 0x004595E0	+	LiftFloorCeiling
 0x00459760	+	LiftFloor
-0x004597A0		LiftCeiling
+0x004597A0	+	LiftCeiling
 0x004597E0		BridgeFlatFloor
 0x00459820		BridgeFlatCeiling
 0x00459840		GetOffset

@@ -205,6 +205,16 @@ void LiftFloor(ITEM_INFO* item, long x, long y, long z, long* h)
 	}
 }
 
+void LiftCeiling(ITEM_INFO* item, long x, long y, long z, long* c)
+{
+	long h, nC;
+
+	LiftFloorCeiling(item, x, y, z, &h, &nC);
+
+	if (nC > *c)
+		*c = nC;
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -215,4 +225,5 @@ void inject_objects(bool replace)
 	INJECT(0x00459500, LiftControl, replace);
 	INJECT(0x004595E0, LiftFloorCeiling, replace);
 	INJECT(0x00459760, LiftFloor, replace);
+	INJECT(0x004597A0, LiftCeiling, replace);
 }
