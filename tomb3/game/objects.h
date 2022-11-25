@@ -9,6 +9,7 @@ void DrawBridgeCeiling(ITEM_INFO* item, long x, long y, long z, long* c);
 void DrawBridgeCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
 void InitialiseLift(short item_number);
 void LiftControl(short item_number);
+void LiftFloorCeiling(ITEM_INFO* item, long x, long y, long z, long* h, long* c);
 
 #define SmashWindow	( (void(__cdecl*)(short)) 0x00458C20 )
 #define InitialiseFinalLevel	( (void(__cdecl*)()) 0x00458840 )

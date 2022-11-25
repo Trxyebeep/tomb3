@@ -126,6 +126,72 @@ void LiftControl(short item_number)
 		ItemNewRoom(item_number, room_number);
 }
 
+void LiftFloorCeiling(ITEM_INFO* item, long x, long y, long z, long* h, long* c)
+{
+	long ix, iz, lx, lz, lh, lc, inside;
+
+	ix = item->pos.x_pos >> WALL_SHIFT;
+	iz = item->pos.z_pos >> WALL_SHIFT;
+	lx = lara_item->pos.x_pos >> WALL_SHIFT;
+	lz = lara_item->pos.z_pos >> WALL_SHIFT;
+	x >>= WALL_SHIFT;
+	z >>= WALL_SHIFT;
+	lh = item->pos.y_pos;
+	lc = lh - 1280;
+	inside = (x == ix || x + 1 == ix) && (z == iz || z - 1 == iz);	//is test point in lift range?
+	*h = 0x7FFF;
+	*c = -0x7FFF;
+
+	if ((lx == ix || lx + 1 == ix) && (lz == iz || lz - 1 == iz))	//is lara in lift range?
+	{
+		if (!item->current_anim_state && lara_item->pos.y_pos < lh + 256 && lara_item->pos.y_pos > lc + 256)
+		{
+			if (inside)
+			{
+				*h = lh;
+				*c = lc + 256;
+			}
+			else
+			{
+				*h = NO_HEIGHT;
+				*c = 0x7FFF;
+			}
+		}
+		else if (inside)
+		{
+			if (lara_item->pos.y_pos < lc + 256)
+				*h = lc;
+			else if (lara_item->pos.y_pos < lh + 256)
+			{
+				*h = lh;
+				*c = lc + 256;
+			}
+			else
+				*c = lh + 256;
+		}
+	}
+	else if (inside)
+	{
+		if (y <= lc)
+			*h = lc;
+		else if (y < lh + 256)
+		{
+			if (item->current_anim_state)
+			{
+				*h = lh;
+				*c = lc + 256;
+			}
+			else
+			{
+				*h = NO_HEIGHT;
+				*c = 0x7FFF;
+			}
+		}
+		else
+			*c = lh + 256;
+	}
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -134,4 +200,5 @@ void inject_objects(bool replace)
 	INJECT(0x00459490, DrawBridgeCollision, replace);
 	INJECT(0x004594C0, InitialiseLift, replace);
 	INJECT(0x00459500, LiftControl, replace);
+	INJECT(0x004595E0, LiftFloorCeiling, replace);
 }
