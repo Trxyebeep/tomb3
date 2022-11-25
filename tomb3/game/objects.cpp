@@ -1,7 +1,8 @@
 #include "../tomb3/pch.h"
 #include "objects.h"
+#include "collide.h"
 
-long OnDrawBridge(ITEM_INFO* item, long x, long z)
+long OnDrawBridge(ITEM_INFO* item, long z, long x)
 {
 	long ix, iz;
 
@@ -10,16 +11,16 @@ long OnDrawBridge(ITEM_INFO* item, long x, long z)
 	x >>= WALL_SHIFT;
 	z >>= WALL_SHIFT;
 
-	if (!item->pos.y_rot && z == ix && (x == iz - 1 || x == iz - 2))
+	if (!item->pos.y_rot && x == ix && (z == iz - 1 || z == iz - 2))
 		return 1;
 
-	if (item->pos.y_rot == 0x8000 && z == ix && (x == iz + 1 || x == iz + 2))
+	if (item->pos.y_rot == 0x8000 && x == ix && (z == iz + 1 || z == iz + 2))
 		return 1;
 
-	if (item->pos.y_rot == 0x4000 && x == iz && (z == ix - 1 || z == ix - 2))
+	if (item->pos.y_rot == 0x4000 && z == iz && (x == ix - 1 || x == ix - 2))
 		return 1;
 
-	if (item->pos.y_rot == -0x4000 && x == iz && (z == ix + 1 || z == ix + 2))
+	if (item->pos.y_rot == -0x4000 && z == iz && (x == ix + 1 || x == ix + 2))
 	return 1;
 
 	return 0;
@@ -43,9 +44,20 @@ void DrawBridgeCeiling(ITEM_INFO* item, long x, long y, long z, long* c)
 		*c = item->pos.y_pos + 256;
 }
 
+void DrawBridgeCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (!item->current_anim_state)
+		DoorCollision(item_number, l, coll);
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
 	INJECT(0x004593F0, DrawBridgeFloor, replace);
 	INJECT(0x00459450, DrawBridgeCeiling, replace);
+	INJECT(0x00459490, DrawBridgeCollision, replace);
 }
