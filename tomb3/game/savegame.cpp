@@ -288,6 +288,16 @@ void WriteSG(void* pointer, long size)
 		*SGpoint++ = *data++;
 }
 
+void ReadSG(void* pointer, long size)
+{
+	char* data;
+
+	SGcount += size;
+
+	for (data = (char*)pointer; size > 0; size--)
+		*data++ = *SGpoint++;
+}
+
 void inject_savegame(bool replace)
 {
 	INJECT(0x00461A60, ModifyStartInfo, replace);
@@ -295,4 +305,5 @@ void inject_savegame(bool replace)
 	INJECT(0x00461B50, CreateStartInfo, replace);
 	INJECT(0x00462DF0, ResetSG, replace);
 	INJECT(0x00462E10, WriteSG, replace);
+	INJECT(0x00462E60, ReadSG, replace);
 }

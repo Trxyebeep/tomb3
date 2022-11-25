@@ -1248,7 +1248,7 @@ tomb3 progress.
 0x004623F0		ExtractSaveGameInfo
 0x00462DF0	+	ResetSG
 0x00462E10	+	WriteSG
-0x00462E60		ReadSG
+0x00462E60	+	ReadSG
 
 
 		game/sealmute.cpp
