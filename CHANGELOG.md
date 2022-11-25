@@ -1,5 +1,20 @@
 # tomb3 changelog
 
+## Unreleased:
+
+### Original bug fixes
+
+- Fix Lara letting go of some ledges.
+
+### tomb3 additions
+
+- Add PSX save crystal system.
+- Add option for blue crystal light.
+
+### tomb3 bug fixes
+
+
+
 ## [1.3.0](https://github.com/Trxyebeep/tomb3/tree/V1.3.0) (Nov. 20 2022)
 
 #### the project was officially renamed from tomb3decomp to tomb3 for this release.

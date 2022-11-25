@@ -20,6 +20,7 @@ void DrawWillBossShield(ITEM_INFO* item);
 void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uchar cb);
 void S_DrawBat();
 void S_DrawSparks();
+void S_DrawSplashes();
 
 #ifdef TROYESTUFF
 void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item);
@@ -27,5 +28,3 @@ void S_DrawFootPrints();
 void DoUwEffect();
 void S_DrawSubWakeFX(ITEM_INFO* item);
 #endif
-
-#define S_DrawSplashes	( (void(__cdecl*)()) 0x0047BAA0 )

@@ -4,6 +4,9 @@
 #include "control.h"
 #include "../3dsystem/phd_math.h"
 #include "items.h"
+#include "objects.h"
+#include "draw.h"
+#include "../3dsystem/3d_gen.h"
 
 void ShiftItem(ITEM_INFO* item, COLL_INFO* coll)
 {
@@ -747,6 +750,208 @@ void UpdateLaraRoom(ITEM_INFO* item, long height)
 		ItemNewRoom(lara.item_number, room_number);
 }
 
+void DoorCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (TestBoundsCollide(item, l, coll->radius) && TestCollision(item, l))
+	{
+		if (coll->enable_baddie_push)
+		{
+			if (item->current_anim_state == item->goal_anim_state)
+				ItemPushLara(item, l, coll, 0, 1);
+			else
+				ItemPushLara(item, l, coll, coll->enable_spaz, 1);
+		}
+	}
+}
+
+void TrapCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (item->status == ITEM_ACTIVE)
+	{
+		if (!TestBoundsCollide(item, l, coll->radius))
+			return;
+
+		TestCollision(item, l);
+
+		if (item->object_number == FAN && item->current_anim_state == 1)
+			ObjectCollision(item_number, l, coll);
+	}
+	else if (item->status != ITEM_INVISIBLE)
+		ObjectCollision(item_number, l, coll);
+}
+
+long TestBoundsCollide(ITEM_INFO* item, ITEM_INFO* l, long rad)
+{
+	short* bounds;
+	short* lbounds;
+	long s, c, dx, dz, x, z;
+
+	bounds = GetBestFrame(item);
+	lbounds = GetBestFrame(l);
+
+	if (item->pos.y_pos + bounds[3] <= l->pos.y_pos + lbounds[2] || item->pos.y_pos + bounds[2] >= l->pos.y_pos + lbounds[3])
+		return 0;
+
+	s = phd_sin(item->pos.y_rot);
+	c = phd_cos(item->pos.y_rot);
+	dx = l->pos.x_pos - item->pos.x_pos;
+	dz = l->pos.z_pos - item->pos.z_pos;
+	x = (dx * c - dz * s) >> W2V_SHIFT;
+	z = (dx * s + dz * c) >> W2V_SHIFT;
+	return x >= bounds[0] - rad && x <= rad + bounds[1] && z >= bounds[4] - rad && z <= rad + bounds[5];
+}
+
+long TestLaraPosition(short* bounds, ITEM_INFO* item, ITEM_INFO* l)
+{
+	PHD_VECTOR pos;
+	long x, y, z;
+	short xrot, yrot, zrot;
+
+	xrot = l->pos.x_rot - item->pos.x_rot;
+	yrot = l->pos.y_rot - item->pos.y_rot;
+	zrot = l->pos.z_rot - item->pos.z_rot;
+
+	if (xrot < bounds[6] || xrot > bounds[7] ||
+		yrot < bounds[8] || yrot > bounds[9] ||
+		zrot < bounds[10] || zrot > bounds[11])
+		return 0;
+
+	phd_PushUnitMatrix();
+	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+	pos.x = l->pos.x_pos - item->pos.x_pos;
+	pos.y = l->pos.y_pos - item->pos.y_pos;
+	pos.z = l->pos.z_pos - item->pos.z_pos;
+	x = (pos.x * phd_mxptr[M00] + pos.y * phd_mxptr[M10] + pos.z * phd_mxptr[M20]) >> W2V_SHIFT;
+	y = (pos.x * phd_mxptr[M01] + pos.y * phd_mxptr[M11] + pos.z * phd_mxptr[M21]) >> W2V_SHIFT;
+	z = (pos.x * phd_mxptr[M02] + pos.y * phd_mxptr[M12] + pos.z * phd_mxptr[M22]) >> W2V_SHIFT;
+	phd_PopMatrix();
+
+	return x >= bounds[0] && x <= bounds[1] && y >= bounds[2] && y <= bounds[3] && z >= bounds[4] && z <= bounds[5];
+}
+
+void AlignLaraPosition(PHD_VECTOR* pos, ITEM_INFO* item, ITEM_INFO* l)
+{
+	FLOOR_INFO* floor;
+	long x, y, z, h, c;
+	short room_number;
+
+	l->pos.x_rot = item->pos.x_rot;
+	l->pos.y_rot = item->pos.y_rot;
+	l->pos.z_rot = item->pos.z_rot;
+
+	phd_PushUnitMatrix();
+	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+	x = item->pos.x_pos + ((pos->x * phd_mxptr[M00] + pos->y * phd_mxptr[M01] + pos->z * phd_mxptr[M02]) >> W2V_SHIFT);
+	y = item->pos.y_pos + ((pos->x * phd_mxptr[M10] + pos->y * phd_mxptr[M11] + pos->z * phd_mxptr[M12]) >> W2V_SHIFT);
+	z = item->pos.z_pos + ((pos->x * phd_mxptr[M20] + pos->y * phd_mxptr[M21] + pos->z * phd_mxptr[M22]) >> W2V_SHIFT);
+	phd_PopMatrix();
+
+	room_number = l->room_number;
+	floor = GetFloor(x, y, z, &room_number);
+	h = GetHeight(floor, x, y, z);
+	c = GetCeiling(floor, x, y, z);
+
+	if (abs(h - l->pos.y_pos) <= 256 && abs(c - l->pos.y_pos) >= 762)
+	{
+		l->pos.x_pos = x;
+		l->pos.y_pos = y;
+		l->pos.z_pos = z;
+	}
+}
+
+long Move3DPosTo3DPos(PHD_3DPOS* pos, PHD_3DPOS* dest, long speed, short rotation)
+{
+	long dx, dy, dz, distance;
+	short adiff;
+
+	dx = dest->x_pos - pos->x_pos;
+	dy = dest->y_pos - pos->y_pos;
+	dz = dest->z_pos - pos->z_pos;
+	distance = phd_sqrt(SQUARE(dx) + SQUARE(dy) + SQUARE(dz));
+
+	if (speed < distance)
+	{
+		pos->x_pos += speed * dx / distance;
+		pos->y_pos += speed * dy / distance;
+		pos->z_pos += speed * dz / distance;
+	}
+	else
+	{
+		pos->x_pos = dest->x_pos;
+		pos->y_pos = dest->y_pos;
+		pos->z_pos = dest->z_pos;
+	}
+
+	adiff = dest->x_rot - pos->x_rot;
+
+	if (adiff > rotation)
+		pos->x_rot += rotation;
+	else if (adiff < -rotation)
+		pos->x_rot -= rotation;
+	else
+		pos->x_rot = dest->x_rot;
+
+	adiff = dest->y_rot - pos->y_rot;
+
+	if (adiff > rotation)
+		pos->y_rot += rotation;
+	else if (adiff < -rotation)
+		pos->y_rot -= rotation;
+	else
+		pos->y_rot = dest->y_rot;
+
+	adiff = dest->z_rot - pos->z_rot;
+
+	if (adiff > rotation)
+		pos->z_rot += rotation;
+	else if (adiff < -rotation)
+		pos->z_rot -= rotation;
+	else
+		pos->z_rot = dest->z_rot;
+
+	return pos->x_pos == dest->x_pos && pos->y_pos == dest->y_pos && pos->z_pos == dest->z_pos &&
+		pos->x_rot == dest->x_rot && pos->y_rot == dest->y_rot && pos->z_rot == dest->z_rot;
+}
+
+long MoveLaraPosition(PHD_VECTOR* v, ITEM_INFO* item, ITEM_INFO* l)
+{
+	PHD_3DPOS pos;
+	long height;
+	short room_number;
+
+	pos.x_rot = item->pos.x_rot;
+	pos.y_rot = item->pos.y_rot;
+	pos.z_rot = item->pos.z_rot;
+	phd_PushUnitMatrix();
+	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+	pos.x_pos = item->pos.x_pos + ((v->x * phd_mxptr[M00] + v->y * phd_mxptr[M01] + v->z * phd_mxptr[M02]) >> W2V_SHIFT);
+	pos.y_pos = item->pos.y_pos + ((v->x * phd_mxptr[M10] + v->y * phd_mxptr[M11] + v->z * phd_mxptr[M12]) >> W2V_SHIFT);
+	pos.z_pos = item->pos.z_pos + ((v->x * phd_mxptr[M20] + v->y * phd_mxptr[M21] + v->z * phd_mxptr[M22]) >> W2V_SHIFT);
+	phd_PopMatrix();
+
+	if (item->object_number == FLARE_ITEM)
+	{
+		room_number = l->room_number;
+		height = GetHeight(GetFloor(pos.x_pos, pos.y_pos, pos.z_pos, &room_number), pos.x_pos, pos.y_pos, pos.z_pos);
+
+		if (abs(height - l->pos.y_pos) > 512)
+			return 0;
+
+		if (phd_sqrt(SQUARE(pos.x_pos - l->pos.x_pos) + SQUARE(pos.y_pos - l->pos.y_pos) + SQUARE(pos.z_pos - l->pos.z_pos)) < 128)
+			return 1;
+	}
+
+	return Move3DPosTo3DPos(&l->pos, &pos, 16, 364);
+}
+
 void inject_collide(bool replace)
 {
 	INJECT(0x0041E690, ShiftItem, replace);
@@ -759,4 +964,11 @@ void inject_collide(bool replace)
 	INJECT(0x0041E140, FindGridShift, replace);
 	INJECT(0x0041D500, GetCollisionInfo, replace);
 	INJECT(0x0041E6D0, UpdateLaraRoom, replace);
+	INJECT(0x0041EC90, DoorCollision, replace);
+	INJECT(0x0041ED10, TrapCollision, replace);
+	INJECT(0x0041F0E0, TestBoundsCollide, replace);
+	INJECT(0x0041F1B0, TestLaraPosition, replace);
+	INJECT(0x0041F2F0, AlignLaraPosition, replace);
+	INJECT(0x0041F5C0, Move3DPosTo3DPos, replace);
+	INJECT(0x0041F430, MoveLaraPosition, replace);
 }

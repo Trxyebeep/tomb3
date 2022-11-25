@@ -7,6 +7,9 @@
 #include "../game/invfunc.h"
 #include "../game/objects.h"
 #include "../game/laramisc.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
 
 const char* KeyboardButtons[272] =
 {
@@ -299,7 +302,12 @@ long S_UpdateInput()
 #endif
 	{
 		if (key_pressed(DIK_F5))
-			linput |= IN_SAVE;
+		{
+#ifdef TROYESTUFF
+			if (!tomb3.psx_saving)
+#endif
+				linput |= IN_SAVE;
+		}
 		else if (key_pressed(DIK_F6))
 			linput |= IN_LOAD;
 	}

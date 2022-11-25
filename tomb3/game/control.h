@@ -20,9 +20,11 @@ long zLOS(GAME_VECTOR* start, GAME_VECTOR* target);
 long xLOS(GAME_VECTOR* start, GAME_VECTOR* target);
 long ClipTarget(GAME_VECTOR* start, GAME_VECTOR* target);
 long ObjectOnLOS(GAME_VECTOR* start, GAME_VECTOR* target);
-
-#define CheckNoColFloorTriangle	( (long(__cdecl*)(FLOOR_INFO*, long, long)) 0x004231F0 )
-#define CheckNoColCeilingTriangle	( (long(__cdecl*)(FLOOR_INFO*, long, long)) 0x004232B0 )
-#define IsRoomOutside	( (long(__cdecl*)(long, long, long)) 0x004233B0 )
-#define TriggerCDTrack	( (void(__cdecl*)(short, short, short)) 0x00423110 )
-#define FlipMap	( (void(__cdecl*)()) 0x00422F40 )
+void FlipMap();
+void RemoveRoomFlipItems(ROOM_INFO* r);
+void AddRoomFlipItems(ROOM_INFO* r);
+void TriggerCDTrack(short value, short flags, short type);
+void TriggerNormalCDTrack(short value, short flags, short type);
+long CheckNoColFloorTriangle(FLOOR_INFO* floor, long x, long z);
+long CheckNoColCeilingTriangle(FLOOR_INFO* floor, long x, long z);
+long IsRoomOutside(long x, long y, long z);

@@ -1635,6 +1635,31 @@ struct RIPPLE_STRUCT
 	uchar init;
 };
 
+struct SPLASH_VERTS
+{
+	short wx;
+	short wy;
+	short wz;
+	short xv;
+	long yv;
+	short zv;
+	short oxv;
+	short ozv;
+	uchar friction;
+	uchar gravity;
+};
+
+struct SPLASH_STRUCT
+{
+	long x;
+	long y;
+	long z;
+	char flags;
+	uchar life;
+	char pad[2];
+	SPLASH_VERTS sv[48];
+};
+
 struct SPLASH_SETUP
 {
 	int x;
@@ -2028,12 +2053,13 @@ struct TOMB3_OPTIONS
 	bool crawl_tilt;
 	bool improved_poison_bar;
 	bool custom_water_color;
-	bool psx_crystal_sfx;
 	bool psx_text_colors;
 	bool upv_wake;
 	bool psx_fov;
 	bool psx_boxes;
 	bool psx_mono;
+	bool psx_saving;
+	bool blue_crystal_light;
 	bool gold;
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum

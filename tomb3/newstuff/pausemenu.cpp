@@ -134,8 +134,8 @@ long S_Pause()
 	flag = overlay_flag;
 	overlay_flag = -3;
 
-	if (T_RemovePrint(ammotext))
-		ammotext = 0;
+	T_RemovePrint(ammotext);
+	ammotext = 0;
 
 	S_FadeInInventory(1);
 	SOUND_Stop();
@@ -167,8 +167,8 @@ long S_Pause()
 
 	Remove_Requester(&Pause_Requester);
 
-	if (T_RemovePrint(pause_text))
-		pause_text = 0;
+	T_RemovePrint(pause_text);
+	pause_text = 0;
 
 	VidSizeLocked = 0;
 	TempVideoRemove();

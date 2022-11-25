@@ -255,26 +255,38 @@ void AnimatingPickUp(short item_number)
 	if (item->object_number == SAVEGAME_CRYSTAL_ITEM)
 	{
 		item->pos.y_pos = item->item_flags[2] - abs(ang >> 4) - 64;
-		TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 8, 0, c, 0);
+
+#ifdef TROYESTUFF
+		if (tomb3.blue_crystal_light)
+			TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 8, 0, c >> 2, c);
+		else
+#endif
+			TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 8, 0, c, 0);
+
 		dx = abs(item->pos.x_pos - lara_item->pos.x_pos);
 		dy = abs(item->pos.y_pos - lara_item->pos.y_pos);
 		dz = abs(item->pos.z_pos - lara_item->pos.z_pos);
 
 		if (dx < 256 && dy < 1024 && dz < 256)
 		{
-			lara.poisoned = 0;
-			lara_item->hit_points += 500;
-
-			if (lara_item->hit_points > 1000)
-				lara_item->hit_points = 1000;
-			
 #ifdef TROYESTUFF
-			if (tomb3.psx_crystal_sfx)
+			if (tomb3.psx_saving)
+			{
+				Inv_AddItem(SAVEGAME_CRYSTAL_ITEM);
 				SoundEffect(SFX_SAVE_CRYSTAL, &lara_item->pos, SFX_DEFAULT);
+			}
 			else
 #endif
+			{
+				lara.poisoned = 0;
+				lara_item->hit_points += 500;
+
+				if (lara_item->hit_points > 1000)
+					lara_item->hit_points = 1000;
+
 				SoundEffect(SFX_MENU_MEDI, &lara_item->pos, SFX_DEFAULT);
-			
+			}
+
 			KillItem(item_number);
 		}
 	}

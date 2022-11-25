@@ -18,6 +18,7 @@
 #include "items.h"
 #include "sphere.h"
 #include "effect2.h"
+#include "effects.h"
 
 BITE_INFO sub_bites[6] =
 {

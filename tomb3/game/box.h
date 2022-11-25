@@ -20,3 +20,5 @@ void AlertNearbyGuards(ITEM_INFO* item);
 #define CreatureVault	( (long(__cdecl*)(short, short, long, long)) 0x004166D0 )
 #define CreatureEffect	( (void(__cdecl*)(ITEM_INFO*, BITE_INFO*, short(__cdecl*)(long, long, long, short, short, short))) 0x00416670 )
 #define CreatureDie	( (void(__cdecl*)(short, long)) 0x00415820 )
+#define CreatureFloat	( (void(__cdecl*)(short)) 0x00416570 )
+#define CreatureUnderwater	( (void(__cdecl*)(ITEM_INFO*, long)) 0x00416620 )

@@ -292,14 +292,14 @@ tomb3 progress.
 0x0041EA60		CreatureCollision
 0x0041EBD0	+	ObjectCollision
 0x0041EC30	+	ObjectCollisionSub
-0x0041EC90		DoorCollision
-0x0041ED10		TrapCollision
+0x0041EC90	+	DoorCollision
+0x0041ED10	+	TrapCollision
 0x0041EDA0		ItemPushLara
-0x0041F0E0		TestBoundsCollide
-0x0041F1B0		TestLaraPosition
-0x0041F2F0		AlignLaraPosition
-0x0041F430		MoveLaraPosition
-0x0041F5C0		Move3DPosTo3DPos
+0x0041F0E0	+	TestBoundsCollide
+0x0041F1B0	+	TestLaraPosition
+0x0041F2F0	+	AlignLaraPosition
+0x0041F430	+	MoveLaraPosition
+0x0041F5C0	+	Move3DPosTo3DPos
 
 
 		game/compy.cpp
@@ -328,14 +328,14 @@ tomb3 progress.
 0x00422700	+	xLOS
 0x004229F0	+	ClipTarget
 0x00422C30	+	ObjectOnLOS
-0x00422F40		FlipMap
-0x00423000		RemoveRoomFlipItems
-0x004230A0		AddRoomFlipItems
-0x00423110		TriggerCDTrack
-0x00423140		TriggerNormalCDTrack
-0x004231F0		CheckNoColFloorTriangle
-0x004232B0		CheckNoColCeilingTriangle
-0x004233B0		IsRoomOutside
+0x00422F40	+	FlipMap
+0x00423000	+	RemoveRoomFlipItems
+0x004230A0	+	AddRoomFlipItems
+0x00423110	+	TriggerCDTrack
+0x00423140	+	TriggerNormalCDTrack
+0x004231F0	+	CheckNoColFloorTriangle
+0x004232B0	+	CheckNoColCeilingTriangle
+0x004233B0	+	IsRoomOutside
 
 
 		game/croc.cpp
@@ -346,17 +346,17 @@ tomb3 progress.
 		game/demo.cpp
 
 0x004236B0	+	DoDemoSequence
-0x00423710		StartDemo
-0x004238A0		LoadLaraDemoPos
+0x00423710	+	StartDemo
+0x004238A0	+	LoadLaraDemoPos
 0x00423970	+	GetDemoInput
 
 
 		game/diver.cpp
 
-0x004239A0		DiverControl
-0x00423CF0		Harpoon
-0x00423D70		GetWaterSurface
-0x00423E80		ControlGhostGasEmitter
+0x004239A0	+	DiverControl
+0x00423CF0	+	Harpoon
+0x00423D70	+	GetWaterSurface
+0x00423E80	+	ControlGhostGasEmitter
 
 
 		game/dog.cpp
@@ -454,84 +454,84 @@ tomb3 progress.
 
 		game/effects.cpp
 
-0x0042E170		ItemNearLara
-0x0042E200		SoundEffects
-0x0042E270		Richochet
+0x0042E170	+	ItemNearLara
+0x0042E200	+	SoundEffects
+0x0042E270	+	Richochet
 0x0042E2C0		DoBloodSplat
 0x0042E330		DoBloodSplatD
 0x0042E3B0		DoLotsOfBlood
 0x0042E460		DoLotsOfBloodD
-0x0042E4F0		CreateBubble
-0x0042E5C0		LaraBubbles
+0x0042E4F0	+	CreateBubble
+0x0042E5C0	+	LaraBubbles
 0x0042E630	+	LaraBreath
-0x0042E750		ControlBubble1
-0x0042E8C0		Splash
-0x0042E9F0		WadeSplash
-0x0042EBB0		WaterFall
-0x0042ECD0		finish_level_effect
-0x0042ECE0		turn180_effect
-0x0042ED00		floor_shake_effect
-0x0042EDA0		lara_normal_effect
-0x0042EDE0		BoilerFX
-0x0042EE00		FloodFX
-0x0042EEA0		RubbleFX
-0x0042EED0		ChandelierFX
-0x0042EF00		ExplosionFX
-0x0042EF30		PistonFX
-0x0042EF50		CurtainFX
-0x0042EF70		StatueFX
-0x0042EF90		SetChangeFX
-0x0042EFB0		ControlDingDong
-0x0042F000		ControlLaraAlarm
-0x0042F040		ControlBirdTweeter
-0x0042F0B0		DoChimeSound
-0x0042F110		ControlClockChimes
-0x0042F180		lara_hands_free
-0x0042F190		flip_map_effect
-0x0042F1A0		draw_right_gun
-0x0042F1F0		draw_left_gun
-0x0042F240		shoot_right_gun
-0x0042F250		shoot_left_gun
-0x0042F260		swap_meshes_with_meshswap1
-0x0042F2D0		swap_meshes_with_meshswap2
-0x0042F340		swap_meshes_with_meshswap3
-0x0042F3F0		invisibility_on
-0x0042F400		invisibility_off
-0x0042F420		dynamic_light_on
-0x0042F430		dynamic_light_off
-0x0042F440		reset_hair
-0x0042F450		AssaultStart
-0x0042F490		AssaultStop
-0x0042F4B0		AssaultReset
-0x0042F4E0		AssaultPenalty4
-0x0042F510		AssaultPenalty30
-0x0042F540		AssaultFinished
-0x0042F5D0		QuadStart
-0x0042F600		QuadStop
-0x0042F630		QuadFinished
-0x0042F690		Exercise1_105
-0x0042F6C0		Exercise1_104
-0x0042F6F0		Exercise2_112
-0x0042F720		Exercise2_83
-0x0042F750		Exercise3_115
-0x0042F780		Exercise3_107
-0x0042F7B0		Exercise3_79
-0x0042F7E0		Exercise4_110
-0x0042F810		Exercise4_111
-0x0042F840		Exercise5_116
-0x0042F870		Exercise5_95
-0x0042F8A0		Exercise6_113
-0x0042F8D0		Exercise6_114
-0x0042F900		Exercise6_80
-0x0042F930		Exercise7_106
-0x0042F960		Exercise7_86
-0x0042F990		Exercise8_93
-0x0042F9C0		Exercise8_109Sp
-0x0042FA00		Exercise8_87
-0x0042FA30		ResetExercises
-0x0042FA50		TubeTrain
-0x0042FA70		RumbleNoShake
-0x0042FA90		BaddieBiteEffect
+0x0042E750	+	ControlBubble1
+0x0042E8C0	+	Splash
+0x0042E9F0	+	WadeSplash
+0x0042EBB0	+	WaterFall
+0x0042ECD0	+	finish_level_effect
+0x0042ECE0	+	turn180_effect
+0x0042ED00	+	floor_shake_effect
+0x0042EDA0	+	lara_normal_effect
+0x0042EDE0	+	BoilerFX
+0x0042EE00	+	FloodFX
+0x0042EEA0	+	RubbleFX
+0x0042EED0	+	ChandelierFX
+0x0042EF00	+	ExplosionFX
+0x0042EF30	+	PistonFX
+0x0042EF50	+	CurtainFX
+0x0042EF70	+	StatueFX
+0x0042EF90	+	SetChangeFX
+0x0042EFB0	+	ControlDingDong
+0x0042F000	+	ControlLaraAlarm
+0x0042F040	+	ControlBirdTweeter
+0x0042F0B0	+	DoChimeSound
+0x0042F110	+	ControlClockChimes
+0x0042F180	+	lara_hands_free
+0x0042F190	+	flip_map_effect
+0x0042F1A0	+	draw_right_gun
+0x0042F1F0	+	draw_left_gun
+0x0042F240	+	shoot_right_gun
+0x0042F250	+	shoot_left_gun
+0x0042F260	+	swap_meshes_with_meshswap1
+0x0042F2D0	+	swap_meshes_with_meshswap2
+0x0042F340	+	swap_meshes_with_meshswap3
+0x0042F3F0	+	invisibility_on
+0x0042F400	+	invisibility_off
+0x0042F420	+	dynamic_light_on
+0x0042F430	+	dynamic_light_off
+0x0042F440	+	reset_hair
+0x0042F450	+	AssaultStart
+0x0042F490	+	AssaultStop
+0x0042F4B0	+	AssaultReset
+0x0042F4E0	+	AssaultPenalty4
+0x0042F510	+	AssaultPenalty30
+0x0042F540	+	AssaultFinished
+0x0042F5D0	+	QuadStart
+0x0042F600	+	QuadStop
+0x0042F630	+	QuadFinished
+0x0042F690	+	Exercise1_105
+0x0042F6C0	+	Exercise1_104
+0x0042F6F0	+	Exercise2_112
+0x0042F720	+	Exercise2_83
+0x0042F750	+	Exercise3_115
+0x0042F780	+	Exercise3_107
+0x0042F7B0	+	Exercise3_79
+0x0042F7E0	+	Exercise4_110
+0x0042F810	+	Exercise4_111
+0x0042F840	+	Exercise5_116
+0x0042F870	+	Exercise5_95
+0x0042F8A0	+	Exercise6_113
+0x0042F8D0	+	Exercise6_114
+0x0042F900	+	Exercise6_80
+0x0042F930	+	Exercise7_106
+0x0042F960	+	Exercise7_86
+0x0042F990	+	Exercise8_93
+0x0042F9C0	+	Exercise8_109Sp
+0x0042FA00	+	Exercise8_87
+0x0042FA30	+	ResetExercises
+0x0042FA50	+	TubeTrain
+0x0042FA70	+	RumbleNoShake
+0x0042FA90	+	BaddieBiteEffect
 
 
 		game/firehead.cpp
@@ -1542,7 +1542,7 @@ tomb3 progress.
 0x0047A4B0	+	DoRain
 0x0047AA80	+	DoSnow
 0x0047B2C0	+	S_DrawSparks
-0x0047BAA0		S_DrawSplashes
+0x0047BAA0	+	S_DrawSplashes
 0x0047C2A0	+	DrawSummonRings
 0x0047CC10	+	DrawTonyBossShield
 0x0047D4A0	+	TriggerTribeBossHeadElectricity

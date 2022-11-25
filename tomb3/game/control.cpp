@@ -23,10 +23,11 @@
 #include "items.h"
 #include "lot.h"
 #include "pickup.h"
+#include "draw.h"
+#include "moveblok.h"
 #ifdef TROYESTUFF
 #include "../newstuff/pausemenu.h"
 #endif
-#include "draw.h"
 
 long ControlPhase(long nframes, long demo_mode)
 {
@@ -2072,6 +2073,225 @@ long ObjectOnLOS(GAME_VECTOR* start, GAME_VECTOR* target)
 	return NO_ITEM;
 }
 
+void FlipMap()
+{
+	ROOM_INFO* r;
+	ROOM_INFO* flipped;
+	ROOM_INFO temp;
+
+	for (int i = 0; i < number_rooms; i++)
+	{
+		r = &room[i];
+
+		if (r->flipped_room < 0)
+			continue;
+
+		flipped = &room[r->flipped_room];
+
+		RemoveRoomFlipItems(r);
+		memcpy(&temp, r, sizeof(ROOM_INFO));
+		memcpy(r, flipped, sizeof(ROOM_INFO));
+		memcpy(flipped, &temp, sizeof(ROOM_INFO));
+		r->flipped_room = flipped->flipped_room;
+		r->item_number = flipped->item_number;
+		r->fx_number = flipped->fx_number;
+		flipped->flipped_room = -1;
+		AddRoomFlipItems(r);
+	}
+
+	flip_status = !flip_status;
+}
+
+void RemoveRoomFlipItems(ROOM_INFO* r)
+{
+	ITEM_INFO* item;
+	short item_number;
+
+	for (item_number = r->item_number; item_number != NO_ITEM; item_number = item->next_item)
+	{
+		item = &items[item_number];
+
+		if (objects[item->object_number].control == MovableBlock)
+			AlterFloorHeight(item, 1024);
+		else if (item->flags & IFL_INVISIBLE && objects[item->object_number].intelligent && item->hit_points <= 0)
+		{
+			RemoveDrawnItem(item_number);
+			item->flags |= IFL_CLEARBODY;
+		}
+	}
+}
+
+void AddRoomFlipItems(ROOM_INFO* r)
+{
+	ITEM_INFO* item;
+	short item_number;
+
+	for (item_number = r->item_number; item_number != NO_ITEM; item_number = item->next_item)
+	{
+		item = &items[item_number];
+
+		if (objects[item->object_number].control == MovableBlock)
+			AlterFloorHeight(item, -1024);
+	}
+}
+
+void TriggerCDTrack(short value, short flags, short type)
+{
+	if (value > 1 && value < 128)
+		TriggerNormalCDTrack(value, flags, type);
+}
+
+void TriggerNormalCDTrack(short value, short flags, short type)
+{
+	long code;
+
+	if (value >= 26 && value <= 36 || value >= 73 && value <= 78 || value == 117)
+	{
+		if (CurrentAtmosphere != value)
+		{
+			CurrentAtmosphere = (char)value;
+
+			if (IsAtmospherePlaying)
+				S_CDPlay(value, 1);
+
+			printf("Got new atmosphere %d\n", value);
+		}
+
+		return;
+	}
+
+	if (value != 2 || CurrentLevel != LV_GYM)
+	{
+		code = (flags >> 8) & 0x3F;		//(IFL_CODEBITS | IFL_INVISIBLE) = 0x3F00, then >> 8 = 0x3F
+
+		if ((cd_flags[value] & code) == code)
+			return;
+
+		cd_flags[value] |= code;
+	}
+
+	S_CDPlay(value, 0);
+	IsAtmospherePlaying = 0;
+}
+
+long CheckNoColFloorTriangle(FLOOR_INFO* floor, long x, long z)
+{
+	short type;
+
+	if (!floor->index)
+		return 0;
+
+	type = floor_data[floor->index] & 0x1F;
+
+	if (type != NOCOLF1T && type != NOCOLF1B && type != NOCOLF2T && type != NOCOLF2B)
+		return 0;
+
+	x &= 0x3FF;
+	z &= 0x3FF;
+
+	if (type == NOCOLF1T && x <= WALL_SIZE - z)
+		return -1;
+
+	if (type == NOCOLF1B && x > WALL_SIZE - z)
+		return -1;
+
+	if (type == NOCOLF2T && x <= z)
+		return -1;
+
+	if (type == NOCOLF2B && x > z)
+		return -1;
+
+	return 1;
+}
+
+long CheckNoColCeilingTriangle(FLOOR_INFO* floor, long x, long z)
+{
+	short* data;
+	short type;
+
+	if (!floor->index)
+		return 0;
+
+	data = &floor_data[floor->index];
+	type = data[0] & 0x1F;
+
+	if (type == TILT_TYPE || type == SPLIT1 || type == SPLIT2 || type == NOCOLF1T || type == NOCOLF1B || type == NOCOLF2T || type == NOCOLF2B)
+	{
+		if (data[0] & 0x8000)
+			return 0;
+
+		type = data[2] & 0x1F;
+	}
+
+	if (type != NOCOLC1T && type != NOCOLC1B && type != NOCOLC2T && type != NOCOLC2B)
+		return 0;
+
+	x &= 0x3FF;
+	z &= 0x3FF;
+
+	if (type == NOCOLC1T && x <= WALL_SIZE - z)
+		return -1;
+
+	if (type == NOCOLC1B && x > WALL_SIZE - z)
+		return -1;
+
+	if (type == NOCOLC2T && x <= z)
+		return -1;
+
+	if (type == NOCOLC2B && x > z)
+		return -1;
+
+	return 1;
+}
+
+long IsRoomOutside(long x, long y, long z)
+{
+	ROOM_INFO* r;
+	FLOOR_INFO* floor;
+	uchar* p;
+	long h, c, offset;
+	short rn;
+
+	offset = (ushort)OutsideRoomOffsets[27 * (x >> 12) + (z >> 12)];
+
+	if (offset == -1)
+		return -2;
+
+	p = (uchar*)&OutsideRoomTable[offset];
+
+	while (*p != 255)
+	{
+		rn = *p;
+		r = &room[rn];
+
+		if (y > r->maxceiling && y < r->minfloor &&
+			(z > r->z + WALL_SIZE && z < (r->x_size << WALL_SHIFT) + r->z - WALL_SIZE) &&
+			(x > r->x + WALL_SIZE && x < (r->y_size << WALL_SHIFT) + r->x - WALL_SIZE))
+		{
+			floor = GetFloor(x, y, z, &rn);
+			h = GetHeight(floor, x, y, z);
+
+			if (h == NO_HEIGHT || y > h)
+				return -2;
+
+			c = GetCeiling(floor, x, y, z);
+
+			if (y < c)
+				return -2;
+
+			if (!(r->flags & (ROOM_UNDERWATER | ROOM_NOT_INSIDE)))
+				return -3;
+
+			IsRoomOutsideNo = *p;
+			return 1;
+		}
+
+		p++;
+	}
+
+	return -2;
+}
+
 void inject_control(bool replace)
 {
 	INJECT(0x0041FFA0, ControlPhase, inject_rando ? 1 : replace);
@@ -2091,4 +2311,12 @@ void inject_control(bool replace)
 	INJECT(0x00422700, xLOS, replace);
 	INJECT(0x004229F0, ClipTarget, replace);
 	INJECT(0x00422C30, ObjectOnLOS, replace);
+	INJECT(0x00422F40, FlipMap, replace);
+	INJECT(0x00423000, RemoveRoomFlipItems, replace);
+	INJECT(0x004230A0, AddRoomFlipItems, replace);
+	INJECT(0x00423110, TriggerCDTrack, replace);
+	INJECT(0x00423140, TriggerNormalCDTrack, replace);
+	INJECT(0x004231F0, CheckNoColFloorTriangle, replace);
+	INJECT(0x004232B0, CheckNoColCeilingTriangle, replace);
+	INJECT(0x004233B0, IsRoomOutside, replace);
 }

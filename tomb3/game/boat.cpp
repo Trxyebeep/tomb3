@@ -13,6 +13,7 @@
 #include "lara.h"
 #include "sound.h"
 #include "effect2.h"
+#include "effects.h"
 #include "../specific/game.h"
 
 void InitialiseBoat(short item_number)

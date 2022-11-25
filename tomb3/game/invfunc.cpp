@@ -10,6 +10,9 @@
 #include "objects.h"
 #include "health.h"
 #include "items.h"
+#ifdef TROYESTUFF
+#include "../tomb3/tomb3.h"
+#endif
 
 #ifdef TROYESTUFF
 GOURAUD_FILL req_main_gour1 =
@@ -1874,6 +1877,14 @@ long Inv_GetItemOption(long item_number)
 	case ICON_PICKUP4_ITEM:
 	case ICON_PICKUP4_OPTION:
 		return ICON_PICKUP4_OPTION;
+
+#ifdef TROYESTUFF
+	case SAVEGAME_CRYSTAL_ITEM:
+	case SAVEGAME_CRYSTAL_OPTION:
+		
+		if (tomb3.psx_saving)
+			return SAVEGAME_CRYSTAL_OPTION;
+#endif
 	}
 
 	return NO_ITEM;
@@ -2409,6 +2420,17 @@ long Inv_AddItem(long item_number)
 	case ICON_PICKUP4_OPTION:
 		Inv_InsertItem(&icon4_option);
 		return 1;
+
+#ifdef TROYESTUFF
+	case SAVEGAME_CRYSTAL_ITEM:
+	case SAVEGAME_CRYSTAL_OPTION:
+
+		if (tomb3.psx_saving && CurrentLevel != LV_GYM)
+		{
+			Inv_InsertItem(&sgcrystal_option);
+			return 1;
+		}
+#endif
 	}
 
 	return 0;
