@@ -2,6 +2,8 @@
 #include "objects.h"
 #include "collide.h"
 #include "../specific/init.h"
+#include "control.h"
+#include "items.h"
 
 long OnDrawBridge(ITEM_INFO* item, long z, long x)
 {
@@ -67,6 +69,63 @@ void InitialiseLift(short item_number)
 	lift->wait_time = 0;
 }
 
+void LiftControl(short item_number)
+{
+	ITEM_INFO* item;
+	LIFT_INFO* lift;
+	short room_number;
+
+	item = &items[item_number];
+	lift = (LIFT_INFO*)item->data;
+
+	if (TriggerActive(item))
+	{
+		if (item->pos.y_pos < lift->start_height + 5616)
+		{
+			if (lift->wait_time < 90)
+			{
+				item->goal_anim_state = 1;
+				lift->wait_time++;
+			}
+			else
+			{
+				item->goal_anim_state = 0;
+				item->pos.y_pos += 16;
+			}
+		}
+		else
+		{
+			item->goal_anim_state = 1;
+			lift->wait_time = 0;
+		}
+	}
+	else if (item->pos.y_pos > lift->start_height + 16)
+	{
+		if (lift->wait_time < 90)
+		{
+			item->goal_anim_state = 1;
+			lift->wait_time++;
+		}
+		else
+		{
+			item->goal_anim_state = 0;
+			item->pos.y_pos -= 16;
+		}
+	}
+	else
+	{
+		item->goal_anim_state = 1;
+		lift->wait_time = 0;
+	}
+
+	AnimateItem(item);
+	room_number = item->room_number;
+	GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+
+	if (item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -74,4 +133,5 @@ void inject_objects(bool replace)
 	INJECT(0x00459450, DrawBridgeCeiling, replace);
 	INJECT(0x00459490, DrawBridgeCollision, replace);
 	INJECT(0x004594C0, InitialiseLift, replace);
+	INJECT(0x00459500, LiftControl, replace);
 }
