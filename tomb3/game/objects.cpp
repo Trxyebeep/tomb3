@@ -24,7 +24,7 @@ long OnDrawBridge(ITEM_INFO* item, long z, long x)
 		return 1;
 
 	if (item->pos.y_rot == -0x4000 && z == iz && (x == ix + 1 || x == ix + 2))
-	return 1;
+		return 1;
 
 	return 0;
 }
