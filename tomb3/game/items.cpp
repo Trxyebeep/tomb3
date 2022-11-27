@@ -259,6 +259,34 @@ void ItemNewRoom(short item_num, short room_num)
 	room[room_num].item_number = item_num;
 }
 
+long GlobalItemReplace(long in, long out)
+{
+	ITEM_INFO* item;
+	ROOM_INFO* r;
+	long nReplaced;
+	short item_num;
+
+	nReplaced = 0;
+
+	for (int i = 0; i < number_rooms; i++)
+	{
+		r = &room[i];
+
+		for (item_num = r->item_number; item_num != NO_ITEM; item_num = item->next_item)
+		{
+			item = &items[item_num];
+
+			if (item->object_number == in)
+			{
+				item->object_number = (short)out;
+				nReplaced++;
+			}
+		}
+	}
+
+	return nReplaced;
+}
+
 void inject_items(bool replace)
 {
 	INJECT(0x0043AA20, InitialiseItemArray, replace);
@@ -269,4 +297,5 @@ void inject_items(bool replace)
 	INJECT(0x0043AEE0, RemoveDrawnItem, replace);
 	INJECT(0x0043AF60, AddActiveItem, replace);
 	INJECT(0x0043AFD0, ItemNewRoom, replace);
+	INJECT(0x0043B080, GlobalItemReplace, replace);
 }
