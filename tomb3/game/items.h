@@ -6,10 +6,10 @@ void inject_items(bool replace);
 void InitialiseItemArray(short num_items);
 void KillItem(short item_num);
 short CreateItem();
+void InitialiseItem(short item_num);
 
 #define CreateEffect	( (short(__cdecl*)(short)) 0x0043B130 )
 #define KillEffect	( (void(__cdecl*)(short)) 0x0043B1A0 )
-#define InitialiseItem	( (void(__cdecl*)(short)) 0x0043AC30 )
 #define AddActiveItem	( (void(__cdecl*)(short)) 0x0043AF60 )
 #define ItemNewRoom	( (void(__cdecl*)(short, short)) 0x0043AFD0 )
 #define EffectNewRoom	( (void(__cdecl*)(short, short)) 0x0043B290 )

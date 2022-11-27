@@ -93,9 +93,77 @@ short CreateItem()
 	return item_number;
 }
 
+void InitialiseItem(short item_num)
+{
+	ITEM_INFO* item;
+	ROOM_INFO* r;
+	FLOOR_INFO* floor;
+
+	item = &items[item_num];
+	item->anim_number = objects[item->object_number].anim_index;
+	item->frame_number = anims[item->anim_number].frame_base;
+	item->current_anim_state = anims[item->anim_number].current_anim_state;
+	item->goal_anim_state = anims[item->anim_number].current_anim_state;
+	item->required_anim_state = 0;
+	item->pos.x_rot = 0;
+	item->pos.z_rot = 0;
+	item->fallspeed = 0;
+	item->speed = 0;
+	item->item_flags[3] = 0;
+	item->item_flags[2] = 0;
+	item->item_flags[1] = 0;
+	item->item_flags[0] = 0;
+	item->hit_points = objects[item->object_number].hit_points;
+	item->collidable = 1;
+	item->clear_body = 0;
+	item->timer = 0;
+	item->mesh_bits = -1;
+	item->touch_bits = 0;
+	item->after_death = 0;
+	item->il.init = 0;
+	item->fired_weapon = 0;
+	item->data = 0;
+
+	if (item->flags & IFL_INVISIBLE)
+	{
+		item->status = ITEM_INVISIBLE;
+		item->flags -= IFL_INVISIBLE;
+	}
+	else if (objects[item->object_number].intelligent)
+		item->status = ITEM_INVISIBLE;
+
+	if (item->flags & IFL_CLEARBODY)
+	{
+		item->clear_body = 1;
+		item->flags -= IFL_CLEARBODY;
+	}
+
+	if ((item->flags & IFL_CODEBITS) == IFL_CODEBITS)
+	{
+		item->flags -= IFL_CODEBITS;
+		item->flags |= IFL_REVERSE;
+		AddActiveItem(item_num);
+		item->status = ITEM_ACTIVE;
+	}
+
+	r = &room[item->room_number];
+	item->next_item = r->item_number;
+	r->item_number = item_num;
+	floor = &r->floor[((item->pos.z_pos - r->z) >> WALL_SHIFT) + r->x_size * ((item->pos.x_pos - r->x) >> WALL_SHIFT)];
+	item->floor = floor->floor << 8;
+	item->box_number = floor->box;
+
+	if (savegame.bonus_flag && !DemoPlay)
+		item->hit_points *= 2;
+
+	if (objects[item->object_number].initialise)
+		objects[item->object_number].initialise(item_num);
+}
+
 void inject_items(bool replace)
 {
 	INJECT(0x0043AA20, InitialiseItemArray, replace);
 	INJECT(0x0043AA90, KillItem, replace);
 	INJECT(0x0043ABE0, CreateItem, replace);
+	INJECT(0x0043AC30, InitialiseItem, replace);
 }
