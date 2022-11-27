@@ -121,6 +121,7 @@
 #define next_item_active	VAR_(0x006D62AA, short)
 #define next_item_free	VAR_(0x006D62A8, short)
 #define next_fx_active	VAR_(0x006D8768, short)
+#define next_fx_free	VAR_(0x006D875C, short)
 #define body_bag	VAR_(0x006D62AC, short)
 #define KillEverythingFlag	VAR_(0x006261AC, long)
 #define baddie_slots	VAR_(0x006D58B0, CREATURE_INFO*)

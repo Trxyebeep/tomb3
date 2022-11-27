@@ -287,6 +287,23 @@ long GlobalItemReplace(long in, long out)
 	return nReplaced;
 }
 
+void InitialiseFXArray()
+{
+	FX_INFO* fx;
+
+	fx = effects;
+	next_fx_active = NO_ITEM;
+	next_fx_free = 0;
+
+	for (int i = 1; i < 50; i++)
+	{
+		fx->next_fx = i;
+		fx++;
+	}
+
+	fx->next_fx = NO_ITEM;
+}
+
 void inject_items(bool replace)
 {
 	INJECT(0x0043AA20, InitialiseItemArray, replace);
@@ -298,4 +315,5 @@ void inject_items(bool replace)
 	INJECT(0x0043AF60, AddActiveItem, replace);
 	INJECT(0x0043AFD0, ItemNewRoom, replace);
 	INJECT(0x0043B080, GlobalItemReplace, replace);
+	INJECT(0x0043B100, InitialiseFXArray, replace);
 }
