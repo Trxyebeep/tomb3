@@ -683,7 +683,7 @@ tomb3 progress.
 0x0043AFD0	+	ItemNewRoom
 0x0043B080	+	GlobalItemReplace
 0x0043B100	+	InitialiseFXArray
-0x0043B130		CreateEffect
+0x0043B130	+	CreateEffect
 0x0043B1A0		KillEffect
 0x0043B290		EffectNewRoom
 0x0043B330		ClearBodyBag

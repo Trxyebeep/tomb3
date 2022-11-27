@@ -304,6 +304,30 @@ void InitialiseFXArray()
 	fx->next_fx = NO_ITEM;
 }
 
+short CreateEffect(short room_num)
+{
+	FX_INFO* fx;
+	ROOM_INFO* r;
+	short fx_num;
+
+	fx_num = next_fx_free;
+
+	if (fx_num != NO_ITEM)
+	{
+		fx = &effects[fx_num];
+		next_fx_free = fx->next_fx;
+		r = &room[room_num];
+		fx->room_number = room_num;
+		fx->next_fx = r->fx_number;
+		r->fx_number = fx_num;
+		fx->next_active = next_fx_active;
+		next_fx_active = fx_num;
+		fx->shade = 0x4210;
+	}
+
+	return fx_num;
+}
+
 void inject_items(bool replace)
 {
 	INJECT(0x0043AA20, InitialiseItemArray, replace);
@@ -316,4 +340,5 @@ void inject_items(bool replace)
 	INJECT(0x0043AFD0, ItemNewRoom, replace);
 	INJECT(0x0043B080, GlobalItemReplace, replace);
 	INJECT(0x0043B100, InitialiseFXArray, replace);
+	INJECT(0x0043B130, CreateEffect, replace);
 }
