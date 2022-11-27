@@ -160,10 +160,35 @@ void InitialiseItem(short item_num)
 		objects[item->object_number].initialise(item_num);
 }
 
+void RemoveActiveItem(short item_num)
+{
+	short linknum;
+
+	if (!items[item_num].active)
+		return;
+
+	items[item_num].active = 0;
+
+	if (next_item_active == item_num)
+		next_item_active = items[item_num].next_active;
+	else
+	{
+		for (linknum = next_item_active; linknum != NO_ITEM; linknum = items[linknum].next_active)
+		{
+			if (items[linknum].next_active == item_num)
+			{
+				items[linknum].next_active = items[item_num].next_active;
+				break;
+			}
+		}
+	}
+}
+
 void inject_items(bool replace)
 {
 	INJECT(0x0043AA20, InitialiseItemArray, replace);
 	INJECT(0x0043AA90, KillItem, replace);
 	INJECT(0x0043ABE0, CreateItem, replace);
 	INJECT(0x0043AC30, InitialiseItem, replace);
+	INJECT(0x0043AE40, RemoveActiveItem, replace);
 }
