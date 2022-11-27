@@ -686,7 +686,7 @@ tomb3 progress.
 0x0043B130	+	CreateEffect
 0x0043B1A0	+	KillEffect
 0x0043B290	+	EffectNewRoom
-0x0043B330		ClearBodyBag
+0x0043B330	+	ClearBodyBag
 
 
 		game/kayak.cpp

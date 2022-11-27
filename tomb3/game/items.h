@@ -16,5 +16,4 @@ void InitialiseFXArray();
 short CreateEffect(short room_num);
 void KillEffect(short fx_num);
 void EffectNewRoom(short fx_num, short room_num);
-
-#define ClearBodyBag	( (void(__cdecl*)()) 0x0043B330 )
+void ClearBodyBag();

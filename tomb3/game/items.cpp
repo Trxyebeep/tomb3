@@ -398,6 +398,27 @@ void EffectNewRoom(short fx_num, short room_num)
 	room[room_num].fx_number = fx_num;
 }
 
+void ClearBodyBag()
+{
+	ITEM_INFO* item;
+	short item_number;
+
+	if (body_bag != NO_ITEM)
+	{
+		item_number = body_bag;
+
+		while (item_number != NO_ITEM)
+		{
+			item = &items[item_number];
+			KillItem(item_number);
+			item_number = item->next_active;
+			item->next_active = NO_ITEM;
+		}
+
+		body_bag = NO_ITEM;
+	}
+}
+
 void inject_items(bool replace)
 {
 	INJECT(0x0043AA20, InitialiseItemArray, replace);
@@ -413,4 +434,5 @@ void inject_items(bool replace)
 	INJECT(0x0043B130, CreateEffect, replace);
 	INJECT(0x0043B1A0, KillEffect, replace);
 	INJECT(0x0043B290, EffectNewRoom, replace);
+	INJECT(0x0043B330, ClearBodyBag, replace);
 }
