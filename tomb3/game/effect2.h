@@ -29,3 +29,4 @@ void TriggerRicochetSpark(GAME_VECTOR* pos, long angle, long size);
 #define SetupRipple	( (RIPPLE_STRUCT*(__cdecl*)(long, long, long, long, long)) 0x0042D080 )
 #define SetupSplash	( (void(__cdecl*)(SPLASH_SETUP*)) 0x0042CAC0 )
 #define TriggerBubble	( (void(__cdecl*)(long, long, long, long, long, short)) 0x0042DAB0 )
+#define DetatchSpark	( (void(__cdecl*)(long, long)) 0x00429F00 )
