@@ -207,6 +207,25 @@ void RemoveDrawnItem(short item_num)
 	}
 }
 
+void AddActiveItem(short item_num)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_num];
+
+	if (objects[item->object_number].control)
+	{
+		if (!item->active)
+		{
+			item->active = 1;
+			item->next_active = next_item_active;
+			next_item_active = item_num;
+		}
+	}
+	else
+		item->status = ITEM_INACTIVE;
+}
+
 void inject_items(bool replace)
 {
 	INJECT(0x0043AA20, InitialiseItemArray, replace);
@@ -215,4 +234,5 @@ void inject_items(bool replace)
 	INJECT(0x0043AC30, InitialiseItem, replace);
 	INJECT(0x0043AE40, RemoveActiveItem, replace);
 	INJECT(0x0043AEE0, RemoveDrawnItem, replace);
+	INJECT(0x0043AF60, AddActiveItem, replace);
 }
