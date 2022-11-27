@@ -6,8 +6,8 @@ void inject_gameflow(bool replace);
 long GF_LoadScriptFile(const char* name);
 long GF_DoFrontEndSequence();
 long GF_DoLevelSequence(long level, long type);
+void GF_ModifyInventory(long level, long type);
 
-#define GF_ModifyInventory	( (void(__cdecl*)(long, long)) 0x004328D0 )
 #define GF_InterpretSequence	( (long(__cdecl*)(short*, long, long)) 0x00432310 )
 
 enum game_levels
@@ -177,4 +177,39 @@ enum game_string_ids
 	GT_LEVELSELECT,
 	GT_SPACE,
 	GT_NUM_GAMESTRINGS
+};
+
+enum add_inv_types
+{
+	ADDINV_PISTOLS,
+	ADDINV_SHOTGUN,
+	ADDINV_AUTOPISTOLS,
+	ADDINV_UZIS,
+	ADDINV_HARPOON,
+	ADDINV_M16,
+	ADDINV_ROCKET,
+	ADDINV_GRENADE,
+	ADDINV_PISTOL_AMMO,
+	ADDINV_SHOTGUN_AMMO,
+	ADDINV_AUTOPISTOLS_AMMO,
+	ADDINV_UZI_AMMO,
+	ADDINV_HARPOON_AMMO,
+	ADDINV_M16_AMMO,
+	ADDINV_ROCKET_AMMO,
+	ADDINV_GRENADE_AMMO,
+	ADDINV_FLARES,
+	ADDINV_MEDI,
+	ADDINV_BIGMEDI,
+	ADDINV_PICKUP1,
+	ADDINV_PICKUP2,
+	ADDINV_PUZZLE1,
+	ADDINV_PUZZLE2,
+	ADDINV_PUZZLE3,
+	ADDINV_PUZZLE4,
+	ADDINV_KEY1,
+	ADDINV_KEY2,
+	ADDINV_KEY3,
+	ADDINV_KEY4,
+	ADDINV_SAVEGAME_CRYSTAL,
+	ADDINV_NUMBEROF
 };
