@@ -545,10 +545,16 @@ void GF_ModifyInventory(long level, long type)
 	}
 }
 
+static void SetCutsceneTrack(long track)
+{
+	cutscene_track = track;
+}
+
 void inject_gameflow(bool replace)
 {
 	INJECT(0x00432030, GF_LoadScriptFile, replace);
 	INJECT(0x00432280, GF_DoFrontEndSequence, replace);
 	INJECT(0x004322A0, GF_DoLevelSequence, replace);
 	INJECT(0x004328D0, GF_ModifyInventory, replace);
+	INJECT(0x00432020, SetCutsceneTrack, replace);
 }
