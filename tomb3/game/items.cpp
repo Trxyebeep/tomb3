@@ -226,6 +226,39 @@ void AddActiveItem(short item_num)
 		item->status = ITEM_INACTIVE;
 }
 
+void ItemNewRoom(short item_num, short room_num)
+{
+	ITEM_INFO* item;
+	ROOM_INFO* r;
+	short linknum;
+
+	item = &items[item_num];
+
+	if (item->room_number != 255)
+	{
+		r = &room[item->room_number];
+		linknum = r->item_number;
+
+		if (linknum == item_num)
+			r->item_number = item->next_item;
+		else
+		{
+			for (; linknum != NO_ITEM; linknum = items[linknum].next_item)
+			{
+				if (items[linknum].next_item == item_num)
+				{
+					items[linknum].next_item = item->next_item;
+					break;
+				}
+			}
+		}
+	}
+
+	item->room_number = room_num;
+	item->next_item = room[room_num].item_number;
+	room[room_num].item_number = item_num;
+}
+
 void inject_items(bool replace)
 {
 	INJECT(0x0043AA20, InitialiseItemArray, replace);
@@ -235,4 +268,5 @@ void inject_items(bool replace)
 	INJECT(0x0043AE40, RemoveActiveItem, replace);
 	INJECT(0x0043AEE0, RemoveDrawnItem, replace);
 	INJECT(0x0043AF60, AddActiveItem, replace);
+	INJECT(0x0043AFD0, ItemNewRoom, replace);
 }
