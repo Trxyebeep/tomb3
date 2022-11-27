@@ -8,13 +8,13 @@ void KillItem(short item_num);
 short CreateItem();
 void InitialiseItem(short item_num);
 void RemoveActiveItem(short item_num);
+void RemoveDrawnItem(short item_num);
 
 #define CreateEffect	( (short(__cdecl*)(short)) 0x0043B130 )
 #define KillEffect	( (void(__cdecl*)(short)) 0x0043B1A0 )
 #define AddActiveItem	( (void(__cdecl*)(short)) 0x0043AF60 )
 #define ItemNewRoom	( (void(__cdecl*)(short, short)) 0x0043AFD0 )
 #define EffectNewRoom	( (void(__cdecl*)(short, short)) 0x0043B290 )
-#define RemoveDrawnItem	( (void(__cdecl*)(short)) 0x0043AEE0 )
 #define GlobalItemReplace	( (void(__cdecl*)(long, long)) 0x0043B080 )
 #define ClearBodyBag	( (void(__cdecl*)()) 0x0043B330 )
 #define InitialiseFXArray	( (void(__cdecl*)()) 0x0043B100 )

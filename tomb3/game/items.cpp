@@ -184,6 +184,29 @@ void RemoveActiveItem(short item_num)
 	}
 }
 
+void RemoveDrawnItem(short item_num)
+{
+	ITEM_INFO* item;
+	short linknum;
+
+	item = &items[item_num];
+	linknum = room[item->room_number].item_number;
+
+	if (linknum == item_num)
+		room[item->room_number].item_number = item->next_item;
+	else
+	{
+		for (; linknum != NO_ITEM; linknum = items[linknum].next_item)
+		{
+			if (items[linknum].next_item == item_num)
+			{
+				items[linknum].next_item = item->next_item;
+				break;
+			}
+		}
+	}
+}
+
 void inject_items(bool replace)
 {
 	INJECT(0x0043AA20, InitialiseItemArray, replace);
@@ -191,4 +214,5 @@ void inject_items(bool replace)
 	INJECT(0x0043ABE0, CreateItem, replace);
 	INJECT(0x0043AC30, InitialiseItem, replace);
 	INJECT(0x0043AE40, RemoveActiveItem, replace);
+	INJECT(0x0043AEE0, RemoveDrawnItem, replace);
 }

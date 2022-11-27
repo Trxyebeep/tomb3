@@ -678,7 +678,7 @@ tomb3 progress.
 0x0043ABE0	+	CreateItem
 0x0043AC30	+	InitialiseItem
 0x0043AE40	+	RemoveActiveItem
-0x0043AEE0		RemoveDrawnItem
+0x0043AEE0	+	RemoveDrawnItem
 0x0043AF60		AddActiveItem
 0x0043AFD0		ItemNewRoom
 0x0043B080		GlobalItemReplace
