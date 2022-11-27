@@ -328,6 +328,48 @@ short CreateEffect(short room_num)
 	return fx_num;
 }
 
+void KillEffect(short fx_num)
+{
+	FX_INFO* fx;
+	short linknum;
+
+	DetatchSpark(fx_num, 64);
+	fx = &effects[fx_num];
+
+	if (next_fx_active == fx_num)
+		next_fx_active = fx->next_active;
+	else
+	{
+		for (linknum = next_fx_active; linknum != NO_ITEM; linknum = effects[linknum].next_active)
+		{
+			if (effects[linknum].next_active == fx_num)
+			{
+				effects[linknum].next_active = fx->next_active;
+				break;
+			}
+		}
+	}
+
+	linknum = room[fx->room_number].fx_number;
+
+	if (linknum == fx_num)
+		room[fx->room_number].fx_number = fx->next_fx;
+	else
+	{
+		for (; linknum != NO_ITEM; linknum = effects[linknum].next_fx)
+		{
+			if (effects[linknum].next_fx == fx_num)
+			{
+				effects[linknum].next_fx = fx->next_fx;
+				break;
+			}
+		}
+	}
+
+	fx->next_fx = next_fx_free;
+	next_fx_free = fx_num;
+}
+
 void inject_items(bool replace)
 {
 	INJECT(0x0043AA20, InitialiseItemArray, replace);
@@ -341,4 +383,5 @@ void inject_items(bool replace)
 	INJECT(0x0043B080, GlobalItemReplace, replace);
 	INJECT(0x0043B100, InitialiseFXArray, replace);
 	INJECT(0x0043B130, CreateEffect, replace);
+	INJECT(0x0043B1A0, KillEffect, replace);
 }

@@ -14,7 +14,7 @@ void ItemNewRoom(short item_num, short room_num);
 long GlobalItemReplace(long in, long out);
 void InitialiseFXArray();
 short CreateEffect(short room_num);
+void KillEffect(short fx_num);
 
-#define KillEffect	( (void(__cdecl*)(short)) 0x0043B1A0 )
 #define EffectNewRoom	( (void(__cdecl*)(short, short)) 0x0043B290 )
 #define ClearBodyBag	( (void(__cdecl*)()) 0x0043B330 )
