@@ -239,7 +239,7 @@ long GetOffset(ITEM_INFO* item, long x, long z)
 
 void BridgeFlatFloor(ITEM_INFO* item, long x, long y, long z, long* h)
 {
-	if (item->pos.y_pos >= y)
+	if (y <= item->pos.y_pos)
 	{
 		*h = item->pos.y_pos;
 		height_type = WALL;
@@ -248,6 +248,12 @@ void BridgeFlatFloor(ITEM_INFO* item, long x, long y, long z, long* h)
 		if (item == lara_item)
 			lara_item->item_flags[0] = 1;
 	}
+}
+
+void BridgeFlatCeiling(ITEM_INFO* item, long x, long y, long z, long* c)
+{
+	if (y > item->pos.y_pos)
+		*c = item->pos.y_pos + 256;
 }
 
 void inject_objects(bool replace)
@@ -263,4 +269,5 @@ void inject_objects(bool replace)
 	INJECT(0x004597A0, LiftCeiling, replace);
 	INJECT(0x00459840, GetOffset, replace);
 	INJECT(0x004597E0, BridgeFlatFloor, replace);
+	INJECT(0x00459820, BridgeFlatCeiling, replace);
 }
