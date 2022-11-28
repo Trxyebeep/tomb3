@@ -215,6 +215,28 @@ void LiftCeiling(ITEM_INFO* item, long x, long y, long z, long* c)
 		*c = nC;
 }
 
+long GetOffset(ITEM_INFO* item, long x, long z)
+{
+	if (!item->pos.y_rot)
+#ifdef TROYESTUFF			// Fixes bridge bug
+		return ~x & 0x3FF;
+#else
+		return -x & 0x3FF;
+#endif
+	
+	if (item->pos.y_rot == -0x8000)
+		return x & 0x3FF;
+	
+	if (item->pos.y_rot == 0x4000)
+		return z & 0x3FF;
+
+#ifdef TROYESTUFF
+	return ~z & 0x3FF;
+#else
+	return -z & 0x3FF;
+#endif
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -226,4 +248,5 @@ void inject_objects(bool replace)
 	INJECT(0x004595E0, LiftFloorCeiling, replace);
 	INJECT(0x00459760, LiftFloor, replace);
 	INJECT(0x004597A0, LiftCeiling, replace);
+	INJECT(0x00459840, GetOffset, replace);
 }
