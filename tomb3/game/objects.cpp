@@ -237,6 +237,19 @@ long GetOffset(ITEM_INFO* item, long x, long z)
 #endif
 }
 
+void BridgeFlatFloor(ITEM_INFO* item, long x, long y, long z, long* h)
+{
+	if (item->pos.y_pos >= y)
+	{
+		*h = item->pos.y_pos;
+		height_type = WALL;
+		OnObject = 1;
+
+		if (item == lara_item)
+			lara_item->item_flags[0] = 1;
+	}
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -249,4 +262,5 @@ void inject_objects(bool replace)
 	INJECT(0x00459760, LiftFloor, replace);
 	INJECT(0x004597A0, LiftCeiling, replace);
 	INJECT(0x00459840, GetOffset, replace);
+	INJECT(0x004597E0, BridgeFlatFloor, replace);
 }
