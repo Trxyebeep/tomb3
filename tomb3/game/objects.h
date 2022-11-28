@@ -22,6 +22,7 @@ void BridgeTilt2Ceiling(ITEM_INFO* item, long x, long y, long z, long* c);
 void ShutThatDoor(DOORPOS_DATA* d);
 void OpenThatDoor(DOORPOS_DATA* d);
 void InitialiseDoor(short item_number);
+void DoorControl(short item_number);
 
 #define SmashWindow	( (void(__cdecl*)(short)) 0x00458C20 )
 #define InitialiseFinalLevel	( (void(__cdecl*)()) 0x00458840 )

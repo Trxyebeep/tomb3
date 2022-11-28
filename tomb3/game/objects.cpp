@@ -454,6 +454,42 @@ void InitialiseDoor(short item_number)
 	}
 }
 
+void DoorControl(short item_number)
+{
+	ITEM_INFO* item;
+	DOOR_DATA* door;
+
+	item = &items[item_number];
+	door = (DOOR_DATA*)item->data;
+
+	if (TriggerActive(item))
+	{
+		if (item->current_anim_state)
+		{
+			OpenThatDoor(&door->d1);
+			OpenThatDoor(&door->d2);
+			OpenThatDoor(&door->d1flip);
+			OpenThatDoor(&door->d2flip);
+		}
+		else
+			item->goal_anim_state = 1;
+	}
+	else
+	{
+		if (item->current_anim_state == 1)
+			item->goal_anim_state = 0;
+		else
+		{
+			ShutThatDoor(&door->d1);
+			ShutThatDoor(&door->d2);
+			ShutThatDoor(&door->d1flip);
+			ShutThatDoor(&door->d2flip);
+		}
+	}
+
+	AnimateItem(item);
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -475,4 +511,5 @@ void inject_objects(bool replace)
 	INJECT(0x00458DC0, ShutThatDoor, replace);
 	INJECT(0x00458E10, OpenThatDoor, replace);
 	INJECT(0x00458E50, InitialiseDoor, replace);
+	INJECT(0x00459260, DoorControl, replace);
 }
