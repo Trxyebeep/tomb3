@@ -6,6 +6,8 @@
 #include "items.h"
 #include "sound.h"
 #include "missile.h"
+#include "effects.h"
+#include "../3dsystem/phd_math.h"
 
 long OnDrawBridge(ITEM_INFO* item, long z, long x)
 {
@@ -543,6 +545,36 @@ void InitialiseWindow(short item_number)
 		boxes[floor->box].overlap_index |= 0x4000;
 }
 
+void WindowControl(short item_number)
+{
+	ITEM_INFO* item;
+	long speed;
+
+	item = &items[item_number];
+
+	if (item->flags & IFL_INVISIBLE)
+		return;
+
+	if (lara.skidoo != NO_ITEM)
+	{
+		if (!ItemNearLara(&item->pos, 512))
+			return;
+	}
+	else
+	{
+		if (!item->touch_bits)
+			return;
+
+		item->touch_bits = 0;
+		speed = (lara_item->speed * phd_cos(lara_item->pos.y_rot - item->pos.y_rot)) >> W2V_SHIFT;
+
+		if (abs(speed) < 50)
+			return;
+	}
+
+	SmashWindow(item_number);
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -567,4 +599,5 @@ void inject_objects(bool replace)
 	INJECT(0x00459260, DoorControl, replace);
 	INJECT(0x00458C20, SmashWindow, replace);
 	INJECT(0x00458B90, InitialiseWindow, replace);
+	INJECT(0x00458D20, WindowControl, replace);
 }
