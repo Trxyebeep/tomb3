@@ -579,7 +579,7 @@ tomb3 progress.
 0x00432030	+	GF_LoadScriptFile
 0x00432280	+	GF_DoFrontEndSequence
 0x004322A0	+	GF_DoLevelSequence
-0x00432310		GF_InterpretSequence
+0x00432310	+	GF_InterpretSequence
 0x004328D0	+	GF_ModifyInventory
 
 

@@ -7,8 +7,7 @@ long GF_LoadScriptFile(const char* name);
 long GF_DoFrontEndSequence();
 long GF_DoLevelSequence(long level, long type);
 void GF_ModifyInventory(long level, long type);
-
-#define GF_InterpretSequence	( (long(__cdecl*)(short*, long, long)) 0x00432310 )
+long GF_InterpretSequence(short* ptr, long type, long seq_type);
 
 enum game_levels
 {
@@ -212,4 +211,31 @@ enum add_inv_types
 	ADDINV_KEY4,
 	ADDINV_SAVEGAME_CRYSTAL,
 	ADDINV_NUMBEROF
+};
+
+enum gf_event_types
+{
+	GFE_PICTURE,
+	GFE_LIST_START,
+	GFE_LIST_END,
+	GFE_PLAYFMV,
+	GFE_STARTLEVEL,
+	GFE_CUTSCENE,
+	GFE_LEVCOMPLETE,
+	GFE_DEMOPLAY,
+	GFE_JUMPTO_SEQ,
+	GFE_END_SEQ,
+	GFE_SETTRACK,
+	GFE_SUNSET,
+	GFE_LOADINGPIC,
+	GFE_DEADLY_WATER,
+	GFE_REMOVE_WEAPONS,
+	GFE_GAMECOMPLETE,
+	GFE_CUTANGLE,
+	GFE_NOFLOOR,
+	GFE_ADD2INV,
+	GFE_STARTANIM,
+	GFE_NUMSECRETS,
+	GFE_KILL2COMPLETE,
+	GFE_REMOVE_AMMO
 };
