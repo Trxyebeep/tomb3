@@ -1998,6 +1998,21 @@ struct LIFT_INFO
 	long wait_time;
 };
 
+struct DOORPOS_DATA
+{
+	FLOOR_INFO* floor;
+	FLOOR_INFO data;
+	short block;
+};
+
+struct DOOR_DATA
+{
+	DOORPOS_DATA d1;
+	DOORPOS_DATA d1flip;
+	DOORPOS_DATA d2;
+	DOORPOS_DATA d2flip;
+};
+
 #ifdef TROYESTUFF
 struct FVECTOR
 {

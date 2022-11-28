@@ -310,6 +310,26 @@ void BridgeTilt2Ceiling(ITEM_INFO* item, long x, long y, long z, long* c)
 		*c = level + 256;
 }
 
+void ShutThatDoor(DOORPOS_DATA* d)
+{
+	FLOOR_INFO* floor;
+
+	floor = d->floor;
+
+	if (d->floor)
+	{
+		floor->box = -1;
+		floor->ceiling = -127;
+		floor->floor = -127;
+		floor->index = 0;
+		floor->sky_room = -1;
+		floor->pit_room = -1;
+
+		if (d->block != 2047)
+			boxes[d->block].overlap_index |= 0x4000;
+	}
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -328,4 +348,5 @@ void inject_objects(bool replace)
 	INJECT(0x004598E0, BridgeTilt1Ceiling, replace);
 	INJECT(0x00459920, BridgeTilt2Floor, replace);
 	INJECT(0x00459980, BridgeTilt2Ceiling, replace);
+	INJECT(0x00458DC0, ShutThatDoor, replace);
 }
