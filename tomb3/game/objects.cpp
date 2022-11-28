@@ -341,6 +341,119 @@ void OpenThatDoor(DOORPOS_DATA* d)
 	}
 }
 
+void InitialiseDoor(short item_number)
+{
+	ITEM_INFO* item;
+	DOOR_DATA* door;
+	ROOM_INFO* r;
+	ROOM_INFO* b;
+	long dx, dy;
+	short box_number, room_number, two_room;
+
+	item = &items[item_number];
+	door = (DOOR_DATA*)game_malloc(sizeof(DOOR_DATA), 31);
+	item->data = door;
+	dx = 0;
+	dy = 0;
+
+	if (!item->pos.y_rot)
+		dx = -1;
+	else if (item->pos.y_rot == -32768)
+		dx = 1;
+	else if (item->pos.y_rot == 16384)
+		dy = -1;
+	else
+		dy = 1;
+
+	r = &room[item->room_number];
+	door->d1.floor = &r->floor[r->x_size * (dy + ((item->pos.x_pos - r->x) >> WALL_SHIFT)) + dx + ((item->pos.z_pos - r->z) >> WALL_SHIFT)];
+	room_number = GetDoor(door->d1.floor);
+
+	if (room_number == 255)
+		box_number = door->d1.floor->box;
+	else
+	{
+		b = &room[room_number];
+		box_number = b->floor[(((item->pos.z_pos - b->z) >> 10) + dx) + (((item->pos.x_pos - b->x) >> 10) + dy) * b->x_size].box;
+	}
+
+	door->d1.block = (boxes[box_number].overlap_index & 0x8000) ? box_number : 2047;
+	door->d1.data = *door->d1.floor;
+
+	if (r->flipped_room == -1)
+		door->d1flip.floor = 0;
+	else
+	{
+		r = &room[r->flipped_room];
+		door->d1flip.floor = &r->floor[(((item->pos.z_pos - r->z) >> 10) + dx) + (((item->pos.x_pos - r->x) >> 10) + dy) * r->x_size];
+		room_number = GetDoor(door->d1flip.floor);
+
+		if (room_number == 255)
+			box_number = door->d1flip.floor->box;
+		else
+		{
+			b = &room[room_number];
+			box_number = b->floor[(((item->pos.z_pos - b->z) >> 10) + dx) + (((item->pos.x_pos - b->x) >> 10) + dy) * b->x_size].box;
+		}
+
+		door->d1flip.block = (boxes[box_number].overlap_index & 0x8000) ? box_number : 2047;
+		door->d1flip.data = *door->d1flip.floor;
+	}
+
+	two_room = GetDoor(door->d1.floor);
+	ShutThatDoor(&door->d1);
+	ShutThatDoor(&door->d1flip);
+
+	if (two_room == 255)
+	{
+		door->d2.floor = 0;
+		door->d2flip.floor = 0;
+	}
+	else
+	{
+		r = &room[two_room];
+		door->d2.floor = &r->floor[((item->pos.z_pos - r->z) >> 10) + ((item->pos.x_pos - r->x) >> 10) * r->x_size];
+		room_number = GetDoor(door->d2.floor);
+
+		if (room_number == 255)
+			box_number = door->d2.floor->box;
+		else
+		{
+			b = &room[room_number];
+			box_number = b->floor[((item->pos.z_pos - b->z) >> 10) + ((item->pos.x_pos - b->x) >> 10) * b->x_size].box;
+		}
+
+		door->d2.block = (boxes[box_number].overlap_index & 0x8000) ? box_number : 2047;
+		door->d2.data = *door->d2.floor;
+
+		if (r->flipped_room == -1)
+			door->d2flip.floor = 0;
+		else
+		{
+			r = &room[r->flipped_room];
+			door->d2flip.floor = &r->floor[((item->pos.z_pos - r->z) >> 10) + ((item->pos.x_pos - r->x) >> 10) * r->x_size];
+			room_number = GetDoor(door->d2flip.floor);
+
+			if (room_number == 255)
+				box_number = door->d2flip.floor->box;
+			else
+			{
+				b = &room[room_number];
+				box_number = b->floor[((item->pos.z_pos - b->z) >> 10) + ((item->pos.x_pos - b->x) >> 10) * b->x_size].box;
+			}
+
+			door->d2flip.block = (boxes[box_number].overlap_index & 0x8000) ? box_number : 2047;
+			door->d2flip.data = *door->d2flip.floor;
+		}
+
+		ShutThatDoor(&door->d2);
+		ShutThatDoor(&door->d2flip);
+		room_number = item->room_number;
+		ItemNewRoom(item_number, two_room);
+		item->room_number = room_number;
+	}
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -361,4 +474,5 @@ void inject_objects(bool replace)
 	INJECT(0x00459980, BridgeTilt2Ceiling, replace);
 	INJECT(0x00458DC0, ShutThatDoor, replace);
 	INJECT(0x00458E10, OpenThatDoor, replace);
+	INJECT(0x00458E50, InitialiseDoor, replace);
 }
