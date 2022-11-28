@@ -330,6 +330,17 @@ void ShutThatDoor(DOORPOS_DATA* d)
 	}
 }
 
+void OpenThatDoor(DOORPOS_DATA* d)
+{
+	if (d->floor)
+	{
+		*d->floor = d->data;
+
+		if (d->block != 2047)
+			boxes[d->block].overlap_index &= ~0x4000;
+	}
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -349,4 +360,5 @@ void inject_objects(bool replace)
 	INJECT(0x00459920, BridgeTilt2Floor, replace);
 	INJECT(0x00459980, BridgeTilt2Ceiling, replace);
 	INJECT(0x00458DC0, ShutThatDoor, replace);
+	INJECT(0x00458E10, OpenThatDoor, replace);
 }

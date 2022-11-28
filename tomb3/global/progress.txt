@@ -1115,7 +1115,7 @@ tomb3 progress.
 0x00458C20		SmashWindow
 0x00458D20		WindowControl
 0x00458DC0	+	ShutThatDoor
-0x00458E10		OpenThatDoor
+0x00458E10	+	OpenThatDoor
 0x00458E50		InitialiseDoor
 0x00459260		DoorControl
 0x00459330	+	OnDrawBridge
