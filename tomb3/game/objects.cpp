@@ -273,6 +273,16 @@ void BridgeTilt1Floor(ITEM_INFO* item, long x, long y, long z, long* h)
 	}
 }
 
+void BridgeTilt1Ceiling(ITEM_INFO* item, long x, long y, long z, long* c)
+{
+	long level;
+
+	level = item->pos.y_pos + (GetOffset(item, x, z) >> 2);
+
+	if (y > level)
+		*c = level + 256;
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -288,4 +298,5 @@ void inject_objects(bool replace)
 	INJECT(0x004597E0, BridgeFlatFloor, replace);
 	INJECT(0x00459820, BridgeFlatCeiling, replace);
 	INJECT(0x00459880, BridgeTilt1Floor, replace);
+	INJECT(0x004598E0, BridgeTilt1Ceiling, replace);
 }
