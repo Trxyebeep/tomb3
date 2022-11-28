@@ -10,5 +10,4 @@ void ResetSG();
 void WriteSG(void* pointer, long size);
 void ReadSG(void* pointer, long size);
 void CreateSaveGameInfo();
-
-#define ExtractSaveGameInfo	( (void(__cdecl*)()) 0x004623F0 )
+void ExtractSaveGameInfo();
