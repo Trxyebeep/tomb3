@@ -15,6 +15,7 @@ void LiftCeiling(ITEM_INFO* item, long x, long y, long z, long* c);
 long GetOffset(ITEM_INFO* item, long x, long z);
 void BridgeFlatFloor(ITEM_INFO* item, long x, long y, long z, long* h);
 void BridgeFlatCeiling(ITEM_INFO* item, long x, long y, long z, long* c);
+void BridgeTilt1Floor(ITEM_INFO* item, long x, long y, long z, long* h);
 
 #define SmashWindow	( (void(__cdecl*)(short)) 0x00458C20 )
 #define InitialiseFinalLevel	( (void(__cdecl*)()) 0x00458840 )
