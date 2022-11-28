@@ -283,6 +283,23 @@ void BridgeTilt1Ceiling(ITEM_INFO* item, long x, long y, long z, long* c)
 		*c = level + 256;
 }
 
+void BridgeTilt2Floor(ITEM_INFO* item, long x, long y, long z, long* h)
+{
+	long level;
+
+	level = item->pos.y_pos + (GetOffset(item, x, z) >> 1);
+
+	if (y <= level)
+	{
+		*h = level;
+		height_type = WALL;
+		OnObject = 1;
+
+		if (item == lara_item)
+			lara_item->item_flags[0] = 1;
+	}
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -299,4 +316,5 @@ void inject_objects(bool replace)
 	INJECT(0x00459820, BridgeFlatCeiling, replace);
 	INJECT(0x00459880, BridgeTilt1Floor, replace);
 	INJECT(0x004598E0, BridgeTilt1Ceiling, replace);
+	INJECT(0x00459920, BridgeTilt2Floor, replace);
 }
