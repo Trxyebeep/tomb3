@@ -4,6 +4,8 @@
 #include "../specific/init.h"
 #include "control.h"
 #include "items.h"
+#include "sound.h"
+#include "missile.h"
 
 long OnDrawBridge(ITEM_INFO* item, long z, long x)
 {
@@ -490,6 +492,41 @@ void DoorControl(short item_number)
 	AnimateItem(item);
 }
 
+void SmashWindow(short item_number)
+{
+	ITEM_INFO* item;
+	ROOM_INFO* r;
+	BOX_INFO* box;
+	long sector;
+
+	item = &items[item_number];
+	r = &room[item->room_number];
+	sector = ((item->pos.z_pos - r->z) >> WALL_SHIFT) + r->x_size * ((item->pos.x_pos - r->x) >> WALL_SHIFT);
+	box = &boxes[r->floor[sector].box];
+
+	if (box->overlap_index & 0x8000)
+		box->overlap_index &= ~0x4000;
+
+	if (item->object_number == SMASH_WINDOW)
+		SoundEffect(SFX_METAL_SHUTTERS_SMASH, &item->pos, SFX_DEFAULT);
+	else
+	{
+		SoundEffect(SFX_EXPLOSION1, &item->pos, SFX_DEFAULT);
+		SoundEffect(SFX_EXPLOSION2, &item->pos, SFX_DEFAULT);
+		item->collidable = 0;
+	}
+
+	item->mesh_bits = 0xFFFE;
+	item->collidable = 0;
+	ExplodingDeath(item_number, 0xFEFE, 0);
+	item->flags |= IFL_INVISIBLE;
+
+	if (item->status == ITEM_ACTIVE)
+		RemoveActiveItem(item_number);
+
+	item->status = ITEM_DEACTIVATED;
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -512,4 +549,5 @@ void inject_objects(bool replace)
 	INJECT(0x00458E10, OpenThatDoor, replace);
 	INJECT(0x00458E50, InitialiseDoor, replace);
 	INJECT(0x00459260, DoorControl, replace);
+	INJECT(0x00458C20, SmashWindow, replace);
 }
