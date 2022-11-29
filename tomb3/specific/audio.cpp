@@ -196,6 +196,7 @@ static bool ACMIsTrackPlaying()
 void ACMSetVolume(long volume)
 {
 #ifdef TROYESTUFF
+	static ulong play;
 	static bool paused;
 
 	if (!DSBuffer)
@@ -205,26 +206,32 @@ void ACMSetVolume(long volume)
 	{
 		if (!paused && ACMIsTrackPlaying())
 		{
+			DSBuffer->GetCurrentPosition(&play, 0);
 			DSBuffer->Stop();
 			paused = 1;
 		}
 	}
 	else
-#endif
 	{
-#ifdef TROYESTUFF
-		if (paused)
+		if (paused && play != -1)
 		{
+			DSBuffer->SetCurrentPosition(play);
 			DSBuffer->Play(0, 0, 1);
+			play = -1;
 			paused = 0;
 		}
-#endif
 
 		acm_volume = long(float(volume * 1.5625F - 400.0F) * 6.0F);
 
 		if (DSBuffer)
 			DSBuffer->SetVolume(acm_volume);
 	}
+#else
+	acm_volume = long(float(volume * 1.5625F - 400.0F) * 6.0F);
+
+	if (DSBuffer)
+		DSBuffer->SetVolume(acm_volume);
+#endif
 }
 
 long ACMHandleNotifications()
