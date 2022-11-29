@@ -252,6 +252,13 @@ long S_CDGetLoc()
 	return ACMGetTrackLocation();
 }
 
+#ifdef TROYESTUFF
+void S_CDMute()
+{
+	ACMMute();
+}
+#endif
+
 void S_CDVolume(long volume)
 {
 	ACMSetVolume(volume);

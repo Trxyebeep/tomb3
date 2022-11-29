@@ -16,6 +16,8 @@
 
 ### tomb3 bug fixes
 
+- Fix music stutter after continuous pausing.
+- Fix music muting.
 
 
 ## [1.3.0](https://github.com/Trxyebeep/tomb3/tree/V1.3.0) (Nov. 20 2022)

@@ -19,5 +19,8 @@ void S_CDLoop();
 void S_CDPlay(short track, long mode);
 void S_CDStop();
 long S_CDGetLoc();
+#ifdef TROYESTUFF
+void S_CDMute();
+#endif
 void S_CDVolume(long volume);
 long S_StartSyncedAudio(long track);

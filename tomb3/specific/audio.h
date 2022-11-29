@@ -10,6 +10,9 @@ void ACMEmulateCDStop();
 void ACMEmulateCDPlay(long track, long mode);
 void ThreadACMEmulateCDPlay(long track, long mode);
 long ACMGetTrackLocation();
+#ifdef TROYESTUFF
+void ACMMute();
+#endif
 void ACMSetVolume(long volume);
 long ACMHandleNotifications();
 long ACMSetupNotifications();

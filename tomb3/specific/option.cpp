@@ -1017,7 +1017,12 @@ void do_sound_option(INVENTORY_ITEM* item)
 			if (Option_Music_Volume)
 				S_CDVolume(25 * Option_Music_Volume + 5);
 			else
+			{
+#ifdef TROYESTUFF
+				S_CDMute();
+#endif
 				S_CDVolume(0);
+			}
 
 			SoundEffect(SFX_MENU_PASSPORT, 0, SFX_ALWAYS);
 		}
