@@ -23,6 +23,8 @@ void RemoveMonoScreen(long fade);
 void DoInventoryPicture();
 void FreePictureTextures(long* indices);
 
+extern DXTEXTURE PictureTextures[MAX_TPAGES];
+
 #ifdef TROYESTUFF
 extern bool bDontGreyOut;
 #endif

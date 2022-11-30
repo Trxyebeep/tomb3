@@ -14,6 +14,7 @@
 #include "di.h"
 #include "audio.h"
 #include "display.h"
+#include "picture.h"
 #ifdef TROYESTUFF
 #include "../game/invfunc.h"
 #include "../tomb3/tomb3.h"

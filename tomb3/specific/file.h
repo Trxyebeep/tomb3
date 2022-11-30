@@ -28,3 +28,5 @@ void build_ext(char* name, const char* ext);
 void AdjustTextureUVs(bool reset);
 long Read_Strings(long num, char** strings, char** buffer, ulong* read, HANDLE file);
 long S_LoadGameFlow(const char* name);
+
+extern PHDTEXTURESTRUCT phdtextinfo[MAX_TINFOS];

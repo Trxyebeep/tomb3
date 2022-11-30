@@ -2,6 +2,9 @@
 #include "texture.h"
 #include "dd.h"
 
+DXTEXTURE* TPages[MAX_TPAGES];
+TEXTURE Textures[MAX_TPAGES];
+
 #define bSetColorKey	VAR_(0x004CEEC4, bool)
 #define bMakeGrey	VAR_(0x006CED60, bool)
 

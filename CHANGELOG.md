@@ -13,6 +13,7 @@
 
 - Add PSX save crystal system.
 - Add option for blue crystal light.
+- Raise TPage/TInfos limits.
 
 ### tomb3 bug fixes
 

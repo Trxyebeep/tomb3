@@ -19,3 +19,6 @@ void MMXTextureCopy(ulong* dest, uchar* src, ulong step);
 long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong flags);
 void DXCreateMaxTPages(long create);
 void DXFreeTPages();
+
+extern DXTEXTURE* TPages[MAX_TPAGES];
+extern TEXTURE Textures[MAX_TPAGES];

@@ -97,8 +97,13 @@ do \
 #define MAX_SORTLISTS	0x2EE0
 #endif
 
+#ifdef TROYESTUFF	//*4
+#define MAX_TPAGES	128
+#define MAX_TINFOS	0x4000
+#else
 #define MAX_TPAGES	32
-#define MAX_TINFOS	4096
+#define MAX_TINFOS	0x1000
+#endif
 
 #define MAX_ITEMS	256
 

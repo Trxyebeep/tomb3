@@ -22,6 +22,12 @@ if (!main) return 0;\
 if (!Read_Strings(readSize, main, &buffer, &read, file)) return 0;\
 }
 
+PHDTEXTURESTRUCT phdtextinfo[MAX_TINFOS];
+static uchar TexturesUVFlag[MAX_TINFOS];
+#ifndef TROYESTUFF
+static char texture_page_ptrs[MAX_TPAGES];
+#endif
+
 long MyReadFile(HANDLE hFile, LPVOID lpBuffer, ulong nNumberOfBytesToRead, ulong* lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped)
 {
 	static ulong nBytesRead;
@@ -777,7 +783,9 @@ void S_UnloadLevelFile()
 		HWR_FreeTexturePages();
 
 	LastLoadedLevelPath[0] = 0;
+#ifndef TROYESTUFF
 	memset(texture_page_ptrs, 0, sizeof(texture_page_ptrs));
+#endif
 	nTInfos = 0;
 }
 
