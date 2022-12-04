@@ -154,9 +154,39 @@ long EnableNonLotAI(short item_number, long Always)
 	return 0;
 }
 
+void DisableBaddieAI(short item_number)
+{
+	ITEM_INFO* item;
+	CREATURE_INFO* creature;
+
+	item = &items[item_number];
+
+	if (item_number == lara.item_number)
+	{
+		creature = lara.creature;
+		lara.creature = 0;
+	}
+	else
+	{
+		creature = (CREATURE_INFO*)item->data;
+		item->data = 0;
+	}
+
+	if (creature)
+	{
+		creature->item_num = NO_ITEM;
+
+		if (objects[item->object_number].non_lot)
+			nonlot_slots_used--;
+		else
+			slots_used--;
+	}
+}
+
 void inject_lot(bool replace)
 {
 	INJECT(0x00452F10, InitialiseLOTarray, replace);
 	INJECT(0x00453740, InitialiseNonLotAI, replace);
 	INJECT(0x004535B0, EnableNonLotAI, replace);
+	INJECT(0x00452F90, DisableBaddieAI, replace);
 }
