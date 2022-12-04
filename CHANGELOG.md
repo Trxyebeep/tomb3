@@ -21,6 +21,8 @@
 
 - Fix music stutter after continuous pausing.
 - Fix music muting.
+- Fix fish movement.
+- Fix snow spawning far from Lara.
 
 
 ## [1.3.0](https://github.com/Trxyebeep/tomb3/tree/V1.3.0) (Nov. 20 2022)

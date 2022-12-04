@@ -99,10 +99,10 @@ static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, short c, bool cFlag)
 		if (v->z < phd_zfar)
 		{
 			v->zv = zv;
-			zT = ZTable[((v->z >> 14) << 1)];
+			zT = ZTable[((v->z >> W2V_SHIFT) << 1)];
 			v->xs = v->xv * zT + f_centerx;
 			v->ys = v->yv * zT + f_centery;
-			v->ooz = ZTable[((v->z >> 14) << 1) + 1];
+			v->ooz = ZTable[((v->z >> W2V_SHIFT) << 1) + 1];
 		}
 		else
 		{
@@ -908,15 +908,16 @@ void DoSnow()
 		y = pos.y;
 		z = pos.z;
 
-		if ((z >> 16) < 32 ||
-			x < 0 || x > w ||
-			y < 0 || y > h)
+		if ((z >> W2V_SHIFT) < 128)
 		{
 			if (snow->life > 16)
 				snow->life = 16;
 
 			continue;
 		}
+
+		if (x < 0 || x > w || y < 0 || y > h)
+			continue;
 
 		size = phd_persp * (snow->yv >> 3) / (z >> 16);
 
