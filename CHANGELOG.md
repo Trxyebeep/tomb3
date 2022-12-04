@@ -8,12 +8,14 @@
 - Fix diver harpoons spamming gunshot SFX.
 - Fix hypothetical crash when loading a demo.
 - Fix bridge bug.
+- Fix weather spawning at Lara position instead of camera position.
 
 ### tomb3 additions
 
 - Add PSX save crystal system.
 - Add option for blue crystal light.
 - Raise TPage/TInfos limits.
+- double the amount of spawned weather particles.
 
 ### tomb3 bug fixes
 

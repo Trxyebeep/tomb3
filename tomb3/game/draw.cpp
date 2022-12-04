@@ -1811,6 +1811,34 @@ void CalculateObjectLightingLara()
 	S_CalculateLight(pos.x, pos.y, pos.z, room_number, &lara_item->il);
 }
 
+#ifdef TROYESTUFF
+static void SwapLaraWithCamera(bool lr)
+{
+	static long x, y, z;
+	static short rn;
+
+	if (!lr)
+	{
+		x = lara_item->pos.x_pos;
+		y = lara_item->pos.y_pos;
+		z = lara_item->pos.z_pos;
+		rn = lara_item->room_number;
+
+		lara_item->pos.x_pos = camera.pos.x;
+		lara_item->pos.y_pos = camera.pos.y;
+		lara_item->pos.z_pos = camera.pos.z;
+		lara_item->room_number = camera.pos.room_number;
+	}
+	else
+	{
+		lara_item->pos.x_pos = x;
+		lara_item->pos.y_pos = y;
+		lara_item->pos.z_pos = z;
+		lara_item->room_number = rn;
+	}
+}
+#endif
+
 void DrawRooms(short current_room)
 {
 	ROOM_INFO* r;
@@ -1933,6 +1961,9 @@ void DrawRooms(short current_room)
 
 	if (bEffectOn)
 	{
+#ifdef TROYESTUFF
+		SwapLaraWithCamera(0);
+#endif
 		nPolyType = 6;
 		S_DrawSparks();
 		S_DrawSplashes();
@@ -1968,6 +1999,10 @@ void DrawRooms(short current_room)
 			if (CurrentLevel == LV_RAPIDS || CurrentLevel == LV_SEWER || CurrentLevel == LV_TOWER)
 				DoUwEffect();
 		}
+#endif
+
+#ifdef TROYESTUFF
+		SwapLaraWithCamera(1);
 #endif
 	}
 

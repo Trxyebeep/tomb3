@@ -113,6 +113,14 @@ do \
 #define NLAYOUTKEYS		14
 #endif
 
+#define MAX_WEATHER			256
+
+#ifdef TROYESTUFF	//*2
+#define MAX_WEATHER_ALIVE	16
+#else
+#define MAX_WEATHER_ALIVE	8
+#endif
+
 #define NO_ROOM	255
 #define WALL_SHIFT	10
 #define WALL_SIZE	(1 << WALL_SHIFT)
