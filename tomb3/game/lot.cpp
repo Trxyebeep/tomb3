@@ -183,10 +183,31 @@ void DisableBaddieAI(short item_number)
 	}
 }
 
+void ClearLOT(LOT_INFO* lot)
+{
+	BOX_NODE* node;
+
+	lot->tail = 2047;
+	lot->head = 2047;
+	lot->search_number = 0;
+	lot->target_box = 2047;
+	lot->required_box = 2047;
+	node = lot->node;
+
+	for (int i = 0; i < number_boxes; i++)
+	{
+		node->next_expansion = 2047;
+		node->exit_box = 2047;
+		node->search_number = 0;
+		node++;
+	}
+}
+
 void inject_lot(bool replace)
 {
 	INJECT(0x00452F10, InitialiseLOTarray, replace);
 	INJECT(0x00453740, InitialiseNonLotAI, replace);
 	INJECT(0x004535B0, EnableNonLotAI, replace);
 	INJECT(0x00452F90, DisableBaddieAI, replace);
+	INJECT(0x00453560, ClearLOT, replace);
 }
