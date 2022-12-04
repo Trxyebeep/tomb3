@@ -993,6 +993,68 @@ void CreatureCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	}
 }
 
+void LaraBaddieCollision(ITEM_INFO* l, COLL_INFO* coll)
+{
+	ROOM_INFO* r;
+	ITEM_INFO* item;
+	short* door;
+	long i, dx, dy, dz;
+	short num_nearby_rooms, item_number, nex;
+	short nearby_rooms[20];
+
+	l->hit_status = 0;
+	lara.hit_direction = -1;
+
+	if (l->hit_points <= 0)
+		return;
+
+	num_nearby_rooms = 1;
+	nearby_rooms[0] = l->room_number;
+	door = room[nearby_rooms[0]].door;
+
+	if (door)
+	{
+		for (i = *door++; i > 0; i--)
+		{
+			nearby_rooms[num_nearby_rooms] = *door;
+			num_nearby_rooms++;
+			door += 16;
+		}
+	}
+
+	for (i = 0; i < num_nearby_rooms; i++)
+	{
+		r = &room[nearby_rooms[i]];
+		item_number = r->item_number;
+
+		while (item_number != NO_ITEM)
+		{
+			item = &items[item_number];
+			nex = item->next_item;
+
+			if (item->collidable && item->status != ITEM_INVISIBLE)
+			{
+				if (objects[item->object_number].collision)
+				{
+					dx = l->pos.x_pos - item->pos.x_pos;
+					dy = l->pos.y_pos - item->pos.y_pos;
+					dz = l->pos.z_pos - item->pos.z_pos;
+
+					if (dx > -4096 && dx < 4096 && dy > -4096 && dy < 4096 && dz > -4096 && dz < 4096)
+						objects[item->object_number].collision(item_number, l, coll);
+				}
+			}
+
+			item_number = nex;
+		}
+	}
+
+	if (lara.hit_direction == -1)
+		lara.hit_frame = 0;
+
+	Inventory_Chosen = NO_ITEM;
+}
+
 void inject_collide(bool replace)
 {
 	INJECT(0x0041E690, ShiftItem, replace);
@@ -1013,4 +1075,5 @@ void inject_collide(bool replace)
 	INJECT(0x0041F5C0, Move3DPosTo3DPos, replace);
 	INJECT(0x0041F430, MoveLaraPosition, replace);
 	INJECT(0x0041EA60, CreatureCollision, replace);
+	INJECT(0x0041E8D0, LaraBaddieCollision, replace);
 }
