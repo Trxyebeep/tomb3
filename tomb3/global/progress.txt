@@ -1052,7 +1052,7 @@ tomb3 progress.
 0x00453460		CreateZone
 0x00453560		ClearLOT
 0x004535B0		EnableNonLotAI
-0x00453740		InitialiseNonLotAI
+0x00453740	+	InitialiseNonLotAI
 
 
 		game/minecart.cpp
