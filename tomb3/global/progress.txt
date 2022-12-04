@@ -1049,7 +1049,7 @@ tomb3 progress.
 0x00452F90	+	DisableBaddieAI
 0x00453000		EnableBaddieAI
 0x004531F0		InitialiseSlot
-0x00453460		CreateZone
+0x00453460	+	CreateZone
 0x00453560	+	ClearLOT
 0x004535B0	+	EnableNonLotAI
 0x00453740	+	InitialiseNonLotAI

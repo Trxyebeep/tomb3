@@ -203,6 +203,55 @@ void ClearLOT(LOT_INFO* lot)
 	}
 }
 
+void CreateZone(ITEM_INFO* item)
+{
+	CREATURE_INFO* creature;
+	ROOM_INFO* r;
+	BOX_NODE* node;
+	short* zone;
+	short* flip;
+	short zone_number, flip_number;
+
+	creature = (CREATURE_INFO*)item->data;
+	r = &room[item->room_number];
+	item->box_number = r->floor[((item->pos.z_pos - r->z) >> WALL_SHIFT) + r->x_size * ((item->pos.x_pos - r->x) >> WALL_SHIFT)].box;
+
+	if (creature->LOT.fly)
+	{
+		creature->LOT.zone_count = 0;
+		node = creature->LOT.node;
+
+		for (int i = 0; i < number_boxes; i++)
+		{
+			node->box_number = i;
+			node++;
+			creature->LOT.zone_count++;
+		}
+	}
+	else
+	{
+		zone = ground_zone[(creature->LOT.step >> 8) - 1][0];
+		flip = ground_zone[(creature->LOT.step >> 8) - 1][1];
+		zone_number = zone[item->box_number];
+		flip_number = flip[item->box_number];
+		creature->LOT.zone_count = 0;
+		node = creature->LOT.node;
+
+		for (int i = 0; i < number_boxes; i++)
+		{
+			if (*zone == zone_number || *flip == flip_number)
+			{
+				node->box_number = i;
+				node++;
+				creature->LOT.zone_count++;
+			}
+
+			zone++;
+			flip++;
+		}
+	}
+}
+
 void inject_lot(bool replace)
 {
 	INJECT(0x00452F10, InitialiseLOTarray, replace);
@@ -210,4 +259,5 @@ void inject_lot(bool replace)
 	INJECT(0x004535B0, EnableNonLotAI, replace);
 	INJECT(0x00452F90, DisableBaddieAI, replace);
 	INJECT(0x00453560, ClearLOT, replace);
+	INJECT(0x00453460, CreateZone, replace);
 }
