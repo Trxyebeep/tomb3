@@ -1,7 +1,32 @@
 #pragma once
 #include "../global/vars.h"
 
-#define SmashWindow	( (void(__cdecl*)(short)) 0x00458C20 )
+void inject_objects(bool replace);
+
+long OnDrawBridge(ITEM_INFO* item, long z, long x);
+void DrawBridgeFloor(ITEM_INFO* item, long x, long y, long z, long* h);
+void DrawBridgeCeiling(ITEM_INFO* item, long x, long y, long z, long* c);
+void DrawBridgeCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
+void InitialiseLift(short item_number);
+void LiftControl(short item_number);
+void LiftFloorCeiling(ITEM_INFO* item, long x, long y, long z, long* h, long* c);
+void LiftFloor(ITEM_INFO* item, long x, long y, long z, long* h);
+void LiftCeiling(ITEM_INFO* item, long x, long y, long z, long* c);
+long GetOffset(ITEM_INFO* item, long x, long z);
+void BridgeFlatFloor(ITEM_INFO* item, long x, long y, long z, long* h);
+void BridgeFlatCeiling(ITEM_INFO* item, long x, long y, long z, long* c);
+void BridgeTilt1Floor(ITEM_INFO* item, long x, long y, long z, long* h);
+void BridgeTilt1Ceiling(ITEM_INFO* item, long x, long y, long z, long* c);
+void BridgeTilt2Floor(ITEM_INFO* item, long x, long y, long z, long* h);
+void BridgeTilt2Ceiling(ITEM_INFO* item, long x, long y, long z, long* c);
+void ShutThatDoor(DOORPOS_DATA* d);
+void OpenThatDoor(DOORPOS_DATA* d);
+void InitialiseDoor(short item_number);
+void DoorControl(short item_number);
+void SmashWindow(short item_number);
+void InitialiseWindow(short item_number);
+void WindowControl(short item_number);
+
 #define InitialiseFinalLevel	( (void(__cdecl*)()) 0x00458840 )
 
 enum object_types

@@ -59,8 +59,11 @@ static uchar SplashLinks[32]
 
 static uchar BatLinks[9] = { 0, 2, 4, 6, 0, 4, 2, 8, 4 };
 
-static RAINDROP raindrops[256];
-static SNOWFLAKE snowflakes[256];
+static RAINDROP raindrops[MAX_WEATHER];
+static SNOWFLAKE snowflakes[MAX_WEATHER];
+#ifdef TROYESTUFF
+static RAINDROP uwparts[MAX_WEATHER];
+#endif
 
 #ifdef TROYESTUFF
 static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, short c, bool cFlag)
@@ -593,11 +596,11 @@ void DoRain()
 	long Z[2];
 	short XY[4];
 
-	for (int i = 0, num_alive = 0; i < 256; i++)
+	for (int i = 0, num_alive = 0; i < MAX_WEATHER; i++)
 	{
 		rptr = &raindrops[i];
 
-		if (!rptr->x && num_alive < 8)
+		if (!rptr->x && num_alive < MAX_WEATHER_ALIVE)
 		{
 			num_alive++;
 			rad = GetRandomDraw() & 0xFFF;
@@ -675,7 +678,7 @@ void DoRain()
 	pXY = XY;
 	pZ = Z;
 
-	for (int i = 0; i < 256; i++)
+	for (int i = 0; i < MAX_WEATHER; i++)
 	{
 		rptr = &raindrops[i];
 
@@ -790,11 +793,11 @@ void DoSnow()
 	h = dm->h;
 	bBlueEffect = 0;
 
-	for (int i = 0, num_alive = 0; i < 256; i++)
+	for (int i = 0, num_alive = 0; i < MAX_WEATHER; i++)
 	{
 		snow = &snowflakes[i];
 
-		if (!snow->x && num_alive < 8)
+		if (!snow->x && num_alive < MAX_WEATHER_ALIVE)
 		{
 			num_alive++;
 			rad = GetRandomDraw() & 0xFFF;
@@ -884,7 +887,7 @@ void DoSnow()
 	phd_PushMatrix();
 	phd_TranslateAbs(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos);
 
-	for (int i = 0; i < 256; i++)
+	for (int i = 0; i < MAX_WEATHER; i++)
 	{
 		snow = &snowflakes[i];
 
@@ -4694,8 +4697,6 @@ void S_DrawFootPrints()
 	}
 }
 
-static RAINDROP uwparts[256];
-
 void DoUwEffect()
 {
 	DISPLAYMODE* dm;
@@ -4715,7 +4716,7 @@ void DoUwEffect()
 	h = dm->h;
 	bBlueEffect = 0;
 
-	for (int i = 0, num_alive = 0; i < 256; i++)
+	for (int i = 0, num_alive = 0; i < MAX_WEATHER; i++)
 	{
 		p = &uwparts[i];
 
@@ -4725,7 +4726,7 @@ void DoUwEffect()
 			continue;
 		}
 
-		if (!p->x && num_alive < 16)
+		if (!p->x && num_alive < MAX_WEATHER_ALIVE)
 		{
 			num_alive++;
 			rad = GetRandomDraw() & 0xFFF;
@@ -4783,7 +4784,7 @@ void DoUwEffect()
 	phd_PushMatrix();
 	phd_TranslateAbs(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos);
 
-	for (int i = 0; i < 256; i++)
+	for (int i = 0; i < MAX_WEATHER; i++)
 	{
 		p = &uwparts[i];
 

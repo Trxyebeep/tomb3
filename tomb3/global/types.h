@@ -97,13 +97,28 @@ do \
 #define MAX_SORTLISTS	0x2EE0
 #endif
 
+#ifdef TROYESTUFF	//*4
+#define MAX_TPAGES	128
+#define MAX_TINFOS	0x4000
+#else
 #define MAX_TPAGES	32
-#define MAX_TINFOS	4096
+#define MAX_TINFOS	0x1000
+#endif
+
+#define MAX_ITEMS	256
 
 #ifdef TROYESTUFF
 #define NLAYOUTKEYS		15
 #else
 #define NLAYOUTKEYS		14
+#endif
+
+#define MAX_WEATHER			256
+
+#ifdef TROYESTUFF	//*2
+#define MAX_WEATHER_ALIVE	16
+#else
+#define MAX_WEATHER_ALIVE	8
 #endif
 
 #define NO_ROOM	255
@@ -1988,6 +2003,27 @@ struct CARTINFO
 	short Gradient;
 	char Flags;
 	char StopDelay;
+};
+
+struct LIFT_INFO
+{
+	long start_height;
+	long wait_time;
+};
+
+struct DOORPOS_DATA
+{
+	FLOOR_INFO* floor;
+	FLOOR_INFO data;
+	short block;
+};
+
+struct DOOR_DATA
+{
+	DOORPOS_DATA d1;
+	DOORPOS_DATA d1flip;
+	DOORPOS_DATA d2;
+	DOORPOS_DATA d2flip;
 };
 
 #ifdef TROYESTUFF

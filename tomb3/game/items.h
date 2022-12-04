@@ -1,17 +1,19 @@
 #pragma once
 #include "../global/vars.h"
 
-#define CreateEffect	( (short(__cdecl*)(short)) 0x0043B130 )
-#define KillItem	( (void(__cdecl*)(short)) 0x0043AA90 )
-#define KillEffect	( (void(__cdecl*)(short)) 0x0043B1A0 )
-#define CreateItem	( (short(__cdecl*)()) 0x0043ABE0 )
-#define InitialiseItem	( (void(__cdecl*)(short)) 0x0043AC30 )
-#define InitialiseItemArray	( (void(__cdecl*)(short)) 0x0043AA20 )
-#define AddActiveItem	( (void(__cdecl*)(short)) 0x0043AF60 )
-#define ItemNewRoom	( (void(__cdecl*)(short, short)) 0x0043AFD0 )
-#define EffectNewRoom	( (void(__cdecl*)(short, short)) 0x0043B290 )
-#define RemoveActiveItem	( (void(__cdecl*)(short)) 0x0043AE40 )
-#define RemoveDrawnItem	( (void(__cdecl*)(short)) 0x0043AEE0 )
-#define GlobalItemReplace	( (void(__cdecl*)(long, long)) 0x0043B080 )
-#define ClearBodyBag	( (void(__cdecl*)()) 0x0043B330 )
-#define InitialiseFXArray	( (void(__cdecl*)()) 0x0043B100 )
+void inject_items(bool replace);
+
+void InitialiseItemArray(short num_items);
+void KillItem(short item_num);
+short CreateItem();
+void InitialiseItem(short item_num);
+void RemoveActiveItem(short item_num);
+void RemoveDrawnItem(short item_num);
+void AddActiveItem(short item_num);
+void ItemNewRoom(short item_num, short room_num);
+long GlobalItemReplace(long in, long out);
+void InitialiseFXArray();
+short CreateEffect(short room_num);
+void KillEffect(short fx_num);
+void EffectNewRoom(short fx_num, short room_num);
+void ClearBodyBag();

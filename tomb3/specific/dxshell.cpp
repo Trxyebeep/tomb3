@@ -6,6 +6,8 @@
 #include "mmx.h"
 #include "drawprimitive.h"
 #include "display.h"
+#include "picture.h"
+#include "texture.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif

@@ -1,6 +1,8 @@
 #include "../tomb3/pch.h"
 #include "hwinsert.h"
 #include "../specific/hwrender.h"
+#include "../specific/file.h"
+#include "../specific/texture.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif

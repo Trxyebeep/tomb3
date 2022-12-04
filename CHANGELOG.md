@@ -5,14 +5,22 @@
 ### Original bug fixes
 
 - Fix Lara letting go of some ledges.
+- Fix diver harpoons spamming gunshot SFX.
+- Fix hypothetical crash when loading a demo.
+- Fix bridge bug.
+- Fix weather spawning at Lara position instead of camera position.
 
 ### tomb3 additions
 
 - Add PSX save crystal system.
 - Add option for blue crystal light.
+- Raise TPage/TInfos limits.
+- double the amount of spawned weather particles.
 
 ### tomb3 bug fixes
 
+- Fix music stutter after continuous pausing.
+- Fix music muting.
 
 
 ## [1.3.0](https://github.com/Trxyebeep/tomb3/tree/V1.3.0) (Nov. 20 2022)

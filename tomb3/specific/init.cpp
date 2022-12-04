@@ -11,6 +11,7 @@
 #include "game.h"
 #include "transform.h"
 #include "../3dsystem/hwinsert.h"
+#include "picture.h"
 
 const char* game_malloc_types[47] =
 {

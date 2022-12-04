@@ -11,6 +11,7 @@
 #include "game.h"
 #include "../3dsystem/phd_math.h"
 #include "dd.h"
+#include "file.h"
 #ifdef TROYESTUFF
 #include "../game/health.h"
 #include "../game/objects.h"

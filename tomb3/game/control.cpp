@@ -1578,6 +1578,7 @@ long GetCeiling(FLOOR_INFO* floor, long x, long y, long z)
 					}
 
 				} while (!(trigger & 0x8000));
+
 				break;
 
 			case LAVA_TYPE:

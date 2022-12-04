@@ -22,6 +22,12 @@ if (!main) return 0;\
 if (!Read_Strings(readSize, main, &buffer, &read, file)) return 0;\
 }
 
+PHDTEXTURESTRUCT phdtextinfo[MAX_TINFOS];
+static uchar TexturesUVFlag[MAX_TINFOS];
+#ifndef TROYESTUFF
+static char texture_page_ptrs[MAX_TPAGES];
+#endif
+
 long MyReadFile(HANDLE hFile, LPVOID lpBuffer, ulong nNumberOfBytesToRead, ulong* lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped)
 {
 	static ulong nBytesRead;
@@ -489,13 +495,13 @@ long LoadItems(HANDLE file)
 	if (!num)
 		return 1;
 
-	if (num > 256)
+	if (num > MAX_ITEMS)
 	{
 		lstrcpy(exit_message, "LoadItems(): Too Many Items being Loaded!!");
 		return 0;
 	}
 
-	items = (ITEM_INFO*)game_malloc(sizeof(ITEM_INFO) * 256, 18);
+	items = (ITEM_INFO*)game_malloc(sizeof(ITEM_INFO) * MAX_ITEMS, 18);
 
 	if (!items)
 	{
@@ -504,7 +510,7 @@ long LoadItems(HANDLE file)
 	}
 
 	level_items = num;
-	InitialiseItemArray(256);
+	InitialiseItemArray(MAX_ITEMS);
 
 	for (int i = 0; i < level_items; i++)
 	{
@@ -777,7 +783,9 @@ void S_UnloadLevelFile()
 		HWR_FreeTexturePages();
 
 	LastLoadedLevelPath[0] = 0;
+#ifndef TROYESTUFF
 	memset(texture_page_ptrs, 0, sizeof(texture_page_ptrs));
+#endif
 	nTInfos = 0;
 }
 

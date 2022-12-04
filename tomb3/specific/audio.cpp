@@ -29,6 +29,10 @@ static bool acm_done;
 static bool acm_loop_track;
 static bool acm_eof;
 static volatile bool acm_locked;
+#ifdef TROYESTUFF
+static ulong acm_playpos = -1;
+static bool acm_paused = 0;
+#endif
 
 BOOL __stdcall ACMEnumCallBack(HACMDRIVERID hadid, DWORD_PTR dwInstance, DWORD fdwSupport)
 {
@@ -191,40 +195,54 @@ static bool ACMIsTrackPlaying()
 
 	return 0;
 }
+
+void ACMMute()
+{
+	acm_paused = 0;
+	acm_playpos = -1;
+	acm_volume = DSBVOLUME_MIN;
+
+	if (DSBuffer)
+		DSBuffer->SetVolume(acm_volume);
+}
 #endif
 
 void ACMSetVolume(long volume)
 {
 #ifdef TROYESTUFF
-	static bool paused;
-
 	if (!DSBuffer)
 		return;
 
 	if (!volume)
 	{
-		if (!paused && ACMIsTrackPlaying())
+		if (!acm_paused && ACMIsTrackPlaying())
 		{
+			DSBuffer->GetCurrentPosition(&acm_playpos, 0);
 			DSBuffer->Stop();
-			paused = 1;
+			acm_paused = 1;
 		}
 	}
 	else
-#endif
 	{
-#ifdef TROYESTUFF
-		if (paused)
+		if (acm_paused && acm_playpos != -1)
 		{
+			DSBuffer->SetCurrentPosition(acm_playpos);
 			DSBuffer->Play(0, 0, 1);
-			paused = 0;
+			acm_playpos = -1;
+			acm_paused = 0;
 		}
-#endif
 
 		acm_volume = long(float(volume * 1.5625F - 400.0F) * 6.0F);
 
 		if (DSBuffer)
 			DSBuffer->SetVolume(acm_volume);
 	}
+#else
+	acm_volume = long(float(volume * 1.5625F - 400.0F) * 6.0F);
+
+	if (DSBuffer)
+		DSBuffer->SetVolume(acm_volume);
+#endif
 }
 
 long ACMHandleNotifications()

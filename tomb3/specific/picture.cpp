@@ -10,6 +10,8 @@
 #include "../tomb3/tomb3.h"
 #endif
 
+DXTEXTURE PictureTextures[MAX_TPAGES];
+
 #ifdef TROYESTUFF
 bool bDontGreyOut;
 #endif

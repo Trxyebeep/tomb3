@@ -6,9 +6,8 @@ void inject_gameflow(bool replace);
 long GF_LoadScriptFile(const char* name);
 long GF_DoFrontEndSequence();
 long GF_DoLevelSequence(long level, long type);
-
-#define GF_ModifyInventory	( (void(__cdecl*)(long, long)) 0x004328D0 )
-#define GF_InterpretSequence	( (long(__cdecl*)(short*, long, long)) 0x00432310 )
+void GF_ModifyInventory(long level, long type);
+long GF_InterpretSequence(short* ptr, long type, long seq_type);
 
 enum game_levels
 {
@@ -177,4 +176,66 @@ enum game_string_ids
 	GT_LEVELSELECT,
 	GT_SPACE,
 	GT_NUM_GAMESTRINGS
+};
+
+enum add_inv_types
+{
+	ADDINV_PISTOLS,
+	ADDINV_SHOTGUN,
+	ADDINV_AUTOPISTOLS,
+	ADDINV_UZIS,
+	ADDINV_HARPOON,
+	ADDINV_M16,
+	ADDINV_ROCKET,
+	ADDINV_GRENADE,
+	ADDINV_PISTOL_AMMO,
+	ADDINV_SHOTGUN_AMMO,
+	ADDINV_AUTOPISTOLS_AMMO,
+	ADDINV_UZI_AMMO,
+	ADDINV_HARPOON_AMMO,
+	ADDINV_M16_AMMO,
+	ADDINV_ROCKET_AMMO,
+	ADDINV_GRENADE_AMMO,
+	ADDINV_FLARES,
+	ADDINV_MEDI,
+	ADDINV_BIGMEDI,
+	ADDINV_PICKUP1,
+	ADDINV_PICKUP2,
+	ADDINV_PUZZLE1,
+	ADDINV_PUZZLE2,
+	ADDINV_PUZZLE3,
+	ADDINV_PUZZLE4,
+	ADDINV_KEY1,
+	ADDINV_KEY2,
+	ADDINV_KEY3,
+	ADDINV_KEY4,
+	ADDINV_SAVEGAME_CRYSTAL,
+	ADDINV_NUMBEROF
+};
+
+enum gf_event_types
+{
+	GFE_PICTURE,
+	GFE_LIST_START,
+	GFE_LIST_END,
+	GFE_PLAYFMV,
+	GFE_STARTLEVEL,
+	GFE_CUTSCENE,
+	GFE_LEVCOMPLETE,
+	GFE_DEMOPLAY,
+	GFE_JUMPTO_SEQ,
+	GFE_END_SEQ,
+	GFE_SETTRACK,
+	GFE_SUNSET,
+	GFE_LOADINGPIC,
+	GFE_DEADLY_WATER,
+	GFE_REMOVE_WEAPONS,
+	GFE_GAMECOMPLETE,
+	GFE_CUTANGLE,
+	GFE_NOFLOOR,
+	GFE_ADD2INV,
+	GFE_STARTANIM,
+	GFE_NUMSECRETS,
+	GFE_KILL2COMPLETE,
+	GFE_REMOVE_AMMO
 };

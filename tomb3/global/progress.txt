@@ -575,12 +575,12 @@ tomb3 progress.
 
 		game/gameflow.cpp
 
-0x00432020		SetCutsceneTrack
+0x00432020	+	SetCutsceneTrack
 0x00432030	+	GF_LoadScriptFile
 0x00432280	+	GF_DoFrontEndSequence
 0x004322A0	+	GF_DoLevelSequence
-0x00432310		GF_InterpretSequence
-0x004328D0		GF_ModifyInventory
+0x00432310	+	GF_InterpretSequence
+0x004328D0	+	GF_ModifyInventory
 
 
 		game/hair.cpp
@@ -673,20 +673,20 @@ tomb3 progress.
 
 		game/items.cpp
 
-0x0043AA20		InitialiseItemArray
-0x0043AA90		KillItem
-0x0043ABE0		CreateItem
-0x0043AC30		InitialiseItem
-0x0043AE40		RemoveActiveItem
-0x0043AEE0		RemoveDrawnItem
-0x0043AF60		AddActiveItem
-0x0043AFD0		ItemNewRoom
-0x0043B080		GlobalItemReplace
-0x0043B100		InitialiseFXArray
-0x0043B130		CreateEffect
-0x0043B1A0		KillEffect
-0x0043B290		EffectNewRoom
-0x0043B330		ClearBodyBag
+0x0043AA20	+	InitialiseItemArray
+0x0043AA90	+	KillItem
+0x0043ABE0	+	CreateItem
+0x0043AC30	+	InitialiseItem
+0x0043AE40	+	RemoveActiveItem
+0x0043AEE0	+	RemoveDrawnItem
+0x0043AF60	+	AddActiveItem
+0x0043AFD0	+	ItemNewRoom
+0x0043B080	+	GlobalItemReplace
+0x0043B100	+	InitialiseFXArray
+0x0043B130	+	CreateEffect
+0x0043B1A0	+	KillEffect
+0x0043B290	+	EffectNewRoom
+0x0043B330	+	ClearBodyBag
 
 
 		game/kayak.cpp
@@ -1071,8 +1071,8 @@ tomb3 progress.
 
 		game/missile.cpp
 
-0x00454FB0		ControlMissile
-0x004552C0		ShootAtLara
+0x00454FB0	+	ControlMissile
+0x004552C0	+	ShootAtLara
 0x00455370		ExplodingDeath
 0x004557A0		ControlBodyPart
 
@@ -1111,29 +1111,29 @@ tomb3 progress.
 0x00458840		InitialiseFinalLevel
 0x00458880		FinalLevelCounter
 0x00458AB0		MiniCopterControl
-0x00458B90		InitialiseWindow
-0x00458C20		SmashWindow
-0x00458D20		WindowControl
-0x00458DC0		ShutThatDoor
-0x00458E10		OpenThatDoor
-0x00458E50		InitialiseDoor
-0x00459260		DoorControl
-0x00459330		OnDrawBridge
-0x004593F0		DrawBridgeFloor
-0x00459450		DrawBridgeCeiling
-0x00459490		DrawBridgeCollision
-0x004594C0		InitialiseLift
-0x00459500		LiftControl
-0x004595E0		LiftFloorCeiling
-0x00459760		LiftFloor
-0x004597A0		LiftCeiling
-0x004597E0		BridgeFlatFloor
-0x00459820		BridgeFlatCeiling
-0x00459840		GetOffset
-0x00459880		BridgeTilt1Floor
-0x004598E0		BridgeTilt1Ceiling
-0x00459920		BridgeTilt2Floor
-0x00459980		BridgeTilt2Ceiling
+0x00458B90	+	InitialiseWindow
+0x00458C20	+	SmashWindow
+0x00458D20	+	WindowControl
+0x00458DC0	+	ShutThatDoor
+0x00458E10	+	OpenThatDoor
+0x00458E50	+	InitialiseDoor
+0x00459260	+	DoorControl
+0x00459330	+	OnDrawBridge
+0x004593F0	+	DrawBridgeFloor
+0x00459450	+	DrawBridgeCeiling
+0x00459490	+	DrawBridgeCollision
+0x004594C0	+	InitialiseLift
+0x00459500	+	LiftControl
+0x004595E0	+	LiftFloorCeiling
+0x00459760	+	LiftFloor
+0x004597A0	+	LiftCeiling
+0x004597E0	+	BridgeFlatFloor
+0x00459820	+	BridgeFlatCeiling
+0x00459840	+	GetOffset
+0x00459880	+	BridgeTilt1Floor
+0x004598E0	+	BridgeTilt1Ceiling
+0x00459920	+	BridgeTilt2Floor
+0x00459980	+	BridgeTilt2Ceiling
 0x004599C0		GeneralControl
 0x00459A50		DetonatorControl
 0x00459AD0		ControlAnimating_1_4
@@ -1244,11 +1244,11 @@ tomb3 progress.
 0x00461950	+	InitialiseStartInfo
 0x00461A60	+	ModifyStartInfo
 0x00461B50	+	CreateStartInfo
-0x00461DD0		CreateSaveGameInfo
-0x004623F0		ExtractSaveGameInfo
-0x00462DF0		ResetSG
-0x00462E10		WriteSG
-0x00462E60		ReadSG
+0x00461DD0	+	CreateSaveGameInfo
+0x004623F0	+	ExtractSaveGameInfo
+0x00462DF0	+	ResetSG
+0x00462E10	+	WriteSG
+0x00462E60	+	ReadSG
 
 
 		game/sealmute.cpp
