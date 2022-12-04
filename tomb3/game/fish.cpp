@@ -221,243 +221,54 @@ void ControlFish(short item_number)
 	LEADER_INFO* pLeader;
 	FISH_INFO* pFish;
 	PHD_3DPOS pos;
-	long leader, pirahna_attack, diff, x, z, xRange, zRange, angadd, fx, fz, angle, dx, dz;
+	long leader, pirahna_attack, diff, x, z, dx, dz;
 
 	item = &items[item_number];
+	enemy = item;
 
-	if (!TriggerActive(item))
-		return;
-
-	leader = item->hit_points;
-	pLeader = &lead_info[leader];
-
-	if (!pLeader->on)
-		SetupFish(leader, item);
-
-	enemy = lara_item;
-
-	if (item->object_number == PIRAHNAS)
+	if (TriggerActive(item))
 	{
+		leader = item->hit_points;
+		pLeader = &lead_info[leader];
 
-#ifdef RANDO_STUFF
-		if (rando.levels[RANDOLEVEL].original_id == LV_CRASH)
-#else
-		if (CurrentLevel == LV_CRASH)
-#endif
-		{
-			if (CarcassItem == NO_ITEM)
-				pirahna_attack = lara_item->room_number == item->room_number;
-			else
-				pirahna_attack = 2;
-		}
-		else
-			pirahna_attack = lara_item->room_number == item->room_number;
-	}
-	else
-		pirahna_attack = 0;
-
-	if (PirahnaHitWait)
-		PirahnaHitWait--;
-
-	pFish = &fish[leader];
-
-	if (pirahna_attack)
-	{
-		if (pirahna_attack != 1)
-			enemy = &items[CarcassItem];
-
-		pFish->angle = ((-(long)mGetAngle(pFish->x + item->pos.x_pos, pFish->z + item->pos.z_pos, enemy->pos.x_pos, enemy->pos.z_pos) - 0x4000) >> 4) & 0xFFF;
-		pLeader->angle = pFish->angle;
-		pLeader->speed = (GetRandomControl() & 0x3F) - 64;
-	}
-
-	diff = pFish->angle - pLeader->angle;
-
-	if (diff > 2048)
-		diff -= 4096;
-	else if (diff < -2048)
-		diff += 4096;
-
-	if (diff > 128)
-	{
-		pFish->angadd -= 4;
-
-		if (pFish->angadd < -120)
-			pFish->angadd = -120;
-	}
-	else if (diff < -128)
-	{
-		pFish->angadd += 4;
-
-		if (pFish->angadd > 120)
-			pFish->angadd = 120;
-	}
-	else
-	{
-		pFish->angadd -= pFish->angadd >> 2;
-
-		if (abs(pFish->angadd) < 4)
-			pFish->angadd = 0;
-	}
-
-	pFish->angle += pFish->angadd;
-
-	if (diff > 1024)
-		pFish->angle += pFish->angadd >> 2;
-
-	pFish->angle &= 0xFFF;
-	diff = pFish->speed - pLeader->speed;
-
-	if (diff < -4)
-	{
-		diff = pFish->speed + (GetRandomControl() & 3) + 1;
-
-		if (diff < 0)
-			diff = 0;
-
-		pFish->speed = (uchar)diff;
-
-	}
-	else if (diff > 4)
-	{
-		diff = pFish->speed - (GetRandomControl() & 3) - 1;
-
-		if (diff > 255)
-			diff = 255;
-
-		pFish->speed = (uchar)diff;
-	}
-
-	pFish->swim = (pFish->swim + (pFish->speed >> 4)) & 0x3F;
-	x = pFish->x - ((pFish->speed * rcossin_tbl[pFish->angle << 1]) >> 13);
-	z = pFish->z + ((pFish->speed * rcossin_tbl[(pFish->angle << 1) + 1]) >> 13);
-
-	if (!pirahna_attack)
-	{
-		xRange = pLeader->Xrange;
-		zRange = pLeader->Zrange;
-
-		if (z < -zRange)
-		{
-			z = -zRange;
-
-			if (pFish->angle < 2048)
-				pLeader->angle = pFish->angle - (GetRandomControl() & 0x7F) - 128;
-			else
-				pLeader->angle = pFish->angle + (GetRandomControl() & 0x7F) + 128;
-
-			pLeader->angle_time = (GetRandomControl() & 0xF) + 8;
-			pLeader->speed_time = 0;
-		}
-		else if (z > zRange)
-		{
-			z = zRange;
-
-			if (pFish->angle > 3072)
-				pLeader->angle = pFish->angle - (GetRandomControl() & 0x7F) - 128;
-			else
-				pLeader->angle = pFish->angle + (GetRandomControl() & 0x7F) + 128;
-
-			pLeader->angle_time = (GetRandomControl() & 0xF) + 8;
-			pLeader->speed_time = 0;
-		}
-
-		if (x < -xRange)
-		{
-			x = -xRange;
-
-			if (pFish->angle < 1024)
-				pLeader->angle = pFish->angle - (GetRandomControl() & 0x7F) - 128;
-			else
-				pLeader->angle = pFish->angle + (GetRandomControl() & 0x7F) + 128;
-
-			pLeader->angle_time = (GetRandomControl() & 0xF) + 8;
-			pLeader->speed_time = 0;
-		}
-		else if (x > xRange)
-		{
-			x = xRange;
-
-			if (pFish->angle < 3072)
-				pLeader->angle = pFish->angle - (GetRandomControl() & 0x7F) - 128;
-			else
-				pLeader->angle = pFish->angle + (GetRandomControl() & 0x7F) + 128;
-
-			pLeader->angle_time = (GetRandomControl() & 0xF) + 8;
-			pLeader->speed_time = 0;
-		}
-
-		if (!(GetRandomControl() & 0xF))
-			pLeader->angle_time = 0;
-
-		if (pLeader->angle_time)
-			pLeader->angle_time--;
-		else
-		{
-			pLeader->angle_time = (GetRandomControl() & 0xF) + 8;
-			angadd = (GetRandomControl() & 0x3F) - 24;
-
-			if (!(GetRandomControl() & 3))
-				pLeader->angle += (short)angadd << 5;
-			else
-				pLeader->angle += (short)angadd;
-
-			pLeader->angle &= 0xFFF;
-		}
-
-		if (pLeader->speed_time)
-			pLeader->speed_time--;
-		else
-		{
-			pLeader->speed_time = (GetRandomControl() & 0x1F) + 32;
-
-			if (!(GetRandomControl() & 7))
-				pLeader->speed = (GetRandomControl() & 0x7F) + 128;
-			else if (!(GetRandomControl() & 3))
-				pLeader->speed += (GetRandomControl() & 0x7F) + 32;
-			else if (pLeader->speed > 140)
-				pLeader->speed -= (GetRandomControl() & 0x1F) + 48;
-			else
-			{
-				pLeader->speed_time = (GetRandomControl() & 3) + 4;
-				pLeader->speed += (GetRandomControl() & 0x1F) - 15;
-			}
-		}
-	}
-
-	pFish->x = (short)x;
-	pFish->z = (short)z;
-	fx = x;
-	fz = z;
-
-	for (int i = 0, j = 32; i < 24; i++, j += 2)
-	{
-		pFish = &fish[(leader * 24) + 8 + i];
+		if (!pLeader->on)
+			SetupFish(leader, item);
 
 		if (item->object_number == PIRAHNAS)
 		{
-			pos.x_pos = item->pos.x_pos + pFish->x;
-			pos.y_pos = item->pos.y_pos + pFish->y;
-			pos.z_pos = item->pos.z_pos + pFish->z;
 
-			if (FishNearLara(&pos, 256, pirahna_attack < 2 ? lara_item : enemy))
-			{
-				if (!PirahnaHitWait)
-				{
-					DoBloodSplat(item->pos.x_pos + pFish->x, item->pos.y_pos + pFish->y, item->pos.z_pos + pFish->z, 0, 0,
-						pirahna_attack < 2 ? lara_item->room_number : enemy->room_number);
-					PirahnaHitWait = 8;
-				}
+#ifdef RANDO_STUFF
+			if (rando.levels[RANDOLEVEL].original_id != LV_CRASH)
+#else
+			if (CurrentLevel != LV_CRASH)
+#endif
+				pirahna_attack = lara_item->room_number == item->room_number;
+			else if (CarcassItem != NO_ITEM)
+				pirahna_attack = 2;
+			else
+				pirahna_attack = lara_item->room_number == item->room_number;
+		}
+		else
+			pirahna_attack = 0;
 
-				if (pirahna_attack != 2)
-					lara_item->hit_points -= 4;
-			}
+		if (PirahnaHitWait)
+			PirahnaHitWait--;
+
+		pFish = &fish[leader];
+
+		if (pirahna_attack)
+		{
+			if (pirahna_attack != 1)
+				enemy = &items[CarcassItem];
+			else
+				enemy = lara_item;
+
+			pFish->angle = ((-(long)mGetAngle(pFish->x + item->pos.x_pos, pFish->z + item->pos.z_pos, enemy->pos.x_pos, enemy->pos.z_pos) - 16384) >> 4) & 0xFFF;
+			pLeader->angle = pFish->angle;
+			pLeader->speed = (GetRandomControl() & 0x3F) - 64;
 		}
 
-		angle = ((-(long)mGetAngle(pFish->x, pFish->z, fx, fz) - 0x4000) >> 4) & 0xFFF;
-		dx = SQUARE(pFish->x - fx + ((24 - i) << 7));
-		dz = SQUARE(pFish->z - fz - ((24 - i) << 7));
-		diff = pFish->angle - angle;
+		diff = pFish->angle - pLeader->angle;
 
 		if (diff > 2048)
 			diff -= 4096;
@@ -468,15 +279,15 @@ void ControlFish(short item_number)
 		{
 			pFish->angadd -= 4;
 
-			if (pFish->angadd < -92 - (i >> 1))
-				pFish->angadd = -92 - (i >> 1);
+			if (pFish->angadd < -120)
+				pFish->angadd = -120;
 		}
-		else	if (diff < -128)
+		else if (diff < -128)
 		{
 			pFish->angadd += 4;
 
-			if (pFish->angadd > (i >> 1) + 92)
-				pFish->angadd = (i >> 1) + 92;
+			if (pFish->angadd > 120)
+				pFish->angadd = 120;
 		}
 		else
 		{
@@ -492,60 +303,234 @@ void ControlFish(short item_number)
 			pFish->angle += pFish->angadd >> 2;
 
 		pFish->angle &= 0xFFF;
+		diff = pFish->speed - pLeader->speed;
 
-		if (dx + dz < SQUARE(i << 7) + 0x100000)
+		if (diff < -4)
 		{
-			if (pFish->speed > j)
-				pFish->speed -= pFish->speed >> 5;
+			diff = pFish->speed + (GetRandomControl() & 3) + 1;
+
+			if (diff < 0)
+				diff = 0;
+
+			pFish->speed = (uchar)diff;
 		}
-		else
+		else if (diff > 4)
 		{
-			if (pFish->speed < (i >> 1) + 160)
-				pFish->speed += uchar((i >> 1) + (GetRandomControl() & 3) + 1);
+			diff = pFish->speed - (GetRandomControl() & 3) - 1;
 
-			if (pFish->speed > (i >> 1) - (i << 2) + 160)
-				pFish->speed = (i >> 1) - (i << 2) + 160;
+			if (diff > 255)
+				diff = 255;
+
+			pFish->speed = (uchar)diff;
 		}
 
-		if (GetRandomControl() & 1)
-			pFish->speed -= GetRandomControl() & 1;
-		else
-			pFish->speed += GetRandomControl() & 1;
+		pFish->swim = (pFish->swim + (pFish->speed >> 4)) & 0x3F;
+		x = pFish->x - ((pFish->speed * rcossin_tbl[2 * pFish->angle]) >> 13);
+		z = pFish->z + ((pFish->speed * rcossin_tbl[2 * pFish->angle + 1]) >> 13);
 
-		if (pFish->speed < 32)
-			pFish->speed = 32;
-		else if (pFish->speed > 200)
-			pFish->speed = 200;
+		if (!pirahna_attack)
+		{
+			if (z < -pLeader->Zrange)
+			{
+				z = -pLeader->Zrange;
 
-		pFish->swim = (pFish->swim + (pFish->speed >> 4) + (pFish->speed >> 5)) & 0x3F;
+				if (pFish->angle < 2048)
+					pLeader->angle = pFish->angle - (GetRandomControl() & 0x7F) - 128;
+				else
+					pLeader->angle = pFish->angle + (GetRandomControl() & 0x7F) + 128;
 
-		x = pFish->x - ((pFish->speed * rcossin_tbl[pFish->angle << 1]) >> 13);
-		z = pFish->z + ((pFish->speed * rcossin_tbl[(pFish->angle << 1) + 1]) >> 13);
+				pLeader->angle_time = (GetRandomControl() & 0xF) + 8;
+				pLeader->speed_time = 0;
+			}
+			else if (z > pLeader->Zrange)
+			{
+				z = pLeader->Zrange;
 
-		if (z < -0x7D00)
-			z = -0x7D00;
-		else if (z > 0x7D00)
-			z = 0x7D00;
+				if (pFish->angle > 3072)
+					pLeader->angle = pFish->angle - (GetRandomControl() & 0x7F) - 128;
+				else
+					pLeader->angle = pFish->angle + (GetRandomControl() & 0x7F) + 128;
 
-		if (x < -0x7D00)
-			x = -0x7D00;
-		else if (x > 0x7D00)
-			x = 0x7D00;
+				pLeader->angle_time = (GetRandomControl() & 0xF) + 8;
+				pLeader->speed_time = 0;
+			}
+
+			if (x < -pLeader->Xrange)
+			{
+				x = -pLeader->Xrange;
+
+				if (pFish->angle < 1024)
+					pLeader->angle = pFish->angle - (GetRandomControl() & 0x7F) - 128;
+				else
+					pLeader->angle = pFish->angle + (GetRandomControl() & 0x7F) + 128;
+
+				pLeader->angle_time = (GetRandomControl() & 0xF) + 8;
+				pLeader->speed_time = 0;
+			}
+			else if (x > pLeader->Xrange)
+			{
+				x = pLeader->Xrange;
+
+				if (pFish->angle < 3072)
+					pLeader->angle = pFish->angle - (GetRandomControl() & 0x7F) - 128;
+				else
+					pLeader->angle = pFish->angle + (GetRandomControl() & 0x7F) + 128;
+
+				pLeader->angle_time = (GetRandomControl() & 0xF) + 8;
+				pLeader->speed_time = 0;
+			}
+
+			if (!(GetRandomControl() & 0xF))
+				pLeader->angle_time = 0;
+
+			if (pLeader->angle_time)
+				pLeader->angle_time--;
+			else
+			{
+				pLeader->angle_time = (GetRandomControl() & 0xF) + 8;
+				diff = (GetRandomControl() & 0x3F) - 24;
+
+				if (!(GetRandomControl() & 3))
+					diff <<= 5;
+
+				pLeader->angle = (pLeader->angle + diff) & 0xFFF;
+			}
+
+			if (pLeader->speed_time)
+				pLeader->speed_time--;
+			else
+			{
+				pLeader->speed_time = (GetRandomControl() & 0x1F) + 32;
+
+				if (!(GetRandomControl() & 7))
+					pLeader->speed = (GetRandomControl() & 0x7F) + 128;
+				else if (!(GetRandomControl() & 3))
+					pLeader->speed += (GetRandomControl() & 0x7F) + 32;
+				else if (pLeader->speed > 140)
+					pLeader->speed += 208 - (GetRandomControl() & 0x1F);
+				else
+				{
+					pLeader->speed_time = (GetRandomControl() & 3) + 4;
+					pLeader->speed += (GetRandomControl() & 0x1F) - 15;
+				}
+			}
+		}
 
 		pFish->x = (short)x;
 		pFish->z = (short)z;
 
-		if (pirahna_attack)
+		for (int i = 0; i < 24; i++)
 		{
-			diff = enemy->pos.y_pos - item->pos.y_pos;
+			pFish = &fish[24 * leader + i + 8];
 
-			if (abs(pFish->y - pFish->desty) < 16)
-				pFish->desty = short(diff + (GetRandomControl() & 0xFF));
+			if (item->object_number == PIRAHNAS)
+			{
+				pos.x_pos = item->pos.x_pos + pFish->x;
+				pos.y_pos = item->pos.y_pos + pFish->y;
+				pos.z_pos = item->pos.z_pos + pFish->z;
+
+				if (FishNearLara(&pos, 256, pirahna_attack >= 2 ? enemy : lara_item))
+				{
+					if (!PirahnaHitWait)
+					{
+						DoBloodSplat(item->pos.x_pos + pFish->x, item->pos.y_pos + pFish->y, item->pos.z_pos + pFish->z, 0, 0, pirahna_attack < 2 ? lara_item->room_number : enemy->room_number);
+						PirahnaHitWait = 8;
+					}
+
+					if (pirahna_attack != 2)
+						lara_item->hit_points -= 4;
+				}
+			}
+
+			dx = SQUARE(pFish->x - x - 128 * i + 3072);
+			dz = SQUARE(pFish->z - z + 128 * i - 3072);
+			diff = pFish->angle - (((-(long)mGetAngle(pFish->x, pFish->z, x, z) - 16384) >> 4) & 0xFFF);
+
+			if (diff > 2048)
+				diff -= 4096;
+			else if (diff < -2048)
+				diff += 4096;
+
+			if (diff > 128)
+			{
+				pFish->angadd -= 4;
+
+				if (pFish->angadd < -(i >> 1) - 92)
+					pFish->angadd = -(i >> 1) - 92;
+			}
+			else if (diff < -128)
+			{
+				pFish->angadd += 4;
+
+				if (pFish->angadd > (i >> 1) + 92)
+					pFish->angadd = (i >> 1) + 92;
+			}
+			else
+			{
+				pFish->angadd -= pFish->angadd >> 2;
+
+				if (abs(pFish->angadd) < 4)
+					pFish->angadd = 0;
+			}
+
+			pFish->angle += pFish->angadd;
+
+			if (diff > 1024)
+				pFish->angle += pFish->angadd >> 2;
+
+			pFish->angle &= 0xFFF;
+
+			if (dx + dz < 16384 * SQUARE(i) + 1048576)
+			{
+				if (pFish->speed > 2 * i + 32)
+					pFish->speed -= pFish->speed >> 5;
+			}
+			else
+			{
+				if (pFish->speed < (i >> 1) + 160)
+					pFish->speed += uchar((i >> 1) + (GetRandomControl() & 3) + 1);
+
+				if (pFish->speed > (i >> 1) - 4 * i + 160)
+					pFish->speed = (i >> 1) - 4 * i - 96;
+			}
+
+			if (GetRandomControl() & 1)
+				pFish->speed -= GetRandomControl() & 1;
+			else
+				pFish->speed += GetRandomControl() & 1;
+
+			if (pFish->speed < 32)
+				pFish->speed = 32;
+			else if (pFish->speed > 200)
+				pFish->speed = 200;
+
+			pFish->swim = (pFish->swim + (pFish->speed >> 4) + (pFish->speed >> 5)) & 0x3F;
+			dx = pFish->x - ((pFish->speed * rcossin_tbl[2 * pFish->angle]) >> 13);
+			dz = pFish->z + ((pFish->speed * rcossin_tbl[2 * pFish->angle + 1]) >> 13);
+
+			if (dz < -32000)
+				dz = -32000;
+			else if (dz > 32000)
+				dz = 32000;
+
+			if (dx < -32000)
+				dx = -32000;
+			else if (dx > 32000)
+				dx = 32000;
+
+			pFish->x = (short)dx;
+			pFish->z = (short)dz;
+
+			if (!pirahna_attack)
+			{
+				if (abs(pFish->y - pFish->desty) < 16)
+					pFish->desty = GetRandomControl() % pLeader->Yrange;
+			}
+			else if (abs(pFish->y - pFish->desty) < 16)
+				pFish->desty = short(enemy->pos.y_pos - item->pos.y_pos + (GetRandomControl() & 0xFF));
+
+			pFish->y += (pFish->desty - pFish->y) >> 4;
 		}
-		else if (abs(pFish->y - pFish->desty) < 16)
-			pFish->desty = GetRandomControl() % lead_info[leader].Yrange;
-
-		pFish->y += (pFish->desty - pFish->y) >> 4;
 	}
 }
 

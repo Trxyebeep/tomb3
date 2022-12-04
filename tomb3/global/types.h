@@ -1387,7 +1387,7 @@ struct FISH_INFO
 	short z;
 	ushort angle;
 	short desty;
-	uchar angadd;
+	char angadd;
 	uchar speed;
 	uchar acc;
 	uchar swim;
