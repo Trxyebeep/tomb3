@@ -9,6 +9,7 @@
 - Fix hypothetical crash when loading a demo.
 - Fix bridge bug.
 - Fix weather spawning at Lara position instead of camera position.
+- Fix lara collision with objects on water surface.
 
 ### tomb3 additions
 

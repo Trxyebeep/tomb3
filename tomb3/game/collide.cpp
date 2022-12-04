@@ -952,6 +952,47 @@ long MoveLaraPosition(PHD_VECTOR* v, ITEM_INFO* item, ITEM_INFO* l)
 	return Move3DPosTo3DPos(&l->pos, &pos, 16, 364);
 }
 
+void CreatureCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+	short* bounds;
+	long x, z, rx, rz, c, s;
+
+	item = &items[item_number];
+
+	if (!TestBoundsCollide(item, l, coll->radius) || !TestCollision(item, l))
+		return;
+
+#ifdef TROYESTUFF
+	if (lara.water_status != LARA_UNDERWATER && lara.water_status != LARA_SURFACE)
+#else
+	if (lara.water_status != LARA_UNDERWATER && !lara.water_status != LARA_SURFACE)
+#endif
+	{
+		if (coll->enable_baddie_push)
+			ItemPushLara(item, l, coll, coll->enable_spaz, 0);
+		else if (coll->enable_spaz)
+		{
+			bounds = GetBestFrame(item);
+			s = phd_sin(l->pos.y_rot);
+			c = phd_cos(l->pos.y_rot);
+			x = (bounds[0] + bounds[1]) >> 1;
+			z = (bounds[3] - bounds[2]) >> 1;
+			rx = (l->pos.x_pos - item->pos.x_pos) - ((c * x + s * z) >> W2V_SHIFT);
+			rz = (l->pos.z_pos - item->pos.z_pos) - ((c * z - s * x) >> W2V_SHIFT);
+
+			if (bounds[3] - bounds[2] > 256)
+			{
+				lara.hit_direction = ushort((l->pos.y_rot + 0x8000 - phd_atan(rz, rx) + 0x2000)) >> W2V_SHIFT;
+				lara.hit_frame++;
+
+				if (lara.hit_frame > 30)
+					lara.hit_frame = 30;
+			}
+		}
+	}
+}
+
 void inject_collide(bool replace)
 {
 	INJECT(0x0041E690, ShiftItem, replace);
@@ -971,4 +1012,5 @@ void inject_collide(bool replace)
 	INJECT(0x0041F2F0, AlignLaraPosition, replace);
 	INJECT(0x0041F5C0, Move3DPosTo3DPos, replace);
 	INJECT(0x0041F430, MoveLaraPosition, replace);
+	INJECT(0x0041EA60, CreatureCollision, replace);
 }
