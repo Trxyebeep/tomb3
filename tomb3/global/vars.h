@@ -125,6 +125,7 @@
 #define body_bag	VAR_(0x006D62AC, short)
 #define KillEverythingFlag	VAR_(0x006261AC, long)
 #define baddie_slots	VAR_(0x006D58B0, CREATURE_INFO*)
+#define non_lot_slots	VAR_(0x006D58B4, CREATURE_INFO*)
 #define cdtrack	VAR_(0x004C51F8, short)
 #define IsAtmospherePlaying	VAR_(0x006E2A28, char)
 #define reset_flag	VAR_(0x00625F64, long)
@@ -324,6 +325,8 @@
 #define HandbrakeStarting	VAR_(0x006267C8, char)
 #define Stats_Requester	VAR_(0x00626490, REQUEST_INFO)
 #define number_los_rooms	VAR_(0x00625F6C, long)
+#define slots_used	VAR_(0x00626794, long)
+#define nonlot_slots_used	VAR_(0x00626794, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)

@@ -663,7 +663,7 @@ struct ITEM_INFO
 	ushort really_active : 1;
 };
 
-struct box_node
+struct BOX_NODE
 {
 	short exit_box;
 	ushort search_number;
@@ -673,7 +673,7 @@ struct box_node
 
 struct LOT_INFO
 {
-	box_node* node;
+	BOX_NODE* node;
 	short head;
 	short tail;
 	ushort search_number;
