@@ -93,8 +93,70 @@ void InitialiseNonLotAI(short item_number, long slot)
 	nonlot_slots_used++;
 }
 
+long EnableNonLotAI(short item_number, long Always)
+{
+	ITEM_INFO* item;
+	CREATURE_INFO* creature;
+	long x, y, z, slot, worstslot, dist, worstdist;
+
+	item = &items[item_number];
+
+	if (nonlot_slots_used < 12)
+	{
+		for (int i = 0; i < 12; i++)
+		{
+			creature = &non_lot_slots[i];
+
+			if (creature->item_num == NO_ITEM)
+			{
+				InitialiseNonLotAI(item_number, i);
+				return 1;
+			}
+		}
+	}
+
+	if (Always)
+		worstdist = 0;
+	else
+	{
+		x = (item->pos.x_pos - camera.pos.x) >> 8;
+		y = (item->pos.y_pos - camera.pos.y) >> 8;
+		z = (item->pos.z_pos - camera.pos.z) >> 8;
+		worstdist = SQUARE(x) + SQUARE(y) + SQUARE(z);
+	}
+
+	worstslot = -1;
+
+	for (slot = 0; slot < 12; slot++)
+	{
+		creature = &non_lot_slots[slot];
+		item = &items[creature->item_num];
+		x = (item->pos.x_pos - camera.pos.x) >> 8;
+		y = (item->pos.y_pos - camera.pos.y) >> 8;
+		z = (item->pos.z_pos - camera.pos.z) >> 8;
+		dist = SQUARE(x) + SQUARE(y) + SQUARE(z);
+
+		if (dist > worstdist)
+		{
+			worstslot = slot;
+			worstdist = dist;
+		}
+	}
+
+	if (worstslot >= 0)
+	{
+		items[non_lot_slots[worstslot].item_num].status = ITEM_INVISIBLE;
+		DisableBaddieAI(non_lot_slots[worstslot].item_num);
+		InitialiseNonLotAI(item_number, worstslot);
+		return 1;
+	}
+
+	return 0;
+}
+
 void inject_lot(bool replace)
 {
 	INJECT(0x00452F10, InitialiseLOTarray, replace);
 	INJECT(0x00453740, InitialiseNonLotAI, replace);
+	INJECT(0x004535B0, EnableNonLotAI, replace);
 }
