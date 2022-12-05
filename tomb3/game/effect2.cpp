@@ -642,6 +642,64 @@ void TriggerRicochetSpark(GAME_VECTOR* pos, long angle, long size)
 	sptr->MaxYvel = 0;
 }
 
+void TriggerBlood(long x, long y, long z, long angle, long num)
+{
+	SPARKS* sptr;
+	long ang;
+	short rad;
+
+	for (int i = 0; i < num; i++)
+	{
+		sptr = &sparks[GetFreeSpark()];
+		sptr->On = 1;
+
+		if (gameflow.language == 2)
+		{
+			sptr->sR = 112;
+			sptr->sG = 0;
+			sptr->sB = -32;
+			sptr->dR = 96;
+			sptr->dG = 0;
+			sptr->dB = -64;
+		}
+		else
+		{
+			sptr->sR = -32;
+			sptr->sG = 0;
+			sptr->sB = 32;
+			sptr->dR = -64;
+			sptr->dG = 0;
+			sptr->dB = 24;
+		}
+
+		sptr->ColFadeSpeed = 8;
+		sptr->FadeToBlack = 8;
+		sptr->Life = 24;
+		sptr->sLife = 24;
+		sptr->TransType = 1;
+		sptr->Dynamic = -1;
+		sptr->x = (GetRandomControl() & 0x1F) + x - 16;
+		sptr->y = (GetRandomControl() & 0x1F) + y - 16;
+		sptr->z = (GetRandomControl() & 0x1F) + z - 16;
+		rad = GetRandomControl() & 0xF;
+		ang = ((GetRandomControl() & 0x1F) + angle - 16) & 0xFFF;
+		sptr->Xvel = -(rad * rcossin_tbl[ang << 1]) >> 5;
+		sptr->Yvel = -128 - (GetRandomControl() & 0xFF);
+		sptr->Zvel = (rad * rcossin_tbl[(ang << 1) + 1]) >> 5;
+		sptr->Friction = 4;
+		sptr->Flags = 4;
+		sptr->Scalar = 3;
+		sptr->MaxYvel = 0;
+		sptr->Gravity = (GetRandomControl() & 0x1F) + 31;
+		sptr->Width = 2;
+		sptr->sWidth = 2;
+		sptr->Height = 2;
+		sptr->sHeight = 2;
+		sptr->dWidth = 2 - (GetRandomControl() & 1);
+		sptr->dHeight = 2 - (GetRandomControl() & 1);
+	}
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -655,4 +713,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042BBC0, TriggerSideFlame, replace);
 	INJECT(0x0042C670, TriggerRocketSmoke, replace);
 	INJECT(0x0042A680, TriggerRicochetSpark, replace);
+	INJECT(0x0042C7E0, TriggerBlood, replace);
 }

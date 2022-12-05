@@ -14,6 +14,7 @@ void TriggerStaticFlame(long x, long y, long z, long size);
 void TriggerSideFlame(long x, long y, long z, long angle, long speed, long pilot);
 void TriggerRocketSmoke(long x, long y, long z, long c);
 void TriggerRicochetSpark(GAME_VECTOR* pos, long angle, long size);
+void TriggerBlood(long x, long y, long z, long angle, long num);
 
 #define TriggerWaterfallMist	( (void(__cdecl*)(long, long, long, long)) 0x0042D1F0 )
 #define TriggerGunSmoke	( (void(__cdecl*)(long, long, long, long, long, long, long, long, long)) 0x0042B4F0 )
