@@ -33,6 +33,7 @@ void MiniCopterControl(short item_number);
 void EarthQuake(short item_number);
 void ControlCutShotgun(short item_number);
 void InitialiseFinalLevel();
+void FinalLevelCounter(short item_number);
 
 enum object_types
 {

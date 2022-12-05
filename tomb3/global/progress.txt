@@ -1109,7 +1109,7 @@ tomb3 progress.
 0x00458660	+	EarthQuake
 0x004587F0	+	ControlCutShotgun
 0x00458840	+	InitialiseFinalLevel
-0x00458880		FinalLevelCounter
+0x00458880	+	FinalLevelCounter
 0x00458AB0	+	MiniCopterControl
 0x00458B90	+	InitialiseWindow
 0x00458C20	+	SmashWindow

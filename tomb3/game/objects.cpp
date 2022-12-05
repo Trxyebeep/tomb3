@@ -9,10 +9,14 @@
 #include "effects.h"
 #include "../3dsystem/phd_math.h"
 #include "../specific/game.h"
+#include "lara.h"
+#include "lot.h"
+#include "box.h"
 
-static long final_boss_active;	//TR2 remnants
-static long final_boss_count;
-static long final_level_count;
+static short final_boss_active;	//TR2 remnants
+static short final_boss_count;
+static short final_level_count;
+static short final_boss[5];
 
 long OnDrawBridge(ITEM_INFO* item, long z, long x)
 {
@@ -752,6 +756,71 @@ void InitialiseFinalLevel()
 	}
 }
 
+void FinalLevelCounter(short item_number)
+{
+	ITEM_INFO* item;
+	GAME_VECTOR start;
+	GAME_VECTOR target;
+	long dist, best, x, y, z;
+	short boss;
+
+	if (savegame.kills == final_level_count && !final_boss_active)
+	{
+		boss = final_boss[0];
+		best = 0x7FFFFFFF;
+
+		for (int i = 0; i < final_boss_count; i++)
+		{
+			item = &items[final_boss[i]];
+
+			start.x = lara_item->pos.x_pos;
+			start.y = lara_item->pos.y_pos - 512;
+			start.z = lara_item->pos.z_pos;
+			start.room_number = lara_item->room_number;
+
+			target.x = item->pos.x_pos;
+			target.y = item->pos.y_pos - 512;
+			target.z = item->pos.z_pos;
+
+			if (!LOS(&start, &target))
+			{
+				x = (lara_item->pos.x_pos - item->pos.x_pos) >> 6;
+				y = (lara_item->pos.y_pos - item->pos.y_pos) >> 6;
+				z = (lara_item->pos.z_pos - item->pos.z_pos) >> 6;
+				dist = SQUARE(x) + SQUARE(y) + SQUARE(z);
+
+				if (dist < best)
+				{
+					best = dist;
+					boss = final_boss[i];
+				}
+			}
+		}
+
+		item = &items[boss];
+		item->touch_bits = 0;
+		item->status = ITEM_ACTIVE;
+		AddActiveItem(boss);
+		EnableBaddieAI(boss, 1);
+		item->mesh_bits = 0xFFFF1FFF;
+		final_boss_active = 1;
+	}
+	else  if (savegame.kills > final_level_count)
+	{
+		final_boss_active++;
+
+		if (final_boss_active == 150)
+		{
+			item = &items[item_number];
+			cine_frame = 428;
+			CreatureKill(item, 0, 0, EXTRA_FINALANIM);
+			camera.type = CINEMATIC_CAMERA;
+			lara.mesh_ptrs[HAND_R] = meshes[objects[LARA].mesh_index + HAND_R];
+			cinematic_pos = item->pos;
+		}
+	}
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -784,4 +853,5 @@ void inject_objects(bool replace)
 	INJECT(0x00458660, EarthQuake, replace);
 	INJECT(0x004587F0, ControlCutShotgun, replace);
 	INJECT(0x00458840, InitialiseFinalLevel, replace);
+	INJECT(0x00458880, FinalLevelCounter, replace);
 }

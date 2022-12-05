@@ -22,3 +22,4 @@ void AlertNearbyGuards(ITEM_INFO* item);
 #define CreatureDie	( (void(__cdecl*)(short, long)) 0x00415820 )
 #define CreatureFloat	( (void(__cdecl*)(short)) 0x00416570 )
 #define CreatureUnderwater	( (void(__cdecl*)(ITEM_INFO*, long)) 0x00416620 )
+#define CreatureKill	( (void(__cdecl*)(ITEM_INFO*, long, long, long)) 0x00416840 )
