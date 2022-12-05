@@ -274,8 +274,8 @@ tomb3 progress.
 
 		game/cobra.cpp
 
-0x0041D210		InitialiseCobra
-0x0041D290		CobraControl
+0x0041D210	+	InitialiseCobra
+0x0041D290	+	CobraControl
 
 
 		game/collide.cpp
