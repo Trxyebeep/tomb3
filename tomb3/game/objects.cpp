@@ -618,6 +618,16 @@ void DetonatorControl(short item_number)
 		RemoveActiveItem(item_number);
 }
 
+void ControlAnimating_1_4(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (TriggerActive(item))
+		AnimateItem(item);
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -645,4 +655,5 @@ void inject_objects(bool replace)
 	INJECT(0x00458D20, WindowControl, replace);
 	INJECT(0x004599C0, GeneralControl, replace);
 	INJECT(0x00459A50, DetonatorControl, replace);
+	INJECT(0x00459AD0, ControlAnimating_1_4, replace);
 }

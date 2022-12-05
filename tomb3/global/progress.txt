@@ -1136,7 +1136,7 @@ tomb3 progress.
 0x00459980	+	BridgeTilt2Ceiling
 0x004599C0	+	GeneralControl
 0x00459A50	+	DetonatorControl
-0x00459AD0		ControlAnimating_1_4
+0x00459AD0	+	ControlAnimating_1_4
 
 
 		game/objlight.cpp
