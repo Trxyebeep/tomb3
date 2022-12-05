@@ -601,6 +601,23 @@ void GeneralControl(short item_number)
 	}
 }
 
+void DetonatorControl(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+	AnimateItem(item);
+
+	if (item->frame_number - anims[item->anim_number].frame_base == 80)
+	{
+		camera.bounce = -150;
+		SoundEffect(SFX_EXPLOSION1, 0, SFX_DEFAULT);
+	}
+
+	if (item->status == ITEM_DEACTIVATED)
+		RemoveActiveItem(item_number);
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -627,4 +644,5 @@ void inject_objects(bool replace)
 	INJECT(0x00458B90, InitialiseWindow, replace);
 	INJECT(0x00458D20, WindowControl, replace);
 	INJECT(0x004599C0, GeneralControl, replace);
+	INJECT(0x00459A50, DetonatorControl, replace);
 }
