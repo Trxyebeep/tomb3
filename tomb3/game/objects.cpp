@@ -628,6 +628,30 @@ void ControlAnimating_1_4(short item_number)
 		AnimateItem(item);
 }
 
+void MiniCopterControl(short item_number)
+{
+	ITEM_INFO* item;
+	PHD_3DPOS pos;
+	short room_number;
+
+	item = &items[item_number];
+	item->pos.z_pos += 100;
+	pos.x_pos = lara_item->pos.x_pos + ((item->pos.x_pos - lara_item->pos.x_pos) >> 2);
+	pos.y_pos = lara_item->pos.y_pos + ((item->pos.y_pos - lara_item->pos.y_pos) >> 2);
+	pos.z_pos = lara_item->pos.z_pos + ((item->pos.z_pos - lara_item->pos.z_pos) >> 2);
+	SoundEffect(SFX_SMALL_DOOR_SUBWAY_CLOSE, &pos, SFX_DEFAULT);
+
+	if (abs(item->pos.z_pos - lara_item->pos.z_pos) > 30720)
+		KillItem(item_number);
+
+	AnimateItem(item);
+	room_number = item->room_number;
+	GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+
+	if (item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -656,4 +680,5 @@ void inject_objects(bool replace)
 	INJECT(0x004599C0, GeneralControl, replace);
 	INJECT(0x00459A50, DetonatorControl, replace);
 	INJECT(0x00459AD0, ControlAnimating_1_4, replace);
+	INJECT(0x00458AB0, MiniCopterControl, replace);
 }
