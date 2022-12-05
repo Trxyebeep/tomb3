@@ -10,7 +10,9 @@
 #include "../3dsystem/phd_math.h"
 #include "../specific/game.h"
 
-static long final_boss_active;
+static long final_boss_active;	//TR2 remnants
+static long final_boss_count;
+static long final_level_count;
 
 long OnDrawBridge(ITEM_INFO* item, long z, long x)
 {
@@ -733,6 +735,23 @@ void ControlCutShotgun(short item_number)
 	}
 }
 
+void InitialiseFinalLevel()
+{
+	ITEM_INFO* item;
+
+	final_boss_active = 0;
+	final_boss_count = 0;
+	final_level_count = 0;
+
+	for (int i = 0; i < level_items; i++)
+	{
+		item = &items[i];
+
+		if (item->object_number == DOG)
+			final_level_count++;
+	}
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -764,4 +783,5 @@ void inject_objects(bool replace)
 	INJECT(0x00458AB0, MiniCopterControl, replace);
 	INJECT(0x00458660, EarthQuake, replace);
 	INJECT(0x004587F0, ControlCutShotgun, replace);
+	INJECT(0x00458840, InitialiseFinalLevel, replace);
 }
