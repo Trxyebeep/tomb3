@@ -338,6 +338,81 @@ void InitialiseSlot(short item_number, long slot)
 	slots_used++;
 }
 
+long EnableBaddieAI(short item_number, long Always)
+{
+	ITEM_INFO* item;
+	CREATURE_INFO* creature;
+	long x, y, z, slot, worstslot, dist, worstdist;
+
+	item = &items[item_number];
+
+	if (lara.item_number == item_number)
+	{
+		if (lara.creature)
+			return 1;
+	}
+	else
+	{
+		if (item->data)
+			return 1;
+
+		if (objects[item->object_number].non_lot)
+			return EnableNonLotAI(item_number, Always);
+	}
+
+	if (slots_used < 5)
+	{
+		for (slot = 0; slot < 5; slot++)
+		{
+			creature = &baddie_slots[slot];
+
+			if (creature->item_num == NO_ITEM)
+			{
+				InitialiseSlot(item_number, slot);
+				return 1;
+			}
+		}
+	}
+
+	if (Always)
+		worstdist = 0;
+	else
+	{
+		x = (item->pos.x_pos - camera.pos.x) >> 8;
+		y = (item->pos.y_pos - camera.pos.y) >> 8;
+		z = (item->pos.z_pos - camera.pos.z) >> 8;
+		worstdist = SQUARE(x) + SQUARE(y) + SQUARE(z);
+	}
+
+	worstslot = -1;
+
+	for (slot = 0; slot < 5; slot++)
+	{
+		creature = &baddie_slots[slot];
+		item = &items[creature->item_num];
+		x = (item->pos.x_pos - camera.pos.x) >> 8;
+		y = (item->pos.y_pos - camera.pos.y) >> 8;
+		z = (item->pos.z_pos - camera.pos.z) >> 8;
+		dist = SQUARE(x) + SQUARE(y) + SQUARE(z);
+
+		if (dist > worstdist)
+		{
+			worstslot = slot;
+			worstdist = dist;
+		}
+	}
+
+	if (worstslot >= 0)
+	{
+		items[baddie_slots[worstslot].item_num].status = ITEM_INVISIBLE;
+		DisableBaddieAI(baddie_slots[worstslot].item_num);
+		InitialiseSlot(item_number, worstslot);
+		return 1;
+	}
+
+	return 0;
+}
+
 void inject_lot(bool replace)
 {
 	INJECT(0x00452F10, InitialiseLOTarray, replace);
@@ -347,4 +422,5 @@ void inject_lot(bool replace)
 	INJECT(0x00453560, ClearLOT, replace);
 	INJECT(0x00453460, CreateZone, replace);
 	INJECT(0x004531F0, InitialiseSlot, replace);
+	INJECT(0x00453000, EnableBaddieAI, replace);
 }
