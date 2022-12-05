@@ -10,6 +10,8 @@
 #include "../3dsystem/phd_math.h"
 #include "../specific/game.h"
 
+static long final_boss_active;
+
 long OnDrawBridge(ITEM_INFO* item, long z, long x)
 {
 	long ix, iz;
@@ -716,6 +718,21 @@ void EarthQuake(short item_number)
 	}
 }
 
+void ControlCutShotgun(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (final_boss_active < 150)
+		item->status = ITEM_INVISIBLE;
+	else
+	{
+		item->status = ITEM_ACTIVE;
+		AnimateItem(item);
+	}
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -746,4 +763,5 @@ void inject_objects(bool replace)
 	INJECT(0x00459AD0, ControlAnimating_1_4, replace);
 	INJECT(0x00458AB0, MiniCopterControl, replace);
 	INJECT(0x00458660, EarthQuake, replace);
+	INJECT(0x004587F0, ControlCutShotgun, replace);
 }
