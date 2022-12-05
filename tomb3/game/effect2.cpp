@@ -657,17 +657,17 @@ void TriggerBlood(long x, long y, long z, long angle, long num)
 		{
 			sptr->sR = 112;
 			sptr->sG = 0;
-			sptr->sB = -32;
+			sptr->sB = 224;
 			sptr->dR = 96;
 			sptr->dG = 0;
-			sptr->dB = -64;
+			sptr->dB = 192;
 		}
 		else
 		{
-			sptr->sR = -32;
+			sptr->sR = 224;
 			sptr->sG = 0;
 			sptr->sB = 32;
-			sptr->dR = -64;
+			sptr->dR = 192;
 			sptr->dG = 0;
 			sptr->dB = 24;
 		}
@@ -700,6 +700,64 @@ void TriggerBlood(long x, long y, long z, long angle, long num)
 	}
 }
 
+void TriggerBloodD(long x, long y, long z, long angle, long num)
+{
+	SPARKS* sptr;
+	long ang;
+	short rad;
+
+	for (int i = 0; i < num; i++)
+	{
+		sptr = &sparks[GetFreeSpark()];
+		sptr->On = 1;
+
+		if (gameflow.language == 2)
+		{
+			sptr->sR = 112;
+			sptr->sG = 0;
+			sptr->sB = 224;
+			sptr->dR = 96;
+			sptr->dG = 0;
+			sptr->dB = 192;
+		}
+		else
+		{
+			sptr->sR = 224;
+			sptr->sG = 0;
+			sptr->sB = 32;
+			sptr->dR = 192;
+			sptr->dG = 0;
+			sptr->dB = 24;
+		}
+
+		sptr->ColFadeSpeed = 8;
+		sptr->FadeToBlack = 8;
+		sptr->Life = 24;
+		sptr->sLife = 24;
+		sptr->TransType = 1;
+		sptr->Dynamic = -1;
+		sptr->x = (GetRandomDraw() & 0x1F) + x - 16;
+		sptr->y = (GetRandomDraw() & 0x1F) + y - 16;
+		sptr->z = (GetRandomDraw() & 0x1F) + z - 16;
+		rad = GetRandomDraw() & 0xF;
+		ang = ((GetRandomDraw() & 0x1F) + angle - 16) & 0xFFF;
+		sptr->Xvel = -(rad * rcossin_tbl[ang << 1]) >> 5;
+		sptr->Yvel = -128 - (GetRandomDraw() & 0xFF);
+		sptr->Zvel = (rad * rcossin_tbl[(ang << 1) + 1]) >> 5;
+		sptr->Friction = 4;
+		sptr->Flags = 0;
+		sptr->Scalar = 3;
+		sptr->MaxYvel = 0;
+		sptr->Gravity = (GetRandomDraw() & 0x1F) + 31;
+		sptr->Width = 2;
+		sptr->sWidth = 2;
+		sptr->Height = 2;
+		sptr->sHeight = 2;
+		sptr->dWidth = 2 - (GetRandomDraw() & 1);
+		sptr->dHeight = 2 - (GetRandomDraw() & 1);
+	}
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -714,4 +772,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042C670, TriggerRocketSmoke, replace);
 	INJECT(0x0042A680, TriggerRicochetSpark, replace);
 	INJECT(0x0042C7E0, TriggerBlood, replace);
+	INJECT(0x0042C950, TriggerBloodD, replace);
 }
