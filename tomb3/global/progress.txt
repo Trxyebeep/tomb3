@@ -1134,7 +1134,7 @@ tomb3 progress.
 0x004598E0	+	BridgeTilt1Ceiling
 0x00459920	+	BridgeTilt2Floor
 0x00459980	+	BridgeTilt2Ceiling
-0x004599C0		GeneralControl
+0x004599C0	+	GeneralControl
 0x00459A50		DetonatorControl
 0x00459AD0		ControlAnimating_1_4
 

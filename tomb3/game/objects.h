@@ -26,6 +26,7 @@ void DoorControl(short item_number);
 void SmashWindow(short item_number);
 void InitialiseWindow(short item_number);
 void WindowControl(short item_number);
+void GeneralControl(short item_number);
 
 #define InitialiseFinalLevel	( (void(__cdecl*)()) 0x00458840 )
 

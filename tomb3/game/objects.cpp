@@ -575,6 +575,32 @@ void WindowControl(short item_number)
 	SmashWindow(item_number);
 }
 
+void GeneralControl(short item_number)
+{
+	ITEM_INFO* item;
+	short room_number;
+
+	item = &items[item_number];
+
+	if (TriggerActive(item))
+		item->goal_anim_state = 1;
+	else
+		item->goal_anim_state = 0;
+
+	AnimateItem(item);
+	room_number = item->room_number;
+	GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+
+	if (item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+
+	if (item->status == ITEM_DEACTIVATED)
+	{
+		RemoveActiveItem(item_number);
+		item->flags |= IFL_INVISIBLE;
+	}
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -600,4 +626,5 @@ void inject_objects(bool replace)
 	INJECT(0x00458C20, SmashWindow, replace);
 	INJECT(0x00458B90, InitialiseWindow, replace);
 	INJECT(0x00458D20, WindowControl, replace);
+	INJECT(0x004599C0, GeneralControl, replace);
 }
