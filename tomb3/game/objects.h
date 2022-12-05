@@ -30,6 +30,7 @@ void GeneralControl(short item_number);
 void DetonatorControl(short item_number);
 void ControlAnimating_1_4(short item_number);
 void MiniCopterControl(short item_number);
+void EarthQuake(short item_number);
 
 #define InitialiseFinalLevel	( (void(__cdecl*)()) 0x00458840 )
 

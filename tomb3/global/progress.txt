@@ -1106,7 +1106,7 @@ tomb3 progress.
 
 		game/objects.cpp
 
-0x00458660		EarthQuake
+0x00458660	+	EarthQuake
 0x004587F0		ControlCutShotgun
 0x00458840		InitialiseFinalLevel
 0x00458880		FinalLevelCounter

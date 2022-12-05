@@ -8,6 +8,7 @@
 #include "missile.h"
 #include "effects.h"
 #include "../3dsystem/phd_math.h"
+#include "../specific/game.h"
 
 long OnDrawBridge(ITEM_INFO* item, long z, long x)
 {
@@ -652,6 +653,69 @@ void MiniCopterControl(short item_number)
 		ItemNewRoom(item_number, room_number);
 }
 
+void EarthQuake(short item_number)
+{
+	ITEM_INFO* item;
+	long rnd, obj;
+	short itemNum;
+
+	item = &items[item_number];
+
+	if (!TriggerActive(item))
+		return;
+
+	if (!item->item_flags[1])
+		item->item_flags[1] = 100;
+
+	if (!item->item_flags[2] && abs(item->item_flags[0] - item->item_flags[1]) < 16)
+	{
+		if (item->item_flags[1] == 20)
+		{
+			item->item_flags[1] = 100;
+			item->item_flags[2] = (GetRandomControl() & 0x7F) + 90;
+		}
+		else
+		{
+			item->item_flags[1] = 20;
+			item->item_flags[2] = (GetRandomControl() & 0x7F) + 30;
+		}
+	}
+
+	if (item->item_flags[2])
+		item->item_flags[2]--;
+
+	if (item->item_flags[0] > item->item_flags[1])
+		item->item_flags[0] -= (GetRandomControl() & 7) + 2;
+	else
+		item->item_flags[0] += (GetRandomControl() & 7) + 2;
+
+	SoundEffect(SFX_EARTHQUAKE_LOOP, 0, (item->item_flags[0] << 16) + 0x1000000 | SFX_SETPITCH);
+	camera.bounce = -item->item_flags[0];
+	rnd = GetRandomControl();
+
+	if (rnd < 1024)
+	{
+		if (rnd < 512)
+			obj = FLAME_EMITTER;
+		else
+			obj = FALLING_CEILING1;
+
+		for (itemNum = room[item->room_number].item_number; itemNum != NO_ITEM; itemNum = item->next_item)
+		{
+			item = &items[itemNum];
+
+			if (item->object_number == obj && item->status != ITEM_ACTIVE && item->status != ITEM_DEACTIVATED)
+			{
+				AddActiveItem(itemNum);
+				item->status = ITEM_ACTIVE;
+				item->timer = 0;
+				item->flags |= IFL_CODEBITS;
+				break;
+			}
+		}
+	}
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -681,4 +745,5 @@ void inject_objects(bool replace)
 	INJECT(0x00459A50, DetonatorControl, replace);
 	INJECT(0x00459AD0, ControlAnimating_1_4, replace);
 	INJECT(0x00458AB0, MiniCopterControl, replace);
+	INJECT(0x00458660, EarthQuake, replace);
 }
