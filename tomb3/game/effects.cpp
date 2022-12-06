@@ -1016,6 +1016,16 @@ short DoBloodSplat(long x, long y, long z, short speed, short ang, short room_nu
 	return -1;
 }
 
+short DoBloodSplatD(long x, long y, long z, short speed, short ang, short room_number)
+{
+	if (room[room_number].flags & ROOM_UNDERWATER)
+		TriggerUnderwaterBloodD(x, y + 64, z, GetRandomDraw() & 7);
+	else
+		TriggerBloodD(x, y, z, ang >> 4, (GetRandomDraw() & 7) + 6);
+
+	return -1;
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -1093,4 +1103,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042FA70, RumbleNoShake, replace);
 	INJECT(0x0042FA90, BaddieBiteEffect, replace);
 	INJECT(0x0042E2C0, DoBloodSplat, replace);
+	INJECT(0x0042E330, DoBloodSplatD, replace);
 }

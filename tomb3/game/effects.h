@@ -78,6 +78,7 @@ void TubeTrain(ITEM_INFO* item);
 void RumbleNoShake(ITEM_INFO* item);
 void BaddieBiteEffect(ITEM_INFO* item, BITE_INFO* bite);
 short DoBloodSplat(long x, long y, long z, short speed, short ang, short room_number);
+short DoBloodSplatD(long x, long y, long z, short speed, short ang, short room_number);
 
 #define DoLotsOfBlood	( (void(__cdecl*)(long, long, long, short, short, short, long)) 0x0042E3B0 )
 #define DoLotsOfBloodD	( (void(__cdecl*)(long, long, long, short, short, short, long)) 0x0042E460 )
