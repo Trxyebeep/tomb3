@@ -4792,6 +4792,202 @@ void S_DrawLaserBolts(ITEM_INFO* item)
 	phd_PopMatrix();
 }
 
+void S_DrawFish(ITEM_INFO* item)
+{
+	DISPLAYMODE* dm;
+	PHDSPRITESTRUCT* sprite;
+	FISH_INFO* pFish;
+	PHD_VBUF v[3];
+	PHDTEXTURESTRUCT tex;
+	long w, h, sx, sy, x, y, z, ang, size;
+	long x1, y1, z1, x2, y2, z2, x3, y3, z3;
+	long XYZ[3][3];	//3 fishies x 3 vertices
+	long point[3];
+	ushort u1, v1, u2, v2;
+	short g;
+	char clipFlag;
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w;
+	h = dm->h;
+	sx = phd_winxmin + phd_winxmax;
+	sy = phd_winymax + phd_winymin;
+
+	if (!item->active || item->hit_points == NO_ITEM || !lead_info[item->hit_points].on)
+		return;
+
+	if (item->object_number == PIRAHNAS)
+		sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 10];
+	else
+		sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 11];
+
+	pFish = &fish[24 * item->hit_points + 8];
+
+	for (int i = 0; i < 24; i++, pFish++)
+	{
+		x = item->pos.x_pos + pFish->x;
+		y = item->pos.y_pos + pFish->y;
+		z = item->pos.z_pos + pFish->z;
+		ang = ((rcossin_tbl[pFish->swim << 7] >> 5) + pFish->angle - 2048) & 0xFFF;
+
+		mCalcPoint(x, y, z, point);
+		ProjectPCoord(point[0], point[1], point[2], XYZ[0], w >> 1, h >> 1, phd_persp);
+
+		size = (128 * rcossin_tbl[i << 7] >> 12) + 192;
+		x -= (size * rcossin_tbl[ang << 1]) >> 12;
+		y -= size;
+		z += (size * rcossin_tbl[(ang << 1) + 1]) >> 12;
+
+		mCalcPoint(x, y, z, point);
+		ProjectPCoord(point[0], point[1], point[2], XYZ[1], w >> 1, h >> 1, phd_persp);
+
+		y += size << 1;
+
+		mCalcPoint(x, y, z, point);
+		ProjectPCoord(point[0], point[1], point[2], XYZ[2], w >> 1, h >> 1, phd_persp);
+
+		x1 = XYZ[0][0];
+		y1 = XYZ[0][1];
+		z1 = XYZ[0][2];
+		x2 = XYZ[1][0];
+		y2 = XYZ[1][1];
+		z2 = XYZ[1][2];
+		x3 = XYZ[2][0];
+		y3 = XYZ[2][1];
+		z3 = XYZ[2][2];
+
+		if (z1 > 0x5000 || z1 < 32 || z2 < 32 || z3 < 32)
+			continue;
+
+		if ((x1 < phd_winxmin && x2 < phd_winxmin && x3 < phd_winxmin) || (x1 >= sx && x2 >= sx && x3 >= sx))
+			continue;
+
+		if ((y1 < phd_winymin && y2 < phd_winymin && y3 < phd_winymin) || (y1 >= sy && y2 >= sy && y3 >= sy))
+			continue;
+
+		if (ang < 1024)
+			ang -= 512;
+		else if (ang < 2048)
+			ang -= 1536;
+		else if (ang < 3072)
+			ang -= 2560;
+		else
+			ang -= 3584;
+
+		if (ang > 512 || ang < 0)
+			ang = 0;
+		else if (ang < 256)
+			ang >>= 2;
+		else
+			ang = (512 - ang) >> 2;
+
+		ang += i;
+
+		if (ang > 128)
+			ang = 128;
+
+		ang += 80;
+		ang >>= 3;
+		g = short(ang << 10 | ang << 5 | ang);
+
+		z1 <<= W2V_SHIFT;
+		z2 <<= W2V_SHIFT;
+		z3 <<= W2V_SHIFT;
+
+		clipFlag = 0;
+
+		if (x1 < phd_winxmin)
+			clipFlag++;
+		else if (x1 > sx)
+			clipFlag += 2;
+
+		if (y1 < phd_winymin)
+			clipFlag += 4;
+		else if (y1 > sy)
+			clipFlag += 8;
+
+		v[0].clip = clipFlag;
+		v[0].xs = (float)x1;
+		v[0].ys = (float)y1;
+		v[0].zv = (float)z1;
+		v[0].ooz = f_persp / v[0].zv * f_oneopersp;
+		v[0].g = g;
+
+		clipFlag = 0;
+
+		if (x2 < phd_winxmin)
+			clipFlag++;
+		else if (x2 > sx)
+			clipFlag += 2;
+
+		if (y2 < phd_winymin)
+			clipFlag += 4;
+		else if (y2 > sy)
+			clipFlag += 8;
+
+		v[1].clip = clipFlag;
+		v[1].xs = (float)x2;
+		v[1].ys = (float)y2;
+		v[1].zv = (float)z2;
+		v[1].ooz = f_persp / v[1].zv * f_oneopersp;
+		v[1].g = g;
+
+		clipFlag = 0;
+
+		if (x3 < phd_winxmin)
+			clipFlag++;
+		else if (x3 > sx)
+			clipFlag += 2;
+
+		if (y3 < phd_winymin)
+			clipFlag += 4;
+		else if (y3 > sy)
+			clipFlag += 8;
+
+		v[2].clip = clipFlag;
+		v[2].xs = (float)x3;
+		v[2].ys = (float)y3;
+		v[2].zv = (float)z3;
+		v[2].ooz = f_persp / v[2].zv * f_oneopersp;
+		v[2].g = g;
+
+		u1 = (sprite->offset << 8) & 0xFF00;
+		v1 = sprite->offset & 0xFF00;
+		u2 = ushort(u1 + sprite->width - App.nUVAdd);
+		v2 = ushort(v1 + sprite->height - App.nUVAdd);
+		u1 += (ushort)App.nUVAdd;
+		v1 += (ushort)App.nUVAdd;
+		tex.drawtype = 1;
+		tex.tpage = sprite->tpage;
+
+		if (item->object_number == PIRAHNAS)
+			g = (i & 1) != 0;
+		else
+			g = (item->hit_points & 1) != 0;
+
+		if (g)
+		{
+			v[0].u = u1;
+			v[0].v = v1;
+			v[1].u = u2;
+			v[1].v = v1;
+			v[2].u = u1;
+			v[2].v = v2;
+		}
+		else
+		{
+			v[0].u = u2;
+			v[0].v = v2;
+			v[1].u = u1;
+			v[1].v = v2;
+			v[2].u = u2;
+			v[2].v = v1;
+		}
+
+		HWI_InsertGT3_Poly(v, &v[1], &v[2], &tex, &v[0].u, &v[1].u, &v[2].u, MID_SORT, 1);
+	}
+}
+
 #ifdef TROYESTUFF
 //New effects
 void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
@@ -5352,4 +5548,5 @@ void inject_draweffects(bool replace)
 	INJECT(0x0047B2C0, S_DrawSparks, replace);
 	INJECT(0x0047BAA0, S_DrawSplashes, replace);
 	INJECT(0x00478BF0, S_DrawLaserBolts, replace);
+	INJECT(0x004775C0, S_DrawFish, replace);
 }

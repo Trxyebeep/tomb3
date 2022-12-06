@@ -1532,7 +1532,7 @@ tomb3 progress.
 0x00476420	+	S_DrawBat
 0x00476A30		S_DrawDarts
 0x00476CA0	+	DrawExplosionRings
-0x004775C0		S_DrawFish
+0x004775C0	+	S_DrawFish
 0x00477C30	+	DrawKnockBackRings
 0x00478600	+	LaraElectricDeath
 0x00478BF0	+	S_DrawLaserBolts
