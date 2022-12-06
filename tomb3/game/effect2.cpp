@@ -758,6 +758,32 @@ void TriggerBloodD(long x, long y, long z, long angle, long num)
 	}
 }
 
+void TriggerUnderwaterBlood(long x, long y, long z, long size)
+{
+	RIPPLE_STRUCT* ripple;
+	long n;
+
+	ripple = ripples;
+	n = 0;
+
+	while (ripple->flags & 1)
+	{
+		ripple++;
+		n++;
+
+		if (n >= 16)
+			return;
+	}
+
+	ripple->flags = 51;
+	ripple->init = 1;
+	ripple->life = (GetRandomControl() & 7) - 16;
+	ripple->size = (uchar)size;
+	ripple->x = (GetRandomControl() & 0x3F) + x - 32;
+	ripple->y = y;
+	ripple->z = (GetRandomControl() & 0x3F) + z - 32;
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -773,4 +799,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042A680, TriggerRicochetSpark, replace);
 	INJECT(0x0042C7E0, TriggerBlood, replace);
 	INJECT(0x0042C950, TriggerBloodD, replace);
+	INJECT(0x0042D110, TriggerUnderwaterBlood, replace);
 }
