@@ -38,7 +38,7 @@ void InitialiseNonLotAI(short item_number, long slot)
 	creature = &non_lot_slots[slot];
 
 	if (item_number == lara.item_number)
-		lara.creature = &non_lot_slots[slot];
+		lara.creature = creature;
 	else
 		item->data = creature;
 
@@ -261,7 +261,7 @@ void InitialiseSlot(short item_number, long slot)
 	creature = &baddie_slots[slot];
 
 	if (item_number == lara.item_number)
-		lara.creature = &baddie_slots[slot];
+		lara.creature = creature;
 	else
 		item->data = creature;
 

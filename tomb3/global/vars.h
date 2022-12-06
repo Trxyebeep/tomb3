@@ -326,7 +326,7 @@
 #define Stats_Requester	VAR_(0x00626490, REQUEST_INFO)
 #define number_los_rooms	VAR_(0x00625F6C, long)
 #define slots_used	VAR_(0x00626794, long)
-#define nonlot_slots_used	VAR_(0x00626794, long)
+#define nonlot_slots_used	VAR_(0x00626798, long)
 /*renderer/phd/matrix stuff*/
 #define phd_leftfloat	VAR_(0x004F6D30, float)
 #define phd_topfloat	VAR_(0x004E34A8, float)
