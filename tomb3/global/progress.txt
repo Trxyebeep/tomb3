@@ -1535,7 +1535,7 @@ tomb3 progress.
 0x004775C0		S_DrawFish
 0x00477C30	+	DrawKnockBackRings
 0x00478600	+	LaraElectricDeath
-0x00478BF0		S_DrawLaserBolts
+0x00478BF0	+	S_DrawLaserBolts
 0x00479510	+	ClipLine
 0x00479810	+	S_DrawLaserBeam
 0x00479C20	+	DrawLondonBossShield

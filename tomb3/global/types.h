@@ -2026,6 +2026,14 @@ struct DOOR_DATA
 	DOORPOS_DATA d2flip;
 };
 
+struct SVECTOR
+{
+	short x;
+	short y;
+	short z;
+	short pad;
+};
+
 #ifdef TROYESTUFF
 struct FVECTOR
 {

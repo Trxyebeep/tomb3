@@ -21,6 +21,7 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 void S_DrawBat();
 void S_DrawSparks();
 void S_DrawSplashes();
+void S_DrawLaserBolts(ITEM_INFO* item);
 
 #ifdef TROYESTUFF
 void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item);

@@ -57,6 +57,21 @@ static uchar SplashLinks[32]
 	60, 32, 28, 0
 };
 
+static char BoltLinks[20][4] =
+{
+	{0, 0, 1, 2}, {0, 0, 2, 3}, {0, 0, 3, 4}, {0, 0, 4, 1},
+	{1, 2, 5, 6}, {2, 3, 6, 7}, {3, 4, 7, 8}, {4, 1, 8, 5},
+	{5, 6, 9, 10}, {6, 7, 10, 11}, {7, 8, 11, 12}, {8, 5, 12, 9},
+	{9, 10, 13, 14}, {10, 11, 14, 15}, {11, 12, 15, 16}, {12, 9, 16, 13},
+	{13, 14, 17, 17}, {14, 15, 17, 17}, {15, 16, 17, 17}, {16, 13, 17, 17}
+};
+
+static char BoltSummonLinks[8][4] =
+{
+	{0, 0, 1, 2}, {0, 0, 2, 3}, {0, 0, 3, 4}, {0, 0, 4, 1},
+	{1, 2, 5, 5}, {2, 3, 5, 5}, {3, 4, 5, 5}, {4, 1, 5, 5}
+};
+
 static uchar BatLinks[9] = { 0, 2, 4, 6, 0, 4, 2, 8, 4 };
 
 static RAINDROP raindrops[MAX_WEATHER];
@@ -4540,6 +4555,243 @@ void S_DrawSplashes()
 	}
 }
 
+void S_DrawLaserBolts(ITEM_INFO* item)
+{
+	DISPLAYMODE* dm;
+	PHD_VECTOR rad[4];
+	PHD_VECTOR sub[4];
+	PHD_VECTOR pos;
+	long* pZ;
+	short* pXY;
+	uchar* pC;
+	char* links;
+	float zv;
+	long w, h, speed, px, py, pz, d, x, y, z, xStep, yStep, zStep, num, linkNum;
+	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c12, c34, r, g, b, c0, c1;
+	long Z[128];
+	short XY[128];
+	uchar cols[128];
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w - 1;
+	h = dm->h - 1;
+	speed = (item->speed * phd_cos(item->pos.x_rot)) >> W2V_SHIFT;
+	px = (speed * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+	py = -((item->speed * phd_sin(item->pos.x_rot)) >> W2V_SHIFT);
+	pz = (speed * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+
+	phd_PushUnitMatrix();
+	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+
+	d = item->item_flags[1];
+
+	if (item->item_flags[2])
+		d >>= 1;
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (!i)
+		{
+			x = -d;
+			y = -d;
+		}
+		else if (i == 1)
+		{
+			x = d;
+			y = -d;
+		}
+		else if (i == 2)
+		{
+			x = d;
+			y = d;
+		}
+		else
+		{
+			x = -d;
+			y = d;
+		}
+
+		rad[i].x = (x * phd_mxptr[M00] + y * phd_mxptr[M01]) >> W2V_SHIFT;	//z = 0
+		rad[i].y = (x * phd_mxptr[M10] + y * phd_mxptr[M11]) >> W2V_SHIFT;
+		rad[i].z = (x * phd_mxptr[M20] + y * phd_mxptr[M21]) >> W2V_SHIFT;
+		sub[i].x = rad[i].x >> 2;
+		sub[i].y = rad[i].y >> 2;
+		sub[i].z = rad[i].z >> 2;
+	}
+
+	phd_PopMatrix();
+
+	pXY = XY;
+	pZ = Z;
+	pC = cols;
+
+	phd_PushMatrix();
+	phd_TranslateAbs(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos);
+
+	x = item->pos.x_pos - lara_item->pos.x_pos;
+	y = item->pos.y_pos - lara_item->pos.y_pos;
+	z = item->pos.z_pos - lara_item->pos.z_pos;
+	pos.x = x * phd_mxptr[M00] + y * phd_mxptr[M01] + z * phd_mxptr[M02] + phd_mxptr[M03];
+	pos.y = x * phd_mxptr[M10] + y * phd_mxptr[M11] + z * phd_mxptr[M12] + phd_mxptr[M13];
+	pos.z = x * phd_mxptr[M20] + y * phd_mxptr[M21] + z * phd_mxptr[M22] + phd_mxptr[M23];
+	zv = f_persp / pos.z;
+	pos.x = short(float(pos.x * zv + f_centerx));
+	pos.y = short(float(pos.y * zv + f_centery));
+	pXY[0] = (short)pos.x;
+	pXY[1] = (short)pos.y;
+	pZ[0] = pos.z;
+	pXY += 2;
+	pZ++;
+	*pC++ = 128;
+
+	xStep = px << 1;
+	yStep = py << 1;
+	zStep = pz << 1;
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			x = item->pos.x_pos + rad[j].x - xStep - lara_item->pos.x_pos;
+			y = item->pos.y_pos + rad[j].y - yStep - lara_item->pos.y_pos;
+			z = item->pos.z_pos + rad[j].z - zStep - lara_item->pos.z_pos;
+			pos.x = x * phd_mxptr[M00] + y * phd_mxptr[M01] + z * phd_mxptr[M02] + phd_mxptr[M03];
+			pos.y = x * phd_mxptr[M10] + y * phd_mxptr[M11] + z * phd_mxptr[M12] + phd_mxptr[M13];
+			pos.z = x * phd_mxptr[M20] + y * phd_mxptr[M21] + z * phd_mxptr[M22] + phd_mxptr[M23];
+			zv = f_persp / pos.z;
+			pos.x = short(float(pos.x * zv + f_centerx));
+			pos.y = short(float(pos.y * zv + f_centery));
+			pXY[0] = (short)pos.x;
+			pXY[1] = (short)pos.y;
+			pZ[0] = pos.z;
+			pXY += 2;
+			pZ++;
+
+			rad[j].x -= sub[j].x;
+			rad[j].y -= sub[j].y;
+			rad[j].z -= sub[j].z;
+		}
+
+		*pC++ = 64 - (i << 4);
+		xStep += px;
+		yStep += py;
+		zStep += pz;
+
+		if (!i && item->item_flags[2])
+		{
+			xStep += px << 1;
+			yStep += py << 1;
+			zStep += pz << 1;
+			break;
+		}
+	}
+
+	x = item->pos.x_pos - xStep - lara_item->pos.x_pos;
+	y = item->pos.y_pos - yStep - lara_item->pos.y_pos;
+	z = item->pos.z_pos - zStep - lara_item->pos.z_pos;
+	pos.x = x * phd_mxptr[M00] + y * phd_mxptr[M01] + z * phd_mxptr[M02] + phd_mxptr[M03];
+	pos.y = x * phd_mxptr[M10] + y * phd_mxptr[M11] + z * phd_mxptr[M12] + phd_mxptr[M13];
+	pos.z = x * phd_mxptr[M20] + y * phd_mxptr[M21] + z * phd_mxptr[M22] + phd_mxptr[M23];
+	zv = f_persp / pos.z;
+	pos.x = short(float(pos.x * zv + f_centerx));
+	pos.y = short(float(pos.y * zv + f_centery));
+	pXY[0] = (short)pos.x;
+	pXY[1] = (short)pos.y;
+	pZ[0] = pos.z;
+	*pC = 0;
+	pC = cols;
+
+	if (item->item_flags[2])
+		links = &BoltSummonLinks[0][0];
+	else
+		links = &BoltLinks[0][0];
+
+	num = 0;
+
+	if (item->item_flags[2])
+		c12 = (pC[0] * (16 - item->item_flags[3])) >> 4;
+	else
+		c12 = pC[0];
+
+	pC++;
+
+	for (int i = 0; i < 5; i++)
+	{
+		if (item->item_flags[2])
+			c34 = (pC[0] * (16 - item->item_flags[3])) >> 4;
+		else
+			c34 = pC[0];
+
+		pC++;
+
+		for (int j = 0; j < 4; j++)
+		{
+			linkNum = num << 2;
+
+			x1 = XY[links[linkNum + 1] << 1];
+			y1 = XY[(links[linkNum + 1] << 1) + 1];
+			z1 = Z[links[linkNum + 1]];
+
+			x2 = XY[links[linkNum] << 1];
+			y2 = XY[(links[linkNum] << 1) + 1];
+			z2 = Z[links[linkNum]];
+
+			x3 = XY[links[linkNum + 2] << 1];
+			y3 = XY[(links[linkNum + 2] << 1) + 1];
+			z3 = Z[links[linkNum + 2]];
+
+			x4 = XY[links[linkNum + 3] << 1];
+			y4 = XY[(links[linkNum + 3] << 1) + 1];
+			z4 = Z[links[linkNum + 3]];
+
+			z1 = (z1 + z2 + z3 + z4) >> 2;
+
+			if (z1 <= phd_znear + 0x3E8000)
+				continue;
+
+			if (x1 <= -128 || x2 <= -128 || x3 <= -128 || x4 <= -128 ||
+				x1 >= w + 128 || x2 >= w + 128 || x3 >= w + 128 || x4 >= w + 128)
+				continue;
+
+			if (y1 <= -128 || y2 <= -128 || y3 <= -128 || y4 <= -128 ||
+				y1 >= h + 128 || y2 >= h + 128 || y3 >= h + 128 || y4 >= h + 128)
+				continue;
+
+			if (z1 < phd_znear)
+				z1 = phd_znear;
+
+			if (z2 < phd_znear)
+				z2 = phd_znear;
+
+			if (z3 < phd_znear)
+				z3 = phd_znear;
+
+			if (z4 < phd_znear)
+				z4 = phd_znear;
+
+			r = c12 >> 5;
+			g = c12 >> 3;
+			b = c12 >> 4;
+			c0 = r << 10 | g << 5 | b;
+
+			r = c34 >> 5;
+			g = c34 >> 3;
+			b = c34 >> 4;
+			c1 = r << 10 | g << 5 | b;
+
+			HWI_InsertAlphaSprite_Sorted(x1, y1, z1, c0, x2, y2, z2, c0, x3, y3, z3, c1, x4, y4, z4, c1, -1, DT_POLY_GTA, 1);
+			num++;
+		}
+
+		if (i == 1 && item->item_flags[2])
+			break;
+
+		c12 = c34;
+	}
+
+	phd_PopMatrix();
+}
+
 #ifdef TROYESTUFF
 //New effects
 void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
@@ -5099,4 +5351,5 @@ void inject_draweffects(bool replace)
 	INJECT(0x00476420, S_DrawBat, replace);
 	INJECT(0x0047B2C0, S_DrawSparks, replace);
 	INJECT(0x0047BAA0, S_DrawSplashes, replace);
+	INJECT(0x00478BF0, S_DrawLaserBolts, replace);
 }
