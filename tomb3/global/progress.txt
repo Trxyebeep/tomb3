@@ -457,7 +457,7 @@ tomb3 progress.
 0x0042E170	+	ItemNearLara
 0x0042E200	+	SoundEffects
 0x0042E270	+	Richochet
-0x0042E2C0		DoBloodSplat
+0x0042E2C0	+	DoBloodSplat
 0x0042E330		DoBloodSplatD
 0x0042E3B0		DoLotsOfBlood
 0x0042E460		DoLotsOfBloodD
