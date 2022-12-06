@@ -4988,6 +4988,44 @@ void S_DrawFish(ITEM_INFO* item)
 	}
 }
 
+void S_DrawDarts(ITEM_INFO* item)
+{
+	DISPLAYMODE* dm;
+	PHD_VECTOR pos;
+	float zv;
+	long w, h, size, x, y, z;
+	long x1, y1, z1, x2, y2, z2;
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w - 1;
+	h = dm->h - 1;
+
+	phd_PushMatrix();
+	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	zv = f_persp / (float)phd_mxptr[M23];
+	x1 = short(float(phd_mxptr[M03] * zv + f_centerx));
+	y1 = short(float(phd_mxptr[M13] * zv + f_centery));
+	z1 = phd_mxptr[M23];
+
+	size = (-96 * phd_cos(item->pos.x_rot)) >> W2V_SHIFT;
+	x = (size * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+	y = (96 * phd_sin(item->pos.x_rot)) >> W2V_SHIFT;
+	z = (size * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+	pos.x = x * phd_mxptr[M00] + y * phd_mxptr[M01] + z * phd_mxptr[M02] + phd_mxptr[M03];
+	pos.y = x * phd_mxptr[M10] + y * phd_mxptr[M11] + z * phd_mxptr[M12] + phd_mxptr[M13];
+	pos.z = x * phd_mxptr[M20] + y * phd_mxptr[M21] + z * phd_mxptr[M22] + phd_mxptr[M23];
+	zv = f_persp / (float)pos.z;
+	x2 = short(float(pos.x * zv + f_centerx));
+	y2 = short(float(pos.y * zv + f_centery));
+	z2 = pos.z;
+
+	if (z1 > 32 && z2 > 32 && ClipLine(x1, y1, x2, y2, w, h))
+		HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z1, 0, 0x783C14);
+
+	phd_PopMatrix();
+}
+
 #ifdef TROYESTUFF
 //New effects
 void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
@@ -5549,4 +5587,5 @@ void inject_draweffects(bool replace)
 	INJECT(0x0047BAA0, S_DrawSplashes, replace);
 	INJECT(0x00478BF0, S_DrawLaserBolts, replace);
 	INJECT(0x004775C0, S_DrawFish, replace);
+	INJECT(0x00476A30, S_DrawDarts, replace);
 }

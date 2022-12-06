@@ -23,6 +23,7 @@ void S_DrawSparks();
 void S_DrawSplashes();
 void S_DrawLaserBolts(ITEM_INFO* item);
 void S_DrawFish(ITEM_INFO* item);
+void S_DrawDarts(ITEM_INFO* item);
 
 #ifdef TROYESTUFF
 void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item);
