@@ -1033,6 +1033,12 @@ void DoLotsOfBlood(long x, long y, long z, short speed, short direction, short r
 			z - (GetRandomControl() << 9) / 0x8000 + 256, speed, direction, room_num);
 }
 
+void DoLotsOfBloodD(long x, long y, long z, short speed, short direction, short room_num, long num)
+{
+	for (; num > 0; num--)
+		DoBloodSplatD(x - (GetRandomDraw() << 9) / 0x8000 + 256, y, z - (GetRandomDraw() << 9) / 0x8000 + 256, speed, direction, room_num);
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -1112,4 +1118,5 @@ void inject_effects(bool replace)
 	INJECT(0x0042E2C0, DoBloodSplat, replace);
 	INJECT(0x0042E330, DoBloodSplatD, replace);
 	INJECT(0x0042E3B0, DoLotsOfBlood, replace);
+	INJECT(0x0042E460, DoLotsOfBloodD, replace);
 }
