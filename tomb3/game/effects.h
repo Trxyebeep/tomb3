@@ -79,8 +79,8 @@ void RumbleNoShake(ITEM_INFO* item);
 void BaddieBiteEffect(ITEM_INFO* item, BITE_INFO* bite);
 short DoBloodSplat(long x, long y, long z, short speed, short ang, short room_number);
 short DoBloodSplatD(long x, long y, long z, short speed, short ang, short room_number);
+void DoLotsOfBlood(long x, long y, long z, short speed, short direction, short room_num, long num);
 
-#define DoLotsOfBlood	( (void(__cdecl*)(long, long, long, short, short, short, long)) 0x0042E3B0 )
 #define DoLotsOfBloodD	( (void(__cdecl*)(long, long, long, short, short, short, long)) 0x0042E460 )
 
 extern void(*effect_routines[])(ITEM_INFO* item);
