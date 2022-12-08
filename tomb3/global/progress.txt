@@ -1660,8 +1660,8 @@ tomb3 progress.
 
 		specific/fmv.cpp
 
-0x00483170		WinPlayFMV
-0x00483470		WinStopFMV
+0x00483170	+	WinPlayFMV
+0x00483470	+	WinStopFMV
 0x004834C0	+	FMV_Play
 0x00483540	+	FMV_PlayIntro
 

@@ -2115,11 +2115,12 @@ struct TOMB3_OPTIONS
 	float unwater_music_mute;
 	float inv_music_mute;
 
-	//windowed stuff, move to WINAPP when possible
+	//windowed + winplay stuff, move to WINAPP when possible
 	RECT rScreen;
 	RECT rViewport;
 	ulong WindowStyle;
 	bool Windowed;
+	bool WinPlayLoaded;
 };
 #endif
 #pragma pack(pop)
