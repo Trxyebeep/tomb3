@@ -4051,7 +4051,7 @@ void S_DrawSparks()
 
 					if (sptr->sLife - sptr->Life > b)
 					{
-						sptr->Flags &= ~0x1080;
+						sptr->Flags &= ~(SF_ATTACHEDNODE | SF_ITEM);
 						sptr->x = x;
 						sptr->y = y;
 						sptr->z = z;
