@@ -26,6 +26,7 @@
 - Fix fish movement.
 - Fix snow spawning far from Lara.
 - Fix lasers getting affected by selected scale.
+- Fix Lara refusing to pull up from certain hang animations.
 
 
 ## [1.3.0](https://github.com/Trxyebeep/tomb3/tree/V1.3.0) (Nov. 20 2022)

@@ -1771,7 +1771,7 @@ void lara_col_hang2(ITEM_INFO* item, COLL_INFO* coll)
 		if (item->goal_anim_state != AS_HANG2)
 			return;
 
-		if (input & IN_FORWARD && coll->front_floor > 850 && coll->front_floor < -650 && coll->front_floor - coll->front_ceiling >= 0 &&
+		if (input & IN_FORWARD && coll->front_floor > -850 && coll->front_floor < -650 && coll->front_floor - coll->front_ceiling >= 0 &&
 			coll->left_floor2 - coll->left_ceiling2 >= 0 && coll->right_floor2 - coll->right_ceiling2 >= 0 && !coll->hit_static)
 		{
 			if (input & IN_WALK)
@@ -1779,7 +1779,7 @@ void lara_col_hang2(ITEM_INFO* item, COLL_INFO* coll)
 			else
 				item->goal_anim_state = AS_NULL;
 		}
-		else if (input & (IN_FORWARD | IN_DUCK) && coll->front_floor > 850 && coll->front_floor < -650 && coll->front_floor - coll->front_ceiling >= -256 &&
+		else if (input & (IN_FORWARD | IN_DUCK) && coll->front_floor > -850 && coll->front_floor < -650 && coll->front_floor - coll->front_ceiling >= -256 &&
 			coll->left_floor2 - coll->left_ceiling2 >= -256 && coll->right_floor2 - coll->right_ceiling2 >= -256 && !coll->hit_static)
 		{
 			item->goal_anim_state = AS_HANG2DUCK;
@@ -2614,7 +2614,7 @@ void lara_as_reach(ITEM_INFO* item, COLL_INFO* coll)
 	camera.target_angle = 15470;
 
 	if (item->fallspeed > 131)
-		item->goal_anim_state = 9;
+		item->goal_anim_state = AS_FASTFALL;
 }
 
 void lara_as_splat(ITEM_INFO* item, COLL_INFO* coll)
@@ -2649,7 +2649,7 @@ void lara_as_compress(ITEM_INFO* item, COLL_INFO* coll)
 	}
 
 	if (item->fallspeed > 131)
-		item->goal_anim_state = 9;
+		item->goal_anim_state = AS_FASTFALL;
 }
 
 void lara_as_back(ITEM_INFO* item, COLL_INFO* coll)
