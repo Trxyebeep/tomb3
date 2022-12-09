@@ -810,6 +810,101 @@ void TriggerUnderwaterBloodD(long x, long y, long z, long size)
 	ripple->z = (GetRandomDraw() & 0x3F) + z - 32;
 }
 
+void TriggerFlareSparks(long x, long y, long z, long xv, long yv, long zv, long smoke, long unused)
+{
+	SPARKS* sptr;
+	SPARKS* smokeSpark;
+	long dx, dz;
+
+	dx = lara_item->pos.x_pos - x;
+	dz = lara_item->pos.z_pos - z;
+
+	if (dx < -0x4000 || dx > 0x4000 || dz < -0x4000 || dz > 0x4000)
+		return;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 255;
+	sptr->sG = 255;
+	sptr->sB = 255;
+	sptr->dR = 255;
+	sptr->dG = (GetRandomDraw() & 0x7F) + 64;
+	sptr->dB = 192 - sptr->dG;
+	sptr->ColFadeSpeed = 3;
+	sptr->FadeToBlack = 5;
+	sptr->Life = 10;
+	sptr->sLife = 10;
+	sptr->TransType = 2;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomDraw() & 7) + x - 3;
+	sptr->y = (GetRandomDraw() & 7) + y - 3;
+	sptr->z = (GetRandomDraw() & 7) + z - 3;
+	sptr->Xvel = short((GetRandomDraw() & 0xFF) + xv - 128);
+	sptr->Yvel = short((GetRandomDraw() & 0xFF) + yv - 128);
+	sptr->Zvel = short((GetRandomDraw() & 0xFF) + zv - 128);
+	sptr->Friction = 34;
+	sptr->Scalar = 1;
+	sptr->Width = (GetRandomDraw() & 3) + 4;
+	sptr->sWidth = sptr->Width;
+	sptr->dWidth = (GetRandomDraw() & 1) + 1;
+	sptr->Height = (GetRandomDraw() & 3) + 4;
+	sptr->sHeight = sptr->Height;
+	sptr->dHeight = (GetRandomDraw() & 1) + 1;
+	sptr->MaxYvel = 0;
+	sptr->Gravity = 0;
+	sptr->Flags = 2;
+
+	if (smoke)
+	{
+		smokeSpark = &sparks[GetFreeSpark()];
+		smokeSpark->On = 1;
+		smokeSpark->sR = sptr->dR >> 1;
+		smokeSpark->sG = sptr->dG >> 1;
+		smokeSpark->sB = sptr->dB >> 1;
+		smokeSpark->dR = 32;
+		smokeSpark->dG = 32;
+		smokeSpark->dB = 32;
+		smokeSpark->ColFadeSpeed = (GetRandomDraw() & 3) + 8;
+		smokeSpark->FadeToBlack = 4;
+		smokeSpark->TransType = 2;
+		smokeSpark->Life = (GetRandomDraw() & 7) + 13;
+		smokeSpark->sLife = smokeSpark->Life;
+		smokeSpark->x = x + (xv >> 5);
+		smokeSpark->y = y + (yv >> 5);
+		smokeSpark->z = z + (zv >> 5);
+		smokeSpark->extras = 0;
+		smokeSpark->Dynamic = -1;
+		smokeSpark->Xvel = short((GetRandomDraw() & 0x3F) + xv - 32);
+		smokeSpark->Yvel = (short)yv;
+		smokeSpark->Zvel = short((GetRandomDraw() & 0x3F) + zv - 32);
+		smokeSpark->Friction = 4;
+
+		if (GetRandomDraw() & 1)
+		{
+			smokeSpark->Flags = 538;
+			smokeSpark->RotAng = GetRandomDraw() & 0xFFF;
+
+			if (GetRandomDraw() & 1)
+				smokeSpark->RotAdd = -16 - (GetRandomDraw() & 0xF);
+			else
+				smokeSpark->RotAdd = (GetRandomDraw() & 0xF) + 16;
+		}
+		else
+			smokeSpark->Flags = 522;
+
+		smokeSpark->Def = (uchar)objects[EXPLOSION1].mesh_index;
+		smokeSpark->Scalar = 2;
+		smokeSpark->Gravity = -8 - (GetRandomDraw() & 3);
+		smokeSpark->MaxYvel = -4 - (GetRandomDraw() & 3);
+		smokeSpark->dWidth = (GetRandomDraw() & 0xF) + 24;
+		smokeSpark->sWidth = smokeSpark->dWidth >> 3;
+		smokeSpark->Width = smokeSpark->dWidth >> 3;
+		smokeSpark->dHeight = smokeSpark->dWidth;
+		smokeSpark->sHeight = smokeSpark->dHeight >> 3;
+		smokeSpark->Height = smokeSpark->dHeight >> 3;
+	}
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -827,4 +922,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042C950, TriggerBloodD, replace);
 	INJECT(0x0042D110, TriggerUnderwaterBlood, replace);
 	INJECT(0x0042D180, TriggerUnderwaterBloodD, replace);
+	INJECT(0x0042A8B0, TriggerFlareSparks, replace);
 }

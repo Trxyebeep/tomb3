@@ -18,6 +18,7 @@ void TriggerBlood(long x, long y, long z, long angle, long num);
 void TriggerBloodD(long x, long y, long z, long angle, long num);
 void TriggerUnderwaterBlood(long x, long y, long z, long size);
 void TriggerUnderwaterBloodD(long x, long y, long z, long size);
+void TriggerFlareSparks(long x, long y, long z, long xv, long yv, long zv, long smoke, long unused);
 
 #define TriggerWaterfallMist	( (void(__cdecl*)(long, long, long, long)) 0x0042D1F0 )
 #define TriggerGunSmoke	( (void(__cdecl*)(long, long, long, long, long, long, long, long, long)) 0x0042B4F0 )
@@ -25,7 +26,6 @@ void TriggerUnderwaterBloodD(long x, long y, long z, long size);
 #define TriggerExplosionSparks	( (void(__cdecl*)(long, long, long, long, long, long, short)) 0x0042AB80 )
 #define TriggerExplosionSmoke	( (void(__cdecl*)(long, long, long, long)) 0x0042B130 )
 #define GetFreeSpark	( (long(__cdecl*)()) 0x00429FE0 )
-#define TriggerFlareSparks	( (void(__cdecl*)(long, long, long, long, long, long, long, long)) 0x0042A8B0 )
 #define TriggerRocketFlame	( (void(__cdecl*)(long, long, long, long, long, long, long)) 0x0042C510 )
 #define UpdateSparks	( (void(__cdecl*)()) 0x0042A0D0 )
 #define UpdateSplashes	( (void(__cdecl*)()) 0x0042CED0 )
