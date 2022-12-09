@@ -3672,11 +3672,6 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 	long cols[600];
 	long XYZ[3];
 
-#ifdef TROYESTUFF
-	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-		tomb3.improved_lasers = 0;
-#endif
-
 	UpdateLaserShades();
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w - 1;
@@ -4172,16 +4167,8 @@ void S_DrawSparks()
 #ifdef TROYESTUFF
 				if (sptr->TransType == 3)
 				{
-					if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-					{
-						drawType = DT_POLY_COLSUB;
-						r = 4;
-					}
-					else
-					{
-						drawType = DT_POLY_WGTA;
-						r = 1;
-					}
+					drawType = DT_POLY_COLSUB;
+					r = 4;
 				}
 				else
 				{
@@ -4240,16 +4227,8 @@ void S_DrawSparks()
 #ifdef TROYESTUFF
 				if (sptr->TransType == 3)
 				{
-					if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-					{
-						drawType = DT_POLY_COLSUB;
-						r = 4;
-					}
-					else
-					{
-						drawType = DT_POLY_WGTA;
-						r = 1;
-					}
+					drawType = DT_POLY_COLSUB;
+					r = 4;
 				}
 				else
 				{
@@ -4344,16 +4323,8 @@ void S_DrawSparks()
 #ifdef TROYESTUFF
 			if (sptr->TransType == 3)
 			{
-				if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-				{
-					drawType = DT_POLY_COLSUB;
-					r = 4;
-				}
-				else
-				{
-					drawType = DT_POLY_GA;
-					r = 1;
-				}
+				drawType = DT_POLY_COLSUB;
+				r = 4;
 			}
 			else
 			{
@@ -5149,9 +5120,6 @@ void S_DrawFootPrints()
 	FVECTOR pos;
 	ushort u1, v1, u2, v2;
 	short c;
-
-	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-		tomb3.footprints = 0;
 
 	bBlueEffect = 0;
 	sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 17];
