@@ -42,9 +42,9 @@ void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
 		{
 			if (l->current_anim_state == AS_PICKUP)
 			{
-				if (l->frame_number == anims[ANIM_PICKUP].frame_base + 42 ||
+				if ((l->frame_number == anims[ANIM_PICKUP].frame_base + 42 ||
 					l->frame_number == anims[ANIM_DUCKPICKUP].frame_base + 22 ||
-					l->frame_number == anims[ANIM_DUCKPICKUP].frame_base + 20 &&
+					l->frame_number == anims[ANIM_DUCKPICKUP].frame_base + 20) &&
 					item->object_number != FLARE_ITEM)
 				{
 					AddDisplayPickup(item->object_number);
