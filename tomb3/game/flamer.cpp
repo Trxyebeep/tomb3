@@ -47,7 +47,7 @@ static void TriggerPilotFlame(short item_number)
 	sptr->Xvel = (GetRandomControl() & 0x1F) - 16;
 	sptr->Yvel = -(GetRandomControl() & 3);
 	sptr->Zvel = (GetRandomControl() & 0x1F) - 16;
-	sptr->Flags = 4746;
+	sptr->Flags = SF_ATTACHEDNODE | SF_UNUSED5 | SF_ITEM | SF_DEF | SF_SCALE;
 	sptr->FxObj = (uchar)item_number;
 	sptr->NodeNumber = 0;
 	sptr->Friction = 4;
@@ -105,9 +105,9 @@ static void TriggerFlamethrowerFlame(long x, long y, long z, long xv, long yv, l
 	if (GetRandomControl() & 1)
 	{
 		if (fxnum < 0)
-			sptr->Flags = 538;
+			sptr->Flags = SF_UNUSED5 | SF_ROTATE | SF_DEF | SF_SCALE;
 		else
-			sptr->Flags = 602;
+			sptr->Flags = SF_UNUSED5 | SF_FX | SF_ROTATE | SF_DEF | SF_SCALE;
 
 		sptr->RotAng = GetRandomControl() & 0xFFF;
 
@@ -117,9 +117,9 @@ static void TriggerFlamethrowerFlame(long x, long y, long z, long xv, long yv, l
 			sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
 	}
 	else if (fxnum < 0)
-		sptr->Flags = 522;
+		sptr->Flags = SF_UNUSED5 | SF_DEF | SF_SCALE;
 	else
-		sptr->Flags = 586;
+		sptr->Flags = SF_UNUSED5 | SF_FX | SF_DEF | SF_SCALE;
 
 	sptr->MaxYvel = 0;
 	sptr->FxObj = (uchar)fxnum;

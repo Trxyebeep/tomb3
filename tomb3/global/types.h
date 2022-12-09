@@ -126,6 +126,24 @@ do \
 #define WALL_SIZE	(1 << WALL_SHIFT)
 
 /*enums*/
+enum spark_flags
+{
+	SF_NONE =			0x0,
+	SF_UNUSED1 =		0x1,
+	SF_SCALE =			0x2,	//scale using sptr->Scalar
+	SF_UNUSED2 =		0x4,
+	SF_DEF =			0x8,	//use sptr->Def for the drawn sprite (otherwise do flat quad)
+	SF_ROTATE =			0x10,	//rotate the drawn sprite (only supported for sparks with SF_DEF)
+	SF_UNUSED3 =		0x20,
+	SF_FX =				0x40,	//spark is attached to an effect
+	SF_ITEM =			0x80,	//spark is attached to an item
+	SF_UNUSED4 =		0x100,
+	SF_UNUSED5 =		0x200,
+	SF_ATTACHEDPOS =	0x400,	//spark uses the position of the FX/ITEM it is attached to
+	SF_UNUSED6 =		0x800,
+	SF_ATTACHEDNODE =	0x1000,	//spark is attached to an item node, uses NodeOffsets
+};
+
 enum status_codes
 {
 	RNG_OPENING,

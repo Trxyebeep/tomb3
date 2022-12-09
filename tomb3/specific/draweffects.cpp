@@ -4008,11 +4008,11 @@ void S_DrawSparks()
 		if (!sptr->On)
 			continue;
 
-		if (sptr->Flags & 0x40)
+		if (sptr->Flags & SF_FX)
 		{
 			fx = &effects[sptr->FxObj];
 
-			if (sptr->Flags & 0x400)
+			if (sptr->Flags & SF_ATTACHEDPOS)
 			{
 				x = fx->pos.x_pos;
 				y = fx->pos.y_pos;
@@ -4025,17 +4025,17 @@ void S_DrawSparks()
 				z = sptr->z + fx->pos.z_pos;
 			}
 		}
-		else if (sptr->Flags & 0x80)
+		else if (sptr->Flags & SF_ITEM)
 		{
 			item = &items[sptr->FxObj];
 
-			if (sptr->Flags & 0x400)
+			if (sptr->Flags & SF_ATTACHEDPOS)
 			{
 				x = item->pos.x_pos;
 				y = item->pos.y_pos;
 				z = item->pos.z_pos;
 			}
-			else if (sptr->Flags & 0x1000)
+			else if (sptr->Flags & SF_ATTACHEDNODE)
 			{
 				pos.x = NodeOffsets[sptr->NodeNumber].x;
 				pos.y = NodeOffsets[sptr->NodeNumber].y;
@@ -4075,14 +4075,14 @@ void S_DrawSparks()
 		mCalcPoint(x, y, z, point);
 		ProjectPCoord(point[0], point[1], point[2], vpos[0], w >> 1, h >> 1, phd_persp);
 
-		if (sptr->Flags & 8)
+		if (sptr->Flags & SF_DEF)
 		{
-			if (sptr->Flags & 2)
+			if (sptr->Flags & SF_SCALE)
 			{
 				if (!vpos[0][2])
 					vpos[0][2] = 1;
 
-				if (sptr->Flags & 0x1000 && !sptr->NodeNumber)
+				if (sptr->Flags & SF_ATTACHEDNODE && !sptr->NodeNumber)
 					x = 2;
 				else
 					x = 4;
@@ -4118,7 +4118,7 @@ void S_DrawSparks()
 				y + (sh >> 1) < 0 || y - (sh >> 1) > h)
 				continue;
 
-			if (sptr->Flags & 0x10)
+			if (sptr->Flags & SF_ROTATE)
 			{
 				sin = rcossin_tbl[sptr->RotAng << 1];
 				cos = rcossin_tbl[(sptr->RotAng << 1) + 1];
@@ -4255,7 +4255,7 @@ void S_DrawSparks()
 		}
 		else
 		{
-			if (sptr->Flags & 2)
+			if (sptr->Flags & SF_SCALE)
 			{
 				if (!vpos[0][2])
 					vpos[0][2] = 1;
