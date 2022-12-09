@@ -340,14 +340,31 @@ void LaraElectricDeath(long lr, ITEM_INFO* item)
 				c1 >>= 1;
 			}
 
-			if (ClipLine(x1, y1, x2, y2, w, h) &&
-				x1 >= 0 && x1 <= w && y1 >= 0 && y1 <= h && x2 >= 0 && x2 <= w && y2 >= 0 && y2 <= h)
+			if (ClipLine(x1, y1, x2, y2, w, h) && x1 >= 0 && x1 <= w && y1 >= 0 && y1 <= h && x2 >= 0 && x2 <= w && y2 >= 0 && y2 <= h)
 			{
-				xStep = GlobalAlpha;
-				GlobalAlpha = 0x70000000;
+				c0 = c0 | (c0 << 8);
+				c1 = c1 | (c1 << 8);
 				z <<= W2V_SHIFT;
-				HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, c0 | (c0 << 8), c1 | (c1 << 8));
-				GlobalAlpha = xStep;
+
+#ifdef TROYESTUFF
+				if (tomb3.improved_electricity)
+				{
+					xStep = GetFixedScale(1);
+
+					for (int k = 0; k < xStep; k++)
+					{
+						GlobalAlpha = 0xDEADBEEF;
+						HWI_InsertLine_Sorted(x1 - phd_winxmin - k, y1 - phd_winymin, x2 - phd_winxmin - k, y2 - phd_winymin, z, c0, c1);
+					}
+				}
+				else
+#endif
+				{
+					xStep = GlobalAlpha;
+					GlobalAlpha = 0x70000000;
+					HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, c0, c1);
+					GlobalAlpha = xStep;
+				}
 			}
 		}
 
@@ -2510,17 +2527,27 @@ void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy)
 		c1 = (s * c1) >> 6;
 		c2 = (s * c2) >> 6;
 
-		if (ClipLine(x1, y1, x2, y2, w, h))
+		if (ClipLine(x1, y1, x2, y2, w, h) && x1 >= 0 && x1 <= w && x2 >= 0 && x2 <= w && y1 >= 0 && y1 <= h && y2 >= 0 && y2 <= h)
 		{
-			if (x1 >= 0 && x1 <= w &&
-				y1 >= 0 && y1 <= h &&
-				x2 >= 0 && x2 <= w &&
-				y2 >= 0 && y2 <= h)
+			c1 = c1 | (c1 << 8);
+			c2 = c2 | (c2 << 8);
+
+#ifdef TROYESTUFF
+			if (tomb3.improved_electricity)
+			{
+				alpha = GetFixedScale(2);
+
+				for (int j = 0; j < alpha; j++)
+				{
+					GlobalAlpha = 0xDEADBEEF;
+					HWI_InsertLine_Sorted(x1 - phd_winxmin - j, y1 - phd_winymin, x2 - phd_winxmin - j, y2 - phd_winymin, z, c1, c2);
+				}
+			}
+			else
+#endif
 			{
 				alpha = GlobalAlpha;
 				GlobalAlpha = 0x70000000;
-				c1 = c1 | (c1 << 8);
-				c2 = c2 | (c2 << 8);
 				HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, c1, c2);
 				GlobalAlpha = alpha;
 			}
@@ -2580,17 +2607,26 @@ void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy)
 					c2 = (bossdata.attack_count * c2) >> 6;
 				}
 
-				if (ClipLine(x1, y1, x2, y2, w, h))
+				if (ClipLine(x1, y1, x2, y2, w, h) && x1 >= 0 && x1 <= w && y1 >= 0 && y1 <= h && x2 >= 0 && x2 <= w && y2 >= 0 && y2 <= h)
 				{
-					if (x1 >= 0 && x1 <= w &&
-						y1 >= 0 && y1 <= h &&
-						x2 >= 0 && x2 <= w &&
-						y2 >= 0 && y2 <= h)
+					c1 = c1 | (c1 << 8);
+					c2 = c2 | (c2 << 8);
+#ifdef TROYESTUFF
+					if (tomb3.improved_electricity)
+					{
+						alpha = GetFixedScale(2);
+
+						for (int j = 0; j < alpha; j++)
+						{
+							GlobalAlpha = 0xDEADBEEF;
+							HWI_InsertLine_Sorted(x1 - phd_winxmin - j, y1 - phd_winymin, x2 - phd_winxmin - j, y2 - phd_winymin, z, c1, c2);
+						}
+					}
+					else
+#endif
 					{
 						alpha = GlobalAlpha;
 						GlobalAlpha = 0x70000000;
-						c1 = c1 | (c1 << 8);
-						c2 = c2 | (c2 << 8);
 						HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, c1, c2);
 						GlobalAlpha = alpha;
 					}
@@ -3736,7 +3772,9 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 #ifdef TROYESTUFF
 			if (tomb3.improved_lasers)
 			{
-				for (int j = 0; j < GetRenderScale(2); j++)
+				s = GetFixedScale(2);
+
+				for (int j = 0; j < s; j++)
 				{
 					GlobalAlpha = 0xDEADBEEF;
 					HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin - j, x2 - phd_winxmin, y2 - phd_winymin - j, z1 << W2V_SHIFT, c1, c2);

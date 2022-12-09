@@ -17,6 +17,7 @@
 - Add option for blue crystal light.
 - Raise TPage/TInfos limits.
 - double the amount of spawned weather particles.
+- Add option for improved (PSX style) electricity effect.
 
 ### tomb3 bug fixes
 
@@ -24,6 +25,7 @@
 - Fix music muting.
 - Fix fish movement.
 - Fix snow spawning far from Lara.
+- Fix lasers getting affected by selected scale.
 
 
 ## [1.3.0](https://github.com/Trxyebeep/tomb3/tree/V1.3.0) (Nov. 20 2022)
