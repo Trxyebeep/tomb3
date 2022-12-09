@@ -5030,7 +5030,16 @@ void S_DrawDarts(ITEM_INFO* item)
 	z2 = pos.z;
 
 	if (z1 > 32 && z2 > 32 && ClipLine(x1, y1, x2, y2, w, h))
+	{
+#ifdef TROYESTUFF
+		size = 5 * GetFixedScale(1) / 3;
+
+		for (int i = 0; i < size; i++)
+			HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin - i, x2 - phd_winxmin, y2 - phd_winymin - i, z1, 0, 0x783C14);
+#else
 		HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z1, 0, 0x783C14);
+#endif
+	}
 
 	phd_PopMatrix();
 }
