@@ -4,6 +4,7 @@
 #include "items.h"
 #include "../specific/game.h"
 #include "control.h"
+#include "effects.h"
 
 void TriggerDynamic(long x, long y, long z, long falloff, long r, long g, long b)
 {
@@ -1525,17 +1526,17 @@ void TriggerDartSmoke(long x, long y, long z, long xv, long zv, long hit)
 	else
 		sptr->Flags = SF_ALTDEF | SF_DEF | SF_SCALE;
 
-	sptr->Def = objects[EXPLOSION1].mesh_index;
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
 	sptr->Scalar = 1;
 	rnd = (GetRandomControl() & 0x3F) + 72;
 
 	if (hit)
 	{
 		rnd >>= 1;
-		sptr->dWidth = rnd;
+		sptr->dWidth = (uchar)rnd;
 		sptr->Width = sptr->dWidth >> 2;
 		sptr->sWidth = sptr->Width;
-		sptr->dHeight = rnd;
+		sptr->dHeight = (uchar)rnd;
 		sptr->Height = sptr->dHeight >> 2;
 		sptr->sHeight = sptr->Height;
 		sptr->MaxYvel = 0;
@@ -1543,14 +1544,70 @@ void TriggerDartSmoke(long x, long y, long z, long xv, long zv, long hit)
 	}
 	else
 	{
-		sptr->dWidth = rnd;
+		sptr->dWidth = (uchar)rnd;
 		sptr->Width = sptr->dWidth >> 4;
 		sptr->sWidth = sptr->Width;
-		sptr->dHeight = rnd;
+		sptr->dHeight = (uchar)rnd;
 		sptr->Height = sptr->dHeight >> 4;
 		sptr->sHeight = sptr->Height;
 		sptr->Gravity = -4 - (GetRandomControl() & 3);
 		sptr->MaxYvel = -4 - (GetRandomControl() & 3);
+	}
+}
+
+void TriggerExplosionBubble(long x, long y, long z, short room_number)
+{
+	SPARKS* sptr;
+	PHD_3DPOS pos;
+	long dx, dz;
+	uchar size;
+
+	dx = lara_item->pos.x_pos - x;
+	dz = lara_item->pos.z_pos - z;
+
+	if (dx < -0x4000 || dx > 0x4000 || dz < -0x4000 || dz > 0x4000)
+		return;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 128;
+	sptr->sG = 64;
+	sptr->sB = 0;
+	sptr->dR = 128;
+	sptr->dG = 128;
+	sptr->dB = 128;
+	sptr->ColFadeSpeed = 8;
+	sptr->FadeToBlack = 12;
+	sptr->Life = 24;
+	sptr->sLife = 24;
+	sptr->TransType = 2;
+	sptr->extras = 0;
+	sptr->Dynamic = -1;
+	sptr->x = x;
+	sptr->y = y;
+	sptr->z = z;
+	sptr->Xvel = 0;
+	sptr->Yvel = 0;
+	sptr->Zvel = 0;
+	sptr->Friction = 0;
+	sptr->Flags = SF_UNWATER | SF_DEF | SF_SCALE;
+	sptr->Scalar = 3;
+	sptr->Gravity = 0;
+	sptr->MaxYvel = 0;
+	size = (GetRandomControl() & 7) + 63;
+	sptr->Width = size >> 1;
+	sptr->sWidth = sptr->Width;
+	sptr->dWidth = size << 1;
+	sptr->Height = size >> 1;
+	sptr->sHeight = sptr->Height;
+	sptr->dHeight = size << 1;
+
+	for (int i = 0; i < 7; i++)
+	{
+		pos.x_pos = (GetRandomControl() & 0x1FF) + x - 256;
+		pos.y_pos = (GetRandomControl() & 0x7F) + y - 64;
+		pos.z_pos = (GetRandomControl() & 0x1FF) + z - 256;
+		CreateBubble(&pos, room_number, 6, 15);
 	}
 }
 
@@ -1580,4 +1637,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042C510, TriggerRocketFlame, replace);
 	INJECT(0x0042D1F0, TriggerWaterfallMist, replace);
 	INJECT(0x0042D750, TriggerDartSmoke, replace);
+	INJECT(0x0042DBA0, TriggerExplosionBubble, replace);
 }
