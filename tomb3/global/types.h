@@ -131,16 +131,16 @@ enum spark_flags
 	SF_NONE =			0x0,
 	SF_UNUSED1 =		0x1,
 	SF_SCALE =			0x2,	//scale using sptr->Scalar
-	SF_UNUSED2 =		0x4,
+	SF_BLOOD =			0x4,	//set for blood only, to avoid killing it in GetFreeSpark if no free slots are found.
 	SF_DEF =			0x8,	//use sptr->Def for the drawn sprite (otherwise do flat quad)
 	SF_ROTATE =			0x10,	//rotate the drawn sprite (only supported for sparks with SF_DEF)
-	SF_UNUSED3 =		0x20,
+	SF_UNUSED2 =		0x20,
 	SF_FX =				0x40,	//spark is attached to an effect
 	SF_ITEM =			0x80,	//spark is attached to an item
-	SF_UNUSED4 =		0x100,
-	SF_UNUSED5 =		0x200,
+	SF_OUTSIDE =		0x100,	//spark is affected by wind
+	SF_ALTDEF =			0x200,	//alters sptr->Def based on spark colors (for smoke)
 	SF_ATTACHEDPOS =	0x400,	//spark uses the position of the FX/ITEM it is attached to
-	SF_UNUSED6 =		0x800,
+	SF_UNWATER =		0x800,	//for underwater explosions to create bubbles etc.
 	SF_ATTACHEDNODE =	0x1000,	//spark is attached to an item node, uses NodeOffsets
 };
 

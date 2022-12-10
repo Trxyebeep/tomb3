@@ -88,7 +88,7 @@ void ControlGhostGasEmitter(short item_number)
 
 	if (GetRandomControl() & 1)
 	{
-		sptr->Flags = SF_UNUSED5 | SF_ROTATE | SF_DEF | SF_SCALE;
+		sptr->Flags = SF_ALTDEF | SF_ROTATE | SF_DEF | SF_SCALE;
 		sptr->RotAng = GetRandomControl() & 0xFFF;
 
 		if (GetRandomControl() & 1)
@@ -97,7 +97,7 @@ void ControlGhostGasEmitter(short item_number)
 			sptr->RotAdd = (GetRandomControl() & 7) + 4;
 	}
 	else
-		sptr->Flags = SF_UNUSED5 | SF_DEF | SF_SCALE;
+		sptr->Flags = SF_ALTDEF | SF_DEF | SF_SCALE;
 
 	sptr->Scalar = 3;
 	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;

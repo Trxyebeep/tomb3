@@ -236,7 +236,7 @@ void TriggerSummonSmoke(long x, long y, long z)
 
 	if (GetRandomControl() & 1)
 	{
-		sptr->Flags = SF_UNUSED5 | SF_UNUSED4 | SF_ROTATE | SF_DEF | SF_SCALE;
+		sptr->Flags = SF_ALTDEF | SF_OUTSIDE | SF_ROTATE | SF_DEF | SF_SCALE;
 		sptr->RotAng = GetRandomControl() & 0xFFF;
 
 		if (GetRandomControl() & 1)
@@ -245,7 +245,7 @@ void TriggerSummonSmoke(long x, long y, long z)
 			sptr->RotAdd = (GetRandomControl() & 7) + 4;
 	}
 	else
-		sptr->Flags = SF_UNUSED5 | SF_UNUSED4 | SF_DEF | SF_SCALE;
+		sptr->Flags = SF_ALTDEF | SF_OUTSIDE | SF_DEF | SF_SCALE;
 
 	sptr->Scalar = 3;
 	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;

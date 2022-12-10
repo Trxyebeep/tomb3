@@ -100,9 +100,9 @@ void TriggerBreath(long x, long y, long z, long xv, long yv, long zv)
 	sptr->Zvel = (short)zv;
 
 	if (room[lara_item->room_number].flags & ROOM_NOT_INSIDE)
-		sptr->Flags = SF_UNUSED5 | SF_UNUSED4 | SF_DEF | SF_SCALE;
+		sptr->Flags = SF_ALTDEF | SF_OUTSIDE | SF_DEF | SF_SCALE;
 	else
-		sptr->Flags = SF_UNUSED5 | SF_DEF | SF_SCALE;
+		sptr->Flags = SF_ALTDEF | SF_DEF | SF_SCALE;
 
 	sptr->Scalar = 3;
 	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
@@ -259,12 +259,12 @@ void TriggerFireFlame(long x, long y, long z, long body_part, long type)
 		if (body_part == -1)
 		{
 			sptr->Gravity = -16 - (GetRandomControl() & 0x1F);
-			sptr->Flags = SF_UNUSED5 | SF_ROTATE | SF_DEF | SF_SCALE;
+			sptr->Flags = SF_ALTDEF | SF_ROTATE | SF_DEF | SF_SCALE;
 			sptr->MaxYvel = -16 - (GetRandomControl() & 7);
 		}
 		else
 		{
-			sptr->Flags = SF_UNUSED5 | SF_FX | SF_ROTATE | SF_DEF | SF_SCALE;
+			sptr->Flags = SF_ALTDEF | SF_FX | SF_ROTATE | SF_DEF | SF_SCALE;
 			sptr->FxObj = (uchar)body_part;
 			sptr->Gravity = -32 - (GetRandomControl() & 0x3F);
 			sptr->MaxYvel = -24 - (GetRandomControl() & 7);
@@ -279,13 +279,13 @@ void TriggerFireFlame(long x, long y, long z, long body_part, long type)
 	}
 	else if (body_part == -1)
 	{
-		sptr->Flags = SF_UNUSED5 | SF_DEF | SF_SCALE;
+		sptr->Flags = SF_ALTDEF | SF_DEF | SF_SCALE;
 		sptr->Gravity = -16 - (GetRandomControl() & 0x1F);
 		sptr->MaxYvel = -16 - (GetRandomControl() & 7);
 	}
 	else
 	{
-		sptr->Flags = SF_UNUSED5 | SF_FX | SF_DEF | SF_SCALE;
+		sptr->Flags = SF_ALTDEF | SF_FX | SF_DEF | SF_SCALE;
 		sptr->FxObj = (uchar)body_part;
 		sptr->Gravity = -32 - (GetRandomControl() & 0x3F);
 		sptr->MaxYvel = -24 - (GetRandomControl() & 7);
@@ -382,7 +382,7 @@ void TriggerFireSmoke(long x, long y, long z, long body_part, long type)
 
 	if (GetRandomControl() & 1)
 	{
-		sptr->Flags = SF_UNUSED5 | SF_ROTATE | SF_DEF | SF_SCALE;
+		sptr->Flags = SF_ALTDEF | SF_ROTATE | SF_DEF | SF_SCALE;
 		sptr->RotAng = GetRandomControl() & 0xFFF;
 
 		if (GetRandomControl() & 1)
@@ -391,7 +391,7 @@ void TriggerFireSmoke(long x, long y, long z, long body_part, long type)
 			sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
 	}
 	else
-		sptr->Flags = SF_UNUSED5 | SF_DEF | SF_SCALE;
+		sptr->Flags = SF_ALTDEF | SF_DEF | SF_SCALE;
 
 	sptr->Scalar = 3;
 	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
@@ -441,7 +441,7 @@ void TriggerStaticFlame(long x, long y, long z, long size)
 	sptr->Zvel = 0;
 	sptr->Yvel = 0;
 	sptr->Xvel = 0;
-	sptr->Flags = SF_UNUSED5 | SF_DEF | SF_SCALE;
+	sptr->Flags = SF_ALTDEF | SF_DEF | SF_SCALE;
 	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
 	sptr->Scalar = 2;
 	s = (uchar)size;
@@ -495,7 +495,7 @@ void TriggerSideFlame(long x, long y, long z, long angle, long speed, long pilot
 	sptr->Yvel = -6 - (GetRandomControl() & 7);
 	sptr->Zvel = short((GetRandomControl() & 0x7F) + c - 64);
 	sptr->Friction = 4;
-	sptr->Flags = SF_UNUSED5 | SF_DEF | SF_SCALE;
+	sptr->Flags = SF_ALTDEF | SF_DEF | SF_SCALE;
 	sptr->Gravity = -8 - (GetRandomControl() & 0xF);
 	sptr->MaxYvel = -8 - (GetRandomControl() & 7);
 	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
@@ -543,7 +543,7 @@ void TriggerRocketSmoke(long x, long y, long z, long c)
 
 	if (GetRandomControl() & 1)
 	{
-		sptr->Flags = SF_UNUSED5 | SF_ROTATE | SF_DEF | SF_SCALE;
+		sptr->Flags = SF_ALTDEF | SF_ROTATE | SF_DEF | SF_SCALE;
 		sptr->RotAng = GetRandomControl() & 0xFFF;
 
 		if (GetRandomControl() & 1)
@@ -552,7 +552,7 @@ void TriggerRocketSmoke(long x, long y, long z, long c)
 			sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
 	}
 	else
-		sptr->Flags = SF_UNUSED5 | SF_DEF | SF_SCALE;
+		sptr->Flags = SF_ALTDEF | SF_DEF | SF_SCALE;
 
 	sptr->Scalar = 3;
 	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
@@ -687,7 +687,7 @@ void TriggerBlood(long x, long y, long z, long angle, long num)
 		sptr->Yvel = -128 - (GetRandomControl() & 0xFF);
 		sptr->Zvel = (rad * rcossin_tbl[(ang << 1) + 1]) >> 5;
 		sptr->Friction = 4;
-		sptr->Flags = SF_UNUSED2;
+		sptr->Flags = SF_BLOOD;
 		sptr->Scalar = 3;
 		sptr->MaxYvel = 0;
 		sptr->Gravity = (GetRandomControl() & 0x1F) + 31;
@@ -881,7 +881,7 @@ void TriggerFlareSparks(long x, long y, long z, long xv, long yv, long zv, long 
 
 		if (GetRandomDraw() & 1)
 		{
-			smokeSpark->Flags = SF_UNUSED5 | SF_ROTATE | SF_DEF | SF_SCALE;
+			smokeSpark->Flags = SF_ALTDEF | SF_ROTATE | SF_DEF | SF_SCALE;
 			smokeSpark->RotAng = GetRandomDraw() & 0xFFF;
 
 			if (GetRandomDraw() & 1)
@@ -890,7 +890,7 @@ void TriggerFlareSparks(long x, long y, long z, long xv, long yv, long zv, long 
 				smokeSpark->RotAdd = (GetRandomDraw() & 0xF) + 16;
 		}
 		else
-			smokeSpark->Flags = SF_UNUSED5 | SF_DEF | SF_SCALE;
+			smokeSpark->Flags = SF_ALTDEF | SF_DEF | SF_SCALE;
 
 		smokeSpark->Def = (uchar)objects[EXPLOSION1].mesh_index;
 		smokeSpark->Scalar = 2;
