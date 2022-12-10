@@ -905,6 +905,106 @@ void TriggerFlareSparks(long x, long y, long z, long xv, long yv, long zv, long 
 	}
 }
 
+void TriggerGunSmoke(long x, long y, long z, long xv, long yv, long zv, long initial, long weapon, long shade)
+{
+	SPARKS* sptr;
+	uchar size;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 0;
+	sptr->sG = 0;
+	sptr->sB = 0;
+	sptr->dR = uchar(shade << 2);
+	sptr->dG = uchar(shade << 2);
+	sptr->dB = uchar(shade << 2);
+	sptr->ColFadeSpeed = 4;
+	sptr->FadeToBlack = uchar(32 - (initial << 4));
+	sptr->Life = (GetRandomControl() & 3) + 40;
+	sptr->sLife = sptr->Life;
+
+	if ((weapon == LG_PISTOLS || weapon == LG_MAGNUMS || weapon == LG_UZIS) && sptr->dR > 64)
+	{
+		sptr->dR = 64;
+		sptr->dG = 64;
+		sptr->dB = 64;
+	}
+
+	sptr->TransType = 2;
+	sptr->extras = 0;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 0x1F) + x - 16;
+	sptr->y = (GetRandomControl() & 0x1F) + y - 16;
+	sptr->z = (GetRandomControl() & 0x1F) + z - 16;
+
+	if (initial)
+	{
+		sptr->Xvel = short((GetRandomControl() & 0x3FF) + xv - 512);
+		sptr->Yvel = short((GetRandomControl() & 0x3FF) + yv - 512);
+		sptr->Zvel = short((GetRandomControl() & 0x3FF) + zv - 512);
+	}
+	else
+	{
+		sptr->Xvel = ((GetRandomControl() & 0x1FF) - 256) >> 1;
+		sptr->Yvel = ((GetRandomControl() & 0x1FF) - 256) >> 1;
+		sptr->Zvel = ((GetRandomControl() & 0x1FF) - 256) >> 1;
+	}
+
+	sptr->Friction = 4;
+
+	if (GetRandomControl() & 1)
+	{
+		if (room[lara_item->room_number].flags & ROOM_NOT_INSIDE)
+			sptr->Flags = SF_ALTDEF | SF_OUTSIDE | SF_ROTATE | SF_DEF | SF_SCALE;
+		else
+			sptr->Flags = SF_ALTDEF | SF_ROTATE | SF_DEF | SF_SCALE;
+
+		sptr->RotAng = GetRandomControl() & 0xFFF;
+
+		if (GetRandomControl() & 1)
+			sptr->RotAdd = -16 - (GetRandomControl() & 0xF);
+		else
+			sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
+	}
+	else if (room[lara_item->room_number].flags & ROOM_NOT_INSIDE)
+		sptr->Flags = SF_ALTDEF | SF_OUTSIDE | SF_DEF | SF_SCALE;
+	else
+		sptr->Flags = SF_ALTDEF | SF_DEF | SF_SCALE;
+
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+	sptr->Scalar = 3;
+	sptr->Gravity = -2 - (GetRandomControl() & 1);
+	sptr->MaxYvel = -2 - (GetRandomControl() & 1);
+
+	size = (GetRandomControl() & 7) - ((weapon == LG_ROCKET || weapon == LG_GRENADE) ? 0 : 12) + 24;
+
+	if (initial)
+	{
+		sptr->Width = size >> 1;
+		sptr->sWidth = sptr->Width;
+		sptr->dWidth = (size + 4) << 1;
+	}
+	else
+	{
+		sptr->Width = size >> 2;
+		sptr->sWidth = sptr->Width;
+		sptr->dWidth = size;
+	}
+
+	if (initial)
+	{
+		sptr->Height = size >> 1;
+		sptr->sHeight = sptr->Width;
+		sptr->dHeight = (size + 4) << 1;
+	}
+	else
+	{
+		sptr->Height = size >> 2;
+		sptr->sHeight = sptr->Width;
+		sptr->dHeight = size;
+	}
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -923,4 +1023,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042D110, TriggerUnderwaterBlood, replace);
 	INJECT(0x0042D180, TriggerUnderwaterBloodD, replace);
 	INJECT(0x0042A8B0, TriggerFlareSparks, replace);
+	INJECT(0x0042B4F0, TriggerGunSmoke, replace);
 }

@@ -419,7 +419,7 @@ tomb3 progress.
 0x0042AF20		TriggerExplosionSmokeEnd
 0x0042B130		TriggerExplosionSmoke
 0x0042B2F0	+	TriggerFireSmoke
-0x0042B4F0		TriggerGunSmoke
+0x0042B4F0	+	TriggerGunSmoke
 0x0042B780	+	TriggerFireFlame
 0x0042BBC0	+	TriggerSideFlame
 0x0042BDA0	+	TriggerAlertLight
