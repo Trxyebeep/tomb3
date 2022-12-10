@@ -26,6 +26,7 @@ void TriggerExplosionSmokeEnd(long x, long y, long z, long uw);
 void TriggerShotgunSparks(long x, long y, long z, long xv, long yv, long zv);
 void TriggerRocketFlame(long x, long y, long z, long xv, long yv, long zv, long itemNum);
 void TriggerWaterfallMist(long x, long y, long z, long ang);
+void TriggerDartSmoke(long x, long y, long z, long xv, long zv, long hit);
 
 #define TriggerGunShell	( (void(__cdecl*)(short, long, long)) 0x0042BE50 )
 #define GetFreeSpark	( (long(__cdecl*)()) 0x00429FE0 )

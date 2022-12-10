@@ -1459,6 +1459,101 @@ void TriggerWaterfallMist(long x, long y, long z, long ang)
 	}
 }
 
+void TriggerDartSmoke(long x, long y, long z, long xv, long zv, long hit)
+{
+	SPARKS* sptr;
+	long dx, dz, rnd;
+
+	dx = lara_item->pos.x_pos - x;
+	dz = lara_item->pos.z_pos - z;
+
+	if (dx < -0x4000 || dx > 0x4000 || dz < -0x4000 || dz > 0x4000)
+		return;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 16;
+	sptr->sG = 8;
+	sptr->sB = 4;
+	sptr->dR = 64;
+	sptr->dG = 48;
+	sptr->dB = 32;
+	sptr->ColFadeSpeed = 8;
+	sptr->FadeToBlack = 4;
+	sptr->TransType = 2;
+	sptr->extras = 0;
+	sptr->Life = (GetRandomControl() & 3) + 32;
+	sptr->sLife = sptr->Life;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 0x1F) + x - 16;
+	sptr->y = (GetRandomControl() & 0x1F) + y - 16;
+	sptr->z = (GetRandomControl() & 0x1F) + z - 16;
+
+	if (hit)
+	{
+		sptr->Xvel = short((GetRandomControl() & 0xFF) - xv - 128);
+		sptr->Yvel = -4 - (GetRandomControl() & 3);
+		sptr->Zvel = short((GetRandomControl() & 0xFF) - zv - 128);
+	}
+	else
+	{
+		if (xv)
+			sptr->Xvel = (short)-xv;
+		else
+			sptr->Xvel = (GetRandomControl() & 0xFF) - 128;
+
+		sptr->Yvel = -4 - (GetRandomControl() & 3);
+
+		if (zv)
+			sptr->Zvel = (short)-zv;
+		else
+			sptr->Zvel = (GetRandomControl() & 0xFF) - 128;
+	}
+
+	sptr->Friction = 3;
+
+	if (GetRandomControl() & 1)
+	{
+		sptr->Flags = SF_ALTDEF | SF_ROTATE | SF_DEF | SF_SCALE;
+		sptr->RotAng = GetRandomControl() & 0xFFF;
+
+		if (GetRandomControl() & 1)
+			sptr->RotAdd = -16 - (GetRandomControl() & 0xF);
+		else
+			sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
+	}
+	else
+		sptr->Flags = SF_ALTDEF | SF_DEF | SF_SCALE;
+
+	sptr->Def = objects[EXPLOSION1].mesh_index;
+	sptr->Scalar = 1;
+	rnd = (GetRandomControl() & 0x3F) + 72;
+
+	if (hit)
+	{
+		rnd >>= 1;
+		sptr->dWidth = rnd;
+		sptr->Width = sptr->dWidth >> 2;
+		sptr->sWidth = sptr->Width;
+		sptr->dHeight = rnd;
+		sptr->Height = sptr->dHeight >> 2;
+		sptr->sHeight = sptr->Height;
+		sptr->MaxYvel = 0;
+		sptr->Gravity = 0;
+	}
+	else
+	{
+		sptr->dWidth = rnd;
+		sptr->Width = sptr->dWidth >> 4;
+		sptr->sWidth = sptr->Width;
+		sptr->dHeight = rnd;
+		sptr->Height = sptr->dHeight >> 4;
+		sptr->sHeight = sptr->Height;
+		sptr->Gravity = -4 - (GetRandomControl() & 3);
+		sptr->MaxYvel = -4 - (GetRandomControl() & 3);
+	}
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -1484,4 +1579,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042C400, TriggerShotgunSparks, replace);
 	INJECT(0x0042C510, TriggerRocketFlame, replace);
 	INJECT(0x0042D1F0, TriggerWaterfallMist, replace);
+	INJECT(0x0042D750, TriggerDartSmoke, replace);
 }
