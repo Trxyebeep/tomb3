@@ -31,9 +31,9 @@ void TriggerExplosionBubble(long x, long y, long z, short room_number);
 void TriggerBubble(long x, long y, long z, long size, long sizerange, short fxNum);
 void ControlSmokeEmitter(short item_number);
 void DetatchSpark(long num, long type);
+long GetFreeSpark();
 
 #define TriggerGunShell	( (void(__cdecl*)(short, long, long)) 0x0042BE50 )
-#define GetFreeSpark	( (long(__cdecl*)()) 0x00429FE0 )
 #define UpdateSparks	( (void(__cdecl*)()) 0x0042A0D0 )
 #define UpdateSplashes	( (void(__cdecl*)()) 0x0042CED0 )
 #define UpdateBats	( (void(__cdecl*)()) 0x0042D3D0 )

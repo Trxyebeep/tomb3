@@ -1780,6 +1780,55 @@ void DetatchSpark(long num, long type)
 	}
 }
 
+long GetFreeSpark()
+{
+	SPARKS* sptr;
+	static long next_spark;
+	long free, min_life;
+
+	free = next_spark;
+	sptr = &sparks[next_spark];
+
+	for (int i = 0; i < 192; i++)
+	{
+		if (sptr->On)
+		{
+			if (free == 191)
+			{
+				sptr = &sparks[0];
+				free = 0;
+			}
+			else
+			{
+				free++;
+				sptr++;
+			}
+		}
+		else
+		{
+			next_spark = (free + 1) & 0xBF;
+			return free;
+		}
+	}
+
+	free = 0;
+	min_life = 4095;
+
+	for (int i = 0; i < 192; i++)
+	{
+		sptr = &sparks[i];
+
+		if (sptr->Life < min_life && sptr->Dynamic == -1 && (!(sptr->Flags & SF_BLOOD) || i & 1))
+		{
+			free = i;
+			min_life = sptr->Life;
+		}
+	}
+
+	next_spark = (free + 1) & 0xBF;
+	return free;
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -1810,4 +1859,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042DAB0, TriggerBubble, replace);
 	INJECT(0x0042DE80, ControlSmokeEmitter, replace);
 	INJECT(0x00429F00, DetatchSpark, replace);
+	INJECT(0x00429FE0, GetFreeSpark, replace);
 }
