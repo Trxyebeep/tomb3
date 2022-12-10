@@ -23,6 +23,7 @@ void TriggerGunSmoke(long x, long y, long z, long xv, long yv, long zv, long ini
 void TriggerExplosionSparks(long x, long y, long z, long extras, long dynamic, long uw, short room_number);
 void TriggerExplosionSmoke(long x, long y, long z, long uw);
 void TriggerExplosionSmokeEnd(long x, long y, long z, long uw);
+void TriggerShotgunSparks(long x, long y, long z, long xv, long yv, long zv);
 
 #define TriggerWaterfallMist	( (void(__cdecl*)(long, long, long, long)) 0x0042D1F0 )
 #define TriggerGunShell	( (void(__cdecl*)(short, long, long)) 0x0042BE50 )

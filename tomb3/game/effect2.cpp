@@ -1306,6 +1306,43 @@ void TriggerExplosionSmokeEnd(long x, long y, long z, long uw)
 	sptr->sHeight = sptr->Height;
 }
 
+void TriggerShotgunSparks(long x, long y, long z, long xv, long yv, long zv)
+{
+	SPARKS* sptr;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 255;
+	sptr->sG = 255;
+	sptr->sB = 0;
+	sptr->dR = 255;
+	sptr->dG = (GetRandomControl() & 0x7F) + 64;
+	sptr->dB = 0;
+	sptr->ColFadeSpeed = 3;
+	sptr->FadeToBlack = 5;
+	sptr->Life = 10;
+	sptr->sLife = 10;
+	sptr->TransType = 2;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 7) + x - 3;
+	sptr->y = (GetRandomControl() & 7) + y - 3;
+	sptr->z = (GetRandomControl() & 7) + z - 3;
+	sptr->Xvel = short((GetRandomControl() & 0x1FF) + xv - 256);
+	sptr->Yvel = short((GetRandomControl() & 0x1FF) + yv - 256);
+	sptr->Zvel = short((GetRandomControl() & 0x1FF) + zv - 256);
+	sptr->Friction = 0;
+	sptr->Flags = SF_SCALE;
+	sptr->Scalar = 2;
+	sptr->MaxYvel = 0;
+	sptr->Gravity = 0;
+	sptr->Width = (GetRandomControl() & 3) + 4;
+	sptr->sWidth = sptr->Width;
+	sptr->dWidth = 1;
+	sptr->Height = (GetRandomControl() & 3) + 4;
+	sptr->sHeight = sptr->Height;
+	sptr->dHeight = 1;
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -1328,4 +1365,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042AB80, TriggerExplosionSparks, replace);
 	INJECT(0x0042B130, TriggerExplosionSmoke, replace);
 	INJECT(0x0042AF20, TriggerExplosionSmokeEnd, replace);
+	INJECT(0x0042C400, TriggerShotgunSparks, replace);
 }
