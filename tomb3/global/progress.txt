@@ -435,7 +435,7 @@ tomb3 progress.
 0x0042D080		SetupRipple
 0x0042D110	+	TriggerUnderwaterBlood
 0x0042D180	+	TriggerUnderwaterBloodD
-0x0042D1F0		TriggerWaterfallMist
+0x0042D1F0	+	TriggerWaterfallMist
 0x0042D3D0		UpdateBats
 0x0042D510		BatEmitterControl
 0x0042D570		TriggerBats

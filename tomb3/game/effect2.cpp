@@ -1396,6 +1396,69 @@ void TriggerRocketFlame(long x, long y, long z, long xv, long yv, long zv, long 
 	sptr->dHeight = 2;
 }
 
+void TriggerWaterfallMist(long x, long y, long z, long ang)
+{
+	SPARKS* sptr;
+	long offsets[4];
+	long ang2, rad;
+
+	offsets[0] = 576;
+	offsets[1] = 203;
+	offsets[2] = -203;
+	offsets[3] = -576;
+	ang2 = (ang + 1024) & 0xFFF;
+
+	for (int i = 0; i < 4; i++)
+	{
+		sptr = &sparks[GetFreeSpark()];
+		sptr->On = 1;
+		sptr->sR = 128;
+		sptr->sG = 128;
+		sptr->sB = 128;
+		sptr->dR = 192;
+		sptr->dG = 192;
+		sptr->dB = 192;
+		sptr->ColFadeSpeed = 2;
+		sptr->FadeToBlack = 4;
+		sptr->TransType = 2;
+		sptr->Life = (GetRandomControl() & 3) + 6;
+		sptr->sLife = sptr->Life;
+		sptr->Dynamic = -1;
+		rad = (GetRandomControl() & 0x1F) + offsets[i] - 16;
+		sptr->x = ((rad * rcossin_tbl[ang2 << 1]) >> 12) + (GetRandomControl() & 0xF) + x - 8;
+		sptr->y = (GetRandomControl() & 0xF) + y - 8;
+		sptr->z = ((rad * rcossin_tbl[(ang2 << 1) + 1]) >> 12) + (GetRandomControl() & 0xF) + z - 8;
+		sptr->Xvel = rcossin_tbl[ang << 1] >> 12;
+		sptr->Yvel = 0;
+		sptr->Zvel = rcossin_tbl[(ang << 1) + 1] >> 12;
+		sptr->Friction = 3;
+
+		if (GetRandomControl() & 1)
+		{
+			sptr->Flags = SF_ALTDEF | SF_ROTATE | SF_DEF | SF_SCALE;
+			sptr->RotAng = GetRandomControl() & 0xFFF;
+
+			if (GetRandomControl() & 1)
+				sptr->RotAdd = -16 - (GetRandomControl() & 0xF);
+			else
+				sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
+		}
+		else
+			sptr->Flags = SF_ALTDEF | SF_DEF | SF_SCALE;
+
+		sptr->Scalar = 6;
+		sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+		sptr->Gravity = 0;
+		sptr->MaxYvel = 0;
+		sptr->dWidth = (GetRandomControl() & 7) + 12;
+		sptr->Width = sptr->dWidth >> 1;
+		sptr->sWidth = sptr->Width;
+		sptr->dHeight = sptr->dWidth;
+		sptr->Height = sptr->dHeight >> 1;
+		sptr->sHeight = sptr->Height;
+	}
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -1420,4 +1483,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042AF20, TriggerExplosionSmokeEnd, replace);
 	INJECT(0x0042C400, TriggerShotgunSparks, replace);
 	INJECT(0x0042C510, TriggerRocketFlame, replace);
+	INJECT(0x0042D1F0, TriggerWaterfallMist, replace);
 }
