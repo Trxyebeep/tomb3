@@ -1163,6 +1163,59 @@ void TriggerExplosionSparks(long x, long y, long z, long extras, long dynamic, l
 		TriggerExplosionSmokeEnd(x, y, z, uw);
 }
 
+void TriggerExplosionSmoke(long x, long y, long z, long uw)
+{
+	SPARKS* sptr;
+	long dx, dz;
+
+	dx = lara_item->pos.x_pos - x;
+	dz = lara_item->pos.z_pos - z;
+
+	if (dx < -0x4000 || dx > 0x4000 || dz < -0x4000 || dz > 0x4000)
+		return;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 144;
+	sptr->sG = 144;
+	sptr->sB = 144;
+	sptr->dR = 64;
+	sptr->dG = 64;
+	sptr->dB = 64;
+	sptr->ColFadeSpeed = 2;
+	sptr->FadeToBlack = 8;
+	sptr->TransType = 3;
+	sptr->extras = 0;
+	sptr->Life = (GetRandomControl() & 3) + 10;
+	sptr->sLife = sptr->Life;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 0x1FF) + x - 256;
+	sptr->y = (GetRandomControl() & 0x1FF) + y - 256;
+	sptr->z = (GetRandomControl() & 0x1FF) + z - 256;
+	sptr->Xvel = ((GetRandomControl() & 0xFFF) - 2048) >> 2;
+	sptr->Yvel = (GetRandomControl() & 0xFF) - 128;
+	sptr->Zvel = ((GetRandomControl() & 0xFFF) - 2048) >> 2;
+
+	if (uw)
+		sptr->Friction = 2;
+	else
+		sptr->Friction = 6;
+
+	sptr->Flags = SF_ALTDEF | SF_ROTATE | SF_DEF | SF_SCALE;
+	sptr->RotAng = GetRandomControl() & 0xFFF;
+	sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+	sptr->Scalar = 1;
+	sptr->Gravity = -3 - (GetRandomControl() & 3);
+	sptr->MaxYvel = -4 - (GetRandomControl() & 3);
+	sptr->dWidth = (GetRandomControl() & 0x1F) + 128;
+	sptr->Width = sptr->dWidth >> 2;
+	sptr->sWidth = sptr->Width;
+	sptr->dHeight = sptr->dWidth + (GetRandomControl() & 0x1F) + 32;
+	sptr->Height = sptr->dHeight >> 3;
+	sptr->sHeight = sptr->Height;
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -1183,4 +1236,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042A8B0, TriggerFlareSparks, replace);
 	INJECT(0x0042B4F0, TriggerGunSmoke, replace);
 	INJECT(0x0042AB80, TriggerExplosionSparks, replace);
+	INJECT(0x0042B130, TriggerExplosionSmoke, replace);
 }

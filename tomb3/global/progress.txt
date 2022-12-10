@@ -417,7 +417,7 @@ tomb3 progress.
 0x0042A8B0	+	TriggerFlareSparks
 0x0042AB80	+	TriggerExplosionSparks
 0x0042AF20		TriggerExplosionSmokeEnd
-0x0042B130		TriggerExplosionSmoke
+0x0042B130	+	TriggerExplosionSmoke
 0x0042B2F0	+	TriggerFireSmoke
 0x0042B4F0	+	TriggerGunSmoke
 0x0042B780	+	TriggerFireFlame
