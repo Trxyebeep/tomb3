@@ -1611,6 +1611,53 @@ void TriggerExplosionBubble(long x, long y, long z, short room_number)
 	}
 }
 
+void TriggerBubble(long x, long y, long z, long size, long sizerange, short fxNum)
+{
+	SPARKS* sptr;
+	long dx, dz;
+
+	dx = lara_item->pos.x_pos - x;
+	dz = lara_item->pos.z_pos - z;
+
+	if (dx < -0x4000 || dx > 0x4000 || dz < -0x4000 || dz > 0x4000)
+		return;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 0;
+	sptr->sG = 0;
+	sptr->sB = 0;
+	sptr->dR = 144;
+	sptr->dG = 144;
+	sptr->dB = 144;
+	sptr->FadeToBlack = 2;
+	sptr->TransType = 2;
+	sptr->ColFadeSpeed = 4;
+	sptr->Life = 128;
+	sptr->sLife = 128;
+	sptr->extras = 0;
+	sptr->Dynamic = -1;
+	sptr->x = 0;
+	sptr->y = 0;
+	sptr->z = 0;
+	sptr->Xvel = 0;
+	sptr->Yvel = 0;
+	sptr->Zvel = 0;
+	sptr->Friction = 0;
+	sptr->Flags = SF_ATTACHEDPOS | SF_FX | SF_DEF | SF_SCALE;
+	sptr->FxObj = (uchar)fxNum;
+	sptr->Def = (uchar)objects[BUBBLES1].mesh_index;
+	sptr->Scalar = 0;
+	sptr->Gravity = 0;
+	sptr->MaxYvel = 0;
+	sptr->Width = uchar(GetRandomControl() % sizerange + size);
+	sptr->sWidth = sptr->Width;
+	sptr->dWidth = sptr->Width << 3;
+	sptr->Height = sptr->Width;
+	sptr->sHeight = sptr->Height;
+	sptr->dHeight = sptr->Height << 3;
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -1638,4 +1685,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042D1F0, TriggerWaterfallMist, replace);
 	INJECT(0x0042D750, TriggerDartSmoke, replace);
 	INJECT(0x0042DBA0, TriggerExplosionBubble, replace);
+	INJECT(0x0042DAB0, TriggerBubble, replace);
 }
