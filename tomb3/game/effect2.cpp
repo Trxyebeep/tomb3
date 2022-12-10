@@ -1658,6 +1658,86 @@ void TriggerBubble(long x, long y, long z, long size, long sizerange, short fxNu
 	sptr->dHeight = sptr->Height << 3;
 }
 
+void ControlSmokeEmitter(short item_number)
+{
+	ITEM_INFO* item;
+	SPARKS* sptr;
+	long dx, dz;
+
+	item = &items[item_number];
+
+	if (!TriggerActive(item) || wibble & 0xC || (item->object_number == STEAM_EMITTER && wibble & 0x1F))
+		return;
+
+	dx = lara_item->pos.x_pos - item->pos.x_pos;
+	dz = lara_item->pos.z_pos - item->pos.z_pos;
+
+	if (dx < -0x4000 || dx > 0x4000 || dz < -0x4000 || dz > 0x4000)
+		return;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 0;
+	sptr->sG = 0;
+	sptr->sB = 0;
+	sptr->dR = 32;
+	sptr->dG = 32;
+	sptr->dB = 32;
+	sptr->FadeToBlack = 64;
+	sptr->ColFadeSpeed = (GetRandomControl() & 7) + 16;
+	sptr->Life = (GetRandomControl() & 0xF) + 96;
+	sptr->sLife = sptr->Life;
+
+	if (item->object_number == SMOKE_EMITTER_BLACK)
+		sptr->TransType = 3;
+	else
+		sptr->TransType = 2;
+
+	sptr->extras = 0;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 0xF) + item->pos.x_pos - 8;
+	sptr->y = (GetRandomControl() & 0xF) + item->pos.y_pos - 8;
+	sptr->z = (GetRandomControl() & 0xF) + item->pos.z_pos - 8;
+	sptr->Xvel = (GetRandomControl() & 0xFF) - 128;
+	sptr->Yvel = -16 - (GetRandomControl() & 0xF);
+	sptr->Zvel = (GetRandomControl() & 0xFF) - 128;
+	sptr->Friction = 4;
+	
+	if (GetRandomControl() & 1)
+	{
+		sptr->Flags = SF_ALTDEF | SF_OUTSIDE | SF_ROTATE | SF_DEF | SF_SCALE;
+		sptr->RotAng = GetRandomControl() & 0xFFF;
+
+		if (GetRandomControl() & 1)
+			sptr->RotAdd = -4 - (GetRandomControl() & 7);
+		else
+			sptr->RotAdd = (GetRandomControl() & 7) + 4;
+	}
+	else
+		sptr->Flags = SF_ALTDEF | SF_OUTSIDE | SF_DEF | SF_SCALE;
+
+	sptr->Scalar = 3;
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+	sptr->Gravity = -8 - (GetRandomControl() & 7);
+	sptr->MaxYvel = -4 - (GetRandomControl() & 7);
+	sptr->dWidth = (GetRandomControl() & 0x1F) + 128;
+	sptr->Width = sptr->dWidth >> 2;
+	sptr->sWidth = sptr->Width;
+	sptr->dHeight = sptr->dWidth + (GetRandomControl() & 0x1F) + 32;
+	sptr->Height = sptr->dHeight >> 2;
+	sptr->sHeight = sptr->Height >> 2;
+
+	if (item->object_number == STEAM_EMITTER)
+	{
+		sptr->Gravity >>= 1;
+		sptr->Yvel >>= 1;
+		sptr->MaxYvel >>= 1;
+		sptr->dR = 24;
+		sptr->dG = 24;
+		sptr->dB = 24;
+	}
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -1686,4 +1766,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042D750, TriggerDartSmoke, replace);
 	INJECT(0x0042DBA0, TriggerExplosionBubble, replace);
 	INJECT(0x0042DAB0, TriggerBubble, replace);
+	INJECT(0x0042DE80, ControlSmokeEmitter, replace);
 }

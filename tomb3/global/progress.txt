@@ -448,7 +448,7 @@ tomb3 progress.
 0x0042DCF0	+	TriggerBreath
 0x0042DE00	+	TriggerDynamic
 0x0042DE60	+	ClearDynamics
-0x0042DE80		ControlSmokeEmitter
+0x0042DE80	+	ControlSmokeEmitter
 0x0042E0C0		ControlColouredLights
 
 

@@ -29,6 +29,7 @@ void TriggerWaterfallMist(long x, long y, long z, long ang);
 void TriggerDartSmoke(long x, long y, long z, long xv, long zv, long hit);
 void TriggerExplosionBubble(long x, long y, long z, short room_number);
 void TriggerBubble(long x, long y, long z, long size, long sizerange, short fxNum);
+void ControlSmokeEmitter(short item_number);
 
 #define TriggerGunShell	( (void(__cdecl*)(short, long, long)) 0x0042BE50 )
 #define GetFreeSpark	( (long(__cdecl*)()) 0x00429FE0 )
