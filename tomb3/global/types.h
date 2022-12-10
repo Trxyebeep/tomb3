@@ -1485,6 +1485,17 @@ struct SPARKS
 	uchar pad;
 };
 
+struct SP_DYNAMIC
+{
+	uchar On;
+	uchar Falloff;
+	uchar R;
+	uchar G;
+	uchar B;
+	uchar Flags;
+	uchar Pad[2];
+};
+
 struct TEXTURE
 {
 	LPVOID DXTex;	//DXTEXTURE*

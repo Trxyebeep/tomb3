@@ -431,6 +431,7 @@
 #define conflict	ARRAY_(0x0069FCB0, long, [15])
 #define keymap	ARRAY_(0x0069FCF0, uchar, [256])
 #define sparks	ARRAY_(0x006D8880, SPARKS, [192])
+#define spark_dynamics	ARRAY_(0x006DB280, SP_DYNAMIC, [32])
 #define depthq_table	ARRAY_(0x005BB2D8, char, [33][256])
 #define gouraud_table	ARRAY_(0x004D38E8, char, [256][32])
 #define water_palette	ARRAY_(0x006A1228, uchar, [768])

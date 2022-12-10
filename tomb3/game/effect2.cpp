@@ -1005,6 +1005,164 @@ void TriggerGunSmoke(long x, long y, long z, long xv, long yv, long zv, long ini
 	}
 }
 
+void TriggerExplosionSparks(long x, long y, long z, long extras, long dynamic, long uw, short room_number)
+{
+	SPARKS* sptr;
+	SP_DYNAMIC* pDL;
+	long dx, dz, i;
+	uchar extras_table[4];
+	uchar r, g, b;
+
+	extras_table[0] = 0;
+	extras_table[1] = 4;
+	extras_table[2] = 7;
+	extras_table[3] = 10;
+	dx = lara_item->pos.x_pos - x;
+	dz = lara_item->pos.z_pos - z;
+
+	if (dx < -0x4000 || dx > 0x4000 || dz < -0x4000 || dz > 0x4000)
+		return;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 255;
+
+	if (uw == 1)
+	{
+		sptr->sG = (GetRandomControl() & 0x3F) + 128;
+		sptr->sB = 32;
+		sptr->dR = 192;
+		sptr->dG = (GetRandomControl() & 0x1F) + 64;
+		sptr->dB = 0;
+	}
+	else
+	{
+		sptr->sG = (GetRandomControl() & 0xF) + 32;
+		sptr->sB = 0;
+		sptr->dR = (GetRandomControl() & 0x3F) + 192;
+		sptr->dG = (GetRandomControl() & 0x3F) + 128;
+		sptr->dB = 32;
+	}
+
+	if (uw == 1)
+	{
+		sptr->ColFadeSpeed = 7;
+		sptr->FadeToBlack = 8;
+		sptr->TransType = 2;
+		sptr->Life = (GetRandomControl() & 7) + 16;
+		sptr->sLife = sptr->Life;
+		sptr->RoomNumber = (uchar)room_number;
+	}
+	else
+	{
+		sptr->ColFadeSpeed = 8;
+		sptr->FadeToBlack = 16;
+		sptr->TransType = 2;
+		sptr->Life = (GetRandomControl() & 7) + 24;
+		sptr->sLife = sptr->Life;
+	}
+
+	sptr->Dynamic = (char)dynamic;
+	sptr->extras = uchar(extras | ((extras_table[extras] + (GetRandomControl() & 7) - 4) << 3));
+
+	if (dynamic == -2)
+	{
+		for (i = 0; i < 32; i++)
+		{
+			pDL = &spark_dynamics[i];
+
+			if (!pDL->On)
+			{
+				pDL->On = 1;
+				pDL->Falloff = 4;
+
+				if (uw == 1)
+					pDL->Flags = 2;
+				else
+					pDL->Flags = 1;
+
+				sptr->Dynamic = (char)i;
+				break;
+			}
+		}
+
+		if (i == 32)
+			sptr->Dynamic = -1;
+	}
+
+	sptr->x = (GetRandomControl() & 0x1F) + x - 16;
+	sptr->y = (GetRandomControl() & 0x1F) + y - 16;
+	sptr->z = (GetRandomControl() & 0x1F) + z - 16;
+	sptr->Xvel = (GetRandomControl() & 0xFFF) - 2048;
+	sptr->Yvel = (GetRandomControl() & 0xFFF) - 2048;
+	sptr->Zvel = (GetRandomControl() & 0xFFF) - 2048;
+
+	if (dynamic != -2 || uw == 1)
+	{
+		sptr->x = (GetRandomControl() & 0x1F) + x - 16;
+		sptr->y = (GetRandomControl() & 0x1F) + y - 16;
+		sptr->z = (GetRandomControl() & 0x1F) + z - 16;
+	}
+	else
+	{
+		sptr->x = (GetRandomControl() & 0x1FF) + x - 256;
+		sptr->y = (GetRandomControl() & 0x1FF) + y - 256;
+		sptr->z = (GetRandomControl() & 0x1FF) + z - 256;
+	}
+
+	if (uw == 1)
+		sptr->Friction = 17;
+	else
+		sptr->Friction = 51;
+
+	if (GetRandomControl() & 1)
+	{
+		if (uw == 1)
+			sptr->Flags = SF_UNWATER | SF_ALTDEF | SF_ROTATE | SF_DEF | SF_SCALE;
+		else
+			sptr->Flags = SF_ALTDEF | SF_ROTATE | SF_DEF | SF_SCALE;
+
+		sptr->RotAng = GetRandomControl() & 0xFFF;
+		sptr->RotAdd = (GetRandomControl() & 0xFF) + 128;
+	}
+	else if (uw == 1)
+		sptr->Flags = SF_UNWATER | SF_ALTDEF | SF_DEF | SF_SCALE;
+	else
+		sptr->Flags = SF_ALTDEF | SF_DEF | SF_SCALE;
+
+	sptr->Scalar = 3;
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+	sptr->Gravity = 0;
+	sptr->MaxYvel = 0;
+	sptr->Width = (GetRandomControl() & 0xF) + 40;
+	sptr->sWidth = sptr->Width;
+	sptr->dWidth = sptr->Width << 1;
+	sptr->Height = sptr->Width + (GetRandomControl() & 7) + 8;
+	sptr->sHeight = sptr->Height;
+	sptr->dHeight = sptr->Height << 1;
+
+	if (uw == 2)
+	{
+		r = sptr->sR;
+		g = sptr->sG;
+		b = sptr->sB;
+		sptr->sR = b;
+		sptr->sG = r;
+		sptr->sB = g;
+		r = sptr->dR;
+		g = sptr->dG;
+		b = sptr->dB;
+		sptr->dR = b;
+		sptr->dG = r;
+		sptr->dB = g;
+		sptr->Flags |= 0x2000;
+	}
+	else if (extras)
+		TriggerExplosionSmoke(x, y, z, uw);
+	else
+		TriggerExplosionSmokeEnd(x, y, z, uw);
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -1024,4 +1182,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042D180, TriggerUnderwaterBloodD, replace);
 	INJECT(0x0042A8B0, TriggerFlareSparks, replace);
 	INJECT(0x0042B4F0, TriggerGunSmoke, replace);
+	INJECT(0x0042AB80, TriggerExplosionSparks, replace);
 }
