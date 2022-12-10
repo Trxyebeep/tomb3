@@ -24,11 +24,11 @@ void TriggerExplosionSparks(long x, long y, long z, long extras, long dynamic, l
 void TriggerExplosionSmoke(long x, long y, long z, long uw);
 void TriggerExplosionSmokeEnd(long x, long y, long z, long uw);
 void TriggerShotgunSparks(long x, long y, long z, long xv, long yv, long zv);
+void TriggerRocketFlame(long x, long y, long z, long xv, long yv, long zv, long itemNum);
 
 #define TriggerWaterfallMist	( (void(__cdecl*)(long, long, long, long)) 0x0042D1F0 )
 #define TriggerGunShell	( (void(__cdecl*)(short, long, long)) 0x0042BE50 )
 #define GetFreeSpark	( (long(__cdecl*)()) 0x00429FE0 )
-#define TriggerRocketFlame	( (void(__cdecl*)(long, long, long, long, long, long, long)) 0x0042C510 )
 #define UpdateSparks	( (void(__cdecl*)()) 0x0042A0D0 )
 #define UpdateSplashes	( (void(__cdecl*)()) 0x0042CED0 )
 #define UpdateBats	( (void(__cdecl*)()) 0x0042D3D0 )

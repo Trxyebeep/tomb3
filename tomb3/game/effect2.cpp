@@ -1343,6 +1343,59 @@ void TriggerShotgunSparks(long x, long y, long z, long xv, long yv, long zv)
 	sptr->dHeight = 1;
 }
 
+void TriggerRocketFlame(long x, long y, long z, long xv, long yv, long zv, long itemNum)
+{
+	SPARKS* sptr;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = (GetRandomControl() & 0x1F) + 48;
+	sptr->sG = sptr->sR;
+	sptr->sB = (GetRandomControl() & 0x3F) + 192;
+	sptr->dR = (GetRandomControl() & 0x3F) + 192;
+	sptr->dG = (GetRandomControl() & 0x3F) + 128;
+	sptr->dB = 32;
+	sptr->FadeToBlack = 12;
+	sptr->ColFadeSpeed = (GetRandomControl() & 3) + 12;
+	sptr->TransType = 2;
+	sptr->Life = (GetRandomControl() & 3) + 28;
+	sptr->sLife = sptr->Life;
+	sptr->extras = 0;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 0x1F) + x - 16;
+	sptr->y = y;
+	sptr->z = (GetRandomControl() & 0x1F) + z - 16;
+	sptr->Xvel = (short)xv;
+	sptr->Yvel = (short)yv;
+	sptr->Zvel = (short)zv;
+	sptr->Friction = 51;
+	sptr->FxObj = (uchar)itemNum;
+
+	if (GetRandomControl() & 1)
+	{
+		sptr->Flags = SF_ALTDEF | SF_ITEM | SF_ROTATE | SF_DEF | SF_SCALE;
+		sptr->RotAng = GetRandomControl() & 0xFFF;
+
+		if (GetRandomControl() & 1)
+			sptr->RotAdd = -16 - (GetRandomControl() & 0xF);
+		else
+			sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
+	}
+	else
+		sptr->Flags = SF_ALTDEF | SF_ITEM | SF_DEF | SF_SCALE;
+
+	sptr->Gravity = 0;
+	sptr->MaxYvel = 0;
+	sptr->Scalar = 2;
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+	sptr->Width = (GetRandomControl() & 7) + 32;
+	sptr->sWidth = sptr->Width;
+	sptr->dWidth = 2;
+	sptr->Height = sptr->Width;
+	sptr->sHeight = sptr->Height;
+	sptr->dHeight = 2;
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -1366,4 +1419,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042B130, TriggerExplosionSmoke, replace);
 	INJECT(0x0042AF20, TriggerExplosionSmokeEnd, replace);
 	INJECT(0x0042C400, TriggerShotgunSparks, replace);
+	INJECT(0x0042C510, TriggerRocketFlame, replace);
 }
