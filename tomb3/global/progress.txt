@@ -409,7 +409,7 @@ tomb3 progress.
 
 		game/effect2.cpp
 
-0x00429F00		DetatchSpark
+0x00429F00	+	DetatchSpark
 0x00429FE0		GetFreeSpark
 0x0042A080		InitialiseSparks
 0x0042A0D0		UpdateSparks

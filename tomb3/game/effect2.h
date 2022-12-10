@@ -30,6 +30,7 @@ void TriggerDartSmoke(long x, long y, long z, long xv, long zv, long hit);
 void TriggerExplosionBubble(long x, long y, long z, short room_number);
 void TriggerBubble(long x, long y, long z, long size, long sizerange, short fxNum);
 void ControlSmokeEmitter(short item_number);
+void DetatchSpark(long num, long type);
 
 #define TriggerGunShell	( (void(__cdecl*)(short, long, long)) 0x0042BE50 )
 #define GetFreeSpark	( (long(__cdecl*)()) 0x00429FE0 )
@@ -38,4 +39,3 @@ void ControlSmokeEmitter(short item_number);
 #define UpdateBats	( (void(__cdecl*)()) 0x0042D3D0 )
 #define SetupRipple	( (RIPPLE_STRUCT*(__cdecl*)(long, long, long, long, long)) 0x0042D080 )
 #define SetupSplash	( (void(__cdecl*)(SPLASH_SETUP*)) 0x0042CAC0 )
-#define DetatchSpark	( (void(__cdecl*)(long, long)) 0x00429F00 )

@@ -1738,6 +1738,48 @@ void ControlSmokeEmitter(short item_number)
 	}
 }
 
+void DetatchSpark(long num, long type)
+{
+	SPARKS* sptr;
+	FX_INFO* fx;
+	ITEM_INFO* item;
+
+	for (int i = 0; i < 192; i++)
+	{
+		sptr = &sparks[i];
+
+		if (sptr->On && sptr->Flags & type && sptr->FxObj == num)
+		{
+			if (type == SF_FX)
+			{
+				if (sptr->Flags & SF_ATTACHEDPOS)
+					sptr->On = 0;
+				else
+				{
+					fx = &effects[num];
+					sptr->x += fx->pos.x_pos;
+					sptr->y += fx->pos.y_pos;
+					sptr->z += fx->pos.z_pos;
+					sptr->Flags &= ~SF_FX;
+				}
+			}
+			else if (type == SF_ITEM)
+			{
+				if (sptr->Flags & SF_ATTACHEDPOS)
+					sptr->On = 0;
+				else
+				{
+					item = &items[num];
+					sptr->x += item->pos.x_pos;
+					sptr->y += item->pos.y_pos;
+					sptr->z += item->pos.z_pos;
+					sptr->Flags &= ~SF_ITEM;
+				}
+			}
+		}
+	}
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -1767,4 +1809,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042DBA0, TriggerExplosionBubble, replace);
 	INJECT(0x0042DAB0, TriggerBubble, replace);
 	INJECT(0x0042DE80, ControlSmokeEmitter, replace);
+	INJECT(0x00429F00, DetatchSpark, replace);
 }
