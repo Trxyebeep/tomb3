@@ -33,9 +33,9 @@ void ControlSmokeEmitter(short item_number);
 void DetatchSpark(long num, long type);
 long GetFreeSpark();
 void InitialiseSparks();
+void UpdateSparks();
 
 #define TriggerGunShell	( (void(__cdecl*)(short, long, long)) 0x0042BE50 )
-#define UpdateSparks	( (void(__cdecl*)()) 0x0042A0D0 )
 #define UpdateSplashes	( (void(__cdecl*)()) 0x0042CED0 )
 #define UpdateBats	( (void(__cdecl*)()) 0x0042D3D0 )
 #define SetupRipple	( (RIPPLE_STRUCT*(__cdecl*)(long, long, long, long, long)) 0x0042D080 )

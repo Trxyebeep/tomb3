@@ -1156,7 +1156,7 @@ void TriggerExplosionSparks(long x, long y, long z, long extras, long dynamic, l
 		sptr->dR = b;
 		sptr->dG = r;
 		sptr->dB = g;
-		sptr->Flags |= 0x2000;
+		sptr->Flags |= SF_GREEN;
 	}
 	else if (extras)
 		TriggerExplosionSmoke(x, y, z, uw);
@@ -1847,6 +1847,193 @@ void InitialiseSparks()
 		bats[i].flags = 0;
 }
 
+void UpdateSparks()
+{
+	SPARKS* sptr;
+	SP_DYNAMIC* pDL;
+	long fade, uw, rnd, x, y, z, falloff, r, g, b;
+	uchar def;
+
+	def = (uchar)objects[EXPLOSION1].mesh_index;
+
+	for (int i = 0; i < 192; i++)
+	{
+		sptr = &sparks[i];
+
+		if (!sptr->On)
+			continue;
+
+		if (!(sptr->Flags & SF_ATTACHEDPOS) || sptr->Life > 16)
+			sptr->Life--;
+
+		if (!sptr->Life)
+		{
+			if (sptr->Dynamic != -1)
+			{
+				spark_dynamics[sptr->Dynamic].On = 0;
+				sptr->Dynamic = -1;
+			}
+
+			sptr->On = 0;
+			continue;
+		}
+
+		if (sptr->sLife - sptr->Life < sptr->ColFadeSpeed)
+		{
+			fade = ((sptr->sLife - sptr->Life) << 16) / sptr->ColFadeSpeed;
+			sptr->R = uchar(sptr->sR + ((fade * (sptr->dR - sptr->sR)) >> 16));
+			sptr->G = uchar(sptr->sG + ((fade * (sptr->dG - sptr->sG)) >> 16));
+			sptr->B = uchar(sptr->sB + ((fade * (sptr->dB - sptr->sB)) >> 16));
+		}
+		else if (sptr->Life < sptr->FadeToBlack)
+		{
+			fade = ((sptr->Life - sptr->FadeToBlack) << 16) / sptr->FadeToBlack + 0x10000;
+			sptr->R = uchar((sptr->dR * fade) >> 16);
+			sptr->G = uchar((sptr->dG * fade) >> 16);
+			sptr->B = uchar((sptr->dB * fade) >> 16);
+		}
+		else
+		{
+			sptr->R = sptr->dR;
+			sptr->G = sptr->dG;
+			sptr->B = sptr->dB;
+		}
+
+		if (sptr->Life == sptr->FadeToBlack && sptr->Flags & SF_UNWATER)
+		{
+			sptr->dWidth >>= 2;
+			sptr->dHeight >>= 2;
+		}
+
+		if (sptr->Flags & SF_ROTATE)
+			sptr->RotAng = (sptr->RotAng + sptr->RotAdd) & 0xFFF;
+
+		if (sptr->Flags & SF_ALTDEF)
+		{
+			if (sptr->R < 16 && sptr->G < 16 && sptr->B < 16)
+				sptr->Def = def + 3;
+			else if (sptr->R < 64 && sptr->G < 64 && sptr->B < 64)
+				sptr->Def = def + 2;
+			else if (sptr->R < 96 && sptr->G < 96 && sptr->B < 96)
+				sptr->Def = def + 1;
+			else
+				sptr->Def = def;
+		}
+
+		if (sptr->sLife - sptr->Life == sptr->extras >> 3 && sptr->extras & 7)
+		{
+			if (sptr->Flags & SF_UNWATER)
+				uw = 1;
+			else if (sptr->Flags & SF_GREEN)
+				uw = 2;
+			else
+				uw = 0;
+
+			for (int j = 0; j < (sptr->extras & 7); j++)
+			{
+				TriggerExplosionSparks(sptr->x, sptr->y, sptr->z, (sptr->extras & 7) - 1, sptr->Dynamic, uw, sptr->RoomNumber);
+				sptr->Dynamic = -1;
+			}
+
+			if (sptr->Flags & SF_UNWATER)
+				TriggerExplosionBubble(sptr->x, sptr->y, sptr->z, sptr->RoomNumber);
+
+			sptr->extras = 0;
+		}
+
+		fade = ((sptr->sLife - sptr->Life) << 16) / sptr->sLife;
+		sptr->Yvel += sptr->Gravity;
+
+		if (sptr->MaxYvel)
+		{
+			if (sptr->Yvel < 0 && sptr->Yvel < sptr->MaxYvel << 5 || sptr->Yvel > 0 && sptr->Yvel > sptr->MaxYvel << 5)
+				sptr->Yvel = sptr->MaxYvel << 5;
+		}
+
+		if (sptr->Friction & 0xF)
+		{
+			sptr->Xvel -= sptr->Xvel >> (sptr->Friction & 0xF);
+			sptr->Zvel -= sptr->Zvel >> (sptr->Friction & 0xF);
+		}
+
+		if (sptr->Friction & 0xF0)
+			sptr->Yvel -= sptr->Yvel >> (sptr->Friction >> 4);
+
+		sptr->x += sptr->Xvel >> 5;
+		sptr->y += sptr->Yvel >> 5;
+		sptr->z += sptr->Zvel >> 5;
+
+		if (sptr->Flags & SF_OUTSIDE)
+		{
+			sptr->x += SmokeWindX >> 1;
+			sptr->z += SmokeWindZ >> 1;
+		}
+
+		sptr->Width = uchar(sptr->sWidth + ((fade * (sptr->dWidth - sptr->sWidth)) >> 16));
+		sptr->Height = uchar(sptr->sHeight + ((fade * (sptr->dHeight - sptr->sHeight)) >> 16));
+	}
+
+	for (int i = 0; i < 192; i++)
+	{
+		sptr = &sparks[i];
+
+		if (!sptr->On || sptr->Dynamic == -1)
+			continue;
+
+		pDL = &spark_dynamics[sptr->Dynamic];
+
+		if (pDL->Flags & 3)
+		{
+			rnd = GetRandomControl();
+			x = sptr->x + ((rnd & 0xF) << 4);
+			y = sptr->y + (rnd & 0xF0);
+			z = sptr->z + ((rnd >> 4) & 0xF0);
+			falloff = sptr->sLife - sptr->Life - 1;
+
+			if (falloff < 2)
+			{
+				if (pDL->Falloff < 28)
+					pDL->Falloff += 6;
+
+				r = 31 - (rnd & 3) - falloff;
+				g = 31 - (rnd & 3) - (falloff << 1);
+				b = 31 - (rnd & 3) - (falloff << 3);
+			}
+			else if (falloff < 4)
+			{
+				if (pDL->Falloff < 28)
+					pDL->Falloff += 6;
+
+				r = 31 - (rnd & 3) - falloff;
+				g = 16 - falloff;
+				b = (4 - falloff) << 2;
+
+				if (b < 0)
+					b = 0;
+			}
+			else
+			{
+				if (pDL->Falloff)
+					pDL->Falloff--;
+
+				r = (rnd & 3) + 28;
+				g = ((rnd >> 4) & 3) + 16;
+				b = (rnd >> 8) & 7;
+			}
+
+			falloff = pDL->Falloff;
+
+			if (falloff > 31)
+				falloff = 31;
+
+			if (sptr->Flags & SF_GREEN)
+				TriggerDynamic(x, y, z, falloff, b, r, g);
+			else
+				TriggerDynamic(x, y, z, falloff, r, g, b);
+		}
+	}
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -1879,4 +2066,5 @@ void inject_effect2(bool replace)
 	INJECT(0x00429F00, DetatchSpark, replace);
 	INJECT(0x00429FE0, GetFreeSpark, replace);
 	INJECT(0x0042A080, InitialiseSparks, replace);
+	INJECT(0x0042A0D0, UpdateSparks, replace);
 }

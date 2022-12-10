@@ -142,6 +142,7 @@ enum spark_flags
 	SF_ATTACHEDPOS =	0x400,	//spark uses the position of the FX/ITEM it is attached to
 	SF_UNWATER =		0x800,	//for underwater explosions to create bubbles etc.
 	SF_ATTACHEDNODE =	0x1000,	//spark is attached to an item node, uses NodeOffsets
+	SF_GREEN =			0x2000,	//turns the spark into a green-ish blue (for explosions only)
 };
 
 enum status_codes

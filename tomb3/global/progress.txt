@@ -412,7 +412,7 @@ tomb3 progress.
 0x00429F00	+	DetatchSpark
 0x00429FE0	+	GetFreeSpark
 0x0042A080	+	InitialiseSparks
-0x0042A0D0		UpdateSparks
+0x0042A0D0	+	UpdateSparks
 0x0042A680	+	TriggerRicochetSpark
 0x0042A8B0	+	TriggerFlareSparks
 0x0042AB80	+	TriggerExplosionSparks
