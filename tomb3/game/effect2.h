@@ -32,6 +32,7 @@ void TriggerBubble(long x, long y, long z, long size, long sizerange, short fxNu
 void ControlSmokeEmitter(short item_number);
 void DetatchSpark(long num, long type);
 long GetFreeSpark();
+void InitialiseSparks();
 
 #define TriggerGunShell	( (void(__cdecl*)(short, long, long)) 0x0042BE50 )
 #define UpdateSparks	( (void(__cdecl*)()) 0x0042A0D0 )

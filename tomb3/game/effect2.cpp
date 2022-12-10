@@ -1829,6 +1829,24 @@ long GetFreeSpark()
 	return free;
 }
 
+void InitialiseSparks()
+{
+	for (int i = 0; i < 192; i++)
+	{
+		sparks[i].On = 0;
+		sparks[i].Dynamic = -1;
+	}
+
+	for (int i = 0; i < 4; i++)
+		splashes[i].flags = 0;
+
+	for (int i = 0; i < 16; i++)
+		ripples[i].flags = 0;
+
+	for (int i = 0; i < 32; i++)
+		bats[i].flags = 0;
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -1860,4 +1878,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042DE80, ControlSmokeEmitter, replace);
 	INJECT(0x00429F00, DetatchSpark, replace);
 	INJECT(0x00429FE0, GetFreeSpark, replace);
+	INJECT(0x0042A080, InitialiseSparks, replace);
 }
