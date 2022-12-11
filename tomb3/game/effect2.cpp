@@ -2418,6 +2418,89 @@ void SetupSplash(SPLASH_SETUP* setup)
 	SoundEffect(SFX_LARA_SPLASH, (PHD_3DPOS*)setup, SFX_DEFAULT);
 }
 
+void UpdateSplashes()
+{
+	SPLASH_STRUCT* splash;
+	SPLASH_VERTS* v;
+	RIPPLE_STRUCT* ripple;
+	long set;
+
+	for (int i = 0; i < 4; i++)
+	{
+		splash = &splashes[i];
+
+		if (!(splash->flags & 1))
+			continue;
+
+		set = 0;
+
+		for (int j = 0; j < 48; j++)
+		{
+			v = &splash->sv[j];
+			v->wx += v->xv >> 2;
+			v->wy += short(v->yv >> 6);
+			v->wz += v->zv >> 2;
+			v->xv -= v->xv >> v->friction;
+			v->zv -= v->zv >> v->friction;
+
+			if ((v->oxv < 0 && v->xv > v->oxv) || (v->oxv > 0 && v->xv < v->oxv))
+				v->xv = v->oxv;
+			else if ((v->ozv < 0 && v->zv > v->ozv) || (v->ozv > 0 && v->zv < v->ozv))
+				v->zv = v->ozv;
+
+			v->yv += v->gravity << 3;
+
+			if (v->yv > 0x10000)
+				v->yv = 0x10000;
+
+			if (v->wy > 0)
+			{
+				if (j < 16)
+					splash->flags |= 4;
+				else if (j < 32)
+					splash->flags |= 8;
+
+				v->wy = 0;
+				set = 1;
+			}
+		}
+
+		if (set)
+		{
+			splash->life--;
+
+			if (!splash->life)
+				splash->flags = 0;
+		}
+	}
+
+	for (int i = 0; i < 16; i++)
+	{
+		ripple = &ripples[i];
+
+		if (!(ripple->flags & 1))
+			continue;
+
+		if (ripple->size < 254)
+			ripple->size += 2;
+
+		if (!ripple->init)
+		{
+			ripple->life -= 2;
+
+			if (ripple->life > 250)
+				ripple->flags = 0;
+		}
+		else if (ripple->init < ripple->life)
+		{
+			ripple->init += 4;
+
+			if (ripple->init >= ripple->life)
+				ripple->init = 0;
+		}
+	}
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -2455,4 +2538,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042C1A0, ControlGunShell, replace);
 	INJECT(0x0042D080, SetupRipple, replace);
 	INJECT(0x0042CAC0, SetupSplash, replace);
+	INJECT(0x0042CED0, UpdateSplashes, replace);
 }

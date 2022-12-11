@@ -38,6 +38,6 @@ void TriggerGunShell(short lr, long objNum, long weapon);
 void ControlGunShell(short fx_number);
 RIPPLE_STRUCT* SetupRipple(long x, long y, long z, long size, long flags);
 void SetupSplash(SPLASH_SETUP* setup);
+void UpdateSplashes();
 
-#define UpdateSplashes	( (void(__cdecl*)()) 0x0042CED0 )
 #define UpdateBats	( (void(__cdecl*)()) 0x0042D3D0 )
