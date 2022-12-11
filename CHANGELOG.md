@@ -11,6 +11,7 @@
 - Fix weather spawning at Lara position instead of camera position.
 - Fix lara collision with objects on water surface.
 - Fix darts scale.
+- Fix underwater blood color flashing.
 
 ### tomb3 additions
 

@@ -4530,10 +4530,14 @@ void S_DrawSplashes()
 			{
 				nSprite = objects[EXPLOSION1].mesh_index;
 
+#ifdef TROYESTUFF
+				c1 = ripple->life >> 3;
+#else
 				if (ripple->init)
 					c1 = ripple->init >> 1;
 				else
 					c1 = ripple->life >> 1;
+#endif
 
 				c = c1 << 10;	//only red
 			}
