@@ -2523,6 +2523,11 @@ void ControlColouredLights(short item_number)
 	}
 }
 
+void KillAllCurrentItems(short item_number)
+{
+	KillEverythingFlag = 1;
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -2562,4 +2567,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042CAC0, SetupSplash, replace);
 	INJECT(0x0042CED0, UpdateSplashes, replace);
 	INJECT(0x0042E0C0, ControlColouredLights, replace);
+	INJECT(0x0042D990, KillAllCurrentItems, replace);
 }

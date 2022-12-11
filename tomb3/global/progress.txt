@@ -441,7 +441,7 @@ tomb3 progress.
 0x0042D570		TriggerBats
 0x0042D640	+	TriggerStaticFlame
 0x0042D750	+	TriggerDartSmoke
-0x0042D990		KillAllCurrentItems
+0x0042D990	+	KillAllCurrentItems
 0x0042D9A0	+	KillEverything
 0x0042DAB0	+	TriggerBubble
 0x0042DBA0	+	TriggerExplosionBubble
