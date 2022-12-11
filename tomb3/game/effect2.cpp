@@ -2237,6 +2237,46 @@ void ControlGunShell(short fx_number)
 		EffectNewRoom(fx_number, room_number);
 }
 
+RIPPLE_STRUCT* SetupRipple(long x, long y, long z, long size, long flags)
+{
+	RIPPLE_STRUCT* ripple;
+	long num;
+
+	ripple = ripples;
+	num = 0;
+
+	while (ripple->flags & 1)
+	{
+		ripple++;
+		num++;
+
+		if (num >= 16)
+			return ripple;
+	}
+
+	ripple = &ripples[num];
+
+	if (size < 0)
+	{
+		if (flags)
+			ripple->flags = 19;
+		else
+			ripple->flags = 3;
+
+		size = -size;
+	}
+	else
+		ripple->flags = 1;
+
+	ripple->init = 1;
+	ripple->size = (uchar)size;
+	ripple->life = (GetRandomControl() & 0xF) + 48;
+	ripple->x = (GetRandomControl() & 0x7F) + x - 64;
+	ripple->y = y;
+	ripple->z = (GetRandomControl() & 0x7F) + z - 64;
+	return ripple;
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -2272,4 +2312,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042A0D0, UpdateSparks, replace);
 	INJECT(0x0042BE50, TriggerGunShell, replace);
 	INJECT(0x0042C1A0, ControlGunShell, replace);
+	INJECT(0x0042D080, SetupRipple, replace);
 }
