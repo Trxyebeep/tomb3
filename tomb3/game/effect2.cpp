@@ -5,6 +5,7 @@
 #include "../specific/game.h"
 #include "control.h"
 #include "effects.h"
+#include "lara.h"
 
 void TriggerDynamic(long x, long y, long z, long falloff, long r, long g, long b)
 {
@@ -2034,6 +2035,122 @@ void UpdateSparks()
 	}
 }
 
+void TriggerGunShell(short lr, long objNum, long weapon)
+{
+	FX_INFO* fx;
+	PHD_VECTOR pos;
+	short fxNum;
+
+	if (lr)
+	{
+		switch (weapon)
+		{
+		case LG_PISTOLS:
+			pos.x = 8;
+			pos.y = 48;
+			pos.z = 40;
+			break;
+
+		case LG_MAGNUMS:
+			pos.x = 16;
+			pos.y = 40;
+			pos.z = 56;
+			break;
+
+		case LG_UZIS:
+			pos.x = 8;
+			pos.y = 35;
+			pos.z = 48;
+			break;
+
+		case LG_SHOTGUN:
+			pos.x = 16;
+			pos.y = 114;
+			pos.z = 32;
+			break;
+
+		case LG_M16:
+			pos.x = 16;
+			pos.y = 2;
+			pos.z = 64;
+			break;
+		}
+
+		GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+	}
+	else
+	{
+		switch (weapon)
+		{
+		case LG_PISTOLS:
+			pos.x = -12;
+			pos.y = 48;
+			pos.z = 40;
+			break;
+
+		case LG_MAGNUMS:
+			pos.x = -16;
+			pos.y = 40;
+			pos.z = 56;
+			break;
+
+		case LG_UZIS:
+			pos.x = -16;
+			pos.y = 35;
+			pos.z = 48;
+			break;
+		}
+
+		GetLaraHandAbsPosition(&pos, LEFT_HAND);
+	}
+
+	if (weapon == LG_SHOTGUN)
+		TriggerGunSmoke(pos.x, pos.y, pos.z, 0, 0, 0, 0, weapon, 24);
+	else
+		TriggerGunSmoke(pos.x, pos.y, pos.z, 0, 0, 0, 0, weapon, 16);
+
+	fxNum = CreateEffect(lara_item->room_number);
+
+	if (fxNum == NO_ITEM)
+		return;
+
+	fx = &effects[fxNum];
+	fx->pos.x_pos = pos.x;
+	fx->pos.y_pos = pos.y;
+	fx->pos.z_pos = pos.z;
+	fx->room_number = lara_item->room_number;
+	fx->pos.x_rot = 0;
+	fx->pos.y_rot = 0;
+	fx->pos.z_rot = (short)GetRandomControl();
+	fx->speed = (GetRandomControl() & 0x1F) + 16;
+	fx->object_number = (short)objNum;
+	fx->frame_number = objects[fx->object_number].mesh_index;
+	fx->fallspeed = -48 - (GetRandomControl() & 7);
+	fx->shade = 0x4210;
+	fx->counter = (GetRandomControl() & 1) + 1;
+
+	if (lr)
+	{
+		if (weapon == LG_SHOTGUN)
+		{
+			fx->flag1 = lara.left_arm.y_rot + lara_item->pos.y_rot - (GetRandomControl() & 0xFFF) + lara.torso_y_rot + 0x2800;
+			fx->pos.y_rot += lara.torso_y_rot + lara.left_arm.y_rot + lara_item->pos.y_rot;
+
+			if (fx->speed < 24)
+				fx->speed += 24;
+		}
+		else if (weapon == LG_M16)
+		{
+			fx->flag1 = lara.left_arm.y_rot + lara_item->pos.y_rot - (GetRandomControl() & 0xFFF) + lara.torso_y_rot + 0x4800;
+			fx->pos.y_rot += lara.torso_y_rot + lara.left_arm.y_rot + lara_item->pos.y_rot;
+		}
+		else
+			fx->flag1 = lara_item->pos.y_rot - (GetRandomControl() & 0xFFF) + lara.left_arm.y_rot + 0x4800;
+	}
+	else
+		fx->flag1 = lara_item->pos.y_rot + (GetRandomControl() & 0xFFF) + lara.left_arm.y_rot - 0x4800;
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -2067,4 +2184,5 @@ void inject_effect2(bool replace)
 	INJECT(0x00429FE0, GetFreeSpark, replace);
 	INJECT(0x0042A080, InitialiseSparks, replace);
 	INJECT(0x0042A0D0, UpdateSparks, replace);
+	INJECT(0x0042BE50, TriggerGunShell, replace);
 }
