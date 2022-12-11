@@ -6,6 +6,8 @@
 #include "control.h"
 #include "effects.h"
 #include "lara.h"
+#include "../3dsystem/phd_math.h"
+#include "sound.h"
 
 void TriggerDynamic(long x, long y, long z, long falloff, long r, long g, long b)
 {
@@ -2151,6 +2153,90 @@ void TriggerGunShell(short lr, long objNum, long weapon)
 		fx->flag1 = lara_item->pos.y_rot + (GetRandomControl() & 0xFFF) + lara.left_arm.y_rot - 0x4800;
 }
 
+void ControlGunShell(short fx_number)
+{
+	FX_INFO* fx;
+	FLOOR_INFO* floor;
+	long ox, oy, oz, c, h;
+	short room_number;
+
+	fx = &effects[fx_number];
+	ox = fx->pos.x_pos;
+	oy = fx->pos.y_pos;
+	oz = fx->pos.z_pos;
+
+	fx->fallspeed += 6;
+	fx->pos.x_rot += 182 * ((fx->speed >> 1) + 7);
+	fx->pos.y_rot += 182 * fx->speed;
+	fx->pos.z_rot += 4186;
+	fx->pos.x_pos += fx->speed * phd_sin(fx->flag1) >> (W2V_SHIFT + 1);
+	fx->pos.y_pos += fx->fallspeed;
+	fx->pos.z_pos += fx->speed * phd_cos(fx->flag1) >> (W2V_SHIFT + 1);
+
+	room_number = fx->room_number;
+	floor = GetFloor(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, &room_number);
+
+	if (fx->room_number != room_number)
+		EffectNewRoom(fx_number, room_number);
+
+	if (room[room_number].flags & ROOM_UNDERWATER)
+	{
+		SetupRipple(fx->pos.x_pos, room[room_number].maxceiling, fx->pos.z_pos, -8 - (GetRandomControl() & 3), 1);
+		KillEffect(fx_number);
+		return;
+	}
+
+	c = GetCeiling(floor, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
+
+	if (fx->pos.y_pos < c)
+	{
+		SoundEffect(SFX_LARA_SHOTGUN_SHELL, &fx->pos, SFX_DEFAULT);
+		fx->speed -= 4;
+		fx->counter--;
+
+		if (fx->counter < 0 || fx->speed < 8)
+		{
+			KillEffect(fx_number);
+			return;
+		}
+
+		fx->fallspeed = -fx->fallspeed;
+		fx->pos.y_pos = c;
+	}
+
+	h = GetHeight(floor, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
+
+	if (fx->pos.y_pos >= h)
+	{
+		SoundEffect(SFX_LARA_SHOTGUN_SHELL, &fx->pos, SFX_DEFAULT);
+		fx->speed -= 8;
+		fx->counter--;
+
+		if (fx->counter < 0 || fx->speed < 8)
+		{
+			KillEffect(fx_number);
+			return;
+		}
+
+		if (oy > h)
+		{
+			fx->flag1 += 0x8000;
+			fx->pos.x_pos = ox;
+			fx->pos.z_pos = oz;
+		}
+		else
+			fx->fallspeed = -fx->fallspeed >> 1;
+
+		fx->pos.y_pos = oy;
+	}
+
+	room_number = fx->room_number;
+	GetFloor(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, &room_number);
+
+	if (fx->room_number != room_number)
+		EffectNewRoom(fx_number, room_number);
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -2185,4 +2271,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042A080, InitialiseSparks, replace);
 	INJECT(0x0042A0D0, UpdateSparks, replace);
 	INJECT(0x0042BE50, TriggerGunShell, replace);
+	INJECT(0x0042C1A0, ControlGunShell, replace);
 }

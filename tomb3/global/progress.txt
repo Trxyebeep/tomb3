@@ -424,7 +424,7 @@ tomb3 progress.
 0x0042BBC0	+	TriggerSideFlame
 0x0042BDA0	+	TriggerAlertLight
 0x0042BE50	+	TriggerGunShell
-0x0042C1A0		ControlGunShell
+0x0042C1A0	+	ControlGunShell
 0x0042C400	+	TriggerShotgunSparks
 0x0042C510	+	TriggerRocketFlame
 0x0042C670	+	TriggerRocketSmoke
