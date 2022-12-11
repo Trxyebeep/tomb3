@@ -430,7 +430,7 @@ tomb3 progress.
 0x0042C670	+	TriggerRocketSmoke
 0x0042C7E0	+	TriggerBlood
 0x0042C950	+	TriggerBloodD
-0x0042CAC0		SetupSplash
+0x0042CAC0	+	SetupSplash
 0x0042CED0		UpdateSplashes
 0x0042D080	+	SetupRipple
 0x0042D110	+	TriggerUnderwaterBlood

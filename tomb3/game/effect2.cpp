@@ -9,6 +9,18 @@
 #include "../3dsystem/phd_math.h"
 #include "sound.h"
 
+static short SplashRings[8][2] =
+{
+	{0, -24},
+	{17, -17},
+	{24, 0},
+	{17, 17},
+	{0, 24},
+	{-17, 17},
+	{-24, 0},
+	{-17, -17}
+};
+
 void TriggerDynamic(long x, long y, long z, long falloff, long r, long g, long b)
 {
 	DYNAMIC* dl;
@@ -2277,6 +2289,135 @@ RIPPLE_STRUCT* SetupRipple(long x, long y, long z, long size, long flags)
 	return ripple;
 }
 
+void SetupSplash(SPLASH_SETUP* setup)
+{
+	SPLASH_STRUCT* splash;
+	SPLASH_VERTS* v;
+	long n;
+
+	splash = splashes;
+	n = 0;
+
+	while (splash->flags & 1)
+	{
+		splash++;
+		n++;
+
+		if (n >= 4)
+		{
+			SoundEffect(SFX_LARA_SPLASH, (PHD_3DPOS*)setup, SFX_DEFAULT);
+			return;
+		}
+	}
+
+	splash->flags = 3;
+
+	if (setup->OuterFriction == -9)
+	{
+		splash->flags = 67;
+		setup->OuterFriction = 9;
+	}
+
+	splash->x = setup->x;
+	splash->y = setup->y;
+	splash->z = setup->z;
+	splash->life = 63;
+
+	v = splash->sv;
+
+	for (int i = 0; i < 8; i++)
+	{
+		v->wx = (setup->InnerXZoff * SplashRings[i][0]) << 1;
+		v->wy = 0;
+		v->wz = (setup->InnerXZoff * SplashRings[i][1]) << 1;
+		v->xv = (setup->InnerXZvel * SplashRings[i][0]) / 12;
+		v->yv = 0;
+		v->zv = (setup->InnerXZvel * SplashRings[i][1]) / 12;
+		v->oxv = v->xv >> 3;
+		v->ozv = v->zv >> 3;
+		v->gravity = 0;
+		v->friction = setup->InnerFriction - 2;
+		v++;
+	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		v->wx = ((setup->InnerXZoff + setup->InnerXZsize) * SplashRings[i][0]) << 1;
+		v->wy = setup->InnerYsize;
+		v->wz = ((setup->InnerXZoff + setup->InnerXZsize) * SplashRings[i][1]) << 1;
+		v->xv = (setup->InnerXZvel * SplashRings[i][0]) >> 3;
+		v->yv = setup->InnerYvel;
+		v->zv = (setup->InnerXZvel * SplashRings[i][1]) >> 3;
+		v->oxv = v->xv >> 3;
+		v->ozv = v->zv >> 3;
+		v->gravity = (uchar)setup->InnerGravity;
+		v->friction = (uchar)setup->InnerFriction;
+		v++;
+	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		v->wx = (setup->MiddleXZoff * SplashRings[i][0]) << 1;
+		v->wy = 0;
+		v->wz = (setup->MiddleXZoff * SplashRings[i][1]) << 1;
+		v->xv = (setup->MiddleXZvel * SplashRings[i][0]) / 12;
+		v->yv = 0;
+		v->zv = (setup->MiddleXZvel * SplashRings[i][1]) / 12;
+		v->oxv = v->xv >> 3;
+		v->ozv = v->zv >> 3;
+		v->gravity = 0;
+		v->friction = setup->MiddleFriction - 2;
+		v++;
+	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		v->wx = ((setup->MiddleXZoff + setup->MiddleXZsize) * SplashRings[i][0]) << 1;
+		v->wy = setup->MiddleYsize;
+		v->wz = ((setup->MiddleXZoff + setup->MiddleXZsize) * SplashRings[i][1]) << 1;
+		v->xv = (setup->MiddleXZvel * SplashRings[i][0]) >> 3;
+		v->yv = setup->MiddleYvel;
+		v->zv = (setup->MiddleXZvel * SplashRings[i][1]) >> 3;
+		v->oxv = v->xv >> 3;
+		v->ozv = v->zv >> 3;
+		v->gravity = (uchar)setup->MiddleGravity;
+		v->friction = (uchar)setup->MiddleFriction;
+		v++;
+	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		v->wx = (setup->OuterXZoff * SplashRings[i][0]) << 1;
+		v->wy = 0;
+		v->wz = (setup->OuterXZoff * SplashRings[i][1]) << 1;
+		v->xv = (setup->OuterXZvel * SplashRings[i][0]) / 12;
+		v->yv = 0;
+		v->zv = (setup->OuterXZvel * SplashRings[i][1]) / 12;
+		v->oxv = v->xv >> 3;
+		v->ozv = v->zv >> 3;
+		v->gravity = 0;
+		v->friction = setup->OuterFriction - 2;
+		v++;
+	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		v->wx = ((setup->OuterXZoff + setup->OuterXZsize) * SplashRings[i][0]) << 1;
+		v->wy = 0;
+		v->wz = ((setup->OuterXZoff + setup->OuterXZsize) * SplashRings[i][1]) << 1;
+		v->xv = (setup->OuterXZvel * SplashRings[i][0]) >> 3;
+		v->yv = 0;
+		v->zv = (setup->OuterXZvel * SplashRings[i][1]) >> 3;
+		v->oxv = v->xv >> 3;
+		v->ozv = v->zv >> 3;
+		v->gravity = 0;
+		v->friction = (uchar)setup->OuterFriction;
+		v++;
+	}
+
+	SoundEffect(SFX_LARA_SPLASH, (PHD_3DPOS*)setup, SFX_DEFAULT);
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -2313,4 +2454,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042BE50, TriggerGunShell, replace);
 	INJECT(0x0042C1A0, ControlGunShell, replace);
 	INJECT(0x0042D080, SetupRipple, replace);
+	INJECT(0x0042CAC0, SetupSplash, replace);
 }
