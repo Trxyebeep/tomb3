@@ -4419,7 +4419,7 @@ void S_DrawSplashes()
 				z4 = p[n + 2];
 
 				if ((x1 < 0 && x2 < 0 && x3 < 0 && x4 < 0) || (x1 >= w && x2 >= w && x3 >= w && x4 >= w) ||
-					(y1 < 0 && y2 < 0 && y3 < 0 && y4 < 0) || (y1 >= h || y2 >= h || y3 >= h || y4 >= h))
+					(y1 < 0 && y2 < 0 && y3 < 0 && y4 < 0) || (y1 >= h && y2 >= h && y3 >= h && y4 >= h))
 					continue;
 
 				z1 <<= W2V_SHIFT;
