@@ -2501,6 +2501,28 @@ void UpdateSplashes()
 	}
 }
 
+void ControlColouredLights(short item_number)
+{
+	ITEM_INFO* item;
+	long objnum;
+	uchar colours[5][3] =
+	{
+		{ 31, 0, 0 },		//RED_LIGHT
+		{ 0, 31, 0 },		//GREEN_LIGHT
+		{ 0, 0, 31 },		//BLUE_LIGHT
+		{ 31, 24, 0 },		//AMBER_LIGHT 
+		{ 28, 28, 31 }		//WHITE_LIGHT
+	};
+
+	item = &items[item_number];
+
+	if (TriggerActive(item))
+	{
+		objnum = item->object_number - RED_LIGHT;
+		TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 24, colours[objnum][0], colours[objnum][1], colours[objnum][2]);
+	}
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -2539,4 +2561,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042D080, SetupRipple, replace);
 	INJECT(0x0042CAC0, SetupSplash, replace);
 	INJECT(0x0042CED0, UpdateSplashes, replace);
+	INJECT(0x0042E0C0, ControlColouredLights, replace);
 }
