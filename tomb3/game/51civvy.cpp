@@ -31,7 +31,7 @@ static void TriggerFenceSparks(long x, long y, long z, long kill)
 	sptr->Yvel = short((GetRandomControl() & 0xF) - (kill << 5) - 8);
 	sptr->Zvel = ((GetRandomControl() & 0xFF) - 128) << 1;
 	sptr->Friction = 4;
-	sptr->Flags = 2;
+	sptr->Flags = SF_SCALE;
 	sptr->Scalar = uchar(kill + 1);
 	sptr->sWidth = 1;
 	sptr->dWidth = 1;

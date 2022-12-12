@@ -126,6 +126,25 @@ do \
 #define WALL_SIZE	(1 << WALL_SHIFT)
 
 /*enums*/
+enum spark_flags
+{
+	SF_NONE =			0x0,
+	SF_UNUSED1 =		0x1,
+	SF_SCALE =			0x2,	//scale using sptr->Scalar
+	SF_BLOOD =			0x4,	//set for blood only, to avoid killing it in GetFreeSpark if no free slots are found.
+	SF_DEF =			0x8,	//use sptr->Def for the drawn sprite (otherwise do flat quad)
+	SF_ROTATE =			0x10,	//rotate the drawn sprite (only supported for sparks with SF_DEF)
+	SF_UNUSED2 =		0x20,
+	SF_FX =				0x40,	//spark is attached to an effect
+	SF_ITEM =			0x80,	//spark is attached to an item
+	SF_OUTSIDE =		0x100,	//spark is affected by wind
+	SF_ALTDEF =			0x200,	//alters sptr->Def based on spark colors (for smoke)
+	SF_ATTACHEDPOS =	0x400,	//spark uses the position of the FX/ITEM it is attached to
+	SF_UNWATER =		0x800,	//for underwater explosions to create bubbles etc.
+	SF_ATTACHEDNODE =	0x1000,	//spark is attached to an item node, uses NodeOffsets
+	SF_GREEN =			0x2000,	//turns the spark into a green-ish blue (for explosions only)
+};
+
 enum status_codes
 {
 	RNG_OPENING,
@@ -663,7 +682,7 @@ struct ITEM_INFO
 	ushort really_active : 1;
 };
 
-struct box_node
+struct BOX_NODE
 {
 	short exit_box;
 	ushort search_number;
@@ -673,7 +692,7 @@ struct box_node
 
 struct LOT_INFO
 {
-	box_node* node;
+	BOX_NODE* node;
 	short head;
 	short tail;
 	ushort search_number;
@@ -1467,6 +1486,17 @@ struct SPARKS
 	uchar pad;
 };
 
+struct SP_DYNAMIC
+{
+	uchar On;
+	uchar Falloff;
+	uchar R;
+	uchar G;
+	uchar B;
+	uchar Flags;
+	uchar Pad[2];
+};
+
 struct TEXTURE
 {
 	LPVOID DXTex;	//DXTEXTURE*
@@ -2026,6 +2056,14 @@ struct DOOR_DATA
 	DOORPOS_DATA d2flip;
 };
 
+struct SVECTOR
+{
+	short x;
+	short y;
+	short z;
+	short pad;
+};
+
 #ifdef TROYESTUFF
 struct FVECTOR
 {
@@ -2096,6 +2134,7 @@ struct TOMB3_OPTIONS
 	bool psx_mono;
 	bool psx_saving;
 	bool blue_crystal_light;
+	bool improved_electricity;
 	bool gold;
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum
@@ -2107,11 +2146,12 @@ struct TOMB3_OPTIONS
 	float unwater_music_mute;
 	float inv_music_mute;
 
-	//windowed stuff, move to WINAPP when possible
+	//windowed + winplay stuff, move to WINAPP when possible
 	RECT rScreen;
 	RECT rViewport;
 	ulong WindowStyle;
 	bool Windowed;
+	bool WinPlayLoaded;
 };
 #endif
 #pragma pack(pop)

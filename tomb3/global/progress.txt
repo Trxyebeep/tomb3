@@ -274,8 +274,8 @@ tomb3 progress.
 
 		game/cobra.cpp
 
-0x0041D210		InitialiseCobra
-0x0041D290		CobraControl
+0x0041D210	+	InitialiseCobra
+0x0041D290	+	CobraControl
 
 
 		game/collide.cpp
@@ -288,13 +288,13 @@ tomb3 progress.
 0x0041E690	+	ShiftItem
 0x0041E6D0	+	UpdateLaraRoom
 0x0041E730	+	GetTiltType
-0x0041E8D0		LaraBaddieCollision
-0x0041EA60		CreatureCollision
+0x0041E8D0	+	LaraBaddieCollision
+0x0041EA60	+	CreatureCollision
 0x0041EBD0	+	ObjectCollision
 0x0041EC30	+	ObjectCollisionSub
 0x0041EC90	+	DoorCollision
 0x0041ED10	+	TrapCollision
-0x0041EDA0		ItemPushLara
+0x0041EDA0	+	ItemPushLara
 0x0041F0E0	+	TestBoundsCollide
 0x0041F1B0	+	TestLaraPosition
 0x0041F2F0	+	AlignLaraPosition
@@ -409,47 +409,47 @@ tomb3 progress.
 
 		game/effect2.cpp
 
-0x00429F00		DetatchSpark
-0x00429FE0		GetFreeSpark
-0x0042A080		InitialiseSparks
-0x0042A0D0		UpdateSparks
+0x00429F00	+	DetatchSpark
+0x00429FE0	+	GetFreeSpark
+0x0042A080	+	InitialiseSparks
+0x0042A0D0	+	UpdateSparks
 0x0042A680	+	TriggerRicochetSpark
-0x0042A8B0		TriggerFlareSparks
-0x0042AB80		TriggerExplosionSparks
-0x0042AF20		TriggerExplosionSmokeEnd
-0x0042B130		TriggerExplosionSmoke
+0x0042A8B0	+	TriggerFlareSparks
+0x0042AB80	+	TriggerExplosionSparks
+0x0042AF20	+	TriggerExplosionSmokeEnd
+0x0042B130	+	TriggerExplosionSmoke
 0x0042B2F0	+	TriggerFireSmoke
-0x0042B4F0		TriggerGunSmoke
+0x0042B4F0	+	TriggerGunSmoke
 0x0042B780	+	TriggerFireFlame
 0x0042BBC0	+	TriggerSideFlame
 0x0042BDA0	+	TriggerAlertLight
-0x0042BE50		TriggerGunShell
-0x0042C1A0		ControlGunShell
-0x0042C400		TriggerShotgunSparks
-0x0042C510		TriggerRocketFlame
+0x0042BE50	+	TriggerGunShell
+0x0042C1A0	+	ControlGunShell
+0x0042C400	+	TriggerShotgunSparks
+0x0042C510	+	TriggerRocketFlame
 0x0042C670	+	TriggerRocketSmoke
-0x0042C7E0		TriggerBlood
-0x0042C950		TriggerBloodD
-0x0042CAC0		SetupSplash
-0x0042CED0		UpdateSplashes
-0x0042D080		SetupRipple
-0x0042D110		TriggerUnderwaterBlood
-0x0042D180		TriggerUnderwaterBloodD
-0x0042D1F0		TriggerWaterfallMist
+0x0042C7E0	+	TriggerBlood
+0x0042C950	+	TriggerBloodD
+0x0042CAC0	+	SetupSplash
+0x0042CED0	+	UpdateSplashes
+0x0042D080	+	SetupRipple
+0x0042D110	+	TriggerUnderwaterBlood
+0x0042D180	+	TriggerUnderwaterBloodD
+0x0042D1F0	+	TriggerWaterfallMist
 0x0042D3D0		UpdateBats
 0x0042D510		BatEmitterControl
 0x0042D570		TriggerBats
 0x0042D640	+	TriggerStaticFlame
-0x0042D750		TriggerDartSmoke
-0x0042D990		KillAllCurrentItems
+0x0042D750	+	TriggerDartSmoke
+0x0042D990	+	KillAllCurrentItems
 0x0042D9A0	+	KillEverything
-0x0042DAB0		TriggerBubble
-0x0042DBA0		TriggerExplosionBubble
+0x0042DAB0	+	TriggerBubble
+0x0042DBA0	+	TriggerExplosionBubble
 0x0042DCF0	+	TriggerBreath
 0x0042DE00	+	TriggerDynamic
 0x0042DE60	+	ClearDynamics
-0x0042DE80		ControlSmokeEmitter
-0x0042E0C0		ControlColouredLights
+0x0042DE80	+	ControlSmokeEmitter
+0x0042E0C0	+	ControlColouredLights
 
 
 		game/effects.cpp
@@ -457,10 +457,10 @@ tomb3 progress.
 0x0042E170	+	ItemNearLara
 0x0042E200	+	SoundEffects
 0x0042E270	+	Richochet
-0x0042E2C0		DoBloodSplat
-0x0042E330		DoBloodSplatD
-0x0042E3B0		DoLotsOfBlood
-0x0042E460		DoLotsOfBloodD
+0x0042E2C0	+	DoBloodSplat
+0x0042E330	+	DoBloodSplatD
+0x0042E3B0	+	DoLotsOfBlood
+0x0042E460	+	DoLotsOfBloodD
 0x0042E4F0	+	CreateBubble
 0x0042E5C0	+	LaraBubbles
 0x0042E630	+	LaraBreath
@@ -1045,14 +1045,14 @@ tomb3 progress.
 
 		game/lot.cpp
 
-0x00452F10		InitialiseLOTarray
-0x00452F90		DisableBaddieAI
-0x00453000		EnableBaddieAI
-0x004531F0		InitialiseSlot
-0x00453460		CreateZone
-0x00453560		ClearLOT
-0x004535B0		EnableNonLotAI
-0x00453740		InitialiseNonLotAI
+0x00452F10	+	InitialiseLOTarray
+0x00452F90	+	DisableBaddieAI
+0x00453000	+	EnableBaddieAI
+0x004531F0	+	InitialiseSlot
+0x00453460	+	CreateZone
+0x00453560	+	ClearLOT
+0x004535B0	+	EnableNonLotAI
+0x00453740	+	InitialiseNonLotAI
 
 
 		game/minecart.cpp
@@ -1106,11 +1106,11 @@ tomb3 progress.
 
 		game/objects.cpp
 
-0x00458660		EarthQuake
-0x004587F0		ControlCutShotgun
-0x00458840		InitialiseFinalLevel
-0x00458880		FinalLevelCounter
-0x00458AB0		MiniCopterControl
+0x00458660	+	EarthQuake
+0x004587F0	+	ControlCutShotgun
+0x00458840	+	InitialiseFinalLevel
+0x00458880	+	FinalLevelCounter
+0x00458AB0	+	MiniCopterControl
 0x00458B90	+	InitialiseWindow
 0x00458C20	+	SmashWindow
 0x00458D20	+	WindowControl
@@ -1134,9 +1134,9 @@ tomb3 progress.
 0x004598E0	+	BridgeTilt1Ceiling
 0x00459920	+	BridgeTilt2Floor
 0x00459980	+	BridgeTilt2Ceiling
-0x004599C0		GeneralControl
-0x00459A50		DetonatorControl
-0x00459AD0		ControlAnimating_1_4
+0x004599C0	+	GeneralControl
+0x00459A50	+	DetonatorControl
+0x00459AD0	+	ControlAnimating_1_4
 
 
 		game/objlight.cpp
@@ -1530,12 +1530,12 @@ tomb3 progress.
 		specific/draweffects.cpp
 
 0x00476420	+	S_DrawBat
-0x00476A30		S_DrawDarts
+0x00476A30	+	S_DrawDarts
 0x00476CA0	+	DrawExplosionRings
-0x004775C0		S_DrawFish
+0x004775C0	+	S_DrawFish
 0x00477C30	+	DrawKnockBackRings
 0x00478600	+	LaraElectricDeath
-0x00478BF0		S_DrawLaserBolts
+0x00478BF0	+	S_DrawLaserBolts
 0x00479510	+	ClipLine
 0x00479810	+	S_DrawLaserBeam
 0x00479C20	+	DrawLondonBossShield
@@ -1660,8 +1660,8 @@ tomb3 progress.
 
 		specific/fmv.cpp
 
-0x00483170		WinPlayFMV
-0x00483470		WinStopFMV
+0x00483170	+	WinPlayFMV
+0x00483470	+	WinStopFMV
 0x004834C0	+	FMV_Play
 0x00483540	+	FMV_PlayIntro
 

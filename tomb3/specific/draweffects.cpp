@@ -57,6 +57,21 @@ static uchar SplashLinks[32]
 	60, 32, 28, 0
 };
 
+static char BoltLinks[20][4] =
+{
+	{0, 0, 1, 2}, {0, 0, 2, 3}, {0, 0, 3, 4}, {0, 0, 4, 1},
+	{1, 2, 5, 6}, {2, 3, 6, 7}, {3, 4, 7, 8}, {4, 1, 8, 5},
+	{5, 6, 9, 10}, {6, 7, 10, 11}, {7, 8, 11, 12}, {8, 5, 12, 9},
+	{9, 10, 13, 14}, {10, 11, 14, 15}, {11, 12, 15, 16}, {12, 9, 16, 13},
+	{13, 14, 17, 17}, {14, 15, 17, 17}, {15, 16, 17, 17}, {16, 13, 17, 17}
+};
+
+static char BoltSummonLinks[8][4] =
+{
+	{0, 0, 1, 2}, {0, 0, 2, 3}, {0, 0, 3, 4}, {0, 0, 4, 1},
+	{1, 2, 5, 5}, {2, 3, 5, 5}, {3, 4, 5, 5}, {4, 1, 5, 5}
+};
+
 static uchar BatLinks[9] = { 0, 2, 4, 6, 0, 4, 2, 8, 4 };
 
 static RAINDROP raindrops[MAX_WEATHER];
@@ -99,10 +114,10 @@ static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, short c, bool cFlag)
 		if (v->z < phd_zfar)
 		{
 			v->zv = zv;
-			zT = ZTable[((v->z >> 14) << 1)];
+			zT = ZTable[((v->z >> W2V_SHIFT) << 1)];
 			v->xs = v->xv * zT + f_centerx;
 			v->ys = v->yv * zT + f_centery;
-			v->ooz = ZTable[((v->z >> 14) << 1) + 1];
+			v->ooz = ZTable[((v->z >> W2V_SHIFT) << 1) + 1];
 		}
 		else
 		{
@@ -325,14 +340,31 @@ void LaraElectricDeath(long lr, ITEM_INFO* item)
 				c1 >>= 1;
 			}
 
-			if (ClipLine(x1, y1, x2, y2, w, h) &&
-				x1 >= 0 && x1 <= w && y1 >= 0 && y1 <= h && x2 >= 0 && x2 <= w && y2 >= 0 && y2 <= h)
+			if (ClipLine(x1, y1, x2, y2, w, h) && x1 >= 0 && x1 <= w && y1 >= 0 && y1 <= h && x2 >= 0 && x2 <= w && y2 >= 0 && y2 <= h)
 			{
-				xStep = GlobalAlpha;
-				GlobalAlpha = 0x70000000;
+				c0 = c0 | (c0 << 8);
+				c1 = c1 | (c1 << 8);
 				z <<= W2V_SHIFT;
-				HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, c0 | (c0 << 8), c1 | (c1 << 8));
-				GlobalAlpha = xStep;
+
+#ifdef TROYESTUFF
+				if (tomb3.improved_electricity)
+				{
+					xStep = GetFixedScale(1);
+
+					for (int k = 0; k < xStep; k++)
+					{
+						GlobalAlpha = 0xDEADBEEF;
+						HWI_InsertLine_Sorted(x1 - phd_winxmin - k, y1 - phd_winymin, x2 - phd_winxmin - k, y2 - phd_winymin, z, c0, c1);
+					}
+				}
+				else
+#endif
+				{
+					xStep = GlobalAlpha;
+					GlobalAlpha = 0x70000000;
+					HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, c0, c1);
+					GlobalAlpha = xStep;
+				}
 			}
 		}
 
@@ -908,15 +940,16 @@ void DoSnow()
 		y = pos.y;
 		z = pos.z;
 
-		if ((z >> 16) < 32 ||
-			x < 0 || x > w ||
-			y < 0 || y > h)
+		if ((z >> W2V_SHIFT) < 128)
 		{
 			if (snow->life > 16)
 				snow->life = 16;
 
 			continue;
 		}
+
+		if (x < 0 || x > w || y < 0 || y > h)
+			continue;
 
 		size = phd_persp * (snow->yv >> 3) / (z >> 16);
 
@@ -2494,17 +2527,27 @@ void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy)
 		c1 = (s * c1) >> 6;
 		c2 = (s * c2) >> 6;
 
-		if (ClipLine(x1, y1, x2, y2, w, h))
+		if (ClipLine(x1, y1, x2, y2, w, h) && x1 >= 0 && x1 <= w && x2 >= 0 && x2 <= w && y1 >= 0 && y1 <= h && y2 >= 0 && y2 <= h)
 		{
-			if (x1 >= 0 && x1 <= w &&
-				y1 >= 0 && y1 <= h &&
-				x2 >= 0 && x2 <= w &&
-				y2 >= 0 && y2 <= h)
+			c1 = c1 | (c1 << 8);
+			c2 = c2 | (c2 << 8);
+
+#ifdef TROYESTUFF
+			if (tomb3.improved_electricity)
+			{
+				alpha = GetFixedScale(2);
+
+				for (int j = 0; j < alpha; j++)
+				{
+					GlobalAlpha = 0xDEADBEEF;
+					HWI_InsertLine_Sorted(x1 - phd_winxmin - j, y1 - phd_winymin, x2 - phd_winxmin - j, y2 - phd_winymin, z, c1, c2);
+				}
+			}
+			else
+#endif
 			{
 				alpha = GlobalAlpha;
 				GlobalAlpha = 0x70000000;
-				c1 = c1 | (c1 << 8);
-				c2 = c2 | (c2 << 8);
 				HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, c1, c2);
 				GlobalAlpha = alpha;
 			}
@@ -2564,17 +2607,26 @@ void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy)
 					c2 = (bossdata.attack_count * c2) >> 6;
 				}
 
-				if (ClipLine(x1, y1, x2, y2, w, h))
+				if (ClipLine(x1, y1, x2, y2, w, h) && x1 >= 0 && x1 <= w && y1 >= 0 && y1 <= h && x2 >= 0 && x2 <= w && y2 >= 0 && y2 <= h)
 				{
-					if (x1 >= 0 && x1 <= w &&
-						y1 >= 0 && y1 <= h &&
-						x2 >= 0 && x2 <= w &&
-						y2 >= 0 && y2 <= h)
+					c1 = c1 | (c1 << 8);
+					c2 = c2 | (c2 << 8);
+#ifdef TROYESTUFF
+					if (tomb3.improved_electricity)
+					{
+						alpha = GetFixedScale(2);
+
+						for (int j = 0; j < alpha; j++)
+						{
+							GlobalAlpha = 0xDEADBEEF;
+							HWI_InsertLine_Sorted(x1 - phd_winxmin - j, y1 - phd_winymin, x2 - phd_winxmin - j, y2 - phd_winymin, z, c1, c2);
+						}
+					}
+					else
+#endif
 					{
 						alpha = GlobalAlpha;
 						GlobalAlpha = 0x70000000;
-						c1 = c1 | (c1 << 8);
-						c2 = c2 | (c2 << 8);
 						HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z, c1, c2);
 						GlobalAlpha = alpha;
 					}
@@ -3620,11 +3672,6 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 	long cols[600];
 	long XYZ[3];
 
-#ifdef TROYESTUFF
-	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-		tomb3.improved_lasers = 0;
-#endif
-
 	UpdateLaserShades();
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w - 1;
@@ -3720,7 +3767,9 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 #ifdef TROYESTUFF
 			if (tomb3.improved_lasers)
 			{
-				for (int j = 0; j < GetRenderScale(2); j++)
+				s = GetFixedScale(2);
+
+				for (int j = 0; j < s; j++)
 				{
 					GlobalAlpha = 0xDEADBEEF;
 					HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin - j, x2 - phd_winxmin, y2 - phd_winymin - j, z1 << W2V_SHIFT, c1, c2);
@@ -3959,11 +4008,11 @@ void S_DrawSparks()
 		if (!sptr->On)
 			continue;
 
-		if (sptr->Flags & 0x40)
+		if (sptr->Flags & SF_FX)
 		{
 			fx = &effects[sptr->FxObj];
 
-			if (sptr->Flags & 0x400)
+			if (sptr->Flags & SF_ATTACHEDPOS)
 			{
 				x = fx->pos.x_pos;
 				y = fx->pos.y_pos;
@@ -3976,17 +4025,17 @@ void S_DrawSparks()
 				z = sptr->z + fx->pos.z_pos;
 			}
 		}
-		else if (sptr->Flags & 0x80)
+		else if (sptr->Flags & SF_ITEM)
 		{
 			item = &items[sptr->FxObj];
 
-			if (sptr->Flags & 0x400)
+			if (sptr->Flags & SF_ATTACHEDPOS)
 			{
 				x = item->pos.x_pos;
 				y = item->pos.y_pos;
 				z = item->pos.z_pos;
 			}
-			else if (sptr->Flags & 0x1000)
+			else if (sptr->Flags & SF_ATTACHEDNODE)
 			{
 				pos.x = NodeOffsets[sptr->NodeNumber].x;
 				pos.y = NodeOffsets[sptr->NodeNumber].y;
@@ -4002,7 +4051,7 @@ void S_DrawSparks()
 
 					if (sptr->sLife - sptr->Life > b)
 					{
-						sptr->Flags &= ~0x1080;
+						sptr->Flags &= ~(SF_ATTACHEDNODE | SF_ITEM);
 						sptr->x = x;
 						sptr->y = y;
 						sptr->z = z;
@@ -4026,14 +4075,14 @@ void S_DrawSparks()
 		mCalcPoint(x, y, z, point);
 		ProjectPCoord(point[0], point[1], point[2], vpos[0], w >> 1, h >> 1, phd_persp);
 
-		if (sptr->Flags & 8)
+		if (sptr->Flags & SF_DEF)
 		{
-			if (sptr->Flags & 2)
+			if (sptr->Flags & SF_SCALE)
 			{
 				if (!vpos[0][2])
 					vpos[0][2] = 1;
 
-				if (sptr->Flags & 0x1000 && !sptr->NodeNumber)
+				if (sptr->Flags & SF_ATTACHEDNODE && !sptr->NodeNumber)
 					x = 2;
 				else
 					x = 4;
@@ -4069,7 +4118,7 @@ void S_DrawSparks()
 				y + (sh >> 1) < 0 || y - (sh >> 1) > h)
 				continue;
 
-			if (sptr->Flags & 0x10)
+			if (sptr->Flags & SF_ROTATE)
 			{
 				sin = rcossin_tbl[sptr->RotAng << 1];
 				cos = rcossin_tbl[(sptr->RotAng << 1) + 1];
@@ -4118,16 +4167,8 @@ void S_DrawSparks()
 #ifdef TROYESTUFF
 				if (sptr->TransType == 3)
 				{
-					if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-					{
-						drawType = DT_POLY_COLSUB;
-						r = 4;
-					}
-					else
-					{
-						drawType = DT_POLY_WGTA;
-						r = 1;
-					}
+					drawType = DT_POLY_COLSUB;
+					r = 4;
 				}
 				else
 				{
@@ -4186,16 +4227,8 @@ void S_DrawSparks()
 #ifdef TROYESTUFF
 				if (sptr->TransType == 3)
 				{
-					if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-					{
-						drawType = DT_POLY_COLSUB;
-						r = 4;
-					}
-					else
-					{
-						drawType = DT_POLY_WGTA;
-						r = 1;
-					}
+					drawType = DT_POLY_COLSUB;
+					r = 4;
 				}
 				else
 				{
@@ -4222,7 +4255,7 @@ void S_DrawSparks()
 		}
 		else
 		{
-			if (sptr->Flags & 2)
+			if (sptr->Flags & SF_SCALE)
 			{
 				if (!vpos[0][2])
 					vpos[0][2] = 1;
@@ -4290,16 +4323,8 @@ void S_DrawSparks()
 #ifdef TROYESTUFF
 			if (sptr->TransType == 3)
 			{
-				if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-				{
-					drawType = DT_POLY_COLSUB;
-					r = 4;
-				}
-				else
-				{
-					drawType = DT_POLY_GA;
-					r = 1;
-				}
+				drawType = DT_POLY_COLSUB;
+				r = 4;
 			}
 			else
 			{
@@ -4394,7 +4419,7 @@ void S_DrawSplashes()
 				z4 = p[n + 2];
 
 				if ((x1 < 0 && x2 < 0 && x3 < 0 && x4 < 0) || (x1 >= w && x2 >= w && x3 >= w && x4 >= w) ||
-					(y1 < 0 && y2 < 0 && y3 < 0 && y4 < 0) || (y1 >= h || y2 >= h || y3 >= h || y4 >= h))
+					(y1 < 0 && y2 < 0 && y3 < 0 && y4 < 0) || (y1 >= h && y2 >= h && y3 >= h && y4 >= h))
 					continue;
 
 				z1 <<= W2V_SHIFT;
@@ -4476,7 +4501,7 @@ void S_DrawSplashes()
 		z4 = *p++;
 
 		if ((x1 < 0 && x2 < 0 && x3 < 0 && x4 < 0) || (x1 >= w && x2 >= w && x3 >= w && x4 >= w) ||
-			(y1 < 0 && y2 < 0 && y3 < 0 && y4 < 0) || (y1 >= h || y2 >= h || y3 >= h || y4 >= h))
+			(y1 < 0 && y2 < 0 && y3 < 0 && y4 < 0) || (y1 >= h && y2 >= h && y3 >= h && y4 >= h))
 			continue;
 
 		z1 <<= W2V_SHIFT;
@@ -4505,10 +4530,14 @@ void S_DrawSplashes()
 			{
 				nSprite = objects[EXPLOSION1].mesh_index;
 
+#ifdef TROYESTUFF
+				c1 = ripple->life >> 3;
+#else
 				if (ripple->init)
 					c1 = ripple->init >> 1;
 				else
 					c1 = ripple->life >> 1;
+#endif
 
 				c = c1 << 10;	//only red
 			}
@@ -4537,6 +4566,486 @@ void S_DrawSplashes()
 		else
 			HWI_InsertAlphaSprite_Sorted(x1, y1, z1, c, x3, y3, z3, c, x4, y4, z4, c, x2, y2, z2, c, nSprite, DT_POLY_WGTA, 1);
 	}
+}
+
+void S_DrawLaserBolts(ITEM_INFO* item)
+{
+	DISPLAYMODE* dm;
+	PHD_VECTOR rad[4];
+	PHD_VECTOR sub[4];
+	PHD_VECTOR pos;
+	long* pZ;
+	short* pXY;
+	uchar* pC;
+	char* links;
+	float zv;
+	long w, h, speed, px, py, pz, d, x, y, z, xStep, yStep, zStep, num, linkNum;
+	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c12, c34, r, g, b, c0, c1;
+	long Z[128];
+	short XY[128];
+	uchar cols[128];
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w - 1;
+	h = dm->h - 1;
+	speed = (item->speed * phd_cos(item->pos.x_rot)) >> W2V_SHIFT;
+	px = (speed * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+	py = -((item->speed * phd_sin(item->pos.x_rot)) >> W2V_SHIFT);
+	pz = (speed * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+
+	phd_PushUnitMatrix();
+	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+
+	d = item->item_flags[1];
+
+	if (item->item_flags[2])
+		d >>= 1;
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (!i)
+		{
+			x = -d;
+			y = -d;
+		}
+		else if (i == 1)
+		{
+			x = d;
+			y = -d;
+		}
+		else if (i == 2)
+		{
+			x = d;
+			y = d;
+		}
+		else
+		{
+			x = -d;
+			y = d;
+		}
+
+		rad[i].x = (x * phd_mxptr[M00] + y * phd_mxptr[M01]) >> W2V_SHIFT;	//z = 0
+		rad[i].y = (x * phd_mxptr[M10] + y * phd_mxptr[M11]) >> W2V_SHIFT;
+		rad[i].z = (x * phd_mxptr[M20] + y * phd_mxptr[M21]) >> W2V_SHIFT;
+		sub[i].x = rad[i].x >> 2;
+		sub[i].y = rad[i].y >> 2;
+		sub[i].z = rad[i].z >> 2;
+	}
+
+	phd_PopMatrix();
+
+	pXY = XY;
+	pZ = Z;
+	pC = cols;
+
+	phd_PushMatrix();
+	phd_TranslateAbs(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos);
+
+	x = item->pos.x_pos - lara_item->pos.x_pos;
+	y = item->pos.y_pos - lara_item->pos.y_pos;
+	z = item->pos.z_pos - lara_item->pos.z_pos;
+	pos.x = x * phd_mxptr[M00] + y * phd_mxptr[M01] + z * phd_mxptr[M02] + phd_mxptr[M03];
+	pos.y = x * phd_mxptr[M10] + y * phd_mxptr[M11] + z * phd_mxptr[M12] + phd_mxptr[M13];
+	pos.z = x * phd_mxptr[M20] + y * phd_mxptr[M21] + z * phd_mxptr[M22] + phd_mxptr[M23];
+	zv = f_persp / pos.z;
+	pos.x = short(float(pos.x * zv + f_centerx));
+	pos.y = short(float(pos.y * zv + f_centery));
+	pXY[0] = (short)pos.x;
+	pXY[1] = (short)pos.y;
+	pZ[0] = pos.z;
+	pXY += 2;
+	pZ++;
+	*pC++ = 128;
+
+	xStep = px << 1;
+	yStep = py << 1;
+	zStep = pz << 1;
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			x = item->pos.x_pos + rad[j].x - xStep - lara_item->pos.x_pos;
+			y = item->pos.y_pos + rad[j].y - yStep - lara_item->pos.y_pos;
+			z = item->pos.z_pos + rad[j].z - zStep - lara_item->pos.z_pos;
+			pos.x = x * phd_mxptr[M00] + y * phd_mxptr[M01] + z * phd_mxptr[M02] + phd_mxptr[M03];
+			pos.y = x * phd_mxptr[M10] + y * phd_mxptr[M11] + z * phd_mxptr[M12] + phd_mxptr[M13];
+			pos.z = x * phd_mxptr[M20] + y * phd_mxptr[M21] + z * phd_mxptr[M22] + phd_mxptr[M23];
+			zv = f_persp / pos.z;
+			pos.x = short(float(pos.x * zv + f_centerx));
+			pos.y = short(float(pos.y * zv + f_centery));
+			pXY[0] = (short)pos.x;
+			pXY[1] = (short)pos.y;
+			pZ[0] = pos.z;
+			pXY += 2;
+			pZ++;
+
+			rad[j].x -= sub[j].x;
+			rad[j].y -= sub[j].y;
+			rad[j].z -= sub[j].z;
+		}
+
+		*pC++ = 64 - (i << 4);
+		xStep += px;
+		yStep += py;
+		zStep += pz;
+
+		if (!i && item->item_flags[2])
+		{
+			xStep += px << 1;
+			yStep += py << 1;
+			zStep += pz << 1;
+			break;
+		}
+	}
+
+	x = item->pos.x_pos - xStep - lara_item->pos.x_pos;
+	y = item->pos.y_pos - yStep - lara_item->pos.y_pos;
+	z = item->pos.z_pos - zStep - lara_item->pos.z_pos;
+	pos.x = x * phd_mxptr[M00] + y * phd_mxptr[M01] + z * phd_mxptr[M02] + phd_mxptr[M03];
+	pos.y = x * phd_mxptr[M10] + y * phd_mxptr[M11] + z * phd_mxptr[M12] + phd_mxptr[M13];
+	pos.z = x * phd_mxptr[M20] + y * phd_mxptr[M21] + z * phd_mxptr[M22] + phd_mxptr[M23];
+	zv = f_persp / pos.z;
+	pos.x = short(float(pos.x * zv + f_centerx));
+	pos.y = short(float(pos.y * zv + f_centery));
+	pXY[0] = (short)pos.x;
+	pXY[1] = (short)pos.y;
+	pZ[0] = pos.z;
+	*pC = 0;
+	pC = cols;
+
+	if (item->item_flags[2])
+		links = &BoltSummonLinks[0][0];
+	else
+		links = &BoltLinks[0][0];
+
+	num = 0;
+
+	if (item->item_flags[2])
+		c12 = (pC[0] * (16 - item->item_flags[3])) >> 4;
+	else
+		c12 = pC[0];
+
+	pC++;
+
+	for (int i = 0; i < 5; i++)
+	{
+		if (item->item_flags[2])
+			c34 = (pC[0] * (16 - item->item_flags[3])) >> 4;
+		else
+			c34 = pC[0];
+
+		pC++;
+
+		for (int j = 0; j < 4; j++)
+		{
+			linkNum = num << 2;
+
+			x1 = XY[links[linkNum + 1] << 1];
+			y1 = XY[(links[linkNum + 1] << 1) + 1];
+			z1 = Z[links[linkNum + 1]];
+
+			x2 = XY[links[linkNum] << 1];
+			y2 = XY[(links[linkNum] << 1) + 1];
+			z2 = Z[links[linkNum]];
+
+			x3 = XY[links[linkNum + 2] << 1];
+			y3 = XY[(links[linkNum + 2] << 1) + 1];
+			z3 = Z[links[linkNum + 2]];
+
+			x4 = XY[links[linkNum + 3] << 1];
+			y4 = XY[(links[linkNum + 3] << 1) + 1];
+			z4 = Z[links[linkNum + 3]];
+
+			z1 = (z1 + z2 + z3 + z4) >> 2;
+
+			if (z1 <= phd_znear + 0x3E8000)
+				continue;
+
+			if (x1 <= -128 || x2 <= -128 || x3 <= -128 || x4 <= -128 ||
+				x1 >= w + 128 || x2 >= w + 128 || x3 >= w + 128 || x4 >= w + 128)
+				continue;
+
+			if (y1 <= -128 || y2 <= -128 || y3 <= -128 || y4 <= -128 ||
+				y1 >= h + 128 || y2 >= h + 128 || y3 >= h + 128 || y4 >= h + 128)
+				continue;
+
+			if (z1 < phd_znear)
+				z1 = phd_znear;
+
+			if (z2 < phd_znear)
+				z2 = phd_znear;
+
+			if (z3 < phd_znear)
+				z3 = phd_znear;
+
+			if (z4 < phd_znear)
+				z4 = phd_znear;
+
+			r = c12 >> 5;
+			g = c12 >> 3;
+			b = c12 >> 4;
+			c0 = r << 10 | g << 5 | b;
+
+			r = c34 >> 5;
+			g = c34 >> 3;
+			b = c34 >> 4;
+			c1 = r << 10 | g << 5 | b;
+
+			HWI_InsertAlphaSprite_Sorted(x1, y1, z1, c0, x2, y2, z2, c0, x3, y3, z3, c1, x4, y4, z4, c1, -1, DT_POLY_GTA, 1);
+			num++;
+		}
+
+		if (i == 1 && item->item_flags[2])
+			break;
+
+		c12 = c34;
+	}
+
+	phd_PopMatrix();
+}
+
+void S_DrawFish(ITEM_INFO* item)
+{
+	DISPLAYMODE* dm;
+	PHDSPRITESTRUCT* sprite;
+	FISH_INFO* pFish;
+	PHD_VBUF v[3];
+	PHDTEXTURESTRUCT tex;
+	long w, h, sx, sy, x, y, z, ang, size;
+	long x1, y1, z1, x2, y2, z2, x3, y3, z3;
+	long XYZ[3][3];	//3 fishies x 3 vertices
+	long point[3];
+	ushort u1, v1, u2, v2;
+	short g;
+	char clipFlag;
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w;
+	h = dm->h;
+	sx = phd_winxmin + phd_winxmax;
+	sy = phd_winymax + phd_winymin;
+
+	if (!item->active || item->hit_points == NO_ITEM || !lead_info[item->hit_points].on)
+		return;
+
+	if (item->object_number == PIRAHNAS)
+		sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 10];
+	else
+		sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 11];
+
+	pFish = &fish[24 * item->hit_points + 8];
+
+	for (int i = 0; i < 24; i++, pFish++)
+	{
+		x = item->pos.x_pos + pFish->x;
+		y = item->pos.y_pos + pFish->y;
+		z = item->pos.z_pos + pFish->z;
+		ang = ((rcossin_tbl[pFish->swim << 7] >> 5) + pFish->angle - 2048) & 0xFFF;
+
+		mCalcPoint(x, y, z, point);
+		ProjectPCoord(point[0], point[1], point[2], XYZ[0], w >> 1, h >> 1, phd_persp);
+
+		size = (128 * rcossin_tbl[i << 7] >> 12) + 192;
+		x -= (size * rcossin_tbl[ang << 1]) >> 12;
+		y -= size;
+		z += (size * rcossin_tbl[(ang << 1) + 1]) >> 12;
+
+		mCalcPoint(x, y, z, point);
+		ProjectPCoord(point[0], point[1], point[2], XYZ[1], w >> 1, h >> 1, phd_persp);
+
+		y += size << 1;
+
+		mCalcPoint(x, y, z, point);
+		ProjectPCoord(point[0], point[1], point[2], XYZ[2], w >> 1, h >> 1, phd_persp);
+
+		x1 = XYZ[0][0];
+		y1 = XYZ[0][1];
+		z1 = XYZ[0][2];
+		x2 = XYZ[1][0];
+		y2 = XYZ[1][1];
+		z2 = XYZ[1][2];
+		x3 = XYZ[2][0];
+		y3 = XYZ[2][1];
+		z3 = XYZ[2][2];
+
+		if (z1 > 0x5000 || z1 < 32 || z2 < 32 || z3 < 32)
+			continue;
+
+		if ((x1 < phd_winxmin && x2 < phd_winxmin && x3 < phd_winxmin) || (x1 >= sx && x2 >= sx && x3 >= sx))
+			continue;
+
+		if ((y1 < phd_winymin && y2 < phd_winymin && y3 < phd_winymin) || (y1 >= sy && y2 >= sy && y3 >= sy))
+			continue;
+
+		if (ang < 1024)
+			ang -= 512;
+		else if (ang < 2048)
+			ang -= 1536;
+		else if (ang < 3072)
+			ang -= 2560;
+		else
+			ang -= 3584;
+
+		if (ang > 512 || ang < 0)
+			ang = 0;
+		else if (ang < 256)
+			ang >>= 2;
+		else
+			ang = (512 - ang) >> 2;
+
+		ang += i;
+
+		if (ang > 128)
+			ang = 128;
+
+		ang += 80;
+		ang >>= 3;
+		g = short(ang << 10 | ang << 5 | ang);
+
+		z1 <<= W2V_SHIFT;
+		z2 <<= W2V_SHIFT;
+		z3 <<= W2V_SHIFT;
+
+		clipFlag = 0;
+
+		if (x1 < phd_winxmin)
+			clipFlag++;
+		else if (x1 > sx)
+			clipFlag += 2;
+
+		if (y1 < phd_winymin)
+			clipFlag += 4;
+		else if (y1 > sy)
+			clipFlag += 8;
+
+		v[0].clip = clipFlag;
+		v[0].xs = (float)x1;
+		v[0].ys = (float)y1;
+		v[0].zv = (float)z1;
+		v[0].ooz = f_persp / v[0].zv * f_oneopersp;
+		v[0].g = g;
+
+		clipFlag = 0;
+
+		if (x2 < phd_winxmin)
+			clipFlag++;
+		else if (x2 > sx)
+			clipFlag += 2;
+
+		if (y2 < phd_winymin)
+			clipFlag += 4;
+		else if (y2 > sy)
+			clipFlag += 8;
+
+		v[1].clip = clipFlag;
+		v[1].xs = (float)x2;
+		v[1].ys = (float)y2;
+		v[1].zv = (float)z2;
+		v[1].ooz = f_persp / v[1].zv * f_oneopersp;
+		v[1].g = g;
+
+		clipFlag = 0;
+
+		if (x3 < phd_winxmin)
+			clipFlag++;
+		else if (x3 > sx)
+			clipFlag += 2;
+
+		if (y3 < phd_winymin)
+			clipFlag += 4;
+		else if (y3 > sy)
+			clipFlag += 8;
+
+		v[2].clip = clipFlag;
+		v[2].xs = (float)x3;
+		v[2].ys = (float)y3;
+		v[2].zv = (float)z3;
+		v[2].ooz = f_persp / v[2].zv * f_oneopersp;
+		v[2].g = g;
+
+		u1 = (sprite->offset << 8) & 0xFF00;
+		v1 = sprite->offset & 0xFF00;
+		u2 = ushort(u1 + sprite->width - App.nUVAdd);
+		v2 = ushort(v1 + sprite->height - App.nUVAdd);
+		u1 += (ushort)App.nUVAdd;
+		v1 += (ushort)App.nUVAdd;
+		tex.drawtype = 1;
+		tex.tpage = sprite->tpage;
+
+		if (item->object_number == PIRAHNAS)
+			g = (i & 1) != 0;
+		else
+			g = (item->hit_points & 1) != 0;
+
+		if (g)
+		{
+			v[0].u = u1;
+			v[0].v = v1;
+			v[1].u = u2;
+			v[1].v = v1;
+			v[2].u = u1;
+			v[2].v = v2;
+		}
+		else
+		{
+			v[0].u = u2;
+			v[0].v = v2;
+			v[1].u = u1;
+			v[1].v = v2;
+			v[2].u = u2;
+			v[2].v = v1;
+		}
+
+		HWI_InsertGT3_Poly(v, &v[1], &v[2], &tex, &v[0].u, &v[1].u, &v[2].u, MID_SORT, 1);
+	}
+}
+
+void S_DrawDarts(ITEM_INFO* item)
+{
+	DISPLAYMODE* dm;
+	PHD_VECTOR pos;
+	float zv;
+	long w, h, size, x, y, z;
+	long x1, y1, z1, x2, y2, z2;
+
+	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	w = dm->w - 1;
+	h = dm->h - 1;
+
+	phd_PushMatrix();
+	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	zv = f_persp / (float)phd_mxptr[M23];
+	x1 = short(float(phd_mxptr[M03] * zv + f_centerx));
+	y1 = short(float(phd_mxptr[M13] * zv + f_centery));
+	z1 = phd_mxptr[M23];
+
+	size = (-96 * phd_cos(item->pos.x_rot)) >> W2V_SHIFT;
+	x = (size * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+	y = (96 * phd_sin(item->pos.x_rot)) >> W2V_SHIFT;
+	z = (size * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+	pos.x = x * phd_mxptr[M00] + y * phd_mxptr[M01] + z * phd_mxptr[M02] + phd_mxptr[M03];
+	pos.y = x * phd_mxptr[M10] + y * phd_mxptr[M11] + z * phd_mxptr[M12] + phd_mxptr[M13];
+	pos.z = x * phd_mxptr[M20] + y * phd_mxptr[M21] + z * phd_mxptr[M22] + phd_mxptr[M23];
+	zv = f_persp / (float)pos.z;
+	x2 = short(float(pos.x * zv + f_centerx));
+	y2 = short(float(pos.y * zv + f_centery));
+	z2 = pos.z;
+
+	if (z1 > 32 && z2 > 32 && ClipLine(x1, y1, x2, y2, w, h))
+	{
+#ifdef TROYESTUFF
+		size = 5 * GetFixedScale(1) / 3;
+
+		for (int i = 0; i < size; i++)
+			HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin - i, x2 - phd_winxmin, y2 - phd_winymin - i, z1, 0, 0x783C14);
+#else
+		HWI_InsertLine_Sorted(x1 - phd_winxmin, y1 - phd_winymin, x2 - phd_winxmin, y2 - phd_winymin, z1, 0, 0x783C14);
+#endif
+	}
+
+	phd_PopMatrix();
 }
 
 #ifdef TROYESTUFF
@@ -4624,9 +5133,6 @@ void S_DrawFootPrints()
 	FVECTOR pos;
 	ushort u1, v1, u2, v2;
 	short c;
-
-	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-		tomb3.footprints = 0;
 
 	bBlueEffect = 0;
 	sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 17];
@@ -5098,4 +5604,7 @@ void inject_draweffects(bool replace)
 	INJECT(0x00476420, S_DrawBat, replace);
 	INJECT(0x0047B2C0, S_DrawSparks, replace);
 	INJECT(0x0047BAA0, S_DrawSplashes, replace);
+	INJECT(0x00478BF0, S_DrawLaserBolts, replace);
+	INJECT(0x004775C0, S_DrawFish, replace);
+	INJECT(0x00476A30, S_DrawDarts, replace);
 }

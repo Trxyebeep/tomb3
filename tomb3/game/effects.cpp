@@ -1006,6 +1006,39 @@ void BaddieBiteEffect(ITEM_INFO* item, BITE_INFO* bite)
 	DoBloodSplat(pos.x, pos.y, pos.z, item->speed, item->pos.y_rot, item->room_number);
 }
 
+short DoBloodSplat(long x, long y, long z, short speed, short ang, short room_number)
+{
+	if (room[room_number].flags & ROOM_UNDERWATER)
+		TriggerUnderwaterBlood(x, y, z, GetRandomControl() & 7);
+	else
+		TriggerBlood(x, y, z, ang >> 4, (GetRandomControl() & 7) + 6);
+
+	return -1;
+}
+
+short DoBloodSplatD(long x, long y, long z, short speed, short ang, short room_number)
+{
+	if (room[room_number].flags & ROOM_UNDERWATER)
+		TriggerUnderwaterBloodD(x, y + 64, z, GetRandomDraw() & 7);
+	else
+		TriggerBloodD(x, y, z, ang >> 4, (GetRandomDraw() & 7) + 6);
+
+	return -1;
+}
+
+void DoLotsOfBlood(long x, long y, long z, short speed, short direction, short room_num, long num)
+{
+	for (; num > 0; num--)
+		DoBloodSplat(x - (GetRandomControl() << 9) / 0x8000 + 256, y - (GetRandomControl() << 9) / 0x8000 + 256,
+			z - (GetRandomControl() << 9) / 0x8000 + 256, speed, direction, room_num);
+}
+
+void DoLotsOfBloodD(long x, long y, long z, short speed, short direction, short room_num, long num)
+{
+	for (; num > 0; num--)
+		DoBloodSplatD(x - (GetRandomDraw() << 9) / 0x8000 + 256, y, z - (GetRandomDraw() << 9) / 0x8000 + 256, speed, direction, room_num);
+}
+
 void inject_effects(bool replace)
 {
 	INJECT(0x0042E630, LaraBreath, replace);
@@ -1082,4 +1115,8 @@ void inject_effects(bool replace)
 	INJECT(0x0042FA50, TubeTrain, replace);
 	INJECT(0x0042FA70, RumbleNoShake, replace);
 	INJECT(0x0042FA90, BaddieBiteEffect, replace);
+	INJECT(0x0042E2C0, DoBloodSplat, replace);
+	INJECT(0x0042E330, DoBloodSplatD, replace);
+	INJECT(0x0042E3B0, DoLotsOfBlood, replace);
+	INJECT(0x0042E460, DoLotsOfBloodD, replace);
 }

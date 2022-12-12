@@ -26,8 +26,14 @@ void DoorControl(short item_number);
 void SmashWindow(short item_number);
 void InitialiseWindow(short item_number);
 void WindowControl(short item_number);
-
-#define InitialiseFinalLevel	( (void(__cdecl*)()) 0x00458840 )
+void GeneralControl(short item_number);
+void DetonatorControl(short item_number);
+void ControlAnimating_1_4(short item_number);
+void MiniCopterControl(short item_number);
+void EarthQuake(short item_number);
+void ControlCutShotgun(short item_number);
+void InitialiseFinalLevel();
+void FinalLevelCounter(short item_number);
 
 enum object_types
 {

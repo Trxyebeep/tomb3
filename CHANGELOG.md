@@ -9,6 +9,9 @@
 - Fix hypothetical crash when loading a demo.
 - Fix bridge bug.
 - Fix weather spawning at Lara position instead of camera position.
+- Fix lara collision with objects on water surface.
+- Fix darts scale.
+- Fix underwater blood color flashing.
 
 ### tomb3 additions
 
@@ -16,11 +19,18 @@
 - Add option for blue crystal light.
 - Raise TPage/TInfos limits.
 - double the amount of spawned weather particles.
+- Add option for improved (PSX style) electricity effects.
 
 ### tomb3 bug fixes
 
 - Fix music stutter after continuous pausing.
 - Fix music muting.
+- Fix fish movement.
+- Fix snow spawning far from Lara.
+- Fix lasers getting affected by selected scale.
+- Fix Lara refusing to pull up from certain hang animations.
+- Fix Puna's shield wrongfully lighting up when he shoots.
+- Fix flare pickups.
 
 
 ## [1.3.0](https://github.com/Trxyebeep/tomb3/tree/V1.3.0) (Nov. 20 2022)

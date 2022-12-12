@@ -7,6 +7,7 @@
 #include "objects.h"
 #include "draw.h"
 #include "../3dsystem/3d_gen.h"
+#include "sound.h"
 
 void ShiftItem(ITEM_INFO* item, COLL_INFO* coll)
 {
@@ -952,6 +953,195 @@ long MoveLaraPosition(PHD_VECTOR* v, ITEM_INFO* item, ITEM_INFO* l)
 	return Move3DPosTo3DPos(&l->pos, &pos, 16, 364);
 }
 
+void CreatureCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+	short* bounds;
+	long x, z, rx, rz, c, s;
+
+	item = &items[item_number];
+
+	if (!TestBoundsCollide(item, l, coll->radius) || !TestCollision(item, l))
+		return;
+
+#ifdef TROYESTUFF
+	if (lara.water_status != LARA_UNDERWATER && lara.water_status != LARA_SURFACE)
+#else
+	if (lara.water_status != LARA_UNDERWATER && !lara.water_status != LARA_SURFACE)
+#endif
+	{
+		if (coll->enable_baddie_push)
+			ItemPushLara(item, l, coll, coll->enable_spaz, 0);
+		else if (coll->enable_spaz)
+		{
+			bounds = GetBestFrame(item);
+			s = phd_sin(l->pos.y_rot);
+			c = phd_cos(l->pos.y_rot);
+			x = (bounds[0] + bounds[1]) >> 1;
+			z = (bounds[3] - bounds[2]) >> 1;
+			rx = (l->pos.x_pos - item->pos.x_pos) - ((c * x + s * z) >> W2V_SHIFT);
+			rz = (l->pos.z_pos - item->pos.z_pos) - ((c * z - s * x) >> W2V_SHIFT);
+
+			if (bounds[3] - bounds[2] > 256)
+			{
+				lara.hit_direction = ushort((l->pos.y_rot + 0x8000 - phd_atan(rz, rx) + 0x2000)) >> W2V_SHIFT;
+				lara.hit_frame++;
+
+				if (lara.hit_frame > 30)
+					lara.hit_frame = 30;
+			}
+		}
+	}
+}
+
+void LaraBaddieCollision(ITEM_INFO* l, COLL_INFO* coll)
+{
+	ROOM_INFO* r;
+	ITEM_INFO* item;
+	short* door;
+	long i, dx, dy, dz;
+	short num_nearby_rooms, item_number, nex;
+	short nearby_rooms[20];
+
+	l->hit_status = 0;
+	lara.hit_direction = -1;
+
+	if (l->hit_points <= 0)
+		return;
+
+	num_nearby_rooms = 1;
+	nearby_rooms[0] = l->room_number;
+	door = room[nearby_rooms[0]].door;
+
+	if (door)
+	{
+		for (i = *door++; i > 0; i--)
+		{
+			nearby_rooms[num_nearby_rooms] = *door;
+			num_nearby_rooms++;
+			door += 16;
+		}
+	}
+
+	for (i = 0; i < num_nearby_rooms; i++)
+	{
+		r = &room[nearby_rooms[i]];
+		item_number = r->item_number;
+
+		while (item_number != NO_ITEM)
+		{
+			item = &items[item_number];
+			nex = item->next_item;
+
+			if (item->collidable && item->status != ITEM_INVISIBLE)
+			{
+				if (objects[item->object_number].collision)
+				{
+					dx = l->pos.x_pos - item->pos.x_pos;
+					dy = l->pos.y_pos - item->pos.y_pos;
+					dz = l->pos.z_pos - item->pos.z_pos;
+
+					if (dx > -4096 && dx < 4096 && dy > -4096 && dy < 4096 && dz > -4096 && dz < 4096)
+						objects[item->object_number].collision(item_number, l, coll);
+				}
+			}
+
+			item_number = nex;
+		}
+	}
+
+	if (lara.hit_direction == -1)
+		lara.hit_frame = 0;
+
+	Inventory_Chosen = NO_ITEM;
+}
+
+void ItemPushLara(ITEM_INFO* item, ITEM_INFO* l, COLL_INFO* coll, long spaz, long BigPush)
+{
+	short* bounds;
+	long dx, dz, s, c, x, z;
+	long xmin, xmax, zmin, zmax, left, top, right, bottom;
+	short facing;
+
+	dx = l->pos.x_pos - item->pos.x_pos;
+	dz = l->pos.z_pos - item->pos.z_pos;
+	s = phd_sin(item->pos.y_rot);
+	c = phd_cos(item->pos.y_rot);
+	x = (dx * c - dz * s) >> W2V_SHIFT;
+	z = (dx * s + dz * c) >> W2V_SHIFT;
+	bounds = GetBestFrame(item);
+	xmin = bounds[0];
+	xmax = bounds[1];
+	zmin = bounds[4];
+	zmax = bounds[5];
+
+	if (BigPush)
+	{
+		xmin -= coll->radius;
+		xmax += coll->radius;
+		zmin -= coll->radius;
+		zmax += coll->radius;
+	}
+
+	if (abs(dx) > 4608 || abs(dz) > 4608 || x <= xmin || x >= xmax || z <= zmin || z >= zmax)
+		return;
+
+	left = x - xmin;
+	top = zmax - z;
+	right = xmax - x;
+	bottom = z - zmin;
+
+	if (left <= right && left <= top && left <= bottom)
+		x -= left;
+	else if (right <= left && right <= top && right <= bottom)
+		x += right;
+	else if (top <= left && top <= right && top <= bottom)
+		z += top;
+	else
+		z -= bottom;
+
+	l->pos.x_pos = item->pos.x_pos + ((c * x + s * z) >> W2V_SHIFT);
+	l->pos.z_pos = item->pos.z_pos + ((c * z - s * x) >> W2V_SHIFT);
+
+	if (spaz && bounds[3] - bounds[2] > 256)
+	{
+		x = (bounds[0] + bounds[1]) / 2;
+		z = (bounds[4] + bounds[5]) / 2;
+		dx -= (c * x + s * z) >> W2V_SHIFT;
+		dz -= (c * z - s * x) >> W2V_SHIFT;
+		lara.hit_direction = ushort(l->pos.y_rot + 0x8000 - phd_atan(dz, dx) + 0x2000) >> W2V_SHIFT;
+
+		if (!lara.hit_frame)
+			SoundEffect(SFX_LARA_INJURY, &l->pos, SFX_DEFAULT);
+
+		lara.hit_frame++;
+
+		if (lara.hit_frame > 34)
+			lara.hit_frame = 34;
+	}
+
+	coll->bad_pos = -NO_HEIGHT;
+	coll->bad_neg = -384;
+	coll->bad_ceiling = 0;
+	facing = coll->facing;
+	coll->facing = (short)phd_atan(l->pos.z_pos - coll->old.z, l->pos.x_pos - coll->old.x);
+	GetCollisionInfo(coll, l->pos.x_pos, l->pos.y_pos, l->pos.z_pos, l->room_number, 762);
+	coll->facing = facing;
+
+	if (coll->coll_type == CT_NONE)
+	{
+		coll->old.x = l->pos.x_pos;
+		coll->old.y = l->pos.y_pos;
+		coll->old.z = l->pos.z_pos;
+		UpdateLaraRoom(l, -10);
+	}
+	else
+	{
+		l->pos.x_pos = coll->old.x;
+		l->pos.z_pos = coll->old.z;
+	}
+}
+
 void inject_collide(bool replace)
 {
 	INJECT(0x0041E690, ShiftItem, replace);
@@ -971,4 +1161,7 @@ void inject_collide(bool replace)
 	INJECT(0x0041F2F0, AlignLaraPosition, replace);
 	INJECT(0x0041F5C0, Move3DPosTo3DPos, replace);
 	INJECT(0x0041F430, MoveLaraPosition, replace);
+	INJECT(0x0041EA60, CreatureCollision, replace);
+	INJECT(0x0041E8D0, LaraBaddieCollision, replace);
+	INJECT(0x0041EDA0, ItemPushLara, replace);
 }

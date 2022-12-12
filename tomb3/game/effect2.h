@@ -14,19 +14,32 @@ void TriggerStaticFlame(long x, long y, long z, long size);
 void TriggerSideFlame(long x, long y, long z, long angle, long speed, long pilot);
 void TriggerRocketSmoke(long x, long y, long z, long c);
 void TriggerRicochetSpark(GAME_VECTOR* pos, long angle, long size);
+void TriggerBlood(long x, long y, long z, long angle, long num);
+void TriggerBloodD(long x, long y, long z, long angle, long num);
+void TriggerUnderwaterBlood(long x, long y, long z, long size);
+void TriggerUnderwaterBloodD(long x, long y, long z, long size);
+void TriggerFlareSparks(long x, long y, long z, long xv, long yv, long zv, long smoke, long unused);
+void TriggerGunSmoke(long x, long y, long z, long xv, long yv, long zv, long initial, long weapon, long shade);
+void TriggerExplosionSparks(long x, long y, long z, long extras, long dynamic, long uw, short room_number);
+void TriggerExplosionSmoke(long x, long y, long z, long uw);
+void TriggerExplosionSmokeEnd(long x, long y, long z, long uw);
+void TriggerShotgunSparks(long x, long y, long z, long xv, long yv, long zv);
+void TriggerRocketFlame(long x, long y, long z, long xv, long yv, long zv, long itemNum);
+void TriggerWaterfallMist(long x, long y, long z, long ang);
+void TriggerDartSmoke(long x, long y, long z, long xv, long zv, long hit);
+void TriggerExplosionBubble(long x, long y, long z, short room_number);
+void TriggerBubble(long x, long y, long z, long size, long sizerange, short fxNum);
+void ControlSmokeEmitter(short item_number);
+void DetatchSpark(long num, long type);
+long GetFreeSpark();
+void InitialiseSparks();
+void UpdateSparks();
+void TriggerGunShell(short lr, long objNum, long weapon);
+void ControlGunShell(short fx_number);
+RIPPLE_STRUCT* SetupRipple(long x, long y, long z, long size, long flags);
+void SetupSplash(SPLASH_SETUP* setup);
+void UpdateSplashes();
+void ControlColouredLights(short item_number);
+void KillAllCurrentItems(short item_number);
 
-#define TriggerWaterfallMist	( (void(__cdecl*)(long, long, long, long)) 0x0042D1F0 )
-#define TriggerGunSmoke	( (void(__cdecl*)(long, long, long, long, long, long, long, long, long)) 0x0042B4F0 )
-#define TriggerGunShell	( (void(__cdecl*)(short, long, long)) 0x0042BE50 )
-#define TriggerExplosionSparks	( (void(__cdecl*)(long, long, long, long, long, long, short)) 0x0042AB80 )
-#define TriggerExplosionSmoke	( (void(__cdecl*)(long, long, long, long)) 0x0042B130 )
-#define GetFreeSpark	( (long(__cdecl*)()) 0x00429FE0 )
-#define TriggerFlareSparks	( (void(__cdecl*)(long, long, long, long, long, long, long, long)) 0x0042A8B0 )
-#define TriggerRocketFlame	( (void(__cdecl*)(long, long, long, long, long, long, long)) 0x0042C510 )
-#define UpdateSparks	( (void(__cdecl*)()) 0x0042A0D0 )
-#define UpdateSplashes	( (void(__cdecl*)()) 0x0042CED0 )
 #define UpdateBats	( (void(__cdecl*)()) 0x0042D3D0 )
-#define SetupRipple	( (RIPPLE_STRUCT*(__cdecl*)(long, long, long, long, long)) 0x0042D080 )
-#define SetupSplash	( (void(__cdecl*)(SPLASH_SETUP*)) 0x0042CAC0 )
-#define TriggerBubble	( (void(__cdecl*)(long, long, long, long, long, short)) 0x0042DAB0 )
-#define DetatchSpark	( (void(__cdecl*)(long, long)) 0x00429F00 )

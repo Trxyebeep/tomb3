@@ -8,6 +8,15 @@
 #include "missile.h"
 #include "effects.h"
 #include "../3dsystem/phd_math.h"
+#include "../specific/game.h"
+#include "lara.h"
+#include "lot.h"
+#include "box.h"
+
+static short final_boss_active;	//TR2 remnants
+static short final_boss_count;
+static short final_level_count;
+static short final_boss[5];
 
 long OnDrawBridge(ITEM_INFO* item, long z, long x)
 {
@@ -575,6 +584,243 @@ void WindowControl(short item_number)
 	SmashWindow(item_number);
 }
 
+void GeneralControl(short item_number)
+{
+	ITEM_INFO* item;
+	short room_number;
+
+	item = &items[item_number];
+
+	if (TriggerActive(item))
+		item->goal_anim_state = 1;
+	else
+		item->goal_anim_state = 0;
+
+	AnimateItem(item);
+	room_number = item->room_number;
+	GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+
+	if (item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+
+	if (item->status == ITEM_DEACTIVATED)
+	{
+		RemoveActiveItem(item_number);
+		item->flags |= IFL_INVISIBLE;
+	}
+}
+
+void DetonatorControl(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+	AnimateItem(item);
+
+	if (item->frame_number - anims[item->anim_number].frame_base == 80)
+	{
+		camera.bounce = -150;
+		SoundEffect(SFX_EXPLOSION1, 0, SFX_DEFAULT);
+	}
+
+	if (item->status == ITEM_DEACTIVATED)
+		RemoveActiveItem(item_number);
+}
+
+void ControlAnimating_1_4(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (TriggerActive(item))
+		AnimateItem(item);
+}
+
+void MiniCopterControl(short item_number)
+{
+	ITEM_INFO* item;
+	PHD_3DPOS pos;
+	short room_number;
+
+	item = &items[item_number];
+	item->pos.z_pos += 100;
+	pos.x_pos = lara_item->pos.x_pos + ((item->pos.x_pos - lara_item->pos.x_pos) >> 2);
+	pos.y_pos = lara_item->pos.y_pos + ((item->pos.y_pos - lara_item->pos.y_pos) >> 2);
+	pos.z_pos = lara_item->pos.z_pos + ((item->pos.z_pos - lara_item->pos.z_pos) >> 2);
+	SoundEffect(SFX_SMALL_DOOR_SUBWAY_CLOSE, &pos, SFX_DEFAULT);
+
+	if (abs(item->pos.z_pos - lara_item->pos.z_pos) > 30720)
+		KillItem(item_number);
+
+	AnimateItem(item);
+	room_number = item->room_number;
+	GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+
+	if (item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+}
+
+void EarthQuake(short item_number)
+{
+	ITEM_INFO* item;
+	long rnd, obj;
+	short itemNum;
+
+	item = &items[item_number];
+
+	if (!TriggerActive(item))
+		return;
+
+	if (!item->item_flags[1])
+		item->item_flags[1] = 100;
+
+	if (!item->item_flags[2] && abs(item->item_flags[0] - item->item_flags[1]) < 16)
+	{
+		if (item->item_flags[1] == 20)
+		{
+			item->item_flags[1] = 100;
+			item->item_flags[2] = (GetRandomControl() & 0x7F) + 90;
+		}
+		else
+		{
+			item->item_flags[1] = 20;
+			item->item_flags[2] = (GetRandomControl() & 0x7F) + 30;
+		}
+	}
+
+	if (item->item_flags[2])
+		item->item_flags[2]--;
+
+	if (item->item_flags[0] > item->item_flags[1])
+		item->item_flags[0] -= (GetRandomControl() & 7) + 2;
+	else
+		item->item_flags[0] += (GetRandomControl() & 7) + 2;
+
+	SoundEffect(SFX_EARTHQUAKE_LOOP, 0, (item->item_flags[0] << 16) + 0x1000000 | SFX_SETPITCH);
+	camera.bounce = -item->item_flags[0];
+	rnd = GetRandomControl();
+
+	if (rnd < 1024)
+	{
+		if (rnd < 512)
+			obj = FLAME_EMITTER;
+		else
+			obj = FALLING_CEILING1;
+
+		for (itemNum = room[item->room_number].item_number; itemNum != NO_ITEM; itemNum = item->next_item)
+		{
+			item = &items[itemNum];
+
+			if (item->object_number == obj && item->status != ITEM_ACTIVE && item->status != ITEM_DEACTIVATED)
+			{
+				AddActiveItem(itemNum);
+				item->status = ITEM_ACTIVE;
+				item->timer = 0;
+				item->flags |= IFL_CODEBITS;
+				break;
+			}
+		}
+	}
+}
+
+void ControlCutShotgun(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (final_boss_active < 150)
+		item->status = ITEM_INVISIBLE;
+	else
+	{
+		item->status = ITEM_ACTIVE;
+		AnimateItem(item);
+	}
+}
+
+void InitialiseFinalLevel()
+{
+	ITEM_INFO* item;
+
+	final_boss_active = 0;
+	final_boss_count = 0;
+	final_level_count = 0;
+
+	for (int i = 0; i < level_items; i++)
+	{
+		item = &items[i];
+
+		if (item->object_number == DOG)
+			final_level_count++;
+	}
+}
+
+void FinalLevelCounter(short item_number)
+{
+	ITEM_INFO* item;
+	GAME_VECTOR start;
+	GAME_VECTOR target;
+	long dist, best, x, y, z;
+	short boss;
+
+	if (savegame.kills == final_level_count && !final_boss_active)
+	{
+		boss = final_boss[0];
+		best = 0x7FFFFFFF;
+
+		for (int i = 0; i < final_boss_count; i++)
+		{
+			item = &items[final_boss[i]];
+
+			start.x = lara_item->pos.x_pos;
+			start.y = lara_item->pos.y_pos - 512;
+			start.z = lara_item->pos.z_pos;
+			start.room_number = lara_item->room_number;
+
+			target.x = item->pos.x_pos;
+			target.y = item->pos.y_pos - 512;
+			target.z = item->pos.z_pos;
+
+			if (!LOS(&start, &target))
+			{
+				x = (lara_item->pos.x_pos - item->pos.x_pos) >> 6;
+				y = (lara_item->pos.y_pos - item->pos.y_pos) >> 6;
+				z = (lara_item->pos.z_pos - item->pos.z_pos) >> 6;
+				dist = SQUARE(x) + SQUARE(y) + SQUARE(z);
+
+				if (dist < best)
+				{
+					best = dist;
+					boss = final_boss[i];
+				}
+			}
+		}
+
+		item = &items[boss];
+		item->touch_bits = 0;
+		item->status = ITEM_ACTIVE;
+		AddActiveItem(boss);
+		EnableBaddieAI(boss, 1);
+		item->mesh_bits = 0xFFFF1FFF;
+		final_boss_active = 1;
+	}
+	else  if (savegame.kills > final_level_count)
+	{
+		final_boss_active++;
+
+		if (final_boss_active == 150)
+		{
+			item = &items[item_number];
+			cine_frame = 428;
+			CreatureKill(item, 0, 0, EXTRA_FINALANIM);
+			camera.type = CINEMATIC_CAMERA;
+			lara.mesh_ptrs[HAND_R] = meshes[objects[LARA].mesh_index + HAND_R];
+			cinematic_pos = item->pos;
+		}
+	}
+}
+
 void inject_objects(bool replace)
 {
 	INJECT(0x00459330, OnDrawBridge, replace);
@@ -600,4 +846,12 @@ void inject_objects(bool replace)
 	INJECT(0x00458C20, SmashWindow, replace);
 	INJECT(0x00458B90, InitialiseWindow, replace);
 	INJECT(0x00458D20, WindowControl, replace);
+	INJECT(0x004599C0, GeneralControl, replace);
+	INJECT(0x00459A50, DetonatorControl, replace);
+	INJECT(0x00459AD0, ControlAnimating_1_4, replace);
+	INJECT(0x00458AB0, MiniCopterControl, replace);
+	INJECT(0x00458660, EarthQuake, replace);
+	INJECT(0x004587F0, ControlCutShotgun, replace);
+	INJECT(0x00458840, InitialiseFinalLevel, replace);
+	INJECT(0x00458880, FinalLevelCounter, replace);
 }

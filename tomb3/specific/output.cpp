@@ -39,9 +39,6 @@ void S_PrintShadow(short size, short* box, ITEM_INFO* item)
 	long x0, x1, z0, z1, midX, midZ, xAdd, zAdd;
 
 #ifdef TROYESTUFF
-	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-		tomb3.shadow_mode = SHADOW_ORIGINAL;
-
 	if (tomb3.shadow_mode == SHADOW_PSX)
 	{
 		S_PrintSpriteShadow(size, box, item);

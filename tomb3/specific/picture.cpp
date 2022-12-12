@@ -3,7 +3,6 @@
 #include "hwrender.h"
 #include "dxshell.h"
 #include "time.h"
-#include "dxshell.h"
 #include "texture.h"
 #include "file.h"
 #ifdef TROYESTUFF

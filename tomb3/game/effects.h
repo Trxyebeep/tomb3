@@ -77,9 +77,9 @@ void ResetExercises(ITEM_INFO* item);
 void TubeTrain(ITEM_INFO* item);
 void RumbleNoShake(ITEM_INFO* item);
 void BaddieBiteEffect(ITEM_INFO* item, BITE_INFO* bite);
-
-#define DoBloodSplat	( (short(__cdecl*)(long, long, long, short, short, short)) 0x0042E2C0 )
-#define DoLotsOfBlood	( (void(__cdecl*)(long, long, long, short, short, short, long)) 0x0042E3B0 )
-#define DoLotsOfBloodD	( (void(__cdecl*)(long, long, long, short, short, short, long)) 0x0042E460 )
+short DoBloodSplat(long x, long y, long z, short speed, short ang, short room_number);
+short DoBloodSplatD(long x, long y, long z, short speed, short ang, short room_number);
+void DoLotsOfBlood(long x, long y, long z, short speed, short direction, short room_num, long num);
+void DoLotsOfBloodD(long x, long y, long z, short speed, short direction, short room_num, long num);
 
 extern void(*effect_routines[])(ITEM_INFO* item);

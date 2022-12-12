@@ -12,6 +12,8 @@ void S_DrawTribeBoss(ITEM_INFO* item);
 void TribeBossControl(short item_number);
 
 extern BITE_INFO tribeboss_hit[6];
-extern SHIELD_POINTS TribeBossShield[40];
-extern PHD_VECTOR TrigDynamics[3];
+//extern SHIELD_POINTS TribeBossShield[40];
+//extern PHD_VECTOR TrigDynamics[3];
+#define TribeBossShield	ARRAY_(0x006CFB00, SHIELD_POINTS, [40])
+#define TrigDynamics	ARRAY_(0x006CFAC0, PHD_VECTOR, [3])
 extern char shield_active;

@@ -1130,7 +1130,7 @@ static void TriggerRapidsMist(long x, long y, long z)
 
 	if (GetRandomControl() & 1)
 	{
-		sptr->Flags = 538;
+		sptr->Flags = SF_ALTDEF | SF_ROTATE | SF_DEF | SF_SCALE;
 		sptr->RotAng = GetRandomControl() & 0xFFF;
 
 		if (GetRandomControl() & 1)
@@ -1139,7 +1139,7 @@ static void TriggerRapidsMist(long x, long y, long z)
 			sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
 	}
 	else
-		sptr->Flags = 522;
+		sptr->Flags = SF_ALTDEF | SF_DEF | SF_SCALE;
 
 	sptr->Scalar = 4;
 	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;

@@ -54,7 +54,7 @@ static void TriggerPunkFlame(short item_number)
 	if (GetRandomControl() & 1)
 	{
 		sptr->Gravity = -16 - (GetRandomControl() & 0x1F);
-		sptr->Flags = 4762;
+		sptr->Flags = SF_ATTACHEDNODE | SF_ALTDEF | SF_ITEM | SF_ROTATE | SF_DEF | SF_SCALE;
 		sptr->MaxYvel = -16 - (GetRandomControl() & 7);
 		sptr->RotAng = GetRandomControl() & 0xFFF;
 
@@ -65,7 +65,7 @@ static void TriggerPunkFlame(short item_number)
 	}
 	else
 	{
-		sptr->Flags = 4746;
+		sptr->Flags = SF_ATTACHEDNODE | SF_ALTDEF | SF_ITEM | SF_DEF | SF_SCALE;
 		sptr->Gravity = -16 - (GetRandomControl() & 0x1F);
 		sptr->MaxYvel = -16 - (GetRandomControl() & 7);
 	}

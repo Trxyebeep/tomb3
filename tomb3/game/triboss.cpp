@@ -25,8 +25,8 @@ BITE_INFO tribeboss_hit[6] =
 	{ 8, 32, 400, 8 },
 };
 
-SHIELD_POINTS TribeBossShield[40];
-PHD_VECTOR TrigDynamics[3];
+//SHIELD_POINTS TribeBossShield[40];
+//PHD_VECTOR TrigDynamics[3];
 char shield_active;
 
 static long lizman_summon_coords[2][4] =
@@ -236,7 +236,7 @@ void TriggerSummonSmoke(long x, long y, long z)
 
 	if (GetRandomControl() & 1)
 	{
-		sptr->Flags = 794;
+		sptr->Flags = SF_ALTDEF | SF_OUTSIDE | SF_ROTATE | SF_DEF | SF_SCALE;
 		sptr->RotAng = GetRandomControl() & 0xFFF;
 
 		if (GetRandomControl() & 1)
@@ -245,7 +245,7 @@ void TriggerSummonSmoke(long x, long y, long z)
 			sptr->RotAdd = (GetRandomControl() & 7) + 4;
 	}
 	else
-		sptr->Flags = 778;
+		sptr->Flags = SF_ALTDEF | SF_OUTSIDE | SF_DEF | SF_SCALE;
 
 	sptr->Scalar = 3;
 	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
@@ -370,7 +370,7 @@ void TriggerElectricSparks(GAME_VECTOR* pos, long shield)
 	}
 
 	sptr->Friction = 4;
-	sptr->Flags = 2;
+	sptr->Flags = SF_SCALE;
 	sptr->Scalar = 3;
 	sptr->Width = (GetRandomControl() & 1) + 1;
 	sptr->sWidth = sptr->Width;
