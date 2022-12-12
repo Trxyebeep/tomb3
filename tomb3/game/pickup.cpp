@@ -284,7 +284,12 @@ void AnimatingPickUp(short item_number)
 				if (lara_item->hit_points > 1000)
 					lara_item->hit_points = 1000;
 
-				SoundEffect(SFX_MENU_MEDI, &lara_item->pos, SFX_DEFAULT);
+#ifdef TROYESTUFF
+				if (tomb3.psx_crystal_sfx)
+					SoundEffect(SFX_SAVE_CRYSTAL, &lara_item->pos, SFX_DEFAULT);
+				else
+#endif
+					SoundEffect(SFX_MENU_MEDI, &lara_item->pos, SFX_DEFAULT);
 			}
 
 			KillItem(item_number);

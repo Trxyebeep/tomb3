@@ -2133,6 +2133,7 @@ struct TOMB3_OPTIONS
 	bool psx_boxes;
 	bool psx_mono;
 	bool psx_saving;
+	bool psx_crystal_sfx;
 	bool blue_crystal_light;
 	bool improved_electricity;
 	bool gold;

@@ -80,6 +80,7 @@ static void T3_InitSettings()
 	tomb3.psx_boxes = 0;
 	tomb3.psx_mono = 0;
 	tomb3.psx_saving = 0;
+	tomb3.psx_crystal_sfx = 0;
 	tomb3.blue_crystal_light = 0;
 	tomb3.improved_electricity = 1;
 	tomb3.shadow_mode = SHADOW_PSX;
@@ -151,6 +152,7 @@ void T3_SaveSettings()
 	REG_WriteBool((char*)"psx_boxes", tomb3.psx_boxes);
 	REG_WriteBool((char*)"psx_mono", tomb3.psx_mono);
 	REG_WriteBool((char*)"psx_saving", tomb3.psx_saving);
+	REG_WriteBool((char*)"psx_crystal_sfx", tomb3.psx_crystal_sfx);
 	REG_WriteBool((char*)"blue_crystal_light", tomb3.blue_crystal_light);
 	REG_WriteBool((char*)"improved_electricity", tomb3.improved_electricity);
 	REG_WriteLong((char*)"shadow_mode", tomb3.shadow_mode);
@@ -229,6 +231,7 @@ bool T3_LoadSettings()
 	REG_ReadBool((char*)"psx_boxes", tomb3.psx_boxes, 0);
 	REG_ReadBool((char*)"psx_mono", tomb3.psx_mono, 0);
 	REG_ReadBool((char*)"psx_saving", tomb3.psx_saving, 0);
+	REG_ReadBool((char*)"psx_crystal_sfx", tomb3.psx_crystal_sfx, 0);
 	REG_ReadBool((char*)"blue_crystal_light", tomb3.blue_crystal_light, 0);
 	REG_ReadBool((char*)"improved_electricity", tomb3.improved_electricity, 1);
 	REG_ReadLong((char*)"shadow_mode", (ulong&)tomb3.shadow_mode, SHADOW_PSX);
