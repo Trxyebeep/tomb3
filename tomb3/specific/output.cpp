@@ -185,46 +185,32 @@ display_rots rots[32] =
 	{ICON_PICKUP4_ITEM, 0, 0},
 };
 
-long find_display_entry(short obj_num)
+static void GetRots(short obj_num, short& x, short& z)
 {
 	for (int i = 0; i < 32; i++)
 	{
 		if (rots[i].obj_num == obj_num)
-			return i;
+		{
+			x = rots[i].rot_x;
+			z = rots[i].rot_z;
+			return;
+		}
 	}
 
-	return -1;
+	x = 0;
+	z = 0;
 }
 
-static void phd_PutPolygonsPickup(short* objptr, long clip)
+static void SetPickupLight()
 {
-	short* newPtr;
+	long x, y, z;
 
-	phd_leftfloat = (float)phd_winxmin;
-	phd_topfloat = (float)phd_winymin;
-	phd_rightfloat = float(phd_winxmax + phd_winxmin + 1);
-	phd_bottomfloat = float(phd_winymax + phd_winymin + 1);
-	objptr += 4;
-	newPtr = calc_object_vertices(objptr);
+	//ambient
+	smcr = 64;
+	smcg = 64;
+	smcb = 64;
 
-	if (newPtr)
-	{
-		newPtr = calc_vertice_light(newPtr, objptr);
-		newPtr = InsertObjectGT4(newPtr + 1, *newPtr, MID_SORT);
-		newPtr = InsertObjectGT3(newPtr + 1, *newPtr, MID_SORT);
-		newPtr = InsertObjectG4(newPtr + 1, *newPtr, MID_SORT);
-		InsertObjectG3(newPtr + 1, *newPtr, MID_SORT);
-	}
-}
-
-static void DrawPickup(short obj_num)
-{
-	float fx, fy;
-	long entry, x, y, z;
-	short rotx, rotz;
-
-	phd_LookAt(0, -1024, 0, 0, 0, 0, 0);
-
+	//colors
 	LightCol[M00] = 3072;
 	LightCol[M10] = 1680;	//sun
 	LightCol[M20] = 640;
@@ -237,10 +223,7 @@ static void DrawPickup(short obj_num)
 	LightCol[M12] = 2432;	//dynamic
 	LightCol[M22] = 4080;
 
-	smcr = 64;
-	smcg = 64;
-	smcb = 64;
-
+	//positions
 	x = 0x2000;
 	y = -0x2000;
 	z = 0x1800;
@@ -261,36 +244,56 @@ static void DrawPickup(short obj_num)
 	LPos[2].x = (x * w2v_matrix[M00] + y * w2v_matrix[M01] + z * w2v_matrix[M02]) >> W2V_SHIFT;
 	LPos[2].y = (x * w2v_matrix[M10] + y * w2v_matrix[M11] + z * w2v_matrix[M12]) >> W2V_SHIFT;
 	LPos[2].z = (x * w2v_matrix[M20] + y * w2v_matrix[M21] + z * w2v_matrix[M22]) >> W2V_SHIFT;
+}
 
-	PickupY += 728;
-	entry = find_display_entry(obj_num);
+static void phd_PutPolygonsPickup(short* objptr, float x, float y)
+{
+	short* newPtr;
+	float fx, fy;
 
-	if (entry == -1)
+	fx = f_centerx;
+	fy = f_centery;
+	f_centerx = x;
+	f_centery = y;
+
+	phd_leftfloat = (float)phd_winxmin;
+	phd_topfloat = (float)phd_winymin;
+	phd_rightfloat = float(phd_winxmax + phd_winxmin + 1);
+	phd_bottomfloat = float(phd_winymax + phd_winymin + 1);
+	objptr += 4;
+	newPtr = calc_object_vertices(objptr);
+
+	if (newPtr)
 	{
-		rotx = 0;
-		rotz = 0;
+		SetPickupLight();
+		newPtr = calc_vertice_light(newPtr, objptr);
+		newPtr = InsertObjectGT4(newPtr + 1, *newPtr, MID_SORT);
+		newPtr = InsertObjectGT3(newPtr + 1, *newPtr, MID_SORT);
+		newPtr = InsertObjectG4(newPtr + 1, *newPtr, MID_SORT);
+		InsertObjectG3(newPtr + 1, *newPtr, MID_SORT);
 	}
-	else
-	{
-		rotx = rots[entry].rot_x;
-		rotz = rots[entry].rot_z;
-	}
+
+	f_centerx = fx;
+	f_centery = fy;
+}
+
+static void DrawPickup(short obj_num)
+{
+	float x, y;
+	short rotx, rotz;
+
+	x = float(phd_winxmin + phd_winxmax - GetFixedScale(75));
+	y = float(phd_winymax + phd_winymin - GetFixedScale(75));
+	GetRots(obj_num, rotx, rotz);
+
+	phd_LookAt(0, -1024, 0, 0, 0, 0, 0);
 
 	phd_PushUnitMatrix();
 	phd_mxptr[M03] = 0;
 	phd_mxptr[M13] = 0;
 	phd_mxptr[M23] = 1024 << W2V_SHIFT;
 	phd_RotYXZ(PickupY, rotx, rotz);
-
-	fy = f_centery;
-	fx = f_centerx;
-	f_centerx = float(phd_winxmin + phd_winxmax - ((50 * phd_persp) >> 8));
-	f_centery = float(phd_winymax + phd_winymin - ((50 * phd_persp) >> 8));
-	f_centerx += PickupX;
-	phd_PutPolygonsPickup(meshes[objects[obj_num].mesh_index], 1);	
-	f_centerx = fx;
-	f_centery = fy;
-
+	phd_PutPolygonsPickup(meshes[objects[obj_num].mesh_index], x + PickupX, y);	
 	phd_PopMatrix();
 }
 

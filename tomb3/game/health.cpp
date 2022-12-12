@@ -30,6 +30,8 @@ static void DrawPickups()
 
 	pu = &pickups[CurrentPickup];
 
+	PickupY += 728;
+
 	if (pu->duration > 0)
 	{
 		if (PickupX > 0)
