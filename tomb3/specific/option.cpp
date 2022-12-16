@@ -1722,7 +1722,7 @@ void do_passport_option(INVENTORY_ITEM* item)
 #ifdef TROYESTUFF
 		if (tomb3.psx_saving && Inventory_Mode != INV_TITLE_MODE)
 		{
-			if (item->anim_direction == -1)
+			if (item->anim_direction == -1 && SavedGames)
 				inputDB = IN_LEFT;
 			else
 				inputDB = IN_RIGHT;
@@ -1777,7 +1777,7 @@ void do_passport_option(INVENTORY_ITEM* item)
 		else if (!mode)
 		{
 			if (Inventory_Mode == INV_DEATH_MODE)
-				inputDB = item->anim_direction != -1 ? 8 : 4;
+				inputDB = item->anim_direction != -1 ? IN_RIGHT : IN_RIGHT;
 			else
 			{
 				if (!passport_text1)
