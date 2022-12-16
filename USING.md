@@ -9,7 +9,7 @@
 #### Steam/GoG version:
 1. Get the latest release package.
 2. unzip the archive and copy over the contents to you TR3 folder, overwrite when prompted.
-3. Run the game once to get the setup window at least once before running anything in the ExtraOptions folder.
+3. Run the setup through the config tool at least once before running the game.
 4. Enjoy!
 
 #### CD version:
@@ -37,7 +37,7 @@
 
 #### Updating from pre-V1.3.0 to V1.3.0 or later:
 - Delete tomb3decomp.dll (now renamed to tomb3.dll).
-- Delete the ExtraOptions folder (a config tool is available now).
+- Delete the ExtraOptions folder (the config tool is available now).
 ------------------------
 
 ### TR3: The Lost Artifact support:

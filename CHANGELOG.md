@@ -1,6 +1,6 @@
 # tomb3 changelog
 
-## Unreleased:
+## [1.4.0](https://github.com/Trxyebeep/tomb3/tree/V1.4.0) (Dec. 16 2022)
 
 ### Original bug fixes
 
@@ -28,7 +28,7 @@
 - Fix fish movement.
 - Fix snow spawning far from Lara.
 - Fix lasers getting affected by selected scale.
-- Fix Lara refusing to pull up from certain hang animations.
+- Fix Lara refusing to pull up from certain hang animations (on thin ledges).
 - Fix Puna's shield wrongfully lighting up when he shoots.
 - Fix flare pickups.
 
