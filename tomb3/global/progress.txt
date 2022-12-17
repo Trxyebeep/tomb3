@@ -120,8 +120,8 @@ tomb3 progress.
 
 		game/51laser.cpp
 
-0x0040F190		ControlArea51Laser
-0x0040F460		InitialiseArea51Laser
+0x0040F190	+	ControlArea51Laser
+0x0040F460	+	InitialiseArea51Laser
 
 
 		game/51rocket.cpp

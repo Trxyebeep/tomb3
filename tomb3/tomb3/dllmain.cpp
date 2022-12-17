@@ -54,6 +54,7 @@
 #include "../game/items.h"
 #include "../game/lot.h"
 #include "../game/cobra.h"
+#include "../game/51laser.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -172,6 +173,7 @@ void inject_all(bool replace)
 	inject_items(replace);
 	inject_lot(replace);
 	inject_cobra(replace);
+	inject_51laser(replace);
 
 	//specific
 	inject_drawbars(replace);
