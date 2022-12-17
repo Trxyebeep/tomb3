@@ -1429,8 +1429,13 @@ void InitialiseLaraInventory(long level)
 	for (int i = 0; i < start->num_big_medis; i++)
 		Inv_AddItem(BIGMEDI_ITEM);
 
-	for (int i = 0; i < start->num_sgcrystals; i++)
-		Inv_AddItem(SAVEGAME_CRYSTAL_ITEM);
+#ifdef TROYESTUFF
+	if (!tomb3.gold)
+#endif
+	{
+		for (int i = 0; i < start->num_sgcrystals; i++)
+			Inv_AddItem(SAVEGAME_CRYSTAL_ITEM);
+	}
 
 	if (start->num_icon1)
 		Inv_AddItem(ICON_PICKUP1_ITEM);
