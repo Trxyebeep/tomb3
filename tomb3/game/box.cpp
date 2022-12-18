@@ -1,5 +1,7 @@
 #include "../tomb3/pch.h"
 #include "box.h"
+#include "objects.h"
+#include "../specific/game.h"
 
 void AlertNearbyGuards(ITEM_INFO* item)
 {
@@ -32,7 +34,21 @@ void AlertNearbyGuards(ITEM_INFO* item)
 	}
 }
 
+void InitialiseCreature(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (item->object_number != ELECTRIC_CLEANER && item->object_number != SHIVA && item->object_number != TARGETS)
+		item->pos.y_rot += short((GetRandomControl() - 0x4000) >> 1);
+
+	item->collidable = 1;
+	item->data = 0;
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
+	INJECT(0x004142E0, InitialiseCreature, replace);
 }
