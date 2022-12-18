@@ -862,7 +862,9 @@ void LaraControl(short item_number)
 
 	case LARA_CHEAT:
 
+#ifndef TROYESTUFF
 		if (gameflow.cheat_enable || gameflow.dozy_cheat_enabled)
+#endif
 			LaraCheat(lara_item, mycoll);
 
 		break;
