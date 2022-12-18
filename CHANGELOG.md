@@ -6,6 +6,8 @@
 
 ### tomb3 additions
 
+- Add dynamic light to DOZY.
+
 ### tomb3 bug fixes
 
 - Fix PSX save system passport deadlock.

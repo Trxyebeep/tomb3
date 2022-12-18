@@ -17,6 +17,7 @@
 #include "items.h"
 #include "larafire.h"
 #ifdef TROYESTUFF
+#include "effect2.h"
 #include "../tomb3/tomb3.h"
 #endif
 
@@ -423,6 +424,11 @@ void LaraCheat(ITEM_INFO* item, COLL_INFO* coll)
 {
 	lara_item->hit_points = 1000;
 	LaraUnderWater(item, coll);
+
+#ifdef TROYESTUFF
+	if (input & IN_ACTION)
+		TriggerDynamic(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos, 31, 31, 31, 31);
+#endif
 
 	if (input & IN_WALK && !(input & IN_LOOK))
 	{
