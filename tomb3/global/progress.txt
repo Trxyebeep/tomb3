@@ -196,7 +196,7 @@ tomb3 progress.
 		game/box.cpp
 
 0x004142E0	+	InitialiseCreature
-0x00414330		CreatureActive
+0x00414330	+	CreatureActive
 0x00414390		CreatureAIInfo
 0x00414780		UpdateLOT
 0x00414800		SearchLOT

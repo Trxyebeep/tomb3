@@ -2,6 +2,7 @@
 #include "box.h"
 #include "objects.h"
 #include "../specific/game.h"
+#include "lot.h"
 
 void AlertNearbyGuards(ITEM_INFO* item)
 {
@@ -47,8 +48,29 @@ void InitialiseCreature(short item_number)
 	item->data = 0;
 }
 
+long CreatureActive(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (item->status == ITEM_INVISIBLE)
+	{
+		if (!EnableBaddieAI(item_number, 0))
+			return 0;
+
+		item->status = ITEM_ACTIVE;
+	}
+
+	if (item->data)
+		return 1;
+
+	return 0;
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
 	INJECT(0x004142E0, InitialiseCreature, replace);
+	INJECT(0x00414330, CreatureActive, replace);
 }
