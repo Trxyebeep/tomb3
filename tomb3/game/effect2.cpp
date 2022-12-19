@@ -2548,6 +2548,19 @@ void TriggerBats(long x, long y, long z, short ang)
 	}
 }
 
+void BatEmitterControl(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (item->active)
+	{
+		TriggerBats(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->pos.y_rot >> 4);
+		KillItem(item_number);
+	}
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -2589,4 +2602,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042E0C0, ControlColouredLights, replace);
 	INJECT(0x0042D990, KillAllCurrentItems, replace);
 	INJECT(0x0042D570, TriggerBats, replace);
+	INJECT(0x0042D510, BatEmitterControl, replace);
 }
