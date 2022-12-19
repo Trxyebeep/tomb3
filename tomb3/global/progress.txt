@@ -1464,7 +1464,7 @@ tomb3 progress.
 		game/winston.cpp
 
 0x00473D10		WinstonControl
-0x00474110		OldWinstonControl
+0x00474110	+	OldWinstonControl
 
 // ======================================
 // SPECIFIC
