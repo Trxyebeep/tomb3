@@ -2561,6 +2561,57 @@ void BatEmitterControl(short item_number)
 	}
 }
 
+void UpdateBats()
+{
+	BAT_STRUCT* bat;
+	PHD_3DPOS pos;
+
+	for (int i = 0; i < 32; i++)
+	{
+		bat = &bats[i];
+
+		if (!(bat->flags & 1))
+			continue;
+
+		if (!(i & 3) && !(GetRandomControl() & 7))
+		{
+			pos.x_pos = bat->x;
+			pos.y_pos = bat->y;
+			pos.z_pos = bat->z;
+			SoundEffect(SFX_BATS_1, &pos, SFX_DEFAULT);
+		}
+
+		bat->x -= (bat->speed * rcossin_tbl[(bat->angle << 1) + 1]) >> W2V_SHIFT;
+		bat->y -= GetRandomControl() & 3;
+		bat->z += (bat->speed * rcossin_tbl[bat->angle << 1]) >> W2V_SHIFT;
+		bat->WingYoff = (bat->WingYoff + 11) & 0x3F;
+
+		if (bat->life < 128)
+		{
+			bat->y += -4 - (i >> 1);
+
+			if (!(GetRandomControl() & 3))
+			{
+				bat->angle = (bat->angle + (GetRandomControl() & 0xFF) - 128) & 0xFFF;
+				bat->speed += GetRandomControl() & 3;
+			}
+		}
+
+		bat->speed += 12;
+
+		if (bat->speed > 300)
+			bat->speed = 300;
+
+		if (bat->life && wibble & 4)
+		{
+			bat->life--;
+
+			if (!bat->life)
+				bat->flags = 0;
+		}
+	}
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -2603,4 +2654,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042D990, KillAllCurrentItems, replace);
 	INJECT(0x0042D570, TriggerBats, replace);
 	INJECT(0x0042D510, BatEmitterControl, replace);
+	INJECT(0x0042D3D0, UpdateBats, replace);
 }
