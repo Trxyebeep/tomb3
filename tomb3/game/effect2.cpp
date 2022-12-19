@@ -2528,6 +2528,26 @@ void KillAllCurrentItems(short item_number)
 	KillEverythingFlag = 1;
 }
 
+void TriggerBats(long x, long y, long z, short ang)
+{
+	BAT_STRUCT* bat;
+
+	ang = (ang - 1024) & 0xFFF;
+
+	for (int i = 0; i < 32; i++)
+	{
+		bat = &bats[i];
+		bat->x = (GetRandomControl() & 0x1FF) + x - 256;
+		bat->y = y - (GetRandomControl() & 0xFF) + 256;
+		bat->z = (GetRandomControl() & 0x1FF) + z - 256;
+		bat->angle = ((GetRandomControl() & 0x7F) + ang - 64) & 0xFFF;
+		bat->speed = (GetRandomControl() & 0x1F) + 64;
+		bat->WingYoff = GetRandomControl() & 0x3F;
+		bat->life = (GetRandomControl() & 7) + 144;
+		bat->flags |= 1;
+	}
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -2568,4 +2588,5 @@ void inject_effect2(bool replace)
 	INJECT(0x0042CED0, UpdateSplashes, replace);
 	INJECT(0x0042E0C0, ControlColouredLights, replace);
 	INJECT(0x0042D990, KillAllCurrentItems, replace);
+	INJECT(0x0042D570, TriggerBats, replace);
 }

@@ -41,5 +41,6 @@ void SetupSplash(SPLASH_SETUP* setup);
 void UpdateSplashes();
 void ControlColouredLights(short item_number);
 void KillAllCurrentItems(short item_number);
+void TriggerBats(long x, long y, long z, short ang);
 
 #define UpdateBats	( (void(__cdecl*)()) 0x0042D3D0 )

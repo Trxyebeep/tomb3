@@ -438,7 +438,7 @@ tomb3 progress.
 0x0042D1F0	+	TriggerWaterfallMist
 0x0042D3D0		UpdateBats
 0x0042D510		BatEmitterControl
-0x0042D570		TriggerBats
+0x0042D570	+	TriggerBats
 0x0042D640	+	TriggerStaticFlame
 0x0042D750	+	TriggerDartSmoke
 0x0042D990	+	KillAllCurrentItems
