@@ -287,7 +287,13 @@ long S_UpdateInput()
 		med_debounce--;
 
 	if (key_pressed(DIK_APOSTROPHE))
+	{
+#ifdef TROYESTUFF
+		DXSaveScreen(App.lpBackBuffer);
+#else
 		DXSaveScreen(App.lpFrontBuffer);
+#endif
+	}
 
 	if (FinishLevelCheat)
 	{

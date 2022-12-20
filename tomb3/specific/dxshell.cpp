@@ -422,15 +422,20 @@ void DXSaveScreen(LPDIRECTDRAWSURFACEX surf)
 	if (FAILED(surf->GetSurfaceDesc(&desc)))
 		return;
 
+#ifdef TROYESTUFF
+	if (FAILED(surf->Lock(0, &desc, DDLOCK_WAIT, 0)))
+		return;
+#else
 	memset(&desc, 0, sizeof(DDSURFACEDESCX));
 	desc.dwSize = sizeof(DDSURFACEDESCX);
 
 	if (FAILED(DD_LockSurface(surf, desc, DDLOCK_WAIT | DDLOCK_WRITEONLY)))
 		return;
+#endif
 
 	pSurf = (ushort*)desc.lpSurface;
-	num++;
 	sprintf(buf, "tomb%04d.tga", num);
+	num++;
 	file = fopen(buf, "wb");
 
 	if (file)
@@ -455,7 +460,11 @@ void DXSaveScreen(LPDIRECTDRAWSURFACEX surf)
 
 				if (desc.ddpfPixelFormat.dwRBitMask == 0xF800)
 				{
+#ifdef TROYESTUFF
+					r = (c >> 11) & 0x1F;
+#else
 					r = c >> 11;
+#endif
 					g = (c >> 6) & 0x1F;
 					b = c & 0x1F;
 					*pDest++ = short(r << 10 | g << 5 | b);
