@@ -2616,10 +2616,10 @@ void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy)
 					{
 						alpha = GetFixedScale(2);
 
-						for (int j = 0; j < alpha; j++)
+						for (int k = 0; k < alpha; k++)
 						{
 							GlobalAlpha = 0xDEADBEEF;
-							HWI_InsertLine_Sorted(x1 - phd_winxmin - j, y1 - phd_winymin, x2 - phd_winxmin - j, y2 - phd_winymin, z, c1, c2);
+							HWI_InsertLine_Sorted(x1 - phd_winxmin - k, y1 - phd_winymin, x2 - phd_winxmin - k, y2 - phd_winymin, z, c1, c2);
 						}
 					}
 					else
