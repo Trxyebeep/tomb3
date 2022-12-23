@@ -4,6 +4,9 @@
 
 ### Original bug fixes
 
+- Fix Dash Timer not being saved.
+- Fix Exposure Meter not being saved.
+
 ### tomb3 additions
 
 - Add dynamic light to DOZY.

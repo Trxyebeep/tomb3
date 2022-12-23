@@ -810,12 +810,20 @@ void ExtractSaveGameInfo()
 void save_tomb3_data()
 {
 	memcpy(tomb3_save.RoomsVisited, RoomVisited, 255);
+	tomb3_save.dash_timer = DashTimer;
+	tomb3_save.exposure_meter = ExposureMeter;
 }
 
 void load_tomb3_data()
 {
 	if (tomb3_save_size > offsetof(TOMB3_SAVE, RoomsVisited))
 		memcpy(RoomVisited, tomb3_save.RoomsVisited, 255);
+
+	if (tomb3_save_size > offsetof(TOMB3_SAVE, dash_timer))
+		DashTimer = tomb3_save.dash_timer;
+
+	if (tomb3_save_size > offsetof(TOMB3_SAVE, exposure_meter))
+		ExposureMeter = tomb3_save.exposure_meter;
 }
 #endif
 

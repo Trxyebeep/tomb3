@@ -2112,6 +2112,8 @@ enum t3_ammo_counter
 struct TOMB3_SAVE
 {
 	char RoomsVisited[255];
+	short dash_timer;
+	short exposure_meter;
 };
 
 struct TOMB3_OPTIONS
