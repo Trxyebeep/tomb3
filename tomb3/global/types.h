@@ -2109,6 +2109,11 @@ enum t3_ammo_counter
 	NACTR_MODES
 };
 
+struct TOMB3_SAVE
+{
+	char RoomsVisited[255];
+};
+
 struct TOMB3_OPTIONS
 {
 	bool footprints;

@@ -12,6 +12,10 @@
 #include "lot.h"
 #include "traps.h"
 #include "pickup.h"
+#ifdef TROYESTUFF
+#include "../newstuff/map.h"
+#include "../tomb3/tomb3.h"
+#endif
 
 #define SGcount	VAR_(0x006D588C, long)
 #define SGpoint	VAR_(0x006D2268, char*)
@@ -494,6 +498,10 @@ void CreateSaveGameInfo()
 			WriteSG(&age, sizeof(long));
 		}
 	}
+
+#ifdef TROYESTUFF
+	save_tomb3_data();
+#endif
 }
 
 void ExtractSaveGameInfo()
@@ -792,7 +800,24 @@ void ExtractSaveGameInfo()
 		ReadSG(&age, sizeof(long));
 		item->data = (void*)age;
 	}
+
+#ifdef TROYESTUFF
+	load_tomb3_data();
+#endif
 }
+
+#ifdef TROYESTUFF
+void save_tomb3_data()
+{
+	memcpy(tomb3_save.RoomsVisited, RoomVisited, 255);
+}
+
+void load_tomb3_data()
+{
+	if (tomb3_save_size > offsetof(TOMB3_SAVE, RoomsVisited))
+		memcpy(RoomVisited, tomb3_save.RoomsVisited, 255);
+}
+#endif
 
 void inject_savegame(bool replace)
 {

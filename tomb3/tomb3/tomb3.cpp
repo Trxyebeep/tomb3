@@ -6,6 +6,8 @@
 #include "../specific/input.h"
 
 TOMB3_OPTIONS tomb3;
+TOMB3_SAVE tomb3_save;
+ulong tomb3_save_size;
 
 ulong water_color[24] =
 {
