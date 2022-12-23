@@ -814,6 +814,8 @@ void save_tomb3_data()
 	tomb3_save.exposure_meter = ExposureMeter;
 	memcpy(tomb3_save.fish_leaders, lead_info, sizeof(lead_info));
 	memcpy(tomb3_save.fishies, fish, sizeof(fish));
+	memcpy(tomb3_save.exp_rings, ExpRings, sizeof(ExpRings));
+	memcpy(tomb3_save.kb_rings, KBRings, sizeof(KBRings));
 }
 
 void load_tomb3_data()
@@ -832,6 +834,12 @@ void load_tomb3_data()
 
 	if (tomb3_save_size > offsetof(TOMB3_SAVE, fishies))
 		memcpy(fish, tomb3_save.fishies, sizeof(fish));
+
+	if (tomb3_save_size > offsetof(TOMB3_SAVE, exp_rings))
+		memcpy(ExpRings, tomb3_save.exp_rings, sizeof(ExpRings));
+
+	if (tomb3_save_size > offsetof(TOMB3_SAVE, kb_rings))
+		memcpy(KBRings, tomb3_save.kb_rings, sizeof(KBRings));
 }
 #endif
 

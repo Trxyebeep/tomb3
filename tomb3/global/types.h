@@ -2112,6 +2112,8 @@ struct TOMB3_SAVE
 	short exposure_meter;
 	LEADER_INFO fish_leaders[8];
 	FISH_INFO fishies[200];
+	EXPLOSION_RING exp_rings[6];
+	EXPLOSION_RING kb_rings[6];
 };
 
 struct TOMB3_OPTIONS
