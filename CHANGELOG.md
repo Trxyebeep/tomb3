@@ -6,11 +6,13 @@
 
 - Fix Dash Timer not being saved.
 - Fix Exposure Meter not being saved.
+- Fix fish not being saved.
 
 ### tomb3 additions
 
 - Add dynamic light to DOZY.
 - Add map.
+- New system for expanding savegame format.
 
 ### tomb3 bug fixes
 

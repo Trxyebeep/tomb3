@@ -87,13 +87,9 @@ do \
 
 #ifdef TROYESTUFF	//*4
 #define MAX_TLVERTICES	0x9000
-#else
-#define MAX_TLVERTICES	0x2400
-#endif
-
-#ifdef TROYESTUFF	//*4
 #define MAX_SORTLISTS	0xBB80
 #else
+#define MAX_TLVERTICES	0x2400
 #define MAX_SORTLISTS	0x2EE0
 #endif
 
@@ -2114,6 +2110,8 @@ struct TOMB3_SAVE
 	char RoomsVisited[255];
 	short dash_timer;
 	short exposure_meter;
+	LEADER_INFO fish_leaders[8];
+	FISH_INFO fishies[200];
 };
 
 struct TOMB3_OPTIONS

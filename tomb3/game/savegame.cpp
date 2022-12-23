@@ -812,6 +812,8 @@ void save_tomb3_data()
 	memcpy(tomb3_save.RoomsVisited, RoomVisited, 255);
 	tomb3_save.dash_timer = DashTimer;
 	tomb3_save.exposure_meter = ExposureMeter;
+	memcpy(tomb3_save.fish_leaders, lead_info, sizeof(lead_info));
+	memcpy(tomb3_save.fishies, fish, sizeof(fish));
 }
 
 void load_tomb3_data()
@@ -824,6 +826,12 @@ void load_tomb3_data()
 
 	if (tomb3_save_size > offsetof(TOMB3_SAVE, exposure_meter))
 		ExposureMeter = tomb3_save.exposure_meter;
+
+	if (tomb3_save_size > offsetof(TOMB3_SAVE, fish_leaders))
+		memcpy(lead_info, tomb3_save.fish_leaders, sizeof(lead_info));
+
+	if (tomb3_save_size > offsetof(TOMB3_SAVE, fishies))
+		memcpy(fish, tomb3_save.fishies, sizeof(fish));
 }
 #endif
 
