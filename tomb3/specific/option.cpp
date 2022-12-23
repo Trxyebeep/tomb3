@@ -16,6 +16,7 @@
 #include "output.h"
 #include "smain.h"
 #include "../newstuff/psxsaves.h"
+#include "../newstuff/map.h"
 #include "../tomb3/tomb3.h"
 #endif
 
@@ -1606,8 +1607,19 @@ void do_compass_option(INVENTORY_ITEM* item)
 
 	if (inputDB & (IN_SELECT | IN_DESELECT))
 	{
-		item->anim_direction = 1;
-		item->goal_frame = item->frames_total - 1;
+#ifdef TROYESTUFF
+		if (inputDB & IN_SELECT)
+		{
+			do_map_option();
+			input = 0;
+			inputDB = 0;
+		}
+		else
+#endif
+		{
+			item->anim_direction = 1;
+			item->goal_frame = item->frames_total - 1;
+		}
 	}
 
 	SoundEffect(SFX_MENU_STOPWATCH, 0, SFX_ALWAYS);

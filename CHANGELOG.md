@@ -7,6 +7,7 @@
 ### tomb3 additions
 
 - Add dynamic light to DOZY.
+- Add map.
 
 ### tomb3 bug fixes
 
@@ -14,6 +15,7 @@
 - Fix TR3 Gold getting a crystal at the start.
 - Fix crash when taking screenshots in windowed mode.
 - Fix screenshot file number starting at 1.
+- Fix footprints not being cleared between levels (earlier fix from V1.1.0 didn't work).
 
 
 ## [1.4.0](https://github.com/Trxyebeep/tomb3/tree/V1.4.0) (Dec. 16 2022)

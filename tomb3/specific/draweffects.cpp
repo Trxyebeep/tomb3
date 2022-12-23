@@ -5582,6 +5582,72 @@ void S_DrawSubWakeFX(ITEM_INFO* item)
 
 	phd_PopMatrix();
 }
+
+void SuperDrawBox(short* bounds, long col)	//Make sure matrix is pushed and translated to origin before calling this (bounds are relative)
+{
+	PHD_VECTOR point[8];
+	PHD_VECTOR pos;
+	long coords[8 * 3];
+	long lp, lp2, zv, v0, v1, sz;
+
+	point[0].x = bounds[0];
+	point[0].y = bounds[2];
+	point[0].z = bounds[4];
+
+	point[1].x = bounds[1];
+	point[1].y = bounds[2];
+	point[1].z = bounds[4];
+
+	point[2].x = bounds[1];
+	point[2].y = bounds[2];
+	point[2].z = bounds[5];
+
+	point[3].x = bounds[0];
+	point[3].y = bounds[2];
+	point[3].z = bounds[5];
+
+	point[4].x = bounds[0];
+	point[4].y = bounds[3];
+	point[4].z = bounds[4];
+
+	point[5].x = bounds[1];
+	point[5].y = bounds[3];
+	point[5].z = bounds[4];
+
+	point[6].x = bounds[1];
+	point[6].y = bounds[3];
+	point[6].z = bounds[5];
+
+	point[7].x = bounds[0];
+	point[7].y = bounds[3];
+	point[7].z = bounds[5];
+
+	for (lp = 0; lp < 8; lp++)	//8 points
+	{
+		pos.x = point[lp].x * phd_mxptr[M00] + point[lp].y * phd_mxptr[M01] + point[lp].z * phd_mxptr[M02] + phd_mxptr[M03];
+		pos.y = point[lp].x * phd_mxptr[M10] + point[lp].y * phd_mxptr[M11] + point[lp].z * phd_mxptr[M12] + phd_mxptr[M13];
+		pos.z = point[lp].x * phd_mxptr[M20] + point[lp].y * phd_mxptr[M21] + point[lp].z * phd_mxptr[M22] + phd_mxptr[M23];
+		zv = pos.z / phd_persp;
+		coords[3 * lp + 0] = pos.x / zv + phd_centerx;
+		coords[3 * lp + 1] = pos.y / zv + phd_centery;
+		coords[3 * lp + 2] = pos.z;
+	}
+
+	for (lp = 0; lp < 12; lp++)	//12 lines..
+	{
+		v0 = box_lines[lp][0];
+		v1 = box_lines[lp][1];
+
+		if (coords[3 * v0 + 2] <= phd_znear || coords[3 * v0 + 2] >= phd_zfar ||
+			coords[3 * v1 + 2] <= phd_znear || coords[3 * v1 + 2] >= phd_zfar)
+			continue;
+
+		sz = GetFixedScale(1);
+
+		for (lp2 = 0; lp2 < sz; lp2++)
+			HWI_InsertLine_Sorted(coords[3 * v0 + 0] + lp2, coords[3 * v0 + 1], coords[3 * v1 + 0] + lp2, coords[3 * v1 + 1], phd_znear, col, col);
+	}
+}
 #endif
 
 void inject_draweffects(bool replace)

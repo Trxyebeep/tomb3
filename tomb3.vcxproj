@@ -264,6 +264,7 @@
     <ClInclude Include="tomb3\global\types.h" />
     <ClInclude Include="tomb3\global\vars.h" />
     <ClInclude Include="tomb3\newstuff\LaraDraw.h" />
+    <ClInclude Include="tomb3\newstuff\map.h" />
     <ClInclude Include="tomb3\newstuff\pausemenu.h" />
     <ClInclude Include="tomb3\newstuff\psxsaves.h" />
     <ClInclude Include="tomb3\specific\audio.h" />
@@ -401,6 +402,7 @@
     <ClCompile Include="tomb3\game\wingmute.cpp" />
     <ClCompile Include="tomb3\game\winston.cpp" />
     <ClCompile Include="tomb3\newstuff\LaraDraw.cpp" />
+    <ClCompile Include="tomb3\newstuff\map.cpp" />
     <ClCompile Include="tomb3\newstuff\pausemenu.cpp" />
     <ClCompile Include="tomb3\newstuff\psxsaves.cpp" />
     <ClCompile Include="tomb3\specific\audio.cpp" />
