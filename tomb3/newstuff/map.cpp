@@ -14,43 +14,42 @@
 #define CAM_SPEED	128
 #define VIEW_DIST	(40 * WALL_SIZE)
 
-long ViewAngles[15] = { -0x4000, 0x200, 0, -0x4000, 0x3800, 0, -0x8000, 0x3800, 0, 0x4000, 0x3800, 0, 0, 0x3800, 0 };
-long MapXMax, MapYMax, MapZMax;
-long MapXMin, MapYMin, MapZMin;
-bool DrawBoxes;
+static long ViewAngles[15] = { -0x4000, 0x200, 0, -0x4000, 0x3800, 0, -0x8000, 0x3800, 0, 0x4000, 0x3800, 0, 0, 0x3800, 0 };
+static long MapXMin, MapXMax, MapYMin, MapYMax, MapZMin, MapZMax;
+static bool DrawBoxes;
 char RoomVisited[255];
 
-void phd_ScaleMatrix(long var)
+static void phd_ScaleMatrix(long scalar)
 {
-	phd_mxptr[M00] <<= 16;
-	phd_mxptr[M00] /= var;
+	phd_mxptr[M00] <<= W2V_SHIFT + 2;
+	phd_mxptr[M00] /= scalar;
 
-	phd_mxptr[M01] <<= 16;
-	phd_mxptr[M01] /= var;
+	phd_mxptr[M01] <<= W2V_SHIFT + 2;
+	phd_mxptr[M01] /= scalar;
 
-	phd_mxptr[M02] <<= 16;
-	phd_mxptr[M02] /= var;
+	phd_mxptr[M02] <<= W2V_SHIFT + 2;
+	phd_mxptr[M02] /= scalar;
 
-	phd_mxptr[M10] <<= 16;
-	phd_mxptr[M10] /= var;
+	phd_mxptr[M10] <<= W2V_SHIFT + 2;
+	phd_mxptr[M10] /= scalar;
 
-	phd_mxptr[M11] <<= 16;
-	phd_mxptr[M11] /= var;
+	phd_mxptr[M11] <<= W2V_SHIFT + 2;
+	phd_mxptr[M11] /= scalar;
 
-	phd_mxptr[M12] <<= 16;
-	phd_mxptr[M12] /= var;
+	phd_mxptr[M12] <<= W2V_SHIFT + 2;
+	phd_mxptr[M12] /= scalar;
 
-	phd_mxptr[M20] <<= 16;
-	phd_mxptr[M20] /= var;
+	phd_mxptr[M20] <<= W2V_SHIFT + 2;
+	phd_mxptr[M20] /= scalar;
 
-	phd_mxptr[M21] <<= 16;
-	phd_mxptr[M21] /= var;
+	phd_mxptr[M21] <<= W2V_SHIFT + 2;
+	phd_mxptr[M21] /= scalar;
 
-	phd_mxptr[M22] <<= 16;
-	phd_mxptr[M22] /= var;
+	phd_mxptr[M22] <<= W2V_SHIFT + 2;
+	phd_mxptr[M22] /= scalar;
 }
 
-long GetRoomList(long x, long y, long z, long xSize, long ySize, long zSize, short* rList)
+static long GetRoomList(long x, long y, long z, long xSize, long ySize, long zSize, short* rList)
 {
 	ROOM_INFO* r;
 	long lp, n, right, left, top, bottom, front, back;
@@ -113,7 +112,7 @@ long GetRoomList(long x, long y, long z, long xSize, long ySize, long zSize, sho
 	return n;
 }
 
-long InterpolateAngle(long s, long e, long speed)
+static long InterpolateAngle(long s, long e, long speed)
 {
 	long d;
 
@@ -130,7 +129,7 @@ long InterpolateAngle(long s, long e, long speed)
 	return d / speed;
 }
 
-void MoveCamPos(PHD_VECTOR* pos, long dir)
+static void MoveCamPos(PHD_VECTOR* pos, long dir)
 {
 	switch (dir)
 	{
@@ -246,7 +245,7 @@ void MoveCamPos(PHD_VECTOR* pos, long dir)
 	}
 }
 
-void PrintMapObjects(short room_number)	//cheap copy just need to change a few things :>
+static void PrintMapObjects(short room_number)
 {
 	ROOM_INFO* r;
 	MESH_INFO* mesh;
@@ -310,7 +309,7 @@ void PrintMapObjects(short room_number)	//cheap copy just need to change a few t
 	phd_PopMatrix();
 }
 
-void DrawMapRooms(long nList, short* rList)
+static void DrawMapRooms(long nList, short* rList)
 {
 	ROOM_INFO* r;
 	OBJECT_INFO* obj;
@@ -329,6 +328,9 @@ void DrawMapRooms(long nList, short* rList)
 	{
 		nPolyType = 2;
 		NewDrawLara(lara_item);
+
+		if (DrawBoxes)
+			SuperDrawBox(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos, GetBoundsAccurate(lara_item), 0xFF0000FF);
 	}
 
 	nPolyType = 3;
@@ -559,7 +561,7 @@ void do_map_option()
 		sz = cam.z + (-dist * phd_mxptr[M21] >> W2V_SHIFT);
 		phd_LookAt(sx, sy, sz, cam.x, cam.y, cam.z, rots[2]);
 		S_InitialisePolyList(1);
-		phd_ScaleMatrix(2 << 16);
+		phd_ScaleMatrix(2 << (W2V_SHIFT + 2));
 
 		if (DrawBoxes)
 		{
