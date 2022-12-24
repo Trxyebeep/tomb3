@@ -12,7 +12,7 @@
 #include "../game/inventry.h"
 
 #define CAM_SPEED	128
-#define VIEW_DIST	(5 * WALL_SIZE)
+#define VIEW_DIST	(40 * WALL_SIZE)
 
 long ViewAngles[15] = { -0x4000, 0x200, 0, -0x4000, 0x3800, 0, -0x8000, 0x3800, 0, 0x4000, 0x3800, 0, 0, 0x3800, 0 };
 long MapXMax, MapYMax, MapZMax;
@@ -78,14 +78,14 @@ long GetRoomList(long x, long y, long z, long xSize, long ySize, long zSize, sho
 			continue;
 
 		xMin = r->x;
-		yMin = r->maxceiling;
-		zMin = r->z;
 		xMax = xMin + (r->y_size << WALL_SHIFT);
+		yMin = r->maxceiling;
 		yMax = r->minfloor;
+		zMin = r->z;
 		zMax = zMin + (r->x_size << WALL_SHIFT);
 
 		if (xMin < MapXMin)
-			MapXMin = r->x;
+			MapXMin = xMin;
 
 		if (xMax > MapXMax)
 			MapXMax = xMax;
@@ -103,7 +103,7 @@ long GetRoomList(long x, long y, long z, long xSize, long ySize, long zSize, sho
 			MapZMax = zMax;
 
 		//Don't check Y to help with abrupt room disappearance
-		if (xMin <= right && xMax >= left /*&& yMin <= bottom && yMax >= top*/ && zMin <= front && zMax >= back)
+		if (xMin <= right || xMax >= left ||/* yMin <= bottom || yMax >= top ||*/ zMin <= front || zMax >= back)
 		{
 			*rList++ = (short)lp;
 			n++;
@@ -349,14 +349,11 @@ void DrawMapRooms(long nList, short* rList)
 		{
 			bounds[0] = WALL_SIZE;
 			bounds[1] = (r->y_size - 1) << WALL_SHIFT;
-			bounds[2] = 0;
-			bounds[3] = short(r->maxceiling - r->minfloor);
+			bounds[2] = short(r->maxceiling - r->y);
+			bounds[3] = short(r->minfloor - r->y);
 			bounds[4] = WALL_SIZE;
 			bounds[5] = (r->x_size - 1) << WALL_SHIFT;
-			phd_PushMatrix();
-			phd_TranslateAbs(r->x, r->y, r->z);
-			SuperDrawBox(bounds, 0xFF007F00);
-			phd_PopMatrix();
+			SuperDrawBox(r->x, r->y, r->z, bounds, 0xFF007F00);
 		}
 	}
 
@@ -385,7 +382,7 @@ void do_map_option()
 	PHD_VECTOR cam;
 	PHD_3DPOS viewPos;
 	long nList, num, dist, dir, nFrames, lp, sx, sy, sz;
-	long xAdd, yAdd, zAdd, xRot, yRot, zRot;
+	long xAdd, yAdd, zAdd, xRot, yRot, zRot, fog;
 	short rList[255];
 	short rots[3];
 	static short cubeX, cubeY, cubeZ;
@@ -408,10 +405,12 @@ void do_map_option()
 	viewPos.x_rot = 0;
 	viewPos.y_rot = 0;
 	viewPos.z_rot = 0;
+	fog = distanceFogValue;
 
 	while (!(input & IN_OPTION))
 	{
 		S_UpdateInput();
+		distanceFogValue = MAXINT32 >> W2V_SHIFT;
 
 		for (int i = 0; i < nFrames; i++)
 		{
@@ -583,4 +582,6 @@ void do_map_option()
 		S_OutputPolyList();
 		nFrames = S_DumpScreen();
 	}
+
+	distanceFogValue = fog;
 }

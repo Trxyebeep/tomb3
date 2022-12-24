@@ -31,4 +31,5 @@ void S_DrawFootPrints();
 void DoUwEffect();
 void S_DrawSubWakeFX(ITEM_INFO* item);
 void SuperDrawBox(short* bounds, long col);
+void SuperDrawBox(long x, long y, long z, short* bounds, long col);
 #endif

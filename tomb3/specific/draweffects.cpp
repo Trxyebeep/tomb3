@@ -5648,6 +5648,14 @@ void SuperDrawBox(short* bounds, long col)	//Make sure matrix is pushed and tran
 			HWI_InsertLine_Sorted(coords[3 * v0 + 0] + lp2, coords[3 * v0 + 1], coords[3 * v1 + 0] + lp2, coords[3 * v1 + 1], phd_znear, col, col);
 	}
 }
+
+void SuperDrawBox(long x, long y, long z, short* bounds, long col)
+{
+	phd_PushMatrix();
+	phd_TranslateAbs(x, y, z);
+	SuperDrawBox(bounds, col);
+	phd_PopMatrix();
+}
 #endif
 
 void inject_draweffects(bool replace)
