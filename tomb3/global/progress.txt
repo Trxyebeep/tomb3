@@ -1101,7 +1101,7 @@ tomb3 progress.
 
 		game/mpgun.cpp
 
-0x00457A40		MPGunControl
+0x00457A40	+	MPGunControl
 
 
 		game/objects.cpp

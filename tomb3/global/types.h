@@ -122,6 +122,15 @@ do \
 #define WALL_SIZE	(1 << WALL_SHIFT)
 
 /*enums*/
+enum ai_bits
+{
+	GUARD = 1 << 0,
+	AMBUSH = 1 << 1,
+	PATROL1 = 1 << 2,
+	MODIFY = 1 << 3,
+	FOLLOW = 1 << 4
+};
+
 enum spark_flags
 {
 	SF_NONE =			0x0,
