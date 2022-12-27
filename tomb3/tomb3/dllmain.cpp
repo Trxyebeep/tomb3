@@ -57,6 +57,7 @@
 #include "../game/51laser.h"
 #include "../game/winston.h"
 #include "../game/mpgun.h"
+#include "../game/51baton.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -178,6 +179,7 @@ void inject_all(bool replace)
 	inject_51laser(replace);
 	inject_winston(replace);
 	inject_mpgun(replace);
+	inject_51baton(replace);
 
 	//specific
 	inject_drawbars(replace);
