@@ -74,10 +74,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)Build\</OutDir>
+    <LibraryPath>$(ProjectDir)tomb3\newstuff\libs\discord\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)Build\</OutDir>
+    <LibraryPath>$(ProjectDir)tomb3\newstuff\libs\discord\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -99,8 +101,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalOptions>/SECTION:.text,RWE /pdbaltpath:%_PDB% %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>dxguid.lib;ddraw.lib;Winmm.lib;dinput8.lib;Msacm32.lib;dsound.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/SECTION:.text,RWE /pdbaltpath:%_PDB% /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>dxguid.lib;ddraw.lib;Winmm.lib;dinput8.lib;Msacm32.lib;dsound.lib;discord-rpcd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)tomb3\newstuff\libs\discord\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -121,8 +124,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalOptions>/SECTION:.text,RWE /pdbaltpath:%_PDB% %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>dxguid.lib;ddraw.lib;Winmm.lib;dinput8.lib;Msacm32.lib;dsound.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/SECTION:.text,RWE /pdbaltpath:%_PDB% /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>dxguid.lib;ddraw.lib;Winmm.lib;dinput8.lib;Msacm32.lib;dsound.lib;discord-rpc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)tomb3\newstuff\libs\discord\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -263,6 +267,9 @@
     <ClInclude Include="tomb3\global\math_tbls.h" />
     <ClInclude Include="tomb3\global\types.h" />
     <ClInclude Include="tomb3\global\vars.h" />
+    <ClInclude Include="tomb3\newstuff\discord.h" />
+    <ClInclude Include="tomb3\newstuff\libs\discord\discord_register.h" />
+    <ClInclude Include="tomb3\newstuff\libs\discord\discord_rpc.h" />
     <ClInclude Include="tomb3\newstuff\LaraDraw.h" />
     <ClInclude Include="tomb3\newstuff\map.h" />
     <ClInclude Include="tomb3\newstuff\pausemenu.h" />
@@ -401,6 +408,7 @@
     <ClCompile Include="tomb3\game\willboss.cpp" />
     <ClCompile Include="tomb3\game\wingmute.cpp" />
     <ClCompile Include="tomb3\game\winston.cpp" />
+    <ClCompile Include="tomb3\newstuff\discord.cpp" />
     <ClCompile Include="tomb3\newstuff\LaraDraw.cpp" />
     <ClCompile Include="tomb3\newstuff\map.cpp" />
     <ClCompile Include="tomb3\newstuff\pausemenu.cpp" />
@@ -449,6 +457,10 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="tomb3.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="tomb3\newstuff\libs\discord\discord-rpc.lib" />
+    <Library Include="tomb3\newstuff\libs\discord\discord-rpcd.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

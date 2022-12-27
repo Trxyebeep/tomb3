@@ -435,6 +435,9 @@
     </ClInclude>
     <ClInclude Include="tomb3\newstuff\psxsaves.h" />
     <ClInclude Include="tomb3\newstuff\map.h" />
+    <ClInclude Include="tomb3\newstuff\libs\discord\discord_register.h" />
+    <ClInclude Include="tomb3\newstuff\libs\discord\discord_rpc.h" />
+    <ClInclude Include="tomb3\newstuff\discord.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tomb3\game\51baton.cpp">
@@ -841,6 +844,7 @@
     </ClCompile>
     <ClCompile Include="tomb3\newstuff\psxsaves.cpp" />
     <ClCompile Include="tomb3\newstuff\map.cpp" />
+    <ClCompile Include="tomb3\newstuff\discord.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="tomb3.rc" />
@@ -849,5 +853,9 @@
     <Text Include="tomb3\global\progress.txt">
       <Filter>global</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="tomb3\newstuff\libs\discord\discord-rpc.lib" />
+    <Library Include="tomb3\newstuff\libs\discord\discord-rpcd.lib" />
   </ItemGroup>
 </Project>

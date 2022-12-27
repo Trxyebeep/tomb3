@@ -18,6 +18,7 @@
 #include "health.h"
 #include "../specific/option.h"
 #ifdef TROYESTUFF
+#include "../newstuff/discord.h"
 #include "../tomb3/tomb3.h"
 #endif
 
@@ -444,6 +445,11 @@ long Display_Inventory(long mode)
 
 	do
 	{
+#ifdef TROYESTUFF
+		RPC_title = mode == INV_TITLE_MODE;
+		RPC_Update();
+		RPC_title = 0;
+#endif
 		GlobePointLight = (GlobePointLight + 16) & 0xFF;
 
 		if ((mode == INV_TITLE_MODE || mode == INV_LEVELSELECT_MODE) && cdtrack > 0)

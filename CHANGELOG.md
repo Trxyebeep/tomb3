@@ -14,6 +14,7 @@
 - Add dynamic light to DOZY.
 - Add map.
 - New system for expanding savegame format.
+- Add Discord Rich Presence for base game + Gold.
 
 ### tomb3 bug fixes
 

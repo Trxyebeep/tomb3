@@ -21,8 +21,9 @@
 #include "../game/demo.h"
 #include "../game/lara.h"
 #ifdef TROYESTUFF
-#include "../tomb3/tomb3.h"
 #include "init.h"
+#include "../newstuff/discord.h"
+#include "../tomb3/tomb3.h"
 #endif
 
 #ifdef RANDO_STUFF
@@ -539,6 +540,8 @@ long GameMain()
 		return 0;
 
 #ifdef TROYESTUFF
+	RPC_Init();
+
 	if (tomb3.gold)
 	{
 		if (!GF_LoadScriptFile("datag\\trtla.dat"))	//seems some CDs come with trtla.dat, others with tombPC.dat, others with both!

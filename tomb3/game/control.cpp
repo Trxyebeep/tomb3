@@ -27,6 +27,7 @@
 #include "moveblok.h"
 #ifdef TROYESTUFF
 #include "../newstuff/pausemenu.h"
+#include "../newstuff/discord.h"
 #endif
 
 long ControlPhase(long nframes, long demo_mode)
@@ -42,6 +43,9 @@ long ControlPhase(long nframes, long demo_mode)
 
 	for (framecount += nframes; framecount > 0; framecount -= 2)
 	{
+#ifdef TROYESTUFF
+		RPC_Update();
+#endif
 		if (cdtrack > 0)
 			S_CDLoop();
 
