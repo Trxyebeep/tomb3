@@ -4,6 +4,7 @@
 void inject_51baton(bool replace);
 
 void InitialiseBaton(short item_number);
+void BatonControl(short item_number);
 
 enum BATON_STATES
 {

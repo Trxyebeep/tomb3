@@ -8,6 +8,7 @@
 - Fix Exposure Meter not being saved.
 - Fix fish not being saved.
 - Fix Sophia rings not being saved.
+- Fix rare crash in High Security Compound.
 
 ### tomb3 additions
 

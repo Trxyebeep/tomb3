@@ -107,7 +107,7 @@ tomb3 progress.
 		game/51baton.cpp
 
 0x0040D5F0	+	InitialiseBaton
-0x0040D650		BatonControl
+0x0040D650	+	BatonControl
 
 
 		game/51civvy.cpp
