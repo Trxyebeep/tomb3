@@ -9,6 +9,7 @@
 - Fix fish not being saved.
 - Fix Sophia rings not being saved.
 - Fix rare crash in High Security Compound.
+- Fix unsafe memory access in Wasp Spawner.
 
 ### tomb3 additions
 

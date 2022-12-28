@@ -560,7 +560,7 @@ tomb3 progress.
 
 		game/flymaker.cpp
 
-0x00431C10		FlyEmitterControl
+0x00431C10	+	FlyEmitterControl
 
 
 		game/footprnt.cpp
