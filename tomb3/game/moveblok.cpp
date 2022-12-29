@@ -76,8 +76,23 @@ void AlterFloorHeight(ITEM_INFO* item, long height)
 	}
 }
 
+static long TestBlockMovable(ITEM_INFO* item, long blockhite)
+{
+	FLOOR_INFO* floor;
+	short room_number;
+
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+
+	if (floor->floor == -127 || floor->floor << 8 == item->pos.y_pos - blockhite)
+		return 1;
+
+	return 0;
+}
+
 void inject_moveblok(bool replace)
 {
 	INJECT(0x00456BA0, ClearMovableBlockSplitters, replace);
 	INJECT(0x00457690, AlterFloorHeight, replace);
+	INJECT(0x004573A0, TestBlockMovable, replace);
 }
