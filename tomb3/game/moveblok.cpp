@@ -353,6 +353,17 @@ void SetupCleanerFromSavegame(ITEM_INFO* item, long block)
 	r->floor[((z - r->z) >> WALL_SHIFT) + r->x_size * ((x - r->x) >> WALL_SHIFT)].stopper = 1;
 }
 
+void InitialiseMovingBlock(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+	ClearMovableBlockSplitters(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number);
+
+	if (item->status != ITEM_INVISIBLE)
+		AlterFloorHeight(item, -WALL_SIZE);
+}
+
 void inject_moveblok(bool replace)
 {
 	INJECT(0x00456BA0, ClearMovableBlockSplitters, replace);
@@ -362,4 +373,5 @@ void inject_moveblok(bool replace)
 	INJECT(0x004573F0, TestBlockPull, replace);
 	INJECT(0x00457790, DrawUnclippedItem, replace);
 	INJECT(0x00457800, SetupCleanerFromSavegame, replace);
+	INJECT(0x00456B50, InitialiseMovingBlock, replace);
 }

@@ -1086,7 +1086,7 @@ tomb3 progress.
 
 		game/moveblok.cpp
 
-0x00456B50		InitialiseMovingBlock
+0x00456B50	+	InitialiseMovingBlock
 0x00456BA0	+	ClearMovableBlockSplitters
 0x00456DD0		MovableBlock
 0x00456F40		MovableBlockCollision
