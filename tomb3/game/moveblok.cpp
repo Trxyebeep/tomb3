@@ -156,10 +156,99 @@ static long TestBlockPush(ITEM_INFO* item, long blockhite, ushort quadrant)
 	return 1;
 }
 
+static long TestBlockPull(ITEM_INFO* item, long blockhite, ushort quadrant)
+{
+	ROOM_INFO* r;
+	FLOOR_INFO* floor;
+	COLL_INFO coll;
+	long x, y, y2, z, xAdd, zAdd;
+	short room_number;
+
+	if (!TestBlockMovable(item, blockhite))
+		return 0;
+
+	xAdd = 0;
+	zAdd = 0;
+
+	switch (quadrant)
+	{
+	case NORTH:
+		zAdd = -WALL_SIZE;
+		break;
+
+	case EAST:
+		xAdd = -WALL_SIZE;
+		break;
+
+	case SOUTH:
+		zAdd = WALL_SIZE;
+		break;
+
+	case WEST:
+		xAdd = WALL_SIZE;
+		break;
+	}
+
+	x = item->pos.x_pos + xAdd;
+	y = item->pos.y_pos;
+	z = item->pos.z_pos + zAdd;
+	room_number = item->room_number;
+	floor = GetFloor(x, y, z, &room_number);
+	r = &room[room_number];
+
+	if (r->floor[((z - r->z) >> WALL_SHIFT) + r->x_size * ((x - r->x) >> WALL_SHIFT)].stopper)
+		return 0;
+
+	coll.quadrant = quadrant;
+	coll.radius = 500;
+
+	if (CollideStaticObjects(&coll, x, y, z, room_number, 1000))
+		return 0;
+
+	if (floor->floor << 8 != y)
+		return 0;
+
+	y2 = y - blockhite;
+	floor = GetFloor(x, y2, z, &room_number);
+
+	if (floor->ceiling << 8 > y2)
+		return 0;
+
+	x += xAdd;
+	z += zAdd;
+	room_number = item->room_number;
+	floor = GetFloor(x, y, z, &room_number);
+
+	if (floor->floor << 8 != y)
+		return 0;
+
+	y2 = y - 762;
+	floor = GetFloor(x, y2, z, &room_number);
+
+	if (floor->ceiling << 8 > y2)
+		return 0;
+
+	x = lara_item->pos.x_pos + xAdd;
+	y = lara_item->pos.y_pos;
+	z = lara_item->pos.z_pos + zAdd;
+	room_number = lara_item->room_number;
+	GetFloor(x, y, z, &room_number);
+
+	coll.quadrant = (quadrant - 2) & 3;
+	coll.radius = 100;
+
+	if (CollideStaticObjects(&coll, x, y, z, room_number, 762))
+		return 0;
+
+	item->item_flags[0] = lara_item->pos.y_rot + 0x8000;
+	return 1;
+}
+
 void inject_moveblok(bool replace)
 {
 	INJECT(0x00456BA0, ClearMovableBlockSplitters, replace);
 	INJECT(0x00457690, AlterFloorHeight, replace);
 	INJECT(0x004573A0, TestBlockMovable, replace);
 	INJECT(0x004571E0, TestBlockPush, replace);
+	INJECT(0x004573F0, TestBlockPull, replace);
 }
