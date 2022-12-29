@@ -1089,7 +1089,7 @@ tomb3 progress.
 0x00456B50	+	InitialiseMovingBlock
 0x00456BA0	+	ClearMovableBlockSplitters
 0x00456DD0	+	MovableBlock
-0x00456F40		MovableBlockCollision
+0x00456F40	+	MovableBlockCollision
 0x004571E0	+	TestBlockPush
 0x004573A0	+	TestBlockMovable
 0x004573F0	+	TestBlockPull

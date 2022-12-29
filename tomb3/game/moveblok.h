@@ -9,5 +9,6 @@ void DrawUnclippedItem(ITEM_INFO* item);
 void SetupCleanerFromSavegame(ITEM_INFO* item, long block);
 void InitialiseMovingBlock(short item_number);
 void MovableBlock(short item_number);
+void MovableBlockCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
 
 #define orig_MovableBlock	( (void(__cdecl*)(short)) 0x00456DD0 )

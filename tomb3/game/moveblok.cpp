@@ -7,6 +7,10 @@
 #include "effects.h"
 #include "sound.h"
 #include "box.h"
+#include "lara.h"
+#include "laramisc.h"
+
+static short MovingBlockBounds[12] = { -300, 300, 0, 0, -692, -512, -1820, 1820, -5460, 5460, -1820, 1820 };
 
 void ClearMovableBlockSplitters(long x, long y, long z, short room_number)
 {
@@ -298,7 +302,7 @@ void SetupCleanerFromSavegame(ITEM_INFO* item, long block)
 		}
 
 		xAdd = 0;
-		zAdd = 1024;
+		zAdd = WALL_SIZE;
 	}
 	else if (item->pos.y_rot == 0x4000)
 	{
@@ -310,7 +314,7 @@ void SetupCleanerFromSavegame(ITEM_INFO* item, long block)
 				x = (x & ~0x3FF) + 512;
 		}
 
-		xAdd = 1024;
+		xAdd = WALL_SIZE;
 		zAdd = 0;
 	}
 	else if (item->pos.y_rot == 0x8000)
@@ -326,7 +330,7 @@ void SetupCleanerFromSavegame(ITEM_INFO* item, long block)
 		}
 
 		xAdd = 0;
-		zAdd = -1024;
+		zAdd = -WALL_SIZE;
 	}
 	else
 	{
@@ -340,7 +344,7 @@ void SetupCleanerFromSavegame(ITEM_INFO* item, long block)
 			x += 512;
 		}
 
-		xAdd = -1024;
+		xAdd = -WALL_SIZE;
 		zAdd = 0;
 	}
 
@@ -417,6 +421,115 @@ void MovableBlock(short item_number)
 	}
 }
 
+void MovableBlockCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+	ushort quadrant;
+	short room_number;
+
+	item = &items[item_number];
+
+	if (!(input & IN_ACTION) || item->status == ITEM_ACTIVE || l->gravity_status || l->pos.y_pos != item->pos.y_pos)
+		return;
+
+	quadrant = ushort(l->pos.y_rot + 0x2000) >> 14;
+
+	if (l->current_anim_state == AS_STOP)
+	{
+		if (lara.gun_status != LG_ARMLESS)
+			return;
+
+		switch (quadrant)
+		{
+		case NORTH:
+			item->pos.y_rot = 0;
+			break;
+
+		case EAST:
+			item->pos.y_rot = 0x4000;
+			break;
+
+		case SOUTH:
+			item->pos.y_rot = -0x8000;
+			break;
+
+		case WEST:
+			item->pos.y_rot = -0x4000;
+			break;
+		}
+
+		if (!TestLaraPosition(MovingBlockBounds, item, l))
+			return;
+
+		room_number = l->room_number;
+		GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+
+		if (item->room_number != room_number)
+			return;
+
+		switch (quadrant)
+		{
+		case NORTH:
+			l->pos.z_pos = (l->pos.z_pos & ~0x3FF) + WALL_SIZE - 100;
+			break;
+
+		case EAST:
+			l->pos.x_pos = (l->pos.x_pos & ~0x3FF) + WALL_SIZE - 100;
+			break;
+
+		case SOUTH:
+			l->pos.z_pos = (l->pos.z_pos & ~0x3FF) + 100;
+			break;
+
+		case WEST:
+			l->pos.x_pos = (l->pos.x_pos & ~0x3FF) + 100;
+			break;
+		}
+
+		l->pos.y_rot = item->pos.y_rot;
+		l->goal_anim_state = AS_PPREADY;
+		AnimateLara(l);
+
+		if (l->current_anim_state == AS_PPREADY)
+			lara.gun_status = LG_HANDSBUSY;
+
+		return;
+	}
+	
+	if (l->current_anim_state == AS_PPREADY && l->frame_number == anims[ANIM_PPREADY].frame_base + 19 && TestLaraPosition(MovingBlockBounds, item, l))
+	{
+		if (input & IN_FORWARD)
+		{
+			if (!TestBlockPush(item, WALL_SIZE, quadrant))
+				return;
+
+			item->goal_anim_state = 2;
+			l->goal_anim_state = AS_PUSHBLOCK;
+		}
+		else if (input & IN_BACK)
+		{
+			if (!TestBlockPull(item, WALL_SIZE, quadrant))
+				return;
+
+			item->goal_anim_state = 3;
+			l->goal_anim_state = AS_PULLBLOCK;
+		}
+		else
+			return;
+
+		AddActiveItem(item_number);
+		AlterFloorHeight(item, WALL_SIZE);
+		AdjustStopperFlag(item, item->item_flags[0], 1);
+		item->status = ITEM_ACTIVE;
+		AnimateItem(item);
+		AnimateLara(l);
+		lara.head_x_rot = 0;
+		lara.head_y_rot = 0;
+		lara.torso_x_rot = 0;
+		lara.torso_y_rot = 0;
+	}
+}
+
 void inject_moveblok(bool replace)
 {
 	INJECT(0x00456BA0, ClearMovableBlockSplitters, replace);
@@ -428,4 +541,5 @@ void inject_moveblok(bool replace)
 	INJECT(0x00457800, SetupCleanerFromSavegame, replace);
 	INJECT(0x00456B50, InitialiseMovingBlock, replace);
 	INJECT(0x00456DD0, MovableBlock, replace);
+	INJECT(0x00456F40, MovableBlockCollision, replace);
 }
