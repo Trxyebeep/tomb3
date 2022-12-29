@@ -49,7 +49,22 @@ static void TriggerElectricSparks(PHD_VECTOR* pos, short item_number, short Node
 	sptr->Gravity = (GetRandomControl() & 3) + 4;
 }
 
+void InitialiseCleaner(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+	item->pos.x_pos = (item->pos.x_pos & ~0x3FF) | 512;
+	item->pos.z_pos = (item->pos.z_pos & ~0x3FF) | 512;
+	item->item_flags[0] = 1024;
+	item->item_flags[1] = 0;
+	item->item_flags[2] = 64;
+	item->data = 0;
+	item->collidable = 1;
+}
+
 void inject_cleaner(bool replace)
 {
 	INJECT(0x0041D0B0, TriggerElectricSparks, replace);
+	INJECT(0x0041C3E0, InitialiseCleaner, replace);
 }
