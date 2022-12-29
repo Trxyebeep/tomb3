@@ -1095,7 +1095,7 @@ tomb3 progress.
 0x004573F0	+	TestBlockPull
 0x00457690	+	AlterFloorHeight
 0x00457760		DrawMovableBlock
-0x00457790		DrawUnclippedItem
+0x00457790	+	DrawUnclippedItem
 0x00457800		SetupCleanerFromSavegame
 
 

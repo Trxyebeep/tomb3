@@ -2,6 +2,7 @@
 #include "moveblok.h"
 #include "control.h"
 #include "collide.h"
+#include "draw.h"
 
 void ClearMovableBlockSplitters(long x, long y, long z, short room_number)
 {
@@ -244,6 +245,25 @@ static long TestBlockPull(ITEM_INFO* item, long blockhite, ushort quadrant)
 	return 1;
 }
 
+void DrawUnclippedItem(ITEM_INFO* item)
+{
+	long t, b, l, r;
+
+	t = phd_top;
+	l = phd_left;
+	b = phd_bottom;
+	r = phd_right;
+	phd_top = 0;
+	phd_left = 0;
+	phd_bottom = phd_winymax;
+	phd_right = phd_winxmax;
+	DrawAnimatingItem(item);
+	phd_top = t;
+	phd_left = l;
+	phd_bottom = b;
+	phd_right = r;
+}
+
 void inject_moveblok(bool replace)
 {
 	INJECT(0x00456BA0, ClearMovableBlockSplitters, replace);
@@ -251,4 +271,5 @@ void inject_moveblok(bool replace)
 	INJECT(0x004573A0, TestBlockMovable, replace);
 	INJECT(0x004571E0, TestBlockPush, replace);
 	INJECT(0x004573F0, TestBlockPull, replace);
+	INJECT(0x00457790, DrawUnclippedItem, replace);
 }
