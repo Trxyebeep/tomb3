@@ -572,7 +572,7 @@ void ExtractSaveGameInfo()
 		objnum = item->object_number;
 		obj = &objects[objnum];
 
-		if (obj->control == MovableBlock)
+		if (obj->control == orig_MovableBlock)
 			AlterFloorHeight(item, 1024);
 
 		if (obj->save_position)
@@ -677,11 +677,11 @@ void ExtractSaveGameInfo()
 			ReadSG(item->item_flags, sizeof(short) * 4);
 		}
 
-		if (obj->control == MovableBlock)
+		if (obj->control == orig_MovableBlock)
 		{
 			if (item->status == ITEM_INACTIVE)
 				AlterFloorHeight(item, -1024);
-			else if (obj->control == MovableBlock && item->status != ITEM_INACTIVE)		//ok
+			else if (obj->control == orig_MovableBlock && item->status != ITEM_INACTIVE)		//ok
 				SetupCleanerFromSavegame(item, 1);
 		}
 

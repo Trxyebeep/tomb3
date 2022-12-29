@@ -3,6 +3,10 @@
 #include "control.h"
 #include "collide.h"
 #include "draw.h"
+#include "items.h"
+#include "effects.h"
+#include "sound.h"
+#include "box.h"
 
 void ClearMovableBlockSplitters(long x, long y, long z, short room_number)
 {
@@ -364,6 +368,55 @@ void InitialiseMovingBlock(short item_number)
 		AlterFloorHeight(item, -WALL_SIZE);
 }
 
+void MovableBlock(short item_number)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	long h;
+	short room_number;
+
+	item = &items[item_number];
+
+	if (item->flags & IFL_INVISIBLE)
+	{
+		AlterFloorHeight(item, WALL_SIZE);
+		KillItem(item_number);
+		return;
+	}
+
+	AnimateItem(item);
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	h = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (item->pos.y_pos < h)
+		item->gravity_status = 1;
+	else if (item->gravity_status)
+	{
+		item->pos.y_pos = h;
+		item->gravity_status = 0;
+		item->status = ITEM_DEACTIVATED;
+		floor_shake_effect(item);
+		SoundEffect(SFX_LARA_THUD, &item->pos, SFX_DEFAULT);
+	}
+
+	if (item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+
+	if (item->status == ITEM_DEACTIVATED)
+	{
+		item->status = ITEM_INACTIVE;
+		RemoveActiveItem(item_number);
+		AlterFloorHeight(item, -WALL_SIZE);
+		AdjustStopperFlag(item, item->item_flags[0] + 0x8000, 0);
+
+		room_number = item->room_number;
+		floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+		GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+		TestTriggers(trigger_index, 1);
+	}
+}
+
 void inject_moveblok(bool replace)
 {
 	INJECT(0x00456BA0, ClearMovableBlockSplitters, replace);
@@ -374,4 +427,5 @@ void inject_moveblok(bool replace)
 	INJECT(0x00457790, DrawUnclippedItem, replace);
 	INJECT(0x00457800, SetupCleanerFromSavegame, replace);
 	INJECT(0x00456B50, InitialiseMovingBlock, replace);
+	INJECT(0x00456DD0, MovableBlock, replace);
 }

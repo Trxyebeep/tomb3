@@ -2116,7 +2116,7 @@ void RemoveRoomFlipItems(ROOM_INFO* r)
 	{
 		item = &items[item_number];
 
-		if (objects[item->object_number].control == MovableBlock)
+		if (objects[item->object_number].control == orig_MovableBlock)
 			AlterFloorHeight(item, 1024);
 		else if (item->flags & IFL_INVISIBLE && objects[item->object_number].intelligent && item->hit_points <= 0)
 		{
@@ -2135,7 +2135,7 @@ void AddRoomFlipItems(ROOM_INFO* r)
 	{
 		item = &items[item_number];
 
-		if (objects[item->object_number].control == MovableBlock)
+		if (objects[item->object_number].control == orig_MovableBlock)
 			AlterFloorHeight(item, -1024);
 	}
 }
