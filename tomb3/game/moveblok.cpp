@@ -530,6 +530,14 @@ void MovableBlockCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	}
 }
 
+void DrawMovableBlock(ITEM_INFO* item)
+{
+	if (item->status == ITEM_ACTIVE)
+		DrawUnclippedItem(item);
+	else
+		DrawAnimatingItem(item);
+}
+
 void inject_moveblok(bool replace)
 {
 	INJECT(0x00456BA0, ClearMovableBlockSplitters, replace);
@@ -542,4 +550,5 @@ void inject_moveblok(bool replace)
 	INJECT(0x00456B50, InitialiseMovingBlock, replace);
 	INJECT(0x00456DD0, MovableBlock, replace);
 	INJECT(0x00456F40, MovableBlockCollision, replace);
+	INJECT(0x00457760, DrawMovableBlock, replace);
 }
