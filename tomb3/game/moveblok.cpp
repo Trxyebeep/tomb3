@@ -264,6 +264,95 @@ void DrawUnclippedItem(ITEM_INFO* item)
 	phd_right = r;
 }
 
+void SetupCleanerFromSavegame(ITEM_INFO* item, long block)
+{
+	ROOM_INFO* r;
+	long x, y, z, xAdd, zAdd;
+	short room_number;
+
+	x = item->pos.x_pos;
+	y = item->pos.y_pos;
+	z = item->pos.z_pos;
+
+	if (!block && (x & 0x3FF) == 512 && (z & 0x3FF) == 512)
+	{
+		room_number = item->room_number;
+		GetFloor(x, y, z, &room_number);
+		r = &room[room_number];
+		r->floor[((z - r->z) >> WALL_SHIFT) + r->x_size * ((x - r->x) >> WALL_SHIFT)].stopper = 1;
+		return;
+	}
+
+	if (!item->pos.y_rot)
+	{
+		if (!block)
+		{
+			if ((z & 0x3FF) < 512)
+				z = (z & ~0x3FF) - 512;
+			else
+				z = (z & ~0x3FF) + 512;
+		}
+
+		xAdd = 0;
+		zAdd = 1024;
+	}
+	else if (item->pos.y_rot == 0x4000)
+	{
+		if (!block)
+		{
+			if ((x & 0x3FF) < 512)
+				x = (x & ~0x3FF) - 512;
+			else
+				x = (x & ~0x3FF) + 512;
+		}
+
+		xAdd = 1024;
+		zAdd = 0;
+	}
+	else if (item->pos.y_rot == 0x8000)
+	{
+		if (!block)
+		{
+			if ((z & 0x3FF) > 512)
+				z |= 0x3FF;
+			else
+				z &= ~0x3FF;
+
+			z += 512;
+		}
+
+		xAdd = 0;
+		zAdd = -1024;
+	}
+	else
+	{
+		if (!block)
+		{
+			if ((x & 0x3FF) > 512)
+				x |= 0x3FF;
+			else
+				x &= ~0x3FF;
+
+			x += 512;
+		}
+
+		xAdd = -1024;
+		zAdd = 0;
+	}
+
+	room_number = item->room_number;
+	GetFloor(x, y, z, &room_number);
+	r = &room[room_number];
+	r->floor[((z - r->z) >> WALL_SHIFT) + r->x_size * ((x - r->x) >> WALL_SHIFT)].stopper = 1;
+
+	x += xAdd;
+	z += zAdd;
+	room_number = item->room_number;
+	GetFloor(x, y, z, &room_number);
+	r = &room[room_number];
+	r->floor[((z - r->z) >> WALL_SHIFT) + r->x_size * ((x - r->x) >> WALL_SHIFT)].stopper = 1;
+}
+
 void inject_moveblok(bool replace)
 {
 	INJECT(0x00456BA0, ClearMovableBlockSplitters, replace);
@@ -272,4 +361,5 @@ void inject_moveblok(bool replace)
 	INJECT(0x004571E0, TestBlockPush, replace);
 	INJECT(0x004573F0, TestBlockPull, replace);
 	INJECT(0x00457790, DrawUnclippedItem, replace);
+	INJECT(0x00457800, SetupCleanerFromSavegame, replace);
 }

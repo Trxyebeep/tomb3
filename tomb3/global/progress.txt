@@ -1096,7 +1096,7 @@ tomb3 progress.
 0x00457690	+	AlterFloorHeight
 0x00457760		DrawMovableBlock
 0x00457790	+	DrawUnclippedItem
-0x00457800		SetupCleanerFromSavegame
+0x00457800	+	SetupCleanerFromSavegame
 
 
 		game/mpgun.cpp
