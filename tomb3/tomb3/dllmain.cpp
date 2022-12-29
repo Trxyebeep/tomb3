@@ -59,6 +59,7 @@
 #include "../game/mpgun.h"
 #include "../game/51baton.h"
 #include "../game/flymaker.h"
+#include "../game/moveblok.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -182,6 +183,7 @@ void inject_all(bool replace)
 	inject_mpgun(replace);
 	inject_51baton(replace);
 	inject_flymaker(replace);
+	inject_moveblok(replace);
 
 	//specific
 	inject_drawbars(replace);
