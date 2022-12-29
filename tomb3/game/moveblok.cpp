@@ -1,6 +1,7 @@
 #include "../tomb3/pch.h"
 #include "moveblok.h"
 #include "control.h"
+#include "collide.h"
 
 void ClearMovableBlockSplitters(long x, long y, long z, short room_number)
 {
@@ -90,9 +91,75 @@ static long TestBlockMovable(ITEM_INFO* item, long blockhite)
 	return 0;
 }
 
+static long TestBlockPush(ITEM_INFO* item, long blockhite, ushort quadrant)
+{
+	ROOM_INFO* r;
+	FLOOR_INFO* floor;
+	COLL_INFO coll;
+	long x, y, z;
+	short room_number;
+
+	if (!TestBlockMovable(item, blockhite))
+		return 0;
+
+	x = item->pos.x_pos;
+	y = item->pos.y_pos;
+	z = item->pos.z_pos;
+	room_number = item->room_number;
+
+	switch (quadrant)
+	{
+	case NORTH:
+		z += WALL_SIZE;
+		break;
+
+	case EAST:
+		x += WALL_SIZE;
+		break;
+
+	case SOUTH:
+		z -= WALL_SIZE;
+		break;
+
+	case WEST:
+		x -= WALL_SIZE;
+		break;
+	}
+
+	floor = GetFloor(x, y, z, &room_number);
+	r = &room[room_number];
+
+	if (r->floor[((z - r->z) >> WALL_SHIFT) + r->x_size * ((x - r->x) >> WALL_SHIFT)].stopper)
+		return 0;
+
+	coll.quadrant = quadrant;
+	coll.radius = 500;
+
+	if (CollideStaticObjects(&coll, x, y, z, room_number, 1000))
+		return 0;
+
+	if (floor->floor << 8 != y)
+		return 0;
+
+	GetHeight(floor, x, y, z);
+
+	if (height_type != WALL)
+		return 0;
+
+	y -= blockhite - 100;
+	floor = GetFloor(x, y, z, &room_number);
+
+	if (GetCeiling(floor, x, y, z) > y)
+		return 0;
+
+	item->item_flags[0] = lara_item->pos.y_rot;
+	return 1;
+}
+
 void inject_moveblok(bool replace)
 {
 	INJECT(0x00456BA0, ClearMovableBlockSplitters, replace);
 	INJECT(0x00457690, AlterFloorHeight, replace);
 	INJECT(0x004573A0, TestBlockMovable, replace);
+	INJECT(0x004571E0, TestBlockPush, replace);
 }
