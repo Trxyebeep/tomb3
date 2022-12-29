@@ -268,7 +268,7 @@ tomb3 progress.
 		game/cleaner.cpp
 
 0x0041C3E0	+	InitialiseCleaner
-0x0041C440		CleanerControl
+0x0041C440	+	CleanerControl
 0x0041D0B0	+	TriggerElectricSparks
 
 
