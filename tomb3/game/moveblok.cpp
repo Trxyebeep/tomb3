@@ -47,7 +47,37 @@ void ClearMovableBlockSplitters(long x, long y, long z, short room_number)
 	}
 }
 
+void AlterFloorHeight(ITEM_INFO* item, long height)
+{
+	FLOOR_INFO* floor;
+	FLOOR_INFO* ceiling;
+	short room_num;
+
+	room_num = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_num);
+	ceiling = GetFloor(item->pos.x_pos, item->pos.y_pos + height - WALL_SIZE, item->pos.z_pos, &room_num);
+
+	if (floor->floor == -127)
+		floor->floor = ceiling->ceiling + char(height >> 8);
+	else
+	{
+		floor->floor += char(height >> 8);
+
+		if (floor->floor == ceiling->ceiling)
+			floor->floor = -127;
+	}
+
+	if (boxes[floor->box].overlap_index & 0x8000)
+	{
+		if (height >= 0)
+			boxes[floor->box].overlap_index &= ~0x4000;
+		else
+			boxes[floor->box].overlap_index |= 0x4000;
+	}
+}
+
 void inject_moveblok(bool replace)
 {
 	INJECT(0x00456BA0, ClearMovableBlockSplitters, replace);
+	INJECT(0x00457690, AlterFloorHeight, replace);
 }
