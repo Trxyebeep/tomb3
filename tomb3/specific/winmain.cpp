@@ -286,7 +286,7 @@ LRESULT CALLBACK WinAppProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 #ifdef TROYESTUFF
 	case WM_MOVE:
-		DXMove(LOWORD(lParam), HIWORD(lParam));
+		DXMove((short)LOWORD(lParam), (short)HIWORD(lParam));
 		break;
 #endif
 	}
