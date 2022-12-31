@@ -10,6 +10,7 @@
 - Fix Sophia rings not being saved.
 - Fix rare crash in High Security Compound.
 - Fix unsafe memory access in Wasp Spawner.
+- Fix dynamic light formula on room geometry.
 
 ### tomb3 additions
 
