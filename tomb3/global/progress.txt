@@ -1380,7 +1380,7 @@ tomb3 progress.
 		game/traps.cpp
 
 0x0046D340	+	PropellerControl
-0x0046D500		ControlSpikeWall
+0x0046D500	+	ControlSpikeWall
 0x0046D650		ControlCeilingSpikes
 0x0046D7C0		HookControl
 0x0046D850		SpinningBlade

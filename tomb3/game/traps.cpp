@@ -12,6 +12,7 @@
 #include "draw.h"
 #include "effect2.h"
 #include "sphere.h"
+#include "../3dsystem/phd_math.h"
 
 void LaraBurn()
 {
@@ -470,6 +471,51 @@ void FlameControl(short fx_number)
 	}
 }
 
+void ControlSpikeWall(short item_number)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	long x, y, z, h;
+	short room_number;
+
+	item = &items[item_number];
+
+	if (TriggerActive(item) && item->status != ITEM_DEACTIVATED)
+	{
+		x = item->pos.x_pos + (16 * phd_sin(item->pos.y_rot) >> W2V_SHIFT);
+		y = item->pos.y_pos;
+		z = item->pos.z_pos + (16 * phd_cos(item->pos.y_rot) >> W2V_SHIFT);
+		room_number = item->room_number;
+		floor = GetFloor(x, y, z, &room_number);
+		h = GetHeight(floor, x, y, z);
+
+		if (item->pos.y_pos == h)
+		{
+			item->pos.x_pos = x;
+			item->pos.z_pos = z;
+
+			if (item->room_number != room_number)
+				ItemNewRoom(item_number, room_number);
+
+			SoundEffect(SFX_ROLLING_BALL, &item->pos, SFX_DEFAULT);
+		}
+		else
+		{
+			item->status = ITEM_DEACTIVATED;
+			StopSoundEffect(SFX_ROLLING_BALL);
+		}
+	}
+
+	if (item->touch_bits)
+	{
+		lara_item->hit_points -= 20;
+		lara_item->hit_status = 1;
+		DoLotsOfBlood(lara_item->pos.x_pos, lara_item->pos.y_pos - 512, lara_item->pos.z_pos, 1, item->pos.y_rot, lara_item->room_number, 3);
+		SoundEffect(SFX_LARA_GRABFEET, &item->pos, SFX_DEFAULT);
+		item->touch_bits = 0;
+	}
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -478,4 +524,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046D340, PropellerControl, inject_rando ? 1 : replace);
 	INJECT(0x0046F1E0, SideFlameDetection, replace);
 	INJECT(0x0046F370, FlameControl, inject_rando ? 1 : replace);
+	INJECT(0x0046D500, ControlSpikeWall, replace);
 }
