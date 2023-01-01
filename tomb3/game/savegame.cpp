@@ -57,7 +57,7 @@ void ModifyStartInfo(long level)
 		pInfo->num_sgcrystals = 1;
 		pInfo->gun_type = LG_UNARMED;
 	}
-	else if (level == LV_JUNGLE)	//forgets to reset shotgun!
+	else if (level == LV_FIRSTLEVEL)	//forgets to reset shotgun!
 	{
 		pInfo->available = 1;
 
@@ -144,7 +144,7 @@ void InitialiseStartInfo()
 	}
 
 	savegame.start[LV_GYM].available = 1;
-	savegame.start[LV_JUNGLE].available = 1;
+	savegame.start[LV_FIRSTLEVEL].available = 1;
 	savegame.AfterAdventureSave = 0;
 	savegame.WorldRequired = 0;
 	savegame.IndiaComplete = 0;

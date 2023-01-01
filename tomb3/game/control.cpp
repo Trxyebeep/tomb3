@@ -142,7 +142,7 @@ long ControlPhase(long nframes, long demo_mode)
 						return return_val;
 
 					if (CurrentLevel == LV_GYM)
-						return 1;
+						return STARTGAME | LV_FIRSTLEVEL;
 
 					CreateSaveGameInfo();
 					S_SaveGame(&savegame, sizeof(SAVEGAME_INFO), Inventory_ExtraData[1]);

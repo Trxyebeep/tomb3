@@ -519,9 +519,9 @@ long TitleSequence()
 			InitialiseStartInfo();
 
 			if (gameflow.play_any_level)
-				return Inventory_ExtraData[1] + 1;
+				return STARTGAME | (Inventory_ExtraData[1] + 1);
 
-			return 1;
+			return STARTGAME | LV_FIRSTLEVEL;
 		}
 	}
 

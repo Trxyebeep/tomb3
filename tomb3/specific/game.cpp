@@ -330,12 +330,12 @@ long LevelStats(long level)
 	{
 		savegame.bonus_flag = 1;
 
-		for (int i = 1; i < gameflow.num_levels; i++)
+		for (int i = LV_FIRSTLEVEL; i < gameflow.num_levels; i++)
 			ModifyStartInfo(i);
 
 		savegame.AfterAdventureSave = 0;
 		savegame.AntarcticaComplete = 1;
-		savegame.current_level = LV_JUNGLE;
+		savegame.current_level = LV_FIRSTLEVEL;
 	}
 	else
 	{
@@ -366,7 +366,7 @@ long LevelStats(long level)
 	{
 		savegame.bonus_flag = 1;
 
-		for (int i = 1; i < gameflow.num_levels; i++)
+		for (int i = LV_FIRSTLEVEL; i < gameflow.num_levels; i++)
 			ModifyStartInfo(i);
 	}
 
@@ -751,9 +751,9 @@ long StartGame(long level, long type)
 		return EXIT_TO_TITLE;
 
 	if (gameflow.play_any_level)
-		return Inventory_ExtraData[1] + 1;
+		return STARTGAME | (Inventory_ExtraData[1] + 1);
 	else
-		return LV_JUNGLE;
+		return STARTGAME | LV_FIRSTLEVEL;
 }
 
 void inject_sgame(bool replace)

@@ -1842,7 +1842,7 @@ void do_passport_option(INVENTORY_ITEM* item)
 					inputDB = 0;
 				}
 				else if (inputDB & IN_SELECT)
-					Inventory_ExtraData[1] = LV_JUNGLE;
+					Inventory_ExtraData[1] = LV_FIRSTLEVEL;
 			}
 		}
 	}
