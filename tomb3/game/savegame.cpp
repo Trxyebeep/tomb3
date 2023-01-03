@@ -758,6 +758,7 @@ void ExtractSaveGameInfo()
 
 	if (lara.weapon_item != NO_ITEM)
 	{
+		lara.weapon_item = CreateItem();
 		item = &items[lara.weapon_item];
 		ReadSG(&item->object_number, sizeof(short));
 		ReadSG(&item->anim_number, sizeof(short));

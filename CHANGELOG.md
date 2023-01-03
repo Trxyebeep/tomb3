@@ -23,10 +23,11 @@
 ### tomb3 bug fixes
 
 - Fix PSX save system passport deadlock.
-- Fix TR3 Gold getting a crystal at the start.
+- Fix Gold getting a crystal at the start.
 - Fix crash when taking screenshots in windowed mode.
-- Fix screenshot file number starting at 1.
-- Fix footprints not being cleared between levels (earlier fix from V1.1.0 didn't work).
+- Fix screenshot file number starting at 1 instead of 0.
+- Fix footprints not being cleared between levels (earlier fix from V1.1.0 did not work).
+- Fix possible arm corruption/crash after reloading and using weapons.
 
 
 ## [1.4.0](https://github.com/Trxyebeep/tomb3/tree/V1.4.0) (Dec. 16 2022)
