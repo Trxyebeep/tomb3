@@ -83,11 +83,21 @@ void ControlHarpoonBolt(short item_number)
 			SmashWindow(target_num);
 		else if (obj_num == CARCASS || obj_num == EXTRAFX6)
 		{
-			if (item->status != ITEM_ACTIVE)	//original bug: this doesn't work, need to check target instead of item
+#ifdef TROYESTUFF	//original bug: checks item (the nade) instead of the target
+			if (target->status != ITEM_ACTIVE)
 			{
-				item->status = ITEM_ACTIVE;		//same here
+				target->status = ITEM_ACTIVE;
+				AddActiveItem(target_num);
+				KillItem(item_number);
+				return;
+			}
+#else
+			if (item->status != ITEM_ACTIVE)
+			{
+				item->status = ITEM_ACTIVE;
 				AddActiveItem(target_num);
 			}
+#endif
 		}
 		else if (obj_num != SMASH_OBJECT1)
 		{
@@ -374,13 +384,29 @@ void ControlRocket(short item_number)
 				SmashWindow(target_num);
 			else if (obj_num == CARCASS || obj_num == EXTRAFX6)
 			{
-				if (item->status != ITEM_ACTIVE)	//original bug: this doesn't work, need to check target instead of item
+#ifdef TROYESTUFF	//original bug: checks item (the nade) instead of the target
+				if (target->status != ITEM_ACTIVE)
 				{
-					item->status = ITEM_ACTIVE;		//same here
+					target->status = ITEM_ACTIVE;
+					AddActiveItem(target_num);
+
+					if (!exploded)
+					{
+						exploded = 1;
+						rad = WALL_SIZE << item->item_flags[0];
+						r = -1;
+						break;
+					}
+				}
+#else
+				if (item->status != ITEM_ACTIVE)
+				{
+					item->status = ITEM_ACTIVE;
 					AddActiveItem(target_num);
 				}
+#endif
 			}
-			else if (target->object_number != SMASH_OBJECT1)
+			else if (obj_num != SMASH_OBJECT1)
 			{
 				if (obj_num == TRIBEBOSS && TribeBossShieldOn)
 					FindClosestShieldPoint(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, target);
@@ -606,13 +632,29 @@ void ControlGrenade(short item_number)
 				SmashWindow(target_num);
 			else if (obj_num == CARCASS || obj_num == EXTRAFX6)
 			{
-				if (item->status != ITEM_ACTIVE)	//original bug: this doesn't work, need to check target instead of item
+#ifdef TROYESTUFF	//original bug: checks item (the nade) instead of the target
+				if (target->status != ITEM_ACTIVE)
 				{
-					item->status = ITEM_ACTIVE;		//same here
+					target->status = ITEM_ACTIVE;
+					AddActiveItem(target_num);
+
+					if (!exploded)	//and explode the nade now!
+					{
+						exploded = 1;
+						rad = WALL_SIZE;
+						r = -1;
+						break;
+					}
+				}
+#else
+				if (item->status != ITEM_ACTIVE)	
+				{
+					item->status = ITEM_ACTIVE;
 					AddActiveItem(target_num);
 				}
+#endif
 			}
-			else if (target->object_number != SMASH_OBJECT1)
+			else if (obj_num != SMASH_OBJECT1)
 			{
 				if (obj_num == TRIBEBOSS && TribeBossShieldOn)
 					FindClosestShieldPoint(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, target);
@@ -630,6 +672,7 @@ void ControlGrenade(short item_number)
 					{
 						if (obj_num == LIZARD_MAN && lizard_man_active)
 							lizard_man_active = 0;
+
 						item_after_projectile = target->next_active;
 						CreatureDie(target_num, 1);
 					}
@@ -640,6 +683,7 @@ void ControlGrenade(short item_number)
 					exploded = 1;
 					rad = WALL_SIZE;
 					r = -1;
+					break;
 				}
 			}
 		}

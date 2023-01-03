@@ -11,6 +11,7 @@
 - Fix rare crash in High Security Compound.
 - Fix unsafe memory access in Wasp Spawner.
 - Fix dynamic light formula on room geometry.
+- Fix grenades, rockets, and harpoons ignoring the carcass in Crash Site.
 
 ### tomb3 additions
 
