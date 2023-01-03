@@ -204,8 +204,34 @@ long FireWeapon(long weapon_type, ITEM_INFO* target, ITEM_INFO* source, short* a
 	return 1;
 }
 
+void HitTarget(ITEM_INFO* item, GAME_VECTOR* hitpos, long damage)
+{
+	if (item->hit_points > 0 && item->hit_points <= damage)
+		savegame.kills++;
+
+	item->hit_points -= (short)damage;
+	item->hit_status = 1;
+
+	if (item->data)
+		((CREATURE_INFO*)item->data)->hurt_by_lara = 1;
+
+	if (hitpos && item->object_number != TRIBEBOSS)
+	{
+		if (item->object_number == ROBOT_SENTRY_GUN)
+		{
+			for (int i = 0; i < 3; i++)
+				TriggerRicochetSpark(hitpos, GetRandomControl() & 0xFFF, 0);
+
+			SoundEffect(SFX_LARA_RICOCHET, &item->pos, SFX_DEFAULT);
+		}
+		else if (item->object_number != TARGETS)
+			DoBloodSplat(hitpos->x, hitpos->y, hitpos->z, item->speed, item->pos.y_rot, item->room_number);
+	}
+}
+
 void inject_larafire(bool replace)
 {
 	INJECT(0x0044AF50, WeaponObject, replace);
 	INJECT(0x0044A890, FireWeapon, inject_rando ? 1 : replace);
+	INJECT(0x0044AE20, HitTarget, replace);
 }

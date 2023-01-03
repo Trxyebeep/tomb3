@@ -932,7 +932,7 @@ tomb3 progress.
 0x0044A700		find_target_point
 0x0044A7B0		AimWeapon
 0x0044A890	+	FireWeapon
-0x0044AE20		HitTarget
+0x0044AE20	+	HitTarget
 0x0044AEE0		SmashItem
 0x0044AF50	+	WeaponObject
 0x0044AFB0		DoProperDetection
