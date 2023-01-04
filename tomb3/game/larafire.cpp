@@ -308,7 +308,7 @@ void AimWeapon(WEAPON_INFO* winfo, LARA_ARM* arm)
 	arm->z_rot = 0;
 }
 
-static void find_target_point(ITEM_INFO* item, GAME_VECTOR* target)
+void find_target_point(ITEM_INFO* item, GAME_VECTOR* target)
 {
 	long x, y, z, c, s;
 	short* bounds;

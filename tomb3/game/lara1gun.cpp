@@ -16,6 +16,7 @@
 #include "collide.h"
 #include "box.h"
 #include "sound.h"
+#include "lara.h"
 
 void ControlHarpoonBolt(short item_number)
 {
@@ -825,6 +826,62 @@ void undraw_shotgun(long weapon_type)
 	lara.left_arm.anim_number = lara.right_arm.anim_number;
 }
 
+void FireHarpoon()
+{
+	ITEM_INFO* item;
+	GAME_VECTOR pos;
+	long dx, dy, dz, dist;
+	short item_number;
+
+	if (lara.harpoon.ammo <= 0)
+		return;
+
+	item_number = CreateItem();
+
+	if (item_number == NO_ITEM)
+		return;
+
+	item = &items[item_number];
+	item->shade = -0x3DF0;
+	item->object_number = HARPOON_BOLT;
+	item->room_number = lara_item->room_number;
+	pos.x = -2;
+	pos.y = 373;
+	pos.z = 77;
+	GetLaraHandAbsPosition((PHD_VECTOR*)&pos, RIGHT_HAND);
+	item->pos.x_pos = pos.x;
+	item->pos.y_pos = pos.y;
+	item->pos.z_pos = pos.z;
+	InitialiseItem(item_number);
+
+	if (lara.target)
+	{
+		find_target_point(lara.target, &pos);
+		dx = pos.x - item->pos.x_pos;
+		dy = pos.y - item->pos.y_pos;
+		dz = pos.z - item->pos.z_pos;
+		dist = phd_sqrt(SQUARE(dx) + SQUARE(dz));
+		item->pos.x_rot = -(short)phd_atan(dist, dy);
+		item->pos.y_rot = (short)phd_atan(dz, dx);
+	}
+	else
+	{
+		item->pos.x_rot = lara.torso_x_rot + lara_item->pos.x_rot;
+		item->pos.y_rot = lara.torso_y_rot + lara_item->pos.y_rot;
+	}
+
+	item->pos.z_rot = 0;
+	item->fallspeed = short((-256 * phd_sin(item->pos.x_rot)) >> W2V_SHIFT);
+	item->speed = short((256 * phd_cos(item->pos.x_rot)) >> W2V_SHIFT);
+	item->hit_points = 256;
+	AddActiveItem(item_number);
+
+	if (!savegame.bonus_flag)
+		lara.harpoon.ammo--;
+
+	savegame.ammo_used++;
+}
+
 void inject_lara1gun(bool replace)
 {
 	INJECT(0x004459B0, ControlHarpoonBolt, inject_rando ? 1 : replace);
@@ -835,4 +892,5 @@ void inject_lara1gun(bool replace)
 	INJECT(0x004452C0, ready_shotgun, replace);
 	INJECT(0x004475D0, draw_shotgun, replace);
 	INJECT(0x00447770, undraw_shotgun, replace);
+	INJECT(0x00445820, FireHarpoon, replace);
 }
