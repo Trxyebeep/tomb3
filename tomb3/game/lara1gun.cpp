@@ -720,6 +720,26 @@ void undraw_shotgun_meshes(long weapon_type)
 	lara.mesh_ptrs[HAND_R] = meshes[objects[LARA].mesh_index + HAND_R];
 }
 
+void ready_shotgun(long weapon_type)
+{
+	lara.gun_status = LG_READY;
+	lara.target = 0;
+
+	lara.right_arm.x_rot = 0;
+	lara.right_arm.y_rot = 0;
+	lara.right_arm.z_rot = 0;
+	lara.right_arm.lock = 0;
+	lara.right_arm.frame_number = 0;
+	lara.right_arm.frame_base = objects[WeaponObject(weapon_type)].frame_base;
+
+	lara.left_arm.x_rot = 0;
+	lara.left_arm.y_rot = 0;
+	lara.left_arm.z_rot = 0;
+	lara.left_arm.lock = 0;
+	lara.left_arm.frame_number = 0;
+	lara.left_arm.frame_base = lara.right_arm.frame_base;
+}
+
 void inject_lara1gun(bool replace)
 {
 	INJECT(0x004459B0, ControlHarpoonBolt, inject_rando ? 1 : replace);
@@ -727,4 +747,5 @@ void inject_lara1gun(bool replace)
 	INJECT(0x00446DD0, ControlGrenade, inject_rando ? 1 : replace);
 	INJECT(0x00445250, draw_shotgun_meshes, replace);
 	INJECT(0x00445290, undraw_shotgun_meshes, replace);
+	INJECT(0x004452C0, ready_shotgun, replace);
 }
