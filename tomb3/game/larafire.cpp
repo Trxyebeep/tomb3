@@ -12,6 +12,7 @@
 #include "sound.h"
 #include "../3dsystem/phd_math.h"
 #include "../specific/smain.h"
+#include "items.h"
 
 long WeaponObject(long weapon_type)
 {
@@ -229,9 +230,29 @@ void HitTarget(ITEM_INFO* item, GAME_VECTOR* hitpos, long damage)
 	}
 }
 
+void SmashItem(short item_number, long weapon_type)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (item->object_number >= SMASH_WINDOW && item->object_number <= SMASH_OBJECT3)
+		return SmashWindow(item_number);
+
+	if (item->object_number == CARCASS || item->object_number == EXTRAFX6)
+	{
+		if (item->status != ITEM_ACTIVE)
+		{
+			item->status = ITEM_ACTIVE;
+			AddActiveItem(item_number);
+		}
+	}
+}
+
 void inject_larafire(bool replace)
 {
 	INJECT(0x0044AF50, WeaponObject, replace);
 	INJECT(0x0044A890, FireWeapon, inject_rando ? 1 : replace);
 	INJECT(0x0044AE20, HitTarget, replace);
+	INJECT(0x0044AEE0, SmashItem, replace);
 }
