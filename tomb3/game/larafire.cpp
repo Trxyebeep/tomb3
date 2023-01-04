@@ -301,6 +301,65 @@ static void find_target_point(ITEM_INFO* item, GAME_VECTOR* target)
 	target->room_number = item->room_number;
 }
 
+void LaraTargetInfo(WEAPON_INFO* winfo)
+{
+	GAME_VECTOR start, target;
+	short ang[2];
+
+	if (!lara.target)
+	{
+		lara.right_arm.lock = 0;
+		lara.left_arm.lock = 0;
+		lara.target_angles[0] = 0;
+		lara.target_angles[1] = 0;
+		return;
+	}
+
+	start.x = lara_item->pos.x_pos;
+	start.y = lara_item->pos.y_pos - 650;
+	start.z = lara_item->pos.z_pos;
+	start.room_number = lara_item->room_number;
+	find_target_point(lara.target, &target);
+	phd_GetVectorAngles(target.x - start.x, target.y - start.y, target.z - start.z, ang);
+	ang[0] -= lara_item->pos.y_rot;
+	ang[1] -= lara_item->pos.x_rot;
+
+	if (LOS(&start, &target))
+	{
+		if (ang[0] >= winfo->lock_angles[0] && ang[0] <= winfo->lock_angles[1] &&
+			ang[1] >= winfo->lock_angles[2] && ang[1] <= winfo->lock_angles[3])
+		{
+			lara.left_arm.lock = 1;
+			lara.right_arm.lock = 1;
+			lara.target_angles[0] = ang[0];
+			lara.target_angles[1] = ang[1];
+			return;
+		}
+
+		if (lara.left_arm.lock)
+		{
+			if (ang[0] < winfo->left_angles[0] || ang[0] > winfo->left_angles[1] ||
+				ang[1] < winfo->left_angles[2] || ang[1] > winfo->left_angles[3])
+				lara.left_arm.lock = 0;
+		}
+
+		if (lara.right_arm.lock)
+		{
+			if (ang[0] < winfo->right_angles[0] || ang[0] > winfo->right_angles[1] ||
+				ang[1] < winfo->left_angles[2] || ang[1] > winfo->left_angles[3])
+				lara.right_arm.lock = 0;
+		}
+	}
+	else
+	{
+		lara.right_arm.lock = 0;
+		lara.left_arm.lock = 0;
+	}
+
+	lara.target_angles[0] = ang[0];
+	lara.target_angles[1] = ang[1];
+}
+
 void inject_larafire(bool replace)
 {
 	INJECT(0x0044AF50, WeaponObject, replace);
@@ -309,4 +368,5 @@ void inject_larafire(bool replace)
 	INJECT(0x0044AEE0, SmashItem, replace);
 	INJECT(0x0044A7B0, AimWeapon, replace);
 	INJECT(0x0044A700, find_target_point, replace);
+	INJECT(0x0044A330, LaraTargetInfo, replace);
 }
