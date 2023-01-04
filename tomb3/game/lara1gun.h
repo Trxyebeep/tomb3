@@ -10,7 +10,7 @@ void draw_shotgun_meshes(long weapon_type);
 void undraw_shotgun_meshes(long weapon_type);
 void ready_shotgun(long weapon_type);
 void draw_shotgun(long weapon_type);
+void undraw_shotgun(long weapon_type);
 
 #define TriggerUnderwaterExplosion	( (void(__cdecl*)(ITEM_INFO*)) 0x00447D90 )
-#define undraw_shotgun	( (void(__cdecl*)(long)) 0x00447770 )
 #define RifleHandler	( (void(__cdecl*)(long)) 0x00445340 )

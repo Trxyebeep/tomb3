@@ -785,6 +785,46 @@ void draw_shotgun(long weapon_type)
 	lara.left_arm.anim_number = lara.right_arm.anim_number;
 }
 
+void undraw_shotgun(long weapon_type)
+{
+	ITEM_INFO* item;
+
+	item = &items[lara.weapon_item];
+
+	if (lara.water_status == LARA_SURFACE)
+		item->goal_anim_state = 9;
+	else
+		item->goal_anim_state = 3;
+
+	AnimateItem(item);
+
+	if (item->status == ITEM_DEACTIVATED)
+	{
+		lara.gun_status = LG_ARMLESS;
+		lara.target = 0;
+		lara.right_arm.lock = 0;
+		lara.left_arm.lock = 0;
+		KillItem(lara.weapon_item);
+		lara.weapon_item = NO_ITEM;
+		lara.right_arm.frame_number = 0;
+		lara.left_arm.frame_number = 0;
+	}
+	else if (item->current_anim_state == 3 &&
+#ifdef TROYESTUFF
+		item->frame_number - anims[item->anim_number].frame_base == (weapon_type == LG_GRENADE ? 16 : 21))
+#else
+		item->frame_number - anims[item->anim_number].frame_base == 21)
+#endif
+		undraw_shotgun_meshes(weapon_type);
+
+	lara.right_arm.frame_base = anims[item->anim_number].frame_ptr;
+	lara.left_arm.frame_base = lara.right_arm.frame_base;
+	lara.right_arm.frame_number = item->frame_number - anims[item->anim_number].frame_base;
+	lara.left_arm.frame_number = lara.right_arm.frame_number;
+	lara.right_arm.anim_number = item->anim_number;
+	lara.left_arm.anim_number = lara.right_arm.anim_number;
+}
+
 void inject_lara1gun(bool replace)
 {
 	INJECT(0x004459B0, ControlHarpoonBolt, inject_rando ? 1 : replace);
@@ -794,4 +834,5 @@ void inject_lara1gun(bool replace)
 	INJECT(0x00445290, undraw_shotgun_meshes, replace);
 	INJECT(0x004452C0, ready_shotgun, replace);
 	INJECT(0x004475D0, draw_shotgun, replace);
+	INJECT(0x00447770, undraw_shotgun, replace);
 }

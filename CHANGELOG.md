@@ -12,6 +12,7 @@
 - Fix unsafe memory access in Wasp Spawner.
 - Fix dynamic light formula on room geometry.
 - Fix grenades, rockets, and harpoons ignoring the carcass in Crash Site.
+- Fix grenade launcher unequip frame.
 
 ### tomb3 additions
 
