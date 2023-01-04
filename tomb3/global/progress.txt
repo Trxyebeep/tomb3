@@ -924,7 +924,7 @@ tomb3 progress.
 
 		game/larafire.cpp
 
-0x00449BB0		LaraGun
+0x00449BB0	+	LaraGun
 0x0044A1A0	+	CheckForHoldingState
 0x0044A1E0	+	InitialiseNewWeapon
 0x0044A330	+	LaraTargetInfo

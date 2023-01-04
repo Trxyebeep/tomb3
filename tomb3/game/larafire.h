@@ -11,6 +11,6 @@ void AimWeapon(WEAPON_INFO* winfo, LARA_ARM* arm);
 void LaraTargetInfo(WEAPON_INFO* winfo);
 void LaraGetNewTarget(WEAPON_INFO* winfo);
 void InitialiseNewWeapon();
+void LaraGun();
 
-#define LaraGun	( (void(__cdecl*)()) 0x00449BB0 )
 #define DoProperDetection	( (void(__cdecl*)(short, long, long, long, long, long, long)) 0x0044AFB0 )
