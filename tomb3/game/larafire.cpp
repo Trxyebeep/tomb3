@@ -249,10 +249,45 @@ void SmashItem(short item_number, long weapon_type)
 	}
 }
 
+void AimWeapon(WEAPON_INFO* winfo, LARA_ARM* arm)
+{
+	short speed, x, y;
+
+	speed = winfo->aim_speed;
+
+	if (arm->lock)
+	{
+		y = lara.target_angles[0];
+		x = lara.target_angles[1];
+	}
+	else
+	{
+		x = 0;
+		y = 0;
+	}
+
+	if (arm->y_rot >= y - speed && arm->y_rot <= speed + y)
+		arm->y_rot = y;
+	else if (arm->y_rot < y)
+		arm->y_rot += speed;
+	else
+		arm->y_rot -= speed;
+
+	if (arm->x_rot >= x - speed && arm->x_rot <= speed + x)
+		arm->x_rot = x;
+	else if (arm->x_rot < x)
+		arm->x_rot += speed;
+	else
+		arm->x_rot -= speed;
+
+	arm->z_rot = 0;
+}
+
 void inject_larafire(bool replace)
 {
 	INJECT(0x0044AF50, WeaponObject, replace);
 	INJECT(0x0044A890, FireWeapon, inject_rando ? 1 : replace);
 	INJECT(0x0044AE20, HitTarget, replace);
 	INJECT(0x0044AEE0, SmashItem, replace);
+	INJECT(0x0044A7B0, AimWeapon, replace);
 }
