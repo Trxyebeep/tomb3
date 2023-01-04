@@ -929,7 +929,7 @@ tomb3 progress.
 0x0044A1E0		InitialiseNewWeapon
 0x0044A330		LaraTargetInfo
 0x0044A4D0		LaraGetNewTarget
-0x0044A700		find_target_point
+0x0044A700	+	find_target_point
 0x0044A7B0	+	AimWeapon
 0x0044A890	+	FireWeapon
 0x0044AE20	+	HitTarget

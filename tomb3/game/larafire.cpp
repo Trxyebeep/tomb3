@@ -13,6 +13,7 @@
 #include "../3dsystem/phd_math.h"
 #include "../specific/smain.h"
 #include "items.h"
+#include "draw.h"
 
 long WeaponObject(long weapon_type)
 {
@@ -283,6 +284,23 @@ void AimWeapon(WEAPON_INFO* winfo, LARA_ARM* arm)
 	arm->z_rot = 0;
 }
 
+static void find_target_point(ITEM_INFO* item, GAME_VECTOR* target)
+{
+	long x, y, z, c, s;
+	short* bounds;
+
+	bounds = GetBestFrame(item);
+	x = (bounds[0] + bounds[1]) >> 1;
+	y = bounds[2] + (bounds[3] - bounds[2]) / 3;
+	z = (bounds[4] + bounds[5]) >> 1;
+	s = phd_sin(item->pos.y_rot);
+	c = phd_cos(item->pos.y_rot);
+	target->x = item->pos.x_pos + ((z * s + x * c) >> W2V_SHIFT);
+	target->y = item->pos.y_pos + y;
+	target->z = item->pos.z_pos + ((z * c - x * s) >> W2V_SHIFT);
+	target->room_number = item->room_number;
+}
+
 void inject_larafire(bool replace)
 {
 	INJECT(0x0044AF50, WeaponObject, replace);
@@ -290,4 +308,5 @@ void inject_larafire(bool replace)
 	INJECT(0x0044AE20, HitTarget, replace);
 	INJECT(0x0044AEE0, SmashItem, replace);
 	INJECT(0x0044A7B0, AimWeapon, replace);
+	INJECT(0x0044A700, find_target_point, replace);
 }
