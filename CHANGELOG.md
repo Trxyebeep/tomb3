@@ -28,6 +28,7 @@
 - Fix screenshot file number starting at 1 instead of 0.
 - Fix footprints not being cleared between levels (earlier fix from V1.1.0 did not work).
 - Fix possible arm corruption/crash after reloading and using weapons.
+- Fix window not being rendered on secondary monitor. -From Saracen
 
 
 ## [1.4.0](https://github.com/Trxyebeep/tomb3/tree/V1.4.0) (Dec. 16 2022)
