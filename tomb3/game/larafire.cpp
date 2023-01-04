@@ -17,6 +17,26 @@
 #include "lara2gun.h"
 #include "lara1gun.h"
 #include "laraflar.h"
+#include "lara.h"
+
+static short HoldStates[] =
+{
+	AS_WALK,
+	AS_STOP,
+	AS_POSE,
+	AS_TURN_R,
+	AS_TURN_L,
+	AS_BACK,
+	AS_FASTTURN,
+	AS_STEPLEFT,
+	AS_STEPRIGHT,
+	AS_WADE,
+	AS_PICKUP,
+	AS_SWITCHON,
+	AS_SWITCHOFF,
+	AS_DUCK,
+	-1
+};
 
 long WeaponObject(long weapon_type)
 {
@@ -488,6 +508,26 @@ void InitialiseNewWeapon()
 	}
 }
 
+static long CheckForHoldingState(long state)
+{
+	short* holds;
+
+	if (lara.extra_anim)
+		return 0;
+
+	holds = HoldStates;
+
+	while (*holds >= 0)
+	{
+		if (state == *holds)
+			return 1;
+
+		holds++;
+	}
+
+	return 0;
+}
+
 void inject_larafire(bool replace)
 {
 	INJECT(0x0044AF50, WeaponObject, replace);
@@ -499,4 +539,5 @@ void inject_larafire(bool replace)
 	INJECT(0x0044A330, LaraTargetInfo, replace);
 	INJECT(0x0044A4D0, LaraGetNewTarget, replace);
 	INJECT(0x0044A1E0, InitialiseNewWeapon, replace);
+	INJECT(0x0044A1A0, CheckForHoldingState, replace);
 }
