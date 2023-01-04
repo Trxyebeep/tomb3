@@ -10,7 +10,7 @@ void SmashItem(short item_number, long weapon_type);
 void AimWeapon(WEAPON_INFO* winfo, LARA_ARM* arm);
 void LaraTargetInfo(WEAPON_INFO* winfo);
 void LaraGetNewTarget(WEAPON_INFO* winfo);
+void InitialiseNewWeapon();
 
 #define LaraGun	( (void(__cdecl*)()) 0x00449BB0 )
-#define InitialiseNewWeapon	( (void(__cdecl*)()) 0x0044A1E0 )
 #define DoProperDetection	( (void(__cdecl*)(short, long, long, long, long, long, long)) 0x0044AFB0 )
