@@ -740,6 +740,51 @@ void ready_shotgun(long weapon_type)
 	lara.left_arm.frame_base = lara.right_arm.frame_base;
 }
 
+void draw_shotgun(long weapon_type)
+{
+	ITEM_INFO* item;
+
+	if (lara.weapon_item == NO_ITEM)
+	{
+		lara.weapon_item = CreateItem();
+		item = &items[lara.weapon_item];
+		item->object_number = (short)WeaponObject(weapon_type);
+
+		if (weapon_type == LG_ROCKET)
+			item->anim_number = objects[ROCKET_GUN].anim_index + 1;
+		else if (weapon_type == LG_GRENADE)
+			item->anim_number = objects[GRENADE_GUN].anim_index;
+		else
+			item->anim_number = objects[item->object_number].anim_index + 1;
+
+		item->status = ITEM_ACTIVE;
+		item->frame_number = anims[item->anim_number].frame_base;
+		item->current_anim_state = 1;
+		item->goal_anim_state = 1;
+		item->room_number = 255;
+		lara.right_arm.frame_base = objects[item->object_number].frame_base;
+		lara.left_arm.frame_base = lara.right_arm.frame_base;
+	}
+	else
+		item = &items[lara.weapon_item];
+
+	AnimateItem(item);
+
+	if (!item->current_anim_state || item->current_anim_state == 6)
+		ready_shotgun(weapon_type);
+	else if (item->frame_number - anims[item->anim_number].frame_base == weapons[weapon_type].draw_frame)
+		draw_shotgun_meshes(weapon_type);
+	else if (lara.water_status == LARA_UNDERWATER)
+		item->goal_anim_state = 6;
+
+	lara.right_arm.frame_base = anims[item->anim_number].frame_ptr;
+	lara.right_arm.frame_number = item->frame_number - anims[item->anim_number].frame_base;
+	lara.right_arm.anim_number = item->anim_number;
+	lara.left_arm.frame_base = lara.right_arm.frame_base;
+	lara.left_arm.frame_number = lara.right_arm.frame_number;
+	lara.left_arm.anim_number = lara.right_arm.anim_number;
+}
+
 void inject_lara1gun(bool replace)
 {
 	INJECT(0x004459B0, ControlHarpoonBolt, inject_rando ? 1 : replace);
@@ -748,4 +793,5 @@ void inject_lara1gun(bool replace)
 	INJECT(0x00445250, draw_shotgun_meshes, replace);
 	INJECT(0x00445290, undraw_shotgun_meshes, replace);
 	INJECT(0x004452C0, ready_shotgun, replace);
+	INJECT(0x004475D0, draw_shotgun, replace);
 }
