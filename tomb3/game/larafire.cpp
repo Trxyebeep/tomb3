@@ -360,6 +360,72 @@ void LaraTargetInfo(WEAPON_INFO* winfo)
 	lara.target_angles[1] = ang[1];
 }
 
+void LaraGetNewTarget(WEAPON_INFO* winfo)
+{
+	ITEM_INFO* item;
+	ITEM_INFO* bestitem;
+	GAME_VECTOR start, target;
+	long x, y, z, dist, maxdist, maxdist2, bestdist;
+	short ang[2];
+	short bestyrot, item_number;
+
+	item = 0;
+	bestitem = 0;
+	start.x = lara_item->pos.x_pos;
+	start.y = lara_item->pos.y_pos - 650;
+	start.z = lara_item->pos.z_pos;
+	start.room_number = lara_item->room_number;
+	bestyrot = 0x7FFF;
+	bestdist = 0x7FFFFFFF;
+	maxdist = winfo->target_dist;
+	maxdist2 = SQUARE(maxdist);
+
+	for (item_number = next_item_active; item_number != NO_ITEM; item_number = item->next_active)
+	{
+		if (item_number == NO_ITEM || item_number == lara.item_number)
+			continue;
+
+		item = &items[item_number];
+
+		if (item->hit_points <= 0 || !objects[item->object_number].intelligent)
+			continue;
+
+		x = item->pos.x_pos - start.x;
+		y = item->pos.y_pos - start.y;
+		z = item->pos.z_pos - start.z;
+
+		if (abs(x) > maxdist || abs(y) > maxdist || abs(z) > maxdist)
+			continue;
+
+		dist = SQUARE(x) + SQUARE(y) + SQUARE(z);
+
+		if (dist >= maxdist2)
+			continue;
+
+		find_target_point(item, &target);
+
+		if (!LOS(&start, &target))
+			continue;
+
+		phd_GetVectorAngles(target.x - start.x, target.y - start.y, target.z - start.z, ang);
+		ang[0] -= lara.torso_y_rot + lara_item->pos.y_rot;
+		ang[1] -= lara.torso_x_rot + lara_item->pos.x_rot;
+
+		if (ang[0] >= winfo->lock_angles[0] && ang[0] <= winfo->lock_angles[1] && ang[1] >= winfo->lock_angles[2] && ang[1] <= winfo->lock_angles[3])
+		{
+			if (abs(ang[0]) < bestyrot + 2730 && dist < bestdist)
+			{
+				bestdist = dist;
+				bestyrot = abs(ang[0]);
+				bestitem = item;
+			}
+		}
+	}
+
+	lara.target = bestitem;
+	LaraTargetInfo(winfo);
+}
+
 void inject_larafire(bool replace)
 {
 	INJECT(0x0044AF50, WeaponObject, replace);
@@ -369,4 +435,5 @@ void inject_larafire(bool replace)
 	INJECT(0x0044A7B0, AimWeapon, replace);
 	INJECT(0x0044A700, find_target_point, replace);
 	INJECT(0x0044A330, LaraTargetInfo, replace);
+	INJECT(0x0044A4D0, LaraGetNewTarget, replace);
 }
