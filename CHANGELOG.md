@@ -14,6 +14,7 @@
 - Fix grenades, rockets, and harpoons ignoring the carcass in Crash Site.
 - Fix grenade launcher unequip frame.
 - Fix grenade and rocket launchers double counting kills.
+- Fix cheats not working in All Hallows.
 
 ### tomb3 additions
 
@@ -22,6 +23,7 @@
 - New system for expanding savegame format.
 - Add Discord Rich Presence for base game + Gold.
 - Automatically disable PSX save system when running Gold.
+- Weapons cheat now gives Lara the Racetrack Key + flares in Lara's Home.
 
 ### tomb3 bug fixes
 
