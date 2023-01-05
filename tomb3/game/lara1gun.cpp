@@ -893,6 +893,7 @@ void FireRocket()
 	if (lara.rocket.ammo <= 0)
 		return;
 
+	lara.has_fired = 1;
 	item_number = CreateItem();
 	
 	if (item_number == NO_ITEM)
@@ -968,6 +969,86 @@ void FireRocket()
 	SoundEffect(SFX_EXPLOSION1, &lara_item->pos, 0x2000000 | SFX_SETPITCH);
 }
 
+void FireGrenade()
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	PHD_VECTOR pos;
+	PHD_VECTOR pos2;
+	long h;
+	short item_number;
+
+	if (lara.grenade.ammo <= 0)
+		return;
+
+	lara.has_fired = 1;
+	item_number = CreateItem();
+
+	if (item_number == NO_ITEM)
+		return;
+
+	item = &items[item_number];
+	item->shade = -0x3DF0;
+	item->object_number = GRENADE;
+	item->room_number = lara_item->room_number;
+	pos.x = 0;
+	pos.y = 276;
+	pos.z = 80;
+	GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+	item->pos.x_pos = pos.x;
+	item->pos.y_pos = pos.y;
+	item->pos.z_pos = pos.z;
+	pos2.x = 0;
+	pos2.y = 1204;
+	pos2.z = 72;
+	GetLaraHandAbsPosition(&pos2, RIGHT_HAND);
+
+	floor = GetFloor(pos.x, pos.y, pos.z, &item->room_number);
+	h = GetHeight(floor, pos.x, pos.y, pos.z);
+
+	if (h < pos.y)
+	{
+		item->pos.x_pos = lara_item->pos.x_pos;
+		item->pos.y_pos = pos.y;
+		item->pos.z_pos = lara_item->pos.z_pos;
+		item->room_number = lara_item->room_number;
+	}
+
+	pos.x = 0;
+	pos.y = 1204;
+	pos.z = 80;
+	GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+	SmokeCountL = 32;
+	SmokeWeapon = LG_GRENADE;
+
+	for (int i = 0; i < 5; i++)
+		TriggerGunSmoke(pos2.x, pos2.y, pos2.z, pos.x - pos2.x, pos.y - pos2.y, pos.z - pos2.z, 1, SmokeWeapon, SmokeCountL);
+
+	InitialiseItem(item_number);
+	item->pos.x_rot = lara.left_arm.x_rot + lara_item->pos.x_rot;
+	item->pos.y_rot = lara.left_arm.y_rot + lara_item->pos.y_rot;
+	item->pos.z_rot = 0;
+
+	if (!lara.left_arm.lock)
+	{
+		item->pos.x_rot += lara.torso_x_rot;
+		item->pos.y_rot += lara.torso_y_rot;
+	}
+
+	item->speed = 128;
+	item->fallspeed = -(item->speed * phd_sin(item->pos.x_rot)) >> W2V_SHIFT;
+	item->current_anim_state = item->pos.x_rot;
+	item->goal_anim_state = item->pos.y_rot;
+	item->required_anim_state = 0;
+	item->hit_points = 120;
+	AddActiveItem(item_number);
+
+	if (!savegame.bonus_flag)
+		lara.grenade.ammo--;
+
+	savegame.ammo_used++;
+}
+
 void inject_lara1gun(bool replace)
 {
 	INJECT(0x004459B0, ControlHarpoonBolt, inject_rando ? 1 : replace);
@@ -980,4 +1061,5 @@ void inject_lara1gun(bool replace)
 	INJECT(0x00447770, undraw_shotgun, replace);
 	INJECT(0x00445820, FireHarpoon, replace);
 	INJECT(0x00445F50, FireRocket, replace);
+	INJECT(0x00446BA0, FireGrenade, replace);
 }
