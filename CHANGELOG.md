@@ -13,6 +13,7 @@
 - Fix dynamic light formula on room geometry.
 - Fix grenades, rockets, and harpoons ignoring the carcass in Crash Site.
 - Fix grenade launcher unequip frame.
+- Fix grenade and rocket launchers double counting kills.
 
 ### tomb3 additions
 

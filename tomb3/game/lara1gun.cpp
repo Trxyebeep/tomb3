@@ -418,7 +418,9 @@ void ControlRocket(short item_number)
 
 				if (target->hit_points <= 0)
 				{
+#ifndef TROYESTUFF
 					savegame.kills++;
+#endif
 
 					if (obj_num != TRIBEBOSS && obj_num != WILLARD_BOSS && obj_num != TONY && obj_num != LON_BOSS &&
 						obj_num != ELECTRIC_CLEANER && obj_num != WHALE && obj_num != FLYING_MUTANT_EMITTER)
@@ -666,7 +668,9 @@ void ControlGrenade(short item_number)
 
 				if (target->hit_points <= 0)
 				{
+#ifndef TROYESTUFF
 					savegame.kills++;
+#endif
 
 					if (obj_num != TRIBEBOSS && obj_num != WHALE && obj_num != WILLARD_BOSS && obj_num != TONY &&
 						obj_num != LON_BOSS && obj_num != ELECTRIC_CLEANER && obj_num != FLYING_MUTANT_EMITTER)
@@ -1036,7 +1040,7 @@ void FireGrenade()
 	}
 
 	item->speed = 128;
-	item->fallspeed = -(item->speed * phd_sin(item->pos.x_rot)) >> W2V_SHIFT;
+	item->fallspeed = short(-(item->speed * phd_sin(item->pos.x_rot)) >> W2V_SHIFT);
 	item->current_anim_state = item->pos.x_rot;
 	item->goal_anim_state = item->pos.y_rot;
 	item->required_anim_state = 0;
