@@ -24,6 +24,7 @@
 - Add Discord Rich Presence for base game + Gold.
 - Automatically disable PSX save system when running Gold.
 - Weapons cheat now gives Lara the Racetrack Key + flares in Lara's Home.
+- Add NG+ for Gold.
 
 ### tomb3 bug fixes
 

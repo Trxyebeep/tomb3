@@ -97,7 +97,10 @@ long GameStats(long level_num, long type)
 
 #ifdef TROYESTUFF
 		if (tomb3.gold)
+		{
+			savegame.bonus_flag = 1;
 			GF_BonusLevelEnabled = 0;
+		}
 		else
 #endif
 			if (numsecrets >= num - 1)
