@@ -21,6 +21,7 @@
 - Add map.
 - New system for expanding savegame format.
 - Add Discord Rich Presence for base game + Gold.
+- Automatically disable PSX save system when running Gold.
 
 ### tomb3 bug fixes
 
