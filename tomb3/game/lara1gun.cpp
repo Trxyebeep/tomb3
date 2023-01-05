@@ -882,6 +882,92 @@ void FireHarpoon()
 	savegame.ammo_used++;
 }
 
+void FireRocket()
+{
+	ITEM_INFO* item;
+	PHD_VECTOR pos;
+	PHD_VECTOR pos2;
+	long lp;
+	short item_number;
+
+	if (lara.rocket.ammo <= 0)
+		return;
+
+	item_number = CreateItem();
+	
+	if (item_number == NO_ITEM)
+		return;
+
+	item = &items[item_number];
+	item->object_number = ROCKET;
+	item->room_number = lara_item->room_number;
+	pos.x = 0;
+	pos.y = 180;
+	pos.z = 72;
+	GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+	item->pos.x_pos = pos.x;
+	item->pos.y_pos = pos.y;
+	item->pos.z_pos = pos.z;
+	pos2.x = 0;
+	pos2.y = 1204;
+	pos2.z = 72;
+	GetLaraHandAbsPosition(&pos2, RIGHT_HAND);
+	SmokeCountL = 32;
+	SmokeWeapon = LG_ROCKET;
+
+	for (lp = 0; lp < 5; lp++)
+		TriggerGunSmoke(pos.x, pos.y, pos.z, pos2.x - pos.x, pos2.y - pos.y, pos2.z - pos.z, 1, SmokeWeapon, SmokeCountL);
+
+	InitialiseItem(item_number);
+	item->pos.x_rot = lara.left_arm.x_rot + lara_item->pos.x_rot;
+	item->pos.y_rot = lara.left_arm.y_rot + lara_item->pos.y_rot;
+	item->pos.z_rot = 0;
+
+	if (!lara.left_arm.lock)
+	{
+		item->pos.x_rot += lara.torso_x_rot;
+		item->pos.y_rot += lara.torso_y_rot;
+	}
+
+	item->speed = 16;
+	item->item_flags[0] = 0;
+	AddActiveItem(item_number);
+
+	if (!savegame.bonus_flag)
+		lara.rocket.ammo--;
+
+	savegame.ammo_used++;
+
+	phd_PushUnitMatrix();
+	phd_mxptr[M03] = 0;
+	phd_mxptr[M13] = 0;
+	phd_mxptr[M23] = 0;
+	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+
+	phd_PushMatrix();
+	phd_TranslateRel(0, 0, -128);
+	pos.x = phd_mxptr[M03] >> W2V_SHIFT;
+	pos.y = phd_mxptr[M13] >> W2V_SHIFT;
+	pos.z = phd_mxptr[M23] >> W2V_SHIFT;
+	phd_PopMatrix();
+
+	for (lp = 0; lp < 8; lp++)
+	{
+		phd_PushMatrix();
+		phd_TranslateRel(0, 0, -(GetRandomControl() & 0x7FF));
+		pos2.x = phd_mxptr[M03] >> W2V_SHIFT;
+		pos2.y = phd_mxptr[M13] >> W2V_SHIFT;
+		pos2.z = phd_mxptr[M23] >> W2V_SHIFT;
+		phd_PopMatrix();
+
+		TriggerRocketFlame(pos.x, pos.y, pos.z, pos2.x - pos.x, pos2.y - pos.y, pos2.z - pos.z, item_number);
+	}
+
+	phd_PopMatrix();
+
+	SoundEffect(SFX_EXPLOSION1, &lara_item->pos, 0x2000000 | SFX_SETPITCH);
+}
+
 void inject_lara1gun(bool replace)
 {
 	INJECT(0x004459B0, ControlHarpoonBolt, inject_rando ? 1 : replace);
@@ -893,4 +979,5 @@ void inject_lara1gun(bool replace)
 	INJECT(0x004475D0, draw_shotgun, replace);
 	INJECT(0x00447770, undraw_shotgun, replace);
 	INJECT(0x00445820, FireHarpoon, replace);
+	INJECT(0x00445F50, FireRocket, replace);
 }

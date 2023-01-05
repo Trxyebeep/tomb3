@@ -874,7 +874,7 @@ tomb3 progress.
 0x00445760		FireM16
 0x00445820	+	FireHarpoon
 0x004459B0	+	ControlHarpoonBolt
-0x00445F50		FireRocket
+0x00445F50	+	FireRocket
 0x004461E0	+	ControlRocket
 0x00446BA0		FireGrenade
 0x00446DD0	+	ControlGrenade
