@@ -1161,7 +1161,7 @@ tomb3 progress.
 
 		game/orca.cpp
 
-0x0045B260		OrcaControl
+0x0045B260	+	OrcaControl
 
 
 		game/people.cpp
