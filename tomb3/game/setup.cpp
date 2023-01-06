@@ -15,7 +15,10 @@
 #include "../specific/specific.h"
 #include "lot.h"
 #include "savegame.h"
+#ifdef TROYESTUFF
+#include "../newstuff/map.h"
 #include "../tomb3/tomb3.h"
+#endif
 
 void GetAIPickups()
 {
@@ -76,13 +79,6 @@ void InitialiseLevelFlags()
 	QuadbikeLapTime = 0;
 	compy_scared_timer = 0;
 	compys_attack_lara = 0;
-
-#ifdef TROYESTUFF	//clear footprints
-	for (int i = 0; i < 32; i++)
-		FootPrint[i].Active = 0;
-
-	FootPrintNum = 0;
-#endif
 }
 
 void InitialiseGameFlags()
@@ -182,6 +178,11 @@ long InitialiseLevel(long level, long type)
 	health_bar_timer = 100;
 	SOUND_Stop();
 
+#ifdef TROYESTUFF
+	for (int i = 0; i < 255; i++)
+		RoomVisited[i] = 0;
+#endif
+
 	if (type == 2)
 		ExtractSaveGameInfo();
 	else
@@ -230,6 +231,14 @@ long InitialiseLevel(long level, long type)
 	assault_timer_active = 0;
 	assault_timer_display = 0;
 	camera.underwater = 0;
+
+#ifdef TROYESTUFF
+	for (int i = 0; i < 32; i++)
+		FootPrint[i].Active = 0;
+
+	FootPrintNum = 0;
+#endif
+
 	return 1;
 }
 

@@ -16,6 +16,7 @@
 #include "collide.h"
 #include "box.h"
 #include "sound.h"
+#include "lara.h"
 
 void ControlHarpoonBolt(short item_number)
 {
@@ -83,11 +84,21 @@ void ControlHarpoonBolt(short item_number)
 			SmashWindow(target_num);
 		else if (obj_num == CARCASS || obj_num == EXTRAFX6)
 		{
-			if (item->status != ITEM_ACTIVE)	//original bug: this doesn't work, need to check target instead of item
+#ifdef TROYESTUFF	//original bug: checks item (the nade) instead of the target
+			if (target->status != ITEM_ACTIVE)
 			{
-				item->status = ITEM_ACTIVE;		//same here
+				target->status = ITEM_ACTIVE;
+				AddActiveItem(target_num);
+				KillItem(item_number);
+				return;
+			}
+#else
+			if (item->status != ITEM_ACTIVE)
+			{
+				item->status = ITEM_ACTIVE;
 				AddActiveItem(target_num);
 			}
+#endif
 		}
 		else if (obj_num != SMASH_OBJECT1)
 		{
@@ -374,13 +385,29 @@ void ControlRocket(short item_number)
 				SmashWindow(target_num);
 			else if (obj_num == CARCASS || obj_num == EXTRAFX6)
 			{
-				if (item->status != ITEM_ACTIVE)	//original bug: this doesn't work, need to check target instead of item
+#ifdef TROYESTUFF	//original bug: checks item (the nade) instead of the target
+				if (target->status != ITEM_ACTIVE)
 				{
-					item->status = ITEM_ACTIVE;		//same here
+					target->status = ITEM_ACTIVE;
+					AddActiveItem(target_num);
+
+					if (!exploded)
+					{
+						exploded = 1;
+						rad = WALL_SIZE << item->item_flags[0];
+						r = -1;
+						break;
+					}
+				}
+#else
+				if (item->status != ITEM_ACTIVE)
+				{
+					item->status = ITEM_ACTIVE;
 					AddActiveItem(target_num);
 				}
+#endif
 			}
-			else if (target->object_number != SMASH_OBJECT1)
+			else if (obj_num != SMASH_OBJECT1)
 			{
 				if (obj_num == TRIBEBOSS && TribeBossShieldOn)
 					FindClosestShieldPoint(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, target);
@@ -391,7 +418,9 @@ void ControlRocket(short item_number)
 
 				if (target->hit_points <= 0)
 				{
+#ifndef TROYESTUFF
 					savegame.kills++;
+#endif
 
 					if (obj_num != TRIBEBOSS && obj_num != WILLARD_BOSS && obj_num != TONY && obj_num != LON_BOSS &&
 						obj_num != ELECTRIC_CLEANER && obj_num != WHALE && obj_num != FLYING_MUTANT_EMITTER)
@@ -606,13 +635,29 @@ void ControlGrenade(short item_number)
 				SmashWindow(target_num);
 			else if (obj_num == CARCASS || obj_num == EXTRAFX6)
 			{
-				if (item->status != ITEM_ACTIVE)	//original bug: this doesn't work, need to check target instead of item
+#ifdef TROYESTUFF	//original bug: checks item (the nade) instead of the target
+				if (target->status != ITEM_ACTIVE)
 				{
-					item->status = ITEM_ACTIVE;		//same here
+					target->status = ITEM_ACTIVE;
+					AddActiveItem(target_num);
+
+					if (!exploded)	//and explode the nade now!
+					{
+						exploded = 1;
+						rad = WALL_SIZE;
+						r = -1;
+						break;
+					}
+				}
+#else
+				if (item->status != ITEM_ACTIVE)	
+				{
+					item->status = ITEM_ACTIVE;
 					AddActiveItem(target_num);
 				}
+#endif
 			}
-			else if (target->object_number != SMASH_OBJECT1)
+			else if (obj_num != SMASH_OBJECT1)
 			{
 				if (obj_num == TRIBEBOSS && TribeBossShieldOn)
 					FindClosestShieldPoint(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, target);
@@ -623,13 +668,16 @@ void ControlGrenade(short item_number)
 
 				if (target->hit_points <= 0)
 				{
+#ifndef TROYESTUFF
 					savegame.kills++;
+#endif
 
 					if (obj_num != TRIBEBOSS && obj_num != WHALE && obj_num != WILLARD_BOSS && obj_num != TONY &&
 						obj_num != LON_BOSS && obj_num != ELECTRIC_CLEANER && obj_num != FLYING_MUTANT_EMITTER)
 					{
 						if (obj_num == LIZARD_MAN && lizard_man_active)
 							lizard_man_active = 0;
+
 						item_after_projectile = target->next_active;
 						CreatureDie(target_num, 1);
 					}
@@ -640,6 +688,7 @@ void ControlGrenade(short item_number)
 					exploded = 1;
 					rad = WALL_SIZE;
 					r = -1;
+					break;
 				}
 			}
 		}
@@ -676,6 +725,334 @@ void undraw_shotgun_meshes(long weapon_type)
 	lara.mesh_ptrs[HAND_R] = meshes[objects[LARA].mesh_index + HAND_R];
 }
 
+void ready_shotgun(long weapon_type)
+{
+	lara.gun_status = LG_READY;
+	lara.target = 0;
+
+	lara.right_arm.x_rot = 0;
+	lara.right_arm.y_rot = 0;
+	lara.right_arm.z_rot = 0;
+	lara.right_arm.lock = 0;
+	lara.right_arm.frame_number = 0;
+	lara.right_arm.frame_base = objects[WeaponObject(weapon_type)].frame_base;
+
+	lara.left_arm.x_rot = 0;
+	lara.left_arm.y_rot = 0;
+	lara.left_arm.z_rot = 0;
+	lara.left_arm.lock = 0;
+	lara.left_arm.frame_number = 0;
+	lara.left_arm.frame_base = lara.right_arm.frame_base;
+}
+
+void draw_shotgun(long weapon_type)
+{
+	ITEM_INFO* item;
+
+	if (lara.weapon_item == NO_ITEM)
+	{
+		lara.weapon_item = CreateItem();
+		item = &items[lara.weapon_item];
+		item->object_number = (short)WeaponObject(weapon_type);
+
+		if (weapon_type == LG_ROCKET)
+			item->anim_number = objects[ROCKET_GUN].anim_index + 1;
+		else if (weapon_type == LG_GRENADE)
+			item->anim_number = objects[GRENADE_GUN].anim_index;
+		else
+			item->anim_number = objects[item->object_number].anim_index + 1;
+
+		item->status = ITEM_ACTIVE;
+		item->frame_number = anims[item->anim_number].frame_base;
+		item->current_anim_state = 1;
+		item->goal_anim_state = 1;
+		item->room_number = 255;
+		lara.right_arm.frame_base = objects[item->object_number].frame_base;
+		lara.left_arm.frame_base = lara.right_arm.frame_base;
+	}
+	else
+		item = &items[lara.weapon_item];
+
+	AnimateItem(item);
+
+	if (!item->current_anim_state || item->current_anim_state == 6)
+		ready_shotgun(weapon_type);
+	else if (item->frame_number - anims[item->anim_number].frame_base == weapons[weapon_type].draw_frame)
+		draw_shotgun_meshes(weapon_type);
+	else if (lara.water_status == LARA_UNDERWATER)
+		item->goal_anim_state = 6;
+
+	lara.right_arm.frame_base = anims[item->anim_number].frame_ptr;
+	lara.right_arm.frame_number = item->frame_number - anims[item->anim_number].frame_base;
+	lara.right_arm.anim_number = item->anim_number;
+	lara.left_arm.frame_base = lara.right_arm.frame_base;
+	lara.left_arm.frame_number = lara.right_arm.frame_number;
+	lara.left_arm.anim_number = lara.right_arm.anim_number;
+}
+
+void undraw_shotgun(long weapon_type)
+{
+	ITEM_INFO* item;
+
+	item = &items[lara.weapon_item];
+
+	if (lara.water_status == LARA_SURFACE)
+		item->goal_anim_state = 9;
+	else
+		item->goal_anim_state = 3;
+
+	AnimateItem(item);
+
+	if (item->status == ITEM_DEACTIVATED)
+	{
+		lara.gun_status = LG_ARMLESS;
+		lara.target = 0;
+		lara.right_arm.lock = 0;
+		lara.left_arm.lock = 0;
+		KillItem(lara.weapon_item);
+		lara.weapon_item = NO_ITEM;
+		lara.right_arm.frame_number = 0;
+		lara.left_arm.frame_number = 0;
+	}
+	else if (item->current_anim_state == 3 &&
+#ifdef TROYESTUFF
+		item->frame_number - anims[item->anim_number].frame_base == (weapon_type == LG_GRENADE ? 16 : 21))
+#else
+		item->frame_number - anims[item->anim_number].frame_base == 21)
+#endif
+		undraw_shotgun_meshes(weapon_type);
+
+	lara.right_arm.frame_base = anims[item->anim_number].frame_ptr;
+	lara.left_arm.frame_base = lara.right_arm.frame_base;
+	lara.right_arm.frame_number = item->frame_number - anims[item->anim_number].frame_base;
+	lara.left_arm.frame_number = lara.right_arm.frame_number;
+	lara.right_arm.anim_number = item->anim_number;
+	lara.left_arm.anim_number = lara.right_arm.anim_number;
+}
+
+void FireHarpoon()
+{
+	ITEM_INFO* item;
+	GAME_VECTOR pos;
+	long dx, dy, dz, dist;
+	short item_number;
+
+	if (lara.harpoon.ammo <= 0)
+		return;
+
+	item_number = CreateItem();
+
+	if (item_number == NO_ITEM)
+		return;
+
+	item = &items[item_number];
+	item->shade = -0x3DF0;
+	item->object_number = HARPOON_BOLT;
+	item->room_number = lara_item->room_number;
+	pos.x = -2;
+	pos.y = 373;
+	pos.z = 77;
+	GetLaraHandAbsPosition((PHD_VECTOR*)&pos, RIGHT_HAND);
+	item->pos.x_pos = pos.x;
+	item->pos.y_pos = pos.y;
+	item->pos.z_pos = pos.z;
+	InitialiseItem(item_number);
+
+	if (lara.target)
+	{
+		find_target_point(lara.target, &pos);
+		dx = pos.x - item->pos.x_pos;
+		dy = pos.y - item->pos.y_pos;
+		dz = pos.z - item->pos.z_pos;
+		dist = phd_sqrt(SQUARE(dx) + SQUARE(dz));
+		item->pos.x_rot = -(short)phd_atan(dist, dy);
+		item->pos.y_rot = (short)phd_atan(dz, dx);
+	}
+	else
+	{
+		item->pos.x_rot = lara.torso_x_rot + lara_item->pos.x_rot;
+		item->pos.y_rot = lara.torso_y_rot + lara_item->pos.y_rot;
+	}
+
+	item->pos.z_rot = 0;
+	item->fallspeed = short((-256 * phd_sin(item->pos.x_rot)) >> W2V_SHIFT);
+	item->speed = short((256 * phd_cos(item->pos.x_rot)) >> W2V_SHIFT);
+	item->hit_points = 256;
+	AddActiveItem(item_number);
+
+	if (!savegame.bonus_flag)
+		lara.harpoon.ammo--;
+
+	savegame.ammo_used++;
+}
+
+void FireRocket()
+{
+	ITEM_INFO* item;
+	PHD_VECTOR pos;
+	PHD_VECTOR pos2;
+	long lp;
+	short item_number;
+
+	if (lara.rocket.ammo <= 0)
+		return;
+
+	lara.has_fired = 1;
+	item_number = CreateItem();
+	
+	if (item_number == NO_ITEM)
+		return;
+
+	item = &items[item_number];
+	item->object_number = ROCKET;
+	item->room_number = lara_item->room_number;
+	pos.x = 0;
+	pos.y = 180;
+	pos.z = 72;
+	GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+	item->pos.x_pos = pos.x;
+	item->pos.y_pos = pos.y;
+	item->pos.z_pos = pos.z;
+	pos2.x = 0;
+	pos2.y = 1204;
+	pos2.z = 72;
+	GetLaraHandAbsPosition(&pos2, RIGHT_HAND);
+	SmokeCountL = 32;
+	SmokeWeapon = LG_ROCKET;
+
+	for (lp = 0; lp < 5; lp++)
+		TriggerGunSmoke(pos.x, pos.y, pos.z, pos2.x - pos.x, pos2.y - pos.y, pos2.z - pos.z, 1, SmokeWeapon, SmokeCountL);
+
+	InitialiseItem(item_number);
+	item->pos.x_rot = lara.left_arm.x_rot + lara_item->pos.x_rot;
+	item->pos.y_rot = lara.left_arm.y_rot + lara_item->pos.y_rot;
+	item->pos.z_rot = 0;
+
+	if (!lara.left_arm.lock)
+	{
+		item->pos.x_rot += lara.torso_x_rot;
+		item->pos.y_rot += lara.torso_y_rot;
+	}
+
+	item->speed = 16;
+	item->item_flags[0] = 0;
+	AddActiveItem(item_number);
+
+	if (!savegame.bonus_flag)
+		lara.rocket.ammo--;
+
+	savegame.ammo_used++;
+
+	phd_PushUnitMatrix();
+	phd_mxptr[M03] = 0;
+	phd_mxptr[M13] = 0;
+	phd_mxptr[M23] = 0;
+	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+
+	phd_PushMatrix();
+	phd_TranslateRel(0, 0, -128);
+	pos.x = phd_mxptr[M03] >> W2V_SHIFT;
+	pos.y = phd_mxptr[M13] >> W2V_SHIFT;
+	pos.z = phd_mxptr[M23] >> W2V_SHIFT;
+	phd_PopMatrix();
+
+	for (lp = 0; lp < 8; lp++)
+	{
+		phd_PushMatrix();
+		phd_TranslateRel(0, 0, -(GetRandomControl() & 0x7FF));
+		pos2.x = phd_mxptr[M03] >> W2V_SHIFT;
+		pos2.y = phd_mxptr[M13] >> W2V_SHIFT;
+		pos2.z = phd_mxptr[M23] >> W2V_SHIFT;
+		phd_PopMatrix();
+
+		TriggerRocketFlame(pos.x, pos.y, pos.z, pos2.x - pos.x, pos2.y - pos.y, pos2.z - pos.z, item_number);
+	}
+
+	phd_PopMatrix();
+
+	SoundEffect(SFX_EXPLOSION1, &lara_item->pos, 0x2000000 | SFX_SETPITCH);
+}
+
+void FireGrenade()
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	PHD_VECTOR pos;
+	PHD_VECTOR pos2;
+	long h;
+	short item_number;
+
+	if (lara.grenade.ammo <= 0)
+		return;
+
+	lara.has_fired = 1;
+	item_number = CreateItem();
+
+	if (item_number == NO_ITEM)
+		return;
+
+	item = &items[item_number];
+	item->shade = -0x3DF0;
+	item->object_number = GRENADE;
+	item->room_number = lara_item->room_number;
+	pos.x = 0;
+	pos.y = 276;
+	pos.z = 80;
+	GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+	item->pos.x_pos = pos.x;
+	item->pos.y_pos = pos.y;
+	item->pos.z_pos = pos.z;
+	pos2.x = 0;
+	pos2.y = 1204;
+	pos2.z = 72;
+	GetLaraHandAbsPosition(&pos2, RIGHT_HAND);
+
+	floor = GetFloor(pos.x, pos.y, pos.z, &item->room_number);
+	h = GetHeight(floor, pos.x, pos.y, pos.z);
+
+	if (h < pos.y)
+	{
+		item->pos.x_pos = lara_item->pos.x_pos;
+		item->pos.y_pos = pos.y;
+		item->pos.z_pos = lara_item->pos.z_pos;
+		item->room_number = lara_item->room_number;
+	}
+
+	pos.x = 0;
+	pos.y = 1204;
+	pos.z = 80;
+	GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+	SmokeCountL = 32;
+	SmokeWeapon = LG_GRENADE;
+
+	for (int i = 0; i < 5; i++)
+		TriggerGunSmoke(pos2.x, pos2.y, pos2.z, pos.x - pos2.x, pos.y - pos2.y, pos.z - pos2.z, 1, SmokeWeapon, SmokeCountL);
+
+	InitialiseItem(item_number);
+	item->pos.x_rot = lara.left_arm.x_rot + lara_item->pos.x_rot;
+	item->pos.y_rot = lara.left_arm.y_rot + lara_item->pos.y_rot;
+	item->pos.z_rot = 0;
+
+	if (!lara.left_arm.lock)
+	{
+		item->pos.x_rot += lara.torso_x_rot;
+		item->pos.y_rot += lara.torso_y_rot;
+	}
+
+	item->speed = 128;
+	item->fallspeed = short(-(item->speed * phd_sin(item->pos.x_rot)) >> W2V_SHIFT);
+	item->current_anim_state = item->pos.x_rot;
+	item->goal_anim_state = item->pos.y_rot;
+	item->required_anim_state = 0;
+	item->hit_points = 120;
+	AddActiveItem(item_number);
+
+	if (!savegame.bonus_flag)
+		lara.grenade.ammo--;
+
+	savegame.ammo_used++;
+}
+
 void inject_lara1gun(bool replace)
 {
 	INJECT(0x004459B0, ControlHarpoonBolt, inject_rando ? 1 : replace);
@@ -683,4 +1060,10 @@ void inject_lara1gun(bool replace)
 	INJECT(0x00446DD0, ControlGrenade, inject_rando ? 1 : replace);
 	INJECT(0x00445250, draw_shotgun_meshes, replace);
 	INJECT(0x00445290, undraw_shotgun_meshes, replace);
+	INJECT(0x004452C0, ready_shotgun, replace);
+	INJECT(0x004475D0, draw_shotgun, replace);
+	INJECT(0x00447770, undraw_shotgun, replace);
+	INJECT(0x00445820, FireHarpoon, replace);
+	INJECT(0x00445F50, FireRocket, replace);
+	INJECT(0x00446BA0, FireGrenade, replace);
 }

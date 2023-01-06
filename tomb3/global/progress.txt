@@ -106,8 +106,8 @@ tomb3 progress.
 
 		game/51baton.cpp
 
-0x0040D5F0		InitialiseBaton
-0x0040D650		BatonControl
+0x0040D5F0	+	InitialiseBaton
+0x0040D650	+	BatonControl
 
 
 		game/51civvy.cpp
@@ -120,8 +120,8 @@ tomb3 progress.
 
 		game/51laser.cpp
 
-0x0040F190		ControlArea51Laser
-0x0040F460		InitialiseArea51Laser
+0x0040F190	+	ControlArea51Laser
+0x0040F460	+	InitialiseArea51Laser
 
 
 		game/51rocket.cpp
@@ -195,9 +195,9 @@ tomb3 progress.
 
 		game/box.cpp
 
-0x004142E0		InitialiseCreature
-0x00414330		CreatureActive
-0x00414390		CreatureAIInfo
+0x004142E0	+	InitialiseCreature
+0x00414330	+	CreatureActive
+0x00414390	+	CreatureAIInfo
 0x00414780		UpdateLOT
 0x00414800		SearchLOT
 0x00414A10		TargetBox
@@ -267,9 +267,9 @@ tomb3 progress.
 
 		game/cleaner.cpp
 
-0x0041C3E0		InitialiseCleaner
-0x0041C440		CleanerControl
-0x0041D0B0		TriggerElectricSparks
+0x0041C3E0	+	InitialiseCleaner
+0x0041C440	+	CleanerControl
+0x0041D0B0	+	TriggerElectricSparks
 
 
 		game/cobra.cpp
@@ -436,9 +436,9 @@ tomb3 progress.
 0x0042D110	+	TriggerUnderwaterBlood
 0x0042D180	+	TriggerUnderwaterBloodD
 0x0042D1F0	+	TriggerWaterfallMist
-0x0042D3D0		UpdateBats
-0x0042D510		BatEmitterControl
-0x0042D570		TriggerBats
+0x0042D3D0	+	UpdateBats
+0x0042D510	+	BatEmitterControl
+0x0042D570	+	TriggerBats
 0x0042D640	+	TriggerStaticFlame
 0x0042D750	+	TriggerDartSmoke
 0x0042D990	+	KillAllCurrentItems
@@ -560,7 +560,7 @@ tomb3 progress.
 
 		game/flymaker.cpp
 
-0x00431C10		FlyEmitterControl
+0x00431C10	+	FlyEmitterControl
 
 
 		game/footprnt.cpp
@@ -868,18 +868,18 @@ tomb3 progress.
 
 0x00445250	+	draw_shotgun_meshes
 0x00445290	+	undraw_shotgun_meshes
-0x004452C0		ready_shotgun
+0x004452C0	+	ready_shotgun
 0x00445340		RifleHandler
 0x00445560		FireShotgun
 0x00445760		FireM16
-0x00445820		FireHarpoon
+0x00445820	+	FireHarpoon
 0x004459B0	+	ControlHarpoonBolt
-0x00445F50		FireRocket
+0x00445F50	+	FireRocket
 0x004461E0	+	ControlRocket
-0x00446BA0		FireGrenade
+0x00446BA0	+	FireGrenade
 0x00446DD0	+	ControlGrenade
-0x004475D0		draw_shotgun
-0x00447770		undraw_shotgun
+0x004475D0	+	draw_shotgun
+0x00447770	+	undraw_shotgun
 0x00447880		AnimateShotgun
 0x00447D90		TriggerUnderwaterExplosion
 
@@ -924,16 +924,16 @@ tomb3 progress.
 
 		game/larafire.cpp
 
-0x00449BB0		LaraGun
-0x0044A1A0		CheckForHoldingState
-0x0044A1E0		InitialiseNewWeapon
-0x0044A330		LaraTargetInfo
-0x0044A4D0		LaraGetNewTarget
-0x0044A700		find_target_point
-0x0044A7B0		AimWeapon
+0x00449BB0	+	LaraGun
+0x0044A1A0	+	CheckForHoldingState
+0x0044A1E0	+	InitialiseNewWeapon
+0x0044A330	+	LaraTargetInfo
+0x0044A4D0	+	LaraGetNewTarget
+0x0044A700	+	find_target_point
+0x0044A7B0	+	AimWeapon
 0x0044A890	+	FireWeapon
-0x0044AE20		HitTarget
-0x0044AEE0		SmashItem
+0x0044AE20	+	HitTarget
+0x0044AEE0	+	SmashItem
 0x0044AF50	+	WeaponObject
 0x0044AFB0		DoProperDetection
 
@@ -1086,22 +1086,22 @@ tomb3 progress.
 
 		game/moveblok.cpp
 
-0x00456B50		InitialiseMovingBlock
-0x00456BA0		ClearMovableBlockSplitters
-0x00456DD0		MovableBlock
-0x00456F40		MovableBlockCollision
-0x004571E0		TestBlockPush
-0x004573A0		TestBlockMovable
-0x004573F0		TestBlockPull
-0x00457690		AlterFloorHeight
-0x00457760		DrawMovableBlock
-0x00457790		DrawUnclippedItem
-0x00457800		SetupCleanerFromSavegame
+0x00456B50	+	InitialiseMovingBlock
+0x00456BA0	+	ClearMovableBlockSplitters
+0x00456DD0	+	MovableBlock
+0x00456F40	+	MovableBlockCollision
+0x004571E0	+	TestBlockPush
+0x004573A0	+	TestBlockMovable
+0x004573F0	+	TestBlockPull
+0x00457690	+	AlterFloorHeight
+0x00457760	+	DrawMovableBlock
+0x00457790	+	DrawUnclippedItem
+0x00457800	+	SetupCleanerFromSavegame
 
 
 		game/mpgun.cpp
 
-0x00457A40		MPGunControl
+0x00457A40	+	MPGunControl
 
 
 		game/objects.cpp
@@ -1380,8 +1380,8 @@ tomb3 progress.
 		game/traps.cpp
 
 0x0046D340	+	PropellerControl
-0x0046D500		ControlSpikeWall
-0x0046D650		ControlCeilingSpikes
+0x0046D500	+	ControlSpikeWall
+0x0046D650	+	ControlCeilingSpikes
 0x0046D7C0		HookControl
 0x0046D850		SpinningBlade
 0x0046D9C0		IcicleControl
@@ -1463,8 +1463,8 @@ tomb3 progress.
 
 		game/winston.cpp
 
-0x00473D10		WinstonControl
-0x00474110		OldWinstonControl
+0x00473D10	+	WinstonControl
+0x00474110	+	OldWinstonControl
 
 // ======================================
 // SPECIFIC

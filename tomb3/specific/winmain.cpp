@@ -265,7 +265,7 @@ LRESULT CALLBACK WinAppProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_ACTIVATE:
 
-		switch (LOWORD(wParam))
+		switch ((short)wParam)
 		{
 		case WA_INACTIVE:
 			App.bFocus = 0;
@@ -286,7 +286,7 @@ LRESULT CALLBACK WinAppProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 #ifdef TROYESTUFF
 	case WM_MOVE:
-		DXMove(LOWORD(lParam), HIWORD(lParam));
+		DXMove((short)lParam, short((lParam >> 16) & 0xFFFF));
 		break;
 #endif
 	}

@@ -16,6 +16,7 @@
 #include "output.h"
 #include "smain.h"
 #include "../newstuff/psxsaves.h"
+#include "../newstuff/map.h"
 #include "../tomb3/tomb3.h"
 #endif
 
@@ -1606,8 +1607,19 @@ void do_compass_option(INVENTORY_ITEM* item)
 
 	if (inputDB & (IN_SELECT | IN_DESELECT))
 	{
-		item->anim_direction = 1;
-		item->goal_frame = item->frames_total - 1;
+#ifdef TROYESTUFF
+		if (inputDB & IN_SELECT)
+		{
+			do_map_option();
+			input = 0;
+			inputDB = 0;
+		}
+		else
+#endif
+		{
+			item->anim_direction = 1;
+			item->goal_frame = item->frames_total - 1;
+		}
 	}
 
 	SoundEffect(SFX_MENU_STOPWATCH, 0, SFX_ALWAYS);
@@ -1722,7 +1734,7 @@ void do_passport_option(INVENTORY_ITEM* item)
 #ifdef TROYESTUFF
 		if (tomb3.psx_saving && Inventory_Mode != INV_TITLE_MODE)
 		{
-			if (item->anim_direction == -1)
+			if (item->anim_direction == -1 && SavedGames)
 				inputDB = IN_LEFT;
 			else
 				inputDB = IN_RIGHT;
@@ -1777,7 +1789,7 @@ void do_passport_option(INVENTORY_ITEM* item)
 		else if (!mode)
 		{
 			if (Inventory_Mode == INV_DEATH_MODE)
-				inputDB = item->anim_direction != -1 ? 8 : 4;
+				inputDB = item->anim_direction != -1 ? IN_RIGHT : IN_RIGHT;
 			else
 			{
 				if (!passport_text1)
@@ -1830,7 +1842,7 @@ void do_passport_option(INVENTORY_ITEM* item)
 					inputDB = 0;
 				}
 				else if (inputDB & IN_SELECT)
-					Inventory_ExtraData[1] = LV_JUNGLE;
+					Inventory_ExtraData[1] = LV_FIRSTLEVEL;
 			}
 		}
 	}

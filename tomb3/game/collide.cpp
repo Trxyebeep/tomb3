@@ -8,6 +8,9 @@
 #include "draw.h"
 #include "../3dsystem/3d_gen.h"
 #include "sound.h"
+#ifdef TROYESTUFF
+#include "../newstuff/map.h"
+#endif
 
 void ShiftItem(ITEM_INFO* item, COLL_INFO* coll)
 {
@@ -749,6 +752,11 @@ void UpdateLaraRoom(ITEM_INFO* item, long height)
 
 	if (item->room_number != room_number)
 		ItemNewRoom(lara.item_number, room_number);
+
+#ifdef TROYESTUFF
+	if (!RoomVisited[room_number])
+		RoomVisited[room_number] = 1;
+#endif
 }
 
 void DoorCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)

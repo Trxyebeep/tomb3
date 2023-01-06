@@ -12,6 +12,10 @@
 #include "lot.h"
 #include "traps.h"
 #include "pickup.h"
+#ifdef TROYESTUFF
+#include "../newstuff/map.h"
+#include "../tomb3/tomb3.h"
+#endif
 
 #define SGcount	VAR_(0x006D588C, long)
 #define SGpoint	VAR_(0x006D2268, char*)
@@ -53,7 +57,7 @@ void ModifyStartInfo(long level)
 		pInfo->num_sgcrystals = 1;
 		pInfo->gun_type = LG_UNARMED;
 	}
-	else if (level == LV_JUNGLE)	//forgets to reset shotgun!
+	else if (level == LV_FIRSTLEVEL)	//forgets to reset shotgun!
 	{
 		pInfo->available = 1;
 
@@ -140,7 +144,7 @@ void InitialiseStartInfo()
 	}
 
 	savegame.start[LV_GYM].available = 1;
-	savegame.start[LV_JUNGLE].available = 1;
+	savegame.start[LV_FIRSTLEVEL].available = 1;
 	savegame.AfterAdventureSave = 0;
 	savegame.WorldRequired = 0;
 	savegame.IndiaComplete = 0;
@@ -494,6 +498,10 @@ void CreateSaveGameInfo()
 			WriteSG(&age, sizeof(long));
 		}
 	}
+
+#ifdef TROYESTUFF
+	save_tomb3_data();
+#endif
 }
 
 void ExtractSaveGameInfo()
@@ -564,7 +572,7 @@ void ExtractSaveGameInfo()
 		objnum = item->object_number;
 		obj = &objects[objnum];
 
-		if (obj->control == MovableBlock)
+		if (obj->control == orig_MovableBlock)
 			AlterFloorHeight(item, 1024);
 
 		if (obj->save_position)
@@ -669,11 +677,11 @@ void ExtractSaveGameInfo()
 			ReadSG(item->item_flags, sizeof(short) * 4);
 		}
 
-		if (obj->control == MovableBlock)
+		if (obj->control == orig_MovableBlock)
 		{
 			if (item->status == ITEM_INACTIVE)
 				AlterFloorHeight(item, -1024);
-			else if (obj->control == MovableBlock && item->status != ITEM_INACTIVE)		//ok
+			else if (obj->control == orig_MovableBlock && item->status != ITEM_INACTIVE)		//ok
 				SetupCleanerFromSavegame(item, 1);
 		}
 
@@ -750,6 +758,7 @@ void ExtractSaveGameInfo()
 
 	if (lara.weapon_item != NO_ITEM)
 	{
+		lara.weapon_item = CreateItem();
 		item = &items[lara.weapon_item];
 		ReadSG(&item->object_number, sizeof(short));
 		ReadSG(&item->anim_number, sizeof(short));
@@ -792,7 +801,48 @@ void ExtractSaveGameInfo()
 		ReadSG(&age, sizeof(long));
 		item->data = (void*)age;
 	}
+
+#ifdef TROYESTUFF
+	load_tomb3_data();
+#endif
 }
+
+#ifdef TROYESTUFF
+void save_tomb3_data()
+{
+	memcpy(tomb3_save.RoomsVisited, RoomVisited, 255);
+	tomb3_save.dash_timer = DashTimer;
+	tomb3_save.exposure_meter = ExposureMeter;
+	memcpy(tomb3_save.fish_leaders, lead_info, sizeof(lead_info));
+	memcpy(tomb3_save.fishies, fish, sizeof(fish));
+	memcpy(tomb3_save.exp_rings, ExpRings, sizeof(ExpRings));
+	memcpy(tomb3_save.kb_rings, KBRings, sizeof(KBRings));
+}
+
+void load_tomb3_data()
+{
+	if (tomb3_save_size > offsetof(TOMB3_SAVE, RoomsVisited))
+		memcpy(RoomVisited, tomb3_save.RoomsVisited, 255);
+
+	if (tomb3_save_size > offsetof(TOMB3_SAVE, dash_timer))
+		DashTimer = tomb3_save.dash_timer;
+
+	if (tomb3_save_size > offsetof(TOMB3_SAVE, exposure_meter))
+		ExposureMeter = tomb3_save.exposure_meter;
+
+	if (tomb3_save_size > offsetof(TOMB3_SAVE, fish_leaders))
+		memcpy(lead_info, tomb3_save.fish_leaders, sizeof(lead_info));
+
+	if (tomb3_save_size > offsetof(TOMB3_SAVE, fishies))
+		memcpy(fish, tomb3_save.fishies, sizeof(fish));
+
+	if (tomb3_save_size > offsetof(TOMB3_SAVE, exp_rings))
+		memcpy(ExpRings, tomb3_save.exp_rings, sizeof(ExpRings));
+
+	if (tomb3_save_size > offsetof(TOMB3_SAVE, kb_rings))
+		memcpy(KBRings, tomb3_save.kb_rings, sizeof(KBRings));
+}
+#endif
 
 void inject_savegame(bool replace)
 {

@@ -12,6 +12,9 @@
 #include "transform.h"
 #include "../3dsystem/hwinsert.h"
 #include "picture.h"
+#ifdef TROYESTUFF
+#include "../newstuff/discord.h"
+#endif
 
 const char* game_malloc_types[47] =
 {
@@ -66,6 +69,10 @@ const char* game_malloc_types[47] =
 
 void ShutdownGame()
 {
+#ifdef TROYESTUFF
+	RPC_close();
+#endif
+
 	GLOBALFREE(TLVertexBuffer);
 	GLOBALFREE(TLUnRollBuffer);
 	DXFreeTPages();

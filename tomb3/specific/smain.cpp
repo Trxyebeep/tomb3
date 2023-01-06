@@ -21,8 +21,9 @@
 #include "../game/demo.h"
 #include "../game/lara.h"
 #ifdef TROYESTUFF
-#include "../tomb3/tomb3.h"
 #include "init.h"
+#include "../newstuff/discord.h"
+#include "../tomb3/tomb3.h"
 #endif
 
 #ifdef RANDO_STUFF
@@ -292,8 +293,10 @@ void CheckCheatMode()
 	static long mode, gun, turn;
 	static short as, angle;
 
+#ifndef TROYESTUFF
 	if (CurrentLevel == LV_GYM || CurrentLevel == gameflow.num_levels - gameflow.num_demos - 1)
 		return;
+#endif
 
 	as = lara_item->current_anim_state;
 
@@ -411,30 +414,51 @@ void CheckCheatMode()
 		if (gun)
 		{
 			if (as == AS_FORWARDJUMP)
-				FinishLevelCheat = 1;
+			{
+#ifdef TROYESTUFF
+				if (CurrentLevel != LV_GYM)
+#endif
+					FinishLevelCheat = 1;
+			}
 			else if (as == AS_BACKJUMP)
 			{
-				Inv_AddItem(M16_ITEM);
-				Inv_AddItem(SHOTGUN_ITEM);
-				Inv_AddItem(UZI_ITEM);
-				Inv_AddItem(MAGNUM_ITEM);
-				Inv_AddItem(GUN_ITEM);
-				Inv_AddItem(ROCKET_GUN_ITEM);
-				Inv_AddItem(GRENADE_GUN_ITEM);
-				Inv_AddItem(HARPOON_ITEM);
-				lara.magnums.ammo = 1000;
-				lara.uzis.ammo = 1000;
-				lara.shotgun.ammo = 1000;
-				lara.harpoon.ammo = 1000;
-				lara.rocket.ammo = 1000;
-				lara.grenade.ammo = 1000;
-				lara.m16.ammo = 1000;
-
-				for (int i = 0; i < 50; i++)
+#ifdef TROYESTUFF
+				if (CurrentLevel == LV_GYM)
 				{
-					Inv_AddItem(MEDI_ITEM);
-					Inv_AddItem(BIGMEDI_ITEM);
-					Inv_AddItem(FLARE_ITEM);
+					Inv_AddItem(KEY_ITEM1);
+
+					for (int i = 0; i < 50; i++)
+						Inv_AddItem(FLARE_ITEM);
+				}
+				else
+#endif
+				{
+					Inv_AddItem(M16_ITEM);
+					Inv_AddItem(SHOTGUN_ITEM);
+					Inv_AddItem(UZI_ITEM);
+					Inv_AddItem(MAGNUM_ITEM);
+					Inv_AddItem(GUN_ITEM);
+					Inv_AddItem(ROCKET_GUN_ITEM);
+					Inv_AddItem(GRENADE_GUN_ITEM);
+					Inv_AddItem(HARPOON_ITEM);
+					lara.magnums.ammo = 1000;
+					lara.uzis.ammo = 1000;
+					lara.shotgun.ammo = 1000;
+					lara.harpoon.ammo = 1000;
+					lara.rocket.ammo = 1000;
+					lara.grenade.ammo = 1000;
+					lara.m16.ammo = 1000;
+
+					for (int i = 0; i < 50; i++)
+					{
+						Inv_AddItem(MEDI_ITEM);
+						Inv_AddItem(BIGMEDI_ITEM);
+						Inv_AddItem(FLARE_ITEM);
+#ifdef TROYESTUFF
+						if (tomb3.psx_saving)
+							Inv_AddItem(SAVEGAME_CRYSTAL_ITEM);
+#endif
+					}
 				}
 
 				SoundEffect(SFX_LARA_HOLSTER, 0, SFX_ALWAYS);
@@ -442,9 +466,14 @@ void CheckCheatMode()
 		}
 		else if (as == AS_FORWARDJUMP || as == AS_BACKJUMP)
 		{
-			ExplodingDeath(lara.item_number, -1, 1);
-			lara_item->hit_points = 0;
-			lara_item->flags |= IFL_INVISIBLE;
+#ifdef TROYESTUFF
+			if (CurrentLevel != LV_GYM)
+#endif
+			{
+				ExplodingDeath(lara.item_number, -1, 1);
+				lara_item->hit_points = 0;
+				lara_item->flags |= IFL_INVISIBLE;
+			}
 		}
 																	//no break on purpose
 	default:
@@ -518,9 +547,9 @@ long TitleSequence()
 			InitialiseStartInfo();
 
 			if (gameflow.play_any_level)
-				return Inventory_ExtraData[1] + 1;
+				return STARTGAME | (Inventory_ExtraData[1] + 1);
 
-			return 1;
+			return STARTGAME | LV_FIRSTLEVEL;
 		}
 	}
 
@@ -539,6 +568,8 @@ long GameMain()
 		return 0;
 
 #ifdef TROYESTUFF
+	RPC_Init();
+
 	if (tomb3.gold)
 	{
 		if (!GF_LoadScriptFile("datag\\trtla.dat"))	//seems some CDs come with trtla.dat, others with tombPC.dat, others with both!

@@ -97,7 +97,10 @@ long GameStats(long level_num, long type)
 
 #ifdef TROYESTUFF
 		if (tomb3.gold)
+		{
+			savegame.bonus_flag = 1;
 			GF_BonusLevelEnabled = 0;
+		}
 		else
 #endif
 			if (numsecrets >= num - 1)
@@ -330,12 +333,12 @@ long LevelStats(long level)
 	{
 		savegame.bonus_flag = 1;
 
-		for (int i = 1; i < gameflow.num_levels; i++)
+		for (int i = LV_FIRSTLEVEL; i < gameflow.num_levels; i++)
 			ModifyStartInfo(i);
 
 		savegame.AfterAdventureSave = 0;
 		savegame.AntarcticaComplete = 1;
-		savegame.current_level = LV_JUNGLE;
+		savegame.current_level = LV_FIRSTLEVEL;
 	}
 	else
 	{
@@ -366,7 +369,7 @@ long LevelStats(long level)
 	{
 		savegame.bonus_flag = 1;
 
-		for (int i = 1; i < gameflow.num_levels; i++)
+		for (int i = LV_FIRSTLEVEL; i < gameflow.num_levels; i++)
 			ModifyStartInfo(i);
 	}
 
@@ -553,6 +556,9 @@ long S_LoadGame(LPVOID data, long size, long slot)
 		ReadFile(file, buffer, 75, &bytes, 0);
 		ReadFile(file, &value, sizeof(long), &bytes, 0);
 		ReadFile(file, data, size, &bytes, 0);
+#ifdef TROYESTUFF
+		ReadFile(file, &tomb3_save, sizeof(TOMB3_SAVE), &tomb3_save_size, 0);
+#endif
 		CloseHandle(file);
 		return 1;
 	}
@@ -577,8 +583,11 @@ long S_SaveGame(LPVOID data, long size, long slot)
 	{
 		wsprintf(buffer, "%s", GF_Level_Names[savegame.current_level]);
 		WriteFile(file, buffer, 75, &bytes, 0);
-		WriteFile(file, &save_counter, 4, &bytes, 0);
+		WriteFile(file, &save_counter, sizeof(long), &bytes, 0);
 		WriteFile(file, data, size, &bytes, 0);
+#ifdef TROYESTUFF
+		WriteFile(file, &tomb3_save, sizeof(TOMB3_SAVE), &bytes, 0);
+#endif
 		CloseHandle(file);
 
 		wsprintf(counter, "%d", save_counter);
@@ -745,9 +754,9 @@ long StartGame(long level, long type)
 		return EXIT_TO_TITLE;
 
 	if (gameflow.play_any_level)
-		return Inventory_ExtraData[1] + 1;
+		return STARTGAME | (Inventory_ExtraData[1] + 1);
 	else
-		return LV_JUNGLE;
+		return STARTGAME | LV_FIRSTLEVEL;
 }
 
 void inject_sgame(bool replace)

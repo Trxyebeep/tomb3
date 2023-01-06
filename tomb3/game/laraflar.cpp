@@ -16,6 +16,10 @@
 #include "larafire.h"
 #include "../3dsystem/phd_math.h"
 
+#define FLARE_AGE		900
+#define FLARE_DYING		(FLARE_AGE - 90)
+#define FLARE_END		(FLARE_AGE - 24)
+
 void DrawFlareInAir(ITEM_INFO* item)
 {
 	short* frame[2];
@@ -75,7 +79,7 @@ long DoFlareLight(PHD_VECTOR* pos, long flare_age)
 {
 	long rnd, x, y, z, r, g, b, falloff;
 
-	if (flare_age >= 900)
+	if (flare_age >= FLARE_AGE)
 		return 0;
 
 	rnd = GetRandomControl();
@@ -103,14 +107,14 @@ long DoFlareLight(PHD_VECTOR* pos, long flare_age)
 		falloff = (rnd & 1) + flare_age + 2;
 		TriggerDynamic(x, y, z, falloff, r, g, b);
 	}
-	else if (flare_age < 810)
+	else if (flare_age < FLARE_DYING)
 	{
 		r = (rnd & 7) + 24;
 		g = ((rnd >> 4) & 3) + 16;
 		b = ((rnd >> 8) & 4) + (((rnd >> 6) & 0x10) >> 2);
 		TriggerDynamic(x, y, z, 16, r, g, b);
 	}
-	else if (flare_age < 876)
+	else if (flare_age < FLARE_END)
 	{
 		if (rnd > 0x2000)
 		{
@@ -134,7 +138,7 @@ long DoFlareLight(PHD_VECTOR* pos, long flare_age)
 		r = (GetRandomControl() & 7) + 24;
 		g = (GetRandomControl() & 7) + 8;
 		b = GetRandomControl() & 3;
-		falloff = 16 - ((flare_age - 876) >> 1);
+		falloff = 16 - ((flare_age - FLARE_END) >> 1);
 		TriggerDynamic(x, y, z, falloff, r, g, b);
 		return rnd & 1;
 	}
@@ -152,7 +156,7 @@ void DoFlareInHand(long flare_age)
 	GetLaraHandAbsPosition(&pos, LEFT_HAND);
 	lara.left_arm.flash_gun = (short)DoFlareLight(&pos, flare_age);
 
-	if (lara.flare_age < 900)
+	if (lara.flare_age < FLARE_AGE)
 	{
 		lara.flare_age++;
 
@@ -471,7 +475,7 @@ void FlareControl(short item_number)
 	DoProperDetection(item_number, x, y, z, xv, item->fallspeed, zv);
 	age = (long)item->data & 0x7FFF;
 
-	if (age < 900)
+	if (age < FLARE_AGE)
 		age++;
 	else if (!item->fallspeed && !item->speed)
 	{

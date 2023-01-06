@@ -1,5 +1,42 @@
 # tomb3 changelog
 
+## Unreleased:
+
+### Original bug fixes
+
+- Fix Dash Timer not being saved.
+- Fix Exposure Meter not being saved.
+- Fix fish not being saved.
+- Fix Sophia rings not being saved.
+- Fix rare crash in High Security Compound.
+- Fix unsafe memory access in Wasp Spawner.
+- Fix dynamic light formula on room geometry.
+- Fix grenades, rockets, and harpoons ignoring the carcass in Crash Site.
+- Fix grenade launcher unequip frame.
+- Fix grenade and rocket launchers double counting kills.
+- Fix cheats not working in All Hallows.
+
+### tomb3 additions
+
+- Add dynamic light to DOZY.
+- Add map.
+- New system for expanding savegame format.
+- Add Discord Rich Presence for base game + Gold.
+- Automatically disable PSX save system when running Gold.
+- Weapons cheat now gives Lara the Racetrack Key + flares in Lara's Home.
+- Add NG+ for Gold.
+
+### tomb3 bug fixes
+
+- Fix PSX save system passport deadlock.
+- Fix Gold getting a crystal at the start.
+- Fix crash when taking screenshots in windowed mode.
+- Fix screenshot file number starting at 1 instead of 0.
+- Fix footprints not being cleared between levels (earlier fix from V1.1.0 did not work).
+- Fix possible arm corruption/crash after reloading and using weapons.
+- Fix window not being rendered on secondary monitor. -From Saracen
+
+
 ## [1.4.0](https://github.com/Trxyebeep/tomb3/tree/V1.4.0) (Dec. 16 2022)
 
 ### Original bug fixes

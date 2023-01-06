@@ -87,13 +87,9 @@ do \
 
 #ifdef TROYESTUFF	//*4
 #define MAX_TLVERTICES	0x9000
-#else
-#define MAX_TLVERTICES	0x2400
-#endif
-
-#ifdef TROYESTUFF	//*4
 #define MAX_SORTLISTS	0xBB80
 #else
+#define MAX_TLVERTICES	0x2400
 #define MAX_SORTLISTS	0x2EE0
 #endif
 
@@ -126,6 +122,15 @@ do \
 #define WALL_SIZE	(1 << WALL_SHIFT)
 
 /*enums*/
+enum ai_bits
+{
+	GUARD = 1 << 0,
+	AMBUSH = 1 << 1,
+	PATROL1 = 1 << 2,
+	MODIFY = 1 << 3,
+	FOLLOW = 1 << 4
+};
+
 enum spark_flags
 {
 	SF_NONE =			0x0,
@@ -2107,6 +2112,17 @@ enum t3_ammo_counter
 	ACTR_PC,
 	ACTR_PSX,
 	NACTR_MODES
+};
+
+struct TOMB3_SAVE
+{
+	char RoomsVisited[255];
+	short dash_timer;
+	short exposure_meter;
+	LEADER_INFO fish_leaders[8];
+	FISH_INFO fishies[200];
+	EXPLOSION_RING exp_rings[6];
+	EXPLOSION_RING kb_rings[6];
 };
 
 struct TOMB3_OPTIONS

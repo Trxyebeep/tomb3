@@ -2528,6 +2528,90 @@ void KillAllCurrentItems(short item_number)
 	KillEverythingFlag = 1;
 }
 
+void TriggerBats(long x, long y, long z, short ang)
+{
+	BAT_STRUCT* bat;
+
+	ang = (ang - 1024) & 0xFFF;
+
+	for (int i = 0; i < 32; i++)
+	{
+		bat = &bats[i];
+		bat->x = (GetRandomControl() & 0x1FF) + x - 256;
+		bat->y = y - (GetRandomControl() & 0xFF) + 256;
+		bat->z = (GetRandomControl() & 0x1FF) + z - 256;
+		bat->angle = ((GetRandomControl() & 0x7F) + ang - 64) & 0xFFF;
+		bat->speed = (GetRandomControl() & 0x1F) + 64;
+		bat->WingYoff = GetRandomControl() & 0x3F;
+		bat->life = (GetRandomControl() & 7) + 144;
+		bat->flags |= 1;
+	}
+}
+
+void BatEmitterControl(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (item->active)
+	{
+		TriggerBats(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->pos.y_rot >> 4);
+		KillItem(item_number);
+	}
+}
+
+void UpdateBats()
+{
+	BAT_STRUCT* bat;
+	PHD_3DPOS pos;
+
+	for (int i = 0; i < 32; i++)
+	{
+		bat = &bats[i];
+
+		if (!(bat->flags & 1))
+			continue;
+
+		if (!(i & 3) && !(GetRandomControl() & 7))
+		{
+			pos.x_pos = bat->x;
+			pos.y_pos = bat->y;
+			pos.z_pos = bat->z;
+			SoundEffect(SFX_BATS_1, &pos, SFX_DEFAULT);
+		}
+
+		bat->x -= (bat->speed * rcossin_tbl[(bat->angle << 1) + 1]) >> W2V_SHIFT;
+		bat->y -= GetRandomControl() & 3;
+		bat->z += (bat->speed * rcossin_tbl[bat->angle << 1]) >> W2V_SHIFT;
+		bat->WingYoff = (bat->WingYoff + 11) & 0x3F;
+
+		if (bat->life < 128)
+		{
+			bat->y += -4 - (i >> 1);
+
+			if (!(GetRandomControl() & 3))
+			{
+				bat->angle = (bat->angle + (GetRandomControl() & 0xFF) - 128) & 0xFFF;
+				bat->speed += GetRandomControl() & 3;
+			}
+		}
+
+		bat->speed += 12;
+
+		if (bat->speed > 300)
+			bat->speed = 300;
+
+		if (bat->life && wibble & 4)
+		{
+			bat->life--;
+
+			if (!bat->life)
+				bat->flags = 0;
+		}
+	}
+}
+
 void inject_effect2(bool replace)
 {
 	INJECT(0x0042DE00, TriggerDynamic, replace);
@@ -2568,4 +2652,7 @@ void inject_effect2(bool replace)
 	INJECT(0x0042CED0, UpdateSplashes, replace);
 	INJECT(0x0042E0C0, ControlColouredLights, replace);
 	INJECT(0x0042D990, KillAllCurrentItems, replace);
+	INJECT(0x0042D570, TriggerBats, replace);
+	INJECT(0x0042D510, BatEmitterControl, replace);
+	INJECT(0x0042D3D0, UpdateBats, replace);
 }
