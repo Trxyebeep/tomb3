@@ -55,3 +55,17 @@
 5. Enjoy!
 
 ### You can use the config tool to change any options available.
+
+## Map:
+
+To use the map, simply click Action inside the stopwatch statistics screen.
+
+### Map Controls:
+
+- Pressing WALK toggles drawing the bounding boxes. (Room boxes, Lara's box, and the target cube)
+- Pressing DRAW WEAPON resets the camera.
+- Pressing LOOK + UP/DOWN moves the distance between the camera and the target cube.
+- Pressing ACTION + direction rotates the camera around the target cube.
+- Pressing JUMP + UP/DOWN moves the target box forwards and backwards.
+- Pressing UP/DOWN (without JUMP) moves the target box up and down.
+- Pressing LEFT/RIGHT moves the target box in that direction.

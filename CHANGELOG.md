@@ -1,6 +1,6 @@
 # tomb3 changelog
 
-## Unreleased:
+## [1.5.0](https://github.com/Trxyebeep/tomb3/tree/V1.5.0) (Jan. 6 2022)
 
 ### Original bug fixes
 
@@ -19,7 +19,7 @@
 ### tomb3 additions
 
 - Add dynamic light to DOZY.
-- Add map.
+- Add map (controls in the using guide).
 - New system for expanding savegame format.
 - Add Discord Rich Presence for base game + Gold.
 - Automatically disable PSX save system when running Gold.
