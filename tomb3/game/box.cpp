@@ -286,6 +286,21 @@ long UpdateLOT(LOT_INFO* LOT, long expansion)
 	return SearchLOT(LOT, expansion);
 }
 
+void TargetBox(LOT_INFO* LOT, short box_number)
+{
+	BOX_INFO* box;
+
+	box = &boxes[box_number & 0x7FF];
+	LOT->target.x = (((ulong)box->bottom - (ulong)box->top - 1) >> 5) * GetRandomControl() + ((ulong)box->top << WALL_SHIFT) + 512;
+	LOT->target.z = (((ulong)box->right - (ulong)box->left - 1) >> 5) * GetRandomControl() + ((ulong)box->left << WALL_SHIFT) + 512;
+	LOT->required_box = box_number & 0x7FF;
+
+	if (LOT->fly)
+		LOT->target.y = box->height - 384;
+	else
+		LOT->target.y = box->height;
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -294,4 +309,5 @@ void inject_box(bool replace)
 	INJECT(0x00414390, CreatureAIInfo, replace);
 	INJECT(0x00414800, SearchLOT, replace);
 	INJECT(0x00414780, UpdateLOT, replace);
+	INJECT(0x00414A10, TargetBox, replace);
 }
