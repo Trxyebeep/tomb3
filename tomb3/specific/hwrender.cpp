@@ -876,8 +876,8 @@ void HWR_SetCurrentTexture(DXTEXTURE* tex)
 	TEXTURE* tdata;
 	TEXTURE* temp;
 	LPDIRECT3DTEXTUREX d3dtex;
-	D3DTEXTUREHANDLE handle;
-	static D3DTEXTUREHANDLE lastTextureHandle;
+	TEXHANDLE handle;
+	static TEXHANDLE lastTextureHandle;
 	ulong n;
 
 	handle = 0;
