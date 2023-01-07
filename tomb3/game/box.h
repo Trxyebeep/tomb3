@@ -11,6 +11,7 @@ long SearchLOT(LOT_INFO* LOT, long expansion);
 long UpdateLOT(LOT_INFO* LOT, long expansion);
 void TargetBox(LOT_INFO* LOT, short box_number);
 long EscapeBox(ITEM_INFO* item, ITEM_INFO* enemy, short box_number);
+long ValidBox(ITEM_INFO* item, short zone_number, short box_number);
 
 #define	CreatureTilt	( (void(__cdecl*)(ITEM_INFO*, short)) 0x004164D0 )
 #define CreatureJoint	( (void(__cdecl*)(ITEM_INFO*, short, short)) 0x00416510 )

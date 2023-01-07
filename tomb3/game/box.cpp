@@ -316,6 +316,34 @@ long EscapeBox(ITEM_INFO* item, ITEM_INFO* enemy, short box_number)
 	return z > 0 == item->pos.z_pos > enemy->pos.z_pos || x > 0 == item->pos.x_pos > enemy->pos.x_pos;
 }
 
+long ValidBox(ITEM_INFO* item, short zone_number, short box_number)
+{
+	CREATURE_INFO* creature;
+	BOX_INFO* box;
+	short* zone;
+
+	creature = (CREATURE_INFO*)item->data;
+
+	if (creature->LOT.fly)
+		zone = ground_zone[-1][0];
+	else
+		zone = ground_zone[(creature->LOT.step >> 8) - 1][flip_status];
+
+	if (!creature->LOT.fly && zone[box_number] != zone_number)
+		return 0;
+
+	box = &boxes[box_number];
+
+	if (box->overlap_index & creature->LOT.block_mask)
+		return 0;
+
+	if (item->pos.z_pos > box->left << WALL_SHIFT && item->pos.z_pos < box->right << WALL_SHIFT &&
+		item->pos.x_pos > box->top << WALL_SHIFT && item->pos.x_pos < box->bottom << WALL_SHIFT)
+		return 0;
+
+	return 1;
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -326,4 +354,5 @@ void inject_box(bool replace)
 	INJECT(0x00414780, UpdateLOT, replace);
 	INJECT(0x00414A10, TargetBox, replace);
 	INJECT(0x00414AB0, EscapeBox, replace);
+	INJECT(0x00414B60, ValidBox, replace);
 }
