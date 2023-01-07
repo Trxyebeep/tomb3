@@ -259,6 +259,33 @@ long SearchLOT(LOT_INFO* LOT, long expansion)
 	return 1;
 }
 
+long UpdateLOT(LOT_INFO* LOT, long expansion)
+{
+	BOX_NODE* expand;
+
+	if (LOT->required_box != 2047 && LOT->required_box != LOT->target_box)
+	{
+		LOT->target_box = LOT->required_box;
+		expand = &LOT->node[LOT->required_box];
+
+		if (expand->next_expansion == 2047 && LOT->tail != LOT->required_box)
+		{
+			expand->next_expansion = LOT->head;
+
+			if (LOT->head == 2047)
+				LOT->tail = LOT->target_box;
+
+			LOT->head = LOT->target_box;
+		}
+
+		LOT->search_number++;
+		expand->search_number = LOT->search_number;
+		expand->exit_box = 2047;
+	}
+
+	return SearchLOT(LOT, expansion);
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -266,4 +293,5 @@ void inject_box(bool replace)
 	INJECT(0x00414330, CreatureActive, replace);
 	INJECT(0x00414390, CreatureAIInfo, replace);
 	INJECT(0x00414800, SearchLOT, replace);
+	INJECT(0x00414780, UpdateLOT, replace);
 }
