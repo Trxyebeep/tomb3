@@ -201,7 +201,7 @@ tomb3 progress.
 0x00414780	+	UpdateLOT
 0x00414800	+	SearchLOT
 0x00414A10	+	TargetBox
-0x00414AB0		EscapeBox
+0x00414AB0	+	EscapeBox
 0x00414B60		ValidBox
 0x00414C10		GetCreatureMood
 0x00414E50		CreatureMood

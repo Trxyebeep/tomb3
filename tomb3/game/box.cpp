@@ -301,6 +301,21 @@ void TargetBox(LOT_INFO* LOT, short box_number)
 		LOT->target.y = box->height;
 }
 
+long EscapeBox(ITEM_INFO* item, ITEM_INFO* enemy, short box_number)
+{
+	BOX_INFO* box;
+	long x, z;
+
+	box = &boxes[box_number];
+	x = (((ulong)box->bottom + (ulong)box->top) << 9) - enemy->pos.x_pos;
+	z = (((ulong)box->left + (ulong)box->right) << 9) - enemy->pos.z_pos;
+
+	if (x > -5120 && x < 5120 && z > -5120 && z < 5120)
+		return 0;
+
+	return z > 0 == item->pos.z_pos > enemy->pos.z_pos || x > 0 == item->pos.x_pos > enemy->pos.x_pos;
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -310,4 +325,5 @@ void inject_box(bool replace)
 	INJECT(0x00414800, SearchLOT, replace);
 	INJECT(0x00414780, UpdateLOT, replace);
 	INJECT(0x00414A10, TargetBox, replace);
+	INJECT(0x00414AB0, EscapeBox, replace);
 }
