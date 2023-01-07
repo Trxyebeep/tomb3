@@ -344,6 +344,33 @@ long ValidBox(ITEM_INFO* item, short zone_number, short box_number)
 	return 1;
 }
 
+long StalkBox(ITEM_INFO* item, ITEM_INFO* enemy, short box_number)
+{
+	BOX_INFO* box;
+	long x, z, xrange, zrange, enemy_quad, box_quad, baddie_quad;
+
+	if (!enemy)
+		return 0;
+
+	box = &boxes[box_number];
+	x = (((ulong)box->bottom + (ulong)box->top) << 9) - enemy->pos.x_pos;
+	z = (((ulong)box->left + (ulong)box->right) << 9) - enemy->pos.z_pos;
+	xrange = ((ulong)box->bottom - (ulong)box->top + 3) << WALL_SHIFT;	//3 is the # of blocks
+	zrange = ((ulong)box->right - (ulong)box->left + 3) << WALL_SHIFT;
+
+	if (x > xrange || x < -xrange || z > zrange || z < -zrange)
+		return 0;
+
+	enemy_quad = (enemy->pos.y_rot >> 14) + 2;
+	box_quad = z <= 0 ? (x <= 0 ? 0 : 3) : (x > 0) + 1;
+
+	if (enemy_quad == box_quad)
+		return 0;
+
+	baddie_quad = item->pos.z_pos <= enemy->pos.z_pos ? (item->pos.x_pos <= enemy->pos.x_pos ? 0 : 3) : (item->pos.x_pos > enemy->pos.x_pos) + 1;
+	return enemy_quad != baddie_quad || abs(enemy_quad - box_quad) != 2;
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -355,4 +382,5 @@ void inject_box(bool replace)
 	INJECT(0x00414A10, TargetBox, replace);
 	INJECT(0x00414AB0, EscapeBox, replace);
 	INJECT(0x00414B60, ValidBox, replace);
+	INJECT(0x004150C0, StalkBox, replace);
 }
