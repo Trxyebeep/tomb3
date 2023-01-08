@@ -6,6 +6,7 @@
 #include "../3dsystem/phd_math.h"
 #include "lara.h"
 #include "draw.h"
+#include "control.h"
 
 void AlertNearbyGuards(ITEM_INFO* item)
 {
@@ -790,6 +791,33 @@ void GetCreatureMood(ITEM_INFO* item, AI_INFO* info, long violent)
 	}
 }
 
+long BadFloor(long x, long y, long z, long box_height, long next_height, short room_number, LOT_INFO* LOT)
+{
+	FLOOR_INFO* floor;
+	BOX_INFO* box;
+
+	floor = GetFloor(x, y, z, &room_number);
+
+	if (floor->box == 2047)
+		return 1;
+
+	box = &boxes[floor->box];
+
+	if (LOT->block_mask & box->overlap_index)
+		return 1;
+
+	if (box_height - box->height > LOT->step || box_height - box->height < LOT->drop)
+		return 1;
+
+	if (box_height - box->height < -LOT->step && box->height > next_height)
+		return 1;
+
+	if (LOT->fly && y > LOT->fly + box->height)
+		return 1;
+
+	return 0;
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -805,4 +833,5 @@ void inject_box(bool replace)
 	INJECT(0x004151C0, CalculateTarget, replace);
 	INJECT(0x00414E50, CreatureMood, replace);
 	INJECT(0x00414C10, GetCreatureMood, replace);
+	INJECT(0x00415780, BadFloor, replace);
 }

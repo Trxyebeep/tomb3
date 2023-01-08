@@ -16,6 +16,7 @@ long StalkBox(ITEM_INFO* item, ITEM_INFO* enemy, short box_number);
 target_type CalculateTarget(PHD_VECTOR* target, ITEM_INFO* item, LOT_INFO* LOT);
 void CreatureMood(ITEM_INFO* item, AI_INFO* info, long violent);
 void GetCreatureMood(ITEM_INFO* item, AI_INFO* info, long violent);
+long BadFloor(long x, long y, long z, long box_height, long next_height, short room_number, LOT_INFO* LOT);
 
 #define	CreatureTilt	( (void(__cdecl*)(ITEM_INFO*, short)) 0x004164D0 )
 #define CreatureJoint	( (void(__cdecl*)(ITEM_INFO*, short, short)) 0x00416510 )

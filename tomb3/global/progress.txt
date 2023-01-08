@@ -208,7 +208,7 @@ tomb3 progress.
 0x004150C0	+	StalkBox
 0x004151C0	+	CalculateTarget
 0x00415650		CreatureCreature
-0x00415780		BadFloor
+0x00415780	+	BadFloor
 0x00415820		CreatureDie
 0x00415940		CreatureAnimation
 0x00416400		CreatureTurn
