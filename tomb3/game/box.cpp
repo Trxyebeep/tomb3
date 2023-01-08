@@ -685,6 +685,111 @@ void CreatureMood(ITEM_INFO* item, AI_INFO* info, long violent)
 	CalculateTarget(&creature->target, item, LOT);
 }
 
+void GetCreatureMood(ITEM_INFO* item, AI_INFO* info, long violent)
+{
+	CREATURE_INFO* creature;
+	ITEM_INFO* enemy;
+	LOT_INFO* LOT;
+	mood_type mood;
+
+	creature = (CREATURE_INFO*)item->data;
+
+	if (!creature)
+		return;
+
+	enemy = creature->enemy;
+	LOT = &creature->LOT;
+
+	if (LOT->node[item->box_number].search_number == (LOT->search_number | 0x8000))
+		LOT->required_box = 2047;
+
+	if (creature->mood != ATTACK_MOOD && LOT->required_box != 2047 && !ValidBox(item, info->zone_number, LOT->target_box))
+	{
+		if (info->zone_number == info->enemy_zone)
+			creature->mood = BORED_MOOD;
+
+		LOT->required_box = 2047;
+	}
+
+	mood = creature->mood;
+
+	if (enemy)
+	{
+		if (enemy->hit_points <= 0 && enemy == lara_item)
+			creature->mood = BORED_MOOD;
+		else if (violent)
+		{
+			switch (creature->mood)
+			{
+			case BORED_MOOD:
+			case STALK_MOOD:
+
+				if (info->zone_number == info->enemy_zone)
+					creature->mood = ATTACK_MOOD;
+				else if (item->hit_status)
+					creature->mood = ESCAPE_MOOD;
+
+				break;
+
+			case ATTACK_MOOD:
+
+				if (info->zone_number != info->enemy_zone)
+					creature->mood = BORED_MOOD;
+
+				break;
+
+			case ESCAPE_MOOD:
+
+				if (info->zone_number == info->enemy_zone)
+					creature->mood = ATTACK_MOOD;
+
+				break;
+			}
+		}
+		else
+		{
+			switch (creature->mood)
+			{
+			case BORED_MOOD:
+			case STALK_MOOD:
+
+				if (creature->alerted && info->zone_number != info->enemy_zone)
+					creature->mood = info->distance > 3072 ? STALK_MOOD : BORED_MOOD;
+				else if (info->zone_number == info->enemy_zone)
+					creature->mood = (info->distance < 0x900000 || (creature->mood == STALK_MOOD && LOT->required_box == 2047)) ? ATTACK_MOOD : STALK_MOOD;
+
+				break;
+
+			case ATTACK_MOOD:
+
+				if (item->hit_status && (GetRandomControl() < 2048 || info->zone_number != info->enemy_zone))
+					creature->mood = STALK_MOOD;
+				else if (info->zone_number != info->enemy_zone && info->distance > 6144)
+					creature->mood = BORED_MOOD;
+
+				break;
+
+			case ESCAPE_MOOD:
+
+				if (info->zone_number == info->enemy_zone && GetRandomControl() < 256)
+					creature->mood = STALK_MOOD;
+
+				break;
+			}
+		}
+	}
+	else
+		creature->mood = BORED_MOOD;
+
+	if (mood != creature->mood)
+	{
+		if (mood == ATTACK_MOOD)
+			TargetBox(LOT, LOT->target_box);
+
+		LOT->required_box = 2047;
+	}
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -699,4 +804,5 @@ void inject_box(bool replace)
 	INJECT(0x004150C0, StalkBox, replace);
 	INJECT(0x004151C0, CalculateTarget, replace);
 	INJECT(0x00414E50, CreatureMood, replace);
+	INJECT(0x00414C10, GetCreatureMood, replace);
 }
