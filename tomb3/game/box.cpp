@@ -5,6 +5,7 @@
 #include "lot.h"
 #include "../3dsystem/phd_math.h"
 #include "lara.h"
+#include "draw.h"
 
 void AlertNearbyGuards(ITEM_INFO* item)
 {
@@ -595,6 +596,95 @@ target_type CalculateTarget(PHD_VECTOR* target, ITEM_INFO* item, LOT_INFO* LOT)
 	return NO_TARGET;
 }
 
+void CreatureMood(ITEM_INFO* item, AI_INFO* info, long violent)
+{
+	CREATURE_INFO* creature;
+	ITEM_INFO* enemy;
+	LOT_INFO* LOT;
+	short box_number;
+
+	creature = (CREATURE_INFO*)item->data;
+
+	if (!creature)
+		return;
+
+	enemy = creature->enemy;
+	LOT = &creature->LOT;
+
+	switch (creature->mood)
+	{
+	case BORED_MOOD:
+		box_number = LOT->node[(LOT->zone_count * GetRandomControl()) >> 15].box_number;
+
+		if (ValidBox(item, info->zone_number, box_number))
+		{
+			if (StalkBox(item, enemy, box_number) && enemy->hit_points > 0 && creature->enemy)
+			{
+				TargetBox(LOT, box_number);
+				creature->mood = BORED_MOOD;
+			}
+			else if (LOT->required_box == 2047)
+				TargetBox(LOT, box_number);
+		}
+
+		break;
+
+	case ATTACK_MOOD:
+		LOT->target.x = enemy->pos.x_pos;
+		LOT->target.y = enemy->pos.y_pos;
+		LOT->target.z = enemy->pos.z_pos;
+		LOT->required_box = enemy->box_number;
+
+		if (LOT->fly && lara.water_status == LARA_ABOVEWATER)
+			LOT->target.y += GetBestFrame(enemy)[2];
+
+		break;
+
+	case ESCAPE_MOOD:
+		box_number = LOT->node[(LOT->zone_count * GetRandomControl()) >> 15].box_number;
+
+		if (ValidBox(item, info->zone_number, box_number) && LOT->required_box == 2047)
+		{
+			if (EscapeBox(item, enemy, box_number))
+				TargetBox(LOT, box_number);
+			else if (info->zone_number == info->enemy_zone && StalkBox(item, enemy, box_number) && !violent)
+			{
+				TargetBox(LOT, box_number);
+				creature->mood = STALK_MOOD;
+			}
+		}
+
+		break;
+
+	case STALK_MOOD:
+
+		if (LOT->required_box == 2047 || !StalkBox(item, enemy, LOT->required_box))
+		{
+			box_number = LOT->node[(LOT->zone_count * GetRandomControl()) >> 15].box_number;
+
+			if (ValidBox(item, info->zone_number, box_number))
+			{
+				if (StalkBox(item, enemy, box_number))
+					TargetBox(LOT, box_number);
+				else if (LOT->required_box == 2047)
+				{
+					TargetBox(LOT, box_number);
+
+					if (info->zone_number != info->enemy_zone)
+						creature->mood = BORED_MOOD;
+				}
+			}
+		}
+
+		break;
+	}
+
+	if (LOT->target_box == 2047)
+		TargetBox(LOT, item->box_number);
+
+	CalculateTarget(&creature->target, item, LOT);
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -608,4 +698,5 @@ void inject_box(bool replace)
 	INJECT(0x00414B60, ValidBox, replace);
 	INJECT(0x004150C0, StalkBox, replace);
 	INJECT(0x004151C0, CalculateTarget, replace);
+	INJECT(0x00414E50, CreatureMood, replace);
 }
