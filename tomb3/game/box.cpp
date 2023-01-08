@@ -7,6 +7,8 @@
 #include "lara.h"
 #include "draw.h"
 #include "control.h"
+#include "missile.h"
+#include "items.h"
 
 void AlertNearbyGuards(ITEM_INFO* item)
 {
@@ -851,6 +853,49 @@ long CreatureCreature(short item_number)
 	return 0;
 }
 
+void CreatureDie(short item_number, long explode)
+{
+	ITEM_INFO* item;
+	ITEM_INFO* pickup;
+	FLOOR_INFO* floor;
+	short pickup_number, room_number;
+
+	item = &items[item_number];
+	item->hit_points = DONT_TARGET;
+	item->collidable = 0;
+
+	if (explode)
+	{
+		ExplodingDeath(item_number, -1, 0);
+		KillItem(item_number);
+	}
+	else
+		RemoveActiveItem(item_number);
+
+	DisableBaddieAI(item_number);
+	item->flags |= IFL_INVISIBLE;
+
+	if (item->clear_body)
+	{
+		item->next_active = body_bag;
+		body_bag = item_number;
+	}
+
+	pickup_number = item->carried_item;
+
+	while (pickup_number != NO_ITEM)
+	{
+		pickup = &items[pickup_number];
+		pickup->pos.x_pos = (item->pos.x_pos & -512) | 512;
+		pickup->pos.z_pos = (item->pos.z_pos & -512) | 512;
+		room_number = item->room_number;
+		floor = GetFloor(pickup->pos.x_pos, item->pos.y_pos, pickup->pos.z_pos, &room_number);
+		pickup->pos.y_pos = GetHeight(floor, pickup->pos.x_pos, item->pos.y_pos, pickup->pos.z_pos);
+		ItemNewRoom(pickup_number, item->room_number);
+		pickup_number = pickup->carried_item;
+	}
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -868,4 +913,5 @@ void inject_box(bool replace)
 	INJECT(0x00414C10, GetCreatureMood, replace);
 	INJECT(0x00415780, BadFloor, replace);
 	INJECT(0x00415650, CreatureCreature, replace);
+	INJECT(0x00415820, CreatureDie, replace);
 }
