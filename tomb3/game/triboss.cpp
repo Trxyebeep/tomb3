@@ -158,7 +158,7 @@ static void TribeBossDie(short item_number)
 
 	item = &items[item_number];
 	item->collidable = 0;
-	item->hit_points = NO_TARGET;
+	item->hit_points = DONT_TARGET;
 	KillItem(item_number);
 	DisableBaddieAI(item_number);
 	item->flags |= IFL_INVISIBLE;

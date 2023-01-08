@@ -20,7 +20,7 @@ void OrcaControl(short item_number)
 
 	item = &items[item_number];
 	orca = (CREATURE_INFO*)item->data;
-	item->hit_points = -0x4000;
+	item->hit_points = DONT_TARGET;
 	CreatureAIInfo(item, &info);
 	GetCreatureMood(item, &info, 1);
 

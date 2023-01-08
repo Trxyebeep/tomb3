@@ -94,7 +94,7 @@ do \
 
 //constants
 #define NO_HEIGHT -32512
-#define NO_TARGET	-16384
+#define DONT_TARGET	-16384
 #define NO_ITEM	-1
 #define W2V_SHIFT	14
 
@@ -135,6 +135,13 @@ do \
 #define WALL_SIZE	(1 << WALL_SHIFT)
 
 /*enums*/
+enum target_type
+{
+	NO_TARGET,
+	PRIME_TARGET,
+	SECONDARY_TARGET
+};
+
 enum ai_bits
 {
 	GUARD = 1 << 0,

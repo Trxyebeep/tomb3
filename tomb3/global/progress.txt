@@ -206,7 +206,7 @@ tomb3 progress.
 0x00414C10		GetCreatureMood
 0x00414E50		CreatureMood
 0x004150C0	+	StalkBox
-0x004151C0		CalculateTarget
+0x004151C0	+	CalculateTarget
 0x00415650		CreatureCreature
 0x00415780		BadFloor
 0x00415820		CreatureDie
