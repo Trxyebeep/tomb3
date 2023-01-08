@@ -896,6 +896,36 @@ void CreatureDie(short item_number, long explode)
 	}
 }
 
+short CreatureTurn(ITEM_INFO* item, short maximum_turn)
+{
+	CREATURE_INFO* creature;
+	long x, z;
+	short angle;
+
+	creature = (CREATURE_INFO*)item->data;
+
+	if (!creature || !maximum_turn)
+		return 0;
+
+	x = creature->target.x - item->pos.x_pos;
+	z = creature->target.z - item->pos.z_pos;
+	angle = short(phd_atan(z, x) - item->pos.y_rot);
+
+	if (angle > 0x4000 || angle < -0x4000)
+	{
+		if (SQUARE(x) + SQUARE(z) < SQUARE((item->speed << 14) / maximum_turn))
+			maximum_turn >>= 1;
+	}
+
+	if (angle > maximum_turn)
+		angle = maximum_turn;
+	else if (angle < -maximum_turn)
+		angle = -maximum_turn;
+
+	item->pos.y_rot += angle;
+	return angle;
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -914,4 +944,5 @@ void inject_box(bool replace)
 	INJECT(0x00415780, BadFloor, replace);
 	INJECT(0x00415650, CreatureCreature, replace);
 	INJECT(0x00415820, CreatureDie, replace);
+	INJECT(0x00416400, CreatureTurn, replace);
 }
