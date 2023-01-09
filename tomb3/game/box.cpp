@@ -1330,6 +1330,21 @@ void CreatureFloat(short item_number)
 		ItemNewRoom(item_number, room_number);
 }
 
+void CreatureUnderwater(ITEM_INFO* item, long depth)
+{
+	depth += GetWaterHeight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number);
+
+	if (item->pos.y_pos < depth)
+	{
+		item->pos.y_pos = depth;
+
+		if (item->pos.x_rot > 364)
+			item->pos.x_rot -= 364;
+		else if (item->pos.x_rot > 0)
+			item->pos.x_rot = 0;
+	}
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -1353,4 +1368,5 @@ void inject_box(bool replace)
 	INJECT(0x004164D0, CreatureTilt, replace);
 	INJECT(0x00416510, CreatureJoint, replace);
 	INJECT(0x00416570, CreatureFloat, replace);
+	INJECT(0x00416620, CreatureUnderwater, replace);
 }
