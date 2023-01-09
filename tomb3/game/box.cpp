@@ -1278,6 +1278,58 @@ void CreatureTilt(ITEM_INFO* item, short angle)
 		item->pos.z_rot += 546;
 }
 
+void CreatureJoint(ITEM_INFO* item, short joint, short required)
+{
+	CREATURE_INFO* creature;
+	short change;
+
+	creature = (CREATURE_INFO*)item->data;
+
+	if (!creature)
+		return;
+
+	change = required - creature->joint_rotation[joint];
+
+	if (change > 910)
+		change = 910;
+	else if (change < -910)
+		change = -910;
+
+	creature->joint_rotation[joint] += change;
+
+	if (creature->joint_rotation[joint] > 0x3000)
+		creature->joint_rotation[joint] = 0x3000;
+	else if (creature->joint_rotation[joint] < -0x3000)
+		creature->joint_rotation[joint] = -0x3000;
+}
+
+void CreatureFloat(short item_number)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	long water_level;
+	short room_number;
+
+	item = &items[item_number];
+	item->hit_points = -16384;
+	item->pos.x_rot = 0;
+	water_level = GetWaterHeight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number);
+
+	if (item->pos.y_pos > water_level)
+		item->pos.y_pos -= 32;
+
+	if (item->pos.y_pos < water_level)
+		item->pos.y_pos = water_level;
+
+	AnimateItem(item);
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	item->floor = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -1299,4 +1351,6 @@ void inject_box(bool replace)
 	INJECT(0x00416400, CreatureTurn, replace);
 	INJECT(0x00415940, CreatureAnimation, replace);
 	INJECT(0x004164D0, CreatureTilt, replace);
+	INJECT(0x00416510, CreatureJoint, replace);
+	INJECT(0x00416570, CreatureFloat, replace);
 }

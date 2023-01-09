@@ -213,8 +213,8 @@ tomb3 progress.
 0x00415940	+	CreatureAnimation
 0x00416400	+	CreatureTurn
 0x004164D0	+	CreatureTilt
-0x00416510		CreatureJoint
-0x00416570		CreatureFloat
+0x00416510	+	CreatureJoint
+0x00416570	+	CreatureFloat
 0x00416620		CreatureUnderwater
 0x00416670		CreatureEffect
 0x004166D0		CreatureVault
