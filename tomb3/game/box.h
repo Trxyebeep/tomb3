@@ -20,10 +20,10 @@ long BadFloor(long x, long y, long z, long box_height, long next_height, short r
 long CreatureCreature(short item_number);
 void CreatureDie(short item_number, long explode);
 short CreatureTurn(ITEM_INFO* item, short maximum_turn);
+long CreatureAnimation(short item_number, short angle, short tilt);
 
 #define	CreatureTilt	( (void(__cdecl*)(ITEM_INFO*, short)) 0x004164D0 )
 #define CreatureJoint	( (void(__cdecl*)(ITEM_INFO*, short, short)) 0x00416510 )
-#define CreatureAnimation	( (void(__cdecl*)(short, short, short)) 0x00415940 )
 #define GetAITarget	( (void(__cdecl*)(CREATURE_INFO*)) 0x00416B60 )
 #define AlertAllGuards	( (void(__cdecl*)(short)) 0x004169C0 )
 #define AIGuard	( (short(__cdecl*)(CREATURE_INFO*)) 0x00416AC0 )
