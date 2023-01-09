@@ -1268,6 +1268,16 @@ long CreatureAnimation(short item_number, short angle, short tilt)
 	return 1;
 }
 
+void CreatureTilt(ITEM_INFO* item, short angle)
+{
+	angle = (angle << 2) - item->pos.z_rot;
+
+	if (angle < -546)
+		item->pos.z_rot -= 546;
+	else if (angle > 546)
+		item->pos.z_rot += 546;
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -1288,4 +1298,5 @@ void inject_box(bool replace)
 	INJECT(0x00415820, CreatureDie, replace);
 	INJECT(0x00416400, CreatureTurn, replace);
 	INJECT(0x00415940, CreatureAnimation, replace);
+	INJECT(0x004164D0, CreatureTilt, replace);
 }
