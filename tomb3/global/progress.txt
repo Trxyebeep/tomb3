@@ -223,7 +223,7 @@ tomb3 progress.
 0x00416A30	+	AlertNearbyGuards
 0x00416AC0	+	AIGuard
 0x00416B60		GetAITarget
-0x00417110		SameZone
+0x00417110	+	SameZone
 0x00417210		AdjustStopperFlag
 
 

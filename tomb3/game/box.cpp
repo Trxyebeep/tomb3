@@ -1525,6 +1525,27 @@ void AlertAllGuards(short item_number)
 	}
 }
 
+short SameZone(CREATURE_INFO* creature, ITEM_INFO* target_item)
+{
+	ITEM_INFO* item;
+	ROOM_INFO* r;
+	short* zone;
+
+	if (creature->LOT.fly)
+		return 1;
+
+	zone = ground_zone[(creature->LOT.step >> 8) - 1][flip_status];
+	item = &items[creature->item_num];
+
+	r = &room[item->room_number];
+	item->box_number = r->floor[((item->pos.z_pos - r->z) >> WALL_SHIFT) + r->x_size * ((item->pos.x_pos - r->x) >> WALL_SHIFT)].box;
+
+	r = &room[target_item->room_number];
+	target_item->box_number = r->floor[((target_item->pos.z_pos - r->z) >> WALL_SHIFT) + r->x_size * ((target_item->pos.x_pos - r->x) >> WALL_SHIFT)].box;
+
+	return zone[item->box_number] == zone[target_item->box_number];
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -1554,4 +1575,5 @@ void inject_box(bool replace)
 	INJECT(0x00416840, CreatureKill, replace);
 	INJECT(0x00416AC0, AIGuard, replace);
 	INJECT(0x004169C0, AlertAllGuards, replace);
+	INJECT(0x00417110, SameZone, replace);
 }
