@@ -68,7 +68,7 @@ void MPGunControl(short item_number)
 			dz = lara_item->pos.z_pos - item->pos.z_pos;
 			lara_info.distance = SQUARE(dx) + SQUARE(dz);
 
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < MAX_LOT; i++)
 			{
 				target = &baddie_slots[i];
 

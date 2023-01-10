@@ -97,6 +97,11 @@ do \
 #define DONT_TARGET	-16384
 #define NO_ITEM	-1
 #define W2V_SHIFT	14
+#define NO_ROOM	255
+#define WALL_SHIFT	10
+#define WALL_SIZE	(1 << WALL_SHIFT)
+#define MAX_LOT		5
+#define MAX_NONLOT	12
 
 #ifdef TROYESTUFF	//*4
 #define MAX_TLVERTICES	0x9000
@@ -129,10 +134,6 @@ do \
 #else
 #define MAX_WEATHER_ALIVE	8
 #endif
-
-#define NO_ROOM	255
-#define WALL_SHIFT	10
-#define WALL_SIZE	(1 << WALL_SHIFT)
 
 /*enums*/
 enum target_type

@@ -17,7 +17,7 @@ void AlertNearbyGuards(ITEM_INFO* item)
 	CREATURE_INFO* creature;
 	long dx, dy, dz, dist;
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < MAX_LOT; i++)
 	{
 		creature = &baddie_slots[i];
 
@@ -1511,7 +1511,7 @@ void AlertAllGuards(short item_number)
 
 	item = &items[item_number];
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < MAX_LOT; i++)
 	{
 		creature = &baddie_slots[i];
 
