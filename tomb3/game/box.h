@@ -27,9 +27,9 @@ void CreatureFloat(short item_number);
 void CreatureUnderwater(ITEM_INFO* item, long depth);
 short CreatureEffect(ITEM_INFO* item, BITE_INFO* bite, short(*generate)(long x, long y, long z, short speed, short yrot, short room_number));
 long CreatureVault(short item_number, short angle, long vault, long shift);
+void CreatureKill(ITEM_INFO* item, long kill_anim, long kill_state, long lara_kill_state);
 
 #define GetAITarget	( (void(__cdecl*)(CREATURE_INFO*)) 0x00416B60 )
 #define AlertAllGuards	( (void(__cdecl*)(short)) 0x004169C0 )
 #define AIGuard	( (short(__cdecl*)(CREATURE_INFO*)) 0x00416AC0 )
-#define CreatureKill	( (void(__cdecl*)(ITEM_INFO*, long, long, long)) 0x00416840 )
 #define AdjustStopperFlag	( (void(__cdecl*)(ITEM_INFO*, long, long)) 0x00417210 )

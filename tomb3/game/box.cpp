@@ -1431,6 +1431,41 @@ long CreatureVault(short item_number, short angle, long vault, long shift)
 	return vault;
 }
 
+void CreatureKill(ITEM_INFO* item, long kill_anim, long kill_state, long lara_kill_state)
+{
+	item->anim_number = objects[item->object_number].anim_index + (short)kill_anim;
+	item->frame_number = anims[item->anim_number].frame_base;
+	item->current_anim_state = (short)kill_state;
+	lara_item->anim_number = objects[LARA_EXTRA].anim_index;
+	lara_item->frame_number = anims[lara_item->anim_number].frame_base;
+	lara_item->current_anim_state = 8;
+	lara_item->goal_anim_state = (short)lara_kill_state;
+	lara_item->pos.x_pos = item->pos.x_pos;
+	lara_item->pos.y_pos = item->pos.y_pos;
+	lara_item->pos.z_pos = item->pos.z_pos;
+	lara_item->pos.x_rot = item->pos.x_rot;
+	lara_item->pos.y_rot = item->pos.y_rot;
+	lara_item->pos.z_rot = item->pos.z_rot;
+	lara_item->fallspeed = 0;
+	lara_item->gravity_status = 0;
+	lara_item->speed = 0;
+
+	if (lara_item->room_number != item->room_number)
+		ItemNewRoom(lara.item_number, item->room_number);
+
+	AnimateItem(lara_item);
+	lara.extra_anim = 1;
+	lara.gun_status = LG_HANDSBUSY;
+	lara.gun_type = LG_UNARMED;
+	lara.hit_direction = -1;
+	lara.air = -1;
+	camera.type = CHASE_CAMERA;
+	camera.pos.room_number = lara_item->room_number;
+	camera.flags = 1;
+	camera.target_angle = 0x78DC;
+	camera.target_elevation = -4550;
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -1457,4 +1492,5 @@ void inject_box(bool replace)
 	INJECT(0x00416620, CreatureUnderwater, replace);
 	INJECT(0x00416670, CreatureEffect, replace);
 	INJECT(0x004166D0, CreatureVault, replace);
+	INJECT(0x00416840, CreatureKill, replace);
 }
