@@ -62,6 +62,7 @@
 #include "../game/moveblok.h"
 #include "../game/cleaner.h"
 #include "../game/orca.h"
+#include "../game/rapmaker.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -188,6 +189,7 @@ void inject_all(bool replace)
 	inject_moveblok(replace);
 	inject_cleaner(replace);
 	inject_orca(replace);
+	inject_rapmaker(replace);
 
 	//specific
 	inject_drawbars(replace);

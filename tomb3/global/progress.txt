@@ -1226,7 +1226,7 @@ tomb3 progress.
 		game/rapmaker.cpp
 
 0x00460DA0		RaptorEmitterControl
-0x00461010		InitialiseRaptorEmitter
+0x00461010	+	InitialiseRaptorEmitter
 
 
 		game/raptor.cpp
