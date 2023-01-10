@@ -1503,6 +1503,28 @@ short AIGuard(CREATURE_INFO* creature)
 	return 0;
 }
 
+void AlertAllGuards(short item_number)
+{
+	ITEM_INFO* item;
+	ITEM_INFO* target;
+	CREATURE_INFO* creature;
+
+	item = &items[item_number];
+
+	for (int i = 0; i < 5; i++)
+	{
+		creature = &baddie_slots[i];
+
+		if (creature->item_num != NO_ITEM)
+		{
+			target = &items[creature->item_num];
+
+			if (target->object_number == item->object_number && target->status == ITEM_ACTIVE)
+				creature->alerted = 1;
+		}
+	}
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -1531,4 +1553,5 @@ void inject_box(bool replace)
 	INJECT(0x004166D0, CreatureVault, replace);
 	INJECT(0x00416840, CreatureKill, replace);
 	INJECT(0x00416AC0, AIGuard, replace);
+	INJECT(0x004169C0, AlertAllGuards, replace);
 }

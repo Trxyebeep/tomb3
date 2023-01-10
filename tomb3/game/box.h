@@ -29,7 +29,7 @@ short CreatureEffect(ITEM_INFO* item, BITE_INFO* bite, short(*generate)(long x, 
 long CreatureVault(short item_number, short angle, long vault, long shift);
 void CreatureKill(ITEM_INFO* item, long kill_anim, long kill_state, long lara_kill_state);
 short AIGuard(CREATURE_INFO* creature);
+void AlertAllGuards(short item_number);
 
 #define GetAITarget	( (void(__cdecl*)(CREATURE_INFO*)) 0x00416B60 )
-#define AlertAllGuards	( (void(__cdecl*)(short)) 0x004169C0 )
 #define AdjustStopperFlag	( (void(__cdecl*)(ITEM_INFO*, long, long)) 0x00417210 )
