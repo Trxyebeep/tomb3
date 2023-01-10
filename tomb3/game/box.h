@@ -31,6 +31,6 @@ void CreatureKill(ITEM_INFO* item, long kill_anim, long kill_state, long lara_ki
 short AIGuard(CREATURE_INFO* creature);
 void AlertAllGuards(short item_number);
 short SameZone(CREATURE_INFO* creature, ITEM_INFO* target_item);
+void GetAITarget(CREATURE_INFO* creature);
 
-#define GetAITarget	( (void(__cdecl*)(CREATURE_INFO*)) 0x00416B60 )
 #define AdjustStopperFlag	( (void(__cdecl*)(ITEM_INFO*, long, long)) 0x00417210 )

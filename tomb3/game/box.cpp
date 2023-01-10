@@ -1546,6 +1546,185 @@ short SameZone(CREATURE_INFO* creature, ITEM_INFO* target_item)
 	return zone[item->box_number] == zone[target_item->box_number];
 }
 
+void GetAITarget(CREATURE_INFO* creature)
+{
+	ITEM_INFO* item;
+	ITEM_INFO* enemy;
+	ITEM_INFO* target;
+	FLOOR_INFO* floor;
+	long lp;
+	short enemy_object;
+	char ai_bits;
+
+	enemy = creature->enemy;
+
+	if (enemy)
+		enemy_object = enemy->object_number;
+	else
+		enemy_object = NO_ITEM;
+
+	item = &items[creature->item_num];
+	ai_bits = item->ai_bits;
+
+	if (ai_bits & GUARD)
+	{
+		creature->enemy = lara_item;
+
+		if (creature->alerted)
+		{
+			item->ai_bits &= ~GUARD;
+
+			if (ai_bits & AMBUSH)
+				item->ai_bits |= MODIFY;
+		}
+	}
+	else if (ai_bits & PATROL1)
+	{
+		if (creature->alerted || creature->hurt_by_lara)
+		{
+			item->ai_bits &= ~PATROL1;
+
+			if (ai_bits & AMBUSH)
+				item->ai_bits |= MODIFY;
+		}
+		else if (!creature->patrol2 && enemy_object != AI_PATROL1)
+		{
+			for (lp = 0; lp < level_items; lp++)
+			{
+				target = &items[lp];
+
+				if (target->object_number == AI_PATROL1 && target->room_number != NO_ROOM &&
+					SameZone(creature, target) && target->pos.y_rot == item->item_flags[3])
+				{
+					creature->enemy = target;
+					return;
+				}
+			}
+		}
+		else if (creature->patrol2 && enemy_object != AI_PATROL2)
+		{
+			for (lp = 0; lp < level_items; lp++)
+			{
+				target = &items[lp];
+
+				if (target->object_number == AI_PATROL2 && target->room_number != NO_ROOM &&
+					SameZone(creature, target) && target->pos.y_rot == item->item_flags[3])
+				{
+					creature->enemy = target;
+					return;
+				}
+			}
+		}
+		else if (abs(enemy->pos.x_pos - item->pos.x_pos) < 768 && abs(enemy->pos.y_pos - item->pos.y_pos) < 768 && abs(enemy->pos.z_pos - item->pos.z_pos) < 768)
+		{
+			floor = GetFloor(enemy->pos.x_pos, enemy->pos.y_pos, enemy->pos.z_pos, &enemy->room_number);
+			GetHeight(floor, enemy->pos.x_pos, enemy->pos.y_pos, enemy->pos.z_pos);
+			TestTriggers(trigger_index, 1);
+			creature->patrol2 = ~creature->patrol2;
+		}
+	}
+	else if (ai_bits & AMBUSH)
+	{
+		if (ai_bits & MODIFY || creature->hurt_by_lara)
+		{
+			if (enemy_object != AI_AMBUSH)
+			{
+				for (lp = 0; lp < level_items; lp++)
+				{
+					target = &items[lp];
+
+					if (target->object_number == AI_AMBUSH && target->room_number != NO_ROOM && SameZone(creature, target) &&
+						(target->pos.y_rot == item->item_flags[3] || item->object_number == MONKEY))
+					{
+						creature->enemy = target;
+						return;
+					}
+				}
+			}
+			else if (item->object_number != MONKEY)
+			{
+				if (abs(enemy->pos.x_pos - item->pos.x_pos) < 768 && abs(enemy->pos.y_pos - item->pos.y_pos) < 768 && abs(enemy->pos.z_pos - item->pos.z_pos) < 768)
+				{
+					floor = GetFloor(enemy->pos.x_pos, enemy->pos.y_pos, enemy->pos.z_pos, &enemy->room_number);
+					GetHeight(floor, enemy->pos.x_pos, enemy->pos.y_pos, enemy->pos.z_pos);
+					TestTriggers(trigger_index, 1);
+					creature->reached_goal = 1;
+					creature->enemy = lara_item;
+					item->ai_bits &= ~(AMBUSH | MODIFY);
+					item->ai_bits |= GUARD;
+					creature->alerted = 0;
+				}
+			}
+		}
+		else
+			creature->enemy = lara_item;
+	}
+	else if (ai_bits & FOLLOW)
+	{
+		if (creature->hurt_by_lara)
+		{
+			creature->enemy = lara_item;
+			creature->alerted = 1;
+			item->ai_bits &= ~FOLLOW;
+		}
+		else if (item->hit_status)
+			item->ai_bits &= ~FOLLOW;
+		else if (enemy_object != AI_FOLLOW)
+		{
+			for (lp = 0; lp < level_items; lp++)
+			{
+				target = &items[lp];
+
+				if (target->object_number == AI_FOLLOW && target->room_number != NO_ROOM &&
+					SameZone(creature, target) && target->pos.y_rot == item->item_flags[3])
+				{
+					creature->enemy = target;
+					return;
+				}
+			}
+		}
+		else if (abs(enemy->pos.x_pos - item->pos.x_pos) < 768 && abs(enemy->pos.y_pos - item->pos.y_pos) < 768 && abs(enemy->pos.z_pos - item->pos.z_pos) < 768)
+		{
+			creature->reached_goal = 1;
+			item->ai_bits &= ~FOLLOW;
+		}
+	}
+	else if (item->object_number == MONKEY && item->carried_item == NO_ITEM)
+	{
+		if (item->ai_bits == MODIFY)
+		{
+			if (enemy_object != KEY_ITEM4)
+			{
+				for (lp = 0; lp < level_items; lp++)
+				{
+					target = &items[lp];
+
+					if (target->object_number == KEY_ITEM4 && target->room_number != NO_ROOM && !target->ai_bits &&
+						target->status != ITEM_INVISIBLE && !(target->flags & IFL_CLEARBODY) && SameZone(creature, target))
+					{
+						creature->enemy = target;
+						return;
+					}
+				}
+			}
+		}
+		else if (enemy_object != MEDI_ITEM)
+		{
+			for (lp = 0; lp < level_items; lp++)
+			{
+				target = &items[lp];
+
+				if (target->object_number == MEDI_ITEM && target->room_number != NO_ROOM && !target->ai_bits &&
+					target->status != ITEM_INVISIBLE && !(target->flags & IFL_CLEARBODY) && SameZone(creature, target))
+				{
+					creature->enemy = target;
+					return;
+				}
+			}
+		}
+	}
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -1576,4 +1755,5 @@ void inject_box(bool replace)
 	INJECT(0x00416AC0, AIGuard, replace);
 	INJECT(0x004169C0, AlertAllGuards, replace);
 	INJECT(0x00417110, SameZone, replace);
+	INJECT(0x00416B60, GetAITarget, replace);
 }
