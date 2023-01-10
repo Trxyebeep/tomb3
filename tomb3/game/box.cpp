@@ -1357,6 +1357,80 @@ short CreatureEffect(ITEM_INFO* item, BITE_INFO* bite, short(*generate)(long x, 
 	return generate(pos.x, pos.y, pos.z, item->speed, item->pos.y_rot, item->room_number);
 }
 
+long CreatureVault(short item_number, short angle, long vault, long shift)
+{
+	ITEM_INFO* item;
+	long x, y, z, xFloor, zFloor;
+	short room_number;
+
+	item = &items[item_number];
+	x = item->pos.x_pos >> WALL_SHIFT;
+	y = item->pos.y_pos;
+	z = item->pos.z_pos >> WALL_SHIFT;
+	room_number = item->room_number;
+	CreatureAnimation(item_number, angle, 0);
+
+	if (item->floor > y + 896)
+		vault = -4;
+	else if (item->floor > y + 640 && item->object_number == MONKEY)
+		vault = -3;
+	else if (item->floor > y + 384 && item->object_number == MONKEY)
+		vault = -2;
+	else
+	{
+		if (item->pos.y_pos > y - 384)
+			return 0;
+
+		if (item->pos.y_pos > y - 640)
+			vault = 2;
+		else if (item->pos.y_pos > y - 896)
+			vault = 3;
+		else
+			vault = 4;
+	}
+
+	xFloor = item->pos.x_pos >> WALL_SHIFT;
+	zFloor = item->pos.z_pos >> WALL_SHIFT;
+
+	if (z == zFloor)
+	{
+		if (x == xFloor)
+			return 0;
+
+		if (x >= xFloor)
+		{
+			item->pos.y_rot = -0x4000;
+			item->pos.x_pos = (x << WALL_SHIFT) + shift;
+		}
+		else
+		{
+			item->pos.y_rot = 0x4000;
+			item->pos.x_pos = (xFloor << WALL_SHIFT) - shift;
+		}
+	}
+	else if (x == xFloor)
+	{
+		if (z < zFloor)
+		{
+			item->pos.y_rot = 0;
+			item->pos.z_pos = (zFloor << WALL_SHIFT) - shift;
+		}
+		else
+		{
+			item->pos.y_rot = -0x8000;
+			item->pos.z_pos = (z << WALL_SHIFT) + shift;
+		}
+	}
+
+	item->floor = y;
+	item->pos.y_pos = y;
+
+	if (item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+
+	return vault;
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -1382,4 +1456,5 @@ void inject_box(bool replace)
 	INJECT(0x00416570, CreatureFloat, replace);
 	INJECT(0x00416620, CreatureUnderwater, replace);
 	INJECT(0x00416670, CreatureEffect, replace);
+	INJECT(0x004166D0, CreatureVault, replace);
 }

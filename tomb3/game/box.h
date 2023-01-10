@@ -26,10 +26,10 @@ void CreatureJoint(ITEM_INFO* item, short joint, short required);
 void CreatureFloat(short item_number);
 void CreatureUnderwater(ITEM_INFO* item, long depth);
 short CreatureEffect(ITEM_INFO* item, BITE_INFO* bite, short(*generate)(long x, long y, long z, short speed, short yrot, short room_number));
+long CreatureVault(short item_number, short angle, long vault, long shift);
 
 #define GetAITarget	( (void(__cdecl*)(CREATURE_INFO*)) 0x00416B60 )
 #define AlertAllGuards	( (void(__cdecl*)(short)) 0x004169C0 )
 #define AIGuard	( (short(__cdecl*)(CREATURE_INFO*)) 0x00416AC0 )
-#define CreatureVault	( (long(__cdecl*)(short, short, long, long)) 0x004166D0 )
 #define CreatureKill	( (void(__cdecl*)(ITEM_INFO*, long, long, long)) 0x00416840 )
 #define AdjustStopperFlag	( (void(__cdecl*)(ITEM_INFO*, long, long)) 0x00417210 )
