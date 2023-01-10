@@ -32,5 +32,4 @@ short AIGuard(CREATURE_INFO* creature);
 void AlertAllGuards(short item_number);
 short SameZone(CREATURE_INFO* creature, ITEM_INFO* target_item);
 void GetAITarget(CREATURE_INFO* creature);
-
-#define AdjustStopperFlag	( (void(__cdecl*)(ITEM_INFO*, long, long)) 0x00417210 )
+void AdjustStopperFlag(ITEM_INFO* item, long dir, long set);

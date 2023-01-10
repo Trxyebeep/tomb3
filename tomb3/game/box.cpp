@@ -1725,6 +1725,25 @@ void GetAITarget(CREATURE_INFO* creature)
 	}
 }
 
+void AdjustStopperFlag(ITEM_INFO* item, long dir, long set)
+{
+	ROOM_INFO* r;
+	long x, z;
+	short room_number;
+
+	x = item->pos.x_pos;
+	z = item->pos.z_pos;
+	r = &room[item->room_number];
+	r->floor[((z - r->z) >> WALL_SHIFT) + r->x_size * ((x - r->x) >> WALL_SHIFT)].stopper = set;
+
+	x = item->pos.x_pos + (WALL_SIZE * phd_sin(dir) >> W2V_SHIFT);
+	z = item->pos.z_pos + (WALL_SIZE * phd_cos(dir) >> W2V_SHIFT);
+	room_number = item->room_number;
+	GetFloor(x, item->pos.y_pos, z, &room_number);
+	r = &room[room_number];
+	r->floor[((z - r->z) >> WALL_SHIFT) + r->x_size * ((x - r->x) >> WALL_SHIFT)].stopper = set;
+}
+
 void inject_box(bool replace)
 {
 	INJECT(0x00416A30, AlertNearbyGuards, replace);
@@ -1756,4 +1775,5 @@ void inject_box(bool replace)
 	INJECT(0x004169C0, AlertAllGuards, replace);
 	INJECT(0x00417110, SameZone, replace);
 	INJECT(0x00416B60, GetAITarget, replace);
+	INJECT(0x00417210, AdjustStopperFlag, replace);
 }
