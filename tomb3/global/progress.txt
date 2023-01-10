@@ -216,7 +216,7 @@ tomb3 progress.
 0x00416510	+	CreatureJoint
 0x00416570	+	CreatureFloat
 0x00416620	+	CreatureUnderwater
-0x00416670		CreatureEffect
+0x00416670	+	CreatureEffect
 0x004166D0		CreatureVault
 0x00416840		CreatureKill
 0x004169C0		AlertAllGuards
