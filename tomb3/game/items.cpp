@@ -1,6 +1,9 @@
 #include "../tomb3/pch.h"
 #include "items.h"
 #include "effect2.h"
+#ifdef TROYESTUFF
+#include "../newstuff/map.h"
+#endif
 
 void InitialiseItemArray(short num_items)
 {
@@ -241,6 +244,14 @@ void ItemNewRoom(short item_num, short room_num)
 	short linknum;
 
 	item = &items[item_num];
+
+#ifdef TROYESTUFF
+	if (item_num == lara.item_number)
+	{
+		if (!RoomVisited[room_num])
+			RoomVisited[room_num] = 1;
+	}
+#endif
 
 	if (item->room_number != 255)
 	{
