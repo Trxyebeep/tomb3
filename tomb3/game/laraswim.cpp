@@ -491,6 +491,78 @@ void LaraWaterCurrent(COLL_INFO* coll)
 	coll->old.z = lara_item->pos.z_pos;
 }
 
+void LaraSwimCollision(ITEM_INFO* item, COLL_INFO* coll)
+{
+	long y;
+
+	if (item->pos.x_rot < -0x4000 || item->pos.x_rot > 0x4000)
+		lara.move_angle = item->pos.y_rot + 0x8000;
+	else
+		lara.move_angle = item->pos.y_rot;
+
+	coll->facing = lara.move_angle;
+	y = 762 * phd_sin(item->pos.x_rot) >> W2V_SHIFT;
+
+	if (y < 0)
+		y = -y;
+
+	if (y < 200)
+		y = 200;
+
+	coll->bad_neg = -y;
+	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos + y / 2, item->pos.z_pos, item->room_number, y);
+	ShiftItem(item, coll);
+
+	switch (coll->coll_type)
+	{
+	case CT_FRONT:
+
+		if (item->pos.x_rot > 8190)
+			item->pos.x_rot += 364;
+		else if (item->pos.x_rot < -8190)
+			item->pos.x_rot -= 364;
+		else
+			item->fallspeed = 0;
+
+		break;
+
+	case CT_TOP:
+
+		if (item->pos.x_rot < -8190)
+			item->pos.x_rot -= 364;
+
+		break;
+
+	case CT_TOP_FRONT:
+		item->fallspeed = 0;
+		break;
+
+	case CT_LEFT:
+		item->pos.y_rot += 910;
+		break;
+
+	case CT_RIGHT:
+		item->pos.y_rot -= 910;
+		break;
+
+	case CT_CLAMP:
+		item->pos.x_pos = coll->old.x;
+		item->pos.y_pos = coll->old.y;
+		item->pos.z_pos = coll->old.z;
+		item->fallspeed = 0;
+		return;
+	}
+
+	if (coll->mid_floor < 0)
+	{
+		item->pos.x_rot += 364;
+		item->pos.y_pos += coll->mid_floor;
+	}
+
+	if (lara.water_status != LARA_CHEAT && !lara.extra_anim)
+		LaraTestWaterDepth(item, coll);
+}
+
 void inject_laraswim(bool replace)
 {
 	INJECT(0x0044E950, LaraUnderWater, replace);
@@ -510,4 +582,5 @@ void inject_laraswim(bool replace)
 	INJECT(0x0044F180, GetWaterDepth, replace);
 	INJECT(0x0044EFC0, LaraTestWaterDepth, replace);
 	INJECT(0x0044F310, LaraWaterCurrent, replace);
+	INJECT(0x0044EE60, LaraSwimCollision, replace);
 }

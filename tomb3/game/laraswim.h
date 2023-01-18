@@ -20,5 +20,4 @@ void lara_col_waterroll(ITEM_INFO* item, COLL_INFO* coll);
 long GetWaterDepth(long x, long y, long z, short room_number);
 void LaraTestWaterDepth(ITEM_INFO* item, COLL_INFO* coll);
 void LaraWaterCurrent(COLL_INFO* coll);
-
-#define LaraSwimCollision	( (void(__cdecl*)(ITEM_INFO*, COLL_INFO*)) 0x0044EE60 )
+void LaraSwimCollision(ITEM_INFO* item, COLL_INFO* coll);

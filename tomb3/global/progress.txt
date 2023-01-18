@@ -997,7 +997,7 @@ tomb3 progress.
 0x0044EDD0	+	lara_as_uwdeath
 0x0044EE30	+	lara_as_waterroll
 0x0044EE40	+	lara_col_swim
-0x0044EE60		LaraSwimCollision
+0x0044EE60	+	LaraSwimCollision
 0x0044EFC0	+	LaraTestWaterDepth
 0x0044F0A0	+	lara_col_glide
 0x0044F0C0	+	lara_col_tread
