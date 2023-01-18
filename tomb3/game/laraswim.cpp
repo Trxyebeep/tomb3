@@ -364,6 +364,39 @@ long GetWaterDepth(long x, long y, long z, short room_number)
 	}
 }
 
+void LaraTestWaterDepth(ITEM_INFO* item, COLL_INFO* coll)
+{
+	FLOOR_INFO* floor;
+	long wd;
+	short room_number;
+
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	wd = GetWaterDepth(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, room_number);
+
+	if (wd == NO_HEIGHT)
+	{
+		item->pos.x_pos = coll->old.x;
+		item->pos.y_pos = coll->old.y;
+		item->pos.z_pos = coll->old.z;
+		item->fallspeed = 0;
+	}
+	else if (wd <= 512)
+	{
+		item->anim_number = ANIM_SWIM2QSTND;
+		item->frame_number = anims[ANIM_SWIM2QSTND].frame_base;
+		item->current_anim_state = AS_WATEROUT;
+		item->goal_anim_state = AS_STOP;
+		item->pos.x_rot = 0;
+		item->pos.z_rot = 0;
+		item->gravity_status = 0;
+		item->speed = 0;
+		item->fallspeed = 0;
+		lara.water_status = LARA_WADE;
+		item->pos.y_pos = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+	}
+}
+
 void inject_laraswim(bool replace)
 {
 	INJECT(0x0044E950, LaraUnderWater, replace);
@@ -381,4 +414,5 @@ void inject_laraswim(bool replace)
 	INJECT(0x0044F100, lara_col_uwdeath, replace);
 	INJECT(0x0044F160, lara_col_waterroll, replace);
 	INJECT(0x0044F180, GetWaterDepth, replace);
+	INJECT(0x0044EFC0, LaraTestWaterDepth, replace);
 }
