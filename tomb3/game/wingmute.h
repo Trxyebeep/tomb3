@@ -4,6 +4,7 @@
 void inject_wingmute(bool replace);
 
 void InitialiseWingmute(short item_number);
+void WingmuteControl(short item_number);
 
 enum WINGMUTE_STATES
 {
