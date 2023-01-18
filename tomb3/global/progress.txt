@@ -1004,7 +1004,7 @@ tomb3 progress.
 0x0044F0E0	+	lara_col_dive
 0x0044F100	+	lara_col_uwdeath
 0x0044F160	+	lara_col_waterroll
-0x0044F180		GetWaterDepth
+0x0044F180	+	GetWaterDepth
 0x0044F310		LaraWaterCurrent
 
 

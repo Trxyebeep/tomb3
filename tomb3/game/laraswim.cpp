@@ -278,6 +278,92 @@ void lara_col_waterroll(ITEM_INFO* item, COLL_INFO* coll)
 	LaraSwimCollision(item, coll);
 }
 
+long GetWaterDepth(long x, long y, long z, short room_number)
+{
+	ROOM_INFO* r;
+	FLOOR_INFO* floor;
+	long x_floor, y_floor, h;
+	short door;
+
+	r = &room[room_number];
+
+	do
+	{
+		x_floor = (z - r->z) >> WALL_SHIFT;
+		y_floor = (x - r->x) >> WALL_SHIFT;
+
+		if (x_floor <= 0)
+		{
+			x_floor = 0;
+
+			if (y_floor < 1)
+				y_floor = 1;
+			else if (y_floor > r->y_size - 2)
+				y_floor = r->y_size - 2;
+		}
+		else if (x_floor >= r->x_size - 1)
+		{
+			x_floor = r->x_size - 1;
+
+			if (y_floor < 1)
+				y_floor = 1;
+			else if (y_floor > r->y_size - 2)
+				y_floor = r->y_size - 2;
+		}
+		else if (y_floor < 0)
+			y_floor = 0;
+		else if (y_floor >= r->y_size)
+			y_floor = r->y_size - 1;
+
+		floor = &r->floor[x_floor + y_floor * r->x_size];
+		door = GetDoor(floor);
+
+		if (door != NO_ROOM)
+		{
+			room_number = door;
+			r = &room[door];
+		}
+
+	} while (door != NO_ROOM);
+
+	if (r->flags & (ROOM_UNDERWATER | ROOM_SWAMP))
+	{
+		while (floor->sky_room != NO_ROOM)
+		{
+			r = &room[floor->sky_room];
+
+			if (!(r->flags & (ROOM_UNDERWATER | ROOM_SWAMP)))
+			{
+				h = floor->ceiling << 8;
+				floor = GetFloor(x, y, z, &room_number);
+				return GetHeight(floor, x, y, z) - h;
+			}
+
+			floor = &r->floor[((z - r->z) >> WALL_SHIFT) + r->x_size * ((x - r->x) >> WALL_SHIFT)];
+		}
+
+		return 0x7FFF;
+	}
+	else
+	{
+		while (floor->pit_room != NO_ROOM)
+		{
+			r = &room[floor->pit_room];
+
+			if (r->flags & (ROOM_UNDERWATER | ROOM_SWAMP))
+			{
+				h = floor->floor << 8;
+				floor = GetFloor(x, y, z, &room_number);
+				return GetHeight(floor, x, y, z) - h;
+			}
+
+			floor = &r->floor[((z - r->z) >> WALL_SHIFT) + r->x_size * ((x - r->x) >> WALL_SHIFT)];
+		}
+
+		return NO_HEIGHT;
+	}
+}
+
 void inject_laraswim(bool replace)
 {
 	INJECT(0x0044E950, LaraUnderWater, replace);
@@ -294,4 +380,5 @@ void inject_laraswim(bool replace)
 	INJECT(0x0044F0E0, lara_col_dive, replace);
 	INJECT(0x0044F100, lara_col_uwdeath, replace);
 	INJECT(0x0044F160, lara_col_waterroll, replace);
+	INJECT(0x0044F180, GetWaterDepth, replace);
 }
