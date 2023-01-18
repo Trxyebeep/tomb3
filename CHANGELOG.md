@@ -9,6 +9,7 @@
 ### tomb3 bug fixes
 
 - Fix map not registering rooms when on vehicles.
+- Fix possible error in dynamic light formula.
 
 
 ## [1.5.0](https://github.com/Trxyebeep/tomb3/tree/V1.5.0) (Jan. 6 2022)
