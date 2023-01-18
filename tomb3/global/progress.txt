@@ -1456,7 +1456,7 @@ tomb3 progress.
 
 		game/wingmute.cpp
 
-0x00473780		InitialiseWingmute
+0x00473780	+	InitialiseWingmute
 0x004737E0		WingmuteControl
 0x00473BA0		TriggerWingMuteParticles
 
