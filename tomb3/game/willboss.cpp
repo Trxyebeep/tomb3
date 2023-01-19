@@ -3,6 +3,7 @@
 #include "effect2.h"
 #include "../specific/game.h"
 #include "objects.h"
+#include "items.h"
 
 static void TriggerPlasmaBallFlame(short fx_number, long type, long xv, long yv, long zv)
 {
@@ -84,7 +85,35 @@ static void TriggerPlasmaBallFlame(short fx_number, long type, long xv, long yv,
 	sptr->dHeight = sptr->Height >> 3;
 }
 
+static void TriggerPlasmaBall(PHD_VECTOR* pos, short room_number, short angle, short type)
+{
+	FX_INFO* fx;
+	short fxNum;
+
+	fxNum = CreateEffect(room_number);
+
+	if (fxNum == NO_ITEM)
+		return;
+
+	fx = &effects[fxNum];
+	fx->pos.x_pos = pos->x;
+	fx->pos.y_pos = pos->y;
+	fx->pos.z_pos = pos->z;
+	fx->pos.x_rot = 0;
+	fx->pos.y_rot = angle;
+	fx->object_number = EXTRAFX2;
+
+	if (type != -16)
+		fx->speed = (GetRandomControl() & 0x1F) + 16;
+	else
+		fx->speed = 0;
+
+	fx->fallspeed = -16 * type;
+	fx->flag1 = type;
+}
+
 void inject_willboss(bool replace)
 {
 	INJECT(0x00473570, TriggerPlasmaBallFlame, replace);
+	INJECT(0x004731B0, TriggerPlasmaBall, replace);
 }
