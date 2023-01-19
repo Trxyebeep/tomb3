@@ -4,6 +4,12 @@
 #include "../specific/game.h"
 #include "objects.h"
 #include "items.h"
+#include "../3dsystem/3d_gen.h"
+#include "../3dsystem/phd_math.h"
+#include "control.h"
+#include "effects.h"
+#include "sphere.h"
+#include "traps.h"
 
 static void TriggerPlasmaBallFlame(short fx_number, long type, long xv, long yv, long zv)
 {
@@ -176,9 +182,110 @@ static void TriggerPlasma(short item_number, long node, long size)
 	sptr->dHeight = sptr->Height >> 2;
 }
 
+void ControlWillbossPlasmaBall(short fx_number)
+{
+	FX_INFO* fx;
+	FLOOR_INFO* floor;
+	PHD_VECTOR pos;
+	PHD_VECTOR oldPos;
+	long speed, h, c;
+	short room_number;
+	short ang[2];
+	char falloffs[5];
+
+	falloffs[0] = 13;
+	falloffs[1] = 7;
+	falloffs[2] = 7;
+	falloffs[3] = 7;
+	falloffs[4] = 7;
+	fx = &effects[fx_number];
+	oldPos.x = fx->pos.x_pos;
+	oldPos.y = fx->pos.y_pos;
+	oldPos.z = fx->pos.z_pos;
+
+	if (fx->flag1)
+	{
+		fx->fallspeed += (fx->flag1 != 1) + 1;
+
+		if (!(wibble & 0xC))
+		{
+			if (fx->speed)
+				fx->speed--;
+
+			TriggerPlasmaBallFlame(fx_number, -1 - fx->flag1, 0, -(GetRandomControl() & 0x1F), 0);
+		}
+	}
+	else
+	{
+		phd_GetVectorAngles(lara_item->pos.x_pos - oldPos.x, lara_item->pos.y_pos - oldPos.y - 256, lara_item->pos.z_pos - oldPos.z, ang);
+		fx->pos.x_rot = ang[1];
+		fx->pos.y_rot = ang[0];
+
+		if (fx->speed < 512)
+			fx->speed += (fx->speed >> 4) + 4;
+
+		if (wibble & 4)
+			TriggerPlasmaBallFlame(fx_number, fx->speed >> 1, 0, 0, 0);
+	}
+
+	speed = (fx->speed * phd_cos(fx->pos.x_rot)) >> W2V_SHIFT;
+	fx->pos.x_pos += (speed * phd_sin(fx->pos.y_rot)) >> W2V_SHIFT;
+	fx->pos.y_pos += fx->fallspeed - ((fx->speed * phd_sin(fx->pos.x_rot)) >> W2V_SHIFT);
+	fx->pos.z_pos += (speed * phd_cos(fx->pos.y_rot)) >> W2V_SHIFT;
+
+	room_number = fx->room_number;
+	floor = GetFloor(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, &room_number);
+	h = GetHeight(floor, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
+	c = GetCeiling(floor, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
+
+	if (fx->pos.y_pos >= h || fx->pos.y_pos < c)
+	{
+		if (!fx->flag1)
+		{
+			pos.x = oldPos.x;
+			pos.y = oldPos.y;
+			pos.z = oldPos.z;
+			h = (GetRandomControl() & 3) + 2;
+
+			for (int i = 0; i < h; i++)
+				TriggerPlasmaBall(&pos, fx->room_number, fx->pos.y_rot + (GetRandomControl() & 0x3FFF) + 0x6000, 1);
+		}
+
+		KillEffect(fx_number);
+	}
+	else if (ItemNearLara(&fx->pos, 200) && !fx->flag1)
+	{
+		for (int i = 14; i >= 0; i -= 2)
+		{
+			pos.x = 0;
+			pos.y = 0;
+			pos.z = 0;
+			GetJointAbsPosition(lara_item, &pos, i);
+			TriggerPlasmaBall(&pos, fx->room_number, short(GetRandomControl() << 1), 1);
+		}
+
+		LaraBurn();
+		lara_item->hit_points = -1;
+		lara.BurnGreen = 1;
+		KillEffect(fx_number);
+	}
+	else
+	{
+		if (fx->room_number != room_number)
+			EffectNewRoom(fx_number, lara_item->room_number);
+
+		if (falloffs[fx->flag1])
+		{
+			c = GetRandomControl();
+			TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, falloffs[fx->flag1], c & 7, 31 - ((c >> 4) & 3), 24 - ((c >> 6) & 3));
+		}
+	}
+}
+
 void inject_willboss(bool replace)
 {
 	INJECT(0x00473570, TriggerPlasmaBallFlame, replace);
 	INJECT(0x004731B0, TriggerPlasmaBall, replace);
 	INJECT(0x00472FE0, TriggerPlasma, replace);
+	INJECT(0x00473230, ControlWillbossPlasmaBall, replace);
 }
