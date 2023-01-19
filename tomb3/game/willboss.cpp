@@ -18,6 +18,8 @@ static long dheights2[5] = { -1536, -1152, -768, -384, 0 };
 static long death_radii[5];
 static long death_heights[5];
 
+#define closest_ai_path	VAR_(0x004C7FB4, long)
+
 static void TriggerPlasmaBallFlame(short fx_number, long type, long xv, long yv, long zv)
 {
 	FX_INFO* fx;
@@ -373,6 +375,18 @@ void ControlWillbossPlasmaBall(short fx_number)
 	}
 }
 
+void InitialiseWillBoss(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+	item->item_flags[1] = 0;
+	closest_ai_path = -1;
+	bossdata.explode_count = 0;
+	bossdata.dropped_icon = 0;
+	bossdata.dead = 0;
+}
+
 void inject_willboss(bool replace)
 {
 	INJECT(0x00473570, TriggerPlasmaBallFlame, replace);
@@ -380,4 +394,5 @@ void inject_willboss(bool replace)
 	INJECT(0x00472FE0, TriggerPlasma, replace);
 	INJECT(0x00472D60, ExplodeWillBoss, replace);
 	INJECT(0x00473230, ControlWillbossPlasmaBall, replace);
+	INJECT(0x00472D20, InitialiseWillBoss, replace);
 }
