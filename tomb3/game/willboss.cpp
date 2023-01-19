@@ -11,6 +11,12 @@
 #include "sphere.h"
 #include "traps.h"
 #include "sound.h"
+#include "box.h"
+#include "invfunc.h"
+#include "lot.h"
+
+static BITE_INFO willboss_bite_left = { 19, -13, 3, 20 };
+static BITE_INFO willboss_bite_right = { 19, -13, 3, 23 };
 
 static long dradii[5] = { 1600, 5600, 6400, 5600, 1600 };
 static long dheights1[5] = { -7680, -4224, -768, 2688, 6144 };
@@ -19,6 +25,11 @@ static long death_radii[5];
 static long death_heights[5];
 
 #define closest_ai_path	VAR_(0x004C7FB4, long)
+#define lara_ai_path	VAR_(0x004C7FB8, long)
+#define lara_junction	VAR_(0x004C7FBC, long)
+#define junction_index	ARRAY_(0x006271D0, long, [4])
+#define ai_path	ARRAY_(0x006271E0, PHD_3DPOS, [16])
+#define ai_junction	ARRAY_(0x00627170, PHD_3DPOS, [4])
 
 static void TriggerPlasmaBallFlame(short fx_number, long type, long xv, long yv, long zv)
 {
@@ -275,6 +286,18 @@ static void ExplodeWillBoss(ITEM_INFO* item)
 	}
 }
 
+static void WillBossDie(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+	item->hit_points = DONT_TARGET;
+	item->collidable = 0;
+	KillItem(item_number);
+	DisableBaddieAI(item_number);
+	item->flags |= IFL_INVISIBLE;
+}
+
 void ControlWillbossPlasmaBall(short fx_number)
 {
 	FX_INFO* fx;
@@ -387,6 +410,433 @@ void InitialiseWillBoss(short item_number)
 	bossdata.dead = 0;
 }
 
+void WillBossControl(short item_number)
+{
+	ITEM_INFO* item;
+	ITEM_INFO* ai;
+	CREATURE_INFO* willy;
+	AI_INFO info;
+	PHD_VECTOR pos;
+	long lp, lp2, nJunction, nPath, dist, best_dist, best_dist2, x, z, index, fire, f, r, g, b;
+	static long direction = 1;
+	static long desired_direction = 1;
+	static long puzzle_complete;
+	short lara_alive, angle;
+
+	if (!CreatureActive(item_number))
+		return;
+
+	item = &items[item_number];
+	willy = (CREATURE_INFO*)item->data;
+	lara_alive = lara_item->hit_points > 0;
+
+	if (closest_ai_path == -1)
+	{
+		nJunction = 0;
+		nPath = 0;
+
+		for (lp = room[item->room_number].item_number; lp != NO_ITEM; lp = ai->next_item)
+		{
+			ai = &items[lp];
+
+			if (ai->object_number == AI_X1 && nPath < 16)
+				ai_path[nPath++] = ai->pos;
+			else if (ai->object_number == AI_X2 && nJunction < 4)
+				ai_junction[nJunction++] = ai->pos;
+		}
+
+		closest_ai_path = -1;
+		best_dist = 0x7FFFFFFF;
+
+		for (lp = 0; lp < 16; lp++)
+		{
+			x = (ai_path[lp].x_pos - item->pos.x_pos) >> 6;
+			z = (ai_path[lp].z_pos - item->pos.z_pos) >> 6;
+			dist = SQUARE(x) + SQUARE(z);
+
+			if (dist < best_dist)
+			{
+				closest_ai_path = lp;
+				best_dist = dist;
+			}
+		}
+
+		lara_ai_path = -1;
+		best_dist = 0x7FFFFFFF;
+
+		for (lp = 0; lp < 16; lp++)
+		{
+			x = (ai_path[lp].x_pos - lara_item->pos.x_pos) >> 6;
+			z = (ai_path[lp].z_pos - lara_item->pos.z_pos) >> 6;
+			dist = SQUARE(x) + SQUARE(z);
+
+			if (dist < best_dist)
+			{
+				lara_ai_path = lp;
+				best_dist = dist;
+			}
+		}
+
+		for (lp2 = 0; lp2 < 4; lp2++)
+		{
+			index = -1;
+			best_dist = 0x7FFFFFFF;
+
+			for (lp = 0; lp < 16; lp++)
+			{
+				x = abs((ai_path[lp].x_pos - ai_junction[lp2].x_pos) >> 6);
+				z = abs((ai_path[lp].z_pos - ai_junction[lp2].z_pos) >> 6);
+				dist = x + (z >> 1);
+
+				if (dist < best_dist)
+				{
+					index = lp;
+					best_dist = dist;
+				}
+			}
+
+			junction_index[lp] = index;
+		}
+	}
+
+	lp2 = closest_ai_path;
+	best_dist = 0x7FFFFFFF;
+
+	for (lp = lp2 - 1; lp < lp2 + 2; lp++)
+	{
+		if (lp < 0)
+			nPath = lp + 16;
+		else if (lp > 15)
+			nPath = lp - 16;
+		else
+			nPath = lp;
+
+		x = (ai_path[nPath].x_pos - item->pos.x_pos) >> 6;
+		z = (ai_path[nPath].z_pos - item->pos.z_pos) >> 6;
+		dist = SQUARE(x) + SQUARE(z);
+
+		if (dist < best_dist)
+		{
+			closest_ai_path = nPath;
+			best_dist = dist;
+		}
+	}
+
+	lp2 = lara_ai_path;
+	best_dist = 0x7FFFFFFF;
+
+	for (lp = lp2 - 1; lp < lp2 + 2; lp++)
+	{
+		if (lp < 0)
+			nPath = lp + 16;
+		else if (lp > 15)
+			nPath = lp - 16;
+		else
+			nPath = lp;
+
+		x = (ai_path[nPath].x_pos - lara_item->pos.x_pos) >> 6;
+		z = (ai_path[nPath].z_pos - lara_item->pos.z_pos) >> 6;
+		dist = SQUARE(x) + SQUARE(z);
+
+		if (dist < best_dist)
+		{
+			lara_ai_path = nPath;
+			best_dist = dist;
+		}
+	}
+
+	best_dist2 = 0x7FFFFFFF;
+
+	for (lp = 0; lp < 4; lp++)
+	{
+		x = (ai_junction[lp].x_pos - lara_item->pos.x_pos) >> 6;
+		z = (ai_junction[lp].z_pos - lara_item->pos.z_pos) >> 6;
+		dist = SQUARE(x) + SQUARE(z);
+
+		if (dist < best_dist2)
+		{
+			lara_junction = lp;
+			best_dist2 = dist;
+		}
+	}
+
+	fire = best_dist2 < best_dist || item->pos.y_pos > lara_item->pos.y_pos + 2048;
+	x = ai_junction[lara_junction].x_pos - item->pos.x_pos;
+	z = ai_junction[lara_junction].z_pos - item->pos.z_pos;
+	dist = z * z + x * x;
+
+	if (item->hit_points <= 0)
+	{
+		puzzle_complete = Inv_RequestItem(ICON_PICKUP1_ITEM);
+		puzzle_complete += Inv_RequestItem(ICON_PICKUP2_ITEM);
+		puzzle_complete += Inv_RequestItem(ICON_PICKUP3_ITEM);
+		puzzle_complete += Inv_RequestItem(ICON_PICKUP4_ITEM);
+
+		if (puzzle_complete == 4 && item->item_flags[1])
+		{
+			if (item->current_anim_state != WILLBOSS_STUNNED)
+			{
+				item->anim_number = objects[item->object_number].anim_index + 7;
+				item->frame_number = anims[item->anim_number].frame_base;
+				item->current_anim_state = WILLBOSS_STUNNED;
+			}
+			else if (item->frame_number >= anims[item->anim_number].frame_end - 2)
+			{
+				item->mesh_bits = 0;
+				item->frame_number = anims[item->anim_number].frame_end - 2;
+
+				if (!bossdata.explode_count)
+				{
+					bossdata.ring_count = 0;
+
+					for (lp = 0; lp < 6; lp++)
+					{
+						ExpRings[lp].on = 0;
+						ExpRings[lp].life = 32;
+						ExpRings[lp].radius = 512;
+						ExpRings[lp].speed = short((lp + 4) << 5);
+						ExpRings[lp].xrot = ((GetRandomControl() & 0x1FF) - 256) & 0xFFF;
+						ExpRings[lp].zrot = ((GetRandomControl() & 0x1FF) - 256) & 0xFFF;
+					}
+				}
+
+				if (bossdata.explode_count < 256)
+					bossdata.explode_count++;
+
+				if (bossdata.explode_count <= 128 || bossdata.ring_count != 6 || ExpRings[5].life)
+					ExplodeWillBoss(item);
+				else
+				{
+					WillBossDie(item_number);
+					bossdata.dead = 1;
+				}
+
+				return;
+			}
+		}
+		else
+		{
+			willy->maximum_turn = 0;
+
+			switch (item->current_anim_state)
+			{
+			case WILLBOSS_STOP:
+				item->goal_anim_state = WILLBOSS_STUNNED;
+				break;
+
+			case WILLBOSS_STUNNED:
+				bossdata.death_count = 280;
+				break;
+
+			case WILLBOSS_KNOCKOUT:
+				bossdata.death_count--;
+
+				if (bossdata.death_count < 0)
+					item->goal_anim_state = WILLBOSS_GETUP;
+
+				break;
+
+			case WILLBOSS_GETUP:
+				item->hit_points = 200;
+
+				if (puzzle_complete == 4)
+					item->item_flags[1] = 1;
+
+				willy->maximum_turn = 364;
+				break;
+
+			default:
+				item->goal_anim_state = WILLBOSS_STOP;
+				break;
+			}
+		}
+	}
+	else
+	{
+		CreatureAIInfo(item, &info);
+
+		if (item->touch_bits)
+			lara_item->hit_points -= 10;
+
+		index = lara_ai_path - closest_ai_path;
+
+		if (direction == -1 && (index < 0 && index > -6 || index > 10))
+			desired_direction = 1;
+		else if (direction == 1 && (index > 0 && index < 6 || index < -10))
+			desired_direction = -1;
+
+		willy->target.x = ai_path[closest_ai_path].x_pos + (WALL_SIZE * direction * phd_sin(ai_path[closest_ai_path].y_rot) >> W2V_SHIFT);
+		willy->target.z = ai_path[closest_ai_path].z_pos + (WALL_SIZE * direction * phd_cos(ai_path[closest_ai_path].y_rot) >> W2V_SHIFT);
+
+		switch (item->current_anim_state)
+		{
+		case WILLBOSS_STOP:
+			willy->maximum_turn = 0;
+			willy->flags = 0;
+
+			if (direction != desired_direction)
+				item->goal_anim_state = WILLBOSS_180;
+			else if (fire && info.ahead && dist < 0x1000000 && lara_item->hit_points > 0)
+				item->goal_anim_state = WILLBOSS_SHOOT;
+			else if (!info.bite || info.distance >= 0x400000)
+				item->goal_anim_state = WILLBOSS_WALK;
+			else
+				item->goal_anim_state = WILLBOSS_LUNGE;
+
+			break;
+
+		case WILLBOSS_WALK:
+			willy->maximum_turn = 910;
+			willy->flags = 0;
+
+			if (direction != desired_direction)
+				item->goal_anim_state = WILLBOSS_STOP;
+			else if (fire && info.ahead && dist < 0x1000000)
+				item->goal_anim_state = WILLBOSS_STOP;
+			else if (info.bite && info.distance < 0x240000)
+			{
+				if ((GetRandomControl() & 3) == 1)
+					item->goal_anim_state = WILLBOSS_STOP;
+				else if (item->frame_number >= anims[item->anim_number].frame_base + 30)
+					item->goal_anim_state = WILLBOSS_WALKATAK1;
+				else
+					item->goal_anim_state = WILLBOSS_WALKATAK2;
+			}
+
+			break;
+
+		case WILLBOSS_LUNGE:
+			willy->target.x = lara_item->pos.x_pos;
+			willy->target.z = lara_item->pos.z_pos;
+			willy->maximum_turn = 364;
+
+			if (!willy->flags && item->touch_bits & 0x900000)
+			{
+				lara_item->hit_points -= 440;
+				lara_item->hit_status = 1;
+				CreatureEffect(item, &willboss_bite_left, DoBloodSplat);
+				CreatureEffect(item, &willboss_bite_right, DoBloodSplat);
+				willy->flags = 1;
+			}
+
+			break;
+
+		case WILLBOSS_BIGKILL:
+
+			switch (item->frame_number - anims[item->anim_number].frame_base)
+			{
+			case 0:
+			case 43:
+			case 95:
+			case 105:
+				CreatureEffect(item, &willboss_bite_left, DoBloodSplat);
+				break;
+
+			case 61:
+			case 91:
+			case 101:
+				CreatureEffect(item, &willboss_bite_right, DoBloodSplat);
+				break;
+			}
+
+			break;
+
+		case WILLBOSS_WALKATAK1:
+		case WILLBOSS_WALKATAK2:
+
+			if (!willy->flags && (item->touch_bits & 0x900000) != 0)
+			{
+				lara_item->hit_points -= 220;
+				lara_item->hit_status = 1;
+				CreatureEffect(item, &willboss_bite_left, DoBloodSplat);
+				CreatureEffect(item, &willboss_bite_right, DoBloodSplat);
+				willy->flags = 1;
+			}
+
+			if (fire && info.bite && dist < 0x1000000)
+				item->goal_anim_state = WILLBOSS_WALK;
+			else if (info.bite && info.distance < 0x240000)
+			{
+				if (item->current_anim_state == WILLBOSS_WALKATAK1)
+					item->goal_anim_state = WILLBOSS_WALKATAK2;
+				else
+					item->goal_anim_state = WILLBOSS_WALKATAK1;
+			}
+			else
+				item->goal_anim_state = WILLBOSS_WALK;
+
+			break;
+
+		case WILLBOSS_180:
+			willy->maximum_turn = 0;
+			willy->flags = 0;
+
+			if (item->frame_number == anims[item->anim_number].frame_base + 51)
+			{
+				item->pos.y_rot += 0x8000;
+				direction = -direction;
+			}
+
+			break;
+
+		case WILLBOSS_SHOOT:
+			willy->target.x = lara_item->pos.x_pos;
+			willy->target.z = lara_item->pos.z_pos;
+			willy->maximum_turn = 364;
+
+			if (item->frame_number - anims[item->anim_number].frame_base == 40 && lara_item->hit_points > 0)
+			{
+				pos.x = -64;
+				pos.y = 410;
+				pos.z = 0;
+				GetJointAbsPosition(item, &pos, 20);
+				TriggerPlasmaBall(&pos, item->room_number, item->pos.y_rot - 4096, 0);
+
+				pos.x = 64;
+				pos.y = 410;
+				pos.z = 0;
+				GetJointAbsPosition(item, &pos, 23);
+				TriggerPlasmaBall(&pos, item->room_number, item->pos.y_rot + 4096, 0);
+			}
+
+			f = item->frame_number - anims[item->anim_number].frame_base;
+
+			if (f > 16)
+			{
+				f = anims[item->anim_number].frame_end - item->frame_number;
+
+				if (f > 16)
+					f = 16;
+			}
+
+			pos.x = 0;
+			pos.y = 0;
+			pos.z = 0;
+			GetJointAbsPosition(item, &pos, 17);
+
+			b = GetRandomControl();
+			r = (f * (b & 7)) >> 4;
+			g = (f * (31 - ((b >> 4) & 3))) >> 4;
+			b = (f * (24 - ((b >> 6) & 3))) >> 4;
+
+			TriggerDynamic(pos.x, pos.y, pos.z, 12, r, g, b);
+			TriggerPlasma(item_number, 7, f << 2);
+			TriggerPlasma(item_number, 8, f << 2);
+			break;
+		}
+
+		if (lara_alive && lara_item->hit_points <= 0)
+		{
+			CreatureKill(item, 6, WILLBOSS_BIGKILL, 2);
+			willy->maximum_turn = 0;
+			return;
+		}
+	}
+
+	angle = CreatureTurn(item, willy->maximum_turn);
+	CreatureAnimation(item_number, angle, 0);
+}
+
 void inject_willboss(bool replace)
 {
 	INJECT(0x00473570, TriggerPlasmaBallFlame, replace);
@@ -395,4 +845,5 @@ void inject_willboss(bool replace)
 	INJECT(0x00472D60, ExplodeWillBoss, replace);
 	INJECT(0x00473230, ControlWillbossPlasmaBall, replace);
 	INJECT(0x00472D20, InitialiseWillBoss, replace);
+	INJECT(0x00472000, WillBossControl, replace);
 }
