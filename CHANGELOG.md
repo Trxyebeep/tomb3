@@ -4,6 +4,8 @@
 
 ### Original bug fixes
 
+- Fix missing effect on Willard explosion.
+
 ### tomb3 additions
 
 ### tomb3 bug fixes

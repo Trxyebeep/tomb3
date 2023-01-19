@@ -10,6 +10,13 @@
 #include "effects.h"
 #include "sphere.h"
 #include "traps.h"
+#include "sound.h"
+
+static long dradii[5] = { 1600, 5600, 6400, 5600, 1600 };
+static long dheights1[5] = { -7680, -4224, -768, 2688, 6144 };
+static long dheights2[5] = { -1536, -1152, -768, -384, 0 };
+static long death_radii[5];
+static long death_heights[5];
 
 static void TriggerPlasmaBallFlame(short fx_number, long type, long xv, long yv, long zv)
 {
@@ -182,6 +189,90 @@ static void TriggerPlasma(short item_number, long node, long size)
 	sptr->dHeight = sptr->Height >> 2;
 }
 
+static void ExplodeWillBoss(ITEM_INFO* item)
+{
+	SHIELD_POINTS* p;
+	PHD_VECTOR pos;
+	long x, y, z, lp, lp2, rad, angle, r, g, b, m;
+
+	if (bossdata.explode_count == 1 || bossdata.explode_count == 15 || bossdata.explode_count == 25 ||
+		bossdata.explode_count == 35 || bossdata.explode_count == 45 || bossdata.explode_count == 55)
+	{
+		x = (GetRandomDraw() & 0x3FF) + item->pos.x_pos - 512;
+		y = item->pos.y_pos - (GetRandomDraw() & 0x3FF) - 256;
+		z = (GetRandomDraw() & 0x3FF) + item->pos.z_pos - 512;
+		ExpRings[bossdata.ring_count].x = x;
+		ExpRings[bossdata.ring_count].y = y;
+		ExpRings[bossdata.ring_count].z = z;
+		ExpRings[bossdata.ring_count].on = 1;
+		bossdata.ring_count++;
+
+#ifdef TROYESTUFF
+		for (lp = 0; lp < 24; lp += 3)	//they originally used x for this loop then which messed up the TriggerExplosionSparks call
+#else
+		for (x = 0; x < 24; x += 3)
+#endif
+		{
+			pos.x = 0;
+			pos.y = 0;
+			pos.z = 0;
+#ifdef TROYESTUFF
+			GetJointAbsPosition(item, &pos, lp);
+#else
+			GetJointAbsPosition(item, &pos, x);
+#endif
+			TriggerPlasmaBall(&pos, item->room_number, short(GetRandomControl() << 1), 4);
+		}
+
+		TriggerExplosionSparks(x, y, z, 3, -2, 2, 0);
+		SoundEffect(SFX_BLAST_CIRCLE, &item->pos, 0x800000 | SFX_SETPITCH);
+	}
+
+	for (lp = 0; lp < 5; lp++)
+	{
+		if (bossdata.explode_count < 128)
+		{
+			death_radii[lp] = (dradii[lp] >> 4) + ((bossdata.explode_count * dradii[lp]) >> 7);
+			death_heights[lp] = dheights2[lp] + ((bossdata.explode_count * (dheights1[lp] - dheights2[lp])) >> 7);
+		}
+	}
+
+	p = WillBossShield;
+
+	for (lp = 0; lp < 5; lp++)
+	{
+		y = death_heights[lp];
+		rad = death_radii[lp];
+		angle = (wibble & 0x3F) << 3;
+
+		for (lp2 = 0; lp2 < 8; lp2++, p++)
+		{
+			p->x = short((rad * rcossin_tbl[angle << 1]) >> 11);
+			p->y = (short)y;
+			p->z = short((rad * rcossin_tbl[(angle << 1) + 1]) >> 11);
+
+			if (!lp || lp == 16 || bossdata.explode_count >= 64)
+				p->rgb = 0;
+			else
+			{
+				m = 64 - bossdata.explode_count;
+
+				r = GetRandomDraw() & 0x3F;
+				g = (GetRandomDraw() & 0x1F) + 224;
+				b = (g >> 1) + (GetRandomDraw() & 0x3F);
+
+				r = (m * r) >> 6;
+				g = (m * g) >> 6;
+				b = (m * b) >> 6;
+
+				p->rgb = (b << 16) | (g << 8) | r;
+			}
+
+			angle = (angle + 512) & 0xFFF;
+		}
+	}
+}
+
 void ControlWillbossPlasmaBall(short fx_number)
 {
 	FX_INFO* fx;
@@ -287,5 +378,6 @@ void inject_willboss(bool replace)
 	INJECT(0x00473570, TriggerPlasmaBallFlame, replace);
 	INJECT(0x004731B0, TriggerPlasmaBall, replace);
 	INJECT(0x00472FE0, TriggerPlasma, replace);
+	INJECT(0x00472D60, ExplodeWillBoss, replace);
 	INJECT(0x00473230, ControlWillbossPlasmaBall, replace);
 }
