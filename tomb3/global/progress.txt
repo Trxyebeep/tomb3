@@ -1445,7 +1445,7 @@ tomb3 progress.
 		game/willboss.cpp
 
 0x00472000	+	WillBossControl
-0x00472CE0		S_DrawWillBoss
+0x00472CE0	+	S_DrawWillBoss
 0x00472D20	+	InitialiseWillBoss
 0x00472D60	+	ExplodeWillBoss
 0x00472FE0	+	TriggerPlasma

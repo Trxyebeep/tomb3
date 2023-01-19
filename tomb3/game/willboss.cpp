@@ -14,6 +14,8 @@
 #include "box.h"
 #include "invfunc.h"
 #include "lot.h"
+#include "draw.h"
+#include "../specific/draweffects.h"
 
 static BITE_INFO willboss_bite_left = { 19, -13, 3, 20 };
 static BITE_INFO willboss_bite_right = { 19, -13, 3, 23 };
@@ -837,6 +839,22 @@ void WillBossControl(short item_number)
 	CreatureAnimation(item_number, angle, 0);
 }
 
+void S_DrawWillBoss(ITEM_INFO* item)
+{
+	DrawAnimatingItem(item);
+
+	if (bossdata.explode_count)
+	{
+		DrawExplosionRings();
+
+		if (bossdata.explode_count)
+		{
+			if (bossdata.explode_count <= 64)
+				DrawWillBossShield(item);
+		}
+	}
+}
+
 void inject_willboss(bool replace)
 {
 	INJECT(0x00473570, TriggerPlasmaBallFlame, replace);
@@ -846,4 +864,5 @@ void inject_willboss(bool replace)
 	INJECT(0x00473230, ControlWillbossPlasmaBall, replace);
 	INJECT(0x00472D20, InitialiseWillBoss, replace);
 	INJECT(0x00472000, WillBossControl, replace);
+	INJECT(0x00472CE0, S_DrawWillBoss, replace);
 }
