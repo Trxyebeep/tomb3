@@ -64,6 +64,7 @@
 #include "../game/orca.h"
 #include "../game/rapmaker.h"
 #include "../game/wingmute.h"
+#include "../game/willboss.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -192,6 +193,7 @@ void inject_all(bool replace)
 	inject_orca(replace);
 	inject_rapmaker(replace);
 	inject_wingmute(replace);
+	inject_willboss(replace);
 
 	//specific
 	inject_drawbars(replace);

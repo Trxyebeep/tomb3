@@ -1451,7 +1451,7 @@ tomb3 progress.
 0x00472FE0		TriggerPlasma
 0x004731B0		TriggerPlasmaBall
 0x00473230		ControlWillbossPlasmaBall
-0x00473570		TriggerPlasmaBallFlame
+0x00473570	+	TriggerPlasmaBallFlame
 
 
 		game/wingmute.cpp
