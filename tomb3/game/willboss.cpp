@@ -112,8 +112,73 @@ static void TriggerPlasmaBall(PHD_VECTOR* pos, short room_number, short angle, s
 	fx->flag1 = type;
 }
 
+static void TriggerPlasma(short item_number, long node, long size)
+{
+	ITEM_INFO* item;
+	SPARKS* sptr;
+	long dx, dz;
+
+	item = &items[item_number];
+	dx = lara_item->pos.x_pos - item->pos.x_pos;
+	dz = lara_item->pos.z_pos - item->pos.z_pos;
+
+	if (dx < -0x4000 || dx > 0x4000 || dz < -0x4000 || dz > 0x4000)
+		return;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 48;
+	sptr->sG = 255;
+	sptr->sB = (GetRandomControl() & 0x1F) + 48;
+	sptr->dR = 32;
+	sptr->dG = (GetRandomControl() & 0x3F) + 192;
+	sptr->dB = (GetRandomControl() & 0x3F) + 128;
+	sptr->FadeToBlack = 8;
+	sptr->ColFadeSpeed = (GetRandomControl() & 3) + 12;
+	sptr->TransType = 2;
+	sptr->extras = 0;
+	sptr->Life = (GetRandomControl() & 7) + 24;
+	sptr->sLife = sptr->Life;
+	sptr->Dynamic = -1;
+	sptr->Friction = 3;
+	sptr->x = (GetRandomControl() & 0xF) - 8;
+	sptr->y = 0;
+	sptr->z = (GetRandomControl() & 0xF) - 8;
+	sptr->Xvel = (GetRandomControl() & 0x1F) - 16;
+	sptr->Yvel = (GetRandomControl() & 7) + 8;
+	sptr->Zvel = (GetRandomControl() & 0x1F) - 16;
+
+	if (GetRandomControl() & 1)
+	{
+		sptr->Flags = SF_ATTACHEDNODE | SF_ALTDEF | SF_ITEM | SF_ROTATE | SF_DEF | SF_SCALE;
+		sptr->RotAng = GetRandomControl() & 0xFFF;
+
+		if (GetRandomControl() & 1)
+			sptr->RotAdd = -16 - (GetRandomControl() & 0xF);
+		else
+			sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
+	}
+	else
+		sptr->Flags = SF_ATTACHEDNODE | SF_ALTDEF | SF_ITEM | SF_DEF | SF_SCALE;
+
+	sptr->Gravity = (GetRandomControl() & 7) + 8;
+	sptr->NodeNumber = (uchar)node;
+	sptr->MaxYvel = (GetRandomControl() & 7) + 16;
+	sptr->FxObj = (uchar)item_number;
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+	sptr->Scalar = 1;
+	size += GetRandomControl() & 0xF;
+	sptr->Width = (uchar)size;
+	sptr->sWidth = sptr->Width;
+	sptr->dWidth = sptr->Width >> 2;
+	sptr->Height = sptr->Width;
+	sptr->sHeight = sptr->Height;
+	sptr->dHeight = sptr->Height >> 2;
+}
+
 void inject_willboss(bool replace)
 {
 	INJECT(0x00473570, TriggerPlasmaBallFlame, replace);
 	INJECT(0x004731B0, TriggerPlasmaBall, replace);
+	INJECT(0x00472FE0, TriggerPlasma, replace);
 }

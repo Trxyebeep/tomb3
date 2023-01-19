@@ -1448,7 +1448,7 @@ tomb3 progress.
 0x00472CE0		S_DrawWillBoss
 0x00472D20		InitialiseWillBoss
 0x00472D60		ExplodeWillBoss
-0x00472FE0		TriggerPlasma
+0x00472FE0	+	TriggerPlasma
 0x004731B0	+	TriggerPlasmaBall
 0x00473230		ControlWillbossPlasmaBall
 0x00473570	+	TriggerPlasmaBallFlame
