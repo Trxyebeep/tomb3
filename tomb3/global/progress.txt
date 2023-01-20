@@ -1414,7 +1414,7 @@ tomb3 progress.
 0x0046F370	+	FlameControl
 0x0046FAE0	+	LaraBurn
 0x0046FB30	+	LavaBurn
-0x0046FBD0		TriggerPendulumFlame
+0x0046FBD0	+	TriggerPendulumFlame
 
 
 		game/trex.cpp

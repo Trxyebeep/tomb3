@@ -563,6 +563,64 @@ void ControlCeilingSpikes(short item_number)
 		AnimateItem(item);
 }
 
+void TriggerPendulumFlame(short item_number)
+{
+	ITEM_INFO* item;
+	SPARKS* sptr;
+	long x, z;
+
+	item = &items[item_number];
+	x = lara_item->pos.x_pos - item->pos.x_pos;
+	z = lara_item->pos.z_pos - item->pos.z_pos;
+
+	if (x < -0x4000 || x > 0x4000 || z < -0x4000 || z > 0x4000)
+		return;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = (GetRandomControl() & 0x1F) + 48;
+	sptr->sG = sptr->sR >> 1;
+	sptr->sB = 0;
+	sptr->dR = (GetRandomControl() & 0x3F) + 192;
+	sptr->dG = (GetRandomControl() & 0x3F) + 128;
+	sptr->dB = 32;
+	sptr->ColFadeSpeed = (GetRandomControl() & 3) + 12;
+	sptr->FadeToBlack = 8;
+	sptr->TransType = 2;
+	sptr->extras = 0;
+	sptr->Life = (GetRandomControl() & 7) + 28;
+	sptr->sLife = sptr->Life;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 0x1F) - 16;
+	sptr->y = 0;
+	sptr->z = (GetRandomControl() & 0x1F) - 16;
+	sptr->Xvel = (GetRandomControl() & 0x3F) - 32;
+	sptr->Yvel = -16 - (GetRandomControl() & 0xF);
+	sptr->Zvel = (GetRandomControl() & 0x3F) - 32;
+	sptr->Friction = 4;
+	sptr->Flags = SF_ATTACHEDNODE | SF_ALTDEF | SF_ITEM | SF_DEF | SF_SCALE;
+	
+	if (GetRandomControl() & 1)
+	{
+		sptr->Flags |= SF_ROTATE;
+		sptr->RotAng = GetRandomControl() & 0xFFF;
+		sptr->RotAdd = (GetRandomControl() & 0x1F) - 16;
+	}
+
+	sptr->NodeNumber = 3;
+	sptr->FxObj = (uchar)item_number;
+	sptr->Gravity = -16 - (GetRandomControl() & 0x1F);
+	sptr->MaxYvel = -16 - (GetRandomControl() & 7);
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+	sptr->Scalar = 3;
+	sptr->Width = (GetRandomControl() & 7) + 32;
+	sptr->sWidth = sptr->Width;
+	sptr->dWidth = sptr->Width >> 2;
+	sptr->Height = sptr->Width;
+	sptr->sHeight = sptr->Height;
+	sptr->dHeight = sptr->Height >> 2;
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -573,4 +631,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046F370, FlameControl, inject_rando ? 1 : replace);
 	INJECT(0x0046D500, ControlSpikeWall, replace);
 	INJECT(0x0046D650, ControlCeilingSpikes, replace);
+	INJECT(0x0046FBD0, TriggerPendulumFlame, replace);
 }
