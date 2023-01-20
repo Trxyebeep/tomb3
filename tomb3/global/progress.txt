@@ -1419,7 +1419,7 @@ tomb3 progress.
 
 		game/trex.cpp
 
-0x0046FD80		DinoControl
+0x0046FD80	+	DinoControl
 
 
 		game/tribeaxe.cpp

@@ -16,6 +16,7 @@
 #include "lot.h"
 #include "draw.h"
 #include "../specific/draweffects.h"
+#include "lara.h"
 
 static BITE_INFO willboss_bite_left = { 19, -13, 3, 20 };
 static BITE_INFO willboss_bite_right = { 19, -13, 3, 23 };
@@ -829,7 +830,7 @@ void WillBossControl(short item_number)
 
 		if (lara_alive && lara_item->hit_points <= 0)
 		{
-			CreatureKill(item, 6, WILLBOSS_BIGKILL, 2);
+			CreatureKill(item, 6, WILLBOSS_BIGKILL, EXTRA_YETIKILL);
 			willy->maximum_turn = 0;
 			return;
 		}
