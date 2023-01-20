@@ -1424,7 +1424,7 @@ tomb3 progress.
 
 		game/tribeaxe.cpp
 
-0x00470530		TribeAxeControl
+0x00470530	+	TribeAxeControl
 
 
 		game/triboss.cpp
