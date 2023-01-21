@@ -297,6 +297,16 @@ void FlameControl(short fx_number)
 		}
 		else
 		{
+#ifdef TROYESTUFF
+			if (lara.water_status == LARA_CHEAT)
+			{
+				fx->counter = 0;
+				KillEffect(fx_number);
+				lara.burn = 0;
+				return;
+			}
+#endif
+
 			for (int i = 0; i < NUM_LARA_MESHES; i++)
 			{
 				if (!(wibble & 0xC))

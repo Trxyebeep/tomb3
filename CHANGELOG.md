@@ -8,6 +8,8 @@
 
 ### tomb3 additions
 
+- Remove fire from Lara in DOZY.
+
 ### tomb3 bug fixes
 
 - Fix map not registering rooms when on vehicles.
