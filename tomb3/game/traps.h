@@ -17,3 +17,4 @@ void FlameEmitterControl(short item_number);
 void FlameEmitter2Control(short item_number);
 void FlameEmitter3Control(short item_number);
 void DartsControl(short item_number);
+void DartEmitterControl(short item_number);
