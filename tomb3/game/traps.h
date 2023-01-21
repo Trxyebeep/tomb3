@@ -15,3 +15,4 @@ void TriggerPendulumFlame(short item_number);
 void SideFlameEmitterControl(short item_number);
 void FlameEmitterControl(short item_number);
 void FlameEmitter2Control(short item_number);
+void FlameEmitter3Control(short item_number);
