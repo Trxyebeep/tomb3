@@ -14,3 +14,4 @@ void ControlCeilingSpikes(short item_number);
 void TriggerPendulumFlame(short item_number);
 void SideFlameEmitterControl(short item_number);
 void FlameEmitterControl(short item_number);
+void FlameEmitter2Control(short item_number);

@@ -705,6 +705,42 @@ void FlameEmitterControl(short item_number)
 	}
 }
 
+void FlameEmitter2Control(short item_number)
+{
+	ITEM_INFO* item;
+	FX_INFO* fx;
+	short fxNum;
+
+	item = &items[item_number];
+
+	if (!TriggerActive(item))
+	{
+		if (item->data)
+		{
+			KillEffect(short((ulong)item->data) - 1);
+			item->data;
+		}
+	}
+	else if (!item->data)
+	{
+		fxNum = CreateEffect(item->room_number);
+
+		if (fxNum != NO_ITEM)
+		{
+			fx = &effects[fxNum];
+			fx->pos.x_pos = item->pos.x_pos;
+			fx->pos.y_pos = item->pos.y_pos;
+			fx->pos.z_pos = item->pos.z_pos;
+			fx->pos.y_rot = item->pos.y_rot;
+			fx->frame_number = SMALL_FIRE;
+			fx->object_number = FLAME;
+			fx->counter = 0;
+		}
+
+		item->data = (void*)(fxNum + 1);
+	}
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -718,4 +754,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046FBD0, TriggerPendulumFlame, replace);
 	INJECT(0x0046EF40, SideFlameEmitterControl, replace);
 	INJECT(0x0046EFF0, FlameEmitterControl, replace);
+	INJECT(0x0046F090, FlameEmitter2Control, replace);
 }
