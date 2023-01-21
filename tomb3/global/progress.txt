@@ -1403,7 +1403,7 @@ tomb3 progress.
 0x0046E9B0		FallingBlockFloor
 0x0046EA00		FallingBlockCeiling
 0x0046EA50		TeethTrap
-0x0046EB20		FallingCeiling
+0x0046EB20	+	FallingCeiling
 0x0046EC10	+	DartEmitterControl
 0x0046EDD0	+	DartsControl
 0x0046EF40	+	SideFlameEmitterControl
