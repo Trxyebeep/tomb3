@@ -14,6 +14,13 @@
 #include "sphere.h"
 #include "../3dsystem/phd_math.h"
 
+static BITE_INFO teeth1a = { -23, 0, -1718, 0 };
+static BITE_INFO teeth1b = { 71, 0, -1718, 1 };
+static BITE_INFO teeth2a = { -23, 10, -1718, 0 };
+static BITE_INFO teeth2b = { 71, 10, -1718, 1 };
+static BITE_INFO teeth3a = { -23, -10, -1718, 0 };
+static BITE_INFO teeth3b = { 71, -10, -1718, 1 };
+
 void LaraBurn()
 {
 	FX_INFO* fx;
@@ -941,6 +948,34 @@ void FallingCeiling(short item_number)
 	}
 }
 
+void TeethTrap(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (TriggerActive(item))
+	{
+		item->goal_anim_state = 1;
+
+		if (item->touch_bits && item->current_anim_state == 1)
+		{
+			lara_item->hit_points -= 400;
+			lara_item->hit_status = 1;
+			BaddieBiteEffect(item, &teeth1a);
+			BaddieBiteEffect(item, &teeth1b);
+			BaddieBiteEffect(item, &teeth2a);
+			BaddieBiteEffect(item, &teeth2b);
+			BaddieBiteEffect(item, &teeth3a);
+			BaddieBiteEffect(item, &teeth3b);
+		}
+	}
+	else
+		item->goal_anim_state = 0;
+
+	AnimateItem(item);
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -959,4 +994,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046EDD0, DartsControl, replace);
 	INJECT(0x0046EC10, DartEmitterControl, replace);
 	INJECT(0x0046EB20, FallingCeiling, replace);
+	INJECT(0x0046EA50, TeethTrap, replace);
 }

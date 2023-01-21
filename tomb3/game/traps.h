@@ -19,3 +19,4 @@ void FlameEmitter3Control(short item_number);
 void DartsControl(short item_number);
 void DartEmitterControl(short item_number);
 void FallingCeiling(short item_number);
+void TeethTrap(short item_number);
