@@ -779,6 +779,49 @@ void FlameEmitter3Control(short item_number)
 	}
 }
 
+void DartsControl(short item_number)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	long x, z, speed;
+	short room_num;
+
+	item = &items[item_number];
+
+	if (item->touch_bits)
+	{
+		lara_item->hit_points -= 25;
+		lara_item->hit_status = 1;
+		lara.poisoned += 160;
+		DoBloodSplat(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, lara_item->speed, lara_item->pos.y_rot, lara_item->room_number);
+		KillItem(item_number);
+	}
+	else
+	{
+		x = item->pos.x_pos;
+		z = item->pos.z_pos;
+		speed = (item->speed * phd_cos(item->pos.x_rot)) >> W2V_SHIFT;
+		item->pos.x_pos += (speed * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+		item->pos.y_pos -= (item->speed * phd_sin(item->pos.x_rot)) >> W2V_SHIFT;
+		item->pos.z_pos += (speed * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+		room_num = item->room_number;
+		floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_num);
+
+		if (item->room_number != room_num)
+			ItemNewRoom(item_number, room_num);
+
+		item->floor = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+		if (item->pos.y_pos >= item->floor)
+		{
+			for (int i = 0; i < 4; i++)
+				TriggerDartSmoke(x, item->pos.y_pos, z, 0, 0, 1);
+
+			KillItem(item_number);
+		}
+	}
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -794,4 +837,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046EFF0, FlameEmitterControl, replace);
 	INJECT(0x0046F090, FlameEmitter2Control, replace);
 	INJECT(0x0046F130, FlameEmitter3Control, replace);
+	INJECT(0x0046EDD0, DartsControl, replace);
 }
