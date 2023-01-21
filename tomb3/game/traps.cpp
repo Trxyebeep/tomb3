@@ -1005,6 +1005,55 @@ void FallingBlockFloor(ITEM_INFO* item, long x, long y, long z, long* h)
 	}
 }
 
+void FallingBlock(short item_number)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	short room_number;
+
+	item = &items[item_number];
+
+	if (!item->current_anim_state)
+	{
+		if (lara_item->pos.y_pos == item->pos.y_pos - (item->object_number == FALLING_PLANK ? 1024 : 512))
+			item->goal_anim_state = 1;
+		else
+		{
+			item->status = ITEM_INACTIVE;
+			RemoveActiveItem(item_number);
+			return;
+		}
+	}
+	else if (item->current_anim_state == 1)
+		item->goal_anim_state = 2;
+	else if (item->current_anim_state == 2 && item->goal_anim_state != 3)
+		item->gravity_status = 1;
+
+	AnimateItem(item);
+
+	if (item->status == ITEM_DEACTIVATED)
+	{
+		RemoveActiveItem(item_number);
+		return;
+	}
+
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+
+	if (item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+
+	item->floor = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (item->current_anim_state == 2 && item->pos.y_pos >= item->floor)
+	{
+		item->goal_anim_state = 3;
+		item->pos.y_pos = item->floor;
+		item->fallspeed = 0;
+		item->gravity_status = 0;
+	}
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1026,4 +1075,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046EA50, TeethTrap, replace);
 	INJECT(0x0046EA00, FallingBlockCeiling, replace);
 	INJECT(0x0046E9B0, FallingBlockFloor, replace);
+	INJECT(0x0046E890, FallingBlock, replace);
 }
