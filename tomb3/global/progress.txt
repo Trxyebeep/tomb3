@@ -1400,7 +1400,7 @@ tomb3 progress.
 0x0046E640		OnTrapDoor
 0x0046E6F0		Pendulum
 0x0046E890		FallingBlock
-0x0046E9B0		FallingBlockFloor
+0x0046E9B0	+	FallingBlockFloor
 0x0046EA00	+	FallingBlockCeiling
 0x0046EA50	+	TeethTrap
 0x0046EB20	+	FallingCeiling

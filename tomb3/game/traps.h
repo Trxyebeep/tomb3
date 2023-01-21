@@ -21,3 +21,4 @@ void DartEmitterControl(short item_number);
 void FallingCeiling(short item_number);
 void TeethTrap(short item_number);
 void FallingBlockCeiling(ITEM_INFO* item, long x, long y, long z, long* h);
+void FallingBlockFloor(ITEM_INFO* item, long x, long y, long z, long* h);

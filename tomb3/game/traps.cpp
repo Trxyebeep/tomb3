@@ -989,6 +989,22 @@ void FallingBlockCeiling(ITEM_INFO* item, long x, long y, long z, long* h)
 	}
 }
 
+void FallingBlockFloor(ITEM_INFO* item, long x, long y, long z, long* h)
+{
+	long dy;
+
+	dy = item->pos.y_pos - (item->object_number == FALLING_PLANK ? 1024 : 512);
+
+	if (y <= dy)
+	{
+		if (!item->current_anim_state || item->current_anim_state == 1)
+		{
+			*h = dy;
+			OnObject = 1;
+		}
+	}
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1009,4 +1025,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046EB20, FallingCeiling, replace);
 	INJECT(0x0046EA50, TeethTrap, replace);
 	INJECT(0x0046EA00, FallingBlockCeiling, replace);
+	INJECT(0x0046E9B0, FallingBlockFloor, replace);
 }
