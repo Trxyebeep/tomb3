@@ -12,3 +12,4 @@ void FlameControl(short fx_number);
 void ControlSpikeWall(short item_number);
 void ControlCeilingSpikes(short item_number);
 void TriggerPendulumFlame(short item_number);
+void SideFlameEmitterControl(short item_number);

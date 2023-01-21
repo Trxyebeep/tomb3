@@ -1406,7 +1406,7 @@ tomb3 progress.
 0x0046EB20		FallingCeiling
 0x0046EC10		DartEmitterControl
 0x0046EDD0		DartsControl
-0x0046EF40		SideFlameEmitterControl
+0x0046EF40	+	SideFlameEmitterControl
 0x0046EFF0		FlameEmitterControl
 0x0046F090		FlameEmitter2Control
 0x0046F130		FlameEmitter3Control
