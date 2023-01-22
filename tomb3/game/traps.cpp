@@ -1386,6 +1386,26 @@ void SpinningBlade(short item_number)
 		item->pos.y_rot += 0x8000;
 }
 
+void HookControl(short item_number)
+{
+	ITEM_INFO* item;
+	static long clonked;
+
+	item = &items[item_number];
+
+	if (!item->touch_bits || clonked)
+		clonked = 0;
+	else
+	{
+		lara_item->hit_points -= 50;
+		lara_item->hit_status = 1;
+		DoLotsOfBlood(lara_item->pos.x_pos, lara_item->pos.y_pos - 512, lara_item->pos.z_pos,
+			lara_item->speed, lara_item->pos.y_rot, lara_item->room_number, 3);
+	}
+
+	AnimateItem(item);
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1420,4 +1440,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046DB30, BladeControl, replace);
 	INJECT(0x0046D9C0, IcicleControl, replace);
 	INJECT(0x0046D850, SpinningBlade, replace);
+	INJECT(0x0046D7C0, HookControl, replace);
 }

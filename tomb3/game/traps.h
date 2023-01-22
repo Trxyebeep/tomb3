@@ -35,3 +35,4 @@ void InitialiseBlade(short item_number);
 void BladeControl(short item_number);
 void IcicleControl(short item_number);
 void SpinningBlade(short item_number);
+void HookControl(short item_number);
