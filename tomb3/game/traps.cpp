@@ -1140,6 +1140,23 @@ void TrapDoorFloor(ITEM_INFO* item, long x, long y, long z, long* h)
 	}
 }
 
+void TrapDoorControl(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (TriggerActive(item))
+	{
+		if (!item->current_anim_state)
+			item->goal_anim_state = 1;
+	}
+	else if (item->current_anim_state == 1)
+		item->goal_anim_state = 0;
+
+	AnimateItem(item);
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1166,4 +1183,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046E640, OnTrapDoor, replace);
 	INJECT(0x0046E5F0, TrapDoorCeiling, replace);
 	INJECT(0x0046E590, TrapDoorFloor, replace);
+	INJECT(0x0046E530, TrapDoorControl, replace);
 }
