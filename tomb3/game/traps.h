@@ -25,3 +25,4 @@ void FallingBlockFloor(ITEM_INFO* item, long x, long y, long z, long* h);
 void FallingBlock(short item_number);
 void Pendulum(short item_number);
 long OnTrapDoor(ITEM_INFO* item, long x, long z);
+void TrapDoorCeiling(ITEM_INFO* item, long x, long y, long z, long* h);

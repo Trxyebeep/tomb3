@@ -1396,7 +1396,7 @@ tomb3 progress.
 0x0046E3D0		SpikeCollision
 0x0046E530		TrapDoorControl
 0x0046E590		TrapDoorFloor
-0x0046E5F0		TrapDoorCeiling
+0x0046E5F0	+	TrapDoorCeiling
 0x0046E640	+	OnTrapDoor
 0x0046E6F0	+	Pendulum
 0x0046E890	+	FallingBlock
