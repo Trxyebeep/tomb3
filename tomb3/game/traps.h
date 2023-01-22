@@ -33,3 +33,4 @@ void SpringBoardControl(short item_number);
 void InitialiseKillerStatue(short item_number);
 void InitialiseBlade(short item_number);
 void BladeControl(short item_number);
+void IcicleControl(short item_number);

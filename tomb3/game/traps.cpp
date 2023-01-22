@@ -1274,6 +1274,60 @@ void BladeControl(short item_number)
 	AnimateItem(item);
 }
 
+void IcicleControl(short item_number)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	short room_number;
+
+	item = &items[item_number];
+
+	if (item->current_anim_state == 1)
+		item->goal_anim_state = 2;
+	else if (item->current_anim_state == 2)
+	{
+		if (!item->gravity_status)
+		{
+			item->gravity_status = 1;
+			item->fallspeed = 50;
+		}
+
+		if (item->touch_bits)
+		{
+			lara_item->hit_points -= 200;
+			lara_item->hit_status = 1;
+		}
+	}
+	else if (item->current_anim_state == 3)
+		item->gravity_status = 0;
+
+	AnimateItem(item);
+
+	if (item->status == ITEM_DEACTIVATED)
+	{
+		RemoveActiveItem(item_number);
+		return;
+	}
+
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+
+	if (item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+
+	item->floor = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (item->current_anim_state == 2 && item->pos.y_pos >= item->floor)
+	{
+		item->gravity_status = 0;
+		item->goal_anim_state = 3;
+		item->pos.y_pos = item->floor;
+		item->fallspeed = 0;
+		item->mesh_bits = 43;
+		SoundEffect(SFX_STALEGTITE, &item->pos, SFX_DEFAULT);
+	}
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1306,4 +1360,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046DBD0, InitialiseKillerStatue, replace);
 	INJECT(0x0046DAF0, InitialiseBlade, replace);
 	INJECT(0x0046DB30, BladeControl, replace);
+	INJECT(0x0046D9C0, IcicleControl, replace);
 }
