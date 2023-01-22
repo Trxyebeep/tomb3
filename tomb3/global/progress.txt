@@ -1383,7 +1383,7 @@ tomb3 progress.
 0x0046D500	+	ControlSpikeWall
 0x0046D650	+	ControlCeilingSpikes
 0x0046D7C0		HookControl
-0x0046D850		SpinningBlade
+0x0046D850	+	SpinningBlade
 0x0046D9C0	+	IcicleControl
 0x0046DAF0	+	InitialiseBlade
 0x0046DB30	+	BladeControl

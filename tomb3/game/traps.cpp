@@ -1328,6 +1328,64 @@ void IcicleControl(short item_number)
 	}
 }
 
+void SpinningBlade(short item_number)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	long flip, x, y, z;
+	short room_number;
+
+	item = &items[item_number];
+
+	if (item->current_anim_state != 2)
+	{
+		if (TriggerActive(item))
+			item->goal_anim_state = 2;
+
+		flip = 0;
+	}
+	else
+	{
+		if (item->goal_anim_state != 1)
+		{
+			x = item->pos.x_pos + ((1536 * phd_sin(item->pos.y_rot)) >> W2V_SHIFT);
+			y = item->pos.y_pos;
+			z = item->pos.z_pos + ((1536 * phd_cos(item->pos.y_rot)) >> W2V_SHIFT);
+			room_number = item->room_number;
+			floor = GetFloor(x, y, z, &room_number);
+
+			if (GetHeight(floor, x, y, z) == NO_HEIGHT)
+				item->goal_anim_state = 1;
+		}
+
+		flip = 1;
+
+		if (item->touch_bits)
+		{
+			lara_item->hit_points -= 100;
+			lara_item->hit_status = 1;
+			DoLotsOfBlood(lara_item->pos.x_pos, lara_item->pos.y_pos - 512, lara_item->pos.z_pos,
+				item->speed << 1, lara_item->pos.y_rot, lara_item->room_number, 2);
+		}
+	}
+
+	AnimateItem(item);
+
+	x = item->pos.x_pos;
+	y = item->pos.y_pos;
+	z = item->pos.z_pos;
+	room_number = item->room_number;
+	floor = GetFloor(x, y, z, &room_number);
+	item->floor = GetHeight(floor, x, y, z);
+	item->pos.y_pos = item->floor;
+
+	if (item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+
+	if (flip && item->current_anim_state == 1)
+		item->pos.y_rot += 0x8000;
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1361,4 +1419,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046DAF0, InitialiseBlade, replace);
 	INJECT(0x0046DB30, BladeControl, replace);
 	INJECT(0x0046D9C0, IcicleControl, replace);
+	INJECT(0x0046D850, SpinningBlade, replace);
 }
