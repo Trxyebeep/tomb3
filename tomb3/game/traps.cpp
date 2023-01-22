@@ -1097,6 +1097,30 @@ void Pendulum(short item_number)
 	AnimateItem(item);
 }
 
+long OnTrapDoor(ITEM_INFO* item, long x, long z)
+{
+	long ix, iz;
+
+	x >>= WALL_SHIFT;
+	z >>= WALL_SHIFT;
+	ix = item->pos.x_pos >> WALL_SHIFT;
+	iz = item->pos.z_pos >> WALL_SHIFT;
+
+	if (!item->pos.y_rot && x == ix && (z == iz || z == iz + 1))
+		return 1;
+
+	if (item->pos.y_rot == -0x8000 && x == ix && (z == iz || z == iz - 1))
+		return 1;
+
+	if (item->pos.y_rot == 0x4000 && z == iz && (x == ix || x == ix + 1))
+		return 1;
+
+	if (item->pos.y_rot == -0x4000 && z == iz && (x == ix || x == ix - 1))
+		return 1;
+
+	return 0;
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1120,4 +1144,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046E9B0, FallingBlockFloor, replace);
 	INJECT(0x0046E890, FallingBlock, replace);
 	INJECT(0x0046E6F0, Pendulum, replace);
+	INJECT(0x0046E640, OnTrapDoor, replace);
 }
