@@ -1204,6 +1204,35 @@ void SpikeCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	}
 }
 
+void SpringBoardControl(short item_number)
+{
+	ITEM_INFO* item;
+	ITEM_INFO* l;
+
+	item = &items[item_number];
+	l = lara_item;
+
+	if (!item->current_anim_state && l->pos.y_pos == item->pos.y_pos &&
+		!((l->pos.x_pos ^ item->pos.x_pos) & ~0x3FF) && !((l->pos.z_pos ^ item->pos.z_pos) & ~0x3FF))
+	{
+		if (l->hit_points <= 0)
+			return;
+
+		if (l->current_anim_state == AS_BACK || l->current_anim_state == AS_FASTBACK)
+			l->speed = -l->speed;
+
+		l->fallspeed = -240;
+		l->gravity_status = 1;
+		l->anim_number = ANIM_FALLDOWN;
+		l->frame_number = anims[ANIM_FALLDOWN].frame_base;
+		l->current_anim_state = AS_FORWARDJUMP;
+		l->goal_anim_state = AS_FORWARDJUMP;
+		item->goal_anim_state = 1;
+	}
+
+	AnimateItem(item);
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1232,4 +1261,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046E590, TrapDoorFloor, replace);
 	INJECT(0x0046E530, TrapDoorControl, replace);
 	INJECT(0x0046E3D0, SpikeCollision, replace);
+	INJECT(0x0046DC20, SpringBoardControl, replace);
 }
