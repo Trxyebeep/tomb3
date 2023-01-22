@@ -28,3 +28,4 @@ long OnTrapDoor(ITEM_INFO* item, long x, long z);
 void TrapDoorCeiling(ITEM_INFO* item, long x, long y, long z, long* h);
 void TrapDoorFloor(ITEM_INFO* item, long x, long y, long z, long* h);
 void TrapDoorControl(short item_number);
+void SpikeCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);

@@ -1393,7 +1393,7 @@ tomb3 progress.
 0x0046DD50		RollingBallControl
 0x0046E0E0		RollingBallCollision
 0x0046E340	+	SpikeControl
-0x0046E3D0		SpikeCollision
+0x0046E3D0	+	SpikeCollision
 0x0046E530	+	TrapDoorControl
 0x0046E590	+	TrapDoorFloor
 0x0046E5F0	+	TrapDoorCeiling

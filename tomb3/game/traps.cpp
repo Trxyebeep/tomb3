@@ -13,6 +13,8 @@
 #include "effect2.h"
 #include "sphere.h"
 #include "../3dsystem/phd_math.h"
+#include "collide.h"
+#include "lara.h"
 
 static BITE_INFO teeth1a = { -23, 0, -1718, 0 };
 static BITE_INFO teeth1b = { 71, 0, -1718, 1 };
@@ -1157,6 +1159,51 @@ void TrapDoorControl(short item_number)
 	AnimateItem(item);
 }
 
+void SpikeCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+	long lp, x, y, z;
+
+	item = &items[item_number];
+
+	if (l->hit_points < 0 || !TestBoundsCollide(item, l, coll->radius) || !TestCollision(item, l))
+		return;
+
+	lp = GetRandomControl() / 0x6000;
+
+	if (l->gravity_status)
+	{
+		if (l->fallspeed > 6)
+		{
+			l->hit_points = -1;
+			lp = 20;
+		}
+	}
+	else if (l->speed < 30)
+		return;
+
+	l->hit_points -= 15;
+
+	while (lp)
+	{
+		x = l->pos.x_pos + (GetRandomControl() - 0x4000) / 256;
+		y = l->pos.y_pos - GetRandomControl() / 64;
+		z = l->pos.z_pos + (GetRandomControl() - 0x4000) / 256;
+		DoBloodSplat(x, y, z, 20, (short)GetRandomControl(), item->room_number);
+		lp--;
+	}
+
+	if (l->hit_points <= 0)
+	{
+		l->anim_number = ANIM_SPIKED;
+		l->frame_number = anims[ANIM_SPIKED].frame_base;
+		l->current_anim_state = AS_DEATH;
+		l->goal_anim_state = AS_DEATH;
+		l->pos.y_pos = item->pos.y_pos;
+		l->gravity_status = 0;
+	}
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1184,4 +1231,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046E5F0, TrapDoorCeiling, replace);
 	INJECT(0x0046E590, TrapDoorFloor, replace);
 	INJECT(0x0046E530, TrapDoorControl, replace);
+	INJECT(0x0046E3D0, SpikeCollision, replace);
 }
