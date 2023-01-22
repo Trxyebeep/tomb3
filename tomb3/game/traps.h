@@ -23,3 +23,4 @@ void TeethTrap(short item_number);
 void FallingBlockCeiling(ITEM_INFO* item, long x, long y, long z, long* h);
 void FallingBlockFloor(ITEM_INFO* item, long x, long y, long z, long* h);
 void FallingBlock(short item_number);
+void Pendulum(short item_number);

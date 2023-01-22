@@ -1054,6 +1054,49 @@ void FallingBlock(short item_number)
 	}
 }
 
+void Pendulum(short item_number)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	PHD_VECTOR pos;
+
+	item = &items[item_number];
+
+	if (!TriggerActive(item))
+		return;
+
+	if (item->touch_bits)
+	{
+		lara_item->hit_points -= 50;
+		lara_item->hit_status = 1;
+
+		if (item->item_flags[0])
+			LaraBurn();
+		else
+		{
+			pos.x = lara_item->pos.x_pos + (GetRandomControl() - 0x4000) / 256;
+			pos.y = lara_item->pos.y_pos - GetRandomControl() / 44;
+			pos.z = lara_item->pos.z_pos + (GetRandomControl() - 0x4000) / 256;
+			DoBloodSplat(pos.x, pos.y, pos.z, lara_item->speed, short((lara_item->pos.y_rot + (GetRandomControl() - 0x4000)) >> 3), lara_item->room_number);
+		}
+	}
+
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &item->room_number);
+	item->floor = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (item->item_flags[0])
+	{
+		TriggerPendulumFlame(item_number);
+		pos.x = 0;
+		pos.y = -512;
+		pos.z = 0;
+		GetJointAbsPosition(item, &pos, 5);
+		TriggerDynamic(pos.x, pos.y, pos.z, 11, (GetRandomControl() & 7) + 24, (GetRandomControl() & 3) + 12, 0);
+	}
+
+	AnimateItem(item);
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1076,4 +1119,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046EA00, FallingBlockCeiling, replace);
 	INJECT(0x0046E9B0, FallingBlockFloor, replace);
 	INJECT(0x0046E890, FallingBlock, replace);
+	INJECT(0x0046E6F0, Pendulum, replace);
 }
