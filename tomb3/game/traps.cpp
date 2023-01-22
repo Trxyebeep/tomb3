@@ -1253,6 +1253,27 @@ void InitialiseBlade(short item_number)
 	item->current_anim_state = 1;
 }
 
+void BladeControl(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (TriggerActive(item) && item->current_anim_state == 1)
+		item->goal_anim_state = 2;
+	else
+		item->goal_anim_state = 1;
+
+	if (item->touch_bits & 2 && item->current_anim_state == 2)
+	{
+		lara_item->hit_points -= 100;
+		lara_item->hit_status = 1;
+		DoLotsOfBlood(lara_item->pos.x_pos, item->pos.y_pos - 256, lara_item->pos.z_pos, lara_item->speed, lara_item->pos.y_rot, lara_item->room_number, 2);
+	}
+
+	AnimateItem(item);
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1284,4 +1305,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046DC20, SpringBoardControl, replace);
 	INJECT(0x0046DBD0, InitialiseKillerStatue, replace);
 	INJECT(0x0046DAF0, InitialiseBlade, replace);
+	INJECT(0x0046DB30, BladeControl, replace);
 }

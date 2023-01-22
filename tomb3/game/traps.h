@@ -32,3 +32,4 @@ void SpikeCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
 void SpringBoardControl(short item_number);
 void InitialiseKillerStatue(short item_number);
 void InitialiseBlade(short item_number);
+void BladeControl(short item_number);
