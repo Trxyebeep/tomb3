@@ -1243,6 +1243,16 @@ void InitialiseKillerStatue(short item_number)
 	item->current_anim_state = 1;
 }
 
+void InitialiseBlade(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+	item->anim_number = objects[BLADE].anim_index + 2;
+	item->frame_number = anims[item->anim_number].frame_base;
+	item->current_anim_state = 1;
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1273,4 +1283,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046E3D0, SpikeCollision, replace);
 	INJECT(0x0046DC20, SpringBoardControl, replace);
 	INJECT(0x0046DBD0, InitialiseKillerStatue, replace);
+	INJECT(0x0046DAF0, InitialiseBlade, replace);
 }

@@ -1385,7 +1385,7 @@ tomb3 progress.
 0x0046D7C0		HookControl
 0x0046D850		SpinningBlade
 0x0046D9C0		IcicleControl
-0x0046DAF0		InitialiseBlade
+0x0046DAF0	+	InitialiseBlade
 0x0046DB30		BladeControl
 0x0046DBD0	+	InitialiseKillerStatue
 0x0046DC20	+	SpringBoardControl
