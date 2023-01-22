@@ -1127,6 +1127,19 @@ void TrapDoorCeiling(ITEM_INFO* item, long x, long y, long z, long* h)
 		*h = item->pos.y_pos + 256;
 }
 
+void TrapDoorFloor(ITEM_INFO* item, long x, long y, long z, long* h)
+{
+	if (OnTrapDoor(item, x, z) && y <= item->pos.y_pos && !item->current_anim_state && item->pos.y_pos < *h)
+	{
+		*h = item->pos.y_pos;
+		OnObject = 1;
+		height_type = WALL;
+
+		if (item == lara_item)
+			lara_item->item_flags[0] = 1;
+	}
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1152,4 +1165,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046E6F0, Pendulum, replace);
 	INJECT(0x0046E640, OnTrapDoor, replace);
 	INJECT(0x0046E5F0, TrapDoorCeiling, replace);
+	INJECT(0x0046E590, TrapDoorFloor, replace);
 }
