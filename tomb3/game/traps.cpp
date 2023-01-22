@@ -1233,6 +1233,16 @@ void SpringBoardControl(short item_number)
 	AnimateItem(item);
 }
 
+void InitialiseKillerStatue(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+	item->anim_number = objects[item->object_number].anim_index + 3;
+	item->frame_number = anims[item->anim_number].frame_base;
+	item->current_anim_state = 1;
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1262,4 +1272,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046E530, TrapDoorControl, replace);
 	INJECT(0x0046E3D0, SpikeCollision, replace);
 	INJECT(0x0046DC20, SpringBoardControl, replace);
+	INJECT(0x0046DBD0, InitialiseKillerStatue, replace);
 }
