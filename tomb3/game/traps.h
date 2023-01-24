@@ -38,3 +38,4 @@ void SpinningBlade(short item_number);
 void HookControl(short item_number);
 void InitialiseRollingBall(short item_number);
 void RollingBallControl(short item_number);
+void RollingBallCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);

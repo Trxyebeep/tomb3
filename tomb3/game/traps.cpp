@@ -1550,6 +1550,71 @@ void RollingBallControl(short item_number)
 	}
 }
 
+void RollingBallCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+	long x, y, z;
+	short d;
+
+	item = &items[item_number];
+
+	if (item->status == ITEM_ACTIVE)
+	{
+		if (!TestBoundsCollide(item, l, coll->radius) || !TestCollision(item, l))
+			return;
+
+		if (l->gravity_status)
+		{
+			if (coll->enable_baddie_push)
+				ItemPushLara(item, l, coll, coll->enable_spaz, 1);
+
+			l->hit_points -= 100;
+			x = l->pos.x_pos - item->pos.x_pos;
+			y = l->pos.y_pos - item->pos.y_pos + 162;
+			z = l->pos.z_pos - item->pos.z_pos;
+			d = (short)phd_sqrt(SQUARE(x) + SQUARE(y) + SQUARE(z));
+
+			if (d < 512)
+				d = 512;
+
+			x = item->pos.x_pos + (x << 10) / 2 / d;
+			y = (y << 10) / 2 / d + item->pos.y_pos - 512;
+			z = item->pos.z_pos + (z << 10) / 2 / d;
+			DoBloodSplat(x, y, z, item->speed, item->pos.y_rot, item->room_number);
+		}
+		else
+		{
+			l->hit_status = 1;
+
+			if (l->hit_points <= 0)
+				return;
+
+			l->hit_points = -1;
+			l->pos.x_rot = 0;
+			l->pos.y_rot = item->pos.y_rot;
+			l->pos.z_rot = 0;
+			l->anim_number = ANIM_RBALL_DEATH;
+			l->frame_number = anims[ANIM_RBALL_DEATH].frame_base;
+			l->current_anim_state = AS_SPECIAL;
+			l->goal_anim_state = AS_SPECIAL;
+			camera.flags = 1;
+			camera.target_angle = 30940;
+			camera.target_elevation = -4550;
+
+			for (int i = 0; i < 15; i++)
+			{
+				x = l->pos.x_pos + (GetRandomControl() - 0x4000) / 256;
+				y = l->pos.y_pos - GetRandomControl() / 64;
+				z = l->pos.z_pos + (GetRandomControl() - 0x4000) / 256;
+				d = short(item->pos.y_rot + (GetRandomControl() - 0x4000) / 8);
+				DoBloodSplat(x, y, z, 2 * item->speed, d, item->room_number);
+			}
+		}
+	}
+	else if (item->active != ITEM_INVISIBLE)
+		ObjectCollision(item_number, l, coll);
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1587,4 +1652,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046D7C0, HookControl, replace);
 	INJECT(0x0046DD10, InitialiseRollingBall, replace);
 	INJECT(0x0046DD50, RollingBallControl, replace);
+	INJECT(0x0046E0E0, RollingBallCollision, replace);
 }
