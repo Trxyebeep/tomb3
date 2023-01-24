@@ -1421,6 +1421,135 @@ void InitialiseRollingBall(short item_number)
 	pos->room_number = item->room_number;
 }
 
+void RollingBallControl(short item_number)
+{
+	ITEM_INFO* item;
+	GAME_VECTOR* pos;
+	FLOOR_INFO* floor;
+	long oldx, oldz, dx, dz, dist, x, y, z, h, c;
+	short room_number;
+
+	item = &items[item_number];
+
+	if (item->status == ITEM_ACTIVE)
+	{
+		if (item->goal_anim_state == 2)
+		{
+			AnimateItem(item);
+			return;
+		}
+
+		if (item->pos.y_pos >= item->floor)
+		{
+			if (!item->current_anim_state)
+				item->goal_anim_state = 1;
+		}
+		else if (!item->gravity_status)
+		{
+			item->fallspeed = -10;
+			item->gravity_status = 1;
+		}
+
+		oldx = item->pos.x_pos;
+		oldz = item->pos.z_pos;
+		AnimateItem(item);
+
+		room_number = item->room_number;
+		floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+
+		if (item->room_number != room_number)
+			ItemNewRoom(item_number, room_number);
+
+		item->floor = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+		TestTriggers(trigger_index, 1);
+
+		if (item->pos.y_pos >= item->floor - 256)
+		{
+			item->gravity_status = 0;
+			item->fallspeed = 0;
+			item->pos.y_pos = item->floor;
+			SoundEffect(SFX_ROLLING_BALL, &item->pos, SFX_DEFAULT);
+			dx = camera.mike_pos.x - item->pos.x_pos;
+			dz = camera.mike_pos.z - item->pos.z_pos;
+			dist = phd_sqrt(SQUARE(dx) + SQUARE(dz));
+
+			if (dist < 10240)
+				camera.bounce = 40 * (dist - 10240) / 10240;
+		}
+
+		if (item->object_number == ROLLING_BALL)
+		{
+			dist = 320;
+			y = 832;
+		}
+		else if (item->object_number == BIG_ROLLING_BALL)
+		{
+			dist = 1088;
+			y = 2112;
+		}
+		else
+		{
+			dist = 1024;
+			y = 1024;
+		}
+
+		x = item->pos.x_pos + ((dist * phd_sin(item->pos.y_rot)) >> W2V_SHIFT);
+		z = item->pos.z_pos + ((dist * phd_cos(item->pos.y_rot)) >> W2V_SHIFT);
+
+		floor = GetFloor(x, item->pos.y_pos, z, &room_number);
+		h = GetHeight(floor, x, item->pos.y_pos, z);
+
+		room_number = item->room_number;
+		floor = GetFloor(x, item->pos.y_pos - y, z, &room_number);
+		c = GetCeiling(floor, x, item->pos.y_pos - y, z);
+
+		if (h < item->pos.y_pos || c > item->pos.y_pos - y)
+		{
+			if (item->object_number == OILDRUMS)
+			{
+				StopSoundEffect(SFX_ROLLING_BALL);
+				item->goal_anim_state = 2;
+			}
+			else
+			{
+				StopSoundEffect(SFX_ROLLING_BALL);
+				item->status = ITEM_DEACTIVATED;
+			}
+
+			item->pos.x_pos = oldx;
+			item->pos.y_pos = item->floor;
+			item->pos.z_pos = oldz;
+			item->fallspeed = 0;
+			item->speed = 0;
+			item->touch_bits = 0;
+		}
+	}
+	else if (item->status == ITEM_DEACTIVATED && !TriggerActive(item))
+	{
+		item->status = ITEM_INACTIVE;
+		pos = (GAME_VECTOR*)item->data;
+		item->pos.x_pos = pos->x;
+		item->pos.y_pos = pos->y;
+		item->pos.z_pos = pos->z;
+
+		if (item->room_number != pos->room_number)
+		{
+			RemoveDrawnItem(item_number);
+			item->next_item = room[pos->room_number].item_number;
+			room[pos->room_number].item_number = item_number;
+			item->room_number = pos->room_number;
+		}
+
+		item->current_anim_state = 0;
+		item->goal_anim_state = 0;
+		item->anim_number = objects[item->object_number].anim_index;
+		item->frame_number = anims[item->anim_number].frame_base;
+		item->current_anim_state = anims[item->anim_number].current_anim_state;
+		item->goal_anim_state = item->current_anim_state;
+		RemoveActiveItem(item_number);
+	}
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1457,4 +1586,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046D850, SpinningBlade, replace);
 	INJECT(0x0046D7C0, HookControl, replace);
 	INJECT(0x0046DD10, InitialiseRollingBall, replace);
+	INJECT(0x0046DD50, RollingBallControl, replace);
 }
