@@ -13,6 +13,7 @@
 #include "output.h"
 #ifdef TROYESTUFF
 #include "../game/sub.h"
+#include "../game/lara.h"
 #include "../tomb3/tomb3.h"
 #endif
 
@@ -5050,17 +5051,110 @@ void S_DrawDarts(ITEM_INFO* item)
 
 #ifdef TROYESTUFF
 //New effects
+#define LINE_POINTS	4	//number of points in each grid line
+#define GRID_POINTS	(LINE_POINTS * LINE_POINTS)	//number of points in the whole grid
 void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 {
 	PHDSPRITESTRUCT* sprite;
 	PHDTEXTURESTRUCT tex;
-	PHD_VBUF v[4];
-	FVECTOR pos;
-	ushort u1, v1, u2, v2;
-	long xMid, zMid, xSize, zSize;
-	short c;
+	PHD_VBUF v[GRID_POINTS];
+	PHD_VECTOR pos;
+	FVECTOR fPos;
+	long* sXYZ;
+	long* hXZ;
+	long* hY;
+	long sxyz[GRID_POINTS * 3];
+	long hxz[GRID_POINTS * 2];
+	long hy[GRID_POINTS];
+	ushort u1, v1, u2, v2, uStep, vStep;
+	long xDist, zDist, xSize, zSize, x, y, z;
+	short c, room_number;
 
 	bBlueEffect = 0;
+	xSize = size * (box[1] - box[0]) / 128;
+	zSize = size * (box[5] - box[4]) / 128;
+	xDist = xSize / LINE_POINTS;
+	zDist = zSize / LINE_POINTS;
+	x = -xDist - (xDist >> 1);
+	z = zDist + (zDist >> 1);
+	sXYZ = sxyz;
+	hXZ = hxz;
+
+	c = short((4096 - abs(item->floor - lara_item->pos.y_pos)) >> 4) - 1;
+	c >>= 3;
+
+	if (c < 4)
+		c = 4;
+
+	for (int i = 0; i < LINE_POINTS; i++, z -= zDist)
+	{
+		for (int j = 0; j < LINE_POINTS; j++, sXYZ += 3, hXZ += 2, x += xDist)
+		{
+			sXYZ[0] = x;
+			sXYZ[2] = z;
+			hXZ[0] = x;
+			hXZ[1] = z;
+		}
+
+		x = -xDist - (xDist >> 1);
+	}
+
+	phd_PushUnitMatrix();
+	phd_mxptr[M03] = 0;
+	phd_mxptr[M13] = 0;
+	phd_mxptr[M23] = 0;
+
+	pos.x = item->pos.x_pos;
+	y = item->floor - 16;
+	pos.z = item->pos.z_pos;
+
+	phd_TranslateRel(pos.x, y, pos.z);
+	phd_RotY(item->pos.y_rot);	//rot the grid to correct Y
+	hXZ = hxz;
+
+	for (int i = 0; i < GRID_POINTS; i++, hXZ += 2)
+	{
+		x = hXZ[0];
+		z = hXZ[1];
+		hXZ[0] = (x * phd_mxptr[M00] + z * phd_mxptr[M02] + phd_mxptr[M03]) >> W2V_SHIFT;
+		hXZ[1] = (x * phd_mxptr[M20] + z * phd_mxptr[M22] + phd_mxptr[M23]) >> W2V_SHIFT;
+	}
+
+	phd_PopMatrix();
+
+	hXZ = hxz;
+	hY = hy;
+
+	for (int i = 0; i < GRID_POINTS; i++, hXZ += 2, hY++)	//Get height on each grid point and store it in hy array
+	{
+		room_number = item->room_number;
+		*hY = GetHeight(GetFloor(hXZ[0], item->floor, hXZ[1], &room_number), hXZ[0], item->floor, hXZ[1]);
+
+		if (abs(*hY - item->floor) > 196)
+			*hY = item->floor;
+	}
+
+	sXYZ = sxyz;
+	hY = hy;
+
+	for (int i = 0; i < GRID_POINTS; i++, sXYZ += 3)
+		sXYZ[1] = hY[i] - item->floor;
+
+	phd_PushMatrix();
+	phd_TranslateAbs(pos.x, y, pos.z);
+	phd_RotY(item->pos.y_rot);
+	sXYZ = sxyz;
+
+	for (int i = 0; i < GRID_POINTS; i++, sXYZ += 3)
+	{
+		fPos.x = (float)sXYZ[0];
+		fPos.y = (float)sXYZ[1];
+		fPos.z = (float)sXYZ[2];
+		ProjectPHDVBuf(&fPos, &v[i], c, 0);
+	}
+
+	phd_PopMatrix();
+
 	sprite = &phdspriteinfo[objects[SHADOW].mesh_index];
 	u1 = (sprite->offset << 8) & 0xFF00;
 	v1 = sprite->offset & 0xFF00;
@@ -5069,59 +5163,46 @@ void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 	u1 += (ushort)App.nUVAdd;
 	v1 += (ushort)App.nUVAdd;
 
-	xMid = (box[1] + box[0]) >> 1;
-	zMid = (box[5] + box[4]) >> 1;
-	size = size + (size >> 1);
-	xSize = (size * (box[1] - box[0])) >> 9;
-	zSize = (size * (box[5] - box[4])) >> 9;
-
-	c = short((4096 - abs(item->floor - lara_item->pos.y_pos)) >> 4) - 1;
-	c >>= 3;
-
-	if (c < 4)
-		c = 4;
-
-	phd_PushMatrix();
-	phd_TranslateAbs(item->pos.x_pos, item->floor - 16, item->pos.z_pos);
-	phd_RotY(item->pos.y_rot);
-
-	pos.x = float(xMid - xSize);
-	pos.y = 0;
-	pos.z = float(zMid + zSize);
-	ProjectPHDVBuf(&pos, &v[0], c, 0);
-
-	pos.x = float(xMid + xSize);
-	pos.y = 0;
-	pos.z = float(zMid + zSize);
-	ProjectPHDVBuf(&pos, &v[1], c, 0);
-
-	pos.x = float(xMid + xSize);
-	pos.y = 0;
-	pos.z = float(zMid - zSize);
-	ProjectPHDVBuf(&pos, &v[2], c, 0);
-
-	pos.x = float(xMid - xSize);
-	pos.y = 0;
-	pos.z = float(zMid - zSize);
-	ProjectPHDVBuf(&pos, &v[3], c, 0);
-
-	phd_PopMatrix();
+	uStep = ushort((sprite->width - App.nUVAdd) / (LINE_POINTS - 1));
+	vStep = ushort((sprite->height - App.nUVAdd) / (LINE_POINTS - 1));
 
 	tex.u1 = u1;
 	tex.v1 = v1;
 
-	tex.u2 = u2;
+	tex.u2 = u2 - (uStep * (LINE_POINTS - 2));
 	tex.v2 = v1;
 
-	tex.u3 = u2;
-	tex.v3 = v2;
+	tex.u3 = u2 - (uStep * (LINE_POINTS - 2));
+	tex.v3 = v2 - (vStep * (LINE_POINTS - 2));
 
 	tex.u4 = u1;
-	tex.v4 = v2;
+	tex.v4 = v2 - (vStep * (LINE_POINTS - 2));
 
 	tex.tpage = sprite->tpage;
 	tex.drawtype = 3;
-	HWI_InsertGT4_Sorted(&v[0], &v[1], &v[2], &v[3], &tex, MID_SORT, 1);
+
+	for (int i = 0; i < LINE_POINTS - 1; i++)
+	{
+		for (int j = 0; j < LINE_POINTS - 1; j++)
+		{
+			c = i * LINE_POINTS;
+			HWI_InsertGT4_Sorted(&v[j + c + 0], &v[j + c + 1], &v[j + c + (LINE_POINTS + 1)], &v[j + c + LINE_POINTS], &tex, MID_SORT, 1);
+
+			tex.u1 += uStep;
+			tex.u2 += uStep;
+			tex.u3 += uStep;
+			tex.u4 += uStep;
+		}
+
+		tex.u1 = u1;
+		tex.u2 = u2 - (uStep * (LINE_POINTS - 2));
+		tex.u3 = u2 - (uStep * (LINE_POINTS - 2));
+		tex.u4 = u1;
+		tex.v1 += vStep;
+		tex.v2 += vStep;
+		tex.v3 += vStep;
+		tex.v4 += vStep;
+	}
 }
 
 void S_DrawFootPrints()
@@ -5178,7 +5259,7 @@ void S_DrawFootPrints()
 		phd_mxptr[M03] = 0;
 		phd_mxptr[M13] = 0;
 		phd_mxptr[M23] = 0;
-		phd_TranslateRel(print->x, print->y, print->z);
+		phd_TranslateRel(print->x, print->y - 16, print->z);
 		phd_RotY(print->YRot);
 
 		for (int j = 0; j < 3; j++)
@@ -5197,7 +5278,7 @@ void S_DrawFootPrints()
 		phd_PopMatrix();
 
 		phd_PushMatrix();
-		phd_TranslateAbs(print->x, print->y, print->z);
+		phd_TranslateAbs(print->x, print->y - 16, print->z);
 		phd_RotY(print->YRot);
 		ProjectPHDVBuf(&pos[0], &v[0], c, 0);
 		ProjectPHDVBuf(&pos[1], &v[1], c, 0);
