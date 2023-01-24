@@ -863,6 +863,9 @@ void NewDrawLara(ITEM_INFO* item)
 
 	for (int i = 0; i < 15; i++)
 	{
+		if (!(item->mesh_bits & 1 << lara_mesh_sweetness_table[i]))
+			continue;
+
 		phd_mxptr[M00] = lara_matrices[i * indices_count + M00];
 		phd_mxptr[M01] = lara_matrices[i * indices_count + M01];
 		phd_mxptr[M02] = lara_matrices[i * indices_count + M02];
@@ -883,7 +886,7 @@ void NewDrawLara(ITEM_INFO* item)
 	phd_PopMatrix();
 	DrawHair();
 
-	if (lara.back_gun)
+	if (lara.back_gun && item->mesh_bits & 1 << lara_mesh_sweetness_table[LMX_TORSO])
 	{
 		phd_PushMatrix();
 		phd_mxptr[M00] = lara_matrices[indices_count * LMX_TORSO + M00];

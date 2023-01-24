@@ -5,6 +5,7 @@
 ### Original bug fixes
 
 - Fix missing effect on Willard explosion.
+- Fix Lara meshbits not being saved.
 
 ### tomb3 additions
 
@@ -14,6 +15,7 @@
 
 - Fix map not registering rooms when on vehicles.
 - Fix possible error in dynamic light formula.
+- Fix Lara meshbits not affecting drawn meshes.
 
 
 ## [1.5.0](https://github.com/Trxyebeep/tomb3/tree/V1.5.0) (Jan. 6 2022)

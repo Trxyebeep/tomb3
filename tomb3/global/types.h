@@ -2146,6 +2146,7 @@ struct TOMB3_SAVE
 	FISH_INFO fishies[200];
 	EXPLOSION_RING exp_rings[6];
 	EXPLOSION_RING kb_rings[6];
+	ulong lara_meshbits;
 };
 
 struct TOMB3_OPTIONS
