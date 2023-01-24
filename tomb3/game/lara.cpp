@@ -824,6 +824,9 @@ void lara_as_all4s(ITEM_INFO* item, COLL_INFO* coll)
 
 void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 {
+#ifdef TROYESTUFF
+	PHD_3DPOS old;
+#endif
 	long h;
 	short angle;
 
@@ -904,7 +907,10 @@ void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 
 		if (input & IN_ACTION && h > 768 && !GetStaticObjects(item, item->pos.y_rot + 0x8000, 512, 50, 300))
 		{
-			angle = (ushort)(item->pos.y_rot + 0x2000) / 0x4000;
+#ifdef TROYESTUFF
+			old = item->pos;
+#endif
+			angle = ushort(item->pos.y_rot + 0x2000) / 0x4000;
 
 			switch (angle)
 			{
@@ -929,7 +935,14 @@ void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 				break;
 			}
 
-			item->goal_anim_state = AS_CRAWL2HANG;
+#ifdef TROYESTUFF
+			h = LaraFloorFront(item, item->pos.y_rot, 0);
+
+			if (h > 255 || h < -255 || height_type == BIG_SLOPE)
+				item->pos = old;
+			else
+#endif
+				item->goal_anim_state = AS_CRAWL2HANG;
 		}
 	}
 	else if (input & IN_LEFT)
