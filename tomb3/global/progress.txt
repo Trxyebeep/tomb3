@@ -1389,7 +1389,7 @@ tomb3 progress.
 0x0046DB30	+	BladeControl
 0x0046DBD0	+	InitialiseKillerStatue
 0x0046DC20	+	SpringBoardControl
-0x0046DD10		InitialiseRollingBall
+0x0046DD10	+	InitialiseRollingBall
 0x0046DD50		RollingBallControl
 0x0046E0E0		RollingBallCollision
 0x0046E340	+	SpikeControl

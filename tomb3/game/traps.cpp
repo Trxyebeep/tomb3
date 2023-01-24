@@ -15,6 +15,7 @@
 #include "../3dsystem/phd_math.h"
 #include "collide.h"
 #include "lara.h"
+#include "../specific/init.h"
 
 static BITE_INFO teeth1a = { -23, 0, -1718, 0 };
 static BITE_INFO teeth1b = { 71, 0, -1718, 1 };
@@ -1406,6 +1407,20 @@ void HookControl(short item_number)
 	AnimateItem(item);
 }
 
+void InitialiseRollingBall(short item_number)
+{
+	ITEM_INFO* item;
+	GAME_VECTOR* pos;
+
+	item = &items[item_number];
+	item->data = (GAME_VECTOR*)game_malloc(sizeof(GAME_VECTOR), 38);
+	pos = (GAME_VECTOR*)item->data;
+	pos->x = item->pos.x_pos;
+	pos->y = item->pos.y_pos;
+	pos->z = item->pos.z_pos;
+	pos->room_number = item->room_number;
+}
+
 void inject_traps(bool replace)
 {
 	INJECT(0x0046FAE0, LaraBurn, replace);
@@ -1441,4 +1456,5 @@ void inject_traps(bool replace)
 	INJECT(0x0046D9C0, IcicleControl, replace);
 	INJECT(0x0046D850, SpinningBlade, replace);
 	INJECT(0x0046D7C0, HookControl, replace);
+	INJECT(0x0046DD10, InitialiseRollingBall, replace);
 }
