@@ -6,6 +6,7 @@
 
 - Fix missing effect on Willard explosion.
 - Fix Lara meshbits not being saved.
+- Fix Lara's grab position when performing the crawl to grab animation on a triangle ledge.
 
 ### tomb3 additions
 
