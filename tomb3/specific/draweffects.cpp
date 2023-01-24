@@ -5130,9 +5130,10 @@ void S_DrawFootPrints()
 	PHDSPRITESTRUCT* sprite;
 	PHDTEXTURESTRUCT tex;
 	PHD_VBUF v[3];
-	FVECTOR pos;
+	FVECTOR pos[3];
+	long x, z, px, pz;
 	ushort u1, v1, u2, v2;
-	short c;
+	short c, room_number;
 
 	bBlueEffect = 0;
 	sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 17];
@@ -5165,25 +5166,42 @@ void S_DrawFootPrints()
 
 		c >>= 3;
 
+		memset(pos, 0, sizeof(pos));
+		pos[0].x = 0;
+		pos[0].z = -64;
+		pos[1].x = -128;
+		pos[1].z = 64;
+		pos[2].x = 128;
+		pos[2].z = 64;
+
+		phd_PushUnitMatrix();
+		phd_mxptr[M03] = 0;
+		phd_mxptr[M13] = 0;
+		phd_mxptr[M23] = 0;
+		phd_TranslateRel(print->x, print->y, print->z);
+		phd_RotY(print->YRot);
+
+		for (int j = 0; j < 3; j++)
+		{
+			px = (long)pos[j].x;
+			pz = (long)pos[j].z;
+			x = (px * phd_mxptr[M00] + pz * phd_mxptr[M02] + phd_mxptr[M03]) >> W2V_SHIFT;
+			z = (px * phd_mxptr[M20] + pz * phd_mxptr[M22] + phd_mxptr[M23]) >> W2V_SHIFT;
+			room_number = lara_item->room_number;
+			pos[j].y = float(GetHeight(GetFloor(x, print->y, z, &room_number), x, print->y, z) - print->y);
+
+			if (abs(pos[j].y) > 128)
+				pos[j].y = 0;
+		}
+
+		phd_PopMatrix();
+
 		phd_PushMatrix();
 		phd_TranslateAbs(print->x, print->y, print->z);
 		phd_RotY(print->YRot);
-
-		pos.x = 0;
-		pos.y = 0;
-		pos.z = -64;
-		ProjectPHDVBuf(&pos, &v[0], c, 0);
-
-		pos.x = -128;
-		pos.y = 0;
-		pos.z = 64;
-		ProjectPHDVBuf(&pos, &v[1], c, 0);
-
-		pos.x = 128;
-		pos.y = 0;
-		pos.z = 64;
-		ProjectPHDVBuf(&pos, &v[2], c, 0);
-
+		ProjectPHDVBuf(&pos[0], &v[0], c, 0);
+		ProjectPHDVBuf(&pos[1], &v[1], c, 0);
+		ProjectPHDVBuf(&pos[2], &v[2], c, 0);
 		phd_PopMatrix();
 
 		tex.u1 = u1;

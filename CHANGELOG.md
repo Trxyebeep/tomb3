@@ -12,6 +12,7 @@
 ### tomb3 additions
 
 - Remove fire from Lara in DOZY.
+- Make footprints tilt with the floor below them.
 
 ### tomb3 bug fixes
 
