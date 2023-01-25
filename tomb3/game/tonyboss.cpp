@@ -6,6 +6,7 @@
 #include "sphere.h"
 #include "items.h"
 #include "sound.h"
+#include "lot.h"
 
 static long dradii[5] = { 1600, 5600, 6400, 5600, 1600 };
 static long dheights1[5] = { -7680, -4224, -768, 2688, 6144 };
@@ -336,10 +337,23 @@ static void ExplodeTonyBoss(ITEM_INFO* item)
 	}
 }
 
+static void TonyBossDie(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+	item->hit_points = DONT_TARGET;
+	item->collidable = 0;
+	KillItem(item_number);
+	DisableBaddieAI(item_number);
+	item->flags |= IFL_INVISIBLE;
+}
+
 void inject_tonyboss(bool replace)
 {
 	INJECT(0x0046C460, TriggerTonyFlame, replace);
 	INJECT(0x0046C640, TriggerFireBall, replace);
 	INJECT(0x0046CD00, TriggerFireBallFlame, replace);
 	INJECT(0x0046C1C0, ExplodeTonyBoss, replace);
+	INJECT(0x0046C0D0, TonyBossDie, replace);
 }
