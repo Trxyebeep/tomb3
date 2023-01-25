@@ -1367,7 +1367,7 @@ tomb3 progress.
 0x0046C460	+	TriggerTonyFlame
 0x0046C640	+	TriggerFireBall
 0x0046C860		ControlTonyFireBall
-0x0046CD00		TriggerFireBallFlame
+0x0046CD00	+	TriggerFireBallFlame
 
 
 		game/train.cpp

@@ -163,8 +163,95 @@ static void TriggerFireBall(ITEM_INFO* item, long type, PHD_VECTOR* pos, short r
 		fx->flag2 = 0;
 }
 
+static void TriggerFireBallFlame(short fxNum, long type, long xv, long yv, long zv)
+{
+	FX_INFO* fx;
+	SPARKS* sptr;
+	long dx, dz;
+
+	fx = &effects[fxNum];
+	dx = lara_item->pos.x_pos - fx->pos.x_pos;
+	dz = lara_item->pos.z_pos - fx->pos.z_pos;
+
+	if (dx < -0x4000 || dx > 0x4000 || dz < -0x4000 || dz > 0x4000)
+		return;
+
+	sptr = &sparks[GetFreeSpark()];
+	sptr->On = 1;
+	sptr->sR = 255;
+	sptr->sG = (GetRandomControl() & 0x1F) + 48;
+	sptr->sB = 48;
+	sptr->dR = (GetRandomControl() & 0x3F) + 192;
+	sptr->dG = (GetRandomControl() & 0x3F) + 128;
+	sptr->dB = 32;
+	sptr->FadeToBlack = 8;
+	sptr->ColFadeSpeed = (GetRandomControl() & 3) + 12;
+	sptr->TransType = 2;
+	sptr->Life = (GetRandomControl() & 7) + 24;
+	sptr->sLife = sptr->Life;
+	sptr->extras = 0;
+	sptr->Dynamic = -1;
+	sptr->x = (GetRandomControl() & 0xF) - 8;
+	sptr->y = 0;
+	sptr->z = (GetRandomControl() & 0xF) - 8;
+	sptr->Xvel = short((GetRandomControl() & 0xFF) + xv - 128);
+	sptr->Yvel = (short)yv;
+	sptr->Zvel = short((GetRandomControl() & 0xFF) + zv - 128);
+	sptr->Friction = 5;
+	
+	if ((GetRandomControl() & 1) != 0)
+	{
+		sptr->Flags = SF_ALTDEF | SF_FX | SF_ROTATE | SF_DEF | SF_SCALE;
+		sptr->RotAng = GetRandomControl() & 0xFFF;
+
+		if (GetRandomControl() & 1)
+			sptr->RotAdd = -16 - (GetRandomControl() & 0xF);
+		else
+			sptr->RotAdd = (GetRandomControl() & 0xF) + 16;
+	}
+	else
+		sptr->Flags = SF_ALTDEF | SF_FX | SF_DEF | SF_SCALE;
+
+	sptr->FxObj = (uchar)fxNum;
+	sptr->Def = (uchar)objects[EXPLOSION1].mesh_index;
+	sptr->Scalar = 1;
+	sptr->Width = (GetRandomControl() & 0x1F) + 64;
+	sptr->sWidth = sptr->Width;
+	sptr->dWidth = sptr->Width >> 2;
+	sptr->Height = sptr->Width;
+	sptr->sHeight = sptr->Height;
+	sptr->dHeight = sptr->Height >> 2;
+
+	if (!type || type == 1)
+	{
+		sptr->Gravity = (GetRandomControl() & 0x1F) + 16;
+		sptr->MaxYvel = (GetRandomControl() & 0xF) + 48;
+		sptr->Scalar = 2;
+		sptr->Yvel *= -16;
+	}
+	else if (type == 4 || type == 5 || type == 6)
+	{
+		sptr->MaxYvel = 0;
+		sptr->Gravity = 0;
+	}
+	else if (type == 3)
+	{
+		sptr->Gravity = -16 - (GetRandomControl() & 0x1F);
+		sptr->MaxYvel = -64 - (GetRandomControl() & 0x1F);
+		sptr->Scalar = 2;
+		sptr->Yvel <<= 4;
+	}
+	else if (type == 2)
+	{
+		sptr->MaxYvel = 0;
+		sptr->Gravity = 0;
+		sptr->Scalar = 2;
+	}
+}
+
 void inject_tonyboss(bool replace)
 {
 	INJECT(0x0046C460, TriggerTonyFlame, replace);
 	INJECT(0x0046C640, TriggerFireBall, replace);
+	INJECT(0x0046CD00, TriggerFireBallFlame, replace);
 }
