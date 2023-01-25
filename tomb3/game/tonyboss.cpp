@@ -3,6 +3,8 @@
 #include "effect2.h"
 #include "../specific/game.h"
 #include "objects.h"
+#include "sphere.h"
+#include "items.h"
 
 static void TriggerTonyFlame(short item_number, long node)
 {
@@ -67,7 +69,102 @@ static void TriggerTonyFlame(short item_number, long node)
 	sptr->dHeight = sptr->Height >> 2;
 }
 
+static void TriggerFireBall(ITEM_INFO* item, long type, PHD_VECTOR* pos, short room_number, short angle, long speed)
+{
+	FX_INFO* fx;
+	PHD_VECTOR fxpos;
+	long fallspeed;
+	short fxNum;
+
+	if (!type)
+	{
+		fxpos.x = 0;
+		fxpos.y = 0;
+		fxpos.z = 0;
+		GetJointAbsPosition(item, &fxpos, 10);
+		angle = item->pos.y_rot;
+		fallspeed = -16;
+		speed = 0;
+	}
+	else if (type == 1)
+	{
+		fxpos.x = 0;
+		fxpos.y = 0;
+		fxpos.z = 0;
+		GetJointAbsPosition(item, &fxpos, 13);
+		angle = item->pos.y_rot;
+		fallspeed = -16;
+		speed = 0;
+	}
+	else if (type == 2)
+	{
+		fxpos.x = 0;
+		fxpos.y = 0;
+		fxpos.z = 0;
+		GetJointAbsPosition(item, &fxpos, 13);
+		speed = 160;
+		fallspeed = -32 - (GetRandomControl() & 7);
+	}
+	else if (type == 3)
+	{
+		fxpos.x = pos->x;
+		fxpos.y = pos->y;
+		fxpos.z = pos->z;
+		speed = 0;
+		fallspeed = (GetRandomControl() & 3) + 4;
+	}
+	else if (type == 4)
+	{
+		fxpos.x = pos->x;
+		fxpos.y = pos->y;
+		fxpos.z = pos->z;
+		speed += (GetRandomControl() & 3);
+		angle = short(GetRandomControl() << 1);
+		fallspeed = (GetRandomControl() & 3) - 2;
+	}
+	else if (type == 5)
+	{
+		fxpos.x = pos->x;
+		fxpos.y = pos->y;
+		fxpos.z = pos->z;
+		speed = (GetRandomControl() & 7) + 48;
+		angle += (GetRandomControl() & 0x1FFF) + 28672;
+		fallspeed = -16 - (GetRandomControl() & 0xF);
+	}
+	else
+	{
+		fxpos.x = pos->x;
+		fxpos.y = pos->y;
+		fxpos.z = pos->z;
+		speed = (GetRandomControl() & 0x1F) + 32;
+		angle = short(GetRandomControl() << 1);
+		fallspeed = -32 - (GetRandomControl() & 0x1F);
+	}
+
+	fxNum = CreateEffect(room_number);
+
+	if (fxNum == NO_ITEM)
+		return;
+
+	fx = &effects[fxNum];
+	fx->pos.x_pos = fxpos.x;
+	fx->pos.y_pos = fxpos.y;
+	fx->pos.z_pos = fxpos.z;
+	fx->pos.y_rot = angle;
+	fx->object_number = TONYFIREBALL;
+	fx->speed = (short)speed;
+	fx->fallspeed = (short)fallspeed;
+	fx->flag1 = (short)type;
+	fx->flag2 = (GetRandomControl() & 3) + 1;
+
+	if (type == 5)
+		fx->flag2 <<= 1;
+	else if (type == 2)
+		fx->flag2 = 0;
+}
+
 void inject_tonyboss(bool replace)
 {
 	INJECT(0x0046C460, TriggerTonyFlame, replace);
+	INJECT(0x0046C640, TriggerFireBall, replace);
 }
