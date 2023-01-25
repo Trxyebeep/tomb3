@@ -5,6 +5,13 @@
 #include "objects.h"
 #include "sphere.h"
 #include "items.h"
+#include "sound.h"
+
+static long dradii[5] = { 1600, 5600, 6400, 5600, 1600 };
+static long dheights1[5] = { -7680, -4224, -768, 2688, 6144 };
+static long dheights2[5] = { -1536, -1152, -768, -384, 0 };
+static long death_radii[5];
+static long death_heights[5];
 
 static void TriggerTonyFlame(short item_number, long node)
 {
@@ -249,9 +256,90 @@ static void TriggerFireBallFlame(short fxNum, long type, long xv, long yv, long 
 	}
 }
 
+static void ExplodeTonyBoss(ITEM_INFO* item)
+{
+	SHIELD_POINTS* p;
+	long x, y, z, lp, lp2, rad, angle, r, g, b;
+
+	if (item->hit_points <= 0 && (bossdata.explode_count == 1 || bossdata.explode_count == 15 || bossdata.explode_count == 25 ||
+		bossdata.explode_count == 35 || bossdata.explode_count == 45 || bossdata.explode_count == 55))
+	{
+		x = (GetRandomDraw() & 0x3FF) + item->pos.x_pos - 512;
+		y = item->pos.y_pos - (GetRandomDraw() & 0x3FF) - 256;
+		z = (GetRandomDraw() & 0x3FF) + item->pos.z_pos - 512;
+		ExpRings[bossdata.ring_count].x = x;
+		ExpRings[bossdata.ring_count].y = y;
+		ExpRings[bossdata.ring_count].z = z;
+		ExpRings[bossdata.ring_count].on = 1;
+		bossdata.ring_count++;
+
+		TriggerExplosionSparks(x, y, z, 3, -2, 0, 0);
+
+		for (lp = 0; lp < 2; lp++)
+			TriggerExplosionSparks(x, y, z, 3, -1, 0, 0);
+
+		SoundEffect(SFX_BLAST_CIRCLE, &item->pos, 0x800000 | SFX_SETPITCH);
+	}
+
+	for (lp = 0; lp < 5; lp++)
+	{
+		if (bossdata.explode_count < 128)
+		{
+			death_radii[lp] = (dradii[lp] >> 4) + ((bossdata.explode_count * dradii[lp]) >> 7);
+			death_heights[lp] = dheights2[lp] + ((bossdata.explode_count * (dheights1[lp] - dheights2[lp])) >> 7);
+		}
+	}
+
+	if (bossdata.explode_count > 64)
+		return;
+
+	p = TonyBossShield;
+
+	for (lp = 0; lp < 5; lp++)
+	{
+		y = death_heights[lp];
+		rad = death_radii[lp];
+		angle = (wibble & 0x3F) << 3;
+
+		for (lp2 = 0; lp2 < 8; lp2++, p++)
+		{
+			p->x = short((rad * rcossin_tbl[angle << 1]) >> 11);
+			p->y = (short)y;
+			p->z = short((rad * rcossin_tbl[(angle << 1) + 1]) >> 11);
+
+			if (!lp || lp == 16 || bossdata.explode_count >= 64)
+				p->rgb = 0;
+			else
+			{
+				r = (GetRandomDraw() & 0x1F) + 224;
+				g = (r >> 2) + (GetRandomDraw() & 0x3F);
+				b = GetRandomDraw() & 0x3F;
+
+				if (item->hit_points <= 0)
+				{
+					r = ((64 - bossdata.explode_count) * r) >> 6;
+					g = ((64 - bossdata.explode_count) * g) >> 6;
+					b = ((64 - bossdata.explode_count) * b) >> 6;
+				}
+				else
+				{
+					r = ((128 - bossdata.explode_count) * r) >> 7;
+					g = ((128 - bossdata.explode_count) * g) >> 7;
+					b = ((128 - bossdata.explode_count) * b) >> 7;
+				}
+
+				p->rgb = (b << 16) | (g << 8) | r;
+			}
+
+			angle = (angle + 512) & 0xFFF;
+		}
+	}
+}
+
 void inject_tonyboss(bool replace)
 {
 	INJECT(0x0046C460, TriggerTonyFlame, replace);
 	INJECT(0x0046C640, TriggerFireBall, replace);
 	INJECT(0x0046CD00, TriggerFireBallFlame, replace);
+	INJECT(0x0046C1C0, ExplodeTonyBoss, replace);
 }
