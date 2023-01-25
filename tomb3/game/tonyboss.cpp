@@ -7,6 +7,10 @@
 #include "items.h"
 #include "sound.h"
 #include "lot.h"
+#include "../3dsystem/phd_math.h"
+#include "control.h"
+#include "effects.h"
+#include "traps.h"
 
 static long dradii[5] = { 1600, 5600, 6400, 5600, 1600 };
 static long dheights1[5] = { -7680, -4224, -768, 2688, 6144 };
@@ -349,6 +353,149 @@ static void TonyBossDie(short item_number)
 	item->flags |= IFL_INVISIBLE;
 }
 
+void ControlTonyFireBall(short fx_number)
+{
+	FX_INFO* fx;
+	FLOOR_INFO* floor;
+	PHD_VECTOR pos;
+	PHD_VECTOR oldPos;
+	long dx, dy, dz, h, c, lp, lp2, type, r, g, b;
+	short room_number;
+	uchar falloffs[7];
+
+	falloffs[0] = 16;
+	falloffs[1] = 0;
+	falloffs[2] = 14;
+	falloffs[3] = 9;
+	falloffs[4] = 7;
+	falloffs[5] = 7;
+	falloffs[6] = 7;
+	fx = &effects[fx_number];
+	oldPos.x = fx->pos.x_pos;
+	oldPos.y = fx->pos.y_pos;
+	oldPos.z = fx->pos.z_pos;
+
+	if (!fx->flag1 || fx->flag1 == 1)
+	{
+		fx->fallspeed += (fx->fallspeed >> 3) + 1;
+
+		if (fx->fallspeed < -4096)
+			fx->fallspeed = -4096;
+
+		fx->pos.y_pos += fx->fallspeed;
+
+		if (wibble & 4)
+			TriggerFireBallFlame(fx_number, fx->flag1, 0, 0, 0);
+	}
+	else if (fx->flag1 == 3)
+	{
+		fx->fallspeed += 2;
+		fx->pos.y_pos += fx->fallspeed;
+
+		if (wibble & 4)
+			TriggerFireBallFlame(fx_number, 3, 0, 0, 0);
+	}
+	else
+	{
+		if (fx->flag1 != 2)
+		{
+			if (fx->speed > 48)
+				fx->speed--;
+		}
+
+		fx->fallspeed += fx->flag2;
+
+		if (fx->fallspeed > 512)
+			fx->fallspeed = 512;
+
+		fx->pos.x_pos += (fx->speed * phd_sin(fx->pos.y_rot)) >> W2V_SHIFT;
+		fx->pos.y_pos += fx->fallspeed >> 1;
+		fx->pos.z_pos += (fx->speed * phd_cos(fx->pos.y_rot)) >> W2V_SHIFT;
+		dx = (oldPos.x - fx->pos.x_pos) << 3;
+		dy = (oldPos.y - fx->pos.y_pos) << 3;
+		dz = (oldPos.z - fx->pos.z_pos) << 3;
+
+		if (wibble & 4)
+			TriggerFireBallFlame(fx_number, 3, dx, dy, dz);
+	}
+
+	room_number = fx->room_number;
+	floor = GetFloor(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, &room_number);
+	h = GetHeight(floor, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
+	c = GetCeiling(floor, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
+
+	if (fx->pos.y_pos >= h || fx->pos.y_pos < c)
+	{
+		if (!fx->flag1 || fx->flag1 == 1 || fx->flag1 == 2 || fx->flag1 == 3)
+		{
+			TriggerExplosionSparks(oldPos.x, oldPos.y, oldPos.z, 3, -2, 0, fx->room_number);
+
+			if (!fx->flag1 || fx->flag1 == 1)
+			{
+				for (lp = 0; lp < 2; lp++)
+					TriggerExplosionSparks(oldPos.x, oldPos.y, oldPos.z, 3, -1, 0, fx->room_number);
+			}
+
+			pos = oldPos;
+
+			if (fx->flag1 == 2)
+				lp2 = 7;
+			else
+				lp2 = 3;
+
+			if (fx->flag1 == 2)
+				type = 5;
+			else if (fx->flag1 == 3)
+				type = 6;
+			else
+				type = 4;
+
+			for (lp = 0; lp < lp2; lp++)
+				TriggerFireBall(0, type, &pos, fx->room_number, fx->pos.y_rot, (lp << 2) + 32);
+
+			if (!fx->flag1 || fx->flag1 == 1)
+			{
+				room_number = lara_item->room_number;
+				floor = GetFloor(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos, &room_number);
+				pos.x = (GetRandomControl() & 0x3FF) + lara_item->pos.x_pos - 512;
+				pos.y = GetCeiling(floor, lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos) + 256;
+				pos.z = (GetRandomControl() & 0x3FF) + lara_item->pos.z_pos - 512;
+				TriggerFireBall(0, 3, &pos, room_number, 0, 0);
+			}
+		}
+
+		KillEffect(fx_number);
+		return;
+	}
+
+	if (room[room_number].flags & ROOM_UNDERWATER)
+	{
+		KillEffect(fx_number);
+		return;
+	}
+
+	if (!lara.burn && ItemNearLara(&fx->pos, 200))
+	{
+		lara_item->hit_status = 1;
+		KillEffect(fx_number);
+		lara_item->hit_points -= 200;
+		LaraBurn();
+		return;
+	}
+
+	if (fx->room_number != room_number)
+		EffectNewRoom(fx_number, lara_item->room_number);
+
+	if (falloffs[fx->flag1])
+	{
+		type = GetRandomControl();
+		r = 31 - ((type >> 4) & 3);
+		g = 24 - ((type >> 6) & 3);
+		b = type & 7;
+		TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, falloffs[fx->flag1], r, g, b);
+	}
+}
+
 void inject_tonyboss(bool replace)
 {
 	INJECT(0x0046C460, TriggerTonyFlame, replace);
@@ -356,4 +503,5 @@ void inject_tonyboss(bool replace)
 	INJECT(0x0046CD00, TriggerFireBallFlame, replace);
 	INJECT(0x0046C1C0, ExplodeTonyBoss, replace);
 	INJECT(0x0046C0D0, TonyBossDie, replace);
+	INJECT(0x0046C860, ControlTonyFireBall, replace);
 }
