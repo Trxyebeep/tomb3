@@ -20,6 +20,7 @@
 - Fix map not registering rooms when on vehicles.
 - Fix possible error in dynamic light formula.
 - Fix Lara meshbits not affecting drawn meshes.
+- Fix original PC Sophia Rings starry shape.
 
 
 ## [1.5.0](https://github.com/Trxyebeep/tomb3/tree/V1.5.0) (Jan. 6 2022)

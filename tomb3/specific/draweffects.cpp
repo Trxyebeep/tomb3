@@ -1491,7 +1491,18 @@ void DrawSummonRings()
 				vtx2++;
 			}
 
-			if ((z1 + z2 + z3 + z4) >> 4 > phd_znear)
+#ifdef TROYESTUFF
+			x = (z1 + z2 + z3 + z4) >> 4;
+
+			if (tomb3.sophia_rings == SRINGS_PC)
+				z1 = x;
+
+			if (x > phd_znear)
+#else
+			z1 = (z1 + z2 + z3 + z4) >> 4;
+
+			if (z1 > phd_znear)
+#endif
 			{
 				if (x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
 					y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
@@ -1807,8 +1818,18 @@ void DrawKnockBackRings()
 				vtx++;
 				vtx2++;
 			}
+#ifdef TROYESTUFF
+			x = (z1 + z2 + z3 + z4) >> 4;
 
-			if ((z1 + z2 + z3 + z4) >> 4 > phd_znear && (col1 | col2 | col3 | col4))
+			if (tomb3.sophia_rings == SRINGS_PC)
+				z1 = x;
+
+			if (x > phd_znear && (col1 | col2 | col3 | col4))
+#else
+			z1 = (z1 + z2 + z3 + z4) >> 4;
+
+			if (z1 > phd_znear && (col1 | col2 | col3 | col4))
+#endif
 			{
 				if (x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
 					y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
