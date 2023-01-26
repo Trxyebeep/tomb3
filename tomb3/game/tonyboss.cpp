@@ -11,6 +11,8 @@
 #include "control.h"
 #include "effects.h"
 #include "traps.h"
+#include "box.h"
+#include "pickup.h"
 
 static long heights[5] = { -1536, -1280, -832, -384, 0 };
 static long radii[5] = { 200, 400, 500, 500, 475 };
@@ -530,6 +532,237 @@ void InitialiseTonyBoss(short item_number)
 	}
 }
 
+void TonyBossControl(short item_number)
+{
+	ITEM_INFO* item;
+	CREATURE_INFO* tony;
+	AI_INFO info;
+	PHD_VECTOR pos;
+	long x, z, f, r, g, b;
+	short angle, torso_x, torso_y;
+
+	if (!CreatureActive(item_number))
+		return;
+
+	item = &items[item_number];
+	tony = (CREATURE_INFO*)item->data;
+	angle = 0;
+	torso_x = 0;
+	torso_y = 0;
+
+	if (item->hit_points <= 0)
+	{
+		if (item->current_anim_state != TONYBOSS_DEATH)
+		{
+			item->anim_number = objects[item->object_number].anim_index + 6;
+			item->frame_number = anims[item->anim_number].frame_base;
+			item->current_anim_state = TONYBOSS_DEATH;
+		}
+
+		if (item->frame_number - anims[item->anim_number].frame_base > 110)
+		{
+			item->mesh_bits = 0;
+			item->frame_number = anims[item->anim_number].frame_base + 110;
+
+			if (!bossdata.explode_count)
+			{
+				bossdata.ring_count = 0;
+
+				for (int i = 0; i < 5; i++)
+				{
+					ExpRings[i].on = 0;
+					ExpRings[i].life = 32;
+					ExpRings[i].radius = 512;
+					ExpRings[i].speed = 128 + (i << 5);
+					ExpRings[i].xrot = ((GetRandomControl() & 0x1FF) - 256) & 0xFFF;
+					ExpRings[i].zrot = ((GetRandomControl() & 0x1FF) - 256) & 0xFFF;
+				}
+
+				if (!bossdata.dropped_icon)
+				{
+					BossDropIcon(item_number);
+					bossdata.dropped_icon = 1;
+				}
+			}
+
+			if (bossdata.explode_count < 256)
+				bossdata.explode_count++;
+
+			if (bossdata.explode_count > 128 && bossdata.ring_count == 6 && !ExpRings[5].life)
+			{
+				TonyBossDie(item_number);
+				bossdata.dead = 1;
+			}
+			else
+				ExplodeTonyBoss(item);
+
+			return;
+		}
+	}
+	else
+	{
+		if (item->item_flags[3] != 2)
+			item->hit_points = 100;
+
+		CreatureAIInfo(item, &info);
+
+		if (item->item_flags[3])
+		{
+			tony->target.x = lara_item->pos.x_pos;
+			tony->target.z = lara_item->pos.z_pos;
+			angle = CreatureTurn(item, tony->maximum_turn);
+		}
+		else
+		{
+			x = item->pos.x_pos - lara_item->pos.x_pos;
+			z = item->pos.z_pos - lara_item->pos.z_pos;
+
+			if (SQUARE(x) + SQUARE(z) < 0x1900000)
+				item->item_flags[3] = 1;
+
+			angle = 0;
+		}
+
+		switch (item->current_anim_state)
+		{
+		case TONYBOSS_WAIT:
+			tony->maximum_turn = 0;
+
+			if (item->goal_anim_state != TONYBOSS_RISE && item->item_flags[3])
+				item->goal_anim_state = TONYBOSS_RISE;
+
+			break;
+
+		case TONYBOSS_RISE:
+
+			if (item->frame_number - anims[item->anim_number].frame_base <= 16)
+				tony->maximum_turn = 0;
+			else
+				tony->maximum_turn = 364;
+
+			break;
+
+		case TONYBOSS_FLOAT:
+			torso_y = info.angle;
+			torso_x = info.x_angle;
+			tony->maximum_turn = 364;
+
+			if (!bossdata.explode_count)
+			{
+				if (item->goal_anim_state != TONYBOSS_BIGBOOM && item->item_flags[3] != 2)
+				{
+					item->goal_anim_state = TONYBOSS_BIGBOOM;
+					tony->maximum_turn = 0;
+				}
+
+				if (item->goal_anim_state != TONYBOSS_ROCKZAPP && item->item_flags[3] == 2 && !(wibble & 0xFF) && !item->item_flags[0])
+				{
+					item->goal_anim_state = TONYBOSS_ROCKZAPP;
+					item->item_flags[0] = 1;
+				}
+
+				if (item->goal_anim_state != TONYBOSS_ZAPP && item->goal_anim_state != TONYBOSS_ROCKZAPP &&
+					item->item_flags[3] == 2 && !(wibble & 0xFF) && item->item_flags[0] == 1)
+				{
+					item->goal_anim_state = TONYBOSS_ZAPP;
+					item->item_flags[0] = 0;
+				}
+			}
+
+			break;
+
+		case TONYBOSS_ZAPP:
+			torso_y = info.angle;
+			torso_x = info.x_angle;
+			tony->maximum_turn = 182;
+
+			if (item->frame_number - anims[item->anim_number].frame_base == 28)
+				TriggerFireBall(item, 2, 0, item->room_number, item->pos.y_rot, 0);
+
+			break;
+
+		case TONYBOSS_ROCKZAPP:
+			torso_y = info.angle;
+			torso_x = info.x_angle;
+			tony->maximum_turn = 0;
+
+			if (item->frame_number - anims[item->anim_number].frame_base == 40)
+			{
+				TriggerFireBall(item, 0, 0, item->room_number, 0, 0);
+				TriggerFireBall(item, 1, 0, item->room_number, 0, 0);
+			}
+
+			break;
+
+		case TONYBOSS_BIGBOOM:
+			tony->maximum_turn = 0;
+
+			if (item->frame_number - anims[item->anim_number].frame_base == 56)
+			{
+				item->item_flags[3] = 2;
+				bossdata.explode_count = 1;
+			}
+
+			break;
+		}
+	}
+
+	if (item->current_anim_state == TONYBOSS_ROCKZAPP || item->current_anim_state == TONYBOSS_ZAPP || item->current_anim_state == TONYBOSS_BIGBOOM)
+	{
+		f = item->frame_number - anims[item->anim_number].frame_base;
+
+		if (f > 16)
+		{
+			f = anims[item->anim_number].frame_end - item->frame_number;
+
+			if (f > 16)
+				f = 16;
+		}
+
+		b = GetRandomControl();
+		r = (f * (31 - ((b >> 4) & 3))) >> 4;
+		g = (f * (24 - ((b >> 6) & 3))) >> 4;
+		b = (f * (b & 7)) >> 4;
+
+		pos.x = 0;
+		pos.y = 0;
+		pos.z = 0;
+		GetJointAbsPosition(item, &pos, 10);
+		TriggerDynamic(pos.x, pos.y, pos.z, 12, r, g, b);
+		TriggerTonyFlame(item_number, 5);
+
+		if (item->current_anim_state == TONYBOSS_ROCKZAPP || item->current_anim_state == TONYBOSS_BIGBOOM)
+		{
+			pos.x = 0;
+			pos.y = 0;
+			pos.z = 0;
+			GetJointAbsPosition(item, &pos, 13);
+			TriggerDynamic(pos.x, pos.y, pos.z, 12, r, g, b);
+			TriggerTonyFlame(item_number, 4);
+		}
+	}
+
+	if (bossdata.explode_count && item->hit_points > 0)
+	{
+		ExplodeTonyBoss(item);
+		bossdata.explode_count++;
+
+		if (bossdata.explode_count == 32)
+			FlipMap();
+
+		if (bossdata.explode_count > 64)
+		{
+			bossdata.ring_count = 0;
+			bossdata.explode_count = 0;
+		}
+	}
+
+	CreatureJoint(item, 0, torso_y >> 1);
+	CreatureJoint(item, 1, torso_x);
+	CreatureJoint(item, 2, torso_y >> 1);
+	CreatureAnimation(item_number, angle, 0);
+}
+
 void inject_tonyboss(bool replace)
 {
 	INJECT(0x0046C460, TriggerTonyFlame, replace);
@@ -539,4 +772,5 @@ void inject_tonyboss(bool replace)
 	INJECT(0x0046C0D0, TonyBossDie, replace);
 	INJECT(0x0046C860, ControlTonyFireBall, replace);
 	INJECT(0x0046C120, InitialiseTonyBoss, replace);
+	INJECT(0x0046BA60, TonyBossControl, replace);
 }
