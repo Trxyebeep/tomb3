@@ -13,6 +13,8 @@
 #include "traps.h"
 #include "box.h"
 #include "pickup.h"
+#include "draw.h"
+#include "../specific/draweffects.h"
 
 static long heights[5] = { -1536, -1280, -832, -384, 0 };
 static long radii[5] = { 200, 400, 500, 500, 475 };
@@ -568,7 +570,7 @@ void TonyBossControl(short item_number)
 			{
 				bossdata.ring_count = 0;
 
-				for (int i = 0; i < 5; i++)
+				for (int i = 0; i < 6; i++)
 				{
 					ExpRings[i].on = 0;
 					ExpRings[i].life = 32;
@@ -763,6 +765,20 @@ void TonyBossControl(short item_number)
 	CreatureAnimation(item_number, angle, 0);
 }
 
+void S_DrawTonyBoss(ITEM_INFO* item)
+{
+	DrawAnimatingItem(item);
+
+	if (bossdata.explode_count)
+	{
+		if (item->hit_points <= 0)
+			DrawExplosionRings();
+
+		if (bossdata.explode_count && bossdata.explode_count <= 64)
+			DrawTonyBossShield(item);
+	}
+}
+
 void inject_tonyboss(bool replace)
 {
 	INJECT(0x0046C460, TriggerTonyFlame, replace);
@@ -773,4 +789,5 @@ void inject_tonyboss(bool replace)
 	INJECT(0x0046C860, ControlTonyFireBall, replace);
 	INJECT(0x0046C120, InitialiseTonyBoss, replace);
 	INJECT(0x0046BA60, TonyBossControl, replace);
+	INJECT(0x0046C080, S_DrawTonyBoss, replace);
 }

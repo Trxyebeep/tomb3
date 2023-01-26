@@ -6,6 +6,7 @@ void inject_tonyboss(bool replace);
 void ControlTonyFireBall(short fx_number);
 void InitialiseTonyBoss(short item_number);
 void TonyBossControl(short item_number);
+void S_DrawTonyBoss(ITEM_INFO* item);
 
 enum TONYBOSS_STATES
 {
