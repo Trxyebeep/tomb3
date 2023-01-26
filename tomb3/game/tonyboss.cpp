@@ -12,6 +12,8 @@
 #include "effects.h"
 #include "traps.h"
 
+static long heights[5] = { -1536, -1280, -832, -384, 0 };
+static long radii[5] = { 200, 400, 500, 500, 475 };
 static long dradii[5] = { 1600, 5600, 6400, 5600, 1600 };
 static long dheights1[5] = { -7680, -4224, -768, 2688, 6144 };
 static long dheights2[5] = { -1536, -1152, -768, -384, 0 };
@@ -496,6 +498,38 @@ void ControlTonyFireBall(short fx_number)
 	}
 }
 
+void InitialiseTonyBoss(short item_number)
+{
+	ITEM_INFO* item;
+	SHIELD_POINTS* p;
+	long y, rad, angle;
+
+	item = &items[item_number];
+	bossdata.dead = 0;
+	bossdata.dropped_icon = 0;
+	bossdata.ring_count = 0;
+	bossdata.explode_count = 0;
+	item->item_flags[3] = 0;
+
+	p = TonyBossShield;
+
+	for (int i = 0; i < 5; i++)
+	{
+		y = heights[i];
+		rad = radii[i];
+		angle = 0;
+
+		for (int j = 0; j < 8; j++, p++)
+		{
+			p->x = short((rad * rcossin_tbl[angle << 1]) >> 11);
+			p->y = (short)y;
+			p->z = short((rad * rcossin_tbl[(angle << 1) + 1]) >> 11);
+			p->rgb = 0;
+			angle += 512;
+		}
+	}
+}
+
 void inject_tonyboss(bool replace)
 {
 	INJECT(0x0046C460, TriggerTonyFlame, replace);
@@ -504,4 +538,5 @@ void inject_tonyboss(bool replace)
 	INJECT(0x0046C1C0, ExplodeTonyBoss, replace);
 	INJECT(0x0046C0D0, TonyBossDie, replace);
 	INJECT(0x0046C860, ControlTonyFireBall, replace);
+	INJECT(0x0046C120, InitialiseTonyBoss, replace);
 }

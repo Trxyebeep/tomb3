@@ -1362,7 +1362,7 @@ tomb3 progress.
 0x0046BA60		TonyBossControl
 0x0046C080		S_DrawTonyBoss
 0x0046C0D0	+	TonyBossDie
-0x0046C120		InitialiseTonyBoss
+0x0046C120	+	InitialiseTonyBoss
 0x0046C1C0	+	ExplodeTonyBoss
 0x0046C460	+	TriggerTonyFlame
 0x0046C640	+	TriggerFireBall
