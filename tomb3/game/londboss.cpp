@@ -9,6 +9,8 @@
 #include "../3dsystem/3d_gen.h"
 #include "sound.h"
 #include "lot.h"
+#include "control.h"
+#include "effects.h"
 
 static long heights[5] = { -1536, -1280, -832, -384, 0 };
 static long radii[5] = { 200, 400, 500, 500, 475 };
@@ -280,6 +282,63 @@ long KnockBackCollision(EXPLOSION_RING* ring)
 	return 1;
 }
 
+void ControlLondBossPlasmaBall(short fx_number)
+{
+	FX_INFO* fx;
+	FLOOR_INFO* floor;
+	long oldY, speed, h, c, r, g, b;
+	short room_number;
+	uchar falloffs[2];
+
+	falloffs[0] = 13;
+	falloffs[1] = 7;
+	fx = &effects[fx_number];
+	fx->fallspeed++;
+	oldY = fx->pos.y_pos;
+
+	if (fx->speed > 8)
+		fx->speed -= 2;
+
+	if (fx->pos.x_rot > -15360)
+		fx->pos.x_rot -= 256;
+
+	speed = (fx->speed * phd_cos(fx->pos.x_rot)) >> W2V_SHIFT;
+	fx->pos.x_pos += (speed * phd_sin(fx->pos.y_rot)) >> W2V_SHIFT;
+	fx->pos.y_pos += fx->fallspeed - ((fx->speed * phd_sin(fx->pos.x_rot)) >> W2V_SHIFT);
+	fx->pos.z_pos += (speed * phd_cos(fx->pos.y_rot)) >> W2V_SHIFT;
+
+	if (!(wibble & 0xF))
+		TriggerPlasmaBallFlame(fx_number, 0, 0, abs(oldY - fx->pos.y_pos) << 3, 0);
+
+	room_number = fx->room_number;
+	floor = GetFloor(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, &room_number);
+	h = GetHeight(floor, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
+	c = GetCeiling(floor, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
+
+	if (fx->pos.y_pos >= h || fx->pos.y_pos < c || room[room_number].flags & ROOM_UNDERWATER)
+	{
+		KillEffect(fx_number);
+		return;
+	}
+
+	if (!fx->flag2 && ItemNearLara(&fx->pos, 200))
+	{
+		lara_item->hit_points -= 25;
+		lara_item->hit_status = 1;
+		KillEffect(fx_number);
+		return;
+	}
+
+	if (fx->room_number != room_number)
+		EffectNewRoom(fx_number, room_number);
+
+	c = GetRandomControl();
+	r = c & 7;
+	g = 31 - ((c >> 4) & 3);
+	b = 24 - ((c >> 6) & 3);
+	TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, falloffs[fx->flag1], r, g, b);
+}
+
 void inject_londboss(bool replace)
 {
 	INJECT(0x00451DE0, TriggerPlasmaBall, replace);
@@ -287,4 +346,5 @@ void inject_londboss(bool replace)
 	INJECT(0x00451980, TriggerLaserBolt, replace);
 	INJECT(0x00451730, ExplodeLondonBoss, replace);
 	INJECT(0x00452240, KnockBackCollision, replace);
+	INJECT(0x00451E80, ControlLondBossPlasmaBall, replace);
 }
