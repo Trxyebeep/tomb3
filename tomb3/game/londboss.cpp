@@ -7,6 +7,16 @@
 #include "effect2.h"
 #include "lara.h"
 #include "../3dsystem/3d_gen.h"
+#include "sound.h"
+#include "lot.h"
+
+static long heights[5] = { -1536, -1280, -832, -384, 0 };
+static long radii[5] = { 200, 400, 500, 500, 475 };
+static long dradii[5] = { 1600, 5600, 6400, 5600, 1600 };
+static long dheights1[5] = { -7680, -4224, -768, 2688, 6144 };
+static long dheights2[5] = { -1536, -1152, -768, -384, 0 };
+static long death_radii[5];
+static long death_heights[5];
 
 static void TriggerPlasmaBall(ITEM_INFO* item, long type, PHD_VECTOR* pos, short room_number, short angle)
 {
@@ -145,6 +155,83 @@ static void TriggerLaserBolt(PHD_VECTOR* pos, ITEM_INFO* item, long type, short 
 	AddActiveItem(item_number);
 }
 
+static void ExplodeLondonBoss(ITEM_INFO* item)
+{
+	SHIELD_POINTS* p;
+	long x, y, z, lp, lp2, rad, angle, r, g, b;
+
+	if (bossdata.explode_count == 1 || bossdata.explode_count == 15 || bossdata.explode_count == 25 ||
+		bossdata.explode_count == 35 || bossdata.explode_count == 45 || bossdata.explode_count == 55)
+	{
+		x = (GetRandomDraw() & 0x3FF) + item->pos.x_pos - 512;
+		y = item->pos.y_pos - (GetRandomDraw() & 0x3FF) - 256;
+		z = (GetRandomDraw() & 0x3FF) + item->pos.z_pos - 512;
+		ExpRings[bossdata.ring_count].x = x;
+		ExpRings[bossdata.ring_count].y = y;
+		ExpRings[bossdata.ring_count].z = z;
+		ExpRings[bossdata.ring_count].on = 1;
+		bossdata.ring_count++;
+		TriggerExplosionSparks(x, y, z, 3, -2, 2, 0);
+
+		for (lp = 0; lp < 2; lp++)
+			TriggerExplosionSparks(x, y, z, 3, -1, 2, 0);
+
+		SoundEffect(SFX_BLAST_CIRCLE, &item->pos, 0x800000 | SFX_SETPITCH);
+	}
+
+	for (lp = 0; lp < 5; lp++)
+	{
+		if (bossdata.explode_count < 128)
+		{
+			death_radii[lp] = (dradii[lp] >> 4) + ((bossdata.explode_count * dradii[lp]) >> 7);
+			death_heights[lp] = dheights2[lp] + ((bossdata.explode_count * (dheights1[lp] - dheights2[lp])) >> 7);
+		}
+	}
+
+	p = LondonBossShield;
+
+	for (lp = 0; lp < 5; lp++)
+	{
+		y = death_heights[lp];
+		rad = death_radii[lp];
+		angle = (wibble & 0x3F) << 3;
+
+		for (lp2 = 0; lp2 < 8; lp2++, p++)
+		{
+			p->x = short((rad * rcossin_tbl[angle << 1]) >> 11);
+			p->y = (short)y;
+			p->z = short((rad * rcossin_tbl[(angle << 1) + 1]) >> 11);
+
+			if (!lp || lp == 16 || bossdata.explode_count >= 64)
+				p->rgb = 0;
+			else
+			{
+				r = GetRandomDraw() & 0x3F;
+				g = (GetRandomDraw() & 0x1F) + 224;
+				b = (g >> 2) + (GetRandomDraw() & 0x3F);
+				r = ((64 - bossdata.explode_count) * r) >> 6;
+				g = ((64 - bossdata.explode_count) * g) >> 6;
+				b = ((64 - bossdata.explode_count) * b) >> 6;
+				p->rgb = (b << 16) | (g << 8) | r;
+			}
+
+			angle = (angle + 512) & 0xFFF;
+		}
+	}
+}
+
+static void LondonBossDie(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+	item->hit_points = DONT_TARGET;
+	item->collidable = 0;
+	KillItem(item_number);
+	DisableBaddieAI(item_number);
+	item->flags |= IFL_INVISIBLE;
+}
+
 long KnockBackCollision(EXPLOSION_RING* ring)
 {
 	long dx, dz, dist;
@@ -196,7 +283,8 @@ long KnockBackCollision(EXPLOSION_RING* ring)
 void inject_londboss(bool replace)
 {
 	INJECT(0x00451DE0, TriggerPlasmaBall, replace);
-	INJECT(0x00452240, KnockBackCollision, replace);
 	INJECT(0x00452090, TriggerPlasmaBallFlame, replace);
 	INJECT(0x00451980, TriggerLaserBolt, replace);
+	INJECT(0x00451730, ExplodeLondonBoss, replace);
+	INJECT(0x00452240, KnockBackCollision, replace);
 }
