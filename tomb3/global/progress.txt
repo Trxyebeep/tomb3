@@ -1031,7 +1031,7 @@ tomb3 progress.
 0x004516A0		InitialiseLondonBoss
 0x00451730	+	ExplodeLondonBoss
 0x00451980	+	TriggerLaserBolt
-0x00451AB0		ControlLaserBolts
+0x00451AB0	+	ControlLaserBolts
 0x00451DE0	+	TriggerPlasmaBall
 0x00451E80	+	ControlLondBossPlasmaBall
 0x00452090	+	TriggerPlasmaBallFlame

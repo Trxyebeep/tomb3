@@ -339,6 +339,123 @@ void ControlLondBossPlasmaBall(short fx_number)
 	TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, falloffs[fx->flag1], r, g, b);
 }
 
+void ControlLaserBolts(short item_number)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	PHD_VECTOR oldPos;
+	long speed, hit, c, extras, lp, dx, dy, dz, dist, g, b, f;
+	short oldRoom, room_number;
+
+	item = &items[item_number];
+	oldPos.x = item->pos.x_pos;
+	oldPos.y = item->pos.y_pos;
+	oldPos.z = item->pos.z_pos;
+	oldRoom = item->room_number;
+
+	speed = (item->speed * phd_cos(item->pos.x_rot)) >> W2V_SHIFT;
+	item->pos.x_pos += (speed * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
+	item->pos.y_pos -= (item->speed * phd_sin(item->pos.x_rot)) >> W2V_SHIFT;
+	item->pos.z_pos += (speed * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
+
+	if (item->speed < 384)
+		item->speed += (item->speed >> 3) + 2;
+
+	if (item->item_flags[2] && item->speed > 192)
+	{
+		item->item_flags[3]++;
+
+		if (item->item_flags[3] >= 16)
+		{
+			KillItem(item_number);
+			return;
+		}
+	}
+
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+
+	if (item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+
+	if (!item->item_flags[2])
+	{
+		hit = ItemNearLara(&item->pos, 400);
+		item->floor = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+		c = GetCeiling(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+		if (hit || item->pos.y_pos >= item->floor || item->pos.y_pos <= c)
+		{
+			SoundEffect(SFX_EXPLOSION1, &item->pos, SFX_DEFAULT);
+			extras = (item->item_flags[0] >= 0) + 2;
+			TriggerExplosionSparks(oldPos.x, oldPos.y, oldPos.z, extras, -2, 2, item->room_number);
+
+			for (lp = 0; lp < extras; lp++)
+				TriggerExplosionSparks(oldPos.x, oldPos.y, oldPos.z, 2, -1, 2, item->room_number);
+
+			extras++;
+
+			for (lp = 0; lp < extras; lp++)
+				TriggerPlasmaBall(item, 1, &oldPos, oldRoom, item->pos.y_rot);
+
+			if (hit)
+			{
+				lara_item->hit_points += -30 - ((item->item_flags[0] >= 0) << 9);
+				lara_item->hit_status = 1;
+			}
+			else
+			{
+				dx = lara_item->pos.x_pos - item->pos.x_pos;
+				dy = lara_item->pos.y_pos - item->pos.y_pos - 256;
+				dz = lara_item->pos.z_pos - item->pos.z_pos;
+				dist = phd_sqrt(SQUARE(dx) + SQUARE(dy) + SQUARE(dz));
+
+				if (dist < 1024)
+				{
+					lara_item->hit_points -= short((1024 - dist) >> (6 - 2 * (item->item_flags[0] >= 0)));
+					lara_item->hit_status = 1;
+				}
+			}
+
+			KillItem(item_number);
+			return;
+		}
+	}
+
+	g = 31 - (GetRandomControl() & 7);
+	b = g >> 1;
+
+	if (item->item_flags[0] < 0)
+	{
+		if (item->item_flags[2])
+		{
+			f = 16 - item->item_flags[3];
+			g = (f * g) >> 4;
+			b = (f * b) >> 4;
+		}
+
+		f = -item->item_flags[0];
+
+		if (f > 10)
+		{
+			item->item_flags[1] += 2;
+			item->item_flags[0]++;
+		}
+	}
+	else
+	{
+		f = item->item_flags[0];
+
+		if (f > 16)
+		{
+			item->item_flags[1] += 4;
+			item->item_flags[0]--;
+		}
+	}
+
+	TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, f, 0, g, b);
+}
+
 void inject_londboss(bool replace)
 {
 	INJECT(0x00451DE0, TriggerPlasmaBall, replace);
@@ -347,4 +464,5 @@ void inject_londboss(bool replace)
 	INJECT(0x00451730, ExplodeLondonBoss, replace);
 	INJECT(0x00452240, KnockBackCollision, replace);
 	INJECT(0x00451E80, ControlLondBossPlasmaBall, replace);
+	INJECT(0x00451AB0, ControlLaserBolts, replace);
 }
