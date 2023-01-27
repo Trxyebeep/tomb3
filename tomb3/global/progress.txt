@@ -1034,7 +1034,7 @@ tomb3 progress.
 0x00451AB0		ControlLaserBolts
 0x00451DE0	+	TriggerPlasmaBall
 0x00451E80		ControlLondBossPlasmaBall
-0x00452090		TriggerPlasmaBallFlame
+0x00452090	+	TriggerPlasmaBallFlame
 0x00452240	+	KnockBackCollision
 
 
