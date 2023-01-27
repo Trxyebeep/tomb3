@@ -6,6 +6,7 @@
 #include "../3dsystem/phd_math.h"
 #include "effect2.h"
 #include "lara.h"
+#include "../3dsystem/3d_gen.h"
 
 static void TriggerPlasmaBall(ITEM_INFO* item, long type, PHD_VECTOR* pos, short room_number, short angle)
 {
@@ -92,6 +93,58 @@ static void TriggerPlasmaBallFlame(short fx_number, long type, long xv, long yv,
 	sptr->dHeight = sptr->Height >> 2;
 }
 
+static void TriggerLaserBolt(PHD_VECTOR* pos, ITEM_INFO* item, long type, short ang)
+{
+	ITEM_INFO* bolt;
+	short item_number;
+	short angles[2];
+
+	item_number = CreateItem();
+
+	if (item_number == NO_ITEM)
+		return;
+
+	bolt = &items[item_number];
+	bolt->object_number = EXTRAFX4;
+	bolt->room_number = item->room_number;
+	bolt->pos.x_pos = pos->x;
+	bolt->pos.y_pos = pos->y;
+	bolt->pos.z_pos = pos->z;
+	InitialiseItem(item_number);
+
+	if (type == 2)
+	{
+		bolt->pos.y_pos += item->pos.y_pos - 384;
+		bolt->pos.x_rot = short(-pos->y << 5);
+		bolt->pos.y_rot = short(GetRandomControl() << 1);
+	}
+	else
+	{
+		phd_GetVectorAngles(lara_item->pos.x_pos - pos->x, lara_item->pos.y_pos - pos->y - 256, lara_item->pos.z_pos - pos->z, angles);
+		bolt->pos.x_rot = angles[1];
+		bolt->pos.y_rot = ang;
+		bolt->pos.z_rot = 0;
+	}
+
+	if (type == 1)
+	{
+		bolt->speed = 24;
+		bolt->item_flags[0] = 31;
+		bolt->item_flags[1] = 16;
+	}
+	else
+	{
+		bolt->speed = 16;
+		bolt->item_flags[0] = -24;
+		bolt->item_flags[1] = 4;
+
+		if (type == 2)
+			bolt->item_flags[2] = 1;
+	}
+
+	AddActiveItem(item_number);
+}
+
 long KnockBackCollision(EXPLOSION_RING* ring)
 {
 	long dx, dz, dist;
@@ -145,4 +198,5 @@ void inject_londboss(bool replace)
 	INJECT(0x00451DE0, TriggerPlasmaBall, replace);
 	INJECT(0x00452240, KnockBackCollision, replace);
 	INJECT(0x00452090, TriggerPlasmaBallFlame, replace);
+	INJECT(0x00451980, TriggerLaserBolt, replace);
 }
