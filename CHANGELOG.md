@@ -8,6 +8,8 @@
 - Fix Lara meshbits not being saved.
 - Fix Lara's grab position when performing the crawl to grab animation on a triangle ledge.
 - Fix Lara teleporting mid-air wheen performing the crawl to grab animation on a no-col triangle ledge.
+- Fix location skip bug in NG+ mode.
+- Fix All Hallows loading with corrupt textures if player didn't get all secrets in NG+ mode.
 
 ### tomb3 additions
 
