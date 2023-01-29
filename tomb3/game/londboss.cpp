@@ -456,6 +456,35 @@ void ControlLaserBolts(short item_number)
 	TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, f, 0, g, b);
 }
 
+void InitialiseLondonBoss(short item_number)
+{
+	SHIELD_POINTS* p;
+	long y, rad, angle;
+
+	bossdata.dropped_icon = 0;
+	bossdata.dead = 0;
+	bossdata.ring_count = 0;
+	bossdata.explode_count = 0;
+	p = LondonBossShield;
+
+	for (int i = 0; i < 5; i++)
+	{
+		y = heights[i];
+		rad = radii[i];
+		angle = 0;
+
+		for (int j = 0; j < 8; j++)
+		{
+			p->x = short((rad * rcossin_tbl[angle << 1]) >> 11);
+			p->y = (short)y;
+			p->z = short((rad * rcossin_tbl[(angle << 1) + 1]) >> 11);
+			p->rgb = 0;
+			angle += 512;
+			p++;
+		}
+	}
+}
+
 void inject_londboss(bool replace)
 {
 	INJECT(0x00451DE0, TriggerPlasmaBall, replace);
@@ -465,4 +494,5 @@ void inject_londboss(bool replace)
 	INJECT(0x00452240, KnockBackCollision, replace);
 	INJECT(0x00451E80, ControlLondBossPlasmaBall, replace);
 	INJECT(0x00451AB0, ControlLaserBolts, replace);
+	INJECT(0x004516A0, InitialiseLondonBoss, replace);
 }
