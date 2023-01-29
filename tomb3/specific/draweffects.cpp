@@ -1110,9 +1110,40 @@ void DrawExplosionRings()
 				vtx->x = short((rad * rcossin_tbl[ang << 1]) >> (W2V_SHIFT - 2));
 				vtx->z = short((rad * rcossin_tbl[(ang << 1) + 1]) >> (W2V_SHIFT - 2));
 
+#ifdef TROYESTUFF
+				if (ring->on == 2)
+				{
+					//Tony
+					r = (GetRandomDraw() & 0x1F) + 224;
+					g = (r >> 2) + (GetRandomDraw() & 0x3F);
+					b = GetRandomDraw() & 0x3F;			
+				}
+				else if (ring->on == 3)
+				{
+					//Sophia
+					r = GetRandomDraw() & 0x3F;
+					g = (GetRandomDraw() & 0x1F) + 224;
+					b = (g >> 2) + (GetRandomDraw() & 0x3F);
+				}
+				else if (ring->on == 4)
+				{
+					//Puna
+					r = GetRandomDraw() & 0x1F;
+					b = (GetRandomDraw() & 0x3F) + 224;
+					g = (b >> 2) + (GetRandomDraw() & 0x3F);
+				}
+				else
+				{
+					//Willard
+					r = GetRandomDraw() & 0x3F;
+					g = (GetRandomDraw() & 0x1F) + 224;
+					b = (g >> 1) + (GetRandomDraw() & 0x3F);
+				}
+#else
 				r = GetRandomDraw() & 0x1F;
 				g = (GetRandomDraw() & 0x3F) + 224;
 				b = (g >> 2) + (GetRandomDraw() & 0x3F);
+#endif
 				r = (r * ring->life) >> 5;
 				g = (g * ring->life) >> 5;
 				b = (b * ring->life) >> 5;

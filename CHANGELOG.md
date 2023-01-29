@@ -16,6 +16,7 @@
 - Remove fire from Lara in DOZY.
 - Make footprints tilt with the floor below them.
 - Make PSX shadow tilt with the floor below it.
+- Restore PSX boss explosion ring colors.
 
 ### tomb3 bug fixes
 

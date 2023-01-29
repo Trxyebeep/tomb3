@@ -102,7 +102,11 @@ static void ExplodeTribeBoss(ITEM_INFO* item)
 		ExpRings[bossdata.ring_count].x = x;
 		ExpRings[bossdata.ring_count].y = y;
 		ExpRings[bossdata.ring_count].z = z;
+#ifdef TROYESTUFF
+		ExpRings[bossdata.ring_count].on = 4;
+#else
 		ExpRings[bossdata.ring_count].on = 1;
+#endif
 		bossdata.ring_count++;
 		TriggerExplosionSparks(x, y, z, 3, -2, 2, 0);
 
