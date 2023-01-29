@@ -151,6 +151,80 @@ static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, short c, bool cFlag)
 }
 #endif
 
+static __inline void ClipCheckPoint(PHD_VBUF* v, long x, long y, long z)
+{
+	char clipFlag;
+
+	clipFlag = 0;
+
+	if (x < phd_winxmin)
+		clipFlag++;
+	else if (x > phd_winxmax)
+		clipFlag += 2;
+
+	if (y < phd_winymin)
+		clipFlag += 4;
+	else if (y > phd_winymax)
+		clipFlag += 8;
+
+	v->clip = clipFlag;
+	v->xs = (float)x;
+	v->ys = (float)y;
+	v->zv = (float)z;
+	v->ooz = f_persp / (float)z * f_oneopersp;
+}
+
+static __inline void setColor(PHD_VBUF* v, long c, char flag)
+{
+	long r, g, b;
+
+	if (!flag)
+	{
+		r = (c >> 3) & 0x1F;
+		g = (c >> 11) & 0x1F;
+		b = (c >> 19) & 0x1F;
+		v->g = short(r << 10 | g << 5 | b);
+	}
+	else
+		v->g = (short)c;
+}
+
+static __inline void setXYZ3(PHD_VBUF* v, char cFlag,
+	long x1, long y1, long z1, long c1,
+	long x2, long y2, long z2, long c2,
+	long x3, long y3, long z3, long c3)
+{
+	ClipCheckPoint(&v[0], x1, y1, z1);
+	setColor(&v[0], c1, cFlag);
+
+	ClipCheckPoint(&v[1], x2, y2, z2);
+	setColor(&v[1], c2, cFlag);
+
+	ClipCheckPoint(&v[2], x3, y3, z3);
+	setColor(&v[2], c3, cFlag);
+}
+
+static __inline void setXYZ4(PHD_VBUF* v, char cFlag,
+	long x1, long y1, long z1, long c1,
+	long x2, long y2, long z2, long c2,
+	long x3, long y3, long z3, long c3,
+	long x4, long y4, long z4, long c4)
+{
+	ClipCheckPoint(&v[0], x1, y1, z1);
+	setColor(&v[0], c1, cFlag);
+
+	ClipCheckPoint(&v[1], x2, y2, z2);
+	setColor(&v[1], c2, cFlag);
+
+	ClipCheckPoint(&v[2], x3, y3, z3);
+#ifdef TROYESTUFF
+	setColor(&v[2], c3, cFlag);
+#endif
+
+	ClipCheckPoint(&v[3], x4, y4, z4);
+	setColor(&v[3], c4, cFlag);
+}
+
 void LaraElectricDeath(long lr, ITEM_INFO* item)
 {
 	DISPLAYMODE* dm;
@@ -1070,7 +1144,6 @@ void DrawExplosionRings()
 	long Z[16];
 	short XY[32];
 	ushort u1, u2, v1, v2;
-	char clipFlag;
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w - 1;
@@ -1229,96 +1302,7 @@ void DrawExplosionRings()
 				x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
 				y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
 			{
-				clipFlag = 0;
-
-				if (x1 < phd_winxmin)
-					clipFlag++;
-				else if (x1 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y1 < phd_winymin)
-					clipFlag += 4;
-				else if (y1 > phd_winymax)
-					clipFlag += 8;
-
-				v[0].clip = clipFlag;
-				v[0].xs = (float)x1;
-				v[0].ys = (float)y1;
-				v[0].zv = (float)z1;
-				v[0].ooz = f_persp / (float)z1 * f_oneopersp;
-				r = (col1 >> 3) & 0x1F;
-				g = (col1 >> 11) & 0x1F;
-				b = (col1 >> 19) & 0x1F;
-				v[0].g = short(r << 10 | g << 5 | b);
-
-				clipFlag = 0;
-
-				if (x2 < phd_winxmin)
-					clipFlag++;
-				else if (x2 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y2 < phd_winymin)
-					clipFlag += 4;
-				else if (y2 > phd_winymax)
-					clipFlag += 8;
-
-				v[1].clip = clipFlag;
-				v[1].xs = (float)x2;
-				v[1].ys = (float)y2;
-				v[1].zv = (float)z2;
-				v[1].ooz = f_persp / (float)z2 * f_oneopersp;
-				r = (col2 >> 3) & 0x1F;
-				g = (col2 >> 11) & 0x1F;
-				b = (col2 >> 19) & 0x1F;
-				v[1].g = short(r << 10 | g << 5 | b);
-
-				clipFlag = 0;
-
-				if (x3 < phd_winxmin)
-					clipFlag++;
-				else if (x3 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y3 < phd_winymin)
-					clipFlag += 4;
-				else if (y3 > phd_winymax)
-					clipFlag += 8;
-
-				v[3].clip = clipFlag;
-				v[3].xs = (float)x3;
-				v[3].ys = (float)y3;
-				v[3].zv = (float)z3;
-				v[3].ooz = f_persp / (float)z3 * f_oneopersp;
-				r = (col3 >> 3) & 0x1F;
-				g = (col3 >> 11) & 0x1F;
-				b = (col3 >> 19) & 0x1F;
-				v[3].g = short(r << 10 | g << 5 | b);
-
-				clipFlag = 0;
-
-				if (x4 < phd_winxmin)
-					clipFlag++;
-				else if (x4 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y4 < phd_winymin)
-					clipFlag += 4;
-				else if (y4 > phd_winymax)
-					clipFlag += 8;
-
-				v[2].clip = clipFlag;
-				v[2].xs = (float)x4;
-				v[2].ys = (float)y4;
-				v[2].zv = (float)z4;
-				v[2].ooz = f_persp / (float)z4 * f_oneopersp;
-#ifdef TROYESTUFF
-				r = (col4 >> 3) & 0x1F;
-				g = (col4 >> 11) & 0x1F;
-				b = (col4 >> 19) & 0x1F;
-				v[2].g = short(r << 10 | g << 5 | b);
-#endif
-
+				setXYZ4(v, 0, x1, y1, z1, col1, x2, y2, z2, col2, x4, y4, z4, col4, x3, y3, z3, col3);
 				tex.u1 = u1;
 				tex.u2 = u2;
 				tex.u3 = u1;
@@ -1366,7 +1350,6 @@ void DrawSummonRings()
 	long Z[16];
 	short XY[32];
 	ushort u1, u2, v1, v2;
-	char clipFlag;
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w - 1;
@@ -1538,104 +1521,13 @@ void DrawSummonRings()
 				if (x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
 					y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
 				{
-					clipFlag = 0;
-
-					if (x1 < phd_winxmin)
-						clipFlag++;
-					else if (x1 > phd_winxmax)
-						clipFlag += 2;
-
-					if (y1 < phd_winymin)
-						clipFlag += 4;
-					else if (y1 > phd_winymax)
-						clipFlag += 8;
-
-					v[0].clip = clipFlag;
-					v[0].xs = (float)x1;
-					v[0].ys = (float)y1;
-					v[0].zv = (float)z1;
-					v[0].ooz = f_persp / (float)z1 * f_oneopersp;
-					r = (col1 >> 3) & 0x1F;
-					g = (col1 >> 11) & 0x1F;
-					b = (col1 >> 19) & 0x1F;
-					v[0].g = short(r << 10 | g << 5 | b);
-
-					clipFlag = 0;
-
-					if (x2 < phd_winxmin)
-						clipFlag++;
-					else if (x2 > phd_winxmax)
-						clipFlag += 2;
-
-					if (y2 < phd_winymin)
-						clipFlag += 4;
-					else if (y2 > phd_winymax)
-						clipFlag += 8;
-
-					v[1].clip = clipFlag;
-					v[1].xs = (float)x2;
-					v[1].ys = (float)y2;
-					v[1].zv = (float)z2;
-					v[1].ooz = f_persp / (float)z2 * f_oneopersp;
-					r = (col2 >> 3) & 0x1F;
-					g = (col2 >> 11) & 0x1F;
-					b = (col2 >> 19) & 0x1F;
-					v[1].g = short(r << 10 | g << 5 | b);
-
-					clipFlag = 0;
-
-					if (x3 < phd_winxmin)
-						clipFlag++;
-					else if (x3 > phd_winxmax)
-						clipFlag += 2;
-
-					if (y3 < phd_winymin)
-						clipFlag += 4;
-					else if (y3 > phd_winymax)
-						clipFlag += 8;
-
-					v[3].clip = clipFlag;
-					v[3].xs = (float)x3;
-					v[3].ys = (float)y3;
-					v[3].zv = (float)z3;
-					v[3].ooz = f_persp / (float)z3 * f_oneopersp;
-					r = (col3 >> 3) & 0x1F;
-					g = (col3 >> 11) & 0x1F;
-					b = (col3 >> 19) & 0x1F;
-					v[3].g = short(r << 10 | g << 5 | b);
-
-					clipFlag = 0;
-
-					if (x4 < phd_winxmin)
-						clipFlag++;
-					else if (x4 > phd_winxmax)
-						clipFlag += 2;
-
-					if (y4 < phd_winymin)
-						clipFlag += 4;
-					else if (y4 > phd_winymax)
-						clipFlag += 8;
-
-					v[2].clip = clipFlag;
-					v[2].xs = (float)x4;
-					v[2].ys = (float)y4;
-					v[2].zv = (float)z4;
-					v[2].ooz = f_persp / (float)z4 * f_oneopersp;
+					setXYZ4(v, 0, x1, y1, z1, col1, x2, y2, z2, col2, x4, y4, z4, col4, x3, y3, z3, col3);
 
 #ifdef TROYESTUFF
 					if (tomb3.sophia_rings == SRINGS_PSX)
-					{
-						r = (col4 >> 3) & 0x1F;
-						g = (col4 >> 11) & 0x1F;
-						b = (col4 >> 19) & 0x1F;
-						v[2].g = short(r << 10 | g << 5 | b);
-
 						tex.tpage = 0;	//make it a semitransparent quad, no sprite, like PSX.
-					}
 					else if (tomb3.sophia_rings == SRINGS_IMPROVED_PC)	//flip UVs
 					{
-						v[2].g = 0x4210;
-
 						tex.u1 = u1;
 						tex.v1 = v1;
 
@@ -1652,7 +1544,6 @@ void DrawSummonRings()
 					}
 					else
 					{
-						v[2].g = v[0].g;	//originally uninitialized.
 #endif
 						tex.u1 = u1;
 						tex.u2 = u2;
@@ -1706,7 +1597,6 @@ void DrawKnockBackRings()
 	long Z[16];
 	short XY[32];
 	ushort u1, u2, v1, v2;
-	char clipFlag;
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w - 1;
@@ -1865,98 +1755,11 @@ void DrawKnockBackRings()
 				if (x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
 					y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
 				{
-					clipFlag = 0;
-
-					if (x1 < phd_winxmin)
-						clipFlag++;
-					else if (x1 > phd_winxmax)
-						clipFlag += 2;
-
-					if (y1 < phd_winymin)
-						clipFlag += 4;
-					else if (y1 > phd_winymax)
-						clipFlag += 8;
-
-					v[0].clip = clipFlag;
-					v[0].xs = (float)x1;
-					v[0].ys = (float)y1;
-					v[0].zv = (float)z1;
-					v[0].ooz = f_persp / (float)z1 * f_oneopersp;
-					r = (col1 >> 3) & 0x1F;
-					g = (col1 >> 11) & 0x1F;
-					b = (col1 >> 19) & 0x1F;
-					v[0].g = short(r << 10 | g << 5 | b);
-
-					clipFlag = 0;
-
-					if (x2 < phd_winxmin)
-						clipFlag++;
-					else if (x2 > phd_winxmax)
-						clipFlag += 2;
-
-					if (y2 < phd_winymin)
-						clipFlag += 4;
-					else if (y2 > phd_winymax)
-						clipFlag += 8;
-
-					v[1].clip = clipFlag;
-					v[1].xs = (float)x2;
-					v[1].ys = (float)y2;
-					v[1].zv = (float)z2;
-					v[1].ooz = f_persp / (float)z2 * f_oneopersp;
-					r = (col2 >> 3) & 0x1F;
-					g = (col2 >> 11) & 0x1F;
-					b = (col2 >> 19) & 0x1F;
-					v[1].g = short(r << 10 | g << 5 | b);
-
-					clipFlag = 0;
-
-					if (x3 < phd_winxmin)
-						clipFlag++;
-					else if (x3 > phd_winxmax)
-						clipFlag += 2;
-
-					if (y3 < phd_winymin)
-						clipFlag += 4;
-					else if (y3 > phd_winymax)
-						clipFlag += 8;
-
-					v[3].clip = clipFlag;
-					v[3].xs = (float)x3;
-					v[3].ys = (float)y3;
-					v[3].zv = (float)z3;
-					v[3].ooz = f_persp / (float)z3 * f_oneopersp;
-					r = (col3 >> 3) & 0x1F;
-					g = (col3 >> 11) & 0x1F;
-					b = (col3 >> 19) & 0x1F;
-					v[3].g = short(r << 10 | g << 5 | b);
-
-					clipFlag = 0;
-
-					if (x4 < phd_winxmin)
-						clipFlag++;
-					else if (x4 > phd_winxmax)
-						clipFlag += 2;
-
-					if (y4 < phd_winymin)
-						clipFlag += 4;
-					else if (y4 > phd_winymax)
-						clipFlag += 8;
-
-					v[2].clip = clipFlag;
-					v[2].xs = (float)x4;
-					v[2].ys = (float)y4;
-					v[2].zv = (float)z4;
-					v[2].ooz = f_persp / (float)z4 * f_oneopersp;
-
+					setXYZ4(v, 0, x1, y1, z1, col1, x2, y2, z2, col2, x4, y4, z4, col4, x3, y3, z4, col3);
+					
 #ifdef TROYESTUFF
 					if (tomb3.sophia_rings == SRINGS_PSX || tomb3.sophia_rings == SRINGS_IMPROVED_PC)
 					{
-						r = (col4 >> 3) & 0x1F;
-						g = (col4 >> 11) & 0x1F;
-						b = (col4 >> 19) & 0x1F;
-						v[2].g = short(r << 10 | g << 5 | b);
-
 						tex.u1 = u1;
 						tex.v1 = v1;
 						tex.u2 = u2;
@@ -1968,7 +1771,6 @@ void DrawKnockBackRings()
 					}
 					else
 					{
-						v[2].g = 0;
 #endif
 						tex.u1 = u1;
 						tex.v1 = v1;
@@ -2741,7 +2543,6 @@ void DrawTonyBossShield(ITEM_INFO* item)
 	long Z[150];
 	ushort u1, v1, u2, v2;
 	short XY[150];
-	char clipFlag;
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w - 1;
@@ -2855,96 +2656,7 @@ void DrawTonyBossShield(ITEM_INFO* item)
 				x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
 				y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
 			{
-				clipFlag = 0;
-
-				if (x1 < phd_winxmin)
-					clipFlag++;
-				else if (x1 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y1 < phd_winymin)
-					clipFlag += 4;
-				else if (y1 > phd_winymax)
-					clipFlag += 8;
-
-				v[0].clip = clipFlag;
-				v[0].xs = (float)x1;
-				v[0].ys = (float)y1;
-				v[0].zv = (float)z1;
-				v[0].ooz = f_persp / (float)z1 * f_oneopersp;
-				r = (c1 >> 3) & 0x1F;
-				g = (c1 >> 11) & 0x1F;
-				b = (c1 >> 19) & 0x1F;
-				v[0].g = short(r << 10 | g << 5 | b);
-
-				clipFlag = 0;
-
-				if (x2 < phd_winxmin)
-					clipFlag++;
-				else if (x2 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y2 < phd_winymin)
-					clipFlag += 4;
-				else if (y2 > phd_winymax)
-					clipFlag += 8;
-
-				v[1].clip = clipFlag;
-				v[1].xs = (float)x2;
-				v[1].ys = (float)y2;
-				v[1].zv = (float)z2;
-				v[1].ooz = f_persp / (float)z2 * f_oneopersp;
-				r = (c2 >> 3) & 0x1F;
-				g = (c2 >> 11) & 0x1F;
-				b = (c2 >> 19) & 0x1F;
-				v[1].g = short(r << 10 | g << 5 | b);
-
-				clipFlag = 0;
-
-				if (x3 < phd_winxmin)
-					clipFlag++;
-				else if (x3 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y3 < phd_winymin)
-					clipFlag += 4;
-				else if (y3 > phd_winymax)
-					clipFlag += 8;
-
-				v[3].clip = clipFlag;
-				v[3].xs = (float)x3;
-				v[3].ys = (float)y3;
-				v[3].zv = (float)z3;
-				v[3].ooz = f_persp / (float)z3 * f_oneopersp;
-				r = (c3 >> 3) & 0x1F;
-				g = (c3 >> 11) & 0x1F;
-				b = (c3 >> 19) & 0x1F;
-				v[3].g = short(r << 10 | g << 5 | b);
-
-				clipFlag = 0;
-
-				if (x4 < phd_winxmin)
-					clipFlag++;
-				else if (x4 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y4 < phd_winymin)
-					clipFlag += 4;
-				else if (y4 > phd_winymax)
-					clipFlag += 8;
-
-				v[2].clip = clipFlag;
-				v[2].xs = (float)x4;
-				v[2].ys = (float)y4;
-				v[2].zv = (float)z4;
-				v[2].ooz = f_persp / (float)z4 * f_oneopersp;
-#ifdef TROYESTUFF
-				r = (c4 >> 3) & 0x1F;
-				g = (c4 >> 11) & 0x1F;
-				b = (c4 >> 19) & 0x1F;
-				v[2].g = short(r << 10 | g << 5 | b);
-#endif
-
+				setXYZ4(v, 0, x1, y1, z1, c1, x2, y2, z2, c2, x4, y4, z4, c4, x3, y3, z3, c3);
 				tex.u1 = u1;
 				tex.u2 = u2;
 				tex.u3 = u2;
@@ -2991,7 +2703,6 @@ void DrawTribeBossShield(ITEM_INFO* item)
 	long Z[150];
 	ushort u1, v1, u2, v2;
 	short XY[150];
-	char clipFlag;
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w - 1;
@@ -3103,96 +2814,7 @@ void DrawTribeBossShield(ITEM_INFO* item)
 				x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
 				y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
 			{
-				clipFlag = 0;
-
-				if (x1 < phd_winxmin)
-					clipFlag++;
-				else if (x1 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y1 < phd_winymin)
-					clipFlag += 4;
-				else if (y1 > phd_winymax)
-					clipFlag += 8;
-
-				v[0].clip = clipFlag;
-				v[0].xs = (float)x1;
-				v[0].ys = (float)y1;
-				v[0].zv = (float)z1;
-				v[0].ooz = f_persp / (float)z1 * f_oneopersp;
-				r = (c1 >> 3) & 0x1F;
-				g = (c1 >> 11) & 0x1F;
-				b = (c1 >> 19) & 0x1F;
-				v[0].g = short(r << 10 | g << 5 | b);
-
-				clipFlag = 0;
-
-				if (x2 < phd_winxmin)
-					clipFlag++;
-				else if (x2 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y2 < phd_winymin)
-					clipFlag += 4;
-				else if (y2 > phd_winymax)
-					clipFlag += 8;
-
-				v[1].clip = clipFlag;
-				v[1].xs = (float)x2;
-				v[1].ys = (float)y2;
-				v[1].zv = (float)z2;
-				v[1].ooz = f_persp / (float)z2 * f_oneopersp;
-				r = (c2 >> 3) & 0x1F;
-				g = (c2 >> 11) & 0x1F;
-				b = (c2 >> 19) & 0x1F;
-				v[1].g = short(r << 10 | g << 5 | b);
-
-				clipFlag = 0;
-
-				if (x3 < phd_winxmin)
-					clipFlag++;
-				else if (x3 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y3 < phd_winymin)
-					clipFlag += 4;
-				else if (y3 > phd_winymax)
-					clipFlag += 8;
-
-				v[3].clip = clipFlag;
-				v[3].xs = (float)x3;
-				v[3].ys = (float)y3;
-				v[3].zv = (float)z3;
-				v[3].ooz = f_persp / (float)z3 * f_oneopersp;
-				r = (c3 >> 3) & 0x1F;
-				g = (c3 >> 11) & 0x1F;
-				b = (c3 >> 19) & 0x1F;
-				v[3].g = short(r << 10 | g << 5 | b);
-
-				clipFlag = 0;
-
-				if (x4 < phd_winxmin)
-					clipFlag++;
-				else if (x4 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y4 < phd_winymin)
-					clipFlag += 4;
-				else if (y4 > phd_winymax)
-					clipFlag += 8;
-
-				v[2].clip = clipFlag;
-				v[2].xs = (float)x4;
-				v[2].ys = (float)y4;
-				v[2].zv = (float)z4;
-				v[2].ooz = f_persp / (float)z4 * f_oneopersp;
-#ifdef TROYESTUFF
-				r = (c4 >> 3) & 0x1F;
-				g = (c4 >> 11) & 0x1F;
-				b = (c4 >> 19) & 0x1F;
-				v[2].g = short(r << 10 | g << 5 | b);
-#endif
-
+				setXYZ4(v, 0, x1, y1, z1, c1, x2, y2, z2, c2, x4, y4, z4, c4, x3, y3, z3, c3);
 				tex.u1 = u1;
 				tex.u2 = u2;
 				tex.u3 = u2;
@@ -3239,7 +2861,6 @@ void DrawLondonBossShield(ITEM_INFO* item)
 	long Z[150];
 	ushort u1, v1, u2, v2;
 	short XY[150];
-	char clipFlag;
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w - 1;
@@ -3350,96 +2971,7 @@ void DrawLondonBossShield(ITEM_INFO* item)
 				x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
 				y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
 			{
-				clipFlag = 0;
-
-				if (x1 < phd_winxmin)
-					clipFlag++;
-				else if (x1 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y1 < phd_winymin)
-					clipFlag += 4;
-				else if (y1 > phd_winymax)
-					clipFlag += 8;
-
-				v[0].clip = clipFlag;
-				v[0].xs = (float)x1;
-				v[0].ys = (float)y1;
-				v[0].zv = (float)z1;
-				v[0].ooz = f_persp / (float)z1 * f_oneopersp;
-				r = (c1 >> 3) & 0x1F;
-				g = (c1 >> 11) & 0x1F;
-				b = (c1 >> 19) & 0x1F;
-				v[0].g = short(r << 10 | g << 5 | b);
-
-				clipFlag = 0;
-
-				if (x2 < phd_winxmin)
-					clipFlag++;
-				else if (x2 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y2 < phd_winymin)
-					clipFlag += 4;
-				else if (y2 > phd_winymax)
-					clipFlag += 8;
-
-				v[1].clip = clipFlag;
-				v[1].xs = (float)x2;
-				v[1].ys = (float)y2;
-				v[1].zv = (float)z2;
-				v[1].ooz = f_persp / (float)z2 * f_oneopersp;
-				r = (c2 >> 3) & 0x1F;
-				g = (c2 >> 11) & 0x1F;
-				b = (c2 >> 19) & 0x1F;
-				v[1].g = short(r << 10 | g << 5 | b);
-
-				clipFlag = 0;
-
-				if (x3 < phd_winxmin)
-					clipFlag++;
-				else if (x3 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y3 < phd_winymin)
-					clipFlag += 4;
-				else if (y3 > phd_winymax)
-					clipFlag += 8;
-
-				v[3].clip = clipFlag;
-				v[3].xs = (float)x3;
-				v[3].ys = (float)y3;
-				v[3].zv = (float)z3;
-				v[3].ooz = f_persp / (float)z3 * f_oneopersp;
-				r = (c3 >> 3) & 0x1F;
-				g = (c3 >> 11) & 0x1F;
-				b = (c3 >> 19) & 0x1F;
-				v[3].g = short(r << 10 | g << 5 | b);
-
-				clipFlag = 0;
-
-				if (x4 < phd_winxmin)
-					clipFlag++;
-				else if (x4 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y4 < phd_winymin)
-					clipFlag += 4;
-				else if (y4 > phd_winymax)
-					clipFlag += 8;
-
-				v[2].clip = clipFlag;
-				v[2].xs = (float)x4;
-				v[2].ys = (float)y4;
-				v[2].zv = (float)z4;
-				v[2].ooz = f_persp / (float)z4 * f_oneopersp;
-#ifdef TROYESTUFF
-				r = (c4 >> 3) & 0x1F;
-				g = (c4 >> 11) & 0x1F;
-				b = (c4 >> 19) & 0x1F;
-				v[2].g = short(r << 10 | g << 5 | b);
-#endif
-
+				setXYZ4(v, 0, x1, y1, z1, c1, x2, y2, z2, c2, x4, y4, z4, c4, x3, y3, z3, c3);
 				tex.u1 = u1;
 				tex.u2 = u2;
 				tex.u3 = u2;
@@ -3486,7 +3018,6 @@ void DrawWillBossShield(ITEM_INFO* item)
 	long Z[150];
 	ushort u1, v1, u2, v2;
 	short XY[150];
-	char clipFlag;
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w - 1;
@@ -3597,96 +3128,7 @@ void DrawWillBossShield(ITEM_INFO* item)
 				x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
 				y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
 			{
-				clipFlag = 0;
-
-				if (x1 < phd_winxmin)
-					clipFlag++;
-				else if (x1 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y1 < phd_winymin)
-					clipFlag += 4;
-				else if (y1 > phd_winymax)
-					clipFlag += 8;
-
-				v[0].clip = clipFlag;
-				v[0].xs = (float)x1;
-				v[0].ys = (float)y1;
-				v[0].zv = (float)z1;
-				v[0].ooz = f_persp / (float)z1 * f_oneopersp;
-				r = (c1 >> 3) & 0x1F;
-				g = (c1 >> 11) & 0x1F;
-				b = (c1 >> 19) & 0x1F;
-				v[0].g = short(r << 10 | g << 5 | b);
-
-				clipFlag = 0;
-
-				if (x2 < phd_winxmin)
-					clipFlag++;
-				else if (x2 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y2 < phd_winymin)
-					clipFlag += 4;
-				else if (y2 > phd_winymax)
-					clipFlag += 8;
-
-				v[1].clip = clipFlag;
-				v[1].xs = (float)x2;
-				v[1].ys = (float)y2;
-				v[1].zv = (float)z2;
-				v[1].ooz = f_persp / (float)z2 * f_oneopersp;
-				r = (c2 >> 3) & 0x1F;
-				g = (c2 >> 11) & 0x1F;
-				b = (c2 >> 19) & 0x1F;
-				v[1].g = short(r << 10 | g << 5 | b);
-
-				clipFlag = 0;
-
-				if (x3 < phd_winxmin)
-					clipFlag++;
-				else if (x3 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y3 < phd_winymin)
-					clipFlag += 4;
-				else if (y3 > phd_winymax)
-					clipFlag += 8;
-
-				v[3].clip = clipFlag;
-				v[3].xs = (float)x3;
-				v[3].ys = (float)y3;
-				v[3].zv = (float)z3;
-				v[3].ooz = f_persp / (float)z3 * f_oneopersp;
-				r = (c3 >> 3) & 0x1F;
-				g = (c3 >> 11) & 0x1F;
-				b = (c3 >> 19) & 0x1F;
-				v[3].g = short(r << 10 | g << 5 | b);
-
-				clipFlag = 0;
-
-				if (x4 < phd_winxmin)
-					clipFlag++;
-				else if (x4 > phd_winxmax)
-					clipFlag += 2;
-
-				if (y4 < phd_winymin)
-					clipFlag += 4;
-				else if (y4 > phd_winymax)
-					clipFlag += 8;
-
-				v[2].clip = clipFlag;
-				v[2].xs = (float)x4;
-				v[2].ys = (float)y4;
-				v[2].zv = (float)z4;
-				v[2].ooz = f_persp / (float)z4 * f_oneopersp;
-#ifdef TROYESTUFF
-				r = (c4 >> 3) & 0x1F;
-				g = (c4 >> 11) & 0x1F;
-				b = (c4 >> 19) & 0x1F;
-				v[2].g = short(r << 10 | g << 5 | b);
-#endif
-
+				setXYZ4(v, 0, x1, y1, z1, c1, x2, y2, z2, c2, x4, y4, z4, c4, x3, y3, z3, c3);
 				tex.u1 = u1;
 				tex.u2 = u2;
 				tex.u3 = u2;
@@ -3864,7 +3306,6 @@ void S_DrawBat()
 	long Z[10];
 	ushort u1, v1, u2, v2;
 	short XY[10];
-	char clipFlag;
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w;
@@ -3936,63 +3377,7 @@ void S_DrawBat()
 				(y1 < 0 && y2 < 0 && y3 < 0) || (y1 >= h && y2 >= h && y3 >= h))
 				continue;
 
-			clipFlag = 0;
-
-			if (x1 < phd_winxmin)
-				clipFlag++;
-			else if (x1 > phd_winxmax)
-				clipFlag += 2;
-
-			if (y1 < phd_winymin)
-				clipFlag += 4;
-			else if (y1 > phd_winymax)
-				clipFlag += 8;
-
-			v[0].clip = clipFlag;
-			v[0].xs = (float)x1;
-			v[0].ys = (float)y1;
-			v[0].zv = (float)z1;
-			v[0].ooz = f_persp / v[0].zv * f_oneopersp;
-			v[0].g = 0x7E8C;
-
-			clipFlag = 0;
-
-			if (x2 < phd_winxmin)
-				clipFlag++;
-			else if (x2 > phd_winxmax)
-				clipFlag += 2;
-
-			if (y2 < phd_winymin)
-				clipFlag += 4;
-			else if (y2 > phd_winymax)
-				clipFlag += 8;
-
-			v[1].clip = clipFlag;
-			v[1].xs = (float)x2;
-			v[1].ys = (float)y2;
-			v[1].zv = (float)z2;
-			v[1].ooz = f_persp / v[1].zv * f_oneopersp;
-			v[1].g = 0x7E8C;
-
-			clipFlag = 0;
-
-			if (x3 < phd_winxmin)
-				clipFlag++;
-			else if (x3 > phd_winxmax)
-				clipFlag += 2;
-
-			if (y3 < phd_winymin)
-				clipFlag += 4;
-			else if (y3 > phd_winymax)
-				clipFlag += 8;
-
-			v[2].clip = clipFlag;
-			v[2].xs = (float)x3;
-			v[2].ys = (float)y3;
-			v[2].zv = (float)z3;
-			v[2].ooz = f_persp / v[2].zv * f_oneopersp;
-			v[2].g = 0x7E8C;
-
+			setXYZ3(v, 1, x1, y1, z1, 0x7E8C, x2, y2, z2, 0x7E8C, x3, y3, z3, 0x7E8C);
 			sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 12];
 			u1 = (sprite->offset << 8) & 0xFF00;
 			v1 = sprite->offset & 0xFF00;
@@ -4871,7 +4256,6 @@ void S_DrawFish(ITEM_INFO* item)
 	long point[3];
 	ushort u1, v1, u2, v2;
 	short g;
-	char clipFlag;
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w;
@@ -4960,63 +4344,7 @@ void S_DrawFish(ITEM_INFO* item)
 		z2 <<= W2V_SHIFT;
 		z3 <<= W2V_SHIFT;
 
-		clipFlag = 0;
-
-		if (x1 < phd_winxmin)
-			clipFlag++;
-		else if (x1 > sx)
-			clipFlag += 2;
-
-		if (y1 < phd_winymin)
-			clipFlag += 4;
-		else if (y1 > sy)
-			clipFlag += 8;
-
-		v[0].clip = clipFlag;
-		v[0].xs = (float)x1;
-		v[0].ys = (float)y1;
-		v[0].zv = (float)z1;
-		v[0].ooz = f_persp / v[0].zv * f_oneopersp;
-		v[0].g = g;
-
-		clipFlag = 0;
-
-		if (x2 < phd_winxmin)
-			clipFlag++;
-		else if (x2 > sx)
-			clipFlag += 2;
-
-		if (y2 < phd_winymin)
-			clipFlag += 4;
-		else if (y2 > sy)
-			clipFlag += 8;
-
-		v[1].clip = clipFlag;
-		v[1].xs = (float)x2;
-		v[1].ys = (float)y2;
-		v[1].zv = (float)z2;
-		v[1].ooz = f_persp / v[1].zv * f_oneopersp;
-		v[1].g = g;
-
-		clipFlag = 0;
-
-		if (x3 < phd_winxmin)
-			clipFlag++;
-		else if (x3 > sx)
-			clipFlag += 2;
-
-		if (y3 < phd_winymin)
-			clipFlag += 4;
-		else if (y3 > sy)
-			clipFlag += 8;
-
-		v[2].clip = clipFlag;
-		v[2].xs = (float)x3;
-		v[2].ys = (float)y3;
-		v[2].zv = (float)z3;
-		v[2].ooz = f_persp / v[2].zv * f_oneopersp;
-		v[2].g = g;
-
+		setXYZ3(v, 1, x1, y1, z1, g, x2, y2, z2, g, x3, y3, z3, g);
 		u1 = (sprite->offset << 8) & 0xFF00;
 		v1 = sprite->offset & 0xFF00;
 		u2 = ushort(u1 + sprite->width - App.nUVAdd);
@@ -5364,9 +4692,9 @@ void DoUwEffect()
 	PHD_VBUF v[4];
 	float zv;
 	long w, h, rad, ang, x, y, z, tx, ty, tz, size;
+	long x1, y1, x2, y2, x3, y3;
 	ushort u1, v1, u2, v2;
 	short c;
-	char clipFlag;
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w;
@@ -5482,68 +4810,12 @@ void DoUwEffect()
 		size = (size * 0x2AAB) >> 15;
 		size = GetFixedScale(size) >> 1;
 
-		v[0].xs = float(x + size);
-		v[0].ys = float(y - (size << 1));
-		v[0].zv = (float)z;
-		v[0].ooz = f_oneopersp * zv;
-		v[0].u = u2;
-		v[0].v = v1;
-		clipFlag = 0;
-
-		if (v[0].xs < phd_winxmin)
-			clipFlag++;
-		else if (v[0].xs > phd_winxmin + phd_winxmax)
-			clipFlag += 2;
-
-		if (v[0].ys < phd_winymin)
-			clipFlag += 4;
-		else if (v[0].ys > phd_winymin + phd_winymax)
-			clipFlag += 8;
-
-		v[0].clip = clipFlag;
-
-		v[1].xs = float(x + size);
-		v[1].ys = float(y + size);
-		v[1].zv = (float)z;
-		v[1].ooz = f_oneopersp * zv;
-		v[1].u = u2;
-		v[1].v = v2;
-		clipFlag = 0;
-
-		if (v[1].xs < phd_winxmin)
-			clipFlag++;
-		else if (v[1].xs > phd_winxmin + phd_winxmax)
-			clipFlag += 2;
-
-		if (v[1].ys < phd_winymin)
-			clipFlag += 4;
-		else if (v[1].ys > phd_winymin + phd_winymax)
-			clipFlag += 8;
-
-		v[1].clip = clipFlag;
-
-		v[2].xs = float(x - (size << 1));
-		v[2].ys = float(y + size);
-		v[2].zv = (float)z;
-		v[2].ooz = f_oneopersp * zv;
-		v[2].u = u1;
-		v[2].v = v2;
-		clipFlag = 0;
-
-		if (v[2].xs < phd_winxmin)
-			clipFlag++;
-		else if (v[2].xs > phd_winxmin + phd_winxmax)
-			clipFlag += 2;
-
-		if (v[2].ys < phd_winymin)
-			clipFlag += 4;
-		else if (v[2].ys > phd_winymin + phd_winymax)
-			clipFlag += 8;
-
-		v[2].clip = clipFlag;
-
-		tex.drawtype = 2;
-		tex.tpage = sprite->tpage;
+		x1 = x + size;
+		y1 = y - (size << 1);
+		x2 = x + size;
+		y2 = y + size;
+		x3 = x - (size << 1);
+		y3 = y + size;
 
 		if ((p->yv & 7) < 7)
 		{
@@ -5557,10 +4829,18 @@ void DoUwEffect()
 			c = p->life;
 			c = c << 10 | c << 5 | c;
 		}
+		
+		setXYZ3(v, 1, x1, y1, z, c, x2, y2, z, c, x3, y3, z, c);
 
-		v[0].g = c;
-		v[1].g = c;
-		v[2].g = c;
+		tex.drawtype = 2;
+		tex.tpage = sprite->tpage;
+
+		v[0].u = u2;
+		v[0].v = v1;
+		v[1].u = u2;
+		v[1].v = v2;
+		v[2].u = u1;
+		v[2].v = v2;
 		HWI_InsertGT3_Poly(&v[0], &v[1], &v[2], &tex, &v[0].u, &v[1].u, &v[2].u, MID_SORT, 0);
 	}
 
