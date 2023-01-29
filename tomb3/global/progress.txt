@@ -1027,7 +1027,7 @@ tomb3 progress.
 		game/londboss.cpp
 
 0x00450800	+	LondonBossControl
-0x00451640		S_DrawLondonBoss
+0x00451640	+	S_DrawLondonBoss
 0x004516A0	+	InitialiseLondonBoss
 0x00451730	+	ExplodeLondonBoss
 0x00451980	+	TriggerLaserBolt

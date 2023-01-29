@@ -15,6 +15,9 @@
 #include "sphere.h"
 #include "pickup.h"
 #include "people.h"
+#include "draw.h"
+#include "../specific/draweffects.h"
+#include "laraelec.h"
 
 static BITE_INFO londonboss_points[3] =
 {
@@ -977,6 +980,29 @@ void LondonBossControl(short item_number)
 		item->item_flags[0] = 0;
 }
 
+void S_DrawLondonBoss(ITEM_INFO* item)
+{
+	DrawAnimatingItem(item);
+
+	if (bossdata.explode_count)
+	{
+		DrawLondonBossShield(item);
+		DrawExplosionRings();
+	}
+	else
+	{
+		DrawSummonRings();
+		DrawKnockBackRings();
+	}
+
+	if (item->hit_points <= 0 && !bossdata.explode_count)
+	{
+		UpdateElectricityPoints();
+		LaraElectricDeath(0, item);
+		LaraElectricDeath(1, item);
+	}
+}
+
 void inject_londboss(bool replace)
 {
 	INJECT(0x00451DE0, TriggerPlasmaBall, replace);
@@ -988,4 +1014,5 @@ void inject_londboss(bool replace)
 	INJECT(0x00451AB0, ControlLaserBolts, replace);
 	INJECT(0x004516A0, InitialiseLondonBoss, replace);
 	INJECT(0x00450800, LondonBossControl, replace);
+	INJECT(0x00451640, S_DrawLondonBoss, replace);
 }

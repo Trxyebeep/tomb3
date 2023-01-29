@@ -8,6 +8,7 @@ void ControlLondBossPlasmaBall(short fx_number);
 void ControlLaserBolts(short item_number);
 void InitialiseLondonBoss(short item_number);
 void LondonBossControl(short item_number);
+void S_DrawLondonBoss(ITEM_INFO* item);
 
 enum LONDONBOSSS_STATES
 {
