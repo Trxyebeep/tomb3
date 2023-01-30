@@ -11,6 +11,7 @@
 - Fix location skip bug in NG+ mode.
 - Fix All Hallows loading with corrupt textures if player didn't get all secrets in NG+ mode.
 - Fix screen clipping for boss explosion rings/shields.
+- Fix odd color on explosion rings.
 
 ### tomb3 additions
 

@@ -1378,8 +1378,10 @@ void DrawExplosionRings()
 #ifdef TROYESTUFF
 				xv4 = pV2[-16];
 				yv4 = pV2[-15];
-#endif
+				col2 = vtx2[-8].rgb;
+#else
 				col2 = vtx[-8].rgb;
+#endif
 				col4 = vtx->rgb;
 			}
 			else
