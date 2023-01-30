@@ -151,6 +151,38 @@ static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, short c, bool cFlag)
 }
 #endif
 
+#ifdef TROYESTUFF
+static __inline void ClipCheckPoint(PHD_VBUF* v, long x, long y, long z, long xv, long yv)
+{
+	char clipFlag;
+
+	clipFlag = 0;
+
+	if (z < phd_znear)
+		clipFlag = -128;
+	else
+	{
+		if (x < phd_winxmin)
+			clipFlag++;
+		else if (x > phd_winxmax)
+			clipFlag += 2;
+
+		if (y < phd_winymin)
+			clipFlag += 4;
+		else if (y > phd_winymax)
+			clipFlag += 8;
+	}
+
+	v->clip = clipFlag;
+	v->xs = (float)x;
+	v->ys = (float)y;
+	v->xv = (float)xv;
+	v->yv = (float)yv;
+	v->zv = (float)z;
+	v->ooz = f_persp / (float)z * f_oneopersp;
+}
+#endif
+
 static __inline void ClipCheckPoint(PHD_VBUF* v, long x, long y, long z)
 {
 	char clipFlag;
@@ -189,20 +221,53 @@ static __inline void setColor(PHD_VBUF* v, long c, char flag)
 		v->g = (short)c;
 }
 
+#ifdef TROYESTUFF
+static __inline void setXYZ3(PHD_VBUF* v, char cFlag,
+	long x1, long y1, long z1, long xv1, long yv1, long c1,
+	long x2, long y2, long z2, long xv2, long yv2, long c2,
+	long x3, long y3, long z3, long xv3, long yv3, long c3)
+{
+	ClipCheckPoint(&v[0], x1, y1, z1, xv1, yv1);
+	ClipCheckPoint(&v[1], x2, y2, z2, xv2, yv2);
+	ClipCheckPoint(&v[2], x3, y3, z3, xv3, yv3);
+	setColor(&v[0], c1, cFlag);
+	setColor(&v[1], c2, cFlag);
+	setColor(&v[2], c3, cFlag);
+}
+#endif
+
 static __inline void setXYZ3(PHD_VBUF* v, char cFlag,
 	long x1, long y1, long z1, long c1,
 	long x2, long y2, long z2, long c2,
 	long x3, long y3, long z3, long c3)
+
 {
 	ClipCheckPoint(&v[0], x1, y1, z1);
-	setColor(&v[0], c1, cFlag);
-
 	ClipCheckPoint(&v[1], x2, y2, z2);
-	setColor(&v[1], c2, cFlag);
-
 	ClipCheckPoint(&v[2], x3, y3, z3);
+	setColor(&v[0], c1, cFlag);
+	setColor(&v[1], c2, cFlag);
 	setColor(&v[2], c3, cFlag);
 }
+
+#ifdef TROYESTUFF
+static __inline void setXYZ4(PHD_VBUF* v, char cFlag,
+	long x1, long y1, long z1, long xv1, long yv1, long c1,
+	long x2, long y2, long z2, long xv2, long yv2, long c2,
+	long x3, long y3, long z3, long xv3, long yv3, long c3,
+	long x4, long y4, long z4, long xv4, long yv4, long c4)
+{
+	ClipCheckPoint(&v[0], x1, y1, z1, xv1, yv1);
+	ClipCheckPoint(&v[1], x2, y2, z2, xv2, yv2);
+	ClipCheckPoint(&v[2], x3, y3, z3, xv3, yv3);
+	ClipCheckPoint(&v[3], x4, y4, z4, xv4, yv4);
+
+	setColor(&v[0], c1, cFlag);
+	setColor(&v[1], c2, cFlag);
+	setColor(&v[2], c3, cFlag);
+	setColor(&v[3], c4, cFlag);
+}
+#endif
 
 static __inline void setXYZ4(PHD_VBUF* v, char cFlag,
 	long x1, long y1, long z1, long c1,
@@ -211,17 +276,15 @@ static __inline void setXYZ4(PHD_VBUF* v, char cFlag,
 	long x4, long y4, long z4, long c4)
 {
 	ClipCheckPoint(&v[0], x1, y1, z1);
-	setColor(&v[0], c1, cFlag);
-
 	ClipCheckPoint(&v[1], x2, y2, z2);
-	setColor(&v[1], c2, cFlag);
-
 	ClipCheckPoint(&v[2], x3, y3, z3);
+	ClipCheckPoint(&v[3], x4, y4, z4);
+
+	setColor(&v[0], c1, cFlag);
+	setColor(&v[1], c2, cFlag);
 #ifdef TROYESTUFF
 	setColor(&v[2], c3, cFlag);
 #endif
-
-	ClipCheckPoint(&v[3], x4, y4, z4);
 	setColor(&v[3], c4, cFlag);
 }
 
@@ -1135,13 +1198,21 @@ void DrawExplosionRings()
 	PHD_VECTOR pos;
 	PHDTEXTURESTRUCT tex;
 	long* pZ;
-	short* pXY;
 	long* pZ2;
+#ifdef TROYESTUFF
+	long* pV;
+	long* pV2;
+#endif
+	short* pXY;
 	short* pXY2;
 	float zv;
 	long w, h, rad, ang, r, g, b, x, y, z;
 	long x1, x2, x3, x4, y1, y2, y3, y4, z1, z2, z3, z4, col1, col2, col3, col4;
 	long Z[16];
+#ifdef TROYESTUFF
+	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
+	long view[32];
+#endif
 	short XY[32];
 	ushort u1, u2, v1, v2;
 
@@ -1173,6 +1244,9 @@ void DrawExplosionRings()
 		vtx = ring->verts;
 		pXY = XY;
 		pZ = Z;
+#ifdef TROYESTUFF
+		pV = view;
+#endif
 
 		for (int j = 0; j < 2; j++)
 		{
@@ -1232,6 +1306,10 @@ void DrawExplosionRings()
 				pos.y = phd_mxptr[M10] * x + phd_mxptr[M11] * y + phd_mxptr[M12] * z + phd_mxptr[M13];
 				pos.z = phd_mxptr[M20] * x + phd_mxptr[M21] * y + phd_mxptr[M22] * z + phd_mxptr[M23];
 
+#ifdef TROYESTUFF
+				*pV++ = pos.x;
+				*pV++ = pos.y;
+#endif
 				zv = f_persp / (float)pos.z;
 				pos.x = short(float(pos.x * zv + f_centerx));
 				pos.y = short(float(pos.y * zv + f_centery));
@@ -1254,13 +1332,25 @@ void DrawExplosionRings()
 		pZ = Z;
 		pXY2 = &XY[16];
 		pZ2 = &Z[8];
+#ifdef TROYESTUFF
+		pV = view;
+		pV2 = &view[16];
+#endif
 
 		x1 = *pXY++;
 		y1 = *pXY++;
 		z1 = *pZ++;
+#ifdef TROYESTUFF
+		xv1 = *pV++;
+		yv1 = *pV++;
+#endif
 		x3 = *pXY2++;
 		y3 = *pXY2++;
 		z3 = *pZ2++;
+#ifdef TROYESTUFF
+		xv3 = *pV2++;
+		yv3 = *pV2++;
+#endif
 		col1 = vtx->rgb;
 		col3 = vtx2->rgb;
 		sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 4 + ((wibble >> 4) & 3)];
@@ -1278,9 +1368,17 @@ void DrawExplosionRings()
 				x2 = pXY[-16];
 				y2 = pXY[-15];
 				z2 = pZ[-8];
+#ifdef TROYESTUFF
+				xv2 = pV[-16];
+				yv2 = pV[-15];
+#endif
 				x4 = pXY2[-16];
 				y4 = pXY2[-15];
 				z4 = pZ2[-8];
+#ifdef TROYESTUFF
+				xv4 = pV2[-16];
+				yv4 = pV2[-15];
+#endif
 				col2 = vtx[-8].rgb;
 				col4 = vtx->rgb;
 			}
@@ -1289,20 +1387,36 @@ void DrawExplosionRings()
 				x2 = *pXY++;
 				y2 = *pXY++;
 				z2 = *pZ++;
+#ifdef TROYESTUFF
+				xv2 = *pV++;
+				yv2 = *pV++;
+#endif
 				x4 = *pXY2++;
 				y4 = *pXY2++;
 				z4 = *pZ2++;
+#ifdef TROYESTUFF
+				xv4 = *pV2++;
+				yv4 = *pV2++;
+#endif
 				col2 = vtx->rgb;
 				col4 = vtx2->rgb;
 				vtx++;
 				vtx2++;
 			}
 
+#ifdef TROYESTUFF
+			if (col1 || col2 || col3 || col4)
+#else
 			if (((z1 + z2 + z3 + z4) >> 2) > phd_znear && (col1 || col2 || col3 || col4) &&
 				x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
 				y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
+#endif
 			{
+#ifdef TROYESTUFF
+				setXYZ4(v, 0, x1, y1, z1, xv1, yv1,  col1, x2, y2, z2, xv2, yv2, col2, x4, y4, z4, xv4, yv4, col4, x3, y3, z3, xv3, yv3, col3);
+#else
 				setXYZ4(v, 0, x1, y1, z1, col1, x2, y2, z2, col2, x4, y4, z4, col4, x3, y3, z3, col3);
+#endif
 				tex.u1 = u1;
 				tex.u2 = u2;
 				tex.u3 = u1;
@@ -1322,6 +1436,12 @@ void DrawExplosionRings()
 			x3 = x4;
 			y3 = y4;
 			z3 = z4;
+#ifdef TROYESTUFF
+			xv1 = xv2;
+			yv1 = yv2;
+			xv3 = xv4;
+			yv3 = yv4;
+#endif
 			col1 = col2;
 			col3 = col4;
 		}
@@ -1341,15 +1461,23 @@ void DrawSummonRings()
 	PHD_VECTOR pos;
 	PHDTEXTURESTRUCT tex;
 	long* pZ;
-	short* pXY;
 	long* pZ2;
+#ifdef TROYESTUFF
+	long* pV;
+	long* pV2;
+#endif
+	short* pXY;
 	short* pXY2;
 	float zv;
 	long w, h, rad, ang, cval, r, g, b, x, y, z;
 	long x1, x2, x3, x4, y1, y2, y3, y4, z1, z2, z3, z4, col1, col2, col3, col4;
 	long Z[16];
-	short XY[32];
+#ifdef TROYESTUFF
+	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
+	long view[32];
+#endif
 	ushort u1, u2, v1, v2;
+	short XY[32];
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w - 1;
@@ -1397,6 +1525,9 @@ void DrawSummonRings()
 		vtx = ring->verts;
 		pXY = XY;
 		pZ = Z;
+#ifdef TROYESTUFF
+		pV = view;
+#endif
 
 		if (ring->life > 32)
 			cval = (64 - ring->life) << 1;
@@ -1437,6 +1568,10 @@ void DrawSummonRings()
 				pos.y = phd_mxptr[M10] * x + phd_mxptr[M11] * y + phd_mxptr[M12] * z + phd_mxptr[M13];
 				pos.z = phd_mxptr[M20] * x + phd_mxptr[M21] * y + phd_mxptr[M22] * z + phd_mxptr[M23];
 
+#ifdef TROYESTUFF
+				*pV++ = pos.x;
+				*pV++ = pos.y;
+#endif
 				zv = f_persp / (float)pos.z;
 				pos.x = short(float(pos.x * zv + f_centerx));
 				pos.y = short(float(pos.y * zv + f_centery));
@@ -1459,13 +1594,25 @@ void DrawSummonRings()
 		pZ = Z;
 		pXY2 = &XY[16];
 		pZ2 = &Z[8];
+#ifdef TROYESTUFF
+		pV = view;
+		pV2 = &view[16];
+#endif
 
 		x1 = *pXY++;
 		y1 = *pXY++;
 		z1 = *pZ++;
+#ifdef TROYESTUFF
+		xv1 = *pV++;
+		yv1 = *pV++;
+#endif
 		x3 = *pXY2++;
 		y3 = *pXY2++;
 		z3 = *pZ2++;
+#ifdef TROYESTUFF
+		xv3 = *pV2++;
+		yv3 = *pV2++;
+#endif
 		col1 = vtx->rgb;
 		col3 = vtx2->rgb;
 		vtx++;
@@ -1485,9 +1632,17 @@ void DrawSummonRings()
 				x2 = pXY[-16];
 				y2 = pXY[-15];
 				z2 = pZ[-8];
+#ifdef TROYESTUFF
+				xv2 = pV[-16];
+				yv2 = pV[-15];
+#endif
 				x4 = pXY2[-16];
 				y4 = pXY2[-15];
 				z4 = pZ2[-8];
+#ifdef TROYESTUFF
+				xv4 = pV2[-16];
+				yv4 = pV2[-15];
+#endif
 				col2 = vtx[-8].rgb;
 				col4 = vtx->rgb;
 			}
@@ -1496,9 +1651,17 @@ void DrawSummonRings()
 				x2 = *pXY++;
 				y2 = *pXY++;
 				z2 = *pZ++;
+#ifdef TROYESTUFF
+				xv2 = *pV++;
+				yv2 = *pV++;
+#endif
 				x4 = *pXY2++;
 				y4 = *pXY2++;
 				z4 = *pZ2++;
+#ifdef TROYESTUFF
+				xv4 = *pV2++;
+				yv4 = *pV2++;
+#endif
 				col2 = vtx->rgb;
 				col4 = vtx2->rgb;
 				vtx++;
@@ -1506,22 +1669,23 @@ void DrawSummonRings()
 			}
 
 #ifdef TROYESTUFF
-			x = (z1 + z2 + z3 + z4) >> 4;
-
 			if (tomb3.sophia_rings == SRINGS_PC)
-				z1 = x;
-
-			if (x > phd_znear)
+				z1 = (z1 + z2 + z3 + z4) >> 4;
 #else
 			z1 = (z1 + z2 + z3 + z4) >> 4;
 
 			if (z1 > phd_znear)
-#endif
 			{
 				if (x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
 					y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
 				{
+#endif
+
+#ifdef TROYESTUFF
+					setXYZ4(v, 0, x1, y1, z1, xv1, yv1, col1, x2, y2, z2, xv2, yv2, col2, x4, y4, z4, xv4, yv4, col4, x3, y3, z3, xv3, yv3, col3);
+#else
 					setXYZ4(v, 0, x1, y1, z1, col1, x2, y2, z2, col2, x4, y4, z4, col4, x3, y3, z3, col3);
+#endif
 
 #ifdef TROYESTUFF
 					if (tomb3.sophia_rings == SRINGS_PSX)
@@ -1543,8 +1707,8 @@ void DrawSummonRings()
 						tex.tpage = sprite->tpage;
 					}
 					else
-					{
 #endif
+					{
 						tex.u1 = u1;
 						tex.u2 = u2;
 						tex.u3 = u1;
@@ -1554,14 +1718,14 @@ void DrawSummonRings()
 						tex.v3 = v2;
 						tex.v4 = v2;
 						tex.tpage = sprite->tpage;
-#ifdef TROYESTUFF
 					}
-#endif
 
 					tex.drawtype = 2;
 					HWI_InsertGT4_Sorted(&v[0], &v[1], &v[2], &v[3], &tex, MID_SORT, 1);
+#ifndef TROYESTUFF
 				}
 			}
+#endif
 
 			x1 = x2;
 			y1 = y2;
@@ -1569,6 +1733,12 @@ void DrawSummonRings()
 			x3 = x4;
 			y3 = y4;
 			z3 = z4;
+#ifdef TROYESTUFF
+			xv1 = xv2;
+			yv1 = yv2;
+			xv3 = xv4;
+			yv3 = yv4;
+#endif
 			col1 = col2;
 			col3 = col4;
 		}
@@ -1588,15 +1758,23 @@ void DrawKnockBackRings()
 	PHD_VECTOR pos;
 	PHDTEXTURESTRUCT tex;
 	long* pZ;
-	short* pXY;
 	long* pZ2;
+#ifdef TROYESTUFF
+	long* pV;
+	long* pV2;
+#endif
+	short* pXY;
 	short* pXY2;
 	float zv;
 	long w, h, rad, ang, cval, r, g, b, x, y, z;
 	long x1, x2, x3, x4, y1, y2, y3, y4, z1, z2, z3, z4, col1, col2, col3, col4;
 	long Z[16];
-	short XY[32];
+#ifdef TROYESTUFF
+	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
+	long view[32];
+#endif
 	ushort u1, u2, v1, v2;
+	short XY[32];
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	w = dm->w - 1;
@@ -1636,6 +1814,9 @@ void DrawKnockBackRings()
 		vtx = ring->verts;
 		pXY = XY;
 		pZ = Z;
+#ifdef TROYESTUFF
+		pV = view;
+#endif
 
 		if (ring->life > 24)
 			cval = (32 - ring->life) << 2;
@@ -1671,6 +1852,10 @@ void DrawKnockBackRings()
 				pos.y = phd_mxptr[M10] * x + phd_mxptr[M11] * y + phd_mxptr[M12] * z + phd_mxptr[M13];
 				pos.z = phd_mxptr[M20] * x + phd_mxptr[M21] * y + phd_mxptr[M22] * z + phd_mxptr[M23];
 
+#ifdef TROYESTUFF
+				*pV++ = pos.x;
+				*pV++ = pos.y;
+#endif
 				zv = f_persp / (float)pos.z;
 				pos.x = short(float(pos.x * zv + f_centerx));
 				pos.y = short(float(pos.y * zv + f_centery));
@@ -1694,13 +1879,25 @@ void DrawKnockBackRings()
 		pZ = Z;
 		pXY2 = &XY[16];
 		pZ2 = &Z[8];
+#ifdef TROYESTUFF
+		pV = view;
+		pV2 = &view[16];
+#endif
 
 		x1 = *pXY++;
 		y1 = *pXY++;
 		z1 = *pZ++;
+#ifdef TROYESTUFF
+		xv1 = *pV++;
+		yv1 = *pV++;
+#endif
 		x3 = *pXY2++;
 		y3 = *pXY2++;
 		z3 = *pZ2++;
+#ifdef TROYESTUFF
+		xv3 = *pV2++;
+		yv3 = *pV2++;
+#endif
 		col1 = vtx->rgb;
 		col3 = vtx2->rgb;
 		vtx++;
@@ -1720,9 +1917,17 @@ void DrawKnockBackRings()
 				x2 = pXY[-16];
 				y2 = pXY[-15];
 				z2 = pZ[-8];
+#ifdef TROYESTUFF
+				xv2 = pV[-16];
+				yv2 = pV[-15];
+#endif
 				x4 = pXY2[-16];
 				y4 = pXY2[-15];
 				z4 = pZ2[-8];
+#ifdef TROYESTUFF
+				xv4 = pV2[-16];
+				yv4 = pV2[-15];
+#endif
 				col2 = vtx[-8].rgb;
 				col4 = vtx->rgb;
 			}
@@ -1731,31 +1936,44 @@ void DrawKnockBackRings()
 				x2 = *pXY++;
 				y2 = *pXY++;
 				z2 = *pZ++;
+#ifdef TROYESTUFF
+				xv2 = *pV++;
+				yv2 = *pV++;
+#endif
 				x4 = *pXY2++;
 				y4 = *pXY2++;
 				z4 = *pZ2++;
+#ifdef TROYESTUFF
+				xv4 = *pV2++;
+				yv4 = *pV2++;
+#endif
 				col2 = vtx->rgb;
 				col4 = vtx2->rgb;
 				vtx++;
 				vtx2++;
 			}
+
 #ifdef TROYESTUFF
-			x = (z1 + z2 + z3 + z4) >> 4;
-
 			if (tomb3.sophia_rings == SRINGS_PC)
-				z1 = x;
+				z1 = (z1 + z2 + z3 + z4) >> 4;
 
-			if (x > phd_znear && (col1 | col2 | col3 | col4))
+			if (col1 | col2 | col3 | col4)
+			{
 #else
 			z1 = (z1 + z2 + z3 + z4) >> 4;
 
 			if (z1 > phd_znear && (col1 | col2 | col3 | col4))
-#endif
 			{
 				if (x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
 					y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
 				{
+#endif
+
+#ifdef TROYESTUFF
+					setXYZ4(v, 0, x1, y1, z1, xv1, yv1, col1, x2, y2, z2, xv2, yv2, col2, x4, y4, z4, xv4, yv4, col4, x3, y3, z4, xv3, yv3, col3);
+#else
 					setXYZ4(v, 0, x1, y1, z1, col1, x2, y2, z2, col2, x4, y4, z4, col4, x3, y3, z4, col3);
+#endif
 					
 #ifdef TROYESTUFF
 					if (tomb3.sophia_rings == SRINGS_PSX || tomb3.sophia_rings == SRINGS_IMPROVED_PC)
@@ -1770,8 +1988,8 @@ void DrawKnockBackRings()
 						tex.v4 = v2;
 					}
 					else
-					{
 #endif
+					{
 						tex.u1 = u1;
 						tex.v1 = v1;
 						tex.u2 = u2;
@@ -1780,14 +1998,14 @@ void DrawKnockBackRings()
 						tex.v3 = v2;
 						tex.u4 = u2;
 						tex.v4 = v2;
-#ifdef TROYESTUFF
 					}
-#endif
 
 					tex.tpage = sprite->tpage;
 					tex.drawtype = 2;
 					HWI_InsertGT4_Sorted(&v[0], &v[1], &v[2], &v[3], &tex, MID_SORT, 1);
+#ifndef TROYESTUFF
 				}
+#endif
 			}
 
 			x1 = x2;
@@ -1796,6 +2014,12 @@ void DrawKnockBackRings()
 			x3 = x4;
 			y3 = y4;
 			z3 = z4;
+#ifdef TROYESTUFF
+			xv1 = xv2;
+			yv1 = yv2;
+			xv3 = xv4;
+			yv3 = yv4;
+#endif
 			col1 = col2;
 			col3 = col4;
 		}
@@ -2535,12 +2759,20 @@ void DrawTonyBossShield(ITEM_INFO* item)
 	PHDTEXTURESTRUCT tex;
 	long* pZ0;
 	long* pZ1;
+#ifdef TROYESTUFF
+	long* pV;
+	long* pV2;
+#endif
 	short* pXY0;
 	short* pXY1;
 	float zv;
 	long w, h, r, g, b, rgb;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c1, c2, c3, c4;
 	long Z[150];
+#ifdef TROYESTUFF
+	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
+	long view[150];
+#endif
 	ushort u1, v1, u2, v2;
 	short XY[150];
 
@@ -2552,6 +2784,9 @@ void DrawTonyBossShield(ITEM_INFO* item)
 	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
 	pXY0 = XY;
 	pZ0 = Z;
+#ifdef TROYESTUFF
+	pV = view;
+#endif
 	s0 = &TonyBossShield[0];
 
 	for (int i = 0; i < 40; i++, s0++)
@@ -2587,6 +2822,10 @@ void DrawTonyBossShield(ITEM_INFO* item)
 		pos.y = phd_mxptr[M10] * x1 + phd_mxptr[M11] * y1 + phd_mxptr[M12] * z1 + phd_mxptr[M13];
 		pos.z = phd_mxptr[M20] * x1 + phd_mxptr[M21] * y1 + phd_mxptr[M22] * z1 + phd_mxptr[M23];
 
+#ifdef TROYESTUFF
+		*pV++ = pos.x;
+		*pV++ = pos.y;
+#endif
 		zv = f_persp / (float)pos.z;
 		pos.x = short(float(pos.x * zv + f_centerx));
 		pos.y = short(float(pos.y * zv + f_centery));
@@ -2601,6 +2840,10 @@ void DrawTonyBossShield(ITEM_INFO* item)
 	pZ0 = &Z[0];
 	pXY1 = &XY[16];
 	pZ1 = &Z[8];
+#ifdef TROYESTUFF
+	pV = view;
+	pV2 = &view[16];
+#endif
 	s0 = &TonyBossShield[0];
 	s1 = &TonyBossShield[8];
 
@@ -2609,9 +2852,17 @@ void DrawTonyBossShield(ITEM_INFO* item)
 		x1 = *pXY0++;
 		y1 = *pXY0++;
 		z1 = *pZ0++;
+#ifdef TROYESTUFF
+		xv1 = *pV++;
+		yv1 = *pV++;
+#endif
 		x3 = *pXY1++;
 		y3 = *pXY1++;
 		z3 = *pZ1++;
+#ifdef TROYESTUFF
+		xv3 = *pV2++;
+		yv3 = *pV2++;
+#endif
 		c1 = s0->rgb;
 		c3 = s1->rgb;
 		s0++;
@@ -2632,9 +2883,17 @@ void DrawTonyBossShield(ITEM_INFO* item)
 				x2 = pXY0[-16];
 				y2 = pXY0[-15];
 				z2 = pZ0[-8];
+#ifdef TROYESTUFF
+				xv2 = pV[-16];
+				yv2 = pV[-15];
+#endif
 				x4 = pXY1[-16];
 				y4 = pXY1[-15];
 				z4 = pZ1[-8];
+#ifdef TROYESTUFF
+				xv4 = pV2[-16];
+				yv4 = pV2[-15];
+#endif
 				c2 = s0[-8].rgb;
 				c4 = s1->rgb;
 			}
@@ -2643,20 +2902,36 @@ void DrawTonyBossShield(ITEM_INFO* item)
 				x2 = *pXY0++;
 				y2 = *pXY0++;
 				z2 = *pZ0++;
+#ifdef TROYESTUFF
+				xv2 = *pV++;
+				yv2 = *pV++;
+#endif
 				x4 = *pXY1++;
 				y4 = *pXY1++;
 				z4 = *pZ1++;
+#ifdef TROYESTUFF
+				xv4 = *pV2++;
+				yv4 = *pV2++;
+#endif
 				c2 = s0->rgb;
 				c4 = s1->rgb;
 				s0++;
 				s1++;
 			}
 
+#ifdef TROYESTUFF
+			if (c1 || c2 || c3 || c4)
+#else
 			if ((z1 + z2 + z3 + z4) >> 2 > phd_znear && (c1 || c2 || c3 || c4) &&
 				x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
 				y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
+#endif
 			{
+#ifdef TROYESTUFF
+				setXYZ4(v, 0, x1, y1, z1, xv1, yv1, c1, x2, y2, z2, xv2, yv2, c2, x4, y4, z4, xv4, yv4, c4, x3, y3, z3, xv3, yv3, c3);
+#else
 				setXYZ4(v, 0, x1, y1, z1, c1, x2, y2, z2, c2, x4, y4, z4, c4, x3, y3, z3, c3);
+#endif
 				tex.u1 = u1;
 				tex.u2 = u2;
 				tex.u3 = u2;
@@ -2676,6 +2951,12 @@ void DrawTonyBossShield(ITEM_INFO* item)
 			x3 = x4;
 			y3 = y4;
 			z3 = z4;
+#ifdef TROYESTUFF
+			xv1 = xv2;
+			yv1 = yv2;
+			xv3 = xv4;
+			yv3 = yv4;
+#endif
 			c1 = c2;
 			c3 = c4;
 		}
@@ -2695,12 +2976,20 @@ void DrawTribeBossShield(ITEM_INFO* item)
 	PHDTEXTURESTRUCT tex;
 	long* pZ0;
 	long* pZ1;
+#ifdef TROYESTUFF
+	long* pV;
+	long* pV2;
+#endif
 	short* pXY0;
 	short* pXY1;
 	float zv;
 	long w, h, r, g, b, rgb;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c1, c2, c3, c4;
 	long Z[150];
+#ifdef TROYESTUFF
+	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
+	long view[150];
+#endif
 	ushort u1, v1, u2, v2;
 	short XY[150];
 
@@ -2712,6 +3001,9 @@ void DrawTribeBossShield(ITEM_INFO* item)
 	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
 	pXY0 = XY;
 	pZ0 = Z;
+#ifdef TROYESTUFF
+	pV = view;
+#endif
 	shield_active = 0;
 
 	for (int i = 0; i < 40; i++)
@@ -2747,6 +3039,11 @@ void DrawTribeBossShield(ITEM_INFO* item)
 		pos.x = phd_mxptr[M00] * x1 + phd_mxptr[M01] * y1 + phd_mxptr[M02] * z1 + phd_mxptr[M03];
 		pos.y = phd_mxptr[M10] * x1 + phd_mxptr[M11] * y1 + phd_mxptr[M12] * z1 + phd_mxptr[M13];
 		pos.z = phd_mxptr[M20] * x1 + phd_mxptr[M21] * y1 + phd_mxptr[M22] * z1 + phd_mxptr[M23];
+
+#ifdef TROYESTUFF
+		*pV++ = pos.x;
+		*pV++ = pos.y;
+#endif
 		zv = f_persp / (float)pos.z;
 		pos.x = short(float(pos.x * zv + f_centerx));
 		pos.y = short(float(pos.y * zv + f_centery));
@@ -2759,6 +3056,10 @@ void DrawTribeBossShield(ITEM_INFO* item)
 	pZ0 = &Z[0];
 	pXY1 = &XY[16];
 	pZ1 = &Z[8];
+#ifdef TROYESTUFF
+	pV = view;
+	pV2 = &view[16];
+#endif
 	s0 = &TribeBossShield[0];
 	s1 = &TribeBossShield[8];
 
@@ -2767,9 +3068,17 @@ void DrawTribeBossShield(ITEM_INFO* item)
 		x1 = *pXY0++;
 		y1 = *pXY0++;
 		z1 = *pZ0++;
+#ifdef TROYESTUFF
+		xv1 = *pV++;
+		yv1 = *pV++;
+#endif
 		x3 = *pXY1++;
 		y3 = *pXY1++;
 		z3 = *pZ1++;
+#ifdef TROYESTUFF
+		xv3 = *pV2++;
+		yv3 = *pV2++;
+#endif
 		c1 = s0->rgb;
 		c3 = s1->rgb;
 		s0++;
@@ -2790,9 +3099,17 @@ void DrawTribeBossShield(ITEM_INFO* item)
 				x2 = pXY0[-16];
 				y2 = pXY0[-15];
 				z2 = pZ0[-8];
+#ifdef TROYESTUFF
+				xv2 = pV[-16];
+				yv2 = pV[-15];
+#endif
 				x4 = pXY1[-16];
 				y4 = pXY1[-15];
 				z4 = pZ1[-8];
+#ifdef TROYESTUFF
+				xv4 = pV2[-16];
+				yv4 = pV2[-15];
+#endif
 				c2 = s0[-8].rgb;
 				c4 = s1->rgb;
 			}
@@ -2801,20 +3118,36 @@ void DrawTribeBossShield(ITEM_INFO* item)
 				x2 = *pXY0++;
 				y2 = *pXY0++;
 				z2 = *pZ0++;
+#ifdef TROYESTUFF
+				xv2 = *pV++;
+				yv2 = *pV++;
+#endif
 				x4 = *pXY1++;
 				y4 = *pXY1++;
 				z4 = *pZ1++;
+#ifdef TROYESTUFF
+				xv4 = *pV2++;
+				yv4 = *pV2++;
+#endif
 				c2 = s0->rgb;
 				c4 = s1->rgb;
 				s0++;
 				s1++;
 			}
 
+#ifdef TROYESTUFF
+			if (c1 || c2 || c3 || c4)
+#else
 			if ((z1 + z2 + z3 + z4) >> 2 > phd_znear && (c1 || c2 || c3 || c4) &&
 				x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
 				y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
+#endif
 			{
+#ifdef TROYESTUFF
+				setXYZ4(v, 0, x1, y1, z1, xv1, yv1, c1, x2, y2, z2, xv2, yv2, c2, x4, y4, z4, xv4, yv4, c4, x3, y3, z3, xv3, yv3, c3);
+#else
 				setXYZ4(v, 0, x1, y1, z1, c1, x2, y2, z2, c2, x4, y4, z4, c4, x3, y3, z3, c3);
+#endif
 				tex.u1 = u1;
 				tex.u2 = u2;
 				tex.u3 = u2;
@@ -2834,6 +3167,12 @@ void DrawTribeBossShield(ITEM_INFO* item)
 			x3 = x4;
 			y3 = y4;
 			z3 = z4;
+#ifdef TROYESTUFF
+			xv1 = xv2;
+			yv1 = yv2;
+			xv3 = xv4;
+			yv3 = yv4;
+#endif
 			c1 = c2;
 			c3 = c4;
 		}
@@ -2853,12 +3192,20 @@ void DrawLondonBossShield(ITEM_INFO* item)
 	PHDTEXTURESTRUCT tex;
 	long* pZ0;
 	long* pZ1;
+#ifdef TROYESTUFF
+	long* pV;
+	long* pV2;
+#endif
 	short* pXY0;
 	short* pXY1;
 	float zv;
 	long w, h, r, g, b, rgb;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c1, c2, c3, c4;
 	long Z[150];
+#ifdef TROYESTUFF
+	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
+	long view[150];
+#endif
 	ushort u1, v1, u2, v2;
 	short XY[150];
 
@@ -2870,6 +3217,9 @@ void DrawLondonBossShield(ITEM_INFO* item)
 	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
 	pXY0 = XY;
 	pZ0 = Z;
+#ifdef TROYESTUFF
+	pV = view;
+#endif
 
 	for (int i = 0; i < 40; i++)
 	{
@@ -2904,6 +3254,11 @@ void DrawLondonBossShield(ITEM_INFO* item)
 		pos.x = phd_mxptr[M00] * x1 + phd_mxptr[M01] * y1 + phd_mxptr[M02] * z1 + phd_mxptr[M03];
 		pos.y = phd_mxptr[M10] * x1 + phd_mxptr[M11] * y1 + phd_mxptr[M12] * z1 + phd_mxptr[M13];
 		pos.z = phd_mxptr[M20] * x1 + phd_mxptr[M21] * y1 + phd_mxptr[M22] * z1 + phd_mxptr[M23];
+
+#ifdef TROYESTUFF
+		*pV++ = pos.x;
+		*pV++ = pos.y;
+#endif
 		zv = f_persp / (float)pos.z;
 		pos.x = short(float(pos.x * zv + f_centerx));
 		pos.y = short(float(pos.y * zv + f_centery));
@@ -2916,6 +3271,10 @@ void DrawLondonBossShield(ITEM_INFO* item)
 	pZ0 = &Z[0];
 	pXY1 = &XY[16];
 	pZ1 = &Z[8];
+#ifdef TROYESTUFF
+	pV = view;
+	pV2 = &view[16];
+#endif
 	s0 = &LondonBossShield[0];
 	s1 = &LondonBossShield[8];
 
@@ -2924,9 +3283,17 @@ void DrawLondonBossShield(ITEM_INFO* item)
 		x1 = *pXY0++;
 		y1 = *pXY0++;
 		z1 = *pZ0++;
+#ifdef TROYESTUFF
+		xv1 = *pV++;
+		yv1 = *pV++;
+#endif
 		x3 = *pXY1++;
 		y3 = *pXY1++;
 		z3 = *pZ1++;
+#ifdef TROYESTUFF
+		xv3 = *pV2++;
+		yv3 = *pV2++;
+#endif
 		c1 = s0->rgb;
 		c3 = s1->rgb;
 		s0++;
@@ -2947,9 +3314,17 @@ void DrawLondonBossShield(ITEM_INFO* item)
 				x2 = pXY0[-16];
 				y2 = pXY0[-15];
 				z2 = pZ0[-8];
+#ifdef TROYESTUFF
+				xv2 = pV[-16];
+				yv2 = pV[-15];
+#endif
 				x4 = pXY1[-16];
 				y4 = pXY1[-15];
 				z4 = pZ1[-8];
+#ifdef TROYESTUFF
+				xv4 = pV2[-16];
+				yv4 = pV2[-15];
+#endif
 				c2 = s0[-8].rgb;
 				c4 = s1->rgb;
 			}
@@ -2958,20 +3333,36 @@ void DrawLondonBossShield(ITEM_INFO* item)
 				x2 = *pXY0++;
 				y2 = *pXY0++;
 				z2 = *pZ0++;
+#ifdef TROYESTUFF
+				xv2 = *pV++;
+				yv2 = *pV++;
+#endif
 				x4 = *pXY1++;
 				y4 = *pXY1++;
 				z4 = *pZ1++;
+#ifdef TROYESTUFF
+				xv4 = *pV2++;
+				yv4 = *pV2++;
+#endif
 				c2 = s0->rgb;
 				c4 = s1->rgb;
 				s0++;
 				s1++;
 			}
 
+#ifdef TROYESTUFF
+			if (c1 || c2 || c3 || c4)
+#else
 			if ((z1 + z2 + z3 + z4) >> 2 > phd_znear && (c1 || c2 || c3 || c4) &&
 				x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
 				y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
+#endif
 			{
+#ifdef TROYESTUFF
+				setXYZ4(v, 0, x1, y1, z1, xv1, yv1, c1, x2, y2, z2, xv2, yv2, c2, x4, y4, z4, xv4, yv4, c4, x3, y3, z3, xv3, yv3, c3);
+#else
 				setXYZ4(v, 0, x1, y1, z1, c1, x2, y2, z2, c2, x4, y4, z4, c4, x3, y3, z3, c3);
+#endif
 				tex.u1 = u1;
 				tex.u2 = u2;
 				tex.u3 = u2;
@@ -2991,6 +3382,12 @@ void DrawLondonBossShield(ITEM_INFO* item)
 			x3 = x4;
 			y3 = y4;
 			z3 = z4;
+#ifdef TROYESTUFF
+			xv1 = xv2;
+			yv1 = yv2;
+			xv3 = xv4;
+			yv3 = yv4;
+#endif
 			c1 = c2;
 			c3 = c4;
 		}
@@ -3010,12 +3407,20 @@ void DrawWillBossShield(ITEM_INFO* item)
 	PHDTEXTURESTRUCT tex;
 	long* pZ0;
 	long* pZ1;
+#ifdef TROYESTUFF
+	long* pV;
+	long* pV2;
+#endif
 	short* pXY0;
 	short* pXY1;
 	float zv;
 	long w, h, r, g, b, rgb;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c1, c2, c3, c4;
 	long Z[150];
+#ifdef TROYESTUFF
+	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
+	long view[150];
+#endif
 	ushort u1, v1, u2, v2;
 	short XY[150];
 
@@ -3027,6 +3432,9 @@ void DrawWillBossShield(ITEM_INFO* item)
 	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
 	pXY0 = XY;
 	pZ0 = Z;
+#ifdef TROYESTUFF
+	pV = view;
+#endif
 
 	for (int i = 0; i < 40; i++)
 	{
@@ -3061,6 +3469,11 @@ void DrawWillBossShield(ITEM_INFO* item)
 		pos.x = phd_mxptr[M00] * x1 + phd_mxptr[M01] * y1 + phd_mxptr[M02] * z1 + phd_mxptr[M03];
 		pos.y = phd_mxptr[M10] * x1 + phd_mxptr[M11] * y1 + phd_mxptr[M12] * z1 + phd_mxptr[M13];
 		pos.z = phd_mxptr[M20] * x1 + phd_mxptr[M21] * y1 + phd_mxptr[M22] * z1 + phd_mxptr[M23];
+
+#ifdef TROYESTUFF
+		*pV++ = pos.x;
+		*pV++ = pos.y;
+#endif
 		zv = f_persp / (float)pos.z;
 		pos.x = short(float(pos.x * zv + f_centerx));
 		pos.y = short(float(pos.y * zv + f_centery));
@@ -3073,6 +3486,10 @@ void DrawWillBossShield(ITEM_INFO* item)
 	pZ0 = &Z[0];
 	pXY1 = &XY[16];
 	pZ1 = &Z[8];
+#ifdef TROYESTUFF
+	pV = view;
+	pV2 = &view[16];
+#endif
 	s0 = &WillBossShield[0];
 	s1 = &WillBossShield[8];
 
@@ -3081,9 +3498,17 @@ void DrawWillBossShield(ITEM_INFO* item)
 		x1 = *pXY0++;
 		y1 = *pXY0++;
 		z1 = *pZ0++;
+#ifdef TROYESTUFF
+		xv1 = *pV++;
+		yv1 = *pV++;
+#endif
 		x3 = *pXY1++;
 		y3 = *pXY1++;
 		z3 = *pZ1++;
+#ifdef TROYESTUFF
+		xv3 = *pV2++;
+		yv3 = *pV2++;
+#endif
 		c1 = s0->rgb;
 		c3 = s1->rgb;
 		s0++;
@@ -3104,9 +3529,17 @@ void DrawWillBossShield(ITEM_INFO* item)
 				x2 = pXY0[-16];
 				y2 = pXY0[-15];
 				z2 = pZ0[-8];
+#ifdef TROYESTUFF
+				xv2 = pV[-16];
+				yv2 = pV[-15];
+#endif
 				x4 = pXY1[-16];
 				y4 = pXY1[-15];
 				z4 = pZ1[-8];
+#ifdef TROYESTUFF
+				xv4 = pV2[-16];
+				yv4 = pV2[-15];
+#endif
 				c2 = s0[-8].rgb;
 				c4 = s1->rgb;
 			}
@@ -3115,20 +3548,36 @@ void DrawWillBossShield(ITEM_INFO* item)
 				x2 = *pXY0++;
 				y2 = *pXY0++;
 				z2 = *pZ0++;
+#ifdef TROYESTUFF
+				xv2 = *pV++;
+				yv2 = *pV++;
+#endif
 				x4 = *pXY1++;
 				y4 = *pXY1++;
 				z4 = *pZ1++;
+#ifdef TROYESTUFF
+				xv4 = *pV2++;
+				yv4 = *pV2++;
+#endif
 				c2 = s0->rgb;
 				c4 = s1->rgb;
 				s0++;
 				s1++;
 			}
 
+#ifdef TROYESTUFF
+			if (c1 || c2 || c3 || c4)
+#else
 			if ((z1 + z2 + z3 + z4) >> 2 > phd_znear && (c1 || c2 || c3 || c4) &&
 				x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
 				y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
+#endif
 			{
+#ifdef TROYESTUFF
+				setXYZ4(v, 0, x1, y1, z1, xv1, yv1, c1, x2, y2, z2, xv2, yv2, c2, x4, y4, z4, xv4, yv4, c4, x3, y3, z3, xv3, yv3, c3);
+#else
 				setXYZ4(v, 0, x1, y1, z1, c1, x2, y2, z2, c2, x4, y4, z4, c4, x3, y3, z3, c3);
+#endif
 				tex.u1 = u1;
 				tex.u2 = u2;
 				tex.u3 = u2;
@@ -3148,6 +3597,12 @@ void DrawWillBossShield(ITEM_INFO* item)
 			x3 = x4;
 			y3 = y4;
 			z3 = z4;
+#ifdef TROYESTUFF
+			xv1 = xv2;
+			yv1 = yv2;
+			xv3 = xv4;
+			yv3 = yv4;
+#endif
 			c1 = c2;
 			c3 = c4;
 		}
