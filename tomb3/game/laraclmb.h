@@ -18,5 +18,4 @@ void lara_col_climbing(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_climbdown(ITEM_INFO* item, COLL_INFO* coll);
 long LaraTestClimb(long x, long y, long z, long xfront, long zfront, long item_height, short item_room, long* shift);
 long LaraTestClimbPos(ITEM_INFO* item, long front, long right, long origin, long height, long* shift);
-
-#define LaraTestClimbUpPos	( (long(__cdecl*)(ITEM_INFO*, long, long, long*, long*)) 0x00448E60 )
+long LaraTestClimbUpPos(ITEM_INFO* item, long front, long right, long* shift, long* ledge);
