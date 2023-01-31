@@ -498,7 +498,7 @@ void WillBossControl(short item_number)
 				}
 			}
 
-			junction_index[lp] = index;
+			junction_index[lp2] = index;
 		}
 	}
 
@@ -566,7 +566,7 @@ void WillBossControl(short item_number)
 	fire = best_dist2 < best_dist || item->pos.y_pos > lara_item->pos.y_pos + 2048;
 	x = ai_junction[lara_junction].x_pos - item->pos.x_pos;
 	z = ai_junction[lara_junction].z_pos - item->pos.z_pos;
-	dist = z * z + x * x;
+	dist = SQUARE(x) + SQUARE(z);
 
 	if (item->hit_points <= 0)
 	{
