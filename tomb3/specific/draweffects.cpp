@@ -4941,9 +4941,27 @@ void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 	phd_mxptr[M13] = 0;
 	phd_mxptr[M23] = 0;
 
-	pos.x = item->pos.x_pos;
-	y = item->floor - 16;
-	pos.z = item->pos.z_pos;
+	if (item == lara_item && (item->anim_number == ANIM_PULL || item->anim_number == ANIM_PUSH))
+	{
+		pos.x = 0;
+		pos.y = 0;
+		pos.z = 0;
+		GetLaraHandAbsPosition(&pos, LARA_HIPS);
+
+		room_number = item->room_number;
+		y = GetHeight(GetFloor(pos.x, pos.y, pos.z, &room_number), pos.x, pos.y, pos.z);
+
+		if (y == NO_HEIGHT)
+			y = item->floor;
+
+		y -= 16;
+	}
+	else
+	{
+		pos.x = item->pos.x_pos;
+		y = item->floor - 16;
+		pos.z = item->pos.z_pos;
+	}
 
 	phd_TranslateRel(pos.x, y, pos.z);
 	phd_RotY(item->pos.y_rot);	//rot the grid to correct Y
