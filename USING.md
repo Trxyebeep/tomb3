@@ -10,7 +10,8 @@
 1. Get the latest release package.
 2. unzip the archive and copy over the contents to you TR3 folder, overwrite when prompted.
 3. Run the setup through the config tool at least once before running the game.
-4. Enjoy!
+4. Move your saves from the root folder to the new saves folder.
+5. Enjoy!
 
 #### CD version:
 1. Install TR3 through the CD setup.
@@ -28,7 +29,8 @@
 3. Get the latest release package.
 4. unzip the archive and copy over the contents to you TR3 folder, overwrite when prompted.
 5. Run the setup through the config tool at least once before running the game.
-6. Enjoy!
+6. Move your saves from the root folder to the new saves folder.
+7. Enjoy!
 
 ### *Updating/Non-first time installing:*
 1. Get the latest release package.
@@ -38,6 +40,7 @@
 #### Updating from pre-V1.3.0 to V1.3.0 or later:
 - Delete tomb3decomp.dll (now renamed to tomb3.dll).
 - Delete the ExtraOptions folder (the config tool is available now).
+- Move your saves from the root folder to the new saves folder.
 ------------------------
 
 ### TR3: The Lost Artifact support:

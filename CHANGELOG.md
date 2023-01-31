@@ -1,13 +1,13 @@
 # tomb3 changelog
 
-## Unreleased
+## [1.6.0](https://github.com/Trxyebeep/tomb3/tree/V1.6.0) (Jan. 30 2023)
 
 ### Original bug fixes
 
 - Fix missing effect on Willard explosion.
 - Fix Lara meshbits not being saved.
 - Fix Lara's grab position when performing the crawl to grab animation on a triangle ledge.
-- Fix Lara teleporting mid-air wheen performing the crawl to grab animation on a no-col triangle ledge.
+- Fix Lara teleporting mid-air when performing the crawl to grab animation on a no-col triangle ledge.
 - Fix location skip bug in NG+ mode.
 - Fix All Hallows loading with corrupt textures if player didn't get all secrets in NG+ mode.
 - Fix screen clipping for boss explosion rings/shields.
@@ -28,7 +28,7 @@
 - Fix original PC Sophia Rings starry shape.
 
 
-## [1.5.0](https://github.com/Trxyebeep/tomb3/tree/V1.5.0) (Jan. 6 2022)
+## [1.5.0](https://github.com/Trxyebeep/tomb3/tree/V1.5.0) (Jan. 6 2023)
 
 ### Original bug fixes
 
