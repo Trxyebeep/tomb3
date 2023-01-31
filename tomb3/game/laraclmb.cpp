@@ -54,7 +54,7 @@ void LaraDoClimbLeftRight(ITEM_INFO* item, COLL_INFO* coll, long result, long sh
 		item->current_anim_state = AS_CLIMBSTNC;
 		item->goal_anim_state = AS_CLIMBSTNC;
 
-		if (coll->old_anim_state == 56)
+		if (coll->old_anim_state == AS_CLIMBSTNC)
 		{
 			item->frame_number = coll->old_frame_number;
 			item->anim_number = coll->old_anim_number;
@@ -361,6 +361,119 @@ void lara_col_climbdown(ITEM_INFO* item, COLL_INFO* coll)
 	}
 }
 
+long LaraTestClimb(long x, long y, long z, long xfront, long zfront, long item_height, short item_room, long* shift)
+{
+	FLOOR_INFO* floor;
+	long hang, h, c;
+	short room_number;
+
+	*shift = 0;
+	hang = 1;
+
+	if (!lara.climb_status)
+		return 0;
+
+	room_number = item_room;
+	floor = GetFloor(x, y - 128, z, &room_number);
+	h = GetHeight(floor, x, y, z);
+
+	if (h == NO_HEIGHT)
+		return 0;
+
+	h -= 128 + y + item_height;
+
+	if (h < -70)
+		return 0;
+
+	if (h < 0)
+		*shift = h;
+
+	c = GetCeiling(floor, x, y, z) - y;
+
+	if (c > 70)
+		return 0;
+
+	if (c > 0)
+	{
+		if (*shift)
+			return 0;
+
+		*shift = c;
+	}
+
+	if (item_height + h < 900)
+		hang = 0;
+
+	floor = GetFloor(x + xfront, y, z + zfront, &room_number);
+	h = GetHeight(floor, x + xfront, y, z + zfront);
+
+	if (h != NO_HEIGHT)
+		h -= y;
+
+	if (h <= 70)
+	{
+		if (h > 0)
+		{
+			if (*shift < 0)
+				return 0;
+
+			if (h > *shift)
+				*shift = h;
+		}
+
+		room_number = item_room;
+		GetFloor(x, y + item_height, z, &room_number);
+		floor = GetFloor(x + xfront, y + item_height, z + zfront, &room_number);
+		c = GetCeiling(floor, x + xfront, y + item_height, z + zfront);
+
+		if (c == NO_HEIGHT)
+			return 1;
+
+		c -= y;
+
+		if (c <= h)
+			return 1;
+
+		if (c >= 512)
+			return 1;
+
+		if (c > 442 && *shift <= 0)
+		{
+			*shift = c - 512;
+			return 1;
+		}
+
+		return -(hang != 0);
+	}
+
+	c = GetCeiling(floor, x + xfront, y, z + zfront) - y;
+
+	if (c >= 512)
+		return 1;
+
+	if (c > 442)
+	{
+		if (*shift <= 0)
+		{
+			*shift = c - 512;
+			return 1;
+		}
+
+		return -(hang != 0);
+	}
+
+	if (c > 0)
+		return -(hang != 0);
+
+	if (c <= -70 || !hang || *shift > 0)
+		return 0;
+
+	if (*shift > c)
+		*shift = c;
+
+	return -1;
+}
+
 void inject_laraclmb(bool replace)
 {
 	INJECT(0x00449310, LaraCheckForLetGo, replace);
@@ -376,4 +489,5 @@ void inject_laraclmb(bool replace)
 	INJECT(0x00449530, lara_col_climbstnc, replace);
 	INJECT(0x00449740, lara_col_climbing, replace);
 	INJECT(0x00449890, lara_col_climbdown, replace);
+	INJECT(0x00448BE0, LaraTestClimb, replace);
 }

@@ -899,7 +899,7 @@ tomb3 progress.
 
 		game/laraclmb.cpp
 
-0x00448BE0		LaraTestClimb
+0x00448BE0	+	LaraTestClimb
 0x00448E60		LaraTestClimbUpPos
 0x00449090		LaraTestClimbPos
 0x00449140	+	lara_as_climbleft
