@@ -997,15 +997,15 @@ tomb3 progress.
 0x0044EDD0	+	lara_as_uwdeath
 0x0044EE30	+	lara_as_waterroll
 0x0044EE40	+	lara_col_swim
-0x0044EE60		LaraSwimCollision
-0x0044EFC0		LaraTestWaterDepth
+0x0044EE60	+	LaraSwimCollision
+0x0044EFC0	+	LaraTestWaterDepth
 0x0044F0A0	+	lara_col_glide
 0x0044F0C0	+	lara_col_tread
 0x0044F0E0	+	lara_col_dive
 0x0044F100	+	lara_col_uwdeath
 0x0044F160	+	lara_col_waterroll
-0x0044F180		GetWaterDepth
-0x0044F310		LaraWaterCurrent
+0x0044F180	+	GetWaterDepth
+0x0044F310	+	LaraWaterCurrent
 
 
 		game/lasers.cpp
@@ -1026,15 +1026,15 @@ tomb3 progress.
 
 		game/londboss.cpp
 
-0x00450800		LondonBossControl
-0x00451640		S_DrawLondonBoss
-0x004516A0		InitialiseLondonBoss
-0x00451730		ExplodeLondonBoss
-0x00451980		TriggerLaserBolt
-0x00451AB0		ControlLaserBolts
+0x00450800	+	LondonBossControl
+0x00451640	+	S_DrawLondonBoss
+0x004516A0	+	InitialiseLondonBoss
+0x00451730	+	ExplodeLondonBoss
+0x00451980	+	TriggerLaserBolt
+0x00451AB0	+	ControlLaserBolts
 0x00451DE0	+	TriggerPlasmaBall
-0x00451E80		ControlLondBossPlasmaBall
-0x00452090		TriggerPlasmaBallFlame
+0x00451E80	+	ControlLondBossPlasmaBall
+0x00452090	+	TriggerPlasmaBallFlame
 0x00452240	+	KnockBackCollision
 
 
@@ -1225,8 +1225,8 @@ tomb3 progress.
 
 		game/rapmaker.cpp
 
-0x00460DA0		RaptorEmitterControl
-0x00461010		InitialiseRaptorEmitter
+0x00460DA0	+	RaptorEmitterControl
+0x00461010	+	InitialiseRaptorEmitter
 
 
 		game/raptor.cpp
@@ -1359,15 +1359,15 @@ tomb3 progress.
 
 		game/tonyboss.cpp
 
-0x0046BA60		TonyBossControl
-0x0046C080		S_DrawTonyBoss
-0x0046C0D0		TonyBossDie
-0x0046C120		InitialiseTonyBoss
-0x0046C1C0		ExplodeTonyBoss
-0x0046C460		TriggerTonyFlame
-0x0046C640		TriggerFireBall
-0x0046C860		ControlTonyFireBall
-0x0046CD00		TriggerFireBallFlame
+0x0046BA60	+	TonyBossControl
+0x0046C080	+	S_DrawTonyBoss
+0x0046C0D0	+	TonyBossDie
+0x0046C120	+	InitialiseTonyBoss
+0x0046C1C0	+	ExplodeTonyBoss
+0x0046C460	+	TriggerTonyFlame
+0x0046C640	+	TriggerFireBall
+0x0046C860	+	ControlTonyFireBall
+0x0046CD00	+	TriggerFireBallFlame
 
 
 		game/train.cpp
@@ -1382,49 +1382,49 @@ tomb3 progress.
 0x0046D340	+	PropellerControl
 0x0046D500	+	ControlSpikeWall
 0x0046D650	+	ControlCeilingSpikes
-0x0046D7C0		HookControl
-0x0046D850		SpinningBlade
-0x0046D9C0		IcicleControl
-0x0046DAF0		InitialiseBlade
-0x0046DB30		BladeControl
-0x0046DBD0		InitialiseKillerStatue
-0x0046DC20		SpringBoardControl
-0x0046DD10		InitialiseRollingBall
-0x0046DD50		RollingBallControl
-0x0046E0E0		RollingBallCollision
+0x0046D7C0	+	HookControl
+0x0046D850	+	SpinningBlade
+0x0046D9C0	+	IcicleControl
+0x0046DAF0	+	InitialiseBlade
+0x0046DB30	+	BladeControl
+0x0046DBD0	+	InitialiseKillerStatue
+0x0046DC20	+	SpringBoardControl
+0x0046DD10	+	InitialiseRollingBall
+0x0046DD50	+	RollingBallControl
+0x0046E0E0	+	RollingBallCollision
 0x0046E340	+	SpikeControl
-0x0046E3D0		SpikeCollision
-0x0046E530		TrapDoorControl
-0x0046E590		TrapDoorFloor
-0x0046E5F0		TrapDoorCeiling
-0x0046E640		OnTrapDoor
-0x0046E6F0		Pendulum
-0x0046E890		FallingBlock
-0x0046E9B0		FallingBlockFloor
-0x0046EA00		FallingBlockCeiling
-0x0046EA50		TeethTrap
-0x0046EB20		FallingCeiling
-0x0046EC10		DartEmitterControl
-0x0046EDD0		DartsControl
-0x0046EF40		SideFlameEmitterControl
-0x0046EFF0		FlameEmitterControl
-0x0046F090		FlameEmitter2Control
-0x0046F130		FlameEmitter3Control
+0x0046E3D0	+	SpikeCollision
+0x0046E530	+	TrapDoorControl
+0x0046E590	+	TrapDoorFloor
+0x0046E5F0	+	TrapDoorCeiling
+0x0046E640	+	OnTrapDoor
+0x0046E6F0	+	Pendulum
+0x0046E890	+	FallingBlock
+0x0046E9B0	+	FallingBlockFloor
+0x0046EA00	+	FallingBlockCeiling
+0x0046EA50	+	TeethTrap
+0x0046EB20	+	FallingCeiling
+0x0046EC10	+	DartEmitterControl
+0x0046EDD0	+	DartsControl
+0x0046EF40	+	SideFlameEmitterControl
+0x0046EFF0	+	FlameEmitterControl
+0x0046F090	+	FlameEmitter2Control
+0x0046F130	+	FlameEmitter3Control
 0x0046F1E0	+	SideFlameDetection
 0x0046F370	+	FlameControl
 0x0046FAE0	+	LaraBurn
 0x0046FB30	+	LavaBurn
-0x0046FBD0		TriggerPendulumFlame
+0x0046FBD0	+	TriggerPendulumFlame
 
 
 		game/trex.cpp
 
-0x0046FD80		DinoControl
+0x0046FD80	+	DinoControl
 
 
 		game/tribeaxe.cpp
 
-0x00470530		TribeAxeControl
+0x00470530	+	TribeAxeControl
 
 
 		game/triboss.cpp
@@ -1444,21 +1444,21 @@ tomb3 progress.
 
 		game/willboss.cpp
 
-0x00472000		WillBossControl
-0x00472CE0		S_DrawWillBoss
-0x00472D20		InitialiseWillBoss
-0x00472D60		ExplodeWillBoss
-0x00472FE0		TriggerPlasma
-0x004731B0		TriggerPlasmaBall
-0x00473230		ControlWillbossPlasmaBall
-0x00473570		TriggerPlasmaBallFlame
+0x00472000	+	WillBossControl
+0x00472CE0	+	S_DrawWillBoss
+0x00472D20	+	InitialiseWillBoss
+0x00472D60	+	ExplodeWillBoss
+0x00472FE0	+	TriggerPlasma
+0x004731B0	+	TriggerPlasmaBall
+0x00473230	+	ControlWillbossPlasmaBall
+0x00473570	+	TriggerPlasmaBallFlame
 
 
 		game/wingmute.cpp
 
-0x00473780		InitialiseWingmute
-0x004737E0		WingmuteControl
-0x00473BA0		TriggerWingMuteParticles
+0x00473780	+	InitialiseWingmute
+0x004737E0	+	WingmuteControl
+0x00473BA0	+	TriggerWingMuteParticles
 
 
 		game/winston.cpp

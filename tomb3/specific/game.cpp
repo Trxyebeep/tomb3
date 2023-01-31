@@ -112,6 +112,25 @@ long GameStats(long level_num, long type)
 				LoadPicture("pix\\theend2.bmp", App.lpPictureBuffer, 1);
 				nLoadedPictures = 1;
 			}
+#ifdef TROYESTUFF
+			else
+			{
+				//The above block goes to Hallows, these are also reset when you finish Hallows.
+				//Else reset these here if the player didn't get all secrets
+				GF_BonusLevelEnabled = 0;
+				savegame.WorldRequired = 0;
+				savegame.IndiaComplete = 0;
+				savegame.SPacificComplete = 0;
+				savegame.LondonComplete = 0;
+				savegame.NevadaComplete = 0;
+				savegame.AntarcticaComplete = 0;
+				savegame.PeruComplete = 0;
+				savegame.AfterIndia = 0;
+				savegame.AfterSPacific = 0;
+				savegame.AfterLondon = 0;
+				savegame.AfterNevada = 0;
+			}
+#endif
 	}
 
 	return 0;
@@ -371,6 +390,21 @@ long LevelStats(long level)
 
 		for (int i = LV_FIRSTLEVEL; i < gameflow.num_levels; i++)
 			ModifyStartInfo(i);
+
+#ifdef TROYESTUFF
+		GF_BonusLevelEnabled = 0;
+		savegame.WorldRequired = 0;
+		savegame.IndiaComplete = 0;
+		savegame.SPacificComplete = 0;
+		savegame.LondonComplete = 0;
+		savegame.NevadaComplete = 0;
+		savegame.AntarcticaComplete = 0;
+		savegame.PeruComplete = 0;
+		savegame.AfterIndia = 0;
+		savegame.AfterSPacific = 0;
+		savegame.AfterLondon = 0;
+		savegame.AfterNevada = 0;
+#endif
 	}
 
 	if (!ret)

@@ -817,6 +817,7 @@ void save_tomb3_data()
 	memcpy(tomb3_save.fishies, fish, sizeof(fish));
 	memcpy(tomb3_save.exp_rings, ExpRings, sizeof(ExpRings));
 	memcpy(tomb3_save.kb_rings, KBRings, sizeof(KBRings));
+	tomb3_save.lara_meshbits = lara_item->mesh_bits;
 }
 
 void load_tomb3_data()
@@ -841,6 +842,9 @@ void load_tomb3_data()
 
 	if (tomb3_save_size > offsetof(TOMB3_SAVE, kb_rings))
 		memcpy(KBRings, tomb3_save.kb_rings, sizeof(KBRings));
+
+	if (tomb3_save_size > offsetof(TOMB3_SAVE, lara_meshbits))
+		lara_item->mesh_bits = tomb3_save.lara_meshbits;
 }
 #endif
 

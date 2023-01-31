@@ -1,5 +1,33 @@
 # tomb3 changelog
 
+## Unreleased
+
+### Original bug fixes
+
+- Fix missing effect on Willard explosion.
+- Fix Lara meshbits not being saved.
+- Fix Lara's grab position when performing the crawl to grab animation on a triangle ledge.
+- Fix Lara teleporting mid-air wheen performing the crawl to grab animation on a no-col triangle ledge.
+- Fix location skip bug in NG+ mode.
+- Fix All Hallows loading with corrupt textures if player didn't get all secrets in NG+ mode.
+- Fix screen clipping for boss explosion rings/shields.
+- Fix odd color on explosion rings.
+
+### tomb3 additions
+
+- Remove fire from Lara in DOZY.
+- Make footprints tilt with the floor below them.
+- Make PSX shadow tilt with the floor below it.
+- Restore PSX boss explosion ring colors.
+
+### tomb3 bug fixes
+
+- Fix map not registering rooms when on vehicles.
+- Fix possible error in dynamic light formula.
+- Fix Lara meshbits not affecting drawn meshes.
+- Fix original PC Sophia Rings starry shape.
+
+
 ## [1.5.0](https://github.com/Trxyebeep/tomb3/tree/V1.5.0) (Jan. 6 2022)
 
 ### Original bug fixes

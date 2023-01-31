@@ -1,2 +1,23 @@
 #pragma once
 #include "../global/vars.h"
+
+void inject_tribeaxe(bool replace);
+
+void TribeAxeControl(short item_number);
+
+enum TRIBEAXE_STATES
+{
+	TRIBEAXE_EMPTY,
+	TRIBEAXE_WAIT1,
+	TRIBEAXE_WALK,
+	TRIBEAXE_RUN,
+	TRIBEAXE_ATTACK1,
+	TRIBEAXE_ATTACK2,
+	TRIBEAXE_ATTACK3,
+	TRIBEAXE_ATTACK4,
+	TRIBEAXE_AIM3,
+	TRIBEAXE_DEATH,
+	TRIBEAXE_ATTACK5,
+	TRIBEAXE_WAIT2,
+	TRIBEAXE_ATTACK6
+};

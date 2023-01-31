@@ -824,6 +824,9 @@ void lara_as_all4s(ITEM_INFO* item, COLL_INFO* coll)
 
 void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 {
+#ifdef TROYESTUFF
+	PHD_3DPOS old;
+#endif
 	long h;
 	short angle;
 
@@ -904,7 +907,10 @@ void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 
 		if (input & IN_ACTION && h > 768 && !GetStaticObjects(item, item->pos.y_rot + 0x8000, 512, 50, 300))
 		{
-			angle = (ushort)(item->pos.y_rot + 0x2000) / 0x4000;
+#ifdef TROYESTUFF
+			old = item->pos;
+#endif
+			angle = ushort(item->pos.y_rot + 0x2000) / 0x4000;
 
 			switch (angle)
 			{
@@ -929,7 +935,14 @@ void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 				break;
 			}
 
-			item->goal_anim_state = AS_CRAWL2HANG;
+#ifdef TROYESTUFF
+			h = LaraFloorFront(item, item->pos.y_rot, 0);
+
+			if (h > 255 || h < -255 || height_type == BIG_SLOPE)
+				item->pos = old;
+			else
+#endif
+				item->goal_anim_state = AS_CRAWL2HANG;
 		}
 	}
 	else if (input & IN_LEFT)
@@ -1280,8 +1293,34 @@ void lara_col_crawl2hang(ITEM_INFO* item, COLL_INFO* coll)
 	else
 	{
 		item->pos.y_pos += coll->front_floor - bounds[2];
+
+#ifdef TROYESTUFF
+		switch (ushort(item->pos.y_rot + 0x2000) / 0x4000)
+		{
+		case NORTH:
+			item->pos.z_pos = (item->pos.z_pos | 0x3FF) - 100;
+			item->pos.x_pos += coll->shift.x;
+			break;
+
+		case EAST:
+			item->pos.x_pos = (item->pos.x_pos | 0x3FF) - 100;
+			item->pos.z_pos += coll->shift.z;
+			break;
+
+		case SOUTH:
+			item->pos.z_pos = (item->pos.z_pos & ~0x3FF) + 100;
+			item->pos.x_pos += coll->shift.x;
+			break;
+
+		case WEST:
+			item->pos.x_pos = (item->pos.x_pos & ~0x3FF) + 100;
+			item->pos.z_pos += coll->shift.z;
+			break;
+		}
+#else
 		item->pos.x_pos += coll->shift.x;
 		item->pos.z_pos += coll->shift.z;
+#endif
 	}
 
 	item->gravity_status = 1;
@@ -4099,8 +4138,8 @@ void LaraHangTest(ITEM_INFO* item, COLL_INFO* coll)
 			item->frame_number = anims[ANIM_STOPHANG].frame_base + 9;
 			item->current_anim_state = AS_UPJUMP;
 			item->goal_anim_state = AS_UPJUMP;
-			item->pos.y_pos += GetBoundsAccurate(item)[3];
 			item->pos.x_pos += coll->shift.x;
+			item->pos.y_pos += GetBoundsAccurate(item)[3];
 			item->pos.z_pos += coll->shift.z;
 			item->gravity_status = 1;
 			item->speed = 2;

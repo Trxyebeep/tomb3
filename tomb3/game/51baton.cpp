@@ -65,7 +65,7 @@ void BatonControl(short item_number)
 			lara_info.distance = SQUARE(dx) + SQUARE(dz);
 			best = 0x7FFFFFFF;
 
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < MAX_LOT; i++)
 			{
 				target = &baddie_slots[i];
 

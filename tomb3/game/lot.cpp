@@ -7,9 +7,9 @@ void InitialiseLOTarray()
 {
 	CREATURE_INFO* creature;
 
-	baddie_slots = (CREATURE_INFO*)game_malloc(5 * sizeof(CREATURE_INFO), 33);
+	baddie_slots = (CREATURE_INFO*)game_malloc(MAX_LOT * sizeof(CREATURE_INFO), 33);
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < MAX_LOT; i++)
 	{
 		creature = &baddie_slots[i];
 		creature->item_num = NO_ITEM;
@@ -18,9 +18,9 @@ void InitialiseLOTarray()
 
 	slots_used = 0;
 
-	non_lot_slots = (CREATURE_INFO*)game_malloc(12 * sizeof(CREATURE_INFO), 33);
+	non_lot_slots = (CREATURE_INFO*)game_malloc(MAX_NONLOT * sizeof(CREATURE_INFO), 33);
 
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < MAX_NONLOT; i++)
 	{
 		creature = &non_lot_slots[i];
 		creature->item_num = NO_ITEM;
@@ -101,9 +101,9 @@ long EnableNonLotAI(short item_number, long Always)
 
 	item = &items[item_number];
 
-	if (nonlot_slots_used < 12)
+	if (nonlot_slots_used < MAX_NONLOT)
 	{
-		for (int i = 0; i < 12; i++)
+		for (int i = 0; i < MAX_NONLOT; i++)
 		{
 			creature = &non_lot_slots[i];
 
@@ -127,7 +127,7 @@ long EnableNonLotAI(short item_number, long Always)
 
 	worstslot = -1;
 
-	for (slot = 0; slot < 12; slot++)
+	for (slot = 0; slot < MAX_NONLOT; slot++)
 	{
 		creature = &non_lot_slots[slot];
 		item = &items[creature->item_num];
@@ -360,9 +360,9 @@ long EnableBaddieAI(short item_number, long Always)
 			return EnableNonLotAI(item_number, Always);
 	}
 
-	if (slots_used < 5)
+	if (slots_used < MAX_LOT)
 	{
-		for (slot = 0; slot < 5; slot++)
+		for (slot = 0; slot < MAX_LOT; slot++)
 		{
 			creature = &baddie_slots[slot];
 
@@ -386,7 +386,7 @@ long EnableBaddieAI(short item_number, long Always)
 
 	worstslot = -1;
 
-	for (slot = 0; slot < 5; slot++)
+	for (slot = 0; slot < MAX_LOT; slot++)
 	{
 		creature = &baddie_slots[slot];
 		item = &items[creature->item_num];

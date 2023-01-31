@@ -270,7 +270,7 @@ void FlamerControl(short item_number)
 			flamer->enemy = 0;
 			best_dist = 0x7FFFFFFF;
 
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < MAX_LOT; i++)
 			{
 				target = &baddie_slots[i];
 
