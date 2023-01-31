@@ -901,7 +901,7 @@ tomb3 progress.
 
 0x00448BE0	+	LaraTestClimb
 0x00448E60		LaraTestClimbUpPos
-0x00449090		LaraTestClimbPos
+0x00449090	+	LaraTestClimbPos
 0x00449140	+	lara_as_climbleft
 0x00449180	+	lara_as_climbright
 0x004491C0	+	lara_as_climbstnc

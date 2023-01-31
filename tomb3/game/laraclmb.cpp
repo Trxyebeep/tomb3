@@ -474,6 +474,44 @@ long LaraTestClimb(long x, long y, long z, long xfront, long zfront, long item_h
 	return -1;
 }
 
+long LaraTestClimbPos(ITEM_INFO* item, long front, long right, long origin, long height, long* shift)
+{
+	long quad, x, z, xfront, zfront;
+
+	xfront = 0;
+	zfront = 0;
+	quad = ushort(item->pos.y_rot + 0x2000) >> 14;
+
+	switch (quad)
+	{
+	case NORTH:
+		x = item->pos.x_pos + right;
+		z = item->pos.z_pos + front;
+		zfront = 4;
+		break;
+
+	case EAST:
+		x = item->pos.x_pos + front;
+		z = item->pos.z_pos - right;
+		xfront = 4;
+		break;
+
+	case SOUTH:
+		x = item->pos.x_pos - right;
+		z = item->pos.z_pos - front;
+		zfront = -4;
+		break;
+
+	default:
+		x = item->pos.x_pos - front;
+		z = item->pos.z_pos + right;
+		xfront = -4;
+		break;
+	}
+
+	return LaraTestClimb(x, item->pos.y_pos + origin, z, xfront, zfront, height, item->room_number, shift);
+}
+
 void inject_laraclmb(bool replace)
 {
 	INJECT(0x00449310, LaraCheckForLetGo, replace);
@@ -490,4 +528,5 @@ void inject_laraclmb(bool replace)
 	INJECT(0x00449740, lara_col_climbing, replace);
 	INJECT(0x00449890, lara_col_climbdown, replace);
 	INJECT(0x00448BE0, LaraTestClimb, replace);
+	INJECT(0x00449090, LaraTestClimbPos, replace);
 }
