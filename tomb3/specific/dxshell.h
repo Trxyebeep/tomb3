@@ -35,4 +35,5 @@ bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer);
 #ifdef TROYESTUFF
 long DXToggleFullScreen();
 void DXMove(long x, long y);
+bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool windowed);
 #endif

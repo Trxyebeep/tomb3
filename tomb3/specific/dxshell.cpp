@@ -1071,6 +1071,194 @@ void DXMove(long x, long y)
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 	SetRect(&tomb3.rScreen, x, y, x + dm->w, y + dm->h);
 }
+
+bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool windowed)
+{
+	DISPLAYMODE* dm;
+	DIRECT3DINFO* d3d;
+	DDSURFACEDESCX desc;
+	D3DMATERIALX m;
+	DDSCAPSX caps;
+	D3DMATERIALHANDLE handle;
+	LPDIRECTDRAWCLIPPER clipper;
+	RECT r;
+	HWND desktop;
+	DEVMODE dev;
+	HDC hDC;
+
+	Log("Starting DXStartRenderer");
+
+	if (createNew)
+	{
+		if (!DXCreateDirectDraw(device, config, &App.lpDD) || !DXCreateDirect3D(App.lpDD, &App.lpD3D))
+		{
+			Log("Failed to create DirectDraw or Direct3D, exitting..");
+			return 0;
+		}
+	}
+
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
+	dm = &device->DDInfo[config->nDD].D3DInfo[config->nD3D].DisplayMode[config->nVMode];
+
+	if (windowed)
+	{
+		Log("Creating windowed");
+
+		if (!DXSetCooperativeLevel(App.lpDD, App.WindowHandle, DDSCL_NORMAL))
+		{
+			Log("DXSetCooperativeLevel failed: DDSCL_NORMAL, exitting..");
+			return 0;
+		}
+
+		desktop = GetDesktopWindow();
+		hDC = GetDC(desktop);
+		ReleaseDC(desktop, hDC);
+		dev.dmBitsPerPel = dm->bpp;
+		dev.dmSize = sizeof(DEVMODE);
+		dev.dmFields = DM_BITSPERPEL;
+		ChangeDisplaySettings(&dev, 0);
+
+		d3d = &device->DDInfo[config->nDD].D3DInfo[config->nD3D];
+		dm = &d3d->DisplayMode[config->nVMode];
+		r.top = 0;
+		r.left = 0;
+		r.right = dm->w;
+		r.bottom = dm->h;
+		AdjustWindowRect(&r, tomb3.WindowStyle, 0);
+		SetWindowPos(App.WindowHandle, 0, 0, 0, r.right - r.left, r.bottom - r.top, SWP_NOMOVE | SWP_NOZORDER);
+		GetClientRect(App.WindowHandle, &tomb3.rViewport);
+		GetClientRect(App.WindowHandle, &tomb3.rScreen);
+		ClientToScreen(App.WindowHandle, (LPPOINT)&tomb3.rScreen);
+		ClientToScreen(App.WindowHandle, (LPPOINT)&tomb3.rScreen.right);
+		desc.dwFlags = DDSD_CAPS;
+		desc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
+
+		if (!DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACEX)&App.lpFrontBuffer))
+		{
+			Log("DXCreateSurface failed to create front buffer (windowed mode), exitting..");
+			return 0;
+		}
+
+		if (FAILED(App.lpDD->CreateClipper(0, &clipper, 0)))
+		{
+			Log("Failed to CreateClipper");
+			return 0;
+		}
+
+		clipper->SetHWnd(0, App.WindowHandle);
+		App.lpFrontBuffer->SetClipper(clipper);
+		clipper->Release();
+		clipper = 0;
+
+		desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH;
+		desc.dwWidth = dm->w;
+		desc.dwHeight = dm->h;
+		desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_3DDEVICE;
+
+		if (!DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACEX)&App.lpBackBuffer))
+		{
+			Log("DXCreateSurface failed to create back buffer (windowed mode), exitting..");
+			return 0;
+		}
+	}
+	else
+	{
+		Log("Creating Fullscreen");
+
+		if (!DXSetCooperativeLevel(App.lpDD, App.WindowHandle, DDSCL_FULLSCREEN | DDSCL_EXCLUSIVE))
+		{
+			Log("DXSetCooperativeLevel failed: DDSCL_FULLSCREEN | DDSCL_EXCLUSIVE, exitting..");
+			return 0;
+		}
+
+		if (!DXSetVideoMode(App.lpDD, dm->w, dm->h, dm->bpp))
+		{
+			Log("DXSetVideoMode failed, exitting..");
+			return 0;
+		}
+
+		desc.dwBackBufferCount = 1;
+		desc.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
+		desc.ddsCaps.dwCaps = DDSCAPS_COMPLEX | DDSCAPS_FLIP | DDSCAPS_PRIMARYSURFACE | DDSCAPS_3DDEVICE;
+
+		if (!DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACEX)&App.lpFrontBuffer))
+		{
+			Log("DXCreateSurface failed to create front buffer, exitting..");
+			return 0;
+		}
+
+		App.lpFrontBuffer->GetSurfaceDesc(&desc);
+		d3d = &device->DDInfo[config->nDD].D3DInfo[config->nD3D];
+		dm = &d3d->DisplayMode[config->nVMode];
+
+		DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwRBitMask, &dm->rshift, &dm->rbpp);
+		DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwGBitMask, &dm->gshift, &dm->gbpp);
+		DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwBBitMask, &dm->bshift, &dm->bbpp);
+
+		caps.dwCaps = DDSCAPS_BACKBUFFER;
+
+		if (!DXGetAttachedSurface(App.lpFrontBuffer, &caps, &App.lpBackBuffer))
+		{
+			Log("DXGetAttachedSurface failed to get back buffer, exitting..");
+			return 0;
+		}
+
+		tomb3.rViewport.top = 0;
+		tomb3.rViewport.left = 0;
+		tomb3.rViewport.right = dm->w;
+		tomb3.rViewport.bottom = dm->h;
+	}
+
+	if (!DXCreateZBuffer(device, config))
+	{
+		Log("DXCreateZBuffer failed, exitting..");
+		return 0;
+	}
+
+	if (!DXCreateDirect3DDevice(App.lpD3D, d3d->Guid, App.lpBackBuffer, &App.lpD3DDevice))
+	{
+		Log("DXCreateDirect3DDevice failed, exitting..");
+		return 0;
+	}
+
+	dm = &device->DDInfo[config->nDD].D3DInfo[config->nD3D].DisplayMode[config->nVMode];
+
+	if (!DXCreateViewPort(App.lpD3D, App.lpD3DDevice, dm->w, dm->h, &App.lpViewPort))
+	{
+		Log("DXCreateViewPort failed, exitting..");
+		return 0;
+	}
+
+	memset(&m, 0, sizeof(D3DMATERIALX));
+	m.dwSize = sizeof(D3DMATERIALX);
+
+	App.lpD3D->CreateMaterial(&App.lpViewPortMaterial, 0);
+	App.lpViewPortMaterial->SetMaterial(&m);
+	App.lpViewPortMaterial->GetHandle(App.lpD3DDevice, &handle);
+	App.lpViewPort->SetBackground(handle);
+
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
+	desc.dwWidth = 640;
+	desc.dwHeight = 480;
+	desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH;
+	desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
+	DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACEX)&App.lpPictureBuffer);
+	DXClearBuffers(11, 0);
+	InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer, 1);
+	HWR_InitState();
+	DXCreateMaxTPages(1);
+
+	if (!nTPages)
+	{
+		Log("nTPages is 0, DXCreateMaxTPages failed, exitting..");
+		return 0;
+	}
+
+	Log("DXStartRenderer finished successfully");
+	return 1;
+}
 #endif
 
 void inject_dxshell(bool replace)
