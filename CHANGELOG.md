@@ -4,6 +4,7 @@
 
 ### Original bug fixes
 
+- Fix Lara refusing to go in some crawlspaces.
 
 ### tomb3 additions
 

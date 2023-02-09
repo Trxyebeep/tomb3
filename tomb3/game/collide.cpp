@@ -343,7 +343,20 @@ void GetCollisionInfo(COLL_INFO* coll, long x, long y, long z, short room_number
 	static long xfront, zfront;
 	long yT, h, c, tx, tz;
 	long ang, xright, xleft, zright, zleft, xright2, xleft2, zright2, zleft2, hit_left, hit_right;
+#ifdef TROYESTUFF
+	long reset_room;
+#endif
 	short room_num, room_num2, tilt;
+
+#ifdef TROYESTUFF
+	reset_room = 0;
+
+	if (hite < 0)
+	{
+		hite = -hite;
+		reset_room = 1;
+	}
+#endif
 
 	coll->coll_type = CT_NONE;
 	coll->shift.x = 0;
@@ -427,6 +440,11 @@ void GetCollisionInfo(COLL_INFO* coll, long x, long y, long z, short room_number
 		xleft = 0;
 		break;
 	}
+
+#ifdef TROYESTUFF
+	if (reset_room)
+		room_num = room_number;
+#endif
 
 	/*front*/
 	tx = x + xfront;
