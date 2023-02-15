@@ -191,15 +191,20 @@ long WinRegisterWindow(HINSTANCE hinstance)
 }
 
 #ifdef TROYESTUFF
-HWND WinCreateWindow(HINSTANCE hinstance, long nCmdShow, RECT* r)
+static bool WinCreateWindow()
+{
+	App.WindowHandle = CreateWindowEx(WS_EX_APPWINDOW, "Window Class", "Tomb Raider III", WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+		0, 0, App.hInstance, 0);
+
+	if (!App.WindowHandle)
+		return 0;
+
+	return 1;
+}
 #else
 HWND WinCreateWindow(HINSTANCE hinstance, long nCmdShow)
-#endif
 {
-#ifdef TROYESTUFF
-	return CreateWindowEx(WS_EX_APPWINDOW, "Window Class", "Tomb Raider III", tomb3.WindowStyle,
-		CW_USEDEFAULT, CW_USEDEFAULT, r->right - r->left, r->bottom - r->top, 0, 0, hinstance, 0);
-#else
 	HWND hwnd;
 
 	hwnd = CreateWindowEx(WS_EX_APPWINDOW, "Window Class", "Tomb Raider III", WS_POPUP, 0, 0, 0, 0, 0, 0, hinstance, 0);
@@ -211,8 +216,8 @@ HWND WinCreateWindow(HINSTANCE hinstance, long nCmdShow)
 	}
 
 	return hwnd;
-#endif
 }
+#endif
 
 float WinFrameRate()
 {
@@ -307,11 +312,30 @@ void WinFreeDX(bool free_dd)
 	}
 }
 
+#ifdef TROYESTUFF
+void WinSetStyle(bool fullscreen, ulong& set)
+{
+	ulong style;
+
+	style = GetWindowLong(App.WindowHandle, GWL_STYLE);
+
+	if (fullscreen)
+		style = (style & ~WS_OVERLAPPEDWINDOW) | WS_POPUP;
+	else
+		style = (style & ~WS_POPUP) | WS_OVERLAPPEDWINDOW;
+
+	style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX | WS_SYSMENU);
+	SetWindowLong(App.WindowHandle, GWL_STYLE, style);
+
+	if (set)
+		set = style;
+}
+#endif
+
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nShowCmd)
 {
 	DIRECT3DINFO* d3dinfo;
 #ifdef TROYESTUFF
-	RECT r;
 	HWND desktop;
 	HDC hdc;
 	DEVMODE devmode;
@@ -324,7 +348,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	App.hInstance = hInstance;
 
 #ifdef TROYESTUFF
-	tomb3.WindowStyle = WS_OVERLAPPED | WS_BORDER | WS_CAPTION;
+	tomb3.WindowStyle = WS_OVERLAPPEDWINDOW;
 #endif
 
 	if (!hPrevInstance && !WinRegisterWindow(hInstance))
@@ -334,22 +358,21 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	}
 
 #ifdef TROYESTUFF
-	r.left = 0;
-	r.top = 0;
-	r.right = 640;
-	r.bottom = 480;
-	AdjustWindowRect(&r, tomb3.WindowStyle, 0);
-	App.WindowHandle = WinCreateWindow(hInstance, nShowCmd, &r);
+	if (!WinCreateWindow())
 #else
 	App.WindowHandle = WinCreateWindow(hInstance, nShowCmd);
-#endif
-	
 
 	if (!App.WindowHandle)
+#endif
 	{
 		MessageBox(0, "Unable To Create Window", "", MB_OK);
 		return 0;
 	}
+
+#ifdef TROYESTUFF
+	ShowWindow(App.WindowHandle, SW_HIDE);
+	UpdateWindow(App.WindowHandle);
+#endif
 
 #ifndef TROYESTUFF	//nocd
 	if (!CD_Init())
@@ -418,18 +441,17 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	}
 
 #ifdef TROYESTUFF
-	if (!tomb3.Windowed)
+	if (tomb3.Windowed)
 	{
-		SetWindowLongPtr(App.WindowHandle, GWL_STYLE, WS_POPUP);
-		SetWindowPos(App.WindowHandle, 0, tomb3.rScreen.left, tomb3.rScreen.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-
-		SetCursor(0);
-		ShowCursor(0);
+		WinSetStyle(0, tomb3.WindowStyle);
+		SetCursor(LoadCursor(0, IDC_ARROW));
+		ShowCursor(1);
 	}
 	else
 	{
-		SetCursor(LoadCursor(0, IDC_ARROW));
-		ShowCursor(1);
+		WinSetStyle(1, tomb3.WindowStyle);
+		SetCursor(0);
+		ShowCursor(0);
 	}
 
 	UpdateWindow(App.WindowHandle);

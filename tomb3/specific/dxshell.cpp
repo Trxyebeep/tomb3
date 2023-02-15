@@ -1045,6 +1045,7 @@ long DXToggleFullScreen()
 	if (WinDXInit(&App.DeviceInfo, &App.DXConfig, 0))
 	{
 		Log("DXToggleFullScreen: Switched successfully");
+		WinSetStyle(!tomb3.Windowed, tomb3.WindowStyle);
 		return 1;
 	}
 
@@ -1166,7 +1167,7 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 	{
 		Log("Creating Fullscreen");
 
-		if (!DXSetCooperativeLevel(App.lpDD, App.WindowHandle, DDSCL_FULLSCREEN | DDSCL_EXCLUSIVE))
+		if (!DXSetCooperativeLevel(App.lpDD, App.WindowHandle, DDSCL_FULLSCREEN | DDSCL_ALLOWREBOOT | DDSCL_EXCLUSIVE))
 		{
 			Log("DXSetCooperativeLevel failed: DDSCL_FULLSCREEN | DDSCL_EXCLUSIVE, exitting..");
 			return 0;
