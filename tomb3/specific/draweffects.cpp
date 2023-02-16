@@ -4941,7 +4941,7 @@ void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 	phd_mxptr[M13] = 0;
 	phd_mxptr[M23] = 0;
 
-	if (item == lara_item && (item->anim_number == ANIM_PULL || item->anim_number == ANIM_PUSH))
+	if (item == lara_item && (item->anim_number == ANIM_PULL || item->anim_number == ANIM_PUSH || item->anim_number == 289))
 	{
 		pos.x = 0;
 		pos.y = 0;
