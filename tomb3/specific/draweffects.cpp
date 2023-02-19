@@ -4941,18 +4941,28 @@ void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 	phd_mxptr[M13] = 0;
 	phd_mxptr[M23] = 0;
 
-	if (item == lara_item && (item->anim_number == ANIM_PULL || item->anim_number == ANIM_PUSH || item->anim_number == 289))
+	if (item == lara_item)
 	{
 		pos.x = 0;
 		pos.y = 0;
 		pos.z = 0;
 		GetLaraHandAbsPosition(&pos, LARA_HIPS);
 
-		room_number = item->room_number;
-		y = GetHeight(GetFloor(pos.x, pos.y, pos.z, &room_number), pos.x, pos.y, pos.z);
+		if ((abs(item->pos.x_pos - pos.x) > 96 || abs(item->pos.z_pos - pos.z) > 96) &&
+			(item->current_anim_state != AS_ALL4S && item->current_anim_state < AS_ALL4TURNL))
+		{
+			room_number = item->room_number;
+			y = GetHeight(GetFloor(pos.x, pos.y, pos.z, &room_number), pos.x, pos.y, pos.z);
 
-		if (y == NO_HEIGHT)
+			if (y == NO_HEIGHT)
+				y = item->floor;
+		}
+		else
+		{
+			pos.x = item->pos.x_pos;
 			y = item->floor;
+			pos.z = item->pos.z_pos;
+		}
 
 		y -= 16;
 	}

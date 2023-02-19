@@ -39,7 +39,7 @@ void S_PrintShadow(short size, short* box, ITEM_INFO* item)
 	long x0, x1, z0, z1, midX, midZ, xAdd, zAdd;
 
 #ifdef TROYESTUFF
-	if (tomb3.shadow_mode == SHADOW_PSX)
+	if (tomb3.shadow_mode == SHADOW_PSX && GnGameMode != GAMEMODE_IN_CUTSCENE)
 	{
 		S_PrintSpriteShadow(size, box, item);
 		return;
