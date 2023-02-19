@@ -146,7 +146,7 @@ static void TriggerFireBall(ITEM_INFO* item, long type, PHD_VECTOR* pos, short r
 		fxpos.y = pos->y;
 		fxpos.z = pos->z;
 		speed = (GetRandomControl() & 7) + 48;
-		angle += (GetRandomControl() & 0x1FFF) + 28672;
+		angle += (GetRandomControl() & 0x1FFF) + 0x7000;
 		fallspeed = -16 - (GetRandomControl() & 0xF);
 	}
 	else
@@ -217,7 +217,7 @@ static void TriggerFireBallFlame(short fxNum, long type, long xv, long yv, long 
 	sptr->Zvel = short((GetRandomControl() & 0xFF) + zv - 128);
 	sptr->Friction = 5;
 	
-	if ((GetRandomControl() & 1) != 0)
+	if (GetRandomControl() & 1)
 	{
 		sptr->Flags = SF_ALTDEF | SF_FX | SF_ROTATE | SF_DEF | SF_SCALE;
 		sptr->RotAng = GetRandomControl() & 0xFFF;
@@ -470,6 +470,7 @@ void ControlTonyFireBall(short fx_number)
 				pos.x = (GetRandomControl() & 0x3FF) + lara_item->pos.x_pos - 512;
 				pos.y = GetCeiling(floor, lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos) + 256;
 				pos.z = (GetRandomControl() & 0x3FF) + lara_item->pos.z_pos - 512;
+				TriggerExplosionSparks(pos.x, pos.y, pos.z, 3, -2, 0, room_number);
 				TriggerFireBall(0, 3, &pos, room_number, 0, 0);
 			}
 		}
