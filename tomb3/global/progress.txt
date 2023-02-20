@@ -304,8 +304,8 @@ tomb3 progress.
 
 		game/compy.cpp
 
-0x0041F730		InitialiseCompy
-0x0041F750		CompyControl
+0x0041F730	+	InitialiseCompy
+0x0041F750	+	CompyControl
 0x0041FD50		CarcassControl
 
 

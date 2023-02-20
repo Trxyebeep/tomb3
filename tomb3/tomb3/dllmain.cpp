@@ -68,6 +68,7 @@
 #include "../game/tribeaxe.h"
 #include "../game/trex.h"
 #include "../game/tonyboss.h"
+#include "../game/compy.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -200,6 +201,7 @@ void inject_all(bool replace)
 	inject_tribeaxe(replace);
 	inject_trex(replace);
 	inject_tonyboss(replace);
+	inject_compy(replace);
 
 	//specific
 	inject_drawbars(replace);
