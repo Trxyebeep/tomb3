@@ -69,6 +69,7 @@
 #include "../game/trex.h"
 #include "../game/tonyboss.h"
 #include "../game/compy.h"
+#include "../game/tiger.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -202,6 +203,7 @@ void inject_all(bool replace)
 	inject_trex(replace);
 	inject_tonyboss(replace);
 	inject_compy(replace);
+	inject_tiger(replace);
 
 	//specific
 	inject_drawbars(replace);

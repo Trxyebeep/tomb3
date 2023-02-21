@@ -1354,7 +1354,7 @@ tomb3 progress.
 
 		game/tiger.cpp
 
-0x0046B750		TigerControl
+0x0046B750	+	TigerControl
 
 
 		game/tonyboss.cpp
