@@ -14,6 +14,7 @@
 - Fix PSX shadow not following Lara during push/pull animations.
 - Fix Willard pathing.
 - Fix Fullscreen window creation.
+- Fix Tony flame.
 
 
 ## [1.6.0](https://github.com/Trxyebeep/tomb3/tree/V1.6.0) (Jan. 30 2023)

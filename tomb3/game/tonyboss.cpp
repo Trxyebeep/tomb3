@@ -418,15 +418,15 @@ void ControlTonyFireBall(short fx_number)
 		if (fx->fallspeed > 512)
 			fx->fallspeed = 512;
 
-		fx->pos.x_pos += (fx->speed * phd_sin(fx->pos.y_rot)) >> W2V_SHIFT;
+		fx->pos.x_pos += fx->speed * phd_sin(fx->pos.y_rot) >> W2V_SHIFT;
 		fx->pos.y_pos += fx->fallspeed >> 1;
-		fx->pos.z_pos += (fx->speed * phd_cos(fx->pos.y_rot)) >> W2V_SHIFT;
+		fx->pos.z_pos += fx->speed * phd_cos(fx->pos.y_rot) >> W2V_SHIFT;
 		dx = (oldPos.x - fx->pos.x_pos) << 3;
 		dy = (oldPos.y - fx->pos.y_pos) << 3;
 		dz = (oldPos.z - fx->pos.z_pos) << 3;
 
 		if (wibble & 4)
-			TriggerFireBallFlame(fx_number, 3, dx, dy, dz);
+			TriggerFireBallFlame(fx_number, fx->flag1, dx, dy, dz);
 	}
 
 	room_number = fx->room_number;
