@@ -324,7 +324,8 @@ void WinSetStyle(bool fullscreen, ulong& set)
 	else
 		style = (style & ~WS_POPUP) | WS_OVERLAPPEDWINDOW;
 
-	style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX | WS_SYSMENU);
+//	style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX | WS_SYSMENU);	//removing WS_THICKFRAME creates a weird thick white border around the window when the app is moved?
+	style &= ~(WS_MAXIMIZEBOX | WS_SYSMENU);
 	SetWindowLong(App.WindowHandle, GWL_STYLE, style);
 
 	if (set)
