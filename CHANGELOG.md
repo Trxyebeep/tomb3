@@ -8,12 +8,13 @@
 
 ### tomb3 additions
 
+- Improve falling raptor physics.
 
 ### tomb3 bug fixes
 
-- Fix PSX shadow not following Lara during push/pull animations.
+- Fix PSX shadow not following Lara during some animations.
 - Fix Willard pathing.
-- Fix Fullscreen window creation.
+- Fix some issues with window creation.
 - Fix Tony flame.
 
 

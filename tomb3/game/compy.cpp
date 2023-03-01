@@ -7,6 +7,8 @@
 #include "effects.h"
 #include "objects.h"
 #include "lara.h"
+#include "items.h"
+#include "effect2.h"
 
 static BITE_INFO compy_hit = { 0, 0, 0, 2 };
 
@@ -232,8 +234,98 @@ void CompyControl(short item_number)
 	CreatureAnimation(item_number, angle, angle >> 1);
 }
 
+void CarcassControl(short item_number)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	long h;
+	short old_room, room_number, maxfs;
+
+	item = &items[item_number];
+
+	if (item->status != ITEM_ACTIVE)
+		return;
+
+	item->pos.y_pos += item->fallspeed;
+
+	old_room = item->room_number;
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	h = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+
+#ifdef TROYESTUFF
+	h -= 64;
+#endif
+
+	if (item->pos.y_pos >= h)
+	{
+		item->pos.y_pos = h;
+		item->fallspeed = 0;
+#ifdef TROYESTUF
+		item->pos.z_rot = 0x4000;
+#else
+		item->pos.z_rot = 0x6000;
+#endif
+		return;
+	}
+
+#ifdef TROYESTUF
+	item->pos.z_rot += item->fallspeed;
+#else
+	if (room[room_number].flags & ROOM_UNDERWATER)
+		item->pos.z_rot += item->fallspeed << 3;
+	else
+		item->pos.z_rot += item->fallspeed << 1;
+
+	if (item->pos.z_rot > 0x6000)
+		item->pos.z_rot = 0x6000;
+#endif
+	item->fallspeed += room[room_number].flags & ROOM_UNDERWATER ? 1 : 8;
+	maxfs = room[old_room].flags & ROOM_UNDERWATER ? 64 : 512;
+
+	if (item->fallspeed > maxfs)
+		item->fallspeed = maxfs;
+
+	if (room[room_number].flags & ROOM_UNDERWATER && !(room[old_room].flags & ROOM_UNDERWATER))
+	{
+		splash_setup.x = item->pos.x_pos;
+		splash_setup.y = room[room_number].maxceiling;
+		splash_setup.z = item->pos.z_pos;
+		splash_setup.InnerXZoff = 16;
+		splash_setup.InnerXZsize = 16;
+		splash_setup.InnerYsize = -96;
+		splash_setup.InnerXZvel = 160;
+		splash_setup.InnerYvel = -72 * item->fallspeed;
+		splash_setup.InnerGravity = 128;
+		splash_setup.InnerFriction = 7;
+		splash_setup.MiddleXZoff = 24;
+		splash_setup.MiddleXZsize = 32;
+		splash_setup.MiddleYsize = -64;
+		splash_setup.MiddleXZvel = 224;
+		splash_setup.MiddleYvel = -36 * item->fallspeed;
+		splash_setup.MiddleGravity = 72;
+		splash_setup.MiddleFriction = 8;
+		splash_setup.OuterXZoff = 32;
+		splash_setup.OuterXZsize = 32;
+		splash_setup.OuterXZvel = 272;
+		splash_setup.OuterFriction = 9;
+		SetupSplash(&splash_setup);
+		item->fallspeed = 16;
+		item->pos.y_pos = room[room_number].maxceiling + 1;
+	}
+
+	if (room[item->room_number].flags & ROOM_UNDERWATER)
+		CarcassItem = item_number;
+	else
+		CarcassItem = NO_ITEM;
+}
+
 void inject_compy(bool replace)
 {
 	INJECT(0x0041F730, InitialiseCompy, replace);
 	INJECT(0x0041F750, CompyControl, replace);
+	INJECT(0x0041FD50, CarcassControl, replace);
 }
