@@ -123,8 +123,27 @@ static void ShivaDamage(ITEM_INFO* item, CREATURE_INFO* shiva, long damage)
 	}
 }
 
+void InitialiseShiva(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (item->object_number == SHIVA)
+	{
+		item->anim_number = objects[SHIVA].anim_index + 14;
+		item->frame_number = anims[item->anim_number].frame_base;
+		item->current_anim_state = 4;
+		item->goal_anim_state = 4;
+	}
+
+	item->status = ITEM_INACTIVE;
+	item->mesh_bits = 0;
+}
+
 void inject_shiva(bool replace)
 {
 	INJECT(0x00466E00, TriggerShivaSmoke, replace);
 	INJECT(0x00467780, ShivaDamage, replace);
+	INJECT(0x00467010, InitialiseShiva, replace);
 }
