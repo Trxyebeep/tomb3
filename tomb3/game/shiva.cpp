@@ -3,6 +3,12 @@
 #include "effect2.h"
 #include "../specific/game.h"
 #include "objects.h"
+#include "box.h"
+#include "effects.h"
+#include "sound.h"
+
+static BITE_INFO shiva_right = { 0, 0, 920, 22 };
+static BITE_INFO shiva_left = { 0, 0, 920, 13 };
 
 static void TriggerShivaSmoke(long x, long y, long z, long yt)
 {
@@ -96,7 +102,29 @@ static void TriggerShivaSmoke(long x, long y, long z, long yt)
 	sptr->sHeight = sptr->Height;
 }
 
+static void ShivaDamage(ITEM_INFO* item, CREATURE_INFO* shiva, long damage)
+{
+	if (!shiva->flags && item->touch_bits & 0x2400000)
+	{
+		lara_item->hit_points -= (short)damage;
+		lara_item->hit_status = 1;
+		CreatureEffect(item, &shiva_right, DoBloodSplat);
+		shiva->flags = 1;
+		SoundEffect(SFX_MACAQUE_ROLL, &item->pos, 0);
+	}
+
+	if (!shiva->flags && item->touch_bits & 0x2400)
+	{
+		lara_item->hit_points -= (short)damage;
+		lara_item->hit_status = 1;
+		CreatureEffect(item, &shiva_left, DoBloodSplat);
+		shiva->flags = 1;
+		SoundEffect(SFX_MACAQUE_ROLL, &item->pos, 0);
+	}
+}
+
 void inject_shiva(bool replace)
 {
 	INJECT(0x00466E00, TriggerShivaSmoke, replace);
+	INJECT(0x00467780, ShivaDamage, replace);
 }
