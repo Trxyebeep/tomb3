@@ -1274,7 +1274,7 @@ tomb3 progress.
 
 		game/shiva.cpp
 
-0x00466990		DrawShiva
+0x00466990	+	DrawShiva
 0x00466E00	+	TriggerShivaSmoke
 0x00467010	+	InitialiseShiva
 0x00467070	+	ShivaControl
