@@ -1277,7 +1277,7 @@ tomb3 progress.
 0x00466990		DrawShiva
 0x00466E00	+	TriggerShivaSmoke
 0x00467010	+	InitialiseShiva
-0x00467070		ShivaControl
+0x00467070	+	ShivaControl
 0x00467780	+	ShivaDamage
 
 
