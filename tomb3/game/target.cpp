@@ -3,6 +3,7 @@
 #include "items.h"
 #include "sound.h"
 #include "control.h"
+#include "objects.h"
 
 static long reset;
 
@@ -160,8 +161,30 @@ void TargetControl(short item_number)
 	AnimateItem(item);
 }
 
+void ResetTargets()
+{
+	long lp;
+
+	if (!reset)
+	{
+		assault_targets = 0;
+
+		for (lp = 0; lp < level_items; lp++)
+		{
+			if (items[lp].object_number == TARGETS)
+			{
+				InitialiseTarget((short)lp);
+				assault_targets++;
+			}
+		}
+
+		reset = 1;
+	}
+}
+
 void inject_target(bool replace)
 {
 	INJECT(0x0046A8B0, InitialiseTarget, replace);
 	INJECT(0x0046A960, TargetControl, replace);
+	INJECT(0x0046AC00, ResetTargets, replace);
 }
