@@ -71,6 +71,7 @@
 #include "../game/compy.h"
 #include "../game/tiger.h"
 #include "../game/shiva.h"
+#include "../game/target.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -206,6 +207,7 @@ void inject_all(bool replace)
 	inject_compy(replace);
 	inject_tiger(replace);
 	inject_shiva(replace);
+	inject_target(replace);
 
 	//specific
 	inject_drawbars(replace);
