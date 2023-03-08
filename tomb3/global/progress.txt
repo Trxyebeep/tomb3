@@ -1318,7 +1318,7 @@ tomb3 progress.
 		game/swat.cpp
 
 0x00469F80	+	InitialiseSwat
-0x00469FE0		SwatControl
+0x00469FE0	+	SwatControl
 
 
 		game/target.cpp

@@ -2,6 +2,7 @@
 #include "../global/vars.h"
 
 void InitialiseSwat(short item_number);
+void SwatControl(short item_number);
 
 void inject_swat(bool replace);
 
