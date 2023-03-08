@@ -50,10 +50,10 @@ static long(__cdecl* Movie_SetSyncAdjust)(LPVOID, LPVOID, long);
 static long(__cdecl* Movie_GetCurrentFrame)(LPVOID);
 static long(__cdecl* Movie_GetTotalFrames)(LPVOID);
 
+static HMODULE hWinPlay;
+
 bool LoadWinPlay()
 {
-	static HMODULE hWinPlay;
-
 	hWinPlay = LoadLibrary("WINPLAY.DLL");
 
 	if (!hWinPlay)
@@ -98,6 +98,15 @@ bool LoadWinPlay()
 	}
 
 	return 1;
+}
+
+void FreeWinPlay()
+{
+	if (hWinPlay)
+	{
+		FreeLibrary(hWinPlay);
+		hWinPlay = 0;
+	}
 }
 #endif
 

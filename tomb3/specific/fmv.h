@@ -5,6 +5,7 @@ void inject_fmv(bool replace);
 
 #ifdef TROYESTUFF
 bool LoadWinPlay();
+void FreeWinPlay();
 #endif
 
 long FMV_Play(char* name);
