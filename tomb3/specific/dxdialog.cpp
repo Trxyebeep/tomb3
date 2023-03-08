@@ -647,6 +647,7 @@ void DXInitJoystickAdapter(HWND hwnd)
 
 void DXCheckMMXTechnology(HWND hwnd)
 {
+#ifndef TROYESTUFF
 	HWND version;
 	ulong maxCPUID, processorType, info, features, unk1, unk2;
 	long mmx;
@@ -667,46 +668,46 @@ void DXCheckMMXTechnology(HWND hwnd)
 		pushad
 		mov processorType, 4;
 		pushfd
-		pop eax
-		mov ecx, eax
-		xor eax, 200000h
-		push eax
-		popfd
-		pushfd
-		pop eax
-		xor eax, ecx
-		je end
+			pop eax
+			mov ecx, eax
+			xor eax, 200000h
+			push eax
+			popfd
+			pushfd
+			pop eax
+			xor eax, ecx
+			je end
 
-		mov maxCPUID, 0
-		mov eax, 0;	//get largest eax value, and CPU name
+			mov maxCPUID, 0
+			mov eax, 0;	//get largest eax value, and CPU name
 		cpuid
-		mov maxCPUID, eax
-		mov dword ptr[name], ebx
-		mov dword ptr[name + 4], edx
-		mov dword ptr[name + 8], ecx
+			mov maxCPUID, eax
+			mov dword ptr[name], ebx
+			mov dword ptr[name + 4], edx
+			mov dword ptr[name + 8], ecx
 
-		mov eax, 1;	//get version info and feature bits
+			mov eax, 1;	//get version info and feature bits
 		cpuid
-		mov info, eax
-		mov features, edx
+			mov info, eax
+			mov features, edx
 
-		shr eax, 8; //actually getting the type now
+			shr eax, 8; //actually getting the type now
 		and eax, 0Fh
-		mov processorType, eax
+			mov processorType, eax
 
-		cmp eax, 5;	//no idea tbh
+			cmp eax, 5;	//no idea tbh
 		jl end
-		shr eax, 8
-		and eax, 100h
-		setne byte ptr unk1
+			shr eax, 8
+			and eax, 100h
+			setne byte ptr unk1
 
-		and edx, 10h
-		je end
-		shr eax, 8
-		and eax, 4
-		sete byte ptr unk2
+			and edx, 10h
+			je end
+			shr eax, 8
+			and eax, 4
+			sete byte ptr unk2
 
-	end:
+			end :
 		popad
 	}
 
@@ -748,6 +749,10 @@ void DXCheckMMXTechnology(HWND hwnd)
 
 	SetWindowText(version, buf);
 	G_DXConfig->MMX = mmx;
+#else
+	SetWindowText(GetDlgItem(hwnd, IDC_VERSION), "");
+	G_DXConfig->MMX = 1;
+#endif
 }
 
 void DXInitDialogBox(HWND hwnd)

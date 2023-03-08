@@ -685,6 +685,7 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance)
 {
 	LPDIRECTINPUTX lpDinput;
+#ifndef TROYESTUFF
 	ulong maxCPUID, processorType, info, features, unk1, unk2;
 	char name[13];
 
@@ -749,6 +750,9 @@ void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance)
 	}
 
 	MMXSupported = (features >> 23) & 1;
+#else
+	MMXSupported = 1;
+#endif
 	DirectDrawEnumerate(DXEnumDirectDraw, device);
 	DirectSoundEnumerate(DXEnumDirectSound, device);
 
