@@ -702,7 +702,7 @@ long Display_Inventory(long mode)
 				item->goal_frame = item->open_frame;
 				item->anim_direction = 1;
 				Inv_RingMotionSetup(&ring, RNG_SELECTING, RNG_SELECTED, 16);
-				Inv_RingMotionRotation(&ring, 0, -16384 - ring.angle_adder * ring.current_object);
+				Inv_RingMotionRotation(&ring, 0, -0x4000 - ring.angle_adder * ring.current_object);
 				Inv_RingMotionItemSelect(&ring, item);
 				input = 0;
 				inputDB = 0;
@@ -807,7 +807,7 @@ long Display_Inventory(long mode)
 			ring.number_of_objects = inv_keys_objects;
 			ring.current_object = inv_keys_current;
 			Inv_RingCalcAdders(&ring, 24);
-			Inv_RingMotionRotation(&ring, -0x8000, -16384 - ring.angle_adder * ring.current_object);
+			Inv_RingMotionRotation(&ring, -0x8000, -0x4000 - ring.angle_adder * ring.current_object);
 			ring.ringpos.y_rot = imo.rotate_target + 0x8000;
 			break;
 

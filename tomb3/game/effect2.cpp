@@ -1240,7 +1240,7 @@ void TriggerExplosionSmokeEnd(long x, long y, long z, long uw)
 	dx = lara_item->pos.x_pos - x;
 	dz = lara_item->pos.z_pos - z;
 
-	if (dx < -16384 || dx > 16384 || dz < -16384 || dz > 16384)
+	if (dx < -0x4000 || dx > 0x4000 || dz < -0x4000 || dz > 0x4000)
 		return;
 
 	sptr = &sparks[GetFreeSpark()];

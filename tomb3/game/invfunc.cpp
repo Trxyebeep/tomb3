@@ -1220,7 +1220,7 @@ void Inv_RingDoMotions(RING_INFO* ring)
 		if (!ring->rot_count)
 		{
 			ring->current_object = ring->target_object;
-			ring->ringpos.y_rot = -16384 - ring->current_object * ring->angle_adder;
+			ring->ringpos.y_rot = -0x4000 - ring->current_object * ring->angle_adder;
 			ring->rotating = 0;
 		}
 	}

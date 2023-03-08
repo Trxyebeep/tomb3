@@ -1324,7 +1324,7 @@ tomb3 progress.
 		game/target.cpp
 
 0x0046A8B0	+	InitialiseTarget
-0x0046A960		TargetControl
+0x0046A960	+	TargetControl
 0x0046AC00		ResetTargets
 
 

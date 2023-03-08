@@ -1312,7 +1312,7 @@ void CreatureFloat(short item_number)
 	short room_number;
 
 	item = &items[item_number];
-	item->hit_points = -16384;
+	item->hit_points = DONT_TARGET;
 	item->pos.x_rot = 0;
 	water_level = GetWaterHeight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number);
 

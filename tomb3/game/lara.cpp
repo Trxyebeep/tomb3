@@ -285,9 +285,9 @@ long TestLaraSlide(ITEM_INFO* item, COLL_INFO* coll)
 	ang = 0;
 
 	if (coll->tilt_x > 2)
-		ang = -16384;
+		ang = -0x4000;
 	else if (coll->tilt_x < -2)
-		ang = 16384;
+		ang = 0x4000;
 
 	if (coll->tilt_z > 2 && coll->tilt_z > abs(coll->tilt_x))
 		ang = -32768;
@@ -297,7 +297,7 @@ long TestLaraSlide(ITEM_INFO* item, COLL_INFO* coll)
 	ang_diff = ang - item->pos.y_rot;
 	ShiftItem(item, coll);
 
-	if (ang_diff >= -16384 && ang_diff <= 16384)
+	if (ang_diff >= -0x4000 && ang_diff <= 0x4000)
 	{
 		if (item->current_anim_state != AS_SLIDE || old_ang != ang)
 		{
@@ -318,7 +318,7 @@ long TestLaraSlide(ITEM_INFO* item, COLL_INFO* coll)
 			item->frame_number = anims[ANIM_SLIDEBACK].frame_base;
 			item->goal_anim_state = AS_SLIDEBACK;
 			item->current_anim_state = AS_SLIDEBACK;
-			item->pos.y_rot = ang - 32768;
+			item->pos.y_rot = ang - 0x8000;
 			lara.move_angle = ang;
 			old_ang = ang;
 		}
