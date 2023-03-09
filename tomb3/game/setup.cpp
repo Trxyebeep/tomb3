@@ -15,6 +15,7 @@
 #include "../specific/specific.h"
 #include "lot.h"
 #include "savegame.h"
+#include "pickup.h"
 #ifdef TROYESTUFF
 #include "../newstuff/map.h"
 #include "../tomb3/tomb3.h"
@@ -61,6 +62,42 @@ void GetAIPickups()
 				}
 			}
 		}
+	}
+}
+
+void GetCarriedItems()
+{
+	ITEM_INFO* item;
+	ITEM_INFO* pickup;
+	long lp;
+	short pickup_number;
+
+	for (lp = 0; lp < level_items; lp++)
+	{
+		item = &items[lp];
+
+		if (!objects[item->object_number].intelligent)
+			continue;
+
+		item->carried_item = NO_ITEM;
+		pickup_number = room[item->room_number].item_number;
+
+		do
+		{
+			pickup = &items[pickup_number];
+
+			if (pickup->pos.x_pos == item->pos.x_pos && pickup->pos.y_pos == item->pos.y_pos && pickup->pos.z_pos == item->pos.z_pos &&
+				objects[pickup->object_number].collision == orig_PickUpCollision)
+			{
+				pickup->carried_item = item->carried_item;
+				item->carried_item = pickup_number;
+				RemoveDrawnItem(pickup_number);
+				pickup->room_number = NO_ROOM;
+			}
+
+			pickup_number = pickup->next_item;
+
+		} while (pickup_number != NO_ITEM);
 	}
 }
 
@@ -245,6 +282,7 @@ long InitialiseLevel(long level, long type)
 void inject_setup(bool replace)
 {
 	INJECT(0x00466590, GetAIPickups, inject_rando ? 1 : replace);
+	INJECT(0x004664B0, GetCarriedItems, replace);
 	INJECT(0x00463B70, InitialiseLevelFlags, replace);
 	INJECT(0x00463B00, InitialiseGameFlags, replace);
 	INJECT(0x004638F0, InitialiseLevel, replace);

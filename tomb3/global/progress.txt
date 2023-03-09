@@ -1267,7 +1267,7 @@ tomb3 progress.
 0x00463C30		BaddyObjects
 0x00465240		TrapObjects
 0x00465820		ObjectObjects
-0x004664B0		GetCarriedItems
+0x004664B0	+	GetCarriedItems
 0x00466590	+	GetAIPickups
 0x004666C0		BuildOutsideTable
 
