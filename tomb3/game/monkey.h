@@ -2,6 +2,7 @@
 #include "../global/vars.h"
 
 void InitialiseMonkey(short item_number);
+void MonkeyControl(short item_number);
 
 void inject_monkey(bool replace);
 

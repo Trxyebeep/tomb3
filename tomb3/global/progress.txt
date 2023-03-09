@@ -1081,7 +1081,7 @@ tomb3 progress.
 
 0x004559B0	+	InitialiseMonkey
 0x00455A10		DrawMonkey
-0x00455E30		MonkeyControl
+0x00455E30	+	MonkeyControl
 
 
 		game/moveblok.cpp
