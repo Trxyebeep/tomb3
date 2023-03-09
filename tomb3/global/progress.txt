@@ -1080,7 +1080,7 @@ tomb3 progress.
 		game/monkey.cpp
 
 0x004559B0	+	InitialiseMonkey
-0x00455A10		DrawMonkey
+0x00455A10	+	DrawMonkey
 0x00455E30	+	MonkeyControl
 
 

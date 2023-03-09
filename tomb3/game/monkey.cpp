@@ -6,6 +6,9 @@
 #include "effects.h"
 #include "../specific/game.h"
 #include "items.h"
+#include "draw.h"
+#include "../specific/output.h"
+#include "../3dsystem/3d_gen.h"
 
 static BITE_INFO monkey_hit = { 10, 10, 11, 13 };
 
@@ -494,8 +497,156 @@ void MonkeyControl(short item_number)
 	}
 }
 
+void DrawMonkey(ITEM_INFO* item)
+{
+	OBJECT_INFO* obj;
+	short** mesh;
+	short** swap;
+	long* bone;
+	short* frm[2];
+	short* extra_rotation;
+	short* rot;
+	short* rot2;
+	long frac, rate, clip, bit, lp;
+
+	obj = &objects[item->object_number];
+	frac = GetFrames(item, frm, &rate);
+
+	if (obj->shadow_size)
+		S_PrintShadow(obj->shadow_size, frm[0], item);
+
+	phd_PushMatrix();
+	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+
+	clip = S_GetObjectBounds(frm[0]);
+
+	if (!clip)
+	{
+		phd_PopMatrix();
+		return;
+	}
+
+	CalculateObjectLighting(item, frm[0]);
+	extra_rotation = (short*)item->data;
+
+	mesh = &meshes[objects[MONKEY].mesh_index];
+
+	if (item->ai_bits == MODIFY)
+		swap = &meshes[objects[MESHSWAP3].mesh_index];
+	else
+		swap = &meshes[objects[MESHSWAP2].mesh_index];
+
+	bone = &bones[obj->bone_index];
+	bit = 1;
+
+	if (frac)
+	{
+		InitInterpolate(frac, rate);
+		phd_TranslateRel_ID(frm[0][6], frm[0][7], frm[0][8], frm[1][6], frm[1][7], frm[1][8]);
+		rot = frm[0] + 9;
+		rot2 = frm[1] + 9;
+		gar_RotYXZsuperpack_I(&rot, &rot2, 0);
+
+		if (item->mesh_bits & bit)
+			phd_PutPolygons_I(*mesh, clip);
+		else
+			phd_PutPolygons_I(*swap, clip);
+
+		mesh++;
+		swap++;
+
+		for (lp = obj->nmeshes - 1; lp > 0; lp--)
+		{
+			if (bone[0] & 1)
+				phd_PopMatrix_I();
+
+			if (bone[0] & 2)
+				phd_PushMatrix_I();
+
+			phd_TranslateRel_I(bone[1], bone[2], bone[3]);
+			gar_RotYXZsuperpack_I(&rot, &rot2, 0);
+
+			if (extra_rotation && bone[0] & 0x1C)
+			{
+				if (bone[0] & 8)
+					phd_RotY_I(*extra_rotation++);
+
+				if (bone[0] & 4)
+					phd_RotX_I(*extra_rotation++);
+
+				if (bone[0] & 0x10)
+					phd_RotZ_I(*extra_rotation++);
+			}
+
+			bit <<= 1;
+
+			if (item->mesh_bits & bit)
+				phd_PutPolygons_I(*mesh, clip);
+			else if (item->hit_points > 0 || item->status == ITEM_ACTIVE || bit != 0x400 || item->carried_item == NO_ITEM)
+				phd_PutPolygons_I(*swap, clip);
+
+			bone += 4;
+			mesh++;
+			swap++;
+		}
+	}
+	else
+	{
+		phd_TranslateRel(frm[0][6], frm[0][7], frm[0][8]);
+		rot = frm[0] + 9;
+		gar_RotYXZsuperpack(&rot, 0);
+
+		if (item->mesh_bits & bit)
+			phd_PutPolygons(*mesh, clip);
+		else
+			phd_PutPolygons(*swap, clip);
+
+		mesh++;
+		swap++;
+
+		for (lp = obj->nmeshes - 1; lp > 0; lp--)
+		{
+			if (bone[0] & 1)
+				phd_PopMatrix();
+
+			if (bone[0] & 2)
+				phd_PushMatrix();
+
+			phd_TranslateRel(bone[1], bone[2], bone[3]);
+			gar_RotYXZsuperpack(&rot, 0);
+
+			if (extra_rotation && bone[0] & 0x1C)
+			{
+				if (bone[0] & 8)
+					phd_RotY(*extra_rotation++);
+
+				if (bone[0] & 4)
+					phd_RotX(*extra_rotation++);
+
+				if (bone[0] & 0x10)
+					phd_RotZ(*extra_rotation++);
+			}
+
+			bit <<= 1;
+
+			if (item->mesh_bits & bit)
+				phd_PutPolygons(*mesh, clip);
+			else
+				phd_PutPolygons(*swap, clip);
+
+			bone += 4;
+			mesh++;
+			swap++;
+		}
+	}
+
+	phd_PopMatrix();
+}
+
 void inject_monkey(bool replace)
 {
 	INJECT(0x004559B0, InitialiseMonkey, replace);
 	INJECT(0x00455E30, MonkeyControl, replace);
+	INJECT(0x00455A10, DrawMonkey, replace);
 }
