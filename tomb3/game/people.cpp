@@ -193,6 +193,33 @@ long TargetVisible(ITEM_INFO* item, AI_INFO* info)
 	return LOS(&s, &t);
 }
 
+long Targetable(ITEM_INFO* item, AI_INFO* info)
+{
+	ITEM_INFO* enemy;
+	CREATURE_INFO* creature;
+	GAME_VECTOR s;
+	GAME_VECTOR t;
+	short* bounds;
+
+	creature = (CREATURE_INFO*)item->data;
+	enemy = creature->enemy;
+
+	if (!enemy || enemy->hit_points <= 0 || !enemy->data || !info->ahead || info->distance >= 0x4000000)
+		return 0;
+
+	bounds = GetBestFrame(item);
+	s.x = item->pos.x_pos;
+	s.y = item->pos.y_pos + ((bounds[3] + 3 * bounds[2]) >> 2);
+	s.z = item->pos.z_pos;
+	s.room_number = item->room_number;
+
+	bounds = GetBestFrame(enemy);
+	t.x = enemy->pos.x_pos;
+	t.y = enemy->pos.y_pos + ((bounds[3] + 3 * bounds[2]) >> 2);
+	t.z = enemy->pos.z_pos;
+	return LOS(&s, &t);
+}
+
 void inject_people(bool replace)
 {
 	INJECT(0x0045B6F0, GunShot, replace);
@@ -200,4 +227,5 @@ void inject_people(bool replace)
 	INJECT(0x0045B7C0, GunMiss, replace);
 	INJECT(0x0045B870, ShotLara, inject_rando ? 1 : replace);
 	INJECT(0x0045B540, TargetVisible, replace);
+	INJECT(0x0045B610, Targetable, replace);
 }
