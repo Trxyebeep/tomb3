@@ -880,7 +880,7 @@ tomb3 progress.
 0x00446DD0	+	ControlGrenade
 0x004475D0	+	draw_shotgun
 0x00447770	+	undraw_shotgun
-0x00447880		AnimateShotgun
+0x00447880	+	AnimateShotgun
 0x00447D90		TriggerUnderwaterExplosion
 
 
