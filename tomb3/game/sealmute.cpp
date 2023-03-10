@@ -3,6 +3,10 @@
 #include "effect2.h"
 #include "../specific/game.h"
 #include "objects.h"
+#include "items.h"
+#include "sphere.h"
+#include "../3dsystem/3d_gen.h"
+#include "../3dsystem/phd_math.h"
 
 static void TriggerSealmuteGas(long x, long y, long z, long xv, long yv, long zv, long FxObj)
 {
@@ -94,7 +98,69 @@ static void TriggerSealmuteGas(long x, long y, long z, long xv, long yv, long zv
 	}
 }
 
+static short TriggerSealmuteGasThrower(ITEM_INFO* item, BITE_INFO* bite, short speed)
+{
+	FX_INFO* fx;
+	PHD_VECTOR pos;
+	PHD_VECTOR pos1;
+	long lp, s, r, xv, yv, zv;
+	short fxNum;
+	short angles[2];
+
+	fxNum = CreateEffect(item->room_number);
+
+	if (fxNum == NO_ITEM)
+		return NO_ITEM;
+
+	fx = &effects[fxNum];
+
+	pos.x = bite->x;
+	pos.y = bite->y;
+	pos.z = bite->z;
+	GetJointAbsPosition(item, &pos, bite->mesh_num);
+
+	pos1.x = bite->x;
+	pos1.y = bite->y << 1;
+	pos1.z = bite->z << 3;
+	GetJointAbsPosition(item, &pos1, bite->mesh_num);
+
+	phd_GetVectorAngles(pos1.x - pos.x, pos1.y - pos.y, pos1.z - pos.z, angles);
+
+	fx->pos.x_pos = pos.x;
+	fx->pos.y_pos = pos.y;
+	fx->pos.z_pos = pos.z;
+	fx->pos.x_rot = angles[1];
+	fx->pos.y_rot = angles[0];
+	fx->pos.z_rot = 0;
+	fx->room_number = item->room_number;
+	fx->speed = speed << 2;
+	fx->object_number = DRAGON_FIRE;
+	fx->counter = 20;
+	fx->flag1 = 1;
+
+	TriggerSealmuteGas(0, 0, 0, 0, 0, 0, fxNum);
+
+	for (lp = 0; lp < 2; lp++)
+	{
+		s = GetRandomControl() % (speed << 2) + 32;
+		r = (s * phd_cos(fx->pos.x_rot)) >> W2V_SHIFT;
+		xv = (r * phd_sin(fx->pos.y_rot)) >> W2V_SHIFT;
+		yv = -((s * phd_sin(fx->pos.x_rot)) >> W2V_SHIFT);
+		zv = (r * phd_cos(fx->pos.y_rot)) >> W2V_SHIFT;
+		TriggerSealmuteGas(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, xv << 5, yv << 5, zv << 5, -1);
+	}
+
+	r = ((speed << 1) * phd_cos(fx->pos.x_rot)) >> W2V_SHIFT;
+	xv = (r * phd_sin(fx->pos.y_rot)) >> W2V_SHIFT;
+	yv = -(((speed << 1) * phd_sin(fx->pos.x_rot)) >> W2V_SHIFT);
+	zv = (r * phd_cos(fx->pos.y_rot)) >> W2V_SHIFT;
+	TriggerSealmuteGas(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, xv << 5, yv << 5, zv << 5, -2);
+
+	return fxNum;
+}
+
 void inject_sealmute(bool replace)
 {
 	INJECT(0x00463700, TriggerSealmuteGas, replace);
+	INJECT(0x004634C0, TriggerSealmuteGasThrower, replace);
 }
