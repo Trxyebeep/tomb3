@@ -881,7 +881,7 @@ tomb3 progress.
 0x004475D0	+	draw_shotgun
 0x00447770	+	undraw_shotgun
 0x00447880	+	AnimateShotgun
-0x00447D90		TriggerUnderwaterExplosion
+0x00447D90	+	TriggerUnderwaterExplosion
 
 
 		game/lara2gun.cpp

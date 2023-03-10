@@ -1385,6 +1385,53 @@ void RifleHandler(long weapon_type)
 	}
 }
 
+void TriggerUnderwaterExplosion(ITEM_INFO* item)
+{
+	long y, wh;
+
+	TriggerExplosionBubble(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number);
+	TriggerExplosionSparks(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 2, -2, 1, item->room_number);
+
+	for (int i = 0; i < 3; i++)
+		TriggerExplosionSparks(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 2, -1, 1, item->room_number);
+
+	wh = GetWaterHeight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number);
+
+	if (wh != NO_HEIGHT)
+	{
+		y = item->pos.y_pos - wh;
+
+		if (y < 2048)
+		{
+			wh = 2048 - y;
+			y = wh >> 6;
+
+			splash_setup.x = item->pos.x_pos;
+			splash_setup.y = room[item->room_number].maxceiling;
+			splash_setup.z = item->pos.z_pos;
+			splash_setup.InnerYsize = -96;
+			splash_setup.InnerXZvel = 160;
+			splash_setup.InnerGravity = 96;
+			splash_setup.InnerXZoff = short(y + 16);
+			splash_setup.InnerXZsize = short(y + 12);
+			splash_setup.InnerFriction = 7;
+			splash_setup.InnerYvel = short((-512 - wh) << 3);
+			splash_setup.MiddleXZoff = short(y + 24);
+			splash_setup.MiddleXZsize = short(y + 24);
+			splash_setup.MiddleYsize = -64;
+			splash_setup.MiddleXZvel = 224;
+			splash_setup.MiddleYvel = short((-768 - wh) << 2);
+			splash_setup.MiddleGravity = 56;
+			splash_setup.MiddleFriction = 8;
+			splash_setup.OuterXZoff = short(y + 32);
+			splash_setup.OuterXZsize = short(y + 32);
+			splash_setup.OuterXZvel = 272;
+			splash_setup.OuterFriction = 9;
+			SetupSplash(&splash_setup);
+		}
+	}
+}
+
 void inject_lara1gun(bool replace)
 {
 	INJECT(0x004459B0, ControlHarpoonBolt, inject_rando ? 1 : replace);
@@ -1402,4 +1449,5 @@ void inject_lara1gun(bool replace)
 	INJECT(0x00445760, FireM16, replace);
 	INJECT(0x00447880, AnimateShotgun, replace);
 	INJECT(0x00445340, RifleHandler, replace);
+	INJECT(0x00447D90, TriggerUnderwaterExplosion, replace);
 }
