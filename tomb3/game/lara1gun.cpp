@@ -1053,6 +1053,61 @@ void FireGrenade()
 	savegame.ammo_used++;
 }
 
+void FireShotgun()
+{
+	PHD_VECTOR pos;
+	PHD_VECTOR pos2;
+	long fired, lp;
+	short angles[2];
+	short dangles[2];
+
+	angles[0] = lara.left_arm.y_rot + lara_item->pos.y_rot;
+	angles[1] = lara.left_arm.x_rot;
+
+	if (!lara.left_arm.lock)
+	{
+		angles[0] += lara.torso_y_rot;
+		angles[1] += lara.torso_x_rot;
+	}
+
+	fired = 0;
+
+	for (int i = 0; i < 6; i++)
+	{
+		dangles[0] = short(angles[0] + 3640 * (GetRandomControl() - 0x4000) / 0x10000);
+		dangles[1] = short(angles[1] + 3640 * (GetRandomControl() - 0x4000) / 0x10000);
+
+		if (FireWeapon(LG_SHOTGUN, lara.target, lara_item, dangles))
+			fired = 1;
+	}
+
+	if (fired)
+	{
+		pos.x = 0;
+		pos.y = 228;
+		pos.z = 32;
+		GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+
+		pos2.x = 0;
+		pos2.y = 1508;
+		pos2.z = 32;
+		GetLaraHandAbsPosition(&pos2, RIGHT_HAND);
+
+		SmokeCountL = 32;
+		SmokeWeapon = LG_SHOTGUN;
+
+		for (lp = 0; lp < 7; lp++)
+			TriggerGunSmoke(pos.x, pos.y, pos.z, pos2.x - pos.x, pos2.y - pos.y, pos2.z - pos.z, 1, SmokeWeapon, SmokeCountL);
+
+		for (lp = 0; lp < 12; lp++)
+			TriggerShotgunSparks(pos.x, pos.y, pos.z, (pos2.x - pos.x) << 1, (pos2.y - pos.y) << 1, (pos2.z - pos.z) << 1);
+
+		lara.right_arm.flash_gun = weapons[LG_SHOTGUN].flash_time;
+		SoundEffect(SFX_EXPLOSION1, &lara_item->pos, 0x1400000 | SFX_SETPITCH);
+		SoundEffect(weapons[LG_SHOTGUN].sample_num, &lara_item->pos, SFX_DEFAULT);
+	}
+}
+
 void inject_lara1gun(bool replace)
 {
 	INJECT(0x004459B0, ControlHarpoonBolt, inject_rando ? 1 : replace);
@@ -1066,4 +1121,5 @@ void inject_lara1gun(bool replace)
 	INJECT(0x00445820, FireHarpoon, replace);
 	INJECT(0x00445F50, FireRocket, replace);
 	INJECT(0x00446BA0, FireGrenade, replace);
+	INJECT(0x00445560, FireShotgun, replace);
 }
