@@ -893,7 +893,7 @@ tomb3 progress.
 0x00448350	+	draw_pistol_meshes
 0x004483B0	+	undraw_pistol_mesh_left
 0x00448400	+	undraw_pistol_mesh_right
-0x00448440		PistolHandler
+0x00448440	+	PistolHandler
 0x00448650	+	AnimatePistols
 
 

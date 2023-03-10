@@ -5,6 +5,7 @@
 #include "sound.h"
 #include "lara.h"
 #include "effect2.h"
+#include "../specific/game.h"
 
 static PISTOL_DEF PistolTable[4]
 {
@@ -405,6 +406,79 @@ void AnimatePistols(long weapon_type)
 	set_arm_info(&lara.left_arm, anil);
 }
 
+void PistolHandler(long weapon_type)
+{
+	WEAPON_INFO* winfo;
+	PHD_VECTOR pos;
+	long r, g, b;
+
+	winfo = &weapons[weapon_type];
+	
+	if (input & IN_ACTION)
+		LaraTargetInfo(winfo);
+	else
+		lara.target = 0;
+
+	if (!lara.target)
+		LaraGetNewTarget(winfo);
+
+	AimWeapon(winfo, &lara.left_arm);
+	AimWeapon(winfo, &lara.right_arm);
+
+	if (lara.left_arm.lock && lara.right_arm.lock)
+	{
+		lara.torso_x_rot = (lara.left_arm.x_rot + lara.right_arm.x_rot) >> 2;
+		lara.torso_y_rot = (lara.left_arm.y_rot + lara.right_arm.y_rot) >> 2;
+
+		if (camera.old_type != LOOK_CAMERA)
+		{
+			lara.head_x_rot = lara.torso_x_rot;
+			lara.head_y_rot = lara.torso_y_rot;
+		}
+	}
+	else if (lara.left_arm.lock && !lara.right_arm.lock)
+	{
+		lara.torso_x_rot = lara.left_arm.x_rot >> 1;
+		lara.torso_y_rot = lara.left_arm.y_rot >> 1;
+
+		if (camera.old_type != LOOK_CAMERA)
+		{
+			lara.head_x_rot = lara.torso_x_rot;
+			lara.head_y_rot = lara.torso_y_rot;
+		}
+	}
+	else if (!lara.left_arm.lock && lara.right_arm.lock)
+	{
+		lara.torso_x_rot = lara.right_arm.x_rot >> 1;
+		lara.torso_y_rot = lara.right_arm.y_rot >> 1;
+
+		if (camera.old_type != LOOK_CAMERA)
+		{
+			lara.head_x_rot = lara.torso_x_rot;
+			lara.head_y_rot = lara.torso_y_rot;
+		}
+	}
+
+	AnimatePistols(weapon_type);
+
+	if (lara.left_arm.flash_gun || lara.right_arm.flash_gun)
+	{
+		pos.x = (GetRandomControl() & 0xFF) - 128;
+		pos.y = (GetRandomControl() & 0x7F) - 63;
+		pos.z = (GetRandomControl() & 0xFF) - 128;
+
+		if (lara.left_arm.flash_gun)
+			GetLaraHandAbsPosition(&pos, LEFT_HAND);
+		else
+			GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+
+		r = (GetRandomControl() & 7) + 24;
+		g = (GetRandomControl() & 3) + 16;
+		b = GetRandomControl() & 7;
+		TriggerDynamic(pos.x, pos.y, pos.z, 10, r, g, b);
+	}
+}
+
 void inject_lara2gun(bool replace)
 {
 	INJECT(0x00448350, draw_pistol_meshes, replace);
@@ -415,4 +489,5 @@ void inject_lara2gun(bool replace)
 	INJECT(0x00447F30, draw_pistols, replace);
 	INJECT(0x00448050, undraw_pistols, replace);
 	INJECT(0x00448650, AnimatePistols, replace);
+	INJECT(0x00448440, PistolHandler, replace);
 }
