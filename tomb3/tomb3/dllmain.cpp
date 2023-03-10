@@ -74,6 +74,7 @@
 #include "../game/target.h"
 #include "../game/swat.h"
 #include "../game/monkey.h"
+#include "../game/sealmute.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -212,6 +213,7 @@ void inject_all(bool replace)
 	inject_target(replace);
 	inject_swat(replace);
 	inject_monkey(replace);
+	inject_sealmute(replace);
 
 	//specific
 	inject_drawbars(replace);

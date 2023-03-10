@@ -1255,7 +1255,7 @@ tomb3 progress.
 
 0x00462EA0		SealmuteControl
 0x004634C0		TriggerSealmuteGasThrower
-0x00463700		TriggerSealmuteGas
+0x00463700	+	TriggerSealmuteGas
 
 
 		game/setup.cpp
