@@ -17,6 +17,7 @@
 #include "box.h"
 #include "sound.h"
 #include "lara.h"
+#include "lara2gun.h"
 
 void ControlHarpoonBolt(short item_number)
 {
@@ -1321,6 +1322,69 @@ void AnimateShotgun(long weapon_type)
 	lara.left_arm.anim_number = lara.right_arm.anim_number;
 }
 
+void RifleHandler(long weapon_type)
+{
+	WEAPON_INFO* winfo;
+	PHD_VECTOR pos;
+	long r, g, b;
+	static short FuckYou;
+
+	winfo = &weapons[weapon_type];
+
+	if (input & IN_ACTION)
+		LaraTargetInfo(winfo);
+	else
+		lara.target = 0;
+
+	if (!lara.target)
+		LaraGetNewTarget(winfo);
+
+	AimWeapon(winfo, &lara.left_arm);
+
+	if (lara.left_arm.lock)
+	{
+		lara.torso_x_rot = lara.left_arm.x_rot;
+		lara.torso_y_rot = lara.left_arm.y_rot;
+
+		if (camera.old_type != LOOK_CAMERA)
+		{
+			lara.head_x_rot = 0;
+			lara.head_y_rot = 0;
+		}
+	}
+
+	lara.torso_x_rot += FuckYou;
+	lara.left_arm.x_rot += FuckYou;
+
+	if (weapon_type == LG_MAGNUMS)
+		AnimatePistols(LG_MAGNUMS);
+	else
+		AnimateShotgun(weapon_type);
+
+	if (lara.right_arm.flash_gun)
+	{
+		r = (GetRandomControl() & 7) + 24;
+		g = (GetRandomControl() & 3) + 16;
+		b = GetRandomControl() & 7;
+
+		if (weapon_type == LG_SHOTGUN || weapon_type == LG_M16)
+		{
+			pos.x = lara_item->pos.x_pos + (1024 * phd_sin(lara_item->pos.y_rot) >> W2V_SHIFT) + (GetRandomControl() & 0xFF) - 128;
+			pos.y = lara_item->pos.y_pos + ((GetRandomControl() & 0x7F) - 575);
+			pos.z = lara_item->pos.z_pos + (1024 * phd_cos(lara_item->pos.y_rot) >> W2V_SHIFT) + (GetRandomControl() & 0xFF) - 128;
+			TriggerDynamic(pos.x, pos.y, pos.z, weapon_type == LG_SHOTGUN ? 12 : 11, r, g, b);
+		}
+		else if (weapon_type == LG_MAGNUMS)
+		{
+			pos.x = (GetRandomControl() & 0xFF) - 128;
+			pos.y = (GetRandomControl() & 0x7F) - 63;
+			pos.z = (GetRandomControl() & 0xFF) - 128;
+			GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+			TriggerDynamic(pos.x, pos.y, pos.z, 12, r, g, b);
+		}
+	}
+}
+
 void inject_lara1gun(bool replace)
 {
 	INJECT(0x004459B0, ControlHarpoonBolt, inject_rando ? 1 : replace);
@@ -1337,4 +1401,5 @@ void inject_lara1gun(bool replace)
 	INJECT(0x00445560, FireShotgun, replace);
 	INJECT(0x00445760, FireM16, replace);
 	INJECT(0x00447880, AnimateShotgun, replace);
+	INJECT(0x00445340, RifleHandler, replace);
 }

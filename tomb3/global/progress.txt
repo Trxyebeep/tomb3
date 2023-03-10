@@ -869,7 +869,7 @@ tomb3 progress.
 0x00445250	+	draw_shotgun_meshes
 0x00445290	+	undraw_shotgun_meshes
 0x004452C0	+	ready_shotgun
-0x00445340		RifleHandler
+0x00445340	+	RifleHandler
 0x00445560	+	FireShotgun
 0x00445760	+	FireM16
 0x00445820	+	FireHarpoon
