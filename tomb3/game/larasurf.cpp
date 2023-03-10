@@ -312,6 +312,41 @@ long LaraTestWaterClimbOut(ITEM_INFO* item, COLL_INFO* coll)
 	return 1;
 }
 
+long LaraTestWaterStepOut(ITEM_INFO* item, COLL_INFO* coll)
+{
+	if (coll->coll_type == CT_FRONT || coll->mid_type == BIG_SLOPE || coll->mid_type == DIAGONAL || coll->mid_floor >= 0)
+		return 0;
+
+	if (coll->mid_floor < -128)
+	{
+		item->anim_number = ANIM_SURF2WADE1;
+		item->frame_number = anims[ANIM_SURF2WADE1].frame_base;
+		item->current_anim_state = AS_WATEROUT;
+		item->goal_anim_state = AS_STOP;
+	}
+	else if (item->goal_anim_state == AS_SURFLEFT)
+		item->goal_anim_state = AS_STEPLEFT;
+	else if (item->goal_anim_state == AS_SURFRIGHT)
+		item->goal_anim_state = AS_STEPRIGHT;
+	else
+	{
+		item->anim_number = ANIM_WADE;
+		item->frame_number = anims[ANIM_WADE].frame_base;
+		item->current_anim_state = AS_WADE;
+		item->goal_anim_state = AS_WADE;
+	}
+
+	item->pos.y_pos += coll->front_floor + 695;
+	UpdateLaraRoom(item, -381);
+	item->pos.x_rot = 0;
+	item->pos.z_rot = 0;
+	item->gravity_status = 0;
+	item->speed = 0;
+	item->fallspeed = 0;
+	lara.water_status = LARA_WADE;
+	return 1;
+}
+
 void inject_larasurf(bool replace)
 {
 	INJECT(0x0044E050, LaraSurface, replace);
@@ -326,4 +361,5 @@ void inject_larasurf(bool replace)
 	INJECT(0x0044E8C0, lara_col_surfright, replace);
 	INJECT(0x0044E8F0, lara_col_surftread, replace);
 	INJECT(0x0044E450, LaraTestWaterClimbOut, replace);
+	INJECT(0x0044E770, LaraTestWaterStepOut, replace);
 }

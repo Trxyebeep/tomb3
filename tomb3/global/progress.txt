@@ -979,7 +979,7 @@ tomb3 progress.
 0x0044E410	+	lara_col_surfswim
 0x0044E450	+	LaraTestWaterClimbOut
 0x0044E670		LaraSurfaceCollision
-0x0044E770		LaraTestWaterStepOut
+0x0044E770	+	LaraTestWaterStepOut
 0x0044E860	+	lara_col_surfback
 0x0044E890	+	lara_col_surfleft
 0x0044E8C0	+	lara_col_surfright
