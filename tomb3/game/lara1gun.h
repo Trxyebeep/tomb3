@@ -15,6 +15,7 @@ void FireHarpoon();
 void FireRocket();
 void FireGrenade();
 void FireShotgun();
+void FireM16(long running);
 
 #define TriggerUnderwaterExplosion	( (void(__cdecl*)(ITEM_INFO*)) 0x00447D90 )
 #define RifleHandler	( (void(__cdecl*)(long)) 0x00445340 )

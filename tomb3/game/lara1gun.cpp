@@ -1108,6 +1108,39 @@ void FireShotgun()
 	}
 }
 
+void FireM16(long running)
+{
+	short angles[2];
+
+	angles[0] = lara.left_arm.y_rot + lara_item->pos.y_rot;
+	angles[1] = lara.left_arm.x_rot;
+
+	if (!lara.left_arm.lock)
+	{
+		angles[0] += lara.torso_y_rot;
+		angles[1] += lara.torso_x_rot;
+	}
+
+	if (running)	//should be using LG_M16, do NOT fix though.
+	{
+		weapons[M16].shot_accuracy = 2184;	/*Technically LG_ROCKET*/
+		weapons[M16].damage = 1;
+	}
+	else
+	{
+		weapons[M16].shot_accuracy = 728;
+		weapons[M16].damage = 3;
+	}
+
+	if (FireWeapon(LG_M16, lara.target, lara_item, angles))
+	{
+		SmokeCountL = 24;
+		SmokeWeapon = LG_M16;
+		TriggerGunShell(1, GUNSHELL, LG_M16);
+		lara.right_arm.flash_gun = weapons[LG_M16].flash_time;
+	}
+}
+
 void inject_lara1gun(bool replace)
 {
 	INJECT(0x004459B0, ControlHarpoonBolt, inject_rando ? 1 : replace);
@@ -1122,4 +1155,5 @@ void inject_lara1gun(bool replace)
 	INJECT(0x00445F50, FireRocket, replace);
 	INJECT(0x00446BA0, FireGrenade, replace);
 	INJECT(0x00445560, FireShotgun, replace);
+	INJECT(0x00445760, FireM16, replace);
 }
