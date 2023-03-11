@@ -1231,7 +1231,7 @@ tomb3 progress.
 
 		game/raptor.cpp
 
-0x00461040		RaptorControl
+0x00461040	+	RaptorControl
 
 
 		game/rat.cpp
