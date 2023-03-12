@@ -77,6 +77,7 @@
 #include "../game/sealmute.h"
 #include "../game/rat.h"
 #include "../game/raptor.h"
+#include "../game/firehead.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -218,6 +219,7 @@ void inject_all(bool replace)
 	inject_sealmute(replace);
 	inject_rat(replace);
 	inject_raptor(replace);
+	inject_firehead(replace);
 
 	//specific
 	inject_drawbars(replace);
