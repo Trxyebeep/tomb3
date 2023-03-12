@@ -539,7 +539,7 @@ tomb3 progress.
 0x0042FAF0	+	InitialiseFireHead
 0x0042FB50	+	ControlFireHead
 0x0042FE30	+	TriggerFireHeadFlame
-0x00430010		ControlRotateyThing
+0x00430010	+	ControlRotateyThing
 
 
 		game/fish.cpp

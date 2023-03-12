@@ -7,6 +7,7 @@
 #include "sphere.h"
 #include "sound.h"
 #include "traps.h"
+#include "items.h"
 
 static void TriggerFireHeadFlame(long x, long y, long z, long angle, long speed)
 {
@@ -202,9 +203,22 @@ void ControlFireHead(short item_number)
 	AnimateItem(item);
 }
 
+void ControlRotateyThing(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (TriggerActive(item))
+		AnimateItem(item);
+	else
+		KillItem(item_number);
+}
+
 void inject_firehead(bool replace)
 {
 	INJECT(0x0042FE30, TriggerFireHeadFlame, replace);
 	INJECT(0x0042FAF0, InitialiseFireHead, replace);
 	INJECT(0x0042FB50, ControlFireHead, replace);
+	INJECT(0x00430010, ControlRotateyThing, replace);
 }
