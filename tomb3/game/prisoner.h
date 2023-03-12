@@ -4,6 +4,7 @@
 void inject_prisoner(bool replace);
 
 void InitialisePrisoner(short item_number);
+void PrisonerControl(short item_number);
 
 enum BOB_STATES
 {
