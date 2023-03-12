@@ -59,7 +59,19 @@ static void TriggerFireHeadFlame(long x, long y, long z, long angle, long speed)
 	sptr->sHeight = sptr->Height;
 }
 
+void InitialiseFireHead(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+	item->anim_number = objects[item->object_number].anim_index + 1;
+	item->frame_number = anims[item->anim_number].frame_base;
+	item->current_anim_state = FIREHEAD_REAR;
+	item->goal_anim_state = FIREHEAD_REAR;
+}
+
 void inject_firehead(bool replace)
 {
 	INJECT(0x0042FE30, TriggerFireHeadFlame, replace);
+	INJECT(0x0042FAF0, InitialiseFireHead, replace);
 }
