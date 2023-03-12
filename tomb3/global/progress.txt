@@ -1192,7 +1192,7 @@ tomb3 progress.
 
 		game/prisoner.cpp
 
-0x0045CFF0		InitialisePrisoner
+0x0045CFF0	+	InitialisePrisoner
 0x0045D050		PrisonerControl
 
 

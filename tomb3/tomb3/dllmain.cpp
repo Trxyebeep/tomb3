@@ -78,6 +78,7 @@
 #include "../game/rat.h"
 #include "../game/raptor.h"
 #include "../game/firehead.h"
+#include "../game/prisoner.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -220,6 +221,7 @@ void inject_all(bool replace)
 	inject_rat(replace);
 	inject_raptor(replace);
 	inject_firehead(replace);
+	inject_prisoner(replace);
 
 	//specific
 	inject_drawbars(replace);
