@@ -9,6 +9,7 @@
 ### tomb3 additions
 
 - Improve falling raptor physics.
+- Increase drawn vertices limit once more.
 
 ### tomb3 bug fixes
 

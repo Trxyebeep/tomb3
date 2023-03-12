@@ -103,9 +103,9 @@ do \
 #define MAX_LOT		5
 #define MAX_NONLOT	12
 
-#ifdef TROYESTUFF	//*4
-#define MAX_TLVERTICES	0x9000
-#define MAX_SORTLISTS	0xBB80
+#ifdef TROYESTUFF	//*8
+#define MAX_TLVERTICES	0x12000
+#define MAX_SORTLISTS	0x17700
 #else
 #define MAX_TLVERTICES	0x2400
 #define MAX_SORTLISTS	0x2EE0
