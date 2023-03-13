@@ -43,7 +43,32 @@ void ControlStrobeLight(short item_number)
 	}
 }
 
+void ControlPulseLight(short item_number)
+{
+	ITEM_INFO* item;
+	long f;
+
+	item = &items[item_number];
+
+	if (!TriggerActive(item))
+		return;
+
+	item->item_flags[0] += 728;
+	f = abs(rcossin_tbl[((item->item_flags[0] >> 4) & 0xFFF) << 1] >> 7);
+
+	if (f > 31)
+		f = 31;
+	else if (f < 8)
+	{
+		f = 8;
+		item->item_flags[0] += 2048;
+	}
+
+	TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, f, 31, 12, 0);
+}
+
 void inject_objlight(bool replace)
 {
 	INJECT(0x00459B00, ControlStrobeLight, inject_rando ? 1 : replace);
+	INJECT(0x00459C00, ControlPulseLight, replace);
 }
