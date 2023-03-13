@@ -3,6 +3,9 @@
 #include "control.h"
 #include "draw.h"
 #include "../specific/game.h"
+#include "objects.h"
+#include "../specific/draweffects.h"
+#include "effects.h"
 
 static void LaserSplitterToggle(ITEM_INFO* item)
 {
@@ -187,10 +190,94 @@ void LaserControl(short item_number)
 	LaserSplitterToggle(&items[item_number]);
 }
 
+void S_DrawLaser(ITEM_INFO* item)
+{
+	ITEM_INFO* target;
+	GAME_VECTOR s, t;
+	long x, y, z, lp, lp2;
+
+	if (!TriggerActive(item))
+		return;
+
+	if (!item->pos.y_rot)
+	{
+		x = 0;
+		z = 511;
+	}
+	else if (item->pos.y_rot == 0x4000)
+	{
+		x = 511;
+		z = 0;
+	}
+	else if (item->pos.y_rot == -0x8000)
+	{
+		x = 0;
+		z = -511;
+	}
+	else
+	{
+		x = -511;
+		z = 0;
+	}
+
+	y = 0;
+
+	for (lp = 0; lp < item->hit_points; lp++)
+	{
+		s.x = item->pos.x_pos + x;
+		s.y = item->pos.y_pos + y;
+		s.z = item->pos.z_pos + z;
+		s.room_number = item->room_number;
+
+		t.x = item->pos.x_pos - (x << 5);
+		t.y = item->pos.y_pos + y;
+		t.z = item->pos.z_pos - (z << 5);
+
+		LOS(&s, &t);
+
+		if (LaraOnLOS(&s, &t))
+		{
+			if (item->object_number != SECURITY_LASER_ALARM)
+			{
+				if (item->object_number == SECURITY_LASER_KILLER)
+					lara_item->hit_points = 0;
+				else
+					lara_item->hit_points -= 10;
+
+				DoLotsOfBloodD(lara_item->pos.x_pos, item->pos.y_pos + y, lara_item->pos.z_pos, (GetRandomDraw() & 0x7F) + 128,
+					short(GetRandomDraw() << 1), lara_item->room_number, 1);
+			}
+
+			if (!item->pos.y_rot || item->pos.y_rot == -0x8000)
+				t.z = lara_item->pos.z_pos;
+			else
+				t.x = lara_item->pos.x_pos;
+
+			for (lp2 = 0; lp2 < level_items; lp2++)
+			{
+				target = &items[lp2];
+
+				if ((target->object_number == STROBE_LIGHT || target->object_number == ROBOT_SENTRY_GUN) && TriggerActive(target))
+					target->really_active = 1;
+			}
+		}
+
+		if (item->object_number == SECURITY_LASER_ALARM)
+			S_DrawLaserBeam(&s, &t, 16, 0, 16);
+		else if (item->object_number == SECURITY_LASER_DEADLY)
+			S_DrawLaserBeam(&s, &t, 0, 0, 16);
+		else
+			S_DrawLaserBeam(&s, &t, 0, 2, 16);
+
+		y -= 256;
+	}
+}
+
 void inject_lasers(bool replace)
 {
 	INJECT(0x0044F830, LaserSplitterToggle, replace);
 	INJECT(0x0044F580, LaraOnLOS, replace);
 	INJECT(0x0044F7A0, UpdateLaserShades, replace);
 	INJECT(0x0044F810, LaserControl, replace);
+	INJECT(0x0044F980, S_DrawLaser, replace);
 }
