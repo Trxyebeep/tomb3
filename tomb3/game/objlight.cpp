@@ -5,6 +5,7 @@
 #include "effect2.h"
 #include "sound.h"
 #include "../specific/smain.h"
+#include "../specific/game.h"
 
 void ControlStrobeLight(short item_number)
 {
@@ -77,9 +78,58 @@ void ControlOnOffLight(short item_number)
 		TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 16, 31, 31, 31);
 }
 
+void ControlElectricalLight(short item_number)
+{
+	ITEM_INFO* item;
+	long rg, b;
+
+	item = &items[item_number];
+
+	if (!TriggerActive(item))
+	{
+		item->item_flags[0] = 0;
+		return;
+	}
+
+	if (item->item_flags[0] < 16)
+	{
+		rg = (GetRandomControl() & 7) << 2;
+		b = rg + (GetRandomControl() & 3);
+		item->item_flags[0]++;
+	}
+	else if (item->item_flags[0] < 96)
+	{
+		if (wibble & 0x3F && GetRandomControl() & 7)
+			rg = GetRandomControl() & 7;
+		else
+			rg = 24 - (GetRandomControl() & 7);
+
+		b = rg + (GetRandomControl() & 3);
+		item->item_flags[0]++;
+	}
+	else if (item->item_flags[0] < 160)
+	{
+		rg = 12 - (GetRandomControl() & 3);
+		b = rg + (GetRandomControl() & 3);
+
+		if (!(GetRandomControl() & 0x1F) && item->item_flags[0] > 128)
+			item->item_flags[0] = 160;
+		else
+			item->item_flags[0]++;
+	}
+	else
+	{
+		rg = 31 - (GetRandomControl() & 3);
+		b = 31 - (GetRandomControl() & 1);
+	}
+
+	TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 16, rg, rg, b);
+}
+
 void inject_objlight(bool replace)
 {
 	INJECT(0x00459B00, ControlStrobeLight, inject_rando ? 1 : replace);
 	INJECT(0x00459C00, ControlPulseLight, replace);
 	INJECT(0x00459C90, ControlOnOffLight, replace);
+	INJECT(0x00459CE0, ControlElectricalLight, replace);
 }
