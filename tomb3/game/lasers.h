@@ -3,5 +3,6 @@
 
 void inject_lasers(bool replace);
 
-#define LaraOnLOS	( (long(__cdecl*)(GAME_VECTOR*, GAME_VECTOR*)) 0x0044F580 )
+long LaraOnLOS(GAME_VECTOR* s, GAME_VECTOR* t);
+
 #define UpdateLaserShades	( (void(__cdecl*)()) 0x0044F7A0 )

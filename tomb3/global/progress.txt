@@ -1010,7 +1010,7 @@ tomb3 progress.
 
 		game/lasers.cpp
 
-0x0044F580		LaraOnLOS
+0x0044F580	+	LaraOnLOS
 0x0044F7A0		UpdateLaserShades
 0x0044F810		LaserControl
 0x0044F830	+	LaserSplitterToggle

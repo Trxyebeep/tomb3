@@ -1,6 +1,7 @@
 #include "../tomb3/pch.h"
 #include "lasers.h"
 #include "control.h"
+#include "draw.h"
 
 static void LaserSplitterToggle(ITEM_INFO* item)
 {
@@ -56,7 +57,97 @@ static void LaserSplitterToggle(ITEM_INFO* item)
 	}
 }
 
+long LaraOnLOS(GAME_VECTOR* s, GAME_VECTOR* t)
+{
+	ITEM_INFO* l;
+	long dx, dy, dz, x, y, z, dist, flag, lp;
+	short* bounds;
+	short* xextent;
+	short* zextent;
+
+	l = lara_item;
+	dx = t->x - s->x;
+	dy = t->y - s->y;
+	dz = t->z - s->z;
+	bounds = GetBoundsAccurate(l);
+
+	if ((l->pos.y_rot + 0x2000) & 0x4000)
+	{
+		xextent = &bounds[4];
+		zextent = &bounds[0];
+	}
+	else
+	{
+		xextent = &bounds[0];
+		zextent = &bounds[4];
+	}
+
+	flag = 0;
+
+	if (abs(dz) > abs(dx))
+	{
+		dist = l->pos.z_pos - s->z + zextent[0];
+
+		for (lp = 0; lp < 2; lp++)
+		{
+			if ((dz ^ dist) >= 0)
+			{
+				y = dy * dist / dz;
+
+				if (y > l->pos.y_pos - s->y + bounds[2] && y < l->pos.y_pos - s->y + bounds[3])
+				{
+					x = dx * dist / dz;
+
+					if (x < l->pos.x_pos + xextent[0] - s->x)
+						flag |= 1;
+					else if (x > l->pos.x_pos + xextent[1] - s->x)
+						flag |= 2;
+					else
+						return 1;
+				}
+			}
+
+			dist = l->pos.z_pos - s->z + zextent[1];
+		}
+
+		if (flag == 3)
+			return 1;
+	}
+	else
+	{
+		dist = l->pos.x_pos + xextent[0] - s->x;
+
+		for (lp = 0; lp < 2; lp++)
+		{
+			if ((dx ^ dist) >= 0)
+			{
+				y = dy * dist / dx;
+
+				if (y > l->pos.y_pos - s->y + bounds[2] && y < l->pos.y_pos - s->y + bounds[3])
+				{
+					z = dz * dist / dx;
+
+					if (z < l->pos.z_pos - s->z + zextent[0])
+						flag |= 1;
+					else if (z > l->pos.z_pos - s->z + zextent[1])
+						flag |= 2;
+					else
+						return 1;
+				}
+			}
+
+			dist = l->pos.x_pos + xextent[1] - s->x;
+		}
+
+		if (flag == 3)
+			return 1;
+	}
+
+	return 0;
+}
+
 void inject_lasers(bool replace)
 {
 	INJECT(0x0044F830, LaserSplitterToggle, replace);
+	INJECT(0x0044F580, LaraOnLOS, replace);
 }
