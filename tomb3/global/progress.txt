@@ -1013,7 +1013,7 @@ tomb3 progress.
 0x0044F580		LaraOnLOS
 0x0044F7A0		UpdateLaserShades
 0x0044F810		LaserControl
-0x0044F830		LaserSplitterToggle
+0x0044F830	+	LaserSplitterToggle
 0x0044F980		S_DrawLaser
 
 
