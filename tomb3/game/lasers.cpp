@@ -2,6 +2,7 @@
 #include "lasers.h"
 #include "control.h"
 #include "draw.h"
+#include "../specific/game.h"
 
 static void LaserSplitterToggle(ITEM_INFO* item)
 {
@@ -146,8 +147,44 @@ long LaraOnLOS(GAME_VECTOR* s, GAME_VECTOR* t)
 	return 0;
 }
 
+void UpdateLaserShades()
+{
+	long r, lp;
+	uchar s;
+
+	for (lp = 0; lp < 32; lp++)
+	{
+		s = LaserShades[lp];
+		r = GetRandomDraw();
+
+		if (r < 1024)
+			r = (r & 0xF) + 16;
+		else if (r < 4096)
+			r &= 7;
+		else if (!(r & 0x70))
+			r &= 3;
+		else
+			r = 0;
+
+		if (r)
+		{
+			s += (uchar)r;
+
+			if (s > 127)
+				s = 127;
+		}
+		else if (s > 16)
+			s -= s >> 3;
+		else
+			s = 16;
+
+		LaserShades[lp] = s;
+	}
+}
+
 void inject_lasers(bool replace)
 {
 	INJECT(0x0044F830, LaserSplitterToggle, replace);
 	INJECT(0x0044F580, LaraOnLOS, replace);
+	INJECT(0x0044F7A0, UpdateLaserShades, replace);
 }
