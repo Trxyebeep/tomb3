@@ -182,9 +182,15 @@ void UpdateLaserShades()
 	}
 }
 
+void LaserControl(short item_number)
+{
+	LaserSplitterToggle(&items[item_number]);
+}
+
 void inject_lasers(bool replace)
 {
 	INJECT(0x0044F830, LaserSplitterToggle, replace);
 	INJECT(0x0044F580, LaraOnLOS, replace);
 	INJECT(0x0044F7A0, UpdateLaserShades, replace);
+	INJECT(0x0044F810, LaserControl, replace);
 }
