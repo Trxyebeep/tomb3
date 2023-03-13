@@ -80,6 +80,7 @@
 #include "../game/firehead.h"
 #include "../game/prisoner.h"
 #include "../game/lasers.h"
+#include "../game/lizman.h"
 
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
@@ -224,6 +225,7 @@ void inject_all(bool replace)
 	inject_firehead(replace);
 	inject_prisoner(replace);
 	inject_lasers(replace);
+	inject_lizman(replace);
 
 	//specific
 	inject_drawbars(replace);
