@@ -67,8 +67,19 @@ void ControlPulseLight(short item_number)
 	TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, f, 31, 12, 0);
 }
 
+void ControlOnOffLight(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (TriggerActive(item))
+		TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 16, 31, 31, 31);
+}
+
 void inject_objlight(bool replace)
 {
 	INJECT(0x00459B00, ControlStrobeLight, inject_rando ? 1 : replace);
 	INJECT(0x00459C00, ControlPulseLight, replace);
+	INJECT(0x00459C90, ControlOnOffLight, replace);
 }

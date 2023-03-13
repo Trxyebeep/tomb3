@@ -1143,7 +1143,7 @@ tomb3 progress.
 
 0x00459B00	+	ControlStrobeLight
 0x00459C00	+	ControlPulseLight
-0x00459C90		ControlOnOffLight
+0x00459C90	+	ControlOnOffLight
 0x00459CE0		ControlElectricalLight
 0x00459DF0		ControlBeaconLight
 
