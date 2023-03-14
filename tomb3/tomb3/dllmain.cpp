@@ -1,5 +1,40 @@
-// dllmain.cpp : Defines the entry point for the DLL application.
 #include "../tomb3/pch.h"
+
+#include "../3dsystem/3d_gen.h"
+#include "../3dsystem/hwinsert.h"
+#include "../3dsystem/scalespr.h"
+#include "../3dsystem/phd_math.h"
+
+#include "../specific/drawbars.h"
+#include "../specific/transform.h"
+#include "../specific/litesrc.h"
+#include "../specific/output.h"
+#include "../specific/smain.h"
+#include "../specific/hwrender.h"
+#include "../specific/game.h"
+#include "../specific/file.h"
+#include "../specific/draweffects.h"
+#include "../specific/picture.h"
+#include "../specific/option.h"
+#include "../specific/input.h"
+#include "../specific/display.h"
+#include "../specific/specific.h"
+#include "../specific/frontend.h"
+#include "../specific/dd.h"
+#include "../specific/dxdialog.h"
+#include "../specific/dxshell.h"
+#include "../specific/winmain.h"
+#include "../specific/utils.h"
+#include "../specific/init.h"
+#include "../specific/time.h"
+#include "../specific/di.h"
+#include "../specific/audio.h"
+#include "../specific/ds.h"
+#include "../specific/texture.h"
+#include "../specific/mmx.h"
+#include "../specific/fmv.h"
+#include "../specific/drawprimitive.h"
+
 #include "../game/lara.h"
 #include "../game/collide.h"
 #include "../game/laraclmb.h"
@@ -81,41 +116,7 @@
 #include "../game/prisoner.h"
 #include "../game/lasers.h"
 #include "../game/lizman.h"
-
-#include "../3dsystem/3d_gen.h"
-#include "../3dsystem/hwinsert.h"
-#include "../3dsystem/scalespr.h"
-#include "../3dsystem/phd_math.h"
-
-#include "../specific/drawbars.h"
-#include "../specific/transform.h"
-#include "../specific/litesrc.h"
-#include "../specific/output.h"
-#include "../specific/smain.h"
-#include "../specific/hwrender.h"
-#include "../specific/game.h"
-#include "../specific/file.h"
-#include "../specific/draweffects.h"
-#include "../specific/picture.h"
-#include "../specific/option.h"
-#include "../specific/input.h"
-#include "../specific/display.h"
-#include "../specific/specific.h"
-#include "../specific/frontend.h"
-#include "../specific/dd.h"
-#include "../specific/dxdialog.h"
-#include "../specific/dxshell.h"
-#include "../specific/winmain.h"
-#include "../specific/utils.h"
-#include "../specific/init.h"
-#include "../specific/time.h"
-#include "../specific/di.h"
-#include "../specific/audio.h"
-#include "../specific/ds.h"
-#include "../specific/texture.h"
-#include "../specific/mmx.h"
-#include "../specific/fmv.h"
-#include "../specific/drawprimitive.h"
+#include "../game/dragfire.h"
 
 HINSTANCE hinstance = 0;
 
@@ -226,6 +227,7 @@ void inject_all(bool replace)
 	inject_prisoner(replace);
 	inject_lasers(replace);
 	inject_lizman(replace);
+	inject_dragfire(replace);
 
 	//specific
 	inject_drawbars(replace);

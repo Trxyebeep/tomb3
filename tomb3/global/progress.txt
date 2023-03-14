@@ -368,7 +368,7 @@ tomb3 progress.
 		game/dragfire.cpp
 
 0x00424660		ControlFlameThrower
-0x00424830		TriggerFlamethrowerHitFlame
+0x00424830	+	TriggerFlamethrowerHitFlame
 0x00424A10		TriggerFlamethrowerSmoke
 
 
