@@ -3,6 +3,11 @@
 #include "effect2.h"
 #include "../specific/game.h"
 #include "objects.h"
+#include "items.h"
+#include "../3dsystem/phd_math.h"
+#include "control.h"
+#include "effects.h"
+#include "traps.h"
 
 static void TriggerFlamethrowerHitFlame(long x, long y, long z)
 {
@@ -159,8 +164,73 @@ static void TriggerFlamethrowerSmoke(long x, long y, long z, long uw)
 	sptr->sHeight = sptr->Height;
 }
 
+void ControlFlameThrower(short fx_number)
+{
+	FX_INFO* fx;
+	FLOOR_INFO* floor;
+	long speed, h, c;
+	short room_number;
+
+	fx = &effects[fx_number];
+	fx->counter--;
+
+	if (!fx->counter)
+	{
+		KillEffect(fx_number);
+		return;
+	}
+
+	speed = (fx->speed * phd_cos(fx->pos.x_rot)) >> W2V_SHIFT;
+	fx->pos.x_pos += (speed * phd_sin(fx->pos.y_rot)) >> W2V_SHIFT;
+	fx->pos.y_pos -= (fx->speed * phd_sin(fx->pos.x_rot)) >> W2V_SHIFT;
+	fx->pos.z_pos += (speed * phd_cos(fx->pos.y_rot)) >> W2V_SHIFT;
+
+	room_number = fx->room_number;
+	floor = GetFloor(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, &room_number);
+
+	if (room[room_number].flags & ROOM_UNDERWATER && !fx->flag1)
+	{
+		if (GetRandomControl() & 1)
+			TriggerFlamethrowerSmoke(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, 1);
+
+		KillEffect(fx_number);
+		return;
+	}
+
+	h = GetHeight(floor, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
+	c = GetCeiling(floor, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
+
+	if (fx->pos.y_pos >= h || fx->pos.y_pos <= c)
+	{
+		if (!fx->flag1)
+		{
+			TriggerFlamethrowerHitFlame(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
+			TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, 24, 31, 24, GetRandomControl() & 7);
+		}
+
+		KillEffect(fx_number);
+		return;
+	}
+
+	if (fx->room_number != room_number)
+		EffectNewRoom(fx_number, room_number);
+
+	if (ItemNearLara(&fx->pos, 350))
+	{
+		if (fx->flag1)
+			lara.poisoned += 4;
+		else
+		{
+			lara_item->hit_points -= 3;
+			lara_item->hit_status = 1;
+			LaraBurn();
+		}
+	}
+}
+
 void inject_dragfire(bool replace)
 {
 	INJECT(0x00424830, TriggerFlamethrowerHitFlame, replace);
 	INJECT(0x00424A10, TriggerFlamethrowerSmoke, replace);
+	INJECT(0x00424660, ControlFlameThrower, replace);
 }
