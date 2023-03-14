@@ -1019,7 +1019,7 @@ tomb3 progress.
 
 		game/lizman.cpp
 
-0x0044FBC0		LizManControl
+0x0044FBC0	+	LizManControl
 0x004503E0	+	TriggerLizmanGasThrower
 0x00450620	+	TriggerLizmanGas
 
