@@ -182,7 +182,7 @@ long ExplodingDeath(short item_number, long mesh_bits, short counter)
 		}
 	}
 
-	for (lp = 1; lp < obj->nmeshes - 1; lp++)
+	for (lp = 1; lp < obj->nmeshes; lp++)
 	{
 		if (bone[0] & 1)
 			phd_PopMatrix();
@@ -240,10 +240,94 @@ long ExplodingDeath(short item_number, long mesh_bits, short counter)
 				item->mesh_bits -= bit;
 			}
 		}
+
+		bone += 4;
 	}
 
 	phd_PopMatrix();
 	return !(item->mesh_bits & (0x7FFFFFFF >> (31 - obj->nmeshes)));
+}
+
+void ControlBodyPart(short fx_number)
+{
+	FX_INFO* fx;
+	FLOOR_INFO* floor;
+	long h, c, lp;
+	short room_number;
+
+	fx = &effects[fx_number];
+	fx->pos.x_rot += 910;
+	fx->pos.z_rot += 1820;
+	fx->fallspeed += 3;
+	fx->pos.x_pos += (fx->speed * phd_sin(fx->pos.y_rot)) >> (W2V_SHIFT + 2);
+	fx->pos.y_pos += fx->fallspeed;
+	fx->pos.z_pos += (fx->speed * phd_cos(fx->pos.y_rot)) >> (W2V_SHIFT + 2);
+
+	if (!(wibble & 0xC))
+	{
+		if (fx->counter & 1)
+			TriggerFireFlame(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, fx_number, 0);
+
+		if (fx->counter & 2)
+			TriggerFireSmoke(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, -1, 0);
+	}
+
+	room_number = fx->room_number;
+	floor = GetFloor(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, &room_number);
+	c = GetCeiling(floor, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
+
+	if (fx->pos.y_pos < c)
+	{
+		fx->pos.y_pos = c;
+		fx->fallspeed = -fx->fallspeed;
+	}
+
+	h = GetHeight(floor, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
+
+	if (fx->pos.y_pos >= h)
+	{
+		if (fx->counter & 3)
+		{
+			for (lp = 0; lp < 3; lp++)
+			{
+				if (fx->counter & 1)
+					TriggerFireFlame(fx->pos.x_pos, h, fx->pos.z_pos, -1, 0);
+
+				if (fx->counter & 2)
+					TriggerFireSmoke(fx->pos.x_pos, h, fx->pos.z_pos, -1, 0);
+			}
+
+			SoundEffect(SFX_EXPLOSION1, &fx->pos, SFX_DEFAULT);
+		}
+
+		KillEffect(fx_number);
+		return;
+	}
+
+	if (ItemNearLara(&fx->pos, fx->counter & ~3))
+	{
+		lara_item->hit_points -= fx->counter >> 2;
+		lara_item->hit_status = 1;
+
+		if (fx->counter & 3)
+		{
+			for (lp = 0; lp < 3; lp++)
+			{
+				if (fx->counter & 1)
+					TriggerFireFlame(fx->pos.x_pos, h, fx->pos.z_pos, -1, 0);
+
+				if (fx->counter & 2)
+					TriggerFireSmoke(fx->pos.x_pos, h, fx->pos.z_pos, -1, 0);
+			}
+
+			SoundEffect(SFX_EXPLOSION1, &fx->pos, SFX_DEFAULT);
+		}
+
+		KillEffect(fx_number);
+	}
+
+	if (fx->room_number != room_number)
+		EffectNewRoom(fx_number, room_number);
 }
 
 void inject_missile(bool replace)
@@ -251,4 +335,5 @@ void inject_missile(bool replace)
 	INJECT(0x00454FB0, ControlMissile, replace);
 	INJECT(0x004552C0, ShootAtLara, replace);
 	INJECT(0x00455370, ExplodingDeath, replace);
+	INJECT(0x004557A0, ControlBodyPart, replace);
 }
