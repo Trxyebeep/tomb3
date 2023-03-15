@@ -16,6 +16,7 @@
 #include "lot.h"
 #include "savegame.h"
 #include "pickup.h"
+#include "collide.h"
 #ifdef TROYESTUFF
 #include "../newstuff/map.h"
 #include "../tomb3/tomb3.h"
@@ -38,7 +39,7 @@ void GetAIPickups()
 				ai_item = &items[ai_item_number];
 
 				if (item->pos.x_pos == ai_item->pos.x_pos && item->pos.z_pos == ai_item->pos.z_pos &&
-					objects[ai_item->object_number].collision == dummyColFunc && ai_item->object_number < AI_PATROL2)
+					objects[ai_item->object_number].collision == AIPickupCollision && ai_item->object_number < AI_PATROL2)
 				{
 					item->ai_bits |= 1 << (ai_item->object_number - AI_GUARD);
 					item->item_flags[3] = ai_item->pos.y_rot;

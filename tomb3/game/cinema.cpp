@@ -126,7 +126,7 @@ void LaraControlCinematic(short item_number)
 
 void InitialisePlayer1(short item_number)
 {
-	objects[LARA].draw_routine = dummyDrawFunc;
+	objects[LARA].draw_routine = DrawDummyItem;
 	objects[LARA].control = LaraControlCinematic;
 	objects[LARA].shadow_size = 0;
 	AddActiveItem(item_number);

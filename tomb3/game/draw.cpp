@@ -747,7 +747,7 @@ void DrawEffect(short fx_number)
 	fx = &effects[fx_number];
 	obj = &objects[fx->object_number];
 
-	if (!obj->loaded || obj->draw_routine == dummyDrawFunc)
+	if (!obj->loaded || obj->draw_routine == DrawDummyItem)
 		return;
 
 	if (fx->object_number == GLOW)
