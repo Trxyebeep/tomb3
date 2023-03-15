@@ -2204,7 +2204,7 @@ void DrawAnimatingItem(ITEM_INFO* item)
 				if (bone[0] & 4)
 					phd_RotX(*extra_rotation++);
 
-				if (bone[0] & 16)
+				if (bone[0] & 0x10)
 					phd_RotZ(*extra_rotation++);
 			}
 

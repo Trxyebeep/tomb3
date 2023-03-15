@@ -10,6 +10,7 @@
 #include "traps.h"
 #include "../specific/game.h"
 #include "draw.h"
+#include "../3dsystem/3d_gen.h"
 
 void ControlMissile(short fx_number)
 {
@@ -119,8 +120,135 @@ void ShootAtLara(FX_INFO* fx)
 	fx->pos.y_rot += short((GetRandomControl() - 0x4000) / 64);
 }
 
+long ExplodingDeath(short item_number, long mesh_bits, short counter)
+{
+	ITEM_INFO* item;
+	OBJECT_INFO* obj;
+	FX_INFO* fx;
+	long* bone;
+	short* frame;
+	short* rot;
+	short* extra_rotation;
+	long bit, lp;
+	short obj_num, fx_number;
+
+	item = &items[item_number];
+	obj = &objects[item->object_number];
+	bone = &bones[obj->bone_index];
+	frame = GetBestFrame(item);
+	extra_rotation = (short*)item->data;
+
+	phd_PushUnitMatrix();
+	phd_mxptr[M03] = 0;
+	phd_mxptr[M13] = 0;
+	phd_mxptr[M23] = 0;
+	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
+	phd_TranslateRel(frame[6], frame[7], frame[8]);
+	rot = frame + 9;
+	gar_RotYXZsuperpack(&rot, 0);
+
+	bit = 1;
+
+	if (mesh_bits & bit && item->mesh_bits & bit)
+	{
+		obj_num = item->object_number;
+
+		if (!(GetRandomControl() & 3) || obj_num == SMASH_WINDOW || obj_num == SMASH_OBJECT1 || obj_num == SMASH_OBJECT2 || obj_num == SMASH_OBJECT3)
+		{
+			fx_number = CreateEffect(item->room_number);
+
+			if (fx_number != NO_ITEM)
+			{
+				fx = &effects[fx_number];
+				fx->pos.x_pos = item->pos.x_pos + (phd_mxptr[M03] >> W2V_SHIFT);
+				fx->pos.y_pos = item->pos.y_pos + (phd_mxptr[M13] >> W2V_SHIFT);
+				fx->pos.z_pos = item->pos.z_pos + (phd_mxptr[M23] >> W2V_SHIFT);
+				fx->room_number = item->room_number;
+				fx->pos.y_rot = short((GetRandomControl() << 1) + 0x8000);
+				fx->speed = (short)GetRandomControl() >> 8;
+				fx->fallspeed = (short)-GetRandomControl() >> 8;
+
+				if (obj_num == SMASH_WINDOW || obj_num == SMASH_OBJECT1 || obj_num == SMASH_OBJECT2 ||
+					obj_num == SMASH_OBJECT3 || obj_num == MUTANT2 || obj_num == QUADBIKE)
+					fx->counter = 0;
+				else
+					fx->counter = (counter << 2) | GetRandomControl() & 3;
+
+				fx->object_number = BODY_PART;
+				fx->frame_number = obj->mesh_index;
+			}
+
+			item->mesh_bits -= bit;
+		}
+	}
+
+	for (lp = 1; lp < obj->nmeshes - 1; lp++)
+	{
+		if (bone[0] & 1)
+			phd_PopMatrix();
+
+		if (bone[0] & 2)
+			phd_PushMatrix();
+
+		phd_TranslateRel(bone[1], bone[2], bone[3]);
+		gar_RotYXZsuperpack(&rot, 0);
+
+		if (item->data && bone[0] & 0x1C)
+		{
+			if (bone[0] & 8)
+				phd_RotY(*extra_rotation++);
+
+			if (bone[0] & 4)
+				phd_RotX(*extra_rotation++);
+
+			if (bone[0] & 0x10)
+				phd_RotZ(*extra_rotation++);
+		}
+
+		bit <<= 1;
+
+		if (mesh_bits & bit && item->mesh_bits & bit)
+		{
+			obj_num = item->object_number;
+
+			if (!(GetRandomControl() & 3) || obj_num == SMASH_WINDOW || obj_num == SMASH_OBJECT1 || obj_num == SMASH_OBJECT2 || obj_num == SMASH_OBJECT3)
+			{
+				fx_number = CreateEffect(item->room_number);
+
+				if (fx_number != NO_ITEM)
+				{
+					fx = &effects[fx_number];
+					fx->pos.x_pos = item->pos.x_pos + (phd_mxptr[M03] >> W2V_SHIFT);
+					fx->pos.y_pos = item->pos.y_pos + (phd_mxptr[M13] >> W2V_SHIFT);
+					fx->pos.z_pos = item->pos.z_pos + (phd_mxptr[M23] >> W2V_SHIFT);
+					fx->room_number = item->room_number;
+					fx->pos.y_rot = short((GetRandomControl() << 1) + 0x8000);
+					fx->speed = (short)GetRandomControl() >> 8;
+					fx->fallspeed = (short)-GetRandomControl() >> 8;
+
+					if (obj_num == SMASH_WINDOW || obj_num == SMASH_OBJECT1 || obj_num == SMASH_OBJECT2 ||
+						obj_num == SMASH_OBJECT3 || obj_num == MUTANT2 || obj_num == QUADBIKE)
+						fx->counter = 0;
+					else
+						fx->counter = (counter << 2) | GetRandomControl() & 3;
+
+					fx->object_number = BODY_PART;
+					fx->frame_number = short(obj->mesh_index + lp);
+					fx->shade = 0x4210;
+				}
+
+				item->mesh_bits -= bit;
+			}
+		}
+	}
+
+	phd_PopMatrix();
+	return !(item->mesh_bits & (0x7FFFFFFF >> (31 - obj->nmeshes)));
+}
+
 void inject_missile(bool replace)
 {
 	INJECT(0x00454FB0, ControlMissile, replace);
 	INJECT(0x004552C0, ShootAtLara, replace);
+	INJECT(0x00455370, ExplodingDeath, replace);
 }
