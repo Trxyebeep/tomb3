@@ -117,6 +117,7 @@
 #include "../game/lasers.h"
 #include "../game/lizman.h"
 #include "../game/dragfire.h"
+#include "../game/51rocket.h"
 
 HINSTANCE hinstance = 0;
 
@@ -228,6 +229,7 @@ void inject_all(bool replace)
 	inject_lasers(replace);
 	inject_lizman(replace);
 	inject_dragfire(replace);
+	inject_51rocket(replace);
 
 	//specific
 	inject_drawbars(replace);
