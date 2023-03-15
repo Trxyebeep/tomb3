@@ -157,7 +157,7 @@ tomb3 progress.
 
 		game/bird.cpp
 
-0x00411450		InitialiseVulture
+0x00411450	+	InitialiseVulture
 0x004114E0		VultureControl
 
 
