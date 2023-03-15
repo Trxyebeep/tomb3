@@ -129,7 +129,7 @@ tomb3 progress.
 0x0040F4E0	+	ControlArea51Rocket
 0x0040FAF0	+	Trigger51RocketSmoke
 0x0040FCC0	+	Trigger51BlastFire
-0x0040FE90		InitialiseArea51Struts
+0x0040FE90	+	InitialiseArea51Struts
 0x0040FEA0		ControlArea51Struts
 
 

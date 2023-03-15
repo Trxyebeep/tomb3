@@ -363,9 +363,15 @@ void ControlArea51Rocket(short item_number)
 	}
 }
 
+void InitialiseArea51Struts(short item_number)
+{
+	strut_fall = 0;
+}
+
 void inject_51rocket(bool replace)
 {
 	INJECT(0x0040FCC0, Trigger51BlastFire, replace);
 	INJECT(0x0040FAF0, Trigger51RocketSmoke, replace);
 	INJECT(0x0040F4E0, ControlArea51Rocket, replace);
+	INJECT(0x0040FE90, InitialiseArea51Struts, replace);
 }
