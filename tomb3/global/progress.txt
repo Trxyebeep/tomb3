@@ -141,7 +141,7 @@ tomb3 progress.
 		
 		game/autogun.cpp
 
-0x00410750		InitialiseAutogun
+0x00410750	+	InitialiseAutogun
 0x004107A0		AutogunControl
 
 
