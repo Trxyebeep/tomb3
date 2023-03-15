@@ -26,7 +26,7 @@
 short null_rotations[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 static uchar EnemyWeapon[16] = { 0, 1, 129, 0, 1, 1,  1 };
 
-static BITE_INFO EnemyBites[16] =
+static BITE_INFO EnemyBites[16] =	//bite_offsets enum
 {
 	{ 0, 192, 40, 13 },
 	{ 0, 400, 64, 7 },
