@@ -368,10 +368,25 @@ void InitialiseArea51Struts(short item_number)
 	strut_fall = 0;
 }
 
+void ControlArea51Struts(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (!strut_fall)
+		item->current_anim_state = 1;
+	else if (item->goal_anim_state != 2 && item->current_anim_state != 2)
+		item->goal_anim_state = 2;
+
+	AnimateItem(item);
+}
+
 void inject_51rocket(bool replace)
 {
 	INJECT(0x0040FCC0, Trigger51BlastFire, replace);
 	INJECT(0x0040FAF0, Trigger51RocketSmoke, replace);
 	INJECT(0x0040F4E0, ControlArea51Rocket, replace);
 	INJECT(0x0040FE90, InitialiseArea51Struts, replace);
+	INJECT(0x0040FEA0, ControlArea51Struts, replace);
 }
