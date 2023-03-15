@@ -4,6 +4,7 @@
 void inject_bird(bool replace);
 
 void InitialiseVulture(short item_number);
+void VultureControl(short item_number);
 
 enum BIRD_STATES
 {
