@@ -1181,7 +1181,7 @@ tomb3 progress.
 0x0045C400		SwitchCollision2
 0x0045C510		DetonatorCollision
 0x0045C6B0		KeyHoleCollision
-0x0045C900		PuzzleHoleCollision
+0x0045C900	+	PuzzleHoleCollision
 0x0045CC60		SwitchControl
 0x0045CCB0		SwitchTrigger
 0x0045CD50		KeyTrigger

@@ -16,11 +16,16 @@
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
+#include "control.h"
+#include "inventry.h"
 
 static short PickUpBounds[12] = { -256, 256, -100, 100, -256, 256, -1820, 1820, 0, 0, 0, 0 };
 static short PickUpBoundsUW[12] = { -512, 512, -512, 512, -512, 512, -8190, 8190, -8190, 8190, -8190, 8190 };
+static short PuzzleHoleBounds[12] = { -200, 200, 0, 0, 312, 512, -1820, 1820, -5460, 5460, -1820, 1820 };
 static PHD_VECTOR PickUpPosition = { 0, 0, -100 };
 static PHD_VECTOR PickUpPositionUW = { 0, -200, -350 };
+static PHD_VECTOR PuzzleHolePosition = { 0, 0, 327 };
+static long pup_x, pup_y, pup_z;
 
 void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
 {
@@ -299,9 +304,148 @@ void AnimatingPickUp(short item_number)
 		TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 8, 0, c, c >> 1);
 }
 
+void PuzzleHoleCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+	long correct;
+
+	item = &items[item_number];
+	correct = 0;
+
+	if (l->current_anim_state == AS_STOP && l->anim_number == ANIM_BREATH)
+	{
+		if ((Inventory_Chosen == NO_ITEM && !(input & IN_ACTION)) || lara.gun_status != LG_ARMLESS ||
+			l->gravity_status || !TestLaraPosition(PuzzleHoleBounds, &items[item_number], l))
+			return;
+
+		if (item->status != ITEM_INACTIVE)
+		{
+			if (l->pos.x_pos != pup_x || l->pos.y_pos != pup_y || l->pos.z_pos != pup_z)
+			{
+				pup_x = l->pos.x_pos;
+				pup_y = l->pos.y_pos;
+				pup_z = l->pos.z_pos;
+				SoundEffect(SFX_LARA_NO, &l->pos, SFX_DEFAULT);
+			}
+
+			return;
+		}
+
+		if (Inventory_Chosen == NO_ITEM)
+		{
+			Display_Inventory(INV_KEYS_MODE);
+
+			if (Inventory_Chosen == NO_ITEM && inv_keys_objects)
+				return;
+
+			if (Inventory_Chosen != NO_ITEM)
+				pup_y = l->pos.y_pos - 1;
+		}
+		else
+			pup_y = l->pos.y_pos - 1;
+
+		switch (item->object_number)
+		{
+		case PUZZLE_HOLE1:
+
+			if (Inventory_Chosen == PUZZLE_OPTION1)
+			{
+				Inv_RemoveItem(PUZZLE_OPTION1);
+				correct = 1;
+			}
+
+			break;
+		case PUZZLE_HOLE2:
+
+			if (Inventory_Chosen == PUZZLE_OPTION2)
+			{
+				Inv_RemoveItem(PUZZLE_OPTION2);
+				correct = 1;
+			}
+
+			break;
+		case PUZZLE_HOLE3:
+
+			if (Inventory_Chosen == PUZZLE_OPTION3)
+			{
+				Inv_RemoveItem(PUZZLE_OPTION3);
+				correct = 1;
+			}
+
+			break;
+		case PUZZLE_HOLE4:
+
+			if (Inventory_Chosen == PUZZLE_OPTION4)
+			{
+				Inv_RemoveItem(PUZZLE_OPTION4);
+				correct = 1;
+			}
+
+			break;
+		}
+
+		Inventory_Chosen = NO_ITEM;
+
+		if (correct)
+		{
+			AlignLaraPosition(&PuzzleHolePosition, item, l);
+			l->goal_anim_state = AS_USEPUZZLE;
+
+			do AnimateLara(l); while (l->current_anim_state != AS_USEPUZZLE);
+
+			l->goal_anim_state = AS_STOP;
+			lara.gun_status = LG_HANDSBUSY;
+			item->status = ITEM_ACTIVE;
+			pup_x = l->pos.x_pos;
+			pup_y = l->pos.y_pos;
+			pup_z = l->pos.z_pos;
+		}
+		else if (l->pos.x_pos != pup_x || l->pos.y_pos != pup_y || l->pos.z_pos != pup_z)
+		{
+			SoundEffect(SFX_LARA_NO, &l->pos, SFX_DEFAULT);
+			pup_x = l->pos.x_pos;
+			pup_y = l->pos.y_pos;
+			pup_z = l->pos.z_pos;
+		}
+	}
+	else if (l->current_anim_state == AS_USEPUZZLE && TestLaraPosition(PuzzleHoleBounds, &items[item_number], l) &&
+		l->frame_number == anims[ANIM_USEPUZZLE].frame_base + 80)
+	{
+		switch (item->object_number)
+		{
+		case PUZZLE_HOLE1:
+			item->object_number = PUZZLE_DONE1;
+			break;
+
+		case PUZZLE_HOLE2:
+			item->object_number = PUZZLE_DONE2;
+			break;
+
+		case PUZZLE_HOLE3:
+			item->object_number = PUZZLE_DONE3;
+			break;
+
+		case PUZZLE_HOLE4:
+			item->object_number = PUZZLE_DONE4;
+			break;
+		}
+
+		item->anim_number = objects[item->object_number].anim_index;
+		item->frame_number = anims[item->anim_number].frame_base;
+		item->current_anim_state = anims[item->anim_number].current_anim_state;
+		item->goal_anim_state = item->current_anim_state;
+		item->required_anim_state = 0;
+		AddActiveItem(item_number);
+		item->flags = IFL_CODEBITS;
+		item->status = ITEM_ACTIVE;
+		AnimateItem(item);
+	}
+}
+
 void inject_pickup(bool replace)
 {
 	INJECT(0x0045BC00, PickUpCollision, inject_rando ? 1 : replace);
 	INJECT(0x0045CDE0, BossDropIcon, replace);
 	INJECT(0x0045CE70, AnimatingPickUp, replace);
+	INJECT(0x0045C900, PuzzleHoleCollision, replace);
 }

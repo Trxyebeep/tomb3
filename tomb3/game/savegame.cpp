@@ -656,7 +656,7 @@ void ExtractSaveGameInfo()
 				}
 			}
 
-			if (obj->collision == PuzzleHoleCollision)
+			if (obj->collision == orig_PuzzleHoleCollision)
 			{
 				if (item->status == ITEM_ACTIVE || item->status == ITEM_DEACTIVATED)
 					item->object_number += 4;
