@@ -189,8 +189,8 @@ tomb3 progress.
 
 		game/boomute.cpp
 
-0x00413FF0		BoomuteControl
-0x004140A0		TriggerSealmuteGasThrower
+0x00413FF0	+	BoomuteControl
+0x004140A0	+	TriggerSealmuteGasThrower
 
 
 		game/box.cpp

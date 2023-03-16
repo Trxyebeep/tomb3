@@ -121,6 +121,7 @@
 #include "../game/autogun.h"
 #include "../game/bird.h"
 #include "../game/armysmg.h"
+#include "../game/boomute.h"
 
 HINSTANCE hinstance = 0;
 
@@ -236,6 +237,7 @@ void inject_all(bool replace)
 	inject_autogun(replace);
 	inject_bird(replace);
 	inject_armysmg(replace);
+	inject_boomute(replace);
 
 	//specific
 	inject_drawbars(replace);
