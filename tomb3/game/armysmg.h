@@ -4,6 +4,7 @@
 void inject_armysmg(bool replace);
 
 void InitialiseArmySMG(short item_number);
+void ArmySMGControl(short item_number);
 
 enum ARMYSMG_STATES
 {

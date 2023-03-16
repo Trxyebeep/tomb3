@@ -136,7 +136,7 @@ tomb3 progress.
 		game/armysmg.cpp
 
 0x0040FEF0	+	InitialiseArmySMG
-0x0040FF50		ArmySMGControl
+0x0040FF50	+	ArmySMGControl
 
 		
 		game/autogun.cpp
