@@ -120,6 +120,7 @@
 #include "../game/51rocket.h"
 #include "../game/autogun.h"
 #include "../game/bird.h"
+#include "../game/armysmg.h"
 
 HINSTANCE hinstance = 0;
 
@@ -234,6 +235,7 @@ void inject_all(bool replace)
 	inject_51rocket(replace);
 	inject_autogun(replace);
 	inject_bird(replace);
+	inject_armysmg(replace);
 
 	//specific
 	inject_drawbars(replace);
