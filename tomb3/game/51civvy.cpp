@@ -5,6 +5,8 @@
 #include "control.h"
 #include "gameflow.h"
 #include "../specific/smain.h"
+#include "box.h"
+#include "objects.h"
 
 static void TriggerFenceSparks(long x, long y, long z, long kill)
 {
@@ -12,14 +14,14 @@ static void TriggerFenceSparks(long x, long y, long z, long kill)
 
 	sptr = &sparks[GetFreeSpark()];
 	sptr->On = 1;
-	sptr->sR = (GetRandomControl() & 0x3F) - 64;
+	sptr->sR = (GetRandomControl() & 0x3F) + 192;
 	sptr->sG = sptr->sR;
-	sptr->sB = sptr->sG;
-	sptr->ColFadeSpeed = 8;
-	sptr->FadeToBlack = 16;
-	sptr->dB = (GetRandomControl() & 0x3F) - 64;
+	sptr->sB = sptr->sR;
+	sptr->dB = (GetRandomControl() & 0x3F) + 192;
 	sptr->dR = sptr->sB >> 2;
 	sptr->dG = sptr->sB >> 1;
+	sptr->ColFadeSpeed = 8;
+	sptr->FadeToBlack = 16;
 	sptr->TransType = 2;
 	sptr->Dynamic = -1;
 	sptr->Life = (GetRandomControl() & 7) + 32;
@@ -27,9 +29,9 @@ static void TriggerFenceSparks(long x, long y, long z, long kill)
 	sptr->x = x;
 	sptr->y = y;
 	sptr->z = z;
-	sptr->Xvel = ((GetRandomControl() & 0xFF) - 128) << 1;
+	sptr->Xvel = 2 * (GetRandomControl() & 0xFF) - 256;
 	sptr->Yvel = short((GetRandomControl() & 0xF) - (kill << 5) - 8);
-	sptr->Zvel = ((GetRandomControl() & 0xFF) - 128) << 1;
+	sptr->Zvel = 2 * (GetRandomControl() & 0xFF) - 256;
 	sptr->Friction = 4;
 	sptr->Flags = SF_SCALE;
 	sptr->Scalar = uchar(kill + 1);
@@ -56,7 +58,7 @@ void ControlElectricFence(short item_number)
 	dx = lara_item->pos.x_pos - item->pos.x_pos;
 	dz = lara_item->pos.z_pos - item->pos.z_pos;
 
-	if (dx < -20480 || dx > 20480 || dz < -20480 || dz > 20480)
+	if (dx < -0x5000 || dx > 0x5000 || dz < -0x5000 || dz > 0x5000)
 		return;
 
 	if (!item->pos.y_rot)
@@ -65,7 +67,7 @@ void ControlElectricFence(short item_number)
 		z = item->pos.z_pos + 512;
 		ex = x - 992;
 		ez = item->pos.z_pos + 256;
-		xa = 0x7FF;
+		xa = 2047;
 		za = 0;
 		xs = 1056;
 		zs = 128;
@@ -77,7 +79,7 @@ void ControlElectricFence(short item_number)
 		ex = x + 256;
 		ez = z - 992;
 		xa = 0;
-		za = 0x7FF;
+		za = 2047;
 		xs = 128;
 		zs = 1056;
 	}
@@ -190,8 +192,21 @@ void ControlElectricFence(short item_number)
 	lara_item->hit_points = 0;
 }
 
+void InitialiseCivvy(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+	InitialiseCreature(item_number);
+	item->anim_number = objects[CIVVIE].anim_index + 6;
+	item->frame_number = anims[item->anim_number].frame_base;
+	item->current_anim_state = CIVVY_STOP;
+	item->goal_anim_state = CIVVY_STOP;
+}
+
 void inject_civvy(bool replace)
 {
 	INJECT(0x0040F080, TriggerFenceSparks, replace);
 	INJECT(0x0040ECA0, ControlElectricFence, inject_rando ? 1 : replace);
+	INJECT(0x0040E350, InitialiseCivvy, replace);
 }
