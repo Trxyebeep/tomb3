@@ -7,6 +7,12 @@
 #include "../specific/smain.h"
 #include "box.h"
 #include "objects.h"
+#include "effects.h"
+#include "../3dsystem/phd_math.h"
+#include "people.h"
+#include "sound.h"
+
+static BITE_INFO civvy_hit = { 0, 0, 0, 13 };
 
 static void TriggerFenceSparks(long x, long y, long z, long kill)
 {
@@ -204,9 +210,366 @@ void InitialiseCivvy(short item_number)
 	item->goal_anim_state = CIVVY_STOP;
 }
 
+void CivvyControl(short item_number)
+{
+	ITEM_INFO* item;
+	ITEM_INFO* enemy;
+	CREATURE_INFO* civvy;
+	AI_INFO info;
+	AI_INFO larainfo;
+	long x, z;
+	short tilt, angle, head, torso_x, torso_y;
+
+	if (!CreatureActive(item_number))
+		return;
+
+	item = &items[item_number];
+	civvy = (CREATURE_INFO*)item->data;
+	tilt = 0;
+	angle = 0;
+	head = 0;
+	torso_x = 0;
+	torso_y = 0;
+
+	if (boxes[item->box_number].overlap_index & 0x4000)
+	{
+		DoLotsOfBloodD(item->pos.x_pos, item->pos.y_pos - (GetRandomControl() & 0xFF) - 32, item->pos.z_pos,
+			(GetRandomControl() & 0x7F) + 128, short(GetRandomControl() << 1), item->room_number, 3);
+		item->hit_points -= 20;
+	}
+
+	if (item->hit_points <= 0)
+	{
+		if (item->current_anim_state != CIVVY_DEATH)
+		{
+			item->anim_number = objects[CIVVIE].anim_index + 26;
+			item->frame_number = anims[item->anim_number].frame_base;
+			item->current_anim_state = CIVVY_DEATH;
+			civvy->LOT.step = 256;
+		}
+	}
+	else
+	{
+		if (item->ai_bits)
+			GetAITarget(civvy);
+		else
+			civvy->enemy = lara_item;
+
+		CreatureAIInfo(item, &info);
+
+		if (civvy->enemy == lara_item)
+		{
+			larainfo.angle = info.angle;
+			larainfo.distance = info.distance;
+		}
+		else
+		{
+			x = lara_item->pos.x_pos - item->pos.x_pos;
+			z = lara_item->pos.z_pos - item->pos.z_pos;
+			larainfo.angle = short(phd_atan(z, x) - item->pos.y_rot);
+			larainfo.distance = SQUARE(x) + SQUARE(z);
+		}
+
+		GetCreatureMood(item, &info, 1);
+
+		if (civvy->enemy == lara_item && info.distance > 0x900000 && info.enemy_facing < 0x3000 && info.enemy_facing > -0x3000)
+			civvy->mood = ESCAPE_MOOD;
+
+		CreatureMood(item, &info, 1);
+		angle = CreatureTurn(item, civvy->maximum_turn);
+
+		enemy = civvy->enemy;
+		civvy->enemy = lara_item;
+
+		if ((larainfo.distance < 0x100000 || item->hit_status || TargetVisible(item, &larainfo)) && !(item->ai_bits & FOLLOW))
+		{
+			if (!civvy->alerted)
+				SoundEffect(SFX_AMERCAN_HOY, &item->pos, SFX_DEFAULT);
+
+			AlertAllGuards(item_number);
+		}
+
+		civvy->enemy = enemy;
+
+		switch (item->current_anim_state)
+		{
+		case CIVVY_WAIT:
+
+			if (civvy->alerted || item->goal_anim_state == CIVVY_RUN)
+			{
+				item->goal_anim_state = CIVVY_STOP;
+				break;
+			}
+
+		case CIVVY_STOP:
+			civvy->flags = 0;
+			civvy->maximum_turn = 0;
+			head = larainfo.angle;
+
+			if (item->ai_bits & GUARD)
+			{
+				head = AIGuard(civvy);
+
+				if (!(GetRandomControl() & 0xFF))
+				{
+					if (item->current_anim_state == CIVVY_STOP)
+						item->goal_anim_state = CIVVY_WAIT;
+					else
+						item->goal_anim_state = CIVVY_STOP;
+				}
+			}
+			else if (item->ai_bits & PATROL1)
+				item->goal_anim_state = CIVVY_WALK;
+			else if (civvy->mood == ESCAPE_MOOD)
+			{
+				if (lara.target != item && info.ahead)
+					item->goal_anim_state = CIVVY_STOP;
+				else
+					item->goal_anim_state = CIVVY_RUN;
+			}
+			else if (civvy->mood == BORED_MOOD || item->ai_bits & FOLLOW && (civvy->reached_goal || larainfo.distance > 0x400000))
+			{
+				if (item->required_anim_state)
+					item->goal_anim_state = item->required_anim_state;
+				else if (info.ahead)
+					item->goal_anim_state = CIVVY_STOP;
+				else
+					item->goal_anim_state = CIVVY_RUN;
+			}
+			else if (info.bite && info.distance < 0x1C639)
+				item->goal_anim_state = CIVVY_AIM0;
+			else if (info.bite && info.distance < 0x718E4)
+				item->goal_anim_state = CIVVY_AIM1;
+			else if (info.bite && info.distance < 0x100000)
+				item->goal_anim_state = CIVVY_WALK;
+			else
+				item->goal_anim_state = CIVVY_RUN;
+
+			break;
+
+		case CIVVY_WALK:
+			head = larainfo.angle;
+			civvy->maximum_turn = 910;
+
+			if (item->ai_bits & PATROL1)
+			{
+				item->goal_anim_state = CIVVY_WALK;
+				head = 0;
+			}
+			else if (civvy->mood == ESCAPE_MOOD)
+				item->goal_anim_state = CIVVY_RUN;
+			else if (civvy->mood == BORED_MOOD)
+			{
+				if (GetRandomControl() < 256)
+				{
+					item->required_anim_state = CIVVY_WAIT;
+					item->goal_anim_state = CIVVY_STOP;
+				}
+			}
+			else if (info.bite && info.distance < 0x1C639)
+				item->goal_anim_state = CIVVY_STOP;
+			else if (info.bite && info.distance < 0x100000)
+				item->goal_anim_state = CIVVY_AIM2;
+			else
+				item->goal_anim_state = CIVVY_RUN;
+
+			break;
+
+		case CIVVY_PUNCH2:
+
+			if (info.ahead)
+			{
+				torso_x = info.x_angle;
+				torso_y = info.angle;
+			}
+
+			civvy->maximum_turn = 910;
+
+			if (civvy->flags != 2 && item->touch_bits & 0x2400)
+			{
+				lara_item->hit_points -= 50;
+				lara_item->hit_status = 1;
+				CreatureEffect(item, &civvy_hit, DoBloodSplat);
+				SoundEffect(SFX_LARA_THUD, &item->pos, SFX_DEFAULT);
+				civvy->flags = 2;
+			}
+
+			break;
+
+		case CIVVY_AIM2:
+
+			if (info.ahead)
+			{
+				torso_x = info.x_angle;
+				torso_y = info.angle;
+			}
+
+			civvy->maximum_turn = 910;
+			civvy->flags = 0;
+
+			if (info.bite && info.distance < 0x100000)
+				item->goal_anim_state = CIVVY_PUNCH2;
+			else
+				item->goal_anim_state = CIVVY_WALK;
+
+			break;
+
+		case CIVVY_AIM1:
+
+			if (info.ahead)
+			{
+				torso_x = info.x_angle;
+				torso_y = info.angle;
+			}
+
+			civvy->maximum_turn = 910;
+			civvy->flags = 0;
+
+			if (info.ahead && info.distance < 0x718E4)
+				item->goal_anim_state = CIVVY_PUNCH1;
+			else
+				item->goal_anim_state = CIVVY_STOP;
+
+			break;
+
+		case CIVVY_AIM0:
+
+			if (info.ahead)
+			{
+				torso_x = info.x_angle;
+				torso_y = info.angle;
+			}
+
+			civvy->maximum_turn = 910;
+			civvy->flags = 0;
+
+			if (info.bite && info.distance < 0x1C639)
+				item->goal_anim_state = CIVVY_PUNCH0;
+			else
+				item->goal_anim_state = CIVVY_STOP;
+			
+			break;
+
+		case CIVVY_PUNCH1:
+
+			if (info.ahead)
+			{
+				torso_x = info.x_angle;
+				torso_y = info.angle;
+			}
+
+			civvy->maximum_turn = 910;
+
+			if (!civvy->flags && item->touch_bits & 0x2400)
+			{
+				lara_item->hit_points -= 40;
+				lara_item->hit_status = 1;
+				CreatureEffect(item, &civvy_hit, DoBloodSplat);
+				SoundEffect(SFX_LARA_THUD, &item->pos, SFX_DEFAULT);
+				civvy->flags = 1;
+			}
+
+			if (info.ahead && info.distance > 0x718E4 && info.distance < 0x100000)
+				item->goal_anim_state = CIVVY_PUNCH2;
+
+			break;
+
+		case CIVVY_PUNCH0:
+
+			if (info.ahead)
+			{
+				torso_x = info.x_angle;
+				torso_y = info.angle;
+			}
+
+			civvy->maximum_turn = 910;
+
+			if (!civvy->flags && item->touch_bits & 0x2400)
+			{
+				lara_item->hit_points -= 40;
+				lara_item->hit_status = 1;
+				CreatureEffect(item, &civvy_hit, DoBloodSplat);
+				SoundEffect(SFX_LARA_THUD, &item->pos, SFX_DEFAULT);
+				civvy->flags = 1;
+			}
+
+			break;
+
+		case CIVVY_RUN:
+
+			if (info.ahead)
+				head = info.angle;
+
+			civvy->maximum_turn = 1092;
+			tilt = angle >> 1;
+
+			if (item->ai_bits & GUARD)
+				item->goal_anim_state = CIVVY_WAIT;
+			else if (civvy->mood == ESCAPE_MOOD)
+			{
+				if (lara.target != item && info.ahead)
+					item->goal_anim_state = CIVVY_STOP;
+			}
+			else if (item->ai_bits & FOLLOW && (civvy->reached_goal || larainfo.distance > 0x400000))
+				item->goal_anim_state = CIVVY_STOP;
+			else if (civvy->mood == BORED_MOOD)
+				item->goal_anim_state = CIVVY_WALK;
+			else if (info.ahead && info.distance < 0x100000)
+				item->goal_anim_state = CIVVY_WALK;
+
+			break;
+		}
+	}
+
+	CreatureTilt(item, tilt);
+	CreatureJoint(item, 0, torso_y);
+	CreatureJoint(item, 1, torso_x);
+	CreatureJoint(item, 2, head);
+
+	if (item->current_anim_state >= CIVVY_DEATH)
+	{
+		civvy->maximum_turn = 0;
+		CreatureAnimation(item_number, angle, 0);
+	}
+	else
+	{
+		switch (CreatureVault(item_number, angle, 2, 260))
+		{
+		case -4:
+			civvy->maximum_turn = 0;
+			item->anim_number = objects[65].anim_index + 30;
+			item->frame_number = anims[item->anim_number].frame_base;
+			item->current_anim_state = CIVVY_FALL3;
+			break;
+
+		case 2:
+			civvy->maximum_turn = 0;
+			item->anim_number = objects[65].anim_index + 28;
+			item->frame_number = anims[item->anim_number].frame_base;
+			item->current_anim_state = CIVVY_CLIMB1;
+			break;
+
+		case 3:
+			civvy->maximum_turn = 0;
+			item->anim_number = objects[65].anim_index + 29;
+			item->frame_number = anims[item->anim_number].frame_base;
+			item->current_anim_state = CIVVY_CLIMB2;
+			break;
+
+		case 4:
+			civvy->maximum_turn = 0;
+			item->anim_number = objects[CIVVIE].anim_index + 27;
+			item->frame_number = anims[item->anim_number].frame_base;
+			item->current_anim_state = CIVVY_CLIMB3;
+			break;
+		}
+	}
+}
+
 void inject_civvy(bool replace)
 {
 	INJECT(0x0040F080, TriggerFenceSparks, replace);
 	INJECT(0x0040ECA0, ControlElectricFence, inject_rando ? 1 : replace);
 	INJECT(0x0040E350, InitialiseCivvy, replace);
+	INJECT(0x0040E3B0, CivvyControl, replace);
 }
