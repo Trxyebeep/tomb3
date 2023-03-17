@@ -27,6 +27,7 @@ static PHD_VECTOR PickUpPosition = { 0, 0, -100 };
 static PHD_VECTOR PickUpPositionUW = { 0, -200, -350 };
 static PHD_VECTOR PuzzleHolePosition = { 0, 0, 327 };
 static PHD_VECTOR KeyHolePosition = { 0, 0, 362 };
+static PHD_VECTOR DetonatorPosition = { 0, 0, 0 };
 static long pup_x, pup_y, pup_z;
 
 void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
@@ -553,6 +554,64 @@ void KeyHoleCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	}
 }
 
+void DetonatorCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+	short x_rot, y_rot, z_rot;
+
+	if (lara.extra_anim)
+		return;
+
+	item = &items[item_number];
+	x_rot = item->pos.x_rot;
+	y_rot = item->pos.y_rot;
+	z_rot = item->pos.z_rot;
+	item->pos.x_rot = 0;
+	item->pos.y_rot = l->pos.y_rot;
+	item->pos.z_rot = 0;
+	
+	if (item->status==ITEM_DEACTIVATED || !(input & IN_ACTION) || lara.gun_status != LG_ARMLESS || l->gravity_status ||
+		l->current_anim_state != AS_STOP || item->object_number == DETONATOR && !TestLaraPosition(PickUpBounds, item, l))
+	{
+		item->pos.x_rot = x_rot;
+		item->pos.y_rot = y_rot;
+		item->pos.z_rot = z_rot;
+		ObjectCollision(item_number, l, coll);
+		return;
+	}
+
+	if (Inventory_Chosen == NO_ITEM)
+		Display_Inventory(INV_KEYS_MODE);
+
+	if (Inventory_Chosen != KEY_OPTION2)
+	{
+		item->pos.x_rot = x_rot;
+		item->pos.y_rot = y_rot;
+		item->pos.z_rot = z_rot;
+		ObjectCollision(item_number, l, coll);
+		return;
+	}
+
+	Inv_RemoveItem(KEY_OPTION2);
+	AlignLaraPosition(&DetonatorPosition, item, l);
+	l->anim_number = objects[LARA_EXTRA].anim_index;
+	l->frame_number = anims[l->anim_number].frame_base;
+	l->current_anim_state = EXTRA_BREATH;
+
+	if (item->object_number == DETONATOR)
+		l->goal_anim_state = EXTRA_PLUNGER;
+
+	AnimateItem(l);
+	lara.extra_anim = 1;
+	lara.gun_status = LG_HANDSBUSY;
+
+	if (item->object_number == DETONATOR)
+	{
+		item->status = ITEM_ACTIVE;
+		AddActiveItem(item_number);
+	}
+}
+
 void inject_pickup(bool replace)
 {
 	INJECT(0x0045BC00, PickUpCollision, inject_rando ? 1 : replace);
@@ -560,4 +619,5 @@ void inject_pickup(bool replace)
 	INJECT(0x0045CE70, AnimatingPickUp, replace);
 	INJECT(0x0045C900, PuzzleHoleCollision, replace);
 	INJECT(0x0045C6B0, KeyHoleCollision, replace);
+	INJECT(0x0045C510, DetonatorCollision, replace);
 }
