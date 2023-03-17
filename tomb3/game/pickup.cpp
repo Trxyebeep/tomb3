@@ -24,6 +24,7 @@ static short PickUpBoundsUW[12] = { -512, 512, -512, 512, -512, 512, -8190, 8190
 static short PuzzleHoleBounds[12] = { -200, 200, 0, 0, 312, 512, -1820, 1820, -5460, 5460, -1820, 1820 };
 static short KeyHoleBounds[12] = { -200, 200, 0, 0, 312, 512, -1820, 1820, -5460, 5460, -1820, 1820 };
 static short Switch1Bounds[12] = { -220, 220, 0, 0, 292, 512, -1820, 1820, -5460, 5460, -1820, 1820 };
+static short Switch2Bounds[12] = { -1024, 1024, -1024, 1024, -1024, 512, -14560, 14560, -14560, 14560, -14560, 14560 };
 static PHD_VECTOR PickUpPosition = { 0, 0, -100 };
 static PHD_VECTOR PickUpPositionUW = { 0, -200, -350 };
 static PHD_VECTOR PuzzleHolePosition = { 0, 0, 327 };
@@ -32,6 +33,7 @@ static PHD_VECTOR DetonatorPosition = { 0, 0, 0 };
 static PHD_VECTOR SmallSwitchPosition = { 0, 0, 362 };
 static PHD_VECTOR PushSwitchPosition = { 0, 0, 292 };
 static PHD_VECTOR AirlockPosition = { 0, 0, 212 };
+static PHD_VECTOR Switch2Position = { 0, 0, 108 };
 static long pup_x, pup_y, pup_z;
 
 void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
@@ -696,6 +698,43 @@ void SwitchCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	AnimateItem(item);
 }
 
+void SwitchCollision2(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (!(input & IN_ACTION) || item->status != ITEM_INACTIVE || lara.water_status != LARA_UNDERWATER || lara.gun_status != LG_ARMLESS
+		|| l->current_anim_state != AS_TREAD)
+		return;
+
+	if (!TestLaraPosition(Switch2Bounds, item, l))
+		return;
+
+	if (item->current_anim_state != 1 && item->current_anim_state)
+		return;
+
+	if (MoveLaraPosition(&Switch2Position, item, l))
+	{
+		l->fallspeed = 0;
+		l->goal_anim_state = AS_SWITCHON;
+
+		do AnimateLara(l); while (l->current_anim_state != AS_SWITCHON);
+
+		l->goal_anim_state = AS_TREAD;
+		lara.gun_status = LG_HANDSBUSY;
+		item->status = ITEM_ACTIVE;
+		
+		if (item->current_anim_state == 1)
+			item->goal_anim_state = 0;
+		else
+			item->goal_anim_state = 1;
+
+		AddActiveItem(item_number);
+		AnimateItem(item);
+	}
+}
+
 void inject_pickup(bool replace)
 {
 	INJECT(0x0045BC00, PickUpCollision, inject_rando ? 1 : replace);
@@ -705,4 +744,5 @@ void inject_pickup(bool replace)
 	INJECT(0x0045C6B0, KeyHoleCollision, replace);
 	INJECT(0x0045C510, DetonatorCollision, replace);
 	INJECT(0x0045C170, SwitchCollision, replace);
+	INJECT(0x0045C400, SwitchCollision2, replace);
 }
