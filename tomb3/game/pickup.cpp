@@ -785,6 +785,21 @@ long SwitchTrigger(short item_number, short timer)
 	return 0;
 }
 
+long KeyTrigger(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (item->status == ITEM_ACTIVE && lara.gun_status != LG_HANDSBUSY)
+	{
+		item->status = ITEM_DEACTIVATED;
+		return 1;
+	}
+
+	return 0;
+}
+
 void inject_pickup(bool replace)
 {
 	INJECT(0x0045BC00, PickUpCollision, inject_rando ? 1 : replace);
@@ -797,4 +812,5 @@ void inject_pickup(bool replace)
 	INJECT(0x0045C400, SwitchCollision2, replace);
 	INJECT(0x0045CC60, SwitchControl, replace);
 	INJECT(0x0045CCB0, SwitchTrigger, replace);
+	INJECT(0x0045CD50, KeyTrigger, replace);
 }
