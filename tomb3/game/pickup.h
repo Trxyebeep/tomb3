@@ -11,6 +11,7 @@ void KeyHoleCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
 void DetonatorCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
 void SwitchCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
 void SwitchCollision2(short item_number, ITEM_INFO* l, COLL_INFO* coll);
+void SwitchControl(short item_number);
 
 #define SwitchTrigger	( (long(__cdecl*)(short, short)) 0x0045CCB0 )
 #define KeyTrigger	( (long(__cdecl*)(short)) 0x0045CD50 )

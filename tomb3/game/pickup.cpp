@@ -735,6 +735,22 @@ void SwitchCollision2(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	}
 }
 
+void SwitchControl(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+	item->flags |= IFL_CODEBITS;
+
+	if (!TriggerActive(item) && !(item->flags & IFL_INVISIBLE))
+	{
+		item->goal_anim_state = 1;
+		item->timer = 0;
+	}
+
+	AnimateItem(item);
+}
+
 void inject_pickup(bool replace)
 {
 	INJECT(0x0045BC00, PickUpCollision, inject_rando ? 1 : replace);
@@ -745,4 +761,5 @@ void inject_pickup(bool replace)
 	INJECT(0x0045C510, DetonatorCollision, replace);
 	INJECT(0x0045C170, SwitchCollision, replace);
 	INJECT(0x0045C400, SwitchCollision2, replace);
+	INJECT(0x0045CC60, SwitchControl, replace);
 }
