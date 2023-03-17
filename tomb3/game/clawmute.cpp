@@ -6,6 +6,9 @@
 #include "sphere.h"
 #include "../3dsystem/3d_gen.h"
 #include "items.h"
+#include "../3dsystem/phd_math.h"
+#include "control.h"
+#include "effects.h"
 
 static void TriggerPlasmaBallFlame(short fx_number, long type, long xv, long yv, long zv)
 {
@@ -188,9 +191,103 @@ static void TriggerPlasma(short item_number)
 	sptr->dHeight = sptr->Height >> 2;
 }
 
+void ControlClawmutePlasmaBall(short fx_number)
+{
+	FX_INFO* fx;
+	FLOOR_INFO* floor;
+	PHD_VECTOR pos;
+	PHD_VECTOR oldPos;
+	long speed, h, c, lp;
+	short room_number;
+	uchar falloffs[2];
+
+	falloffs[0] = 13;
+	falloffs[1] = 7;
+	fx = &effects[fx_number];
+	oldPos.x = fx->pos.x_pos;
+	oldPos.y = fx->pos.y_pos;
+	oldPos.z = fx->pos.z_pos;
+
+	if (fx->speed < 384 && !fx->flag1)
+		fx->speed += (fx->speed >> 3) + 4;
+
+	if (fx->flag1)
+	{
+		fx->fallspeed++;
+
+		if (fx->fallspeed > 8)
+			fx->speed -= 2;
+
+		if (fx->pos.x_rot > -0x3C00)
+			fx->pos.x_rot -= 0x100;
+	}
+
+	speed = (fx->speed * phd_cos(fx->pos.x_rot)) >> W2V_SHIFT;
+	fx->pos.x_pos += (speed * phd_sin(fx->pos.y_rot)) >> W2V_SHIFT;
+	fx->pos.y_pos += fx->fallspeed - ((fx->speed * phd_sin(fx->pos.x_rot)) >> W2V_SHIFT);
+	fx->pos.z_pos += (speed * phd_cos(fx->pos.y_rot)) >> W2V_SHIFT;
+
+	if (wibble & 4)
+	{
+		if (fx->flag1)
+			TriggerPlasmaBallFlame(fx_number, fx->flag1, 0, abs(oldPos.y - fx->pos.y_pos) << 3, 0);
+		else
+			TriggerPlasmaBallFlame(fx_number, 0, 0, 0, 0);
+	}
+
+	room_number = fx->room_number;
+	floor = GetFloor(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, &room_number);
+	h = GetHeight(floor, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
+	c = GetCeiling(floor, fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
+
+	if (fx->pos.y_pos >= h || fx->pos.y_pos < c)
+	{
+		if (!fx->flag1)
+		{
+			pos.x = oldPos.x;
+			pos.y = oldPos.y;
+			pos.z = oldPos.z;
+			h = (GetRandomControl() & 3) + 5;
+
+			for (lp = 0; lp < h; lp++)
+				TriggerPlasmaBall(0, 1, &pos, fx->room_number, fx->pos.y_rot);
+		}
+
+		KillEffect(fx_number);
+	}
+	else if (room[room_number].flags & ROOM_UNDERWATER)
+		KillEffect(fx_number);
+	else if (ItemNearLara(&fx->pos, 200) && !fx->flag1)
+	{
+		pos.x = fx->pos.x_pos;
+		pos.y = fx->pos.y_pos;
+		pos.z = fx->pos.z_pos;
+		h = (GetRandomControl() & 1) + 3;
+
+		for (lp = 0; lp < h; lp++)
+			TriggerPlasmaBall(0, 1, &pos, fx->room_number, fx->pos.y_rot);
+
+		lara_item->hit_points -= 200;
+		lara_item->hit_status = 1;
+		KillEffect(fx_number);
+	}
+	else
+	{
+		if (fx->room_number != room_number)
+			EffectNewRoom(fx_number, lara_item->room_number);
+
+		if (falloffs[fx->flag1])
+		{
+			c = GetRandomControl();
+			TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, falloffs[fx->flag1], c & 7, 24 - ((c >> 6) & 3), 31 - ((c >> 4) & 3));
+		}
+	}
+}
+
 void inject_clawmute(bool replace)
 {
 	INJECT(0x0041C1F0, TriggerPlasmaBallFlame, replace);
 	INJECT(0x0041BDA0, TriggerPlasmaBall, replace);
 	INJECT(0x0041BBE0, TriggerPlasma, replace);
+	INJECT(0x0041BED0, ControlClawmutePlasmaBall, replace);
 }
