@@ -122,6 +122,7 @@
 #include "../game/bird.h"
 #include "../game/armysmg.h"
 #include "../game/boomute.h"
+#include "../game/clawmute.h"
 
 HINSTANCE hinstance = 0;
 
@@ -238,6 +239,7 @@ void inject_all(bool replace)
 	inject_bird(replace);
 	inject_armysmg(replace);
 	inject_boomute(replace);
+	inject_clawmute(replace);
 
 	//specific
 	inject_drawbars(replace);

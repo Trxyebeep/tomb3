@@ -259,10 +259,10 @@ tomb3 progress.
 		game/clawmute.cpp
 
 0x0041B4F0		ClawmuteControl
-0x0041BBE0		TriggerPlasma
-0x0041BDA0		TriggerPlasmaBall
+0x0041BBE0	+	TriggerPlasma
+0x0041BDA0	+	TriggerPlasmaBall
 0x0041BED0		ControlClawmutePlasmaBall
-0x0041C1F0		TriggerPlasmaBallFlame
+0x0041C1F0	+	TriggerPlasmaBallFlame
 
 
 		game/cleaner.cpp
