@@ -14,8 +14,7 @@ void SwitchCollision2(short item_number, ITEM_INFO* l, COLL_INFO* coll);
 void SwitchControl(short item_number);
 long SwitchTrigger(short item_number, short timer);
 long KeyTrigger(short item_number);
-
-#define PickupTrigger	( (long(__cdecl*)(short)) 0x0045CDA0 )
+long PickupTrigger(short item_number);
 
 #define orig_PuzzleHoleCollision	( (void(__cdecl*)(short, ITEM_INFO*, COLL_INFO*)) 0x0045C900 )
 #define orig_PickUpCollision	( (void(__cdecl*)(short, ITEM_INFO*, COLL_INFO*)) 0x0045BC00 )

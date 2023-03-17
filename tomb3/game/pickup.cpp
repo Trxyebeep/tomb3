@@ -800,6 +800,21 @@ long KeyTrigger(short item_number)
 	return 0;
 }
 
+long PickupTrigger(short item_number)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (item->status == ITEM_INVISIBLE)
+	{
+		item->status = ITEM_DEACTIVATED;
+		return 1;
+	}
+
+	return 0;
+}
+
 void inject_pickup(bool replace)
 {
 	INJECT(0x0045BC00, PickUpCollision, inject_rando ? 1 : replace);
@@ -813,4 +828,5 @@ void inject_pickup(bool replace)
 	INJECT(0x0045CC60, SwitchControl, replace);
 	INJECT(0x0045CCB0, SwitchTrigger, replace);
 	INJECT(0x0045CD50, KeyTrigger, replace);
+	INJECT(0x0045CDA0, PickupTrigger, replace);
 }
