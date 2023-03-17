@@ -1177,7 +1177,7 @@ tomb3 progress.
 		game/pickup.cpp
 
 0x0045BC00	+	PickUpCollision
-0x0045C170		SwitchCollision
+0x0045C170	+	SwitchCollision
 0x0045C400		SwitchCollision2
 0x0045C510	+	DetonatorCollision
 0x0045C6B0	+	KeyHoleCollision

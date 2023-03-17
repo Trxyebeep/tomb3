@@ -23,11 +23,15 @@ static short PickUpBounds[12] = { -256, 256, -100, 100, -256, 256, -1820, 1820, 
 static short PickUpBoundsUW[12] = { -512, 512, -512, 512, -512, 512, -8190, 8190, -8190, 8190, -8190, 8190 };
 static short PuzzleHoleBounds[12] = { -200, 200, 0, 0, 312, 512, -1820, 1820, -5460, 5460, -1820, 1820 };
 static short KeyHoleBounds[12] = { -200, 200, 0, 0, 312, 512, -1820, 1820, -5460, 5460, -1820, 1820 };
+static short Switch1Bounds[12] = { -220, 220, 0, 0, 292, 512, -1820, 1820, -5460, 5460, -1820, 1820 };
 static PHD_VECTOR PickUpPosition = { 0, 0, -100 };
 static PHD_VECTOR PickUpPositionUW = { 0, -200, -350 };
 static PHD_VECTOR PuzzleHolePosition = { 0, 0, 327 };
 static PHD_VECTOR KeyHolePosition = { 0, 0, 362 };
 static PHD_VECTOR DetonatorPosition = { 0, 0, 0 };
+static PHD_VECTOR SmallSwitchPosition = { 0, 0, 362 };
+static PHD_VECTOR PushSwitchPosition = { 0, 0, 292 };
+static PHD_VECTOR AirlockPosition = { 0, 0, 212 };
 static long pup_x, pup_y, pup_z;
 
 void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
@@ -612,6 +616,86 @@ void DetonatorCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	}
 }
 
+void SwitchCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (!(input & IN_ACTION) || item->status != ITEM_INACTIVE || item->flags & IFL_INVISIBLE || lara.gun_status != LG_ARMLESS ||
+		l->gravity_status || l->current_anim_state != AS_STOP || l->anim_number != ANIM_BREATH || !TestLaraPosition(Switch1Bounds, item, l))
+		return;
+
+	lara.head_x_rot = 0;
+	lara.head_y_rot = 0;
+	lara.torso_x_rot = 0;
+	lara.torso_y_rot = 0;
+	l->pos.y_rot = item->pos.y_rot;
+
+	if (item->object_number == SMALL_SWITCH)
+		AlignLaraPosition(&SmallSwitchPosition, item, l);
+	else if (item->object_number == PUSH_SWITCH)
+		AlignLaraPosition(&PushSwitchPosition, item, l);
+	else if (item->object_number == AIRLOCK_SWITCH)
+		AlignLaraPosition(&AirlockPosition, item, l);
+
+	if (item->current_anim_state == 1)
+	{
+		l->current_anim_state = AS_SWITCHON;
+
+		if (item->object_number == SMALL_SWITCH)
+			l->anim_number = objects[LARA].anim_index + ANIM_GENERATORSW_OFF;
+		else if (item->object_number == PUSH_SWITCH)
+			l->anim_number = objects[LARA].anim_index + ANIM_ONEHANDPUSHSW;
+		else if (item->object_number == AIRLOCK_SWITCH)
+		{
+			l->anim_number = objects[LARA_EXTRA].anim_index;
+			l->frame_number = anims[l->anim_number].frame_base;
+			l->current_anim_state = EXTRA_BREATH;
+			l->goal_anim_state = EXTRA_AIRLOCK;
+			AnimateItem(l);
+			lara.extra_anim = 1;
+		}
+		else
+			l->anim_number = objects[LARA].anim_index + ANIM_SWITCHOFF;
+
+		item->goal_anim_state = 0;
+	}
+	else
+	{
+		l->current_anim_state = AS_SWITCHOFF;
+
+		if (item->object_number == SMALL_SWITCH)
+			l->anim_number = objects[LARA].anim_index + ANIM_GENERATORSW_ON;
+		else if (item->object_number == PUSH_SWITCH)
+			l->anim_number = objects[LARA].anim_index + ANIM_ONEHANDPUSHSW;
+		else if (item->object_number == AIRLOCK_SWITCH)
+		{
+			l->anim_number = objects[LARA_EXTRA].anim_index;
+			l->frame_number = anims[l->anim_number].frame_base;
+			l->current_anim_state = EXTRA_BREATH;
+			l->goal_anim_state = EXTRA_AIRLOCK;
+			AnimateItem(l);
+			lara.extra_anim = 1;
+		}
+		else
+			l->anim_number = objects[LARA].anim_index + ANIM_SWITCHON;
+
+		item->goal_anim_state = 1;
+	}
+
+	if (!lara.extra_anim)
+	{
+		l->frame_number = anims[l->anim_number].frame_base;
+		l->goal_anim_state = AS_STOP;
+	}
+
+	lara.gun_status = LG_HANDSBUSY;
+	item->status = ITEM_ACTIVE;
+	AddActiveItem(item_number);
+	AnimateItem(item);
+}
+
 void inject_pickup(bool replace)
 {
 	INJECT(0x0045BC00, PickUpCollision, inject_rando ? 1 : replace);
@@ -620,4 +704,5 @@ void inject_pickup(bool replace)
 	INJECT(0x0045C900, PuzzleHoleCollision, replace);
 	INJECT(0x0045C6B0, KeyHoleCollision, replace);
 	INJECT(0x0045C510, DetonatorCollision, replace);
+	INJECT(0x0045C170, SwitchCollision, replace);
 }
