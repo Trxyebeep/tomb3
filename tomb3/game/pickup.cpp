@@ -751,6 +751,40 @@ void SwitchControl(short item_number)
 	AnimateItem(item);
 }
 
+long SwitchTrigger(short item_number, short timer)
+{
+	ITEM_INFO* item;
+
+	item = &items[item_number];
+
+	if (item->status == ITEM_DEACTIVATED)
+	{
+		if (!item->current_anim_state && timer > 0)
+		{
+			item->timer = timer;
+			item->status = ITEM_ACTIVE;
+
+			if (timer != 1)
+				item->timer *= 30;
+		}
+		else
+		{
+			RemoveActiveItem(item_number);
+			item->status = ITEM_INACTIVE;
+
+			if (item->item_flags[0])
+				item->flags |= IFL_INVISIBLE;
+		}
+
+		return 1;
+	}
+
+	if (item->flags & IFL_INVISIBLE)
+		return 1;
+
+	return 0;
+}
+
 void inject_pickup(bool replace)
 {
 	INJECT(0x0045BC00, PickUpCollision, inject_rando ? 1 : replace);
@@ -762,4 +796,5 @@ void inject_pickup(bool replace)
 	INJECT(0x0045C170, SwitchCollision, replace);
 	INJECT(0x0045C400, SwitchCollision2, replace);
 	INJECT(0x0045CC60, SwitchControl, replace);
+	INJECT(0x0045CCB0, SwitchTrigger, replace);
 }
