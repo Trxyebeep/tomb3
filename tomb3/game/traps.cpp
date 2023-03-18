@@ -1214,7 +1214,7 @@ void SpringBoardControl(short item_number)
 	l = lara_item;
 
 	if (!item->current_anim_state && l->pos.y_pos == item->pos.y_pos &&
-		!((l->pos.x_pos ^ item->pos.x_pos) & ~0x3FF) && !((l->pos.z_pos ^ item->pos.z_pos) & ~0x3FF))
+		!((l->pos.x_pos ^ item->pos.x_pos) & ~WALL_MASK) && !((l->pos.z_pos ^ item->pos.z_pos) & ~WALL_MASK))
 	{
 		if (l->hit_points <= 0)
 			return;

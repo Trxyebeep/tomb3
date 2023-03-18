@@ -100,6 +100,7 @@ do \
 #define NO_ROOM	255
 #define WALL_SHIFT	10
 #define WALL_SIZE	(1 << WALL_SHIFT)
+#define WALL_MASK	(WALL_SIZE - 1)
 #define MAX_LOT		5
 #define MAX_NONLOT	12
 

@@ -282,7 +282,7 @@ void SetupCleanerFromSavegame(ITEM_INFO* item, long block)
 	y = item->pos.y_pos;
 	z = item->pos.z_pos;
 
-	if (!block && (x & 0x3FF) == 512 && (z & 0x3FF) == 512)
+	if (!block && (x & WALL_MASK) == 512 && (z & WALL_MASK) == 512)
 	{
 		room_number = item->room_number;
 		GetFloor(x, y, z, &room_number);
@@ -295,10 +295,10 @@ void SetupCleanerFromSavegame(ITEM_INFO* item, long block)
 	{
 		if (!block)
 		{
-			if ((z & 0x3FF) < 512)
-				z = (z & ~0x3FF) - 512;
+			if ((z & WALL_MASK) < 512)
+				z = (z & ~WALL_MASK) - 512;
 			else
-				z = (z & ~0x3FF) + 512;
+				z = (z & ~WALL_MASK) + 512;
 		}
 
 		xAdd = 0;
@@ -308,10 +308,10 @@ void SetupCleanerFromSavegame(ITEM_INFO* item, long block)
 	{
 		if (!block)
 		{
-			if ((x & 0x3FF) < 512)
-				x = (x & ~0x3FF) - 512;
+			if ((x & WALL_MASK) < 512)
+				x = (x & ~WALL_MASK) - 512;
 			else
-				x = (x & ~0x3FF) + 512;
+				x = (x & ~WALL_MASK) + 512;
 		}
 
 		xAdd = WALL_SIZE;
@@ -321,10 +321,10 @@ void SetupCleanerFromSavegame(ITEM_INFO* item, long block)
 	{
 		if (!block)
 		{
-			if ((z & 0x3FF) > 512)
-				z |= 0x3FF;
+			if ((z & WALL_MASK) > 512)
+				z |= WALL_MASK;
 			else
-				z &= ~0x3FF;
+				z &= ~WALL_MASK;
 
 			z += 512;
 		}
@@ -336,10 +336,10 @@ void SetupCleanerFromSavegame(ITEM_INFO* item, long block)
 	{
 		if (!block)
 		{
-			if ((x & 0x3FF) > 512)
-				x |= 0x3FF;
+			if ((x & WALL_MASK) > 512)
+				x |= WALL_MASK;
 			else
-				x &= ~0x3FF;
+				x &= ~WALL_MASK;
 
 			x += 512;
 		}
@@ -470,19 +470,19 @@ void MovableBlockCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 		switch (quadrant)
 		{
 		case NORTH:
-			l->pos.z_pos = (l->pos.z_pos & ~0x3FF) + WALL_SIZE - 100;
+			l->pos.z_pos = (l->pos.z_pos & ~WALL_MASK) + WALL_SIZE - 100;
 			break;
 
 		case EAST:
-			l->pos.x_pos = (l->pos.x_pos & ~0x3FF) + WALL_SIZE - 100;
+			l->pos.x_pos = (l->pos.x_pos & ~WALL_MASK) + WALL_SIZE - 100;
 			break;
 
 		case SOUTH:
-			l->pos.z_pos = (l->pos.z_pos & ~0x3FF) + 100;
+			l->pos.z_pos = (l->pos.z_pos & ~WALL_MASK) + 100;
 			break;
 
 		case WEST:
-			l->pos.x_pos = (l->pos.x_pos & ~0x3FF) + 100;
+			l->pos.x_pos = (l->pos.x_pos & ~WALL_MASK) + 100;
 			break;
 		}
 

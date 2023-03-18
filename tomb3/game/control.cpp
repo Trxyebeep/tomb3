@@ -722,14 +722,14 @@ long GetHeight(FLOOR_INFO* floor, long x, long y, long z)
 					height_type = SMALL_SLOPE;
 
 				if (xoff < 0)
-					h -= xoff * (z & (WALL_SIZE - 1)) >> 2;
+					h -= xoff * (z & WALL_MASK) >> 2;
 				else
-					h += xoff * ((-1 - (ushort)z) & (WALL_SIZE - 1)) >> 2;
+					h += xoff * ((-1 - (ushort)z) & WALL_MASK) >> 2;
 
 				if (yoff < 0)
-					h -= (yoff * (x & (WALL_SIZE - 1))) >> 2;
+					h -= (yoff * (x & WALL_MASK)) >> 2;
 				else
-					h += (yoff * ((-1 - (ushort)x) & (WALL_SIZE - 1))) >> 2;
+					h += (yoff * ((-1 - (ushort)x) & WALL_MASK)) >> 2;
 			}
 
 			data++;
@@ -788,8 +788,8 @@ long GetHeight(FLOOR_INFO* floor, long x, long y, long z)
 			t1 = (tilts >> 4) & 15;
 			t2 = (tilts >> 8) & 15;
 			t3 = (tilts >> 12) & 15;
-			dx = x & (WALL_SIZE - 1);
-			dz = z & (WALL_SIZE - 1);
+			dx = x & WALL_MASK;
+			dz = z & WALL_MASK;
 			xoff = 0;
 			yoff = 0;
 			height_type = SPLIT_TRI;
@@ -879,14 +879,14 @@ long GetHeight(FLOOR_INFO* floor, long x, long y, long z)
 					height_type = SMALL_SLOPE;
 
 				if (xoff < 0)
-					h -= xoff * (z & (WALL_SIZE - 1)) >> 2;
+					h -= xoff * (z & WALL_MASK) >> 2;
 				else
-					h += xoff * ((-1 - (ushort)z) & (WALL_SIZE - 1)) >> 2;
+					h += xoff * ((-1 - (ushort)z) & WALL_MASK) >> 2;
 
 				if (yoff < 0)
-					h -= yoff * (x & (WALL_SIZE - 1)) >> 2;
+					h -= yoff * (x & WALL_MASK) >> 2;
 				else
-					h += yoff * ((-1 - (ushort)x) & (WALL_SIZE - 1)) >> 2;
+					h += yoff * ((-1 - (ushort)x) & WALL_MASK) >> 2;
 			}
 
 			data++;
@@ -1419,8 +1419,8 @@ long GetCeiling(FLOOR_INFO* floor, long x, long y, long z)
 			{
 				if ((type & 0x1F) == SPLIT3 || (type & 0x1F) == SPLIT4 || (type & 0x1F) == NOCOLC1T || (type & 0x1F) == NOCOLC1B || (type & 0x1F) == NOCOLC2T || (type & 0x1F) == NOCOLC2B)
 				{
-					dx = x & 0x3FF;
-					dz = z & 0x3FF;
+					dx = x & WALL_MASK;
+					dz = z & WALL_MASK;
 					t0 = -(*data & 0xF);
 					t1 = -(*data >> 4 & 0xF);
 					t2 = -(*data >> 8 & 0xF);
@@ -1428,7 +1428,7 @@ long GetCeiling(FLOOR_INFO* floor, long x, long y, long z)
 
 					if ((type & 0x1F) == SPLIT3 || (type & 0x1F) == NOCOLC1T || (type & 0x1F) == NOCOLC1B)
 					{
-						if (dx <= 1024 - dz)
+						if (dx <= WALL_SIZE - dz)
 						{
 							hadj = type >> 10 & 0x1F;
 
@@ -1510,14 +1510,14 @@ long GetCeiling(FLOOR_INFO* floor, long x, long y, long z)
 			if (!chunky_flag)
 			{
 				if (h1 < 0)
-					height += (z & 0x3FF) * h1 >> 2;
+					height += (z & WALL_MASK) * h1 >> 2;
 				else
-					height -= (-1 - z & 0x3FF) * h1 >> 2;
+					height -= (-1 - z & WALL_MASK) * h1 >> 2;
 
 				if (h2 < 0)
-					height += (-1 - x & 0x3FF) * h2 >> 2;
+					height += (-1 - x & WALL_MASK) * h2 >> 2;
 				else
-					height -= (x & 0x3FF) * h2 >> 2;
+					height -= (x & WALL_MASK) * h2 >> 2;
 			}
 		}
 	}
@@ -1687,7 +1687,7 @@ long zLOS(GAME_VECTOR* start, GAME_VECTOR* target)
 
 	if (dz < 0)
 	{
-		z = start->z & ~1023;
+		z = start->z & ~WALL_MASK;
 		x = start->x + ((z - start->z) * dx >> WALL_SHIFT);
 		y = start->y + ((z - start->z) * dy >> WALL_SHIFT);
 
@@ -1736,7 +1736,7 @@ long zLOS(GAME_VECTOR* start, GAME_VECTOR* target)
 	}
 	else
 	{
-		z = start->z | 1023;
+		z = start->z | WALL_MASK;
 		x = start->x + ((z - start->z) * dx >> WALL_SHIFT);
 		y = start->y + ((z - start->z) * dy >> WALL_SHIFT);
 
@@ -1808,7 +1808,7 @@ long xLOS(GAME_VECTOR* start, GAME_VECTOR* target)
 
 	if (dx < 0)
 	{
-		x = start->x & ~1023;
+		x = start->x & ~WALL_MASK;
 		y = start->y + ((x - start->x) * dy >> WALL_SHIFT);
 		z = start->z + ((x - start->x) * dz >> WALL_SHIFT);
 
@@ -1857,7 +1857,7 @@ long xLOS(GAME_VECTOR* start, GAME_VECTOR* target)
 	}
 	else
 	{
-		x = start->x | 1023;
+		x = start->x | WALL_MASK;
 		y = start->y + ((x - start->x) * dy >> WALL_SHIFT);
 		z = start->z + ((x - start->x) * dz >> WALL_SHIFT);
 
@@ -2191,8 +2191,8 @@ long CheckNoColFloorTriangle(FLOOR_INFO* floor, long x, long z)
 	if (type != NOCOLF1T && type != NOCOLF1B && type != NOCOLF2T && type != NOCOLF2B)
 		return 0;
 
-	x &= 0x3FF;
-	z &= 0x3FF;
+	x &= WALL_MASK;
+	z &= WALL_MASK;
 
 	if (type == NOCOLF1T && x <= WALL_SIZE - z)
 		return -1;
@@ -2231,8 +2231,8 @@ long CheckNoColCeilingTriangle(FLOOR_INFO* floor, long x, long z)
 	if (type != NOCOLC1T && type != NOCOLC1B && type != NOCOLC2T && type != NOCOLC2B)
 		return 0;
 
-	x &= 0x3FF;
-	z &= 0x3FF;
+	x &= WALL_MASK;
+	z &= WALL_MASK;
 
 	if (type == NOCOLC1T && x <= WALL_SIZE - z)
 		return -1;

@@ -168,7 +168,7 @@ long CameraCollisionBounds(GAME_VECTOR* ideal, long push, long yfirst)
 	c = GetCeiling(floor, wx - push, wy, wz);
 
 	if (h < wy || h == NO_HEIGHT || c == NO_HEIGHT || c >= h || wy < c)
-		wx = push + (wx & ~0x3FF);
+		wx = push + (wx & ~WALL_MASK);
 
 	room_number = ideal->room_number;
 	floor = GetFloor(wx, wy, wz - push, &room_number);
@@ -176,7 +176,7 @@ long CameraCollisionBounds(GAME_VECTOR* ideal, long push, long yfirst)
 	c = GetCeiling(floor, wx, wy, wz - push);
 
 	if (h < wy || h == NO_HEIGHT || c == NO_HEIGHT || c >= h || wy < c)
-		wz = push + (wz & ~0x3FF);
+		wz = push + (wz & ~WALL_MASK);
 
 	room_number = ideal->room_number;
 	floor = GetFloor(wx + push, wy, wz, &room_number);
@@ -184,7 +184,7 @@ long CameraCollisionBounds(GAME_VECTOR* ideal, long push, long yfirst)
 	c = GetCeiling(floor, wx + push, wy, wz);
 
 	if (h < wy || h == NO_HEIGHT || c == NO_HEIGHT || c >= h || wy < c)
-		wx = (wx | 0x3FF) - push;
+		wx = (wx | WALL_MASK) - push;
 
 	room_number = ideal->room_number;
 	floor = GetFloor(wx, wy, wz + push, &room_number);
@@ -192,7 +192,7 @@ long CameraCollisionBounds(GAME_VECTOR* ideal, long push, long yfirst)
 	c = GetCeiling(floor, wx, wy, wz + push);
 
 	if (h < wy || h == NO_HEIGHT || c == NO_HEIGHT || c >= h || wy < c)
-		wz = (wz | 0x3FF) - push;
+		wz = (wz | WALL_MASK) - push;
 
 	if (!yfirst)
 	{

@@ -839,10 +839,10 @@ void DoProperDetection(short item_number, long x, long y, long z, long xv, long 
 			}
 		}
 
-		if (y > height + 32 && !bs && ((item->pos.x_pos ^ x) & ~0x3FF || (item->pos.z_pos ^ z) & ~0x3FF))
+		if (y > height + 32 && !bs && ((item->pos.x_pos ^ x) & ~WALL_MASK || (item->pos.z_pos ^ z) & ~WALL_MASK))
 		{
-			xs = (item->pos.x_pos ^ x) & ~0x3FF && (item->pos.z_pos ^ z) & ~0x3FF ? abs(x - item->pos.x_pos) < abs(z - item->pos.z_pos) : 1;
-			item->pos.y_rot = (item->pos.x_pos ^ x) & ~0x3FF && xs ? -item->pos.y_rot : -0x8000 - item->pos.y_rot;
+			xs = (item->pos.x_pos ^ x) & ~WALL_MASK && (item->pos.z_pos ^ z) & ~WALL_MASK ? abs(x - item->pos.x_pos) < abs(z - item->pos.z_pos) : 1;
+			item->pos.y_rot = (item->pos.x_pos ^ x) & ~WALL_MASK && xs ? -item->pos.y_rot : -0x8000 - item->pos.y_rot;
 			item->pos.x_pos = x;
 			item->pos.y_pos = y;
 			item->pos.z_pos = z;
@@ -1224,9 +1224,9 @@ void DoProperDetection(short item_number, long x, long y, long z, long xv, long 
 
 		if (item->pos.y_pos < ceiling)
 		{
-			if (y < ceiling && ((item->pos.x_pos ^ x) & ~0x3FF || (item->pos.z_pos ^ z) & ~0x3FF))
+			if (y < ceiling && ((item->pos.x_pos ^ x) & ~WALL_MASK || (item->pos.z_pos ^ z) & ~WALL_MASK))
 			{
-				item->pos.y_rot = (item->pos.x_pos ^ x) & ~0x3FF ? -item->pos.y_rot : -0x8000 - item->pos.y_rot;
+				item->pos.y_rot = (item->pos.x_pos ^ x) & ~WALL_MASK ? -item->pos.y_rot : -0x8000 - item->pos.y_rot;
 
 				if (item->object_number == GRENADE)
 					item->speed -= item->speed >> 3;

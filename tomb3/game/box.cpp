@@ -1002,15 +1002,15 @@ long CreatureAnimation(short item_number, short angle, short tilt)
 		zShift = oldPos.z >> WALL_SHIFT;
 
 		if (wx < xShift)
-			item->pos.x_pos = oldPos.x & ~0x3FF;
+			item->pos.x_pos = oldPos.x & ~WALL_MASK;
 		else if (wx > xShift)
-			item->pos.x_pos = oldPos.x | 0x3FF;
+			item->pos.x_pos = oldPos.x | WALL_MASK;
 
 		//ORIGINAL BUG: should be wz instead of wx here!! (was fixed in TR4)
 		if (wx < zShift)
-			item->pos.z_pos = oldPos.z & ~0x3FF;
+			item->pos.z_pos = oldPos.z & ~WALL_MASK;
 		else if (wx > zShift)
-			item->pos.z_pos = oldPos.z | 0x3FF;
+			item->pos.z_pos = oldPos.z | WALL_MASK;
 
 		floor = GetFloor(item->pos.x_pos, y, item->pos.z_pos, &room_number);
 		box_height = boxes[floor->box].height;
@@ -1032,8 +1032,8 @@ long CreatureAnimation(short item_number, short angle, short tilt)
 
 	x = item->pos.x_pos;
 	z = item->pos.z_pos;
-	wx = x & 0x3FF;
-	wz = z & 0x3FF;
+	wx = x & WALL_MASK;
+	wz = z & WALL_MASK;
 	rad = objects[item->object_number].radius;
 	xShift = 0;
 	zShift = 0;

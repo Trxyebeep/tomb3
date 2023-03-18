@@ -87,7 +87,7 @@ short GetTiltType(FLOOR_INFO* floor, long x, long y, long z)
 			break;
 
 		r = &room[floor->pit_room];
-		floor = &r->floor[((z - r->z) >> 10) + (((x - r->x) >> 10) * r->x_size)];
+		floor = &r->floor[((z - r->z) >> WALL_SHIFT) + (((x - r->x) >> WALL_SHIFT) * r->x_size)];
 	}
 
 	if (y + 512 < floor->floor << 8)
@@ -108,13 +108,13 @@ short GetTiltType(FLOOR_INFO* floor, long x, long y, long z)
 			t1 = (tilt >> 4) & 0xF;
 			t2 = (tilt >> 8) & 0xF;
 			t3 = (tilt >> 12) & 0xF;
-			x2 = x & 0x3FF;
-			z2 = z & 0x3FF;
+			x2 = x & WALL_MASK;
+			z2 = z & WALL_MASK;
 			type = type & 0x1F;
 
 			if (type == SPLIT1 || type == NOCOLF1T || type == NOCOLF1B)
 			{
-				if (x2 > 1024 - z2)
+				if (x2 > WALL_SIZE - z2)
 				{
 					x3 = t3 - t0;
 					y2 = t3 - t2;
@@ -329,7 +329,7 @@ long FindGridShift(long src, long dst)
 	if (srcw == dstw)
 		return 0;
 
-	src &= WALL_SIZE - 1;
+	src &= WALL_MASK;
 
 	if (dstw > srcw)
 		return (WALL_SIZE + 1) - src;

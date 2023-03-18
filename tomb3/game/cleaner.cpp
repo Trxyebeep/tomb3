@@ -60,8 +60,8 @@ void InitialiseCleaner(short item_number)
 	ITEM_INFO* item;
 
 	item = &items[item_number];
-	item->pos.x_pos = (item->pos.x_pos & ~0x3FF) | 512;
-	item->pos.z_pos = (item->pos.z_pos & ~0x3FF) | 512;
+	item->pos.x_pos = (item->pos.x_pos & ~WALL_MASK) | 512;
+	item->pos.z_pos = (item->pos.z_pos & ~WALL_MASK) | 512;
 	item->item_flags[0] = 1024;
 	item->item_flags[1] = 0;
 	item->item_flags[2] = 64;
@@ -89,8 +89,8 @@ void CleanerControl(short item_number)
 
 	if (item->pos.y_rot & 0x3FFF)	//turn
 		item->pos.y_rot += item->item_flags[0];
-	else if (((item->pos.z_pos & 0x3FF) == 512 && (!item->pos.y_rot || item->pos.y_rot == -0x8000)) ||		//middle of a block, decide where to go next
-		((item->pos.x_pos & 0x3FF) == 512 && (item->pos.y_rot == 0x4000 || item->pos.y_rot == -0x4000)))
+	else if (((item->pos.z_pos & WALL_MASK) == 512 && (!item->pos.y_rot || item->pos.y_rot == -0x8000)) ||		//middle of a block, decide where to go next
+		((item->pos.x_pos & WALL_MASK) == 512 && (item->pos.y_rot == 0x4000 || item->pos.y_rot == -0x4000)))
 	{
 		if (item->item_flags[1] == 1)
 		{

@@ -275,13 +275,13 @@ long LaraTestWaterClimbOut(ITEM_INFO* item, COLL_INFO* coll)
 	UpdateLaraRoom(item, -381);
 
 	if (!angle)
-		item->pos.z_pos = (item->pos.z_pos & ~1023) + 1124;
+		item->pos.z_pos = (item->pos.z_pos & ~WALL_MASK) + 1124;
 	else if (angle == 0x4000)
-		item->pos.x_pos = (item->pos.x_pos & ~1023) + 1124;
+		item->pos.x_pos = (item->pos.x_pos & ~WALL_MASK) + 1124;
 	else if (angle == -0x8000)
-		item->pos.z_pos = (item->pos.z_pos & ~1023) - 100;
+		item->pos.z_pos = (item->pos.z_pos & ~WALL_MASK) - 100;
 	else if (angle == -0x4000)
-		item->pos.x_pos = (item->pos.x_pos & ~1023) - 100;
+		item->pos.x_pos = (item->pos.x_pos & ~WALL_MASK) - 100;
 
 	if (hdif < -128)
 	{

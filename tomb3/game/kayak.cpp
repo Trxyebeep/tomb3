@@ -730,8 +730,8 @@ static long DoShift(ITEM_INFO* item, PHD_VECTOR* newPos, PHD_VECTOR* oldPos)
 	nZ = newPos->z >> WALL_SHIFT;
 	oX = oldPos->x >> WALL_SHIFT;
 	oZ = oldPos->z >> WALL_SHIFT;
-	sX = newPos->x & (WALL_SIZE - 1);
-	sZ = newPos->z & (WALL_SIZE - 1);
+	sX = newPos->x & WALL_MASK;
+	sZ = newPos->z & WALL_MASK;
 	
 	if (nX == oX)
 	{

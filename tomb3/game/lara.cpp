@@ -922,22 +922,22 @@ void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 			{
 			case NORTH:
 				item->pos.y_rot = 0;
-				item->pos.z_pos = (item->pos.z_pos & ~0x3FF) + 225;
+				item->pos.z_pos = (item->pos.z_pos & ~WALL_MASK) + 225;
 				break;
 
 			case EAST:
 				item->pos.y_rot = 0x4000;
-				item->pos.x_pos = (item->pos.x_pos & ~0x3FF) + 225;
+				item->pos.x_pos = (item->pos.x_pos & ~WALL_MASK) + 225;
 				break;
 
 			case SOUTH:
 				item->pos.y_rot = -0x8000;
-				item->pos.z_pos = (item->pos.z_pos | 0x3FF) - 225;
+				item->pos.z_pos = (item->pos.z_pos | WALL_MASK) - 225;
 				break;
 
 			case WEST:
 				item->pos.y_rot = -0x4000;
-				item->pos.x_pos = (item->pos.x_pos | 0x3FF) - 225;
+				item->pos.x_pos = (item->pos.x_pos | WALL_MASK) - 225;
 				break;
 			}
 
@@ -1308,22 +1308,22 @@ void lara_col_crawl2hang(ITEM_INFO* item, COLL_INFO* coll)
 		switch (ushort(item->pos.y_rot + 0x2000) / 0x4000)
 		{
 		case NORTH:
-			item->pos.z_pos = (item->pos.z_pos | 0x3FF) - 100;
+			item->pos.z_pos = (item->pos.z_pos | WALL_MASK) - 100;
 			item->pos.x_pos += coll->shift.x;
 			break;
 
 		case EAST:
-			item->pos.x_pos = (item->pos.x_pos | 0x3FF) - 100;
+			item->pos.x_pos = (item->pos.x_pos | WALL_MASK) - 100;
 			item->pos.z_pos += coll->shift.z;
 			break;
 
 		case SOUTH:
-			item->pos.z_pos = (item->pos.z_pos & ~0x3FF) + 100;
+			item->pos.z_pos = (item->pos.z_pos & ~WALL_MASK) + 100;
 			item->pos.x_pos += coll->shift.x;
 			break;
 
 		case WEST:
-			item->pos.x_pos = (item->pos.x_pos & ~0x3FF) + 100;
+			item->pos.x_pos = (item->pos.x_pos & ~WALL_MASK) + 100;
 			item->pos.z_pos += coll->shift.z;
 			break;
 		}
@@ -3615,22 +3615,22 @@ long LaraTestHangJump(ITEM_INFO* item, COLL_INFO* coll)
 		switch (ushort(item->pos.y_rot + 0x2000) / 0x4000)
 		{
 		case NORTH:
-			item->pos.z_pos = (item->pos.z_pos | 0x3FF) - 100;
+			item->pos.z_pos = (item->pos.z_pos | WALL_MASK) - 100;
 			item->pos.x_pos += coll->shift.x;
 			break;
 
 		case EAST:
-			item->pos.x_pos = (item->pos.x_pos | 0x3FF) - 100;
+			item->pos.x_pos = (item->pos.x_pos | WALL_MASK) - 100;
 			item->pos.z_pos += coll->shift.z;
 			break;
 
 		case SOUTH:
-			item->pos.z_pos = (item->pos.z_pos & ~0x3FF) + 100;
+			item->pos.z_pos = (item->pos.z_pos & ~WALL_MASK) + 100;
 			item->pos.x_pos += coll->shift.x;
 			break;
 
 		case WEST:
-			item->pos.x_pos = (item->pos.x_pos & ~0x3FF) + 100;
+			item->pos.x_pos = (item->pos.x_pos & ~WALL_MASK) + 100;
 			item->pos.z_pos += coll->shift.z;
 			break;
 		}
