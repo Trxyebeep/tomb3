@@ -13,5 +13,4 @@ void LaraTargetInfo(WEAPON_INFO* winfo);
 void LaraGetNewTarget(WEAPON_INFO* winfo);
 void InitialiseNewWeapon();
 void LaraGun();
-
-#define DoProperDetection	( (void(__cdecl*)(short, long, long, long, long, long, long)) 0x0044AFB0 )
+void DoProperDetection(short item_number, long x, long y, long z, long xv, long yv, long zv);

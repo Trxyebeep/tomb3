@@ -935,7 +935,7 @@ tomb3 progress.
 0x0044AE20	+	HitTarget
 0x0044AEE0	+	SmashItem
 0x0044AF50	+	WeaponObject
-0x0044AFB0		DoProperDetection
+0x0044AFB0	+	DoProperDetection
 
 
 		game/laraflar.cpp
