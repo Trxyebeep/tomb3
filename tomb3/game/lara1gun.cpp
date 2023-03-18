@@ -767,7 +767,7 @@ void draw_shotgun(long weapon_type)
 		item->frame_number = anims[item->anim_number].frame_base;
 		item->current_anim_state = 1;
 		item->goal_anim_state = 1;
-		item->room_number = 255;
+		item->room_number = NO_ROOM;
 		lara.right_arm.frame_base = objects[item->object_number].frame_base;
 		lara.left_arm.frame_base = lara.right_arm.frame_base;
 	}

@@ -720,7 +720,7 @@ void ExtractSaveGameInfo()
 			if (item->carried_item != NO_ITEM)
 			{
 				RemoveDrawnItem(item->carried_item);
-				items[item->carried_item].room_number = 255;
+				items[item->carried_item].room_number = NO_ROOM;
 				items[item->carried_item].carried_item = NO_ITEM;
 			}
 		}
@@ -766,7 +766,7 @@ void ExtractSaveGameInfo()
 		ReadSG(&item->current_anim_state, sizeof(short));
 		ReadSG(&item->goal_anim_state, sizeof(short));
 		item->status = ITEM_ACTIVE;
-		item->room_number = 255;
+		item->room_number = NO_ROOM;
 	}
 
 	if (lara.burn)

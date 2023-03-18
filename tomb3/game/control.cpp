@@ -1378,7 +1378,7 @@ long GetCeiling(FLOOR_INFO* floor, long x, long y, long z)
 
 	f = floor;
 
-	while (f->sky_room != 255)
+	while (f->sky_room != NO_ROOM)
 	{
 		if (CheckNoColCeilingTriangle(floor, x, z) == 1)
 			break;
@@ -1522,14 +1522,14 @@ long GetCeiling(FLOOR_INFO* floor, long x, long y, long z)
 		}
 	}
 
-	while (floor->pit_room != 255)
+	while (floor->pit_room != NO_ROOM)
 	{
 		if (CheckNoColFloorTriangle(floor, x, z) == 1)
 			break;
 
 		r = &room[floor->pit_room];
-		xoff = (z - r->z) >> 10;
-		yoff = (x - r->x) >> 10;
+		xoff = (z - r->z) >> WALL_SHIFT;
+		yoff = (x - r->x) >> WALL_SHIFT;
 		floor = &r->floor[xoff + r->x_size * yoff];
 	}
 
@@ -1608,7 +1608,7 @@ short GetDoor(FLOOR_INFO* floor)
 	short type;
 
 	if (!floor->index)
-		return 255;
+		return NO_ROOM;
 
 	data = &floor_data[floor->index];
 	type = *data++;
@@ -1617,7 +1617,7 @@ short GetDoor(FLOOR_INFO* floor)
 		(type & 0x1F) == NOCOLF1T || (type & 0x1F) == NOCOLF2B || (type & 0x1F) == NOCOLF2T)
 	{
 		if (type & 0x8000)
-			return 255;
+			return NO_ROOM;
 
 		data++;
 		type = *data++;
@@ -1627,7 +1627,7 @@ short GetDoor(FLOOR_INFO* floor)
 		(type & 0x1F) == NOCOLC1T || (type & 0x1F) == NOCOLC2B || (type & 0x1F) == NOCOLC2T)
 	{
 		if (type & 0x8000)
-			return 255;
+			return NO_ROOM;
 
 		data++;
 		type = *data++;
@@ -1636,7 +1636,7 @@ short GetDoor(FLOOR_INFO* floor)
 	if ((type & 0x1F) == DOOR_TYPE)
 		return *data;
 
-	return 255;
+	return NO_ROOM;
 }
 
 long LOS(GAME_VECTOR* start, GAME_VECTOR* target)
@@ -2264,7 +2264,7 @@ long IsRoomOutside(long x, long y, long z)
 
 	p = (uchar*)&OutsideRoomTable[offset];
 
-	while (*p != 255)
+	while (*p != NO_ROOM)
 	{
 		rn = *p;
 		r = &room[rn];
