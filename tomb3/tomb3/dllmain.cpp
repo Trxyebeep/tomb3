@@ -123,6 +123,7 @@
 #include "../game/armysmg.h"
 #include "../game/boomute.h"
 #include "../game/clawmute.h"
+#include "../game/dog.h"
 
 HINSTANCE hinstance = 0;
 
@@ -240,6 +241,7 @@ void inject_all(bool replace)
 	inject_armysmg(replace);
 	inject_boomute(replace);
 	inject_clawmute(replace);
+	inject_dog(replace);
 
 	//specific
 	inject_drawbars(replace);

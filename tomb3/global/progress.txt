@@ -361,7 +361,7 @@ tomb3 progress.
 
 		game/dog.cpp
 
-0x00424070		InitialiseDog
+0x00424070	+	InitialiseDog
 0x004240C0		DogControl
 
 
