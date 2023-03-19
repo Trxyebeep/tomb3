@@ -124,6 +124,7 @@
 #include "../game/boomute.h"
 #include "../game/clawmute.h"
 #include "../game/dog.h"
+#include "../game/croc.h"
 
 HINSTANCE hinstance = 0;
 
@@ -242,6 +243,7 @@ void inject_all(bool replace)
 	inject_boomute(replace);
 	inject_clawmute(replace);
 	inject_dog(replace);
+	inject_croc(replace);
 
 	//specific
 	inject_drawbars(replace);

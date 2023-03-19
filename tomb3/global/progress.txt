@@ -340,7 +340,7 @@ tomb3 progress.
 
 		game/croc.cpp
 
-0x004234F0		CrocControl
+0x004234F0	+	CrocControl
 
 
 		game/demo.cpp
