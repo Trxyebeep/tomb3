@@ -4,6 +4,7 @@
 void inject_oilsmg(bool replace);
 
 void InitialiseOilSMG(short item_number);
+void OilSMGControl(short item_number);
 
 enum OILSMG_STATES
 {
