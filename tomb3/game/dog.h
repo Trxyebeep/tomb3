@@ -4,6 +4,7 @@
 void inject_dog(bool replace);
 
 void InitialiseDog(short item_number);
+void DogControl(short item_number);
 
 enum DOG_STATES
 {
