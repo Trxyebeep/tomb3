@@ -609,7 +609,7 @@ tomb3 progress.
 
 		game/hybrid.cpp
 
-0x00434E60		HybridControl
+0x00434E60	+	HybridControl
 
 
 		game/inventry.cpp
