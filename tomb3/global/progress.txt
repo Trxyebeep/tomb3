@@ -1155,7 +1155,7 @@ tomb3 progress.
 
 		game/oilsmg.cpp
 
-0x0045AA00		InitialiseOilSMG
+0x0045AA00	+	InitialiseOilSMG
 0x0045AA60		OilSMGControl
 
 
