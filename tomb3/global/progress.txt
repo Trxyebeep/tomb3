@@ -163,7 +163,7 @@ tomb3 progress.
 
 		game/blowpipe.cpp
 
-0x00411710		BlowpipeControl
+0x00411710	+	BlowpipeControl
 
 
 		game/boat.cpp
