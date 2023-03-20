@@ -17,6 +17,47 @@
 #include "savegame.h"
 #include "pickup.h"
 #include "collide.h"
+#include "../specific/winmain.h"
+#include "draw.h"
+#include "cobra.h"
+#include "monkey.h"
+#include "autogun.h"
+#include "diver.h"
+#include "orca.h"
+#include "trex.h"
+#include "raptor.h"
+#include "dog.h"
+#include "rat.h"
+#include "compy.h"
+#include "triboss.h"
+#include "tonyboss.h"
+#include "londboss.h"
+#include "willboss.h"
+#include "tiger.h"
+#include "shiva.h"
+#include "oilsmg.h"
+#include "clawmute.h"
+#include "hybrid.h"
+#include "sealmute.h"
+#include "swat.h"
+#include "armysmg.h"
+#include "lizman.h"
+#include "51baton.h"
+#include "51civvy.h"
+#include "prisoner.h"
+#include "flamer.h"
+#include "tribeaxe.h"
+#include "blowpipe.h"
+#include "wingmute.h"
+#include "bird.h"
+#include "oilred.h"
+#include "londsec.h"
+#include "cleaner.h"
+#include "mpgun.h"
+#include "punk.h"
+#include "croc.h"
+#include "winston.h"
+#include "target.h"
 #ifdef TROYESTUFF
 #include "../newstuff/map.h"
 #include "../tomb3/tomb3.h"
@@ -392,6 +433,936 @@ void BuildOutsideTable()
 	printf("Ouside room table = %d bytes, max_slots = %d\n", (long)oTable - (long)OutsideRoomTable, max_slots);
 }
 
+static void BaddyObjects()
+{
+	OBJECT_INFO* obj;
+
+	obj = &objects[LARA];
+	obj->initialise = InitialiseLaraLoad;
+	obj->draw_routine = DrawDummyItem;
+	obj->shadow_size = 160;
+	obj->hit_points = 1000;
+	obj->save_position = 1;
+	obj->save_hitpoints = 1;
+	obj->save_flags = 1;
+	obj->save_anim = 1;
+
+	obj = &objects[LARA_EXTRA];
+	obj->control = ControlLaraExtra;
+
+	obj = &objects[COBRA];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseCobra;
+		obj->control = CobraControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 8;
+		obj->radius = 102;
+		obj->intelligent = 1;
+		obj->non_lot = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index] |= 8;
+		bones[obj->bone_index + 24] |= 8;
+	}
+
+	obj = &objects[MONKEY];
+
+	if (obj->loaded)
+	{
+		if (!objects[MESHSWAP2].loaded)
+			S_ExitSystem("FATAL: Monkey requires MESHSWAP2 (Monkey + Pickups)");
+
+		obj->initialise = InitialiseMonkey;
+		obj->control = MonkeyControl;
+		obj->collision = CreatureCollision;
+		obj->draw_routine = DrawMonkey;
+		obj->shadow_size = 128;
+		obj->hit_points = 8;
+		obj->radius = 102;
+		obj->pivot_length = 0;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index] |= 0x10;
+		bones[obj->bone_index + 28] |= 4;
+		bones[obj->bone_index + 28] |= 8;
+	}
+
+	obj = &objects[ROBOT_SENTRY_GUN];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseAutogun;
+		obj->control = AutogunControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 0;
+		obj->hit_points = 100;
+		obj->radius = 102;
+		obj->bite_offset = AUTOGUN_LEFT_BITE;
+		obj->intelligent = 1;
+		obj->non_lot = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index] |= 8;
+		bones[obj->bone_index + 4] |= 4;
+	}
+
+	obj = &objects[DIVER];
+
+	if (obj->loaded)
+	{
+		obj->control = DiverControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 20;
+		obj->radius = 341;
+		obj->pivot_length = 50;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		obj->water_creature = 1;
+	}
+
+	obj = &objects[WHALE];
+
+	if (obj->loaded)
+	{
+		obj->control = OrcaControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = DONT_TARGET;
+		obj->pivot_length = 200;
+		obj->radius = 341;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		obj->water_creature = 1;
+	}
+
+	obj = &objects[TREX];
+
+	if (obj->loaded)
+	{
+		obj->control = DinoControl;
+		obj->collision = CreatureCollision;
+		obj->hit_points = 800;
+		obj->shadow_size = 128;
+		obj->pivot_length = 1800;
+		obj->radius = 512;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 36] |= 8;
+		bones[obj->bone_index + 44] |= 8;
+		bones[obj->bone_index + 80] |= 8;
+		bones[obj->bone_index + 88] |= 8;
+	}
+
+	obj = &objects[RAPTOR];
+
+	if (obj->loaded)
+	{
+		obj->control = RaptorControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 90;
+		obj->pivot_length = 600;
+		obj->radius = 341;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 80] |= 8;
+		bones[obj->bone_index + 84] |= 8;
+		bones[obj->bone_index + 92] |= 8;
+		bones[obj->bone_index + 100] |= 8;
+	}
+
+	obj = &objects[HUSKIE];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseDog;
+		obj->control = DogControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 16;
+		obj->pivot_length = 300;
+		obj->radius = 341;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 8] |= 8;
+		bones[obj->bone_index + 8] |= 4;
+	}
+
+	obj = &objects[SMALL_RAT];
+
+	if (obj->loaded)
+	{
+		obj->control = MouseControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 4;
+		obj->pivot_length = 50;
+		obj->radius = 102;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 12] |= 8;
+	}
+
+	obj = &objects[COMPY];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseCompy;
+		obj->control = CompyControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 85;
+		obj->hit_points = 10;
+		obj->pivot_length = 50;
+		obj->radius = 102;
+		obj->intelligent = 1;
+		obj->non_lot = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 4] |= 8;
+		bones[obj->bone_index + 8] |= 8;
+	}
+
+	obj = &objects[TRIBEBOSS];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseTribeBoss;
+		obj->control = TribeBossControl;
+		obj->collision = CreatureCollision;
+		obj->draw_routine = S_DrawTribeBoss;
+		obj->shadow_size = 0;
+		obj->hit_points = 200;
+		obj->pivot_length = 50;
+		obj->radius = 102;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 16] |= 8;
+		bones[obj->bone_index + 28] |= 0xC;
+	}
+
+	obj = &objects[TONY];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseTonyBoss;
+		obj->control = TonyBossControl;
+		obj->collision = CreatureCollision;
+		obj->draw_routine = S_DrawTonyBoss;
+		obj->shadow_size = 0;
+		obj->hit_points = 200;
+		obj->pivot_length = 50;
+		obj->radius = 102;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 24] |= 8;
+		bones[obj->bone_index + 24] |= 4;
+		bones[obj->bone_index + 52] |= 8;
+	}
+
+	obj = &objects[LON_BOSS];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseLondonBoss;
+		obj->control = LondonBossControl;
+		obj->collision = CreatureCollision;
+		obj->draw_routine = S_DrawLondonBoss;
+		obj->shadow_size = 0;
+		obj->hit_points = 300;
+		obj->pivot_length = 50;
+		obj->radius = 102;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 24] |= 8;
+		bones[obj->bone_index + 24] |= 4;
+		bones[obj->bone_index + 52] |= 8;
+	}
+
+	obj = &objects[WILLARD_BOSS];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseWillBoss;
+		obj->control = WillBossControl;
+		obj->collision = CreatureCollision;
+		obj->draw_routine = S_DrawWillBoss;
+		obj->shadow_size = 128;
+		obj->hit_points = 200;
+		obj->pivot_length = 50;
+		obj->radius = 102;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+	}
+
+	obj = &objects[TIGER];
+
+	if (obj->loaded)
+	{
+		obj->control = TigerControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 24;
+		obj->pivot_length = 200;
+		obj->radius = 341;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 84] |= 8;
+	}
+
+	obj = &objects[SHIVA];
+
+	if (obj->loaded)
+	{
+		if (!objects[MESHSWAP1].loaded)
+			S_ExitSystem("FATAL: Shiva requires MESHSWAP1 (Shiva statue)");
+
+		obj->initialise = InitialiseShiva;
+		obj->control = ShivaControl;
+		obj->collision = CreatureCollision;
+		obj->draw_routine = DrawShiva;
+		obj->shadow_size = 128;
+		obj->hit_points = 100;
+		obj->radius = 341;
+		obj->pivot_length = 0;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 24] |= 8;
+		bones[obj->bone_index + 24] |= 4;
+		bones[obj->bone_index + 100] |= 8;
+		bones[obj->bone_index + 100] |= 4;
+	}
+
+	obj = &objects[WHITE_SOLDIER];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseOilSMG;
+		obj->control = OilSMGControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 30;
+		obj->radius = 102;
+		obj->pivot_length = 0;
+		obj->bite_offset = WHITE_SOLDIER_BITE;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index] |= 8;
+		bones[obj->bone_index] |= 4;
+		bones[obj->bone_index + 28] |= 8;
+	}
+
+	obj = &objects[MUTANT2];
+
+	if (obj->loaded)
+	{
+		obj->control = ClawmuteControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 130;
+		obj->radius = 256;
+		obj->pivot_length = 0;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index] |= 0x10;
+		bones[obj->bone_index] |= 4;
+		bones[obj->bone_index + 28] |= 8;
+	}
+
+	obj = &objects[MUTANT3];
+
+	if (obj->loaded)
+	{
+		obj->control = HybridControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 90;
+		obj->radius = 128;
+		obj->pivot_length = 0;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index] |= 0x10;
+		bones[obj->bone_index] |= 4;
+		bones[obj->bone_index + 28] |= 8;
+	}
+
+	obj = &objects[BURNT_MUTANT];
+
+	if (obj->loaded)
+	{
+		obj->control = SealmuteControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 50;
+		obj->radius = 204;
+		obj->pivot_length = 0;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 32] |= 0x10;
+		bones[obj->bone_index + 32] |= 4;
+		bones[obj->bone_index + 36] |= 8;
+	}
+
+	obj = &objects[SWAT_GUN];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseSwat;
+		obj->control = SwatControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 45;
+		obj->radius = 102;
+		obj->pivot_length = 0;
+		obj->bite_offset = SWAT_GUN_BITE;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index] |= 8;
+		bones[obj->bone_index] |= 4;
+		bones[obj->bone_index + 28] |= 8;
+	}
+
+	obj = &objects[STHPAC_MERCENARY];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseArmySMG;
+		obj->control = ArmySMGControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 30;
+		obj->radius = 102;
+		obj->pivot_length = 0;
+		obj->bite_offset = ARMYSMG_GUN_BITE;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index] |= 8;
+		bones[obj->bone_index] |= 4;
+		bones[obj->bone_index + 28] |= 8;
+	}
+
+	obj = &objects[LIZARD_MAN];
+
+	if (obj->loaded)
+	{
+		obj->control = LizManControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 36;
+		obj->radius = 204;
+		obj->pivot_length = 0;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 4] |= 0x10;
+		bones[obj->bone_index + 36] |= 0x10;
+	}
+
+	obj = &objects[MP1];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseBaton;
+		obj->control = BatonControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 25;
+		obj->radius = 102;
+		obj->pivot_length = 0;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 24] |= 8;
+		bones[obj->bone_index + 24] |= 4;
+		bones[obj->bone_index + 52] |= 8;
+	}
+
+	obj = &objects[CIVVIE];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseCivvy;
+		obj->control = CivvyControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 15;
+		obj->radius = 102;
+		obj->pivot_length = 0;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 24] |= 8;
+		bones[obj->bone_index + 24] |= 4;
+		bones[obj->bone_index + 52] |= 8;
+	}
+
+	obj = &objects[BOB];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialisePrisoner;
+		obj->control = PrisonerControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 20;
+		obj->radius = 102;
+		obj->pivot_length = 0;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 24] |= 8;
+		bones[obj->bone_index + 24] |= 4;
+		bones[obj->bone_index + 52] |= 8;
+	}
+
+	obj = &objects[FLAMETHROWER_BLOKE];
+
+	if (obj->loaded)
+	{
+		obj->control = FlamerControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 36;
+		obj->radius = 102;
+		obj->pivot_length = 0;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index] |= 8;
+		bones[obj->bone_index] |= 4;
+		bones[obj->bone_index + 28] |= 8;
+	}
+
+	obj = &objects[TRIBEAXE];
+
+	if (obj->loaded)
+	{
+		obj->control = TribeAxeControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 28;
+		obj->radius = 102;
+		obj->pivot_length = 0;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 52] |= 8;
+		bones[obj->bone_index + 24] |= 8;
+	}
+
+	obj = &objects[BLOWPIPE];
+
+	if (obj->loaded)
+	{
+		obj->control = BlowpipeControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 28;
+		obj->radius = 102;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 24] |= 8;
+		bones[obj->bone_index + 24] |= 4;
+		bones[obj->bone_index + 52] |= 8;
+		bones[obj->bone_index + 52] |= 4;
+	}
+
+	obj = &objects[MUTANT1];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseWingmute;
+		obj->control = WingmuteControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 24;
+		obj->radius = 204;
+		obj->pivot_length = 0;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+	}
+
+	obj = &objects[VULTURE];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseVulture;
+		obj->control = VultureControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 18;
+		obj->radius = 204;
+		obj->pivot_length = 0;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+	}
+
+	obj = &objects[CROW];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseVulture;
+		obj->control = VultureControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 8;
+		obj->radius = 204;
+		obj->pivot_length = 0;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+	}
+
+	obj = &objects[OILRED];
+
+	if (obj->loaded)
+	{
+		obj->control = OilRedControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 34;
+		obj->radius = 102;
+		obj->pivot_length = 0;
+		obj->bite_offset = OILRED_BITE;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 24] |= 8;
+		bones[obj->bone_index + 24] |= 4;
+		bones[obj->bone_index + 52] |= 8;
+	}
+
+	obj = &objects[SECURITY_GUARD];
+
+	if (obj->loaded)
+	{
+		obj->control = LondSecControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 28;
+		obj->radius = 102;
+		obj->pivot_length = 0;
+		obj->bite_offset = OILRED_BITE;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 24] |= 8;
+		bones[obj->bone_index + 24] |= 4;
+		bones[obj->bone_index + 52] |= 8;
+	}
+
+	obj = &objects[ELECTRIC_CLEANER];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseCleaner;
+		obj->control = CleanerControl;
+		obj->collision = ObjectCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = DONT_TARGET;
+		obj->radius = 512;
+		obj->intelligent = 1;
+		obj->non_lot = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+	}
+
+	obj = &objects[MP2];
+
+	if (obj->loaded)
+	{
+		obj->control = MPGunControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 28;
+		obj->radius = 102;
+		obj->pivot_length = 0;
+		obj->bite_offset = OILRED_BITE;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 24] |= 8;
+		bones[obj->bone_index + 24] |= 4;
+		bones[obj->bone_index + 52] |= 8;
+	}
+
+	obj = &objects[LON_MERCENARY1];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseSwat;
+		obj->control = SwatControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 45;
+		obj->radius = 102;
+		obj->pivot_length = 0;
+		obj->bite_offset = SWAT_GUN_BITE;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index] |= 8;
+		bones[obj->bone_index] |= 4;
+		bones[obj->bone_index + 28] |= 8;
+	}
+
+	obj = &objects[PUNK1];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialisePunk;
+		obj->control = PunkControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 20;
+		obj->radius = 102;
+		obj->pivot_length = 0;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 24] |= 8;
+		bones[obj->bone_index + 24] |= 4;
+		bones[obj->bone_index + 52] |= 8;
+	}
+
+	obj = &objects[CROCODILE];
+
+	if (obj->loaded)
+	{
+		obj->control = CrocControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 42;
+		obj->radius = 341;
+		obj->pivot_length = 200;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		obj->water_creature = 1;
+		bones[obj->bone_index + 28] |= 8;
+	}
+
+	obj = &objects[WINSTON];
+
+	if (obj->loaded)
+	{
+		obj->control = OldWinstonControl;
+		obj->collision = ObjectCollision;
+		obj->hit_points = 20;
+		obj->shadow_size = 64;
+		obj->radius = 102;
+		obj->intelligent = 1;
+	}
+
+	obj = &objects[ARMY_WINSTON];
+
+	if (obj->loaded)
+	{
+		obj->control = WinstonControl;
+		obj->collision = ObjectCollision;
+		obj->hit_points = 20;
+		obj->shadow_size = 64;
+		obj->radius = 102;
+		obj->intelligent = 1;
+	}
+
+	obj = &objects[TARGETS];
+
+	if (obj->loaded)
+	{
+		obj->control = TargetControl;
+		obj->collision = ObjectCollision;
+		obj->hit_points = 8;
+		obj->shadow_size = 128;
+		obj->radius = 102;
+		obj->intelligent = 1;
+	}
+
+	obj = &objects[AI_GUARD];
+
+	if (obj->loaded)
+	{
+		obj->draw_routine = DrawDummyItem;
+		obj->collision = AIPickupCollision;
+		obj->hit_points = 0;
+	}
+
+	obj = &objects[AI_AMBUSH];
+
+	if (obj->loaded)
+	{
+		obj->draw_routine = DrawDummyItem;
+		obj->collision = AIPickupCollision;
+		obj->hit_points = 0;
+	}
+
+	obj = &objects[AI_PATROL1];
+
+	if (obj->loaded)
+	{
+		obj->draw_routine = DrawDummyItem;
+		obj->collision = AIPickupCollision;
+		obj->hit_points = 0;
+	}
+
+	obj = &objects[AI_PATROL2];
+
+	if (obj->loaded)
+	{
+		obj->draw_routine = DrawDummyItem;
+		obj->collision = AIPickupCollision;
+		obj->hit_points = 0;
+	}
+
+	obj = &objects[AI_FOLLOW];
+
+	if (obj->loaded)
+	{
+		obj->draw_routine = DrawDummyItem;
+		obj->collision = AIPickupCollision;
+		obj->hit_points = 0;
+	}
+
+	obj = &objects[AI_X1];
+
+	if (obj->loaded)
+	{
+		obj->draw_routine = DrawDummyItem;
+		obj->collision = AIPickupCollision;
+		obj->hit_points = 0;
+	}
+
+	obj = &objects[AI_X2];
+
+	if (obj->loaded)
+	{
+		obj->draw_routine = DrawDummyItem;
+		obj->collision = AIPickupCollision;
+		obj->hit_points = 0;
+	}
+
+	obj = &objects[AI_X3];
+
+	if (obj->loaded)
+	{
+		obj->draw_routine = DrawDummyItem;
+		obj->collision = AIPickupCollision;
+		obj->hit_points = 0;
+	}
+
+	obj = &objects[AI_MODIFY];
+
+	if (obj->loaded)
+	{
+		obj->draw_routine = DrawDummyItem;
+		obj->collision = AIPickupCollision;
+		obj->hit_points = 0;
+	}
+}
+
 void inject_setup(bool replace)
 {
 	INJECT(0x00466590, GetAIPickups, inject_rando ? 1 : replace);
@@ -400,4 +1371,5 @@ void inject_setup(bool replace)
 	INJECT(0x00463B00, InitialiseGameFlags, replace);
 	INJECT(0x004638F0, InitialiseLevel, replace);
 	INJECT(0x004666C0, BuildOutsideTable, replace);
+	INJECT(0x00463C30, BaddyObjects, replace);
 }
