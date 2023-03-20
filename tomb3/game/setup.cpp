@@ -280,6 +280,118 @@ long InitialiseLevel(long level, long type)
 	return 1;
 }
 
+void BuildOutsideTable()
+{
+	ROOM_INFO* r;
+	uchar* pTable;
+	uchar* oTable;
+	uchar* cTable;
+	long max_slots, roomx, roomy, cont, offset, z, z2;
+	long x, y, i, rx, ry, lp;
+
+	max_slots = 0;
+	OutsideRoomTable = (char*)game_malloc(0xB640, 0);
+	memset(OutsideRoomTable, 0xFF, 0xB640);
+	printf("X %d, Y %d, Z %d, Xs %d, Ys %d\n", room->x, room->y, room->z, room->x_size, room->y_size);
+
+	for (y = 0; y < 108; y += 4)
+	{
+		for (x = 0; x < 108; x += 4)
+		{
+			for (i = 0; i < number_rooms; i++)
+			{
+				r = &room[i];
+
+				roomx = (r->z >> WALL_SHIFT) + 1;
+				roomy = (r->x >> WALL_SHIFT) + 1;
+				cont = 0;
+
+				for (ry = 0; ry < 4; ry++)
+				{
+					for (rx = 0; rx < 4; rx++)
+					{
+						if (x + rx >= roomx && x + rx < roomx + r->x_size - 2 && y + ry >= roomy && y + ry < roomy + r->y_size - 2)
+						{
+							cont = 1;
+							break;
+						}
+					}
+				}
+
+				if (!cont)
+					continue;
+
+				pTable = (uchar*)&OutsideRoomTable[64 * ((x >> 2) + 27 * (y >> 2))];
+
+				for (lp = 0; lp < 64; lp++)
+				{
+					if (pTable[lp] == 255)
+					{
+						pTable[lp] = (uchar)i;
+
+						if (lp > max_slots)
+							max_slots = lp;
+
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	oTable = (uchar*)OutsideRoomTable;
+
+	for (y = 0; y < 27; y++)
+	{
+		for (x = 0; x < 27; x++)
+		{
+			z = 0;
+			offset = x + y * 27;
+			pTable = (uchar*)&OutsideRoomTable[64 * (x + y * 27)];
+			while (pTable[z] != 255) z++;
+
+			if (!z)
+				OutsideRoomOffsets[offset] = -1;
+			else if (z == 1)
+				OutsideRoomOffsets[offset] = *pTable | 0x8000;
+			else
+			{
+				cTable = (uchar*)OutsideRoomTable;
+
+				while (cTable < oTable)
+				{
+					if (!memcmp(cTable, pTable, z))
+					{
+						OutsideRoomOffsets[offset] = short((long)cTable - (long)OutsideRoomTable);
+						break;
+					}
+
+					z2 = 0;
+					while (cTable[z2] != 255) z2++;
+					cTable += z2 + 1;
+				}
+
+				if (cTable >= oTable)
+				{
+					OutsideRoomOffsets[offset] = short((long)oTable - (long)OutsideRoomTable);
+
+					do
+					{
+						*oTable++ = *pTable++;
+						z--;
+
+					} while (z);
+
+					*oTable++ = 255;
+				}
+			}
+		}
+	}
+
+	game_free(((long)OutsideRoomTable - (long)oTable + 0xB643) & ~3, 0);	//free unused space (get rid of this asap btw)
+	printf("Ouside room table = %d bytes, max_slots = %d\n", (long)oTable - (long)OutsideRoomTable, max_slots);
+}
+
 void inject_setup(bool replace)
 {
 	INJECT(0x00466590, GetAIPickups, inject_rando ? 1 : replace);
@@ -287,4 +399,5 @@ void inject_setup(bool replace)
 	INJECT(0x00463B70, InitialiseLevelFlags, replace);
 	INJECT(0x00463B00, InitialiseGameFlags, replace);
 	INJECT(0x004638F0, InitialiseLevel, replace);
+	INJECT(0x004666C0, BuildOutsideTable, replace);
 }

@@ -8,6 +8,6 @@ void GetCarriedItems();
 void InitialiseLevelFlags();
 void InitialiseGameFlags();
 long InitialiseLevel(long level, long type);
+void BuildOutsideTable();
 
-#define BuildOutsideTable	( (void(__cdecl*)()) 0x004666C0 )
 #define InitialiseObjects	( (void(__cdecl*)()) 0x00463BC0 )

@@ -1269,7 +1269,7 @@ tomb3 progress.
 0x00465820		ObjectObjects
 0x004664B0	+	GetCarriedItems
 0x00466590	+	GetAIPickups
-0x004666C0		BuildOutsideTable
+0x004666C0	+	BuildOutsideTable
 
 
 		game/shiva.cpp
