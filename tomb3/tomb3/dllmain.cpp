@@ -129,6 +129,7 @@
 #include "../game/hybrid.h"
 #include "../game/oilsmg.h"
 #include "../game/oilred.h"
+#include "../game/londsec.h"
 
 HINSTANCE hinstance = 0;
 
@@ -252,6 +253,7 @@ void inject_all(bool replace)
 	inject_hybrid(replace);
 	inject_oilsmg(replace);
 	inject_oilred(replace);
+	inject_londsec(replace);
 
 	//specific
 	inject_drawbars(replace);

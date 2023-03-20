@@ -1040,7 +1040,7 @@ tomb3 progress.
 
 		game/londsec.cpp
 
-0x004523C0		LondSecControl
+0x004523C0	+	LondSecControl
 
 
 		game/lot.cpp
