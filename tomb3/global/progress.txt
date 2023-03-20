@@ -1150,7 +1150,7 @@ tomb3 progress.
 
 		game/oilred.cpp
 
-0x00459E70		OilRedControl
+0x00459E70	+	OilRedControl
 
 
 		game/oilsmg.cpp

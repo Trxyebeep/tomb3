@@ -128,6 +128,7 @@
 #include "../game/blowpipe.h"
 #include "../game/hybrid.h"
 #include "../game/oilsmg.h"
+#include "../game/oilred.h"
 
 HINSTANCE hinstance = 0;
 
@@ -250,6 +251,7 @@ void inject_all(bool replace)
 	inject_blowpipe(replace);
 	inject_hybrid(replace);
 	inject_oilsmg(replace);
+	inject_oilred(replace);
 
 	//specific
 	inject_drawbars(replace);
