@@ -1,5 +1,40 @@
-// dllmain.cpp : Defines the entry point for the DLL application.
 #include "../tomb3/pch.h"
+
+#include "../3dsystem/3d_gen.h"
+#include "../3dsystem/hwinsert.h"
+#include "../3dsystem/scalespr.h"
+#include "../3dsystem/phd_math.h"
+
+#include "../specific/drawbars.h"
+#include "../specific/transform.h"
+#include "../specific/litesrc.h"
+#include "../specific/output.h"
+#include "../specific/smain.h"
+#include "../specific/hwrender.h"
+#include "../specific/game.h"
+#include "../specific/file.h"
+#include "../specific/draweffects.h"
+#include "../specific/picture.h"
+#include "../specific/option.h"
+#include "../specific/input.h"
+#include "../specific/display.h"
+#include "../specific/specific.h"
+#include "../specific/frontend.h"
+#include "../specific/dd.h"
+#include "../specific/dxdialog.h"
+#include "../specific/dxshell.h"
+#include "../specific/winmain.h"
+#include "../specific/utils.h"
+#include "../specific/init.h"
+#include "../specific/time.h"
+#include "../specific/di.h"
+#include "../specific/audio.h"
+#include "../specific/ds.h"
+#include "../specific/texture.h"
+#include "../specific/mmx.h"
+#include "../specific/fmv.h"
+#include "../specific/drawprimitive.h"
+
 #include "../game/lara.h"
 #include "../game/collide.h"
 #include "../game/laraclmb.h"
@@ -69,41 +104,32 @@
 #include "../game/trex.h"
 #include "../game/tonyboss.h"
 #include "../game/compy.h"
-
-#include "../3dsystem/3d_gen.h"
-#include "../3dsystem/hwinsert.h"
-#include "../3dsystem/scalespr.h"
-#include "../3dsystem/phd_math.h"
-
-#include "../specific/drawbars.h"
-#include "../specific/transform.h"
-#include "../specific/litesrc.h"
-#include "../specific/output.h"
-#include "../specific/smain.h"
-#include "../specific/hwrender.h"
-#include "../specific/game.h"
-#include "../specific/file.h"
-#include "../specific/draweffects.h"
-#include "../specific/picture.h"
-#include "../specific/option.h"
-#include "../specific/input.h"
-#include "../specific/display.h"
-#include "../specific/specific.h"
-#include "../specific/frontend.h"
-#include "../specific/dd.h"
-#include "../specific/dxdialog.h"
-#include "../specific/dxshell.h"
-#include "../specific/winmain.h"
-#include "../specific/utils.h"
-#include "../specific/init.h"
-#include "../specific/time.h"
-#include "../specific/di.h"
-#include "../specific/audio.h"
-#include "../specific/ds.h"
-#include "../specific/texture.h"
-#include "../specific/mmx.h"
-#include "../specific/fmv.h"
-#include "../specific/drawprimitive.h"
+#include "../game/tiger.h"
+#include "../game/shiva.h"
+#include "../game/target.h"
+#include "../game/swat.h"
+#include "../game/monkey.h"
+#include "../game/sealmute.h"
+#include "../game/rat.h"
+#include "../game/raptor.h"
+#include "../game/firehead.h"
+#include "../game/prisoner.h"
+#include "../game/lasers.h"
+#include "../game/lizman.h"
+#include "../game/dragfire.h"
+#include "../game/51rocket.h"
+#include "../game/autogun.h"
+#include "../game/bird.h"
+#include "../game/armysmg.h"
+#include "../game/boomute.h"
+#include "../game/clawmute.h"
+#include "../game/dog.h"
+#include "../game/croc.h"
+#include "../game/blowpipe.h"
+#include "../game/hybrid.h"
+#include "../game/oilsmg.h"
+#include "../game/oilred.h"
+#include "../game/londsec.h"
 
 HINSTANCE hinstance = 0;
 
@@ -202,6 +228,32 @@ void inject_all(bool replace)
 	inject_trex(replace);
 	inject_tonyboss(replace);
 	inject_compy(replace);
+	inject_tiger(replace);
+	inject_shiva(replace);
+	inject_target(replace);
+	inject_swat(replace);
+	inject_monkey(replace);
+	inject_sealmute(replace);
+	inject_rat(replace);
+	inject_raptor(replace);
+	inject_firehead(replace);
+	inject_prisoner(replace);
+	inject_lasers(replace);
+	inject_lizman(replace);
+	inject_dragfire(replace);
+	inject_51rocket(replace);
+	inject_autogun(replace);
+	inject_bird(replace);
+	inject_armysmg(replace);
+	inject_boomute(replace);
+	inject_clawmute(replace);
+	inject_dog(replace);
+	inject_croc(replace);
+	inject_blowpipe(replace);
+	inject_hybrid(replace);
+	inject_oilsmg(replace);
+	inject_oilred(replace);
+	inject_londsec(replace);
 
 	//specific
 	inject_drawbars(replace);

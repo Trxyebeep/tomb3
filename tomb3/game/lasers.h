@@ -1,5 +1,9 @@
 #pragma once
 #include "../global/vars.h"
 
-#define LaraOnLOS	( (long(__cdecl*)(GAME_VECTOR*, GAME_VECTOR*)) 0x0044F580 )
-#define UpdateLaserShades	( (void(__cdecl*)()) 0x0044F7A0 )
+void inject_lasers(bool replace);
+
+long LaraOnLOS(GAME_VECTOR* s, GAME_VECTOR* t);
+void UpdateLaserShades();
+void LaserControl(short item_number);
+void S_DrawLaser(ITEM_INFO* item);

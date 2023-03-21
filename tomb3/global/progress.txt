@@ -112,8 +112,8 @@ tomb3 progress.
 
 		game/51civvy.cpp
 
-0x0040E350		InitialiseCivvy
-0x0040E3B0		CivvyControl
+0x0040E350	+	InitialiseCivvy
+0x0040E3B0	+	CivvyControl
 0x0040ECA0	+	ControlElectricFence
 0x0040F080	+	TriggerFenceSparks
 
@@ -126,23 +126,23 @@ tomb3 progress.
 
 		game/51rocket.cpp
 
-0x0040F4E0		ControlArea51Rocket
-0x0040FAF0		Trigger51RocketSmoke
-0x0040FCC0		Trigger51BlastFire
-0x0040FE90		InitialiseArea51Struts
-0x0040FEA0		ControlArea51Struts
+0x0040F4E0	+	ControlArea51Rocket
+0x0040FAF0	+	Trigger51RocketSmoke
+0x0040FCC0	+	Trigger51BlastFire
+0x0040FE90	+	InitialiseArea51Struts
+0x0040FEA0	+	ControlArea51Struts
 
 
 		game/armysmg.cpp
 
-0x0040FEF0		InitialiseArmySMG
-0x0040FF50		ArmySMGControl
+0x0040FEF0	+	InitialiseArmySMG
+0x0040FF50	+	ArmySMGControl
 
 		
 		game/autogun.cpp
 
-0x00410750		InitialiseAutogun
-0x004107A0		AutogunControl
+0x00410750	+	InitialiseAutogun
+0x004107A0	+	AutogunControl
 
 
 		game/biggun.pp
@@ -157,13 +157,13 @@ tomb3 progress.
 
 		game/bird.cpp
 
-0x00411450		InitialiseVulture
-0x004114E0		VultureControl
+0x00411450	+	InitialiseVulture
+0x004114E0	+	VultureControl
 
 
 		game/blowpipe.cpp
 
-0x00411710		BlowpipeControl
+0x00411710	+	BlowpipeControl
 
 
 		game/boat.cpp
@@ -189,8 +189,8 @@ tomb3 progress.
 
 		game/boomute.cpp
 
-0x00413FF0		BoomuteControl
-0x004140A0		TriggerSealmuteGasThrower
+0x00413FF0	+	BoomuteControl
+0x004140A0	+	TriggerSealmuteGasThrower
 
 
 		game/box.cpp
@@ -258,11 +258,11 @@ tomb3 progress.
 
 		game/clawmute.cpp
 
-0x0041B4F0		ClawmuteControl
-0x0041BBE0		TriggerPlasma
-0x0041BDA0		TriggerPlasmaBall
-0x0041BED0		ControlClawmutePlasmaBall
-0x0041C1F0		TriggerPlasmaBallFlame
+0x0041B4F0	+	ClawmuteControl
+0x0041BBE0	+	TriggerPlasma
+0x0041BDA0	+	TriggerPlasmaBall
+0x0041BED0	+	ControlClawmutePlasmaBall
+0x0041C1F0	+	TriggerPlasmaBallFlame
 
 
 		game/cleaner.cpp
@@ -306,7 +306,7 @@ tomb3 progress.
 
 0x0041F730	+	InitialiseCompy
 0x0041F750	+	CompyControl
-0x0041FD50		CarcassControl
+0x0041FD50	+	CarcassControl
 
 
 		game/control.cpp
@@ -340,7 +340,7 @@ tomb3 progress.
 
 		game/croc.cpp
 
-0x004234F0		CrocControl
+0x004234F0	+	CrocControl
 
 
 		game/demo.cpp
@@ -361,15 +361,15 @@ tomb3 progress.
 
 		game/dog.cpp
 
-0x00424070		InitialiseDog
-0x004240C0		DogControl
+0x00424070	+	InitialiseDog
+0x004240C0	+	DogControl
 
 
 		game/dragfire.cpp
 
-0x00424660		ControlFlameThrower
-0x00424830		TriggerFlamethrowerHitFlame
-0x00424A10		TriggerFlamethrowerSmoke
+0x00424660	+	ControlFlameThrower
+0x00424830	+	TriggerFlamethrowerHitFlame
+0x00424A10	+	TriggerFlamethrowerSmoke
 
 
 		game/draw.cpp
@@ -536,10 +536,10 @@ tomb3 progress.
 
 		game/firehead.cpp
 
-0x0042FAF0		InitialiseFireHead
-0x0042FB50		ControlFireHead
-0x0042FE30		TriggerFireHeadFlame
-0x00430010		ControlRotateyThing
+0x0042FAF0	+	InitialiseFireHead
+0x0042FB50	+	ControlFireHead
+0x0042FE30	+	TriggerFireHeadFlame
+0x00430010	+	ControlRotateyThing
 
 
 		game/fish.cpp
@@ -609,7 +609,7 @@ tomb3 progress.
 
 		game/hybrid.cpp
 
-0x00434E60		HybridControl
+0x00434E60	+	HybridControl
 
 
 		game/inventry.cpp
@@ -869,9 +869,9 @@ tomb3 progress.
 0x00445250	+	draw_shotgun_meshes
 0x00445290	+	undraw_shotgun_meshes
 0x004452C0	+	ready_shotgun
-0x00445340		RifleHandler
-0x00445560		FireShotgun
-0x00445760		FireM16
+0x00445340	+	RifleHandler
+0x00445560	+	FireShotgun
+0x00445760	+	FireM16
 0x00445820	+	FireHarpoon
 0x004459B0	+	ControlHarpoonBolt
 0x00445F50	+	FireRocket
@@ -880,8 +880,8 @@ tomb3 progress.
 0x00446DD0	+	ControlGrenade
 0x004475D0	+	draw_shotgun
 0x00447770	+	undraw_shotgun
-0x00447880		AnimateShotgun
-0x00447D90		TriggerUnderwaterExplosion
+0x00447880	+	AnimateShotgun
+0x00447D90	+	TriggerUnderwaterExplosion
 
 
 		game/lara2gun.cpp
@@ -893,15 +893,15 @@ tomb3 progress.
 0x00448350	+	draw_pistol_meshes
 0x004483B0	+	undraw_pistol_mesh_left
 0x00448400	+	undraw_pistol_mesh_right
-0x00448440		PistolHandler
+0x00448440	+	PistolHandler
 0x00448650	+	AnimatePistols
 
 
 		game/laraclmb.cpp
 
-0x00448BE0		LaraTestClimb
-0x00448E60		LaraTestClimbUpPos
-0x00449090		LaraTestClimbPos
+0x00448BE0	+	LaraTestClimb
+0x00448E60	+	LaraTestClimbUpPos
+0x00449090	+	LaraTestClimbPos
 0x00449140	+	lara_as_climbleft
 0x00449180	+	lara_as_climbright
 0x004491C0	+	lara_as_climbstnc
@@ -935,7 +935,7 @@ tomb3 progress.
 0x0044AE20	+	HitTarget
 0x0044AEE0	+	SmashItem
 0x0044AF50	+	WeaponObject
-0x0044AFB0		DoProperDetection
+0x0044AFB0	+	DoProperDetection
 
 
 		game/laraflar.cpp
@@ -977,9 +977,9 @@ tomb3 progress.
 0x0044E2F0	+	lara_as_surfright
 0x0044E350	+	lara_as_surftread
 0x0044E410	+	lara_col_surfswim
-0x0044E450		LaraTestWaterClimbOut
-0x0044E670		LaraSurfaceCollision
-0x0044E770		LaraTestWaterStepOut
+0x0044E450	+	LaraTestWaterClimbOut
+0x0044E670	+	LaraSurfaceCollision
+0x0044E770	+	LaraTestWaterStepOut
 0x0044E860	+	lara_col_surfback
 0x0044E890	+	lara_col_surfleft
 0x0044E8C0	+	lara_col_surfright
@@ -1010,18 +1010,18 @@ tomb3 progress.
 
 		game/lasers.cpp
 
-0x0044F580		LaraOnLOS
-0x0044F7A0		UpdateLaserShades
-0x0044F810		LaserControl
-0x0044F830		LaserSplitterToggle
-0x0044F980		S_DrawLaser
+0x0044F580	+	LaraOnLOS
+0x0044F7A0	+	UpdateLaserShades
+0x0044F810	+	LaserControl
+0x0044F830	+	LaserSplitterToggle
+0x0044F980	+	S_DrawLaser
 
 
 		game/lizman.cpp
 
-0x0044FBC0		LizManControl
-0x004503E0		TriggerLizmanGasThrower
-0x00450620		TriggerLizmanGas
+0x0044FBC0	+	LizManControl
+0x004503E0	+	TriggerLizmanGasThrower
+0x00450620	+	TriggerLizmanGas
 
 
 		game/londboss.cpp
@@ -1040,7 +1040,7 @@ tomb3 progress.
 
 		game/londsec.cpp
 
-0x004523C0		LondSecControl
+0x004523C0	+	LondSecControl
 
 
 		game/lot.cpp
@@ -1073,15 +1073,15 @@ tomb3 progress.
 
 0x00454FB0	+	ControlMissile
 0x004552C0	+	ShootAtLara
-0x00455370		ExplodingDeath
-0x004557A0		ControlBodyPart
+0x00455370	+	ExplodingDeath
+0x004557A0	+	ControlBodyPart
 
 
 		game/monkey.cpp
 
-0x004559B0		InitialiseMonkey
-0x00455A10		DrawMonkey
-0x00455E30		MonkeyControl
+0x004559B0	+	InitialiseMonkey
+0x00455A10	+	DrawMonkey
+0x00455E30	+	MonkeyControl
 
 
 		game/moveblok.cpp
@@ -1142,21 +1142,21 @@ tomb3 progress.
 		game/objlight.cpp
 
 0x00459B00	+	ControlStrobeLight
-0x00459C00		ControlPulseLight
-0x00459C90		ControlOnOffLight
-0x00459CE0		ControlElectricalLight
-0x00459DF0		ControlBeaconLight
+0x00459C00	+	ControlPulseLight
+0x00459C90	+	ControlOnOffLight
+0x00459CE0	+	ControlElectricalLight
+0x00459DF0	+	ControlBeaconLight
 
 
 		game/oilred.cpp
 
-0x00459E70		OilRedControl
+0x00459E70	+	OilRedControl
 
 
 		game/oilsmg.cpp
 
-0x0045AA00		InitialiseOilSMG
-0x0045AA60		OilSMGControl
+0x0045AA00	+	InitialiseOilSMG
+0x0045AA60	+	OilSMGControl
 
 
 		game/orca.cpp
@@ -1166,8 +1166,8 @@ tomb3 progress.
 
 		game/people.cpp
 
-0x0045B540		TargetVisible
-0x0045B610		Targetable
+0x0045B540	+	TargetVisible
+0x0045B610	+	Targetable
 0x0045B6F0	+	GunShot
 0x0045B700	+	GunHit
 0x0045B7C0	+	GunMiss
@@ -1177,23 +1177,23 @@ tomb3 progress.
 		game/pickup.cpp
 
 0x0045BC00	+	PickUpCollision
-0x0045C170		SwitchCollision
-0x0045C400		SwitchCollision2
-0x0045C510		DetonatorCollision
-0x0045C6B0		KeyHoleCollision
-0x0045C900		PuzzleHoleCollision
-0x0045CC60		SwitchControl
-0x0045CCB0		SwitchTrigger
-0x0045CD50		KeyTrigger
-0x0045CDA0		PickupTrigger
+0x0045C170	+	SwitchCollision
+0x0045C400	+	SwitchCollision2
+0x0045C510	+	DetonatorCollision
+0x0045C6B0	+	KeyHoleCollision
+0x0045C900	+	PuzzleHoleCollision
+0x0045CC60	+	SwitchControl
+0x0045CCB0	+	SwitchTrigger
+0x0045CD50	+	KeyTrigger
+0x0045CDA0	+	PickupTrigger
 0x0045CDE0	+	BossDropIcon
 0x0045CE70	+	AnimatingPickUp
 
 
 		game/prisoner.cpp
 
-0x0045CFF0		InitialisePrisoner
-0x0045D050		PrisonerControl
+0x0045CFF0	+	InitialisePrisoner
+0x0045D050	+	PrisonerControl
 
 
 		game/punk.cpp
@@ -1231,12 +1231,12 @@ tomb3 progress.
 
 		game/raptor.cpp
 
-0x00461040		RaptorControl
+0x00461040	+	RaptorControl
 
 
 		game/rat.cpp
 
-0x00461740		MouseControl
+0x00461740	+	MouseControl
 
 
 		game/savegame.cpp
@@ -1253,9 +1253,9 @@ tomb3 progress.
 
 		game/sealmute.cpp
 
-0x00462EA0		SealmuteControl
-0x004634C0		TriggerSealmuteGasThrower
-0x00463700		TriggerSealmuteGas
+0x00462EA0	+	SealmuteControl
+0x004634C0	+	TriggerSealmuteGasThrower
+0x00463700	+	TriggerSealmuteGas
 
 
 		game/setup.cpp
@@ -1263,22 +1263,22 @@ tomb3 progress.
 0x004638F0	+	InitialiseLevel
 0x00463B00	+	InitialiseGameFlags
 0x00463B70	+	InitialiseLevelFlags
-0x00463BC0		InitialiseObjects
-0x00463C30		BaddyObjects
-0x00465240		TrapObjects
-0x00465820		ObjectObjects
-0x004664B0		GetCarriedItems
+0x00463BC0	+	InitialiseObjects
+0x00463C30	+	BaddyObjects
+0x00465240	+	TrapObjects
+0x00465820	+	ObjectObjects
+0x004664B0	+	GetCarriedItems
 0x00466590	+	GetAIPickups
-0x004666C0		BuildOutsideTable
+0x004666C0	+	BuildOutsideTable
 
 
 		game/shiva.cpp
 
-0x00466990		DrawShiva
-0x00466E00		TriggerShivaSmoke
-0x00467010		InitialiseShiva
-0x00467070		ShivaControl
-0x00467780		ShivaDamage
+0x00466990	+	DrawShiva
+0x00466E00	+	TriggerShivaSmoke
+0x00467010	+	InitialiseShiva
+0x00467070	+	ShivaControl
+0x00467780	+	ShivaDamage
 
 
 		game/sound.cpp
@@ -1317,15 +1317,15 @@ tomb3 progress.
 
 		game/swat.cpp
 
-0x00469F80		InitialiseSwat
-0x00469FE0		SwatControl
+0x00469F80	+	InitialiseSwat
+0x00469FE0	+	SwatControl
 
 
 		game/target.cpp
 
-0x0046A8B0		InitialiseTarget
-0x0046A960		TargetControl
-0x0046AC00		ResetTargets
+0x0046A8B0	+	InitialiseTarget
+0x0046A960	+	TargetControl
+0x0046AC00	+	ResetTargets
 
 
 		game/text.cpp
@@ -1354,7 +1354,7 @@ tomb3 progress.
 
 		game/tiger.cpp
 
-0x0046B750		TigerControl
+0x0046B750	+	TigerControl
 
 
 		game/tonyboss.cpp

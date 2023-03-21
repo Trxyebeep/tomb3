@@ -1,4 +1,16 @@
 #pragma once
 #include "../global/vars.h"
 
-#define ResetTargets	( (void(__cdecl*)()) 0x0046AC00 )
+void inject_target(bool replace);
+
+void InitialiseTarget(short item_number);
+void TargetControl(short item_number);
+void ResetTargets();
+
+enum TARGET_STATES
+{
+	TARGET_RISE,
+	TARGET_HIT1,
+	TARGET_HIT2,
+	TARGET_HIT3
+};

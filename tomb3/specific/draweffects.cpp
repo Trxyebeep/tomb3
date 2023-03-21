@@ -4905,7 +4905,7 @@ void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 	long hy[GRID_POINTS];
 	ushort u1, v1, u2, v2, uStep, vStep;
 	long xDist, zDist, xSize, zSize, x, y, z;
-	short c, room_number;
+	short c, s;
 
 	bBlueEffect = 0;
 	xSize = size * (box[1] - box[0]) / 128;
@@ -4940,11 +4940,28 @@ void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 	phd_mxptr[M03] = 0;
 	phd_mxptr[M13] = 0;
 	phd_mxptr[M23] = 0;
+	s = item->current_anim_state;
 
-	pos.x = item->pos.x_pos;
-	y = item->floor - 16;
-	pos.z = item->pos.z_pos;
+	if (item == lara_item && s != AS_ALL4S && s != AS_CRAWL && s != AS_CRAWLBACK && s != AS_ALL4TURNL && s != AS_ALL4TURNR)
+	{
+		pos.x = 0;
+		pos.y = 0;
+		pos.z = 0;
+		GetLaraHandAbsPosition(&pos, LARA_HIPS);
+		s = item->room_number;
+		y = GetHeight(GetFloor(pos.x, pos.y, pos.z, &s), pos.x, pos.y, pos.z);
 
+		if (y == NO_HEIGHT)
+			y = item->floor;
+	}
+	else
+	{
+		pos.x = item->pos.x_pos;
+		y = item->floor;
+		pos.z = item->pos.z_pos;
+	}
+
+	y -= 16;
 	phd_TranslateRel(pos.x, y, pos.z);
 	phd_RotY(item->pos.y_rot);	//rot the grid to correct Y
 	hXZ = hxz;
@@ -4964,8 +4981,8 @@ void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 
 	for (int i = 0; i < GRID_POINTS; i++, hXZ += 2, hY++)	//Get height on each grid point and store it in hy array
 	{
-		room_number = item->room_number;
-		*hY = GetHeight(GetFloor(hXZ[0], item->floor, hXZ[1], &room_number), hXZ[0], item->floor, hXZ[1]);
+		s = item->room_number;
+		*hY = GetHeight(GetFloor(hXZ[0], item->floor, hXZ[1], &s), hXZ[0], item->floor, hXZ[1]);
 
 		if (abs(*hY - item->floor) > 196)
 			*hY = item->floor;

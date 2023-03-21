@@ -243,6 +243,143 @@ void lara_col_surftread(ITEM_INFO* item, COLL_INFO* coll)
 	LaraSurfaceCollision(item, coll);
 }
 
+long LaraTestWaterClimbOut(ITEM_INFO* item, COLL_INFO* coll)
+{
+	long hdif;
+	short angle;
+
+	if (coll->coll_type != CT_FRONT || !(input & IN_ACTION) || abs(coll->left_floor2 - coll->right_floor2) >= 60 || lara.gun_status != LG_ARMLESS &&
+		(lara.gun_status != LG_READY || lara.gun_type != LG_FLARE) || coll->front_ceiling > 0 || coll->mid_ceiling > -384)
+		return 0;
+
+	hdif = coll->front_floor + 700;
+
+	if (hdif <= -512 || hdif > 316)
+		return 0;
+
+	angle = item->pos.y_rot;
+
+	if (angle >= -0x18E2 && angle <= 0x18E2)
+		angle = 0;
+	else if (angle >= 0x271E && angle <= 0x58E2)
+		angle = 0x4000;
+	else if (angle >= 0x671D || angle <= -0x671D)
+		angle = -0x8000;
+	else if (angle >= -0x58E2 && angle <= -0x271E)
+		angle = -0x4000;
+
+	if (angle & 0x3FFF)
+		return 0;
+
+	item->pos.y_pos += coll->front_floor + 695;
+	UpdateLaraRoom(item, -381);
+
+	if (!angle)
+		item->pos.z_pos = (item->pos.z_pos & ~WALL_MASK) + 1124;
+	else if (angle == 0x4000)
+		item->pos.x_pos = (item->pos.x_pos & ~WALL_MASK) + 1124;
+	else if (angle == -0x8000)
+		item->pos.z_pos = (item->pos.z_pos & ~WALL_MASK) - 100;
+	else if (angle == -0x4000)
+		item->pos.x_pos = (item->pos.x_pos & ~WALL_MASK) - 100;
+
+	if (hdif < -128)
+	{
+		item->anim_number = ANIM_SURFCLIMB;
+		item->frame_number = anims[ANIM_SURFCLIMB].frame_base;
+	}
+	else if (hdif < 128)
+	{
+		item->anim_number = ANIM_SURF2STND;
+		item->frame_number = anims[ANIM_SURF2STND].frame_base;
+	}
+	else
+	{
+		item->anim_number = ANIM_SURF2QSTND;
+		item->frame_number = anims[ANIM_SURF2QSTND].frame_base;
+	}
+
+	item->current_anim_state = AS_WATEROUT;
+	item->goal_anim_state = AS_STOP;
+	item->pos.y_rot = angle;
+	lara.gun_status = LG_HANDSBUSY;
+	item->pos.x_rot = 0;
+	item->pos.z_rot = 0;
+	item->gravity_status = 0;
+	item->speed = 0;
+	item->fallspeed = 0;
+	lara.water_status = LARA_ABOVEWATER;
+	return 1;
+}
+
+long LaraTestWaterStepOut(ITEM_INFO* item, COLL_INFO* coll)
+{
+	if (coll->coll_type == CT_FRONT || coll->mid_type == BIG_SLOPE || coll->mid_type == DIAGONAL || coll->mid_floor >= 0)
+		return 0;
+
+	if (coll->mid_floor < -128)
+	{
+		item->anim_number = ANIM_SURF2WADE1;
+		item->frame_number = anims[ANIM_SURF2WADE1].frame_base;
+		item->current_anim_state = AS_WATEROUT;
+		item->goal_anim_state = AS_STOP;
+	}
+	else if (item->goal_anim_state == AS_SURFLEFT)
+		item->goal_anim_state = AS_STEPLEFT;
+	else if (item->goal_anim_state == AS_SURFRIGHT)
+		item->goal_anim_state = AS_STEPRIGHT;
+	else
+	{
+		item->anim_number = ANIM_WADE;
+		item->frame_number = anims[ANIM_WADE].frame_base;
+		item->current_anim_state = AS_WADE;
+		item->goal_anim_state = AS_WADE;
+	}
+
+	item->pos.y_pos += coll->front_floor + 695;
+	UpdateLaraRoom(item, -381);
+	item->pos.x_rot = 0;
+	item->pos.z_rot = 0;
+	item->gravity_status = 0;
+	item->speed = 0;
+	item->fallspeed = 0;
+	lara.water_status = LARA_WADE;
+	return 1;
+}
+
+void LaraSurfaceCollision(ITEM_INFO* item, COLL_INFO* coll)
+{
+	coll->facing = lara.move_angle;
+	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos + 700, item->pos.z_pos, item->room_number, 800);
+	ShiftItem(item, coll);
+
+	if (coll->coll_type & (CT_CLAMP | CT_TOP_FRONT | CT_TOP | CT_FRONT) || coll->mid_floor < 0 &&
+		(coll->mid_type == BIG_SLOPE || coll->mid_type == DIAGONAL))
+	{
+		item->fallspeed = 0;
+		item->pos.x_pos = coll->old.x;
+		item->pos.y_pos = coll->old.y;
+		item->pos.z_pos = coll->old.z;
+	}
+	else if (coll->coll_type == CT_LEFT)
+		item->pos.y_rot += 910;
+	else if (coll->coll_type == CT_RIGHT)
+		item->pos.y_rot -= 910;
+
+	if (GetWaterHeight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number) - item->pos.y_pos > -100)
+		LaraTestWaterStepOut(item, coll);
+	else
+	{
+		item->anim_number = ANIM_SURFDIVE;
+		item->frame_number = anims[ANIM_SURFDIVE].frame_base;
+		item->current_anim_state = AS_DIVE;
+		item->goal_anim_state = AS_SWIM;
+		item->pos.x_rot = -8190;
+		item->fallspeed = 80;
+		lara.water_status = LARA_UNDERWATER;
+	}
+}
+
 void inject_larasurf(bool replace)
 {
 	INJECT(0x0044E050, LaraSurface, replace);
@@ -256,4 +393,7 @@ void inject_larasurf(bool replace)
 	INJECT(0x0044E890, lara_col_surfleft, replace);
 	INJECT(0x0044E8C0, lara_col_surfright, replace);
 	INJECT(0x0044E8F0, lara_col_surftread, replace);
+	INJECT(0x0044E450, LaraTestWaterClimbOut, replace);
+	INJECT(0x0044E770, LaraTestWaterStepOut, replace);
+	INJECT(0x0044E670, LaraSurfaceCollision, replace);
 }

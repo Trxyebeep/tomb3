@@ -14,6 +14,8 @@ void undraw_shotgun(long weapon_type);
 void FireHarpoon();
 void FireRocket();
 void FireGrenade();
-
-#define TriggerUnderwaterExplosion	( (void(__cdecl*)(ITEM_INFO*)) 0x00447D90 )
-#define RifleHandler	( (void(__cdecl*)(long)) 0x00445340 )
+void FireShotgun();
+void FireM16(long running);
+void AnimateShotgun(long weapon_type);
+void RifleHandler(long weapon_type);
+void TriggerUnderwaterExplosion(ITEM_INFO* item);

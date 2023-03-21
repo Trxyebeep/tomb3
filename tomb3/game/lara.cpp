@@ -285,9 +285,9 @@ long TestLaraSlide(ITEM_INFO* item, COLL_INFO* coll)
 	ang = 0;
 
 	if (coll->tilt_x > 2)
-		ang = -16384;
+		ang = -0x4000;
 	else if (coll->tilt_x < -2)
-		ang = 16384;
+		ang = 0x4000;
 
 	if (coll->tilt_z > 2 && coll->tilt_z > abs(coll->tilt_x))
 		ang = -32768;
@@ -297,7 +297,7 @@ long TestLaraSlide(ITEM_INFO* item, COLL_INFO* coll)
 	ang_diff = ang - item->pos.y_rot;
 	ShiftItem(item, coll);
 
-	if (ang_diff >= -16384 && ang_diff <= 16384)
+	if (ang_diff >= -0x4000 && ang_diff <= 0x4000)
 	{
 		if (item->current_anim_state != AS_SLIDE || old_ang != ang)
 		{
@@ -318,7 +318,7 @@ long TestLaraSlide(ITEM_INFO* item, COLL_INFO* coll)
 			item->frame_number = anims[ANIM_SLIDEBACK].frame_base;
 			item->goal_anim_state = AS_SLIDEBACK;
 			item->current_anim_state = AS_SLIDEBACK;
-			item->pos.y_rot = ang - 32768;
+			item->pos.y_rot = ang - 0x8000;
 			lara.move_angle = ang;
 			old_ang = ang;
 		}
@@ -778,7 +778,11 @@ void lara_col_duck(ITEM_INFO* item, COLL_INFO* coll)
 	coll->bad_neg = -384;
 	coll->bad_ceiling = 0;
 	coll->slopes_are_walls = 1;
+#ifdef TROYESTUFF
+	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, -400);
+#else
 	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
+#endif
 
 	if (LaraFallen(item, coll))
 		lara.gun_status = LG_ARMLESS;
@@ -844,9 +848,11 @@ void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 	coll->bad_ceiling = 400;
 	coll->slopes_are_walls = 1;
 	coll->slopes_are_pits = 1;
-	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
 #ifdef TROYESTUFF
+	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, -400);
 	TiltHer(item, 140, 400);
+#else
+	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
 #endif
 
 	if (LaraFallen(item, coll))
@@ -916,22 +922,22 @@ void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 			{
 			case NORTH:
 				item->pos.y_rot = 0;
-				item->pos.z_pos = (item->pos.z_pos & ~0x3FF) + 225;
+				item->pos.z_pos = (item->pos.z_pos & ~WALL_MASK) + 225;
 				break;
 
 			case EAST:
 				item->pos.y_rot = 0x4000;
-				item->pos.x_pos = (item->pos.x_pos & ~0x3FF) + 225;
+				item->pos.x_pos = (item->pos.x_pos & ~WALL_MASK) + 225;
 				break;
 
 			case SOUTH:
 				item->pos.y_rot = -0x8000;
-				item->pos.z_pos = (item->pos.z_pos | 0x3FF) - 225;
+				item->pos.z_pos = (item->pos.z_pos | WALL_MASK) - 225;
 				break;
 
 			case WEST:
 				item->pos.y_rot = -0x4000;
-				item->pos.x_pos = (item->pos.x_pos | 0x3FF) - 225;
+				item->pos.x_pos = (item->pos.x_pos | WALL_MASK) - 225;
 				break;
 			}
 
@@ -1049,9 +1055,11 @@ void lara_col_crawl(ITEM_INFO* item, COLL_INFO* coll)
 	coll->slopes_are_walls = 1;
 	coll->slopes_are_pits = 1;
 	coll->facing = lara.move_angle;
-	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
 #ifdef TROYESTUFF
+	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, -400);
 	TiltHer(item, 140, 400);
+#else
+	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
 #endif
 
 	if (LaraDeflectEdgeDuck(item, coll))
@@ -1205,9 +1213,11 @@ void lara_col_crawlb(ITEM_INFO* item, COLL_INFO* coll)
 	coll->facing = lara.move_angle;
 	coll->slopes_are_walls = 1;
 	coll->slopes_are_pits = 1;
-	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
 #ifdef TROYESTUFF
+	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, -400);
 	TiltHer(item, 140, 400);
+#else
+	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
 #endif
 
 	if (LaraDeflectEdgeDuck(item, coll))
@@ -1298,22 +1308,22 @@ void lara_col_crawl2hang(ITEM_INFO* item, COLL_INFO* coll)
 		switch (ushort(item->pos.y_rot + 0x2000) / 0x4000)
 		{
 		case NORTH:
-			item->pos.z_pos = (item->pos.z_pos | 0x3FF) - 100;
+			item->pos.z_pos = (item->pos.z_pos | WALL_MASK) - 100;
 			item->pos.x_pos += coll->shift.x;
 			break;
 
 		case EAST:
-			item->pos.x_pos = (item->pos.x_pos | 0x3FF) - 100;
+			item->pos.x_pos = (item->pos.x_pos | WALL_MASK) - 100;
 			item->pos.z_pos += coll->shift.z;
 			break;
 
 		case SOUTH:
-			item->pos.z_pos = (item->pos.z_pos & ~0x3FF) + 100;
+			item->pos.z_pos = (item->pos.z_pos & ~WALL_MASK) + 100;
 			item->pos.x_pos += coll->shift.x;
 			break;
 
 		case WEST:
-			item->pos.x_pos = (item->pos.x_pos & ~0x3FF) + 100;
+			item->pos.x_pos = (item->pos.x_pos & ~WALL_MASK) + 100;
 			item->pos.z_pos += coll->shift.z;
 			break;
 		}
@@ -3605,22 +3615,22 @@ long LaraTestHangJump(ITEM_INFO* item, COLL_INFO* coll)
 		switch (ushort(item->pos.y_rot + 0x2000) / 0x4000)
 		{
 		case NORTH:
-			item->pos.z_pos = (item->pos.z_pos | 0x3FF) - 100;
+			item->pos.z_pos = (item->pos.z_pos | WALL_MASK) - 100;
 			item->pos.x_pos += coll->shift.x;
 			break;
 
 		case EAST:
-			item->pos.x_pos = (item->pos.x_pos | 0x3FF) - 100;
+			item->pos.x_pos = (item->pos.x_pos | WALL_MASK) - 100;
 			item->pos.z_pos += coll->shift.z;
 			break;
 
 		case SOUTH:
-			item->pos.z_pos = (item->pos.z_pos & ~0x3FF) + 100;
+			item->pos.z_pos = (item->pos.z_pos & ~WALL_MASK) + 100;
 			item->pos.x_pos += coll->shift.x;
 			break;
 
 		case WEST:
-			item->pos.x_pos = (item->pos.x_pos & ~0x3FF) + 100;
+			item->pos.x_pos = (item->pos.x_pos & ~WALL_MASK) + 100;
 			item->pos.z_pos += coll->shift.z;
 			break;
 		}
@@ -4204,7 +4214,7 @@ void lara_col_duckroll(ITEM_INFO* item, COLL_INFO* coll)
 	coll->bad_ceiling = 0;
 	coll->slopes_are_walls = 1;
 	coll->radius = 200;
-	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
+	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, -400);
 
 	if (LaraFallen(item, coll))
 		lara.gun_status = LG_ARMLESS;

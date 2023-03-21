@@ -100,12 +100,13 @@ do \
 #define NO_ROOM	255
 #define WALL_SHIFT	10
 #define WALL_SIZE	(1 << WALL_SHIFT)
+#define WALL_MASK	(WALL_SIZE - 1)
 #define MAX_LOT		5
 #define MAX_NONLOT	12
 
-#ifdef TROYESTUFF	//*4
-#define MAX_TLVERTICES	0x9000
-#define MAX_SORTLISTS	0xBB80
+#ifdef TROYESTUFF	//*8
+#define MAX_TLVERTICES	0x12000
+#define MAX_SORTLISTS	0x17700
 #else
 #define MAX_TLVERTICES	0x2400
 #define MAX_SORTLISTS	0x2EE0
@@ -136,6 +137,17 @@ do \
 #endif
 
 /*enums*/
+enum bite_offsets
+{
+	OILRED_BITE,
+	WHITE_SOLDIER_BITE,
+	SWAT_GUN_BITE,
+	SWAT_GUN_LASER_BITE,
+	AUTOGUN_LEFT_BITE,
+	AUTOGUN_RIGHT_BITE,
+	ARMYSMG_GUN_BITE
+};
+
 enum target_type
 {
 	NO_TARGET,
@@ -1171,7 +1183,7 @@ struct OBJECT_INFO
 	short pivot_length;
 	short radius;
 	short shadow_size;
-	ushort bite_offset;
+	ushort bite_offset;	//bite_offsets enum
 	ushort loaded : 1;
 	ushort intelligent : 1;
 	ushort non_lot : 1;

@@ -13,6 +13,7 @@
 #include "../3dsystem/hwinsert.h"
 #include "picture.h"
 #ifdef TROYESTUFF
+#include "fmv.h"
 #include "../newstuff/discord.h"
 #endif
 
@@ -71,6 +72,7 @@ void ShutdownGame()
 {
 #ifdef TROYESTUFF
 	RPC_close();
+	FreeWinPlay();
 #endif
 
 	GLOBALFREE(TLVertexBuffer);

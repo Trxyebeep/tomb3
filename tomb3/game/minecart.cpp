@@ -605,43 +605,43 @@ static void MoveCart(ITEM_INFO* item, ITEM_INFO* l, CARTINFO* cart)
 		switch (rot)
 		{
 		case 0:
-			cart->TurnX = (item->pos.x_pos + 4096) & ~0x3FF;
-			cart->TurnZ = item->pos.z_pos & ~0x3FF;
+			cart->TurnX = (item->pos.x_pos + 4096) & ~WALL_MASK;
+			cart->TurnZ = item->pos.z_pos & ~WALL_MASK;
 			break;
 
 		case 1:
-			cart->TurnX = item->pos.x_pos & ~0x3FF;
-			cart->TurnZ = (item->pos.z_pos - 4096) | 0x3FF;
+			cart->TurnX = item->pos.x_pos & ~WALL_MASK;
+			cart->TurnZ = (item->pos.z_pos - 4096) | WALL_MASK;
 			break;
 
 		case 2:
-			cart->TurnX = (item->pos.x_pos - 4096) | 0x3FF;
-			cart->TurnZ = item->pos.z_pos | 0x3FF;
+			cart->TurnX = (item->pos.x_pos - 4096) | WALL_MASK;
+			cart->TurnZ = item->pos.z_pos | WALL_MASK;
 			break;
 
 		case 3:
-			cart->TurnX = item->pos.x_pos | 0x3FF;
-			cart->TurnZ = (item->pos.z_pos + 4096) & ~0x3FF;
+			cart->TurnX = item->pos.x_pos | WALL_MASK;
+			cart->TurnZ = (item->pos.z_pos + 4096) & ~WALL_MASK;
 			break;
 
 		case 4:
-			cart->TurnX = (item->pos.x_pos - 4096) | 0x3FF;
-			cart->TurnZ = item->pos.z_pos & ~0x3FF;
+			cart->TurnX = (item->pos.x_pos - 4096) | WALL_MASK;
+			cart->TurnZ = item->pos.z_pos & ~WALL_MASK;
 			break;
 
 		case 5:
-			cart->TurnX = item->pos.x_pos & ~0x3FF;
-			cart->TurnZ = (item->pos.z_pos + 4096) & ~0x3FF;
+			cart->TurnX = item->pos.x_pos & ~WALL_MASK;
+			cart->TurnZ = (item->pos.z_pos + 4096) & ~WALL_MASK;
 			break;
 
 		case 6:
-			cart->TurnX = (item->pos.x_pos + 4096) & ~0x3FF;
-			cart->TurnZ = item->pos.z_pos | 0x3FF;
+			cart->TurnX = (item->pos.x_pos + 4096) & ~WALL_MASK;
+			cart->TurnZ = item->pos.z_pos | WALL_MASK;
 			break;
 
 		case 7:
-			cart->TurnX = item->pos.x_pos | 0x3FF;
-			cart->TurnZ = (item->pos.z_pos - 4096) | 0x3FF;
+			cart->TurnX = item->pos.x_pos | WALL_MASK;
+			cart->TurnZ = (item->pos.z_pos - 4096) | WALL_MASK;
 			break;
 		}
 

@@ -26,7 +26,7 @@
 short null_rotations[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 static uchar EnemyWeapon[16] = { 0, 1, 129, 0, 1, 1,  1 };
 
-static BITE_INFO EnemyBites[16] =
+static BITE_INFO EnemyBites[16] =	//bite_offsets enum
 {
 	{ 0, 192, 40, 13 },
 	{ 0, 400, 64, 7 },
@@ -747,7 +747,7 @@ void DrawEffect(short fx_number)
 	fx = &effects[fx_number];
 	obj = &objects[fx->object_number];
 
-	if (!obj->loaded || obj->draw_routine == dummyDrawFunc)
+	if (!obj->loaded || obj->draw_routine == DrawDummyItem)
 		return;
 
 	if (fx->object_number == GLOW)
@@ -2204,7 +2204,7 @@ void DrawAnimatingItem(ITEM_INFO* item)
 				if (bone[0] & 4)
 					phd_RotX(*extra_rotation++);
 
-				if (bone[0] & 16)
+				if (bone[0] & 0x10)
 					phd_RotZ(*extra_rotation++);
 			}
 
@@ -2264,6 +2264,11 @@ void DrawAnimatingItem(ITEM_INFO* item)
 	}
 
 	phd_PopMatrix();
+}
+
+void DrawDummyItem(ITEM_INFO* item)
+{
+
 }
 
 void inject_draw(bool replace)

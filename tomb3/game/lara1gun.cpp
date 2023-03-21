@@ -17,6 +17,7 @@
 #include "box.h"
 #include "sound.h"
 #include "lara.h"
+#include "lara2gun.h"
 
 void ControlHarpoonBolt(short item_number)
 {
@@ -766,7 +767,7 @@ void draw_shotgun(long weapon_type)
 		item->frame_number = anims[item->anim_number].frame_base;
 		item->current_anim_state = 1;
 		item->goal_anim_state = 1;
-		item->room_number = 255;
+		item->room_number = NO_ROOM;
 		lara.right_arm.frame_base = objects[item->object_number].frame_base;
 		lara.left_arm.frame_base = lara.right_arm.frame_base;
 	}
@@ -1053,6 +1054,384 @@ void FireGrenade()
 	savegame.ammo_used++;
 }
 
+void FireShotgun()
+{
+	PHD_VECTOR pos;
+	PHD_VECTOR pos2;
+	long fired, lp;
+	short angles[2];
+	short dangles[2];
+
+	angles[0] = lara.left_arm.y_rot + lara_item->pos.y_rot;
+	angles[1] = lara.left_arm.x_rot;
+
+	if (!lara.left_arm.lock)
+	{
+		angles[0] += lara.torso_y_rot;
+		angles[1] += lara.torso_x_rot;
+	}
+
+	fired = 0;
+
+	for (int i = 0; i < 6; i++)
+	{
+		dangles[0] = short(angles[0] + 3640 * (GetRandomControl() - 0x4000) / 0x10000);
+		dangles[1] = short(angles[1] + 3640 * (GetRandomControl() - 0x4000) / 0x10000);
+
+		if (FireWeapon(LG_SHOTGUN, lara.target, lara_item, dangles))
+			fired = 1;
+	}
+
+	if (fired)
+	{
+		pos.x = 0;
+		pos.y = 228;
+		pos.z = 32;
+		GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+
+		pos2.x = 0;
+		pos2.y = 1508;
+		pos2.z = 32;
+		GetLaraHandAbsPosition(&pos2, RIGHT_HAND);
+
+		SmokeCountL = 32;
+		SmokeWeapon = LG_SHOTGUN;
+
+		for (lp = 0; lp < 7; lp++)
+			TriggerGunSmoke(pos.x, pos.y, pos.z, pos2.x - pos.x, pos2.y - pos.y, pos2.z - pos.z, 1, SmokeWeapon, SmokeCountL);
+
+		for (lp = 0; lp < 12; lp++)
+			TriggerShotgunSparks(pos.x, pos.y, pos.z, (pos2.x - pos.x) << 1, (pos2.y - pos.y) << 1, (pos2.z - pos.z) << 1);
+
+		lara.right_arm.flash_gun = weapons[LG_SHOTGUN].flash_time;
+		SoundEffect(SFX_EXPLOSION1, &lara_item->pos, 0x1400000 | SFX_SETPITCH);
+		SoundEffect(weapons[LG_SHOTGUN].sample_num, &lara_item->pos, SFX_DEFAULT);
+	}
+}
+
+void FireM16(long running)
+{
+	short angles[2];
+
+	angles[0] = lara.left_arm.y_rot + lara_item->pos.y_rot;
+	angles[1] = lara.left_arm.x_rot;
+
+	if (!lara.left_arm.lock)
+	{
+		angles[0] += lara.torso_y_rot;
+		angles[1] += lara.torso_x_rot;
+	}
+
+	if (running)	//should be using LG_M16, do NOT fix though.
+	{
+		weapons[M16].shot_accuracy = 2184;	/*Technically LG_ROCKET*/
+		weapons[M16].damage = 1;
+	}
+	else
+	{
+		weapons[M16].shot_accuracy = 728;
+		weapons[M16].damage = 3;
+	}
+
+	if (FireWeapon(LG_M16, lara.target, lara_item, angles))
+	{
+		SmokeCountL = 24;
+		SmokeWeapon = LG_M16;
+		TriggerGunShell(1, GUNSHELL, LG_M16);
+		lara.right_arm.flash_gun = weapons[LG_M16].flash_time;
+	}
+}
+
+void AnimateShotgun(long weapon_type)
+{
+	ITEM_INFO* item;
+	PHD_VECTOR pos;
+	static long m16_firing, harpoon_fired;
+	long running;
+
+	if (SmokeCountL)
+	{
+		switch (SmokeWeapon)
+		{
+		case LG_ROCKET:
+			pos.x = 0;
+			pos.y = 84;
+			pos.z = 72;
+			break;
+
+		case LG_GRENADE:
+			pos.x = 0;
+			pos.y = 180;
+			pos.z = 80;
+			break;
+
+		case LG_SHOTGUN:
+			pos.x = -16;
+			pos.y = 228;
+			pos.z = 32;
+			break;
+
+		case LG_M16:
+			pos.x = 0;
+			pos.y = 228;
+			pos.z = 96;
+			break;
+		}
+
+		GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+		TriggerGunSmoke(pos.x, pos.y, pos.z, 0, 0, 0, 0, SmokeWeapon, SmokeCountL);
+	}
+
+	item = &items[lara.weapon_item];
+	running = weapon_type == LG_M16 && lara_item->speed;
+
+	switch (item->current_anim_state)
+	{
+	case 0:
+		m16_firing = 0;
+
+		if (harpoon_fired)
+		{
+			item->goal_anim_state = 5;
+			harpoon_fired = 0;
+		}
+		else if (lara.water_status == LARA_UNDERWATER || running)
+			item->goal_anim_state = 6;
+		else if (input & IN_ACTION && !lara.target || lara.left_arm.lock)
+			item->goal_anim_state = 2;
+		else
+			item->goal_anim_state = 4;
+
+		break;
+
+	case 2:
+
+		if (item->frame_number == anims[item->anim_number].frame_base)
+		{
+			item->goal_anim_state = 4;
+
+			if (lara.water_status != LARA_UNDERWATER && !running && !harpoon_fired)
+			{
+				if (input & IN_ACTION && (!lara.target || lara.left_arm.lock))
+				{
+					if (weapon_type == LG_HARPOON)
+					{
+						FireHarpoon();
+
+						if (!(lara.harpoon.ammo & 3))
+							harpoon_fired = 1;
+					}
+					else if (weapon_type == LG_ROCKET)
+						FireRocket();
+					else if (weapon_type == LG_GRENADE)
+						FireGrenade();
+					else if (weapon_type == LG_M16)
+					{
+						FireM16(0);
+						SoundEffect(SFX_EXPLOSION1, &lara_item->pos, 0x5000000 | SFX_SETPITCH);
+						SoundEffect(SFX_HECKLER_KOCH_FIRE, &lara_item->pos, SFX_DEFAULT);
+						m16_firing = 1;
+					}
+					else
+						FireShotgun();
+
+					item->goal_anim_state = 2;
+				}
+				else if (lara.left_arm.lock)
+					item->goal_anim_state = 0;
+			}
+
+			if (item->goal_anim_state != 2 && m16_firing)
+			{
+				SoundEffect(SFX_EXPLOSION1, &lara_item->pos, 0x5000000 | SFX_SETPITCH);
+				m16_firing = 0;
+			}
+		}
+		else if (m16_firing)
+		{
+			SoundEffect(SFX_EXPLOSION1, &lara_item->pos, 0x5000000 | SFX_SETPITCH);
+			SoundEffect(SFX_HECKLER_KOCH_FIRE, &lara_item->pos, SFX_DEFAULT);
+		}
+		else if (weapon_type == LG_SHOTGUN && !(input & IN_ACTION) && !lara.left_arm.lock)
+			item->goal_anim_state = 4;
+
+		if (item->frame_number - anims[item->anim_number].frame_base == 12 && weapon_type == LG_SHOTGUN)
+			TriggerGunShell(1, SHOTGUNSHELL, LG_SHOTGUN);
+
+		break;
+
+	case 6:
+		m16_firing = 0;
+
+		if (harpoon_fired)
+		{
+			item->goal_anim_state = 5;
+			harpoon_fired = 0;
+		}
+		else if (lara.water_status != LARA_UNDERWATER && !running)
+			item->goal_anim_state = 0;
+		else if (input & IN_ACTION && !lara.target || lara.left_arm.lock)
+			item->goal_anim_state = 8;
+		else
+			item->goal_anim_state = 7;
+
+		break;
+
+	case 8:
+
+		if (item->frame_number == anims[item->anim_number].frame_base)
+		{
+			item->goal_anim_state = 7;
+
+			if ((lara.water_status == LARA_UNDERWATER || running) && !harpoon_fired)
+			{
+				if (input & IN_ACTION && (!lara.target || lara.left_arm.lock))
+				{
+					if (weapon_type == LG_HARPOON)
+					{
+						FireHarpoon();
+
+						if (!(lara.harpoon.ammo & 3))
+							harpoon_fired = 1;
+					}
+					else
+						FireM16(1);
+
+					item->goal_anim_state = 8;
+				}
+				else if (lara.left_arm.lock)
+					item->goal_anim_state = 6;
+			}
+		}
+
+		if (weapon_type == LG_M16 && item->goal_anim_state == 8)
+		{
+			SoundEffect(SFX_EXPLOSION1, &lara_item->pos, 0x4000000 | SFX_SETPITCH);
+			SoundEffect(SFX_HECKLER_KOCH_FIRE, &lara_item->pos, 0);
+		}
+
+		break;
+	}
+
+	AnimateItem(item);
+	lara.right_arm.frame_base = anims[item->anim_number].frame_ptr;
+	lara.right_arm.frame_number = item->frame_number - anims[item->anim_number].frame_base;
+	lara.right_arm.anim_number = item->anim_number;
+	lara.left_arm.frame_base = lara.right_arm.frame_base;
+	lara.left_arm.frame_number = lara.right_arm.frame_number;
+	lara.left_arm.anim_number = lara.right_arm.anim_number;
+}
+
+void RifleHandler(long weapon_type)
+{
+	WEAPON_INFO* winfo;
+	PHD_VECTOR pos;
+	long r, g, b;
+	static short FuckYou;
+
+	winfo = &weapons[weapon_type];
+
+	if (input & IN_ACTION)
+		LaraTargetInfo(winfo);
+	else
+		lara.target = 0;
+
+	if (!lara.target)
+		LaraGetNewTarget(winfo);
+
+	AimWeapon(winfo, &lara.left_arm);
+
+	if (lara.left_arm.lock)
+	{
+		lara.torso_x_rot = lara.left_arm.x_rot;
+		lara.torso_y_rot = lara.left_arm.y_rot;
+
+		if (camera.old_type != LOOK_CAMERA)
+		{
+			lara.head_x_rot = 0;
+			lara.head_y_rot = 0;
+		}
+	}
+
+	lara.torso_x_rot += FuckYou;
+	lara.left_arm.x_rot += FuckYou;
+
+	if (weapon_type == LG_MAGNUMS)
+		AnimatePistols(LG_MAGNUMS);
+	else
+		AnimateShotgun(weapon_type);
+
+	if (lara.right_arm.flash_gun)
+	{
+		r = (GetRandomControl() & 7) + 24;
+		g = (GetRandomControl() & 3) + 16;
+		b = GetRandomControl() & 7;
+
+		if (weapon_type == LG_SHOTGUN || weapon_type == LG_M16)
+		{
+			pos.x = lara_item->pos.x_pos + (1024 * phd_sin(lara_item->pos.y_rot) >> W2V_SHIFT) + (GetRandomControl() & 0xFF) - 128;
+			pos.y = lara_item->pos.y_pos + ((GetRandomControl() & 0x7F) - 575);
+			pos.z = lara_item->pos.z_pos + (1024 * phd_cos(lara_item->pos.y_rot) >> W2V_SHIFT) + (GetRandomControl() & 0xFF) - 128;
+			TriggerDynamic(pos.x, pos.y, pos.z, weapon_type == LG_SHOTGUN ? 12 : 11, r, g, b);
+		}
+		else if (weapon_type == LG_MAGNUMS)
+		{
+			pos.x = (GetRandomControl() & 0xFF) - 128;
+			pos.y = (GetRandomControl() & 0x7F) - 63;
+			pos.z = (GetRandomControl() & 0xFF) - 128;
+			GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+			TriggerDynamic(pos.x, pos.y, pos.z, 12, r, g, b);
+		}
+	}
+}
+
+void TriggerUnderwaterExplosion(ITEM_INFO* item)
+{
+	long y, wh;
+
+	TriggerExplosionBubble(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number);
+	TriggerExplosionSparks(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 2, -2, 1, item->room_number);
+
+	for (int i = 0; i < 3; i++)
+		TriggerExplosionSparks(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 2, -1, 1, item->room_number);
+
+	wh = GetWaterHeight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number);
+
+	if (wh != NO_HEIGHT)
+	{
+		y = item->pos.y_pos - wh;
+
+		if (y < 2048)
+		{
+			wh = 2048 - y;
+			y = wh >> 6;
+
+			splash_setup.x = item->pos.x_pos;
+			splash_setup.y = room[item->room_number].maxceiling;
+			splash_setup.z = item->pos.z_pos;
+			splash_setup.InnerYsize = -96;
+			splash_setup.InnerXZvel = 160;
+			splash_setup.InnerGravity = 96;
+			splash_setup.InnerXZoff = short(y + 16);
+			splash_setup.InnerXZsize = short(y + 12);
+			splash_setup.InnerFriction = 7;
+			splash_setup.InnerYvel = short((-512 - wh) << 3);
+			splash_setup.MiddleXZoff = short(y + 24);
+			splash_setup.MiddleXZsize = short(y + 24);
+			splash_setup.MiddleYsize = -64;
+			splash_setup.MiddleXZvel = 224;
+			splash_setup.MiddleYvel = short((-768 - wh) << 2);
+			splash_setup.MiddleGravity = 56;
+			splash_setup.MiddleFriction = 8;
+			splash_setup.OuterXZoff = short(y + 32);
+			splash_setup.OuterXZsize = short(y + 32);
+			splash_setup.OuterXZvel = 272;
+			splash_setup.OuterFriction = 9;
+			SetupSplash(&splash_setup);
+		}
+	}
+}
+
 void inject_lara1gun(bool replace)
 {
 	INJECT(0x004459B0, ControlHarpoonBolt, inject_rando ? 1 : replace);
@@ -1066,4 +1445,9 @@ void inject_lara1gun(bool replace)
 	INJECT(0x00445820, FireHarpoon, replace);
 	INJECT(0x00445F50, FireRocket, replace);
 	INJECT(0x00446BA0, FireGrenade, replace);
+	INJECT(0x00445560, FireShotgun, replace);
+	INJECT(0x00445760, FireM16, replace);
+	INJECT(0x00447880, AnimateShotgun, replace);
+	INJECT(0x00445340, RifleHandler, replace);
+	INJECT(0x00447D90, TriggerUnderwaterExplosion, replace);
 }

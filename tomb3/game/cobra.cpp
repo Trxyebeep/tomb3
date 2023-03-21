@@ -17,7 +17,7 @@ void InitialiseCobra(short item_number)
 	item->current_anim_state = 3;
 	item->goal_anim_state = 3;
 	item->item_flags[2] = item->hit_points;
-	item->hit_points = -16384;
+	item->hit_points = DONT_TARGET;
 }
 
 void CobraControl(short item_number)
@@ -51,7 +51,7 @@ void CobraControl(short item_number)
 	if (!snake)
 		return;
 
-	if (item->hit_points <= 0 && item->hit_points != -16384)
+	if (item->hit_points <= 0 && item->hit_points != DONT_TARGET)
 	{
 		if (item->current_anim_state != 4)
 		{
@@ -107,10 +107,10 @@ void CobraControl(short item_number)
 		case 3:
 			snake->flags = 0;
 
-			if (item->hit_points != -16384)
+			if (item->hit_points != DONT_TARGET)
 			{
 				item->item_flags[2] = item->hit_points;
-				item->hit_points = -16384;
+				item->hit_points = DONT_TARGET;
 			}
 
 			if (info.distance < alert_radius && lara_item->hit_points > 0)

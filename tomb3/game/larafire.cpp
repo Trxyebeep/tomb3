@@ -790,6 +790,468 @@ void LaraGun()
 	}
 }
 
+void DoProperDetection(short item_number, long x, long y, long z, long xv, long yv, long zv)
+{
+	ITEM_INFO* item;
+	FLOOR_INFO* floor;
+	long ceiling, height, oldtype, oldonobj, oldheight, bs, yang, xs;
+	short room_number;
+
+	item = &items[item_number];
+
+	room_number = item->room_number;
+	floor = GetFloor(x, y, z, &room_number);
+	oldheight = GetHeight(floor, x, y, z);
+	oldtype = height_type;
+
+	room_number = item->room_number;
+	floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+	height = GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+	if (item->pos.y_pos >= height)
+	{
+		bs = 0;
+
+		if ((oldtype == BIG_SLOPE || oldtype == DIAGONAL) && oldheight < height)
+		{
+			yang = (ushort)item->pos.y_rot;
+
+			if (tiltyoff < 0)
+			{
+				if (yang >= 0x8000)
+					bs = 1;
+			}
+			else if (tiltyoff > 0)
+			{
+				if (yang <= 0x8000)
+					bs = 1;
+			}
+
+			if (tiltxoff < 0)
+			{
+				if (yang >= 0x4000 && yang <= 0xC000)
+					bs = 1;
+			}
+			else if (tiltxoff > 0)
+			{
+				if (yang <= 0x4000 || yang >= 0xC000)
+					bs = 1;
+			}
+		}
+
+		if (y > height + 32 && !bs && ((item->pos.x_pos ^ x) & ~WALL_MASK || (item->pos.z_pos ^ z) & ~WALL_MASK))
+		{
+			xs = (item->pos.x_pos ^ x) & ~WALL_MASK && (item->pos.z_pos ^ z) & ~WALL_MASK ? abs(x - item->pos.x_pos) < abs(z - item->pos.z_pos) : 1;
+			item->pos.y_rot = (item->pos.x_pos ^ x) & ~WALL_MASK && xs ? -item->pos.y_rot : -0x8000 - item->pos.y_rot;
+			item->pos.x_pos = x;
+			item->pos.y_pos = y;
+			item->pos.z_pos = z;
+			item->speed >>= 1;
+		}
+		else if (oldtype != BIG_SLOPE && oldtype != DIAGONAL)
+		{
+			if (item->fallspeed > 0)
+			{
+				if (item->fallspeed > 16)
+				{
+					if (item->object_number == GRENADE)
+						item->fallspeed = (item->fallspeed >> 1) - item->fallspeed;
+					else
+					{
+						item->fallspeed = -(item->fallspeed >> 2);
+
+						if (item->fallspeed < -100)
+							item->fallspeed = -100;
+					}
+				}
+				else
+				{
+					item->fallspeed = 0;
+
+					if (item->object_number == GRENADE)
+					{
+						item->speed--;
+						item->required_anim_state = 1;
+						item->pos.x_rot = 0;
+					}
+					else
+						item->speed -= 3;
+
+					if (item->speed < 0)
+						item->speed = 0;
+				}
+			}
+
+			item->pos.y_pos = height;
+		}
+		else
+		{
+			item->speed -= item->speed >> 2;
+
+			if (tiltyoff < 0 && abs(tiltyoff) - abs(tiltxoff) >= 2)
+			{
+				if ((ushort)item->pos.y_rot > 0x8000)
+				{
+					item->pos.y_rot = -1 - item->pos.y_rot;
+
+					if (item->fallspeed > 0)
+						item->fallspeed = -(item->fallspeed >> 1);
+				}
+				else
+				{
+					if (item->speed < 32)
+					{
+						item->speed -= short(tiltyoff << 1);
+
+						if ((ushort)item->pos.y_rot > 0x4000 && (ushort)item->pos.y_rot < 0xC000)
+						{
+							item->pos.y_rot -= 0x1000;
+
+							if ((ushort)item->pos.y_rot < 0x4000)
+								item->pos.y_rot = 0x4000;
+						}
+						else if ((ushort)item->pos.y_rot < 0x4000)
+						{
+							item->pos.y_rot += 0x1000;
+
+							if ((ushort)item->pos.y_rot > 0x4000)
+								item->pos.y_rot = 0x4000;
+						}
+					}
+
+					item->fallspeed = item->fallspeed > 0 ? -(item->fallspeed >> 1) : 0;
+				}
+			}
+			else if (tiltyoff > 0 && abs(tiltyoff) - abs(tiltxoff) >= 2)
+			{
+				if ((ushort)item->pos.y_rot < 0x8000)
+				{
+					item->pos.y_rot = -1 - item->pos.y_rot;
+
+					if (item->fallspeed > 0)
+						item->fallspeed = -(item->fallspeed >> 1);
+				}
+				else
+				{
+					if (item->speed < 32)
+					{
+						item->speed += short(tiltyoff << 1);
+
+						if ((ushort)item->pos.y_rot > 0xC000 || (ushort)item->pos.y_rot < 0x4000)
+						{
+							item->pos.y_rot -= 0x1000;
+
+							if ((ushort)item->pos.y_rot < 0xC000)
+								item->pos.y_rot = -0x4000;
+						}
+						else if ((ushort)item->pos.y_rot < 0xC000)
+						{
+							item->pos.y_rot += 0x1000;
+
+							if ((ushort)item->pos.y_rot > 0xC000)
+								item->pos.y_rot = -0x4000;
+						}
+					}
+
+					item->fallspeed = item->fallspeed > 0 ? -(item->fallspeed >> 1) : 0;
+				}
+			}
+			else if (tiltxoff < 0 && abs(tiltxoff) - abs(tiltyoff) >= 2)
+			{
+				if ((ushort)item->pos.y_rot > 0x4000 && (ushort)item->pos.y_rot < 0xC000)
+				{
+					item->pos.y_rot = 0x7FFF - item->pos.y_rot;
+
+					if (item->fallspeed > 0)
+						item->fallspeed = -(item->fallspeed >> 1);
+				}
+				else
+				{
+					if (item->speed < 32)
+					{
+						item->speed -= short(tiltxoff << 1);
+
+						if ((ushort)item->pos.y_rot < 0x8000)
+						{
+							item->pos.y_rot -= 0x4000;
+
+							if ((ushort)item->pos.y_rot > 61440)
+								item->pos.y_rot = 0;
+						}
+						else
+						{
+							item->pos.y_rot += 0x4000;
+
+							if ((ushort)item->pos.y_rot < 0x4000)
+								item->pos.y_rot = 0;
+						}
+					}
+
+					item->fallspeed = item->fallspeed > 0 ? -(item->fallspeed >> 1) : 0;
+				}
+			}
+			else if (tiltxoff > 0 && abs(tiltxoff) - abs(tiltyoff) >= 2)
+			{
+				if ((ushort)item->pos.y_rot > 0xC000 || (ushort)item->pos.y_rot < 0x4000)
+				{
+					item->pos.y_rot = 0x7FFF - item->pos.y_rot;
+
+					if (item->fallspeed > 0)
+						item->fallspeed = -(item->fallspeed >> 1);
+				}
+				else
+				{
+					if (item->speed < 32)
+					{
+						item->speed += short(tiltxoff << 1);
+
+						if ((ushort)item->pos.y_rot > 0x8000)
+						{
+							item->pos.y_rot -= 0x1000;
+
+							if ((ushort)item->pos.y_rot < 0x8000)
+								item->pos.y_rot = -0x8000;
+						}
+						else if ((ushort)item->pos.y_rot < 0x8000)
+						{
+							item->pos.y_rot += 0x1000;
+
+							if ((ushort)item->pos.y_rot > 0x8000)
+								item->pos.y_rot = -0x8000;
+						}
+					}
+
+					item->fallspeed = item->fallspeed > 0 ? -(item->fallspeed >> 1) : 0;
+				}
+			}
+			else if (tiltyoff < 0 && tiltxoff < 0)
+			{
+				if ((ushort)item->pos.y_rot > 0x6000 && (ushort)item->pos.y_rot < 0xE000)
+				{
+					item->pos.y_rot = -0x4001 - item->pos.y_rot;
+
+					if (item->fallspeed > 0)
+						item->fallspeed = -(item->fallspeed >> 1);
+				}
+				else
+				{
+					if (item->speed < 32)
+					{
+						item->speed -= short(tiltxoff + tiltyoff);
+
+						if ((ushort)item->pos.y_rot > 0x2000 && (ushort)item->pos.y_rot < 0xA000)
+						{
+							item->pos.y_rot -= 0x1000;
+
+							if ((ushort)item->pos.y_rot < 0x2000)
+								item->pos.y_rot = 0x2000;
+						}
+						else if (item->pos.y_rot != 0x2000)
+						{
+							item->pos.y_rot += 0x1000;
+
+							if ((ushort)item->pos.y_rot > 0x2000)
+								item->pos.y_rot = 0x2000;
+						}
+					}
+
+					item->fallspeed = item->fallspeed > 0 ? -(item->fallspeed >> 1) : 0;
+				}
+			}
+			else if (tiltyoff < 0 && tiltxoff > 0)
+			{
+				if ((ushort)item->pos.y_rot > 0xA000 || (ushort)item->pos.y_rot < 0x2000)
+				{
+					item->pos.y_rot = 0x3FFF - item->pos.y_rot;
+
+					if (item->fallspeed > 0)
+						item->fallspeed = -(item->fallspeed >> 1);
+				}
+				else
+				{
+					if (item->speed < 32)
+					{
+						item->speed += short(tiltxoff - tiltyoff);
+
+						if ((ushort)item->pos.y_rot < 0xE000 && (ushort)item->pos.y_rot > 0x6000)
+						{
+							item->pos.y_rot -= 0x1000;
+
+							if ((ushort)item->pos.y_rot < 0x6000)
+								item->pos.y_rot = 0x6000;
+						}
+						else if (item->pos.y_rot != 0x6000)
+						{
+							item->pos.y_rot += 0x1000;
+
+							if ((ushort)item->pos.y_rot > 0x6000)
+								item->pos.y_rot = 0x6000;
+						}
+					}
+
+					item->fallspeed = item->fallspeed > 0 ? -(item->fallspeed >> 1) : 0;
+				}
+			}
+			else if (tiltyoff > 0 && tiltxoff > 0)
+			{
+				if ((ushort)item->pos.y_rot > 0xE000 || (ushort)item->pos.y_rot < 0x6000)
+				{
+					item->pos.y_rot = -0x4001 - item->pos.y_rot;
+
+					if (item->fallspeed > 0)
+						item->fallspeed = -(item->fallspeed >> 1);
+				}
+				else
+				{
+					if (item->speed < 32)
+					{
+						item->speed += short(tiltxoff + tiltyoff);
+
+						if ((ushort)item->pos.y_rot < 0x2000 || (ushort)item->pos.y_rot > 0xA000)
+						{
+							item->pos.y_rot -= 0x1000;
+
+							if ((ushort)item->pos.y_rot < 0xA000)
+								item->pos.y_rot = -0x6000;
+						}
+						else if ((ushort)item->pos.y_rot != 0xA000)
+						{
+							item->pos.y_rot += 0x1000;
+
+							if ((ushort)item->pos.y_rot > 0xA000)
+								item->pos.y_rot = -0x6000;
+						}
+					}
+
+					item->fallspeed = item->fallspeed > 0 ? -(item->fallspeed >> 1) : 0;
+				}
+			}
+			else if (tiltyoff > 0 && tiltxoff < 0)
+			{
+				if ((ushort)item->pos.y_rot > 0x2000 && (ushort)item->pos.y_rot < 0xA000)
+				{
+					item->pos.y_rot = 0x3FFF - item->pos.y_rot;
+
+					if (item->fallspeed > 0)
+						item->fallspeed = -(item->fallspeed >> 1);
+				}
+				else
+				{
+					if (item->speed < 32)
+					{
+						item->speed += short(tiltyoff - tiltxoff);
+
+						if ((ushort)item->pos.y_rot < 0x6000 || (ushort)item->pos.y_rot > 0xE000)
+						{
+							item->pos.y_rot -= 0x1000;
+
+							if ((ushort)item->pos.y_rot < 0xE000)
+								item->pos.y_rot = -0x2000;
+						}
+						else if ((ushort)item->pos.y_rot != 0xE000)
+						{
+							item->pos.y_rot += 0x1000;
+
+							if ((ushort)item->pos.y_rot > 0xE000)
+								item->pos.y_rot = -0x2000;
+						}
+					}
+
+					item->fallspeed = item->fallspeed > 0 ? -(item->fallspeed >> 1) : 0;
+				}
+			}
+
+			item->pos.x_pos = x;
+			item->pos.y_pos = y;
+			item->pos.z_pos = z;
+		}
+	}
+	else
+	{
+		if (yv >= 0)
+		{
+			room_number = item->room_number;
+			floor = GetFloor(item->pos.x_pos, y, item->pos.z_pos, &room_number);
+			height = GetHeight(floor, item->pos.x_pos, y, item->pos.z_pos);
+
+			oldonobj = OnObject;
+
+			room_number = item->room_number;
+			floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+			GetHeight(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+			if (item->pos.y_pos >= height && oldonobj)
+			{
+				if (item->fallspeed > 0)
+				{
+					if (item->fallspeed > 16)
+					{
+						if (item->object_number == GRENADE)
+							item->fallspeed = (item->fallspeed >> 1) - item->fallspeed;
+						else
+						{
+							item->fallspeed = -(item->fallspeed >> 2);
+
+							if (item->fallspeed < -100)
+								item->fallspeed = -100;
+						}
+					}
+					else
+					{
+						item->fallspeed = 0;
+
+						if (item->object_number == GRENADE)
+						{
+							item->speed--;
+							item->required_anim_state = 1;
+							item->pos.x_rot = 0;
+						}
+						else
+							item->speed -= 3;
+
+						if (item->speed < 0)
+							item->speed = 0;
+					}
+				}
+
+				item->pos.y_pos = height;
+			}
+		}
+
+		room_number = item->room_number;
+		floor = GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+		ceiling = GetCeiling(floor, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
+
+		if (item->pos.y_pos < ceiling)
+		{
+			if (y < ceiling && ((item->pos.x_pos ^ x) & ~WALL_MASK || (item->pos.z_pos ^ z) & ~WALL_MASK))
+			{
+				item->pos.y_rot = (item->pos.x_pos ^ x) & ~WALL_MASK ? -item->pos.y_rot : -0x8000 - item->pos.y_rot;
+
+				if (item->object_number == GRENADE)
+					item->speed -= item->speed >> 3;
+				else
+					item->speed >>= 1;
+
+				item->pos.x_pos = x;
+				item->pos.y_pos = y;
+				item->pos.z_pos = z;
+			}
+			else
+				item->pos.y_pos = ceiling;
+
+			if (item->fallspeed < 0)
+				item->fallspeed = -item->fallspeed;
+		}
+	}
+
+	room_number = item->room_number;
+	GetFloor(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, &room_number);
+
+	if (item->room_number != room_number)
+		ItemNewRoom(item_number, room_number);
+}
+
 void inject_larafire(bool replace)
 {
 	INJECT(0x0044AF50, WeaponObject, replace);
@@ -803,4 +1265,5 @@ void inject_larafire(bool replace)
 	INJECT(0x0044A1E0, InitialiseNewWeapon, replace);
 	INJECT(0x0044A1A0, CheckForHoldingState, replace);
 	INJECT(0x00449BB0, LaraGun, replace);
+	INJECT(0x0044AFB0, DoProperDetection, replace);
 }

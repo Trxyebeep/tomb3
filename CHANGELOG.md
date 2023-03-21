@@ -1,5 +1,24 @@
 # tomb3 changelog
 
+## Unreleased
+
+### Original bug fixes
+
+- Fix Lara refusing to go in some crawlspaces.
+
+### tomb3 additions
+
+- Improve falling raptor physics.
+- Increase drawn vertices limit once more.
+
+### tomb3 bug fixes
+
+- Fix PSX shadow not following Lara during some animations.
+- Fix Willard pathing.
+- Fix some issues with window creation.
+- Fix Tony flame.
+
+
 ## [1.6.0](https://github.com/Trxyebeep/tomb3/tree/V1.6.0) (Jan. 30 2023)
 
 ### Original bug fixes

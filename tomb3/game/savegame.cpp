@@ -572,7 +572,7 @@ void ExtractSaveGameInfo()
 		objnum = item->object_number;
 		obj = &objects[objnum];
 
-		if (obj->control == orig_MovableBlock)
+		if (obj->control == MovableBlock)
 			AlterFloorHeight(item, 1024);
 
 		if (obj->save_position)
@@ -662,7 +662,7 @@ void ExtractSaveGameInfo()
 					item->object_number += 4;
 			}
 
-			if (obj->collision == orig_PickUpCollision)	//use PickUpCollision when ObjectObjects etc. are decompiled
+			if (obj->collision == PickUpCollision)	//use PickUpCollision when ObjectObjects etc. are decompiled
 			{
 				if (item->status == ITEM_DEACTIVATED)
 					RemoveDrawnItem(i);
@@ -677,11 +677,11 @@ void ExtractSaveGameInfo()
 			ReadSG(item->item_flags, sizeof(short) * 4);
 		}
 
-		if (obj->control == orig_MovableBlock)
+		if (obj->control == MovableBlock)
 		{
 			if (item->status == ITEM_INACTIVE)
 				AlterFloorHeight(item, -1024);
-			else if (obj->control == orig_MovableBlock && item->status != ITEM_INACTIVE)		//ok
+			else if (obj->control == MovableBlock && item->status != ITEM_INACTIVE)		//ok
 				SetupCleanerFromSavegame(item, 1);
 		}
 
@@ -720,7 +720,7 @@ void ExtractSaveGameInfo()
 			if (item->carried_item != NO_ITEM)
 			{
 				RemoveDrawnItem(item->carried_item);
-				items[item->carried_item].room_number = 255;
+				items[item->carried_item].room_number = NO_ROOM;
 				items[item->carried_item].carried_item = NO_ITEM;
 			}
 		}
@@ -766,7 +766,7 @@ void ExtractSaveGameInfo()
 		ReadSG(&item->current_anim_state, sizeof(short));
 		ReadSG(&item->goal_anim_state, sizeof(short));
 		item->status = ITEM_ACTIVE;
-		item->room_number = 255;
+		item->room_number = NO_ROOM;
 	}
 
 	if (lara.burn)

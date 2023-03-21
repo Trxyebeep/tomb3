@@ -49,7 +49,7 @@ void KillItem(short item_num)
 		}
 	}
 
-	if (item->room_number != 255)
+	if (item->room_number != NO_ROOM)
 	{
 		linknum = room[item->room_number].item_number;
 
@@ -253,7 +253,7 @@ void ItemNewRoom(short item_num, short room_num)
 	}
 #endif
 
-	if (item->room_number != 255)
+	if (item->room_number != NO_ROOM)
 	{
 		r = &room[item->room_number];
 		linknum = r->item_number;

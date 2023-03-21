@@ -5,6 +5,7 @@ void inject_compy(bool replace);
 
 void InitialiseCompy(short item_number);
 void CompyControl(short item_number);
+void CarcassControl(short item_number);
 
 enum COMPY_STATES
 {

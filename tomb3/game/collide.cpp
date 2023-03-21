@@ -87,7 +87,7 @@ short GetTiltType(FLOOR_INFO* floor, long x, long y, long z)
 			break;
 
 		r = &room[floor->pit_room];
-		floor = &r->floor[((z - r->z) >> 10) + (((x - r->x) >> 10) * r->x_size)];
+		floor = &r->floor[((z - r->z) >> WALL_SHIFT) + (((x - r->x) >> WALL_SHIFT) * r->x_size)];
 	}
 
 	if (y + 512 < floor->floor << 8)
@@ -108,13 +108,13 @@ short GetTiltType(FLOOR_INFO* floor, long x, long y, long z)
 			t1 = (tilt >> 4) & 0xF;
 			t2 = (tilt >> 8) & 0xF;
 			t3 = (tilt >> 12) & 0xF;
-			x2 = x & 0x3FF;
-			z2 = z & 0x3FF;
+			x2 = x & WALL_MASK;
+			z2 = z & WALL_MASK;
 			type = type & 0x1F;
 
 			if (type == SPLIT1 || type == NOCOLF1T || type == NOCOLF1B)
 			{
-				if (x2 > 1024 - z2)
+				if (x2 > WALL_SIZE - z2)
 				{
 					x3 = t3 - t0;
 					y2 = t3 - t2;
@@ -329,7 +329,7 @@ long FindGridShift(long src, long dst)
 	if (srcw == dstw)
 		return 0;
 
-	src &= WALL_SIZE - 1;
+	src &= WALL_MASK;
 
 	if (dstw > srcw)
 		return (WALL_SIZE + 1) - src;
@@ -343,7 +343,20 @@ void GetCollisionInfo(COLL_INFO* coll, long x, long y, long z, short room_number
 	static long xfront, zfront;
 	long yT, h, c, tx, tz;
 	long ang, xright, xleft, zright, zleft, xright2, xleft2, zright2, zleft2, hit_left, hit_right;
+#ifdef TROYESTUFF
+	long reset_room;
+#endif
 	short room_num, room_num2, tilt;
+
+#ifdef TROYESTUFF
+	reset_room = 0;
+
+	if (hite < 0)
+	{
+		hite = -hite;
+		reset_room = 1;
+	}
+#endif
 
 	coll->coll_type = CT_NONE;
 	coll->shift.x = 0;
@@ -427,6 +440,11 @@ void GetCollisionInfo(COLL_INFO* coll, long x, long y, long z, short room_number
 		xleft = 0;
 		break;
 	}
+
+#ifdef TROYESTUFF
+	if (reset_room)
+		room_num = room_number;
+#endif
 
 	/*front*/
 	tx = x + xfront;
@@ -1148,6 +1166,11 @@ void ItemPushLara(ITEM_INFO* item, ITEM_INFO* l, COLL_INFO* coll, long spaz, lon
 		l->pos.x_pos = coll->old.x;
 		l->pos.z_pos = coll->old.z;
 	}
+}
+
+void AIPickupCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+
 }
 
 void inject_collide(bool replace)

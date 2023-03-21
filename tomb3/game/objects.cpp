@@ -232,21 +232,21 @@ long GetOffset(ITEM_INFO* item, long x, long z)
 {
 	if (!item->pos.y_rot)
 #ifdef TROYESTUFF			// Fixes bridge bug
-		return ~x & 0x3FF;
+		return ~x & WALL_MASK;
 #else
-		return -x & 0x3FF;
+		return -x & WALL_MASK;
 #endif
 	
 	if (item->pos.y_rot == -0x8000)
-		return x & 0x3FF;
+		return x & WALL_MASK;
 	
 	if (item->pos.y_rot == 0x4000)
-		return z & 0x3FF;
+		return z & WALL_MASK;
 
 #ifdef TROYESTUFF
-	return ~z & 0x3FF;
+	return ~z & WALL_MASK;
 #else
-	return -z & 0x3FF;
+	return -z & WALL_MASK;
 #endif
 }
 
@@ -382,12 +382,12 @@ void InitialiseDoor(short item_number)
 	door->d1.floor = &r->floor[r->x_size * (dy + ((item->pos.x_pos - r->x) >> WALL_SHIFT)) + dx + ((item->pos.z_pos - r->z) >> WALL_SHIFT)];
 	room_number = GetDoor(door->d1.floor);
 
-	if (room_number == 255)
+	if (room_number == NO_ROOM)
 		box_number = door->d1.floor->box;
 	else
 	{
 		b = &room[room_number];
-		box_number = b->floor[(((item->pos.z_pos - b->z) >> 10) + dx) + (((item->pos.x_pos - b->x) >> 10) + dy) * b->x_size].box;
+		box_number = b->floor[(((item->pos.z_pos - b->z) >> WALL_SHIFT) + dx) + (((item->pos.x_pos - b->x) >> WALL_SHIFT) + dy) * b->x_size].box;
 	}
 
 	door->d1.block = (boxes[box_number].overlap_index & 0x8000) ? box_number : 2047;
@@ -398,15 +398,15 @@ void InitialiseDoor(short item_number)
 	else
 	{
 		r = &room[r->flipped_room];
-		door->d1flip.floor = &r->floor[(((item->pos.z_pos - r->z) >> 10) + dx) + (((item->pos.x_pos - r->x) >> 10) + dy) * r->x_size];
+		door->d1flip.floor = &r->floor[(((item->pos.z_pos - r->z) >> WALL_SHIFT) + dx) + (((item->pos.x_pos - r->x) >> WALL_SHIFT) + dy) * r->x_size];
 		room_number = GetDoor(door->d1flip.floor);
 
-		if (room_number == 255)
+		if (room_number == NO_ROOM)
 			box_number = door->d1flip.floor->box;
 		else
 		{
 			b = &room[room_number];
-			box_number = b->floor[(((item->pos.z_pos - b->z) >> 10) + dx) + (((item->pos.x_pos - b->x) >> 10) + dy) * b->x_size].box;
+			box_number = b->floor[(((item->pos.z_pos - b->z) >> WALL_SHIFT) + dx) + (((item->pos.x_pos - b->x) >> WALL_SHIFT) + dy) * b->x_size].box;
 		}
 
 		door->d1flip.block = (boxes[box_number].overlap_index & 0x8000) ? box_number : 2047;
@@ -417,7 +417,7 @@ void InitialiseDoor(short item_number)
 	ShutThatDoor(&door->d1);
 	ShutThatDoor(&door->d1flip);
 
-	if (two_room == 255)
+	if (two_room == NO_ROOM)
 	{
 		door->d2.floor = 0;
 		door->d2flip.floor = 0;
@@ -425,15 +425,15 @@ void InitialiseDoor(short item_number)
 	else
 	{
 		r = &room[two_room];
-		door->d2.floor = &r->floor[((item->pos.z_pos - r->z) >> 10) + ((item->pos.x_pos - r->x) >> 10) * r->x_size];
+		door->d2.floor = &r->floor[((item->pos.z_pos - r->z) >> WALL_SHIFT) + ((item->pos.x_pos - r->x) >> WALL_SHIFT) * r->x_size];
 		room_number = GetDoor(door->d2.floor);
 
-		if (room_number == 255)
+		if (room_number == NO_ROOM)
 			box_number = door->d2.floor->box;
 		else
 		{
 			b = &room[room_number];
-			box_number = b->floor[((item->pos.z_pos - b->z) >> 10) + ((item->pos.x_pos - b->x) >> 10) * b->x_size].box;
+			box_number = b->floor[((item->pos.z_pos - b->z) >> WALL_SHIFT) + ((item->pos.x_pos - b->x) >> WALL_SHIFT) * b->x_size].box;
 		}
 
 		door->d2.block = (boxes[box_number].overlap_index & 0x8000) ? box_number : 2047;
@@ -444,15 +444,15 @@ void InitialiseDoor(short item_number)
 		else
 		{
 			r = &room[r->flipped_room];
-			door->d2flip.floor = &r->floor[((item->pos.z_pos - r->z) >> 10) + ((item->pos.x_pos - r->x) >> 10) * r->x_size];
+			door->d2flip.floor = &r->floor[((item->pos.z_pos - r->z) >> WALL_SHIFT) + ((item->pos.x_pos - r->x) >> WALL_SHIFT) * r->x_size];
 			room_number = GetDoor(door->d2flip.floor);
 
-			if (room_number == 255)
+			if (room_number == NO_ROOM)
 				box_number = door->d2flip.floor->box;
 			else
 			{
 				b = &room[room_number];
-				box_number = b->floor[((item->pos.z_pos - b->z) >> 10) + ((item->pos.x_pos - b->x) >> 10) * b->x_size].box;
+				box_number = b->floor[((item->pos.z_pos - b->z) >> WALL_SHIFT) + ((item->pos.x_pos - b->x) >> WALL_SHIFT) * b->x_size].box;
 			}
 
 			door->d2flip.block = (boxes[box_number].overlap_index & 0x8000) ? box_number : 2047;
