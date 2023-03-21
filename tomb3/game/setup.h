@@ -9,5 +9,4 @@ void InitialiseLevelFlags();
 void InitialiseGameFlags();
 long InitialiseLevel(long level, long type);
 void BuildOutsideTable();
-
-#define InitialiseObjects	( (void(__cdecl*)()) 0x00463BC0 )
+void InitialiseObjects();

@@ -68,10 +68,6 @@
 #include "51rocket.h"
 #include "51laser.h"
 #include "../specific/draweffects.h"
-#ifdef TROYESTUFF
-#include "../newstuff/map.h"
-#include "../tomb3/tomb3.h"
-#endif
 #include "firehead.h"
 #include "fusebox.h"
 #include "lara1gun.h"
@@ -90,6 +86,11 @@
 #include "effects.h"
 #include "dragfire.h"
 #include "lasers.h"
+#include "hair.h"
+#ifdef TROYESTUFF
+#include "../newstuff/map.h"
+#include "../tomb3/tomb3.h"
+#endif
 
 void GetAIPickups()
 {
@@ -2308,6 +2309,39 @@ static void ObjectObjects()
 	obj->control = ControlGunShell;
 }
 
+void InitialiseObjects()
+{
+	OBJECT_INFO* obj;
+	long lp;
+
+	for (lp = 0; lp < NUMBER_OBJECTS; lp++)
+	{
+		obj = &objects[lp];
+		obj->initialise = 0;
+		obj->control = 0;
+		obj->collision = 0;
+		obj->draw_routine = DrawAnimatingItem;
+		obj->floor = 0;
+		obj->ceiling = 0;
+		obj->pivot_length = 0;
+		obj->radius = 10;
+		obj->shadow_size = 0;
+		obj->hit_points = DONT_TARGET;
+		obj->intelligent = 0;
+		obj->save_position = 0;
+		obj->save_hitpoints = 0;
+		obj->save_flags = 0;
+		obj->save_anim = 0;
+		obj->water_creature = 0;
+	}
+
+	BaddyObjects();
+	TrapObjects();
+	ObjectObjects();
+	InitialiseHair();
+	InitialiseSparks();
+}
+
 void inject_setup(bool replace)
 {
 	INJECT(0x00466590, GetAIPickups, inject_rando ? 1 : replace);
@@ -2319,4 +2353,5 @@ void inject_setup(bool replace)
 	INJECT(0x00463C30, BaddyObjects, replace);
 	INJECT(0x00465240, TrapObjects, replace);
 	INJECT(0x00465820, ObjectObjects, replace);
+	INJECT(0x00463BC0, InitialiseObjects, replace);
 }
