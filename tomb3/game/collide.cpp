@@ -1168,6 +1168,11 @@ void ItemPushLara(ITEM_INFO* item, ITEM_INFO* l, COLL_INFO* coll, long spaz, lon
 	}
 }
 
+void AIPickupCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
+{
+
+}
+
 void inject_collide(bool replace)
 {
 	INJECT(0x0041E690, ShiftItem, replace);

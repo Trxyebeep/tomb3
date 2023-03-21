@@ -158,7 +158,7 @@ void GetCarriedItems()
 			pickup = &items[pickup_number];
 
 			if (pickup->pos.x_pos == item->pos.x_pos && pickup->pos.y_pos == item->pos.y_pos && pickup->pos.z_pos == item->pos.z_pos &&
-				objects[pickup->object_number].collision == orig_PickUpCollision)
+				objects[pickup->object_number].collision == PickUpCollision)
 			{
 				pickup->carried_item = item->carried_item;
 				item->carried_item = pickup_number;

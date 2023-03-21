@@ -2266,6 +2266,11 @@ void DrawAnimatingItem(ITEM_INFO* item)
 	phd_PopMatrix();
 }
 
+void DrawDummyItem(ITEM_INFO* item)
+{
+
+}
+
 void inject_draw(bool replace)
 {
 	INJECT(0x00429390, phd_PopMatrix_I, replace);

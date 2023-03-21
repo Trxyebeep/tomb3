@@ -34,7 +34,6 @@ void CalculateObjectLightingLara();
 void DrawRooms(short current_room);
 long DrawPhaseGame();
 void DrawAnimatingItem(ITEM_INFO* item);
-
-#define DrawDummyItem	( (void(__cdecl*)(ITEM_INFO*)) 0x004837C0 )	//use in setup.cpp instead nullsub_1 for objects' draw_routine.
+void DrawDummyItem(ITEM_INFO* item);
 
 extern short null_rotations[12];

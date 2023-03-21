@@ -572,7 +572,7 @@ void ExtractSaveGameInfo()
 		objnum = item->object_number;
 		obj = &objects[objnum];
 
-		if (obj->control == orig_MovableBlock)
+		if (obj->control == MovableBlock)
 			AlterFloorHeight(item, 1024);
 
 		if (obj->save_position)
@@ -656,13 +656,13 @@ void ExtractSaveGameInfo()
 				}
 			}
 
-			if (obj->collision == orig_PuzzleHoleCollision)
+			if (obj->collision == PuzzleHoleCollision)
 			{
 				if (item->status == ITEM_ACTIVE || item->status == ITEM_DEACTIVATED)
 					item->object_number += 4;
 			}
 
-			if (obj->collision == orig_PickUpCollision)	//use PickUpCollision when ObjectObjects etc. are decompiled
+			if (obj->collision == PickUpCollision)	//use PickUpCollision when ObjectObjects etc. are decompiled
 			{
 				if (item->status == ITEM_DEACTIVATED)
 					RemoveDrawnItem(i);
@@ -677,11 +677,11 @@ void ExtractSaveGameInfo()
 			ReadSG(item->item_flags, sizeof(short) * 4);
 		}
 
-		if (obj->control == orig_MovableBlock)
+		if (obj->control == MovableBlock)
 		{
 			if (item->status == ITEM_INACTIVE)
 				AlterFloorHeight(item, -1024);
-			else if (obj->control == orig_MovableBlock && item->status != ITEM_INACTIVE)		//ok
+			else if (obj->control == MovableBlock && item->status != ITEM_INACTIVE)		//ok
 				SetupCleanerFromSavegame(item, 1);
 		}
 

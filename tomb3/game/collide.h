@@ -23,5 +23,4 @@ long MoveLaraPosition(PHD_VECTOR* v, ITEM_INFO* item, ITEM_INFO* l);
 void CreatureCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
 void LaraBaddieCollision(ITEM_INFO* l, COLL_INFO* coll);
 void ItemPushLara(ITEM_INFO* item, ITEM_INFO* l, COLL_INFO* coll, long spaz, long BigPush);
-
-#define AIPickupCollision	( (void(__cdecl*)(short, ITEM_INFO*, COLL_INFO*)) 0x004837C0 )	//use in setup.cpp instead nullsub_1 for objects' collision.
+void AIPickupCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
