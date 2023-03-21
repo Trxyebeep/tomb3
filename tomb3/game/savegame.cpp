@@ -17,8 +17,8 @@
 #include "../tomb3/tomb3.h"
 #endif
 
-#define SGcount	VAR_(0x006D588C, long)
-#define SGpoint	VAR_(0x006D2268, char*)
+static char* SGpoint;
+static long SGcount;
 
 void ModifyStartInfo(long level)
 {

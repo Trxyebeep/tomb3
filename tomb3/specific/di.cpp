@@ -1,8 +1,8 @@
 #include "../tomb3/pch.h"
 #include "di.h"
 
-#define Keyboard	VAR_(0x006302A8, LPDIRECTINPUTDEVICEX)
-#define lpDirectInput	VAR_(0x006302A4, LPDIRECTINPUTX)
+static LPDIRECTINPUTDEVICEX Keyboard;
+static LPDIRECTINPUTX lpDirectInput;
 
 void DI_ReadKeyboard(uchar* KeyMap)
 {

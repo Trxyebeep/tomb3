@@ -40,8 +40,8 @@ static bool LeftFlash = 0;
 
 #define StoreMatrix(mx)\
 {\
-memcpy(mx, phd_mxptr, 48);\
-mx += 12;\
+memcpy(mx, phd_mxptr, indices_count * sizeof(long));\
+mx += indices_count;\
 }
 
 static void mInterpolateArmMatrix(long* mx)

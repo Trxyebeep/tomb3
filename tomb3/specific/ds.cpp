@@ -2,9 +2,9 @@
 #include "ds.h"
 #include <list>
 
-#define DS_Buffers	ARRAY_(0x006326C8, LPDIRECTSOUNDBUFFER, [256])
-#define DS_SamplesPlaying	ARRAY_(0x00632AD0, long, [32])
-#define DS_SampleFrequencies	ARRAY_(0x006322B8, ulong, [256])
+static LPDIRECTSOUNDBUFFER DS_Buffers[256];
+static ulong DS_SampleFrequencies[256];
+static long DS_SamplesPlaying[32];
 
 std::list<DXDIRECTSOUNDINFO> DS_AdapterList;
 std::list<DXDIRECTSOUNDINFO>::iterator PrimaryAdapter;

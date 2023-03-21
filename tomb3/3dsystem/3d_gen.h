@@ -33,19 +33,19 @@ __inline void phd_PopMatrix()
 	phd_mxptr -= indices_count;
 }
 
+extern void (*InsertLine)(long x1, long y1, long x2, long y2, long z, long c0, long c1);
+extern short* (*InsertObjectGT4)(short* pFaceInfo, long nFaces, sort_type nSortType);
+extern short* (*InsertObjectGT3)(short* pFaceInfo, long nFaces, sort_type nSortType);
+extern short* (*InsertObjectG4)(short* pFaceInfo, long nFaces, sort_type nSortType);
+extern short* (*InsertObjectG3)(short* pFaceInfo, long nFaces, sort_type nSortType);
+extern short* (*RoomInsertObjectGT4)(short* pFaceInfo, long nFaces, sort_type nSortType);
+extern short* (*RoomInsertObjectGT3)(short* pFaceInfo, long nFaces, sort_type nSortType);
+extern void (*InsertFlatRect)(long x1, long y1, long x2, long y2, long zdepth, long col);
+extern void (*InsertTrans8)(PHD_VBUF* buf, short shade);
+extern void (*InsertSprite)(long zdepth, long x1, long y1, long x2, long y2, long nSprite, long shade, long shade1, long nDrawType, long offset);
+extern void (*InsertTransQuad)(long x, long y, long w, long h, long z);
+
 extern long sort3d_bufferbf[MAX_SORTLISTS];
 extern long sort3d_bufferfb[MAX_SORTLISTS];
 extern short info3d_bufferbf[MAX_SORTLISTS];
 extern short info3d_bufferfb[MAX_SORTLISTS];
-
-#define InsertLine	( *(void(__cdecl**)(long x1, long y1, long x2, long y2, long z, long c0, long c1)) 0x005A6AF8 )
-#define InsertObjectGT4	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005A6A34 )
-#define InsertObjectGT3	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005A6A30 )
-#define InsertObjectG4	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005BAB0C )
-#define InsertObjectG3	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005BAB50 )
-#define RoomInsertObjectGT3	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005CBE44 )
-#define RoomInsertObjectGT4	( *(short*(__cdecl**)(short*, long, sort_type)) 0x005CBE40 )
-#define InsertFlatRect	( *(void(__cdecl**)(long, long, long, long, long, long)) 0x004F6D5C )
-#define InsertTrans8	( *(void(__cdecl**)(PHD_VBUF*, short)) 0x004E34A4 )
-#define InsertSprite	( *(void(__cdecl**)(long, long, long, long, long, long, long, long, long, long)) 0x00531718 )
-#define InsertTransQuad	( *(void(__cdecl**)(long, long, long, long, long)) 0x004D7908 )

@@ -35,6 +35,9 @@ static TEXTSTRING* dtext[DT_NUMT];
 static TEXTSTRING* stext[4];
 static TEXTSTRING* btext[NLAYOUTKEYS];
 static TEXTSTRING* ctext[NLAYOUTKEYS];
+static TEXTSTRING* ctrltext[2];
+static long iconfig;
+static long keychange;
 
 long GetRenderWidth()
 {
@@ -1049,10 +1052,6 @@ void do_sound_option(INVENTORY_ITEM* item)
 		stext[3] = 0;
 	}
 }
-
-#define iconfig	VAR_(0x006A0130, long)
-#define keychange	VAR_(0x006A0128, long)
-#define ctrltext	ARRAY_(0x006A0218, TEXTSTRING*, [2])
 
 static void FlashConflicts()
 {

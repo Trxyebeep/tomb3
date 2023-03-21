@@ -12,12 +12,11 @@
 #include "../tomb3/tomb3.h"
 #endif
 
-//statics
-#define G_ddraw	VAR_(0x006CA0F8, LPDIRECTDRAWX)
-#define G_d3d	VAR_(0x006CA100, LPDIRECT3DX)
-#define SoftwareRenderer	VAR_(0x006CA104, bool)
-#define G_hwnd	VAR_(0x006CA0F4, HWND)
-#define MMXSupported	VAR_(0x006CA108, bool)
+static LPDIRECTDRAWX G_ddraw;
+static LPDIRECT3DX G_d3d;
+static bool SoftwareRenderer;
+static HWND G_hwnd;
+static bool MMXSupported;
 
 long BPPToDDBD(long BPP)
 {

@@ -27,12 +27,12 @@ static long dheights2[5] = { -1536, -1152, -768, -384, 0 };
 static long death_radii[5];
 static long death_heights[5];
 
-#define closest_ai_path	VAR_(0x004C7FB4, long)
-#define lara_ai_path	VAR_(0x004C7FB8, long)
-#define lara_junction	VAR_(0x004C7FBC, long)
-#define junction_index	ARRAY_(0x006271D0, long, [4])
-#define ai_path	ARRAY_(0x006271E0, PHD_3DPOS, [16])
-#define ai_junction	ARRAY_(0x00627170, PHD_3DPOS, [4])
+static long closest_ai_path = -1;
+static long lara_ai_path = -1;
+static long lara_junction = -1;
+static long junction_index[4];
+static PHD_3DPOS ai_path[16];
+static PHD_3DPOS ai_junction[4];
 
 static void TriggerPlasmaBallFlame(short fx_number, long type, long xv, long yv, long zv)
 {

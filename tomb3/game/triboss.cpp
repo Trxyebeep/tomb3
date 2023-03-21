@@ -25,8 +25,8 @@ BITE_INFO tribeboss_hit[6] =
 	{ 8, 32, 400, 8 },
 };
 
-//SHIELD_POINTS TribeBossShield[40];
-//PHD_VECTOR TrigDynamics[3];
+SHIELD_POINTS TribeBossShield[40];
+PHD_VECTOR TrigDynamics[3];
 char shield_active;
 
 static long lizman_summon_coords[2][4] =
@@ -324,6 +324,7 @@ void TriggerElectricSparks(GAME_VECTOR* pos, long shield)
 	if (dx < -0x5000 || dx > 0x5000 || dz < -0x5000 || dz > 0x5000)
 		return;
 
+	//This corrupts TribeBossShield, fixme
 	TrigDynamics[1].x = pos->x;
 	TrigDynamics[1].y = pos->y;
 	TrigDynamics[1].z = pos->z;

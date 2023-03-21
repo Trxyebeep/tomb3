@@ -26,9 +26,9 @@
 #define IDC_VERSION				1016
 #define IDC_TEST				1019
 
-#define G_DXConfig	VAR_(0x006CE508, DXCONFIG*)
-#define G_DeviceInfo	VAR_(0x006CE50C, DEVICEINFO*)
-#define bSoftwareDefault	VAR_(0x006CE514, bool)
+static DXCONFIG* G_DXConfig;
+static DEVICEINFO* G_DeviceInfo;
+static bool bSoftwareDefault;
 
 BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lParam)
 {

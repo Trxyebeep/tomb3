@@ -14,6 +14,18 @@
 #include "../tomb3/tomb3.h"
 #endif
 
+void (*InsertLine)(long x1, long y1, long x2, long y2, long z, long c0, long c1);
+short* (*InsertObjectGT4)(short* pFaceInfo, long nFaces, sort_type nSortType);
+short* (*InsertObjectGT3)(short* pFaceInfo, long nFaces, sort_type nSortType);
+short* (*InsertObjectG4)(short* pFaceInfo, long nFaces, sort_type nSortType);
+short* (*InsertObjectG3)(short* pFaceInfo, long nFaces, sort_type nSortType);
+short* (*RoomInsertObjectGT4)(short* pFaceInfo, long nFaces, sort_type nSortType);
+short* (*RoomInsertObjectGT3)(short* pFaceInfo, long nFaces, sort_type nSortType);
+void (*InsertFlatRect)(long x1, long y1, long x2, long y2, long zdepth, long col);
+void (*InsertTrans8)(PHD_VBUF* buf, short shade);
+void (*InsertSprite)(long zdepth, long x1, long y1, long x2, long y2, long nSprite, long shade, long shade1, long nDrawType, long offset);
+void (*InsertTransQuad)(long x, long y, long w, long h, long z);
+
 long sort3d_bufferbf[MAX_SORTLISTS];
 long sort3d_bufferfb[MAX_SORTLISTS];
 short info3d_bufferbf[MAX_SORTLISTS];
