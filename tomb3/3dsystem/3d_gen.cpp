@@ -332,7 +332,7 @@ void AlterFOV(short fov)
 
 void phd_PushMatrix()
 {
-	memcpy(phd_mxptr + 12, phd_mxptr, 48);
+	memcpy(phd_mxptr + indices_count, phd_mxptr, indices_count * sizeof(long));
 	phd_mxptr += indices_count;
 }
 
