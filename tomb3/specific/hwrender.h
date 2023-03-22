@@ -37,3 +37,5 @@ extern HRESULT (*SetRenderState)(D3DRENDERSTATETYPE, ulong);
 extern HRESULT (*BeginScene)();
 extern HRESULT (*EndScene)();
 extern void (*DrawRoutine)(long, D3DTLVERTEX*, long, long);
+
+extern uchar ColorTable[256];

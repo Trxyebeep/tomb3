@@ -11,6 +11,7 @@
 #include "../game/triboss.h"
 #include "../game/londboss.h"
 #include "output.h"
+#include "transform.h"
 #ifdef TROYESTUFF
 #include "../game/sub.h"
 #include "../game/lara.h"

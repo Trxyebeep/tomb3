@@ -7,6 +7,8 @@
 #include "../tomb3/tomb3.h"
 #endif
 
+static float UVTable[65536];
+
 static __inline bool CheckDrawType(long nDrawType)
 {
 #ifdef TROYESTUFF

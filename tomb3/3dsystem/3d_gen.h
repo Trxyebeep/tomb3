@@ -49,3 +49,6 @@ extern long sort3d_bufferbf[MAX_SORTLISTS];
 extern long sort3d_bufferfb[MAX_SORTLISTS];
 extern short info3d_bufferbf[MAX_SORTLISTS];
 extern short info3d_bufferfb[MAX_SORTLISTS];
+
+extern long w2v_matrix[indices_count];
+extern long matrix_stack[40 * indices_count];

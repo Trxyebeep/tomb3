@@ -1,6 +1,9 @@
 #include "../tomb3/pch.h"
 #include "transform.h"
 #include "../3dsystem/phd_math.h"
+#include "init.h"
+
+float ZTable[40960];
 
 void InitZTable()
 {

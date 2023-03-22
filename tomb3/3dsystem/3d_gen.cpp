@@ -31,6 +31,9 @@ long sort3d_bufferfb[MAX_SORTLISTS];
 short info3d_bufferbf[MAX_SORTLISTS];
 short info3d_bufferfb[MAX_SORTLISTS];
 
+long w2v_matrix[indices_count];
+long matrix_stack[40 * indices_count];
+
 void phd_PutPolygons(short* objptr, long clip)
 {
 	short* newPtr;

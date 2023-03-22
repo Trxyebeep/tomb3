@@ -14,8 +14,11 @@ HRESULT (*BeginScene)();
 HRESULT (*EndScene)();
 void (*DrawRoutine)(long, D3DTLVERTEX*, long, long);
 
-bool zBufWriteEnabled;
-bool zBufCompareEnabled;
+uchar ColorTable[256];
+
+static bool zBufWriteEnabled;
+static bool zBufCompareEnabled;
+
 
 void HWR_EnableZBuffer(bool write, bool compare)
 {

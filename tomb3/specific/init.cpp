@@ -68,6 +68,16 @@ const char* game_malloc_types[47] =
 	"Sprite Infos"
 };
 
+long RColorTable[33][33][33];
+long GColorTable[33][33][33];
+long BColorTable[33][33][33];
+WATERTAB WaterTable[22][64];
+float wibble_table[32];
+
+static short shade_table[32];
+static long rand_table[32];
+static long wibble_light[32][32];
+
 void ShutdownGame()
 {
 #ifdef TROYESTUFF
