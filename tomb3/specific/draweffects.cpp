@@ -2919,6 +2919,11 @@ void DrawTonyBossShield(ITEM_INFO* item)
 				c4 = s1->rgb;
 				s0++;
 				s1++;
+
+#ifdef TROYESTUFF
+				if (s1 - TonyBossShield >= sizeof(TonyBossShield) / sizeof(SHIELD_POINTS))
+					s1 = &TonyBossShield[39];
+#endif
 			}
 
 #ifdef TROYESTUFF
@@ -3135,6 +3140,11 @@ void DrawTribeBossShield(ITEM_INFO* item)
 				c4 = s1->rgb;
 				s0++;
 				s1++;
+
+#ifdef TROYESTUFF
+				if (s1 - TribeBossShield >= sizeof(TribeBossShield) / sizeof(SHIELD_POINTS))
+					s1 = &TribeBossShield[39];
+#endif
 			}
 
 #ifdef TROYESTUFF
@@ -3350,6 +3360,11 @@ void DrawLondonBossShield(ITEM_INFO* item)
 				c4 = s1->rgb;
 				s0++;
 				s1++;
+
+#ifdef TROYESTUFF
+				if (s1 - LondonBossShield >= sizeof(LondonBossShield) / sizeof(SHIELD_POINTS))
+					s1 = &LondonBossShield[39];
+#endif
 			}
 
 #ifdef TROYESTUFF
@@ -3565,6 +3580,11 @@ void DrawWillBossShield(ITEM_INFO* item)
 				c4 = s1->rgb;
 				s0++;
 				s1++;
+
+#ifdef TROYESTUFF
+				if (s1 - WillBossShield >= sizeof(WillBossShield) / sizeof(SHIELD_POINTS))
+					s1 = &WillBossShield[39];
+#endif
 			}
 
 #ifdef TROYESTUFF

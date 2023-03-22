@@ -5,6 +5,7 @@
 ### Original bug fixes
 
 - Fix Lara refusing to go in some crawlspaces.
+- Fix unsafe memory access in boss shield drawing routines.
 
 ### tomb3 additions
 
