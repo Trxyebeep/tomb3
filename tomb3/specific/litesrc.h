@@ -11,3 +11,6 @@ void S_CalculateLight(long x, long y, long z, short room_number, ITEM_LIGHT* il)
 extern PHD_VECTOR LPos[3];
 extern long LightPos[12];
 extern long LightCol[12];
+extern long smcr;
+extern long smcg;
+extern long smcb;

@@ -18,6 +18,7 @@
 #include "larafire.h"
 #ifdef TROYESTUFF
 #include "effect2.h"
+#include "../specific/input.h"
 #include "../tomb3/tomb3.h"
 #endif
 

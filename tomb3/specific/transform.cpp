@@ -3,6 +3,7 @@
 #include "../3dsystem/phd_math.h"
 #include "init.h"
 #include "../3dsystem/hwinsert.h"
+#include "../game/effect2.h"
 
 float ZTable[40960];
 

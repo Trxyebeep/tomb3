@@ -33,3 +33,6 @@ void S_DrawSubWakeFX(ITEM_INFO* item);
 void SuperDrawBox(short* bounds, long col);
 void SuperDrawBox(long x, long y, long z, short* bounds, long col);
 #endif
+
+extern EXPLOSION_RING ExpRings[6];
+extern WAKE_PTS WakePts[32][2];

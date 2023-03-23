@@ -10,11 +10,19 @@
 #include "../game/lasers.h"
 #include "../game/triboss.h"
 #include "../game/londboss.h"
+#include "../game/tonyboss.h"
+#include "../game/willboss.h"
 #include "output.h"
 #include "transform.h"
+#include "../game/fish.h"
+#include "../game/effect2.h"
+#include "file.h"
+#include "../game/laraelec.h"
 #ifdef TROYESTUFF
 #include "../game/sub.h"
 #include "../game/lara.h"
+#include "../game/footprnt.h"
+#include "../game/draw.h"
 #include "../tomb3/tomb3.h"
 #endif
 
@@ -81,6 +89,9 @@ static SNOWFLAKE snowflakes[MAX_WEATHER];
 #ifdef TROYESTUFF
 static RAINDROP uwparts[MAX_WEATHER];
 #endif
+
+EXPLOSION_RING ExpRings[6];
+WAKE_PTS WakePts[32][2];
 
 #ifdef TROYESTUFF
 static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, short c, bool cFlag)

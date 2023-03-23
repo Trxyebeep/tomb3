@@ -10,6 +10,8 @@
 #endif
 
 DXTEXTURE PictureTextures[MAX_TPAGES];
+long OldPicTexIndices[5];
+long CurPicTexIndices[5];
 
 #ifdef TROYESTUFF
 bool bDontGreyOut;

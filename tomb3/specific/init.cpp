@@ -12,6 +12,7 @@
 #include "transform.h"
 #include "../3dsystem/hwinsert.h"
 #include "picture.h"
+#include "smain.h"
 #ifdef TROYESTUFF
 #include "fmv.h"
 #include "../newstuff/discord.h"

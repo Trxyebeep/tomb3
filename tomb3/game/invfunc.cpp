@@ -97,6 +97,8 @@ short gLevelSecrets[21] = { 0, 3, 3, 3, 3, 3, 0, 3, 1, 5, 5, 6, 1, 3, 2, 3, 3, 3
 #endif
 short LevelSecrets[21] = { 0, 6, 4, 5, 0, 3, 3, 3, 1, 5, 5, 6, 1, 3, 2, 3, 3, 3, 3, 0, 0 };
 
+short inv_colours[17];
+
 void InitColours()
 {
 	inv_colours[0] = S_COLOUR(0, 0, 0);

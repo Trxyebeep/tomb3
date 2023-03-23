@@ -3,10 +3,14 @@
 #include "../3dsystem/phd_math.h"
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
+#include "../game/effect2.h"
 
 PHD_VECTOR LPos[3];
 long LightPos[12];
 long LightCol[12];
+long smcr;
+long smcg;
+long smcb;
 
 void S_CalculateStaticLight(short adder)
 {

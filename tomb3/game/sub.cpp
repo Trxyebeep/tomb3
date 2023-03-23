@@ -30,6 +30,8 @@ BITE_INFO sub_bites[6] =
 	{ 0, 0, -64, 2 }
 };
 
+SUB_WAKE_PTS SubWakePts[32][2];
+
 void SubInitialise(short item_number)
 {
 	ITEM_INFO* item;

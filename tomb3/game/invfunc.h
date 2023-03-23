@@ -60,6 +60,8 @@ extern GOURAUD_OUTLINE req_bgnd_gour2;
 extern GOURAUD_FILL req_sel_gour1;
 extern GOURAUD_OUTLINE req_sel_gour2;
 
+extern short inv_colours[17];
+
 #ifdef TROYESTUFF
 extern short gLevelSecrets[21];
 #endif

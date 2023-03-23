@@ -30,3 +30,5 @@ long Read_Strings(long num, char** strings, char** buffer, ulong* read, HANDLE f
 long S_LoadGameFlow(const char* name);
 
 extern PHDTEXTURESTRUCT phdtextinfo[MAX_TINFOS];
+extern PHDSPRITESTRUCT phdspriteinfo[512];
+extern uchar G_GouraudPalette[1024];

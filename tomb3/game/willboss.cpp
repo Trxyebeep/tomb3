@@ -34,6 +34,8 @@ static long junction_index[4];
 static PHD_3DPOS ai_path[16];
 static PHD_3DPOS ai_junction[4];
 
+SHIELD_POINTS WillBossShield[40];
+
 static void TriggerPlasmaBallFlame(short fx_number, long type, long xv, long yv, long zv)
 {
 	FX_INFO* fx;

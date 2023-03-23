@@ -13,6 +13,8 @@
 #include "traps.h"
 #include "pickup.h"
 #ifdef TROYESTUFF
+#include "londboss.h"
+#include "../specific/draweffects.h"
 #include "../newstuff/map.h"
 #include "../tomb3/tomb3.h"
 #endif

@@ -10,6 +10,7 @@
 #include "ds.h"
 #include "specific.h"
 #include "picture.h"
+#include "smain.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
@@ -23,6 +24,8 @@ if (!Read_Strings(readSize, main, &buffer, &read, file)) return 0;\
 }
 
 PHDTEXTURESTRUCT phdtextinfo[MAX_TINFOS];
+PHDSPRITESTRUCT phdspriteinfo[512];
+uchar G_GouraudPalette[1024];
 static uchar TexturesUVFlag[MAX_TINFOS];
 static uchar game_palette[768];
 #ifndef TROYESTUFF

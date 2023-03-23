@@ -44,3 +44,7 @@ void KillAllCurrentItems(short item_number);
 void TriggerBats(long x, long y, long z, short ang);
 void BatEmitterControl(short item_number);
 void UpdateBats();
+
+extern SPARKS sparks[192];
+extern DYNAMIC dynamics[64];
+extern long number_dynamics;

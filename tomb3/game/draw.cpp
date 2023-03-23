@@ -23,8 +23,16 @@
 #include "../tomb3/tomb3.h"
 #endif
 
-short null_rotations[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 static uchar EnemyWeapon[16] = { 0, 1, 129, 0, 1, 1,  1 };
+static long bound_list[128];
+
+long box_lines[12][2] = { {0, 1}, {1, 2}, {2, 3}, {3, 0}, {4, 5}, {5, 6}, {6, 7}, {7, 4}, {0, 4}, {1, 5}, {2, 6}, {3, 7} };
+short null_rotations[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+long IMstack[768];
+long number_draw_rooms;
+short draw_rooms[100];
+char IsJointUnderwater[15];
+char GotJointPos[15];
 
 static BITE_INFO EnemyBites[16] =	//bite_offsets enum
 {

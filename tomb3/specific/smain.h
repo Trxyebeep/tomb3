@@ -9,6 +9,7 @@ void CheckCheatMode();
 long TitleSequence();
 long GameMain();
 
+extern char exit_message[128];
 extern bool inject_rando;
 
 #ifdef RANDO_STUFF

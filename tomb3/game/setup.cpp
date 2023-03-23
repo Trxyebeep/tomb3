@@ -88,6 +88,7 @@
 #include "lasers.h"
 #include "hair.h"
 #ifdef TROYESTUFF
+#include "footprnt.h"
 #include "../newstuff/map.h"
 #include "../tomb3/tomb3.h"
 #endif

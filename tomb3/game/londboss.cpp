@@ -34,6 +34,9 @@ static long dheights2[5] = { -1536, -1152, -768, -384, 0 };
 static long death_radii[5];
 static long death_heights[5];
 
+SHIELD_POINTS LondonBossShield[40];
+EXPLOSION_RING KBRings[3];
+
 static void TriggerPlasmaBall(ITEM_INFO* item, long type, PHD_VECTOR* pos, short room_number, short angle)
 {
 	FX_INFO* fx;

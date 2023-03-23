@@ -56,6 +56,9 @@ short layout[2][NLAYOUTKEYS] =
 #endif
 };
 
+long conflict[15];
+uchar keymap[256];
+
 long Key(long number)
 {
 	short key;

@@ -8,6 +8,7 @@
 #include "lara.h"
 #include "../3dsystem/phd_math.h"
 #include "sound.h"
+#include "fish.h"
 
 static short SplashRings[8][2] =
 {
@@ -20,6 +21,12 @@ static short SplashRings[8][2] =
 	{-24, 0},
 	{-17, -17}
 };
+
+SPARKS sparks[192];
+static SP_DYNAMIC spark_dynamics[32];
+
+DYNAMIC dynamics[64];
+long number_dynamics;
 
 void TriggerDynamic(long x, long y, long z, long falloff, long r, long g, long b)
 {

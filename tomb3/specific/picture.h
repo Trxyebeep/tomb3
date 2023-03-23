@@ -24,6 +24,8 @@ void DoInventoryPicture();
 void FreePictureTextures(long* indices);
 
 extern DXTEXTURE PictureTextures[MAX_TPAGES];
+extern long OldPicTexIndices[5];
+extern long CurPicTexIndices[5];
 
 #ifdef TROYESTUFF
 extern bool bDontGreyOut;

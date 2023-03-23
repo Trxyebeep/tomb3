@@ -24,6 +24,8 @@ static long dheights2[5] = { -1536, -1152, -768, -384, 0 };
 static long death_radii[5];
 static long death_heights[5];
 
+SHIELD_POINTS TonyBossShield[40];
+
 static void TriggerTonyFlame(short item_number, long node)
 {
 	ITEM_INFO* item;

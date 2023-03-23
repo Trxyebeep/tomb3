@@ -26,6 +26,8 @@
 #include "../tomb3/tomb3.h"
 #endif
 
+char exit_message[128];
+
 #ifdef RANDO_STUFF
 rando_info rando;
 bool inject_rando = 1;
