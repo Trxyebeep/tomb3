@@ -41,3 +41,5 @@ long RoomZedClipper(long n, POINT_INFO* in, VERTEX_INFO* out);
 long RoomXYGUVClipper(long n, VERTEX_INFO* in);
 long XYGClipper(long n, VERTEX_INFO* in);
 long XYClipper(long n, VERTEX_INFO* in);
+
+extern PHD_VBUF vbuf[1500];

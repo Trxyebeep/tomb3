@@ -1,6 +1,7 @@
 #include "../tomb3/pch.h"
 #include "scalespr.h"
 #include "3d_gen.h"
+#include "hwinsert.h"
 #ifdef TROYESTUFF
 #include "../specific/output.h"
 #include "../tomb3/tomb3.h"

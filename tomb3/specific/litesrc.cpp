@@ -2,6 +2,11 @@
 #include "litesrc.h"
 #include "../3dsystem/phd_math.h"
 #include "../3dsystem/3d_gen.h"
+#include "../3dsystem/hwinsert.h"
+
+PHD_VECTOR LPos[3];
+long LightPos[12];
+long LightCol[12];
 
 void S_CalculateStaticLight(short adder)
 {

@@ -2,6 +2,7 @@
 #include "transform.h"
 #include "../3dsystem/phd_math.h"
 #include "init.h"
+#include "../3dsystem/hwinsert.h"
 
 float ZTable[40960];
 

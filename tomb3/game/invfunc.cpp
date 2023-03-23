@@ -10,6 +10,7 @@
 #include "objects.h"
 #include "health.h"
 #include "items.h"
+#include "../specific/litesrc.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif

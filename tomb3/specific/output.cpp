@@ -34,6 +34,8 @@ static short shadow[6 + (3 * 8)] =
 	0, 0, 0,
 };
 
+static long light_level[4];
+
 void S_PrintShadow(short size, short* box, ITEM_INFO* item)
 {
 	long x0, x1, z0, z1, midX, midZ, xAdd, zAdd;

@@ -326,6 +326,7 @@ short* GetBoundsAccurate(ITEM_INFO* item)
 	short* frmptr[2];
 	short* bptr;
 	long frac, rate;
+	static short interpolated_bounds[6];
 
 	frac = GetFrames(item, frmptr, &rate);
 

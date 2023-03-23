@@ -14,7 +14,11 @@
 
 ushort S_COLOUR(long r, long g, long b)
 {
+#ifdef TROYESTUFF
+	return 0;
+#else
 	return SWR_FindNearestPaletteEntry(game_palette, r, g, b, 0);
+#endif
 }
 
 void S_DrawScreenLine(long x, long y, long z, long w, long h, long c, GOURAUD_FILL* grdptr, ushort f)

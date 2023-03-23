@@ -24,6 +24,7 @@ if (!Read_Strings(readSize, main, &buffer, &read, file)) return 0;\
 
 PHDTEXTURESTRUCT phdtextinfo[MAX_TINFOS];
 static uchar TexturesUVFlag[MAX_TINFOS];
+static uchar game_palette[768];
 #ifndef TROYESTUFF
 static char texture_page_ptrs[MAX_TPAGES];
 #endif
@@ -544,6 +545,9 @@ long LoadItems(HANDLE file)
 long LoadDepthQ(HANDLE file)
 {
 	ulong read;
+	static uchar water_palette[768];
+	static char depthq_table[33][256];
+	static char gouraud_table[256][32];
 
 	MyReadFile(file, depthq_table, 0x2000, &read, 0);
 

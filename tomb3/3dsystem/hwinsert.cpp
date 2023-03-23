@@ -8,6 +8,9 @@
 #endif
 
 static float UVTable[65536];
+static VERTEX_INFO v_buffer[40];
+
+PHD_VBUF vbuf[1500];
 
 static __inline bool CheckDrawType(long nDrawType)
 {
@@ -1530,11 +1533,15 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 	D3DTLVERTEX* v;
 	long* sort;
 	short* info;
+#ifndef TROYESTUFF
 	uchar* pC;
+#endif
 	float z;
 	long nBucket;
 
+#ifndef TROYESTUFF
 	pC = &game_palette[3 * col];
+#endif
 
 	if (x2 <= x1 || y2 <= y1)
 		return;
