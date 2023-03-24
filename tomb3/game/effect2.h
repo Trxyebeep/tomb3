@@ -46,5 +46,8 @@ void BatEmitterControl(short item_number);
 void UpdateBats();
 
 extern SPARKS sparks[192];
+extern BAT_STRUCT bats[32];
+extern SPLASH_STRUCT splashes[4];
+extern RIPPLE_STRUCT ripples[16];
 extern DYNAMIC dynamics[64];
 extern long number_dynamics;

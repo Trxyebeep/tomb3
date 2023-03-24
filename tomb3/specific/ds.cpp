@@ -6,6 +6,8 @@ static LPDIRECTSOUNDBUFFER DS_Buffers[256];
 static ulong DS_SampleFrequencies[256];
 static long DS_SamplesPlaying[32];
 
+LPDIRECTSOUNDBUFFER DS_Samples[32];
+
 std::list<DXDIRECTSOUNDINFO> DS_AdapterList;
 std::list<DXDIRECTSOUNDINFO>::iterator PrimaryAdapter;
 

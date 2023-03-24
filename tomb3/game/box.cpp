@@ -11,6 +11,9 @@
 #include "items.h"
 #include "sphere.h"
 
+short* ground_zone[4][2];
+short* fly_zone[2];
+
 void AlertNearbyGuards(ITEM_INFO* item)
 {
 	ITEM_INFO* target;

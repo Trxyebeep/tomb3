@@ -28,3 +28,6 @@ void TriggerNormalCDTrack(short value, short flags, short type);
 long CheckNoColFloorTriangle(FLOOR_INFO* floor, long x, long z);
 long CheckNoColCeilingTriangle(FLOOR_INFO* floor, long x, long z);
 long IsRoomOutside(long x, long y, long z);
+
+extern long flipmap[10];
+extern char cd_flags[128];

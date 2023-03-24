@@ -10,3 +10,5 @@ void DrawInventoryItem(INVENTORY_ITEM* item);
 void GetGlobeMeshFlags();
 void Construct_Inventory();
 long Display_Inventory(long mode);
+
+extern long Inventory_ExtraData[8];

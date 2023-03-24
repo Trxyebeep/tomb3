@@ -11,6 +11,9 @@
 #include "specific.h"
 #include "picture.h"
 #include "smain.h"
+#include "../game/gameflow.h"
+#include "../game/box.h"
+#include "../game/sound.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
@@ -28,6 +31,7 @@ PHDSPRITESTRUCT phdspriteinfo[512];
 uchar G_GouraudPalette[1024];
 static uchar TexturesUVFlag[MAX_TINFOS];
 static uchar game_palette[768];
+static char LastLoadedLevelPath[256];
 #ifndef TROYESTUFF
 static char texture_page_ptrs[MAX_TPAGES];
 #endif

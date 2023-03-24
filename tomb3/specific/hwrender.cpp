@@ -3,6 +3,7 @@
 #include "hwrender.h"
 #include "texture.h"
 #include "picture.h"
+#include "../3dsystem/hwinsert.h"
 #ifdef TROYESTUFF
 #include "drawbars.h"
 #include "../tomb3/tomb3.h"

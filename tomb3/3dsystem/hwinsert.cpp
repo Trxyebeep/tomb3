@@ -11,6 +11,7 @@ static float UVTable[65536];
 static VERTEX_INFO v_buffer[40];
 
 PHD_VBUF vbuf[1500];
+TEXTUREBUCKET Buckets[6];
 
 static __inline bool CheckDrawType(long nDrawType)
 {

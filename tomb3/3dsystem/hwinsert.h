@@ -43,3 +43,4 @@ long XYGClipper(long n, VERTEX_INFO* in);
 long XYClipper(long n, VERTEX_INFO* in);
 
 extern PHD_VBUF vbuf[1500];
+extern TEXTUREBUCKET Buckets[6];

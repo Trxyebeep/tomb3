@@ -87,11 +87,16 @@
 #include "dragfire.h"
 #include "lasers.h"
 #include "hair.h"
+#include "control.h"
 #ifdef TROYESTUFF
 #include "footprnt.h"
 #include "../newstuff/map.h"
 #include "../tomb3/tomb3.h"
 #endif
+
+short IsRoomOutsideNo;
+char* OutsideRoomTable;
+short OutsideRoomOffsets[729];
 
 void GetAIPickups()
 {

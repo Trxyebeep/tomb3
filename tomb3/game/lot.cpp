@@ -2,6 +2,7 @@
 #include "lot.h"
 #include "../specific/init.h"
 #include "objects.h"
+#include "box.h"
 
 void InitialiseLOTarray()
 {

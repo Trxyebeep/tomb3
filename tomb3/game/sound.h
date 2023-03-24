@@ -384,3 +384,5 @@ enum sound_effect_names
 
 	NumSamples
 };
+
+extern short sample_lut[370];

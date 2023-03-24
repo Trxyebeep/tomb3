@@ -4,6 +4,7 @@
 #include "../specific/game.h"
 #include "effects.h"
 #include "sound.h"
+#include "objects.h"
 
 static BITE_INFO tribeaxe_hit = { 0, 16, 265, 13 };
 

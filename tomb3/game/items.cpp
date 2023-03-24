@@ -1,6 +1,7 @@
 #include "../tomb3/pch.h"
 #include "items.h"
 #include "effect2.h"
+#include "objects.h"
 #ifdef TROYESTUFF
 #include "../newstuff/map.h"
 #endif

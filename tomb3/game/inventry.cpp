@@ -22,6 +22,8 @@
 #include "../tomb3/tomb3.h"
 #endif
 
+long Inventory_ExtraData[8];
+
 long GetDebouncedInput(long in)
 {
 	static long db;

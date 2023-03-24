@@ -10,3 +10,7 @@ void InitialiseGameFlags();
 long InitialiseLevel(long level, long type);
 void BuildOutsideTable();
 void InitialiseObjects();
+
+extern short IsRoomOutsideNo;
+extern char* OutsideRoomTable;
+extern short OutsideRoomOffsets[729];

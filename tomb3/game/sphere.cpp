@@ -2,6 +2,7 @@
 #include "sphere.h"
 #include "../3dsystem/3d_gen.h"
 #include "draw.h"
+#include "objects.h"
 
 void InitInterpolate2(long frac, long rate)
 {

@@ -8,6 +8,7 @@
 #include "../specific/game.h"
 #include "../game/effect2.h"
 #include "../game/control.h"
+#include "../game/objects.h"
 
 //Calculate Lara's matrices twice (once for drawing another for mesh pos getting) every draw loop
 //instead of multiple times for every little thing.

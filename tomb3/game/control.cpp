@@ -25,10 +25,16 @@
 #include "pickup.h"
 #include "draw.h"
 #include "moveblok.h"
+#include "setup.h"
 #ifdef TROYESTUFF
 #include "../newstuff/pausemenu.h"
 #include "../newstuff/discord.h"
 #endif
+
+long flipmap[10];
+char cd_flags[128];
+static long number_los_rooms;
+static long los_rooms[20];
 
 long ControlPhase(long nframes, long demo_mode)
 {

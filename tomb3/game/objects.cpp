@@ -18,6 +18,9 @@ static short final_boss_count;
 static short final_level_count;
 static short final_boss[5];
 
+OBJECT_INFO objects[NUMBER_OBJECTS];
+STATIC_INFO static_objects[NUMBER_STATIC_OBJECTS];
+
 long OnDrawBridge(ITEM_INFO* item, long z, long x)
 {
 	long ix, iz;

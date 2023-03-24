@@ -3,6 +3,7 @@
 #include "box.h"
 #include "gameflow.h"
 #include "effects.h"
+#include "objects.h"
 
 static BITE_INFO cobra_hit = { 0, 0, 0, 13 };
 

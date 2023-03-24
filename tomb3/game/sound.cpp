@@ -4,6 +4,9 @@
 #include "../specific/game.h"
 #include "../3dsystem/phd_math.h"
 
+static SOUND_SLOT LaSlot[32];
+short sample_lut[370];
+
 void SOUND_Init()
 {
 	for (int i = 0; i < 32; i++)

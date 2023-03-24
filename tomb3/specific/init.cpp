@@ -78,6 +78,7 @@ float wibble_table[32];
 static short shade_table[32];
 static long rand_table[32];
 static long wibble_light[32][32];
+static long SqrtTable[1024];
 
 void ShutdownGame()
 {

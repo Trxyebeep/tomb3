@@ -239,3 +239,11 @@ enum gf_event_types
 	GFE_KILL2COMPLETE,
 	GFE_REMOVE_AMMO
 };
+
+extern short* GF_level_sequence_list[24];
+extern short GF_Offsets[200];
+extern short GF_valid_demos[24];
+extern short GF_CDtracks[16];
+extern char GF_Description[256];
+extern char GF_Add2InvItems[30];
+extern char GF_SecretInvItems[30];

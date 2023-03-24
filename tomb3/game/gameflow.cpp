@@ -13,6 +13,14 @@
 #include "../specific/picture.h"
 #include "demo.h"
 
+short* GF_level_sequence_list[24];
+short GF_Offsets[200];
+short GF_valid_demos[24];
+short GF_CDtracks[16];
+char GF_Description[256];
+char GF_Add2InvItems[30];
+char GF_SecretInvItems[30];
+
 long GF_LoadScriptFile(const char* name)
 {
 	GF_SunsetEnabled = 0;

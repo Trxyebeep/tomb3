@@ -2,6 +2,7 @@
 #include "audio.h"
 #include "file.h"
 
+static TRACK_INFO TrackInfos[130];
 static LPDIRECTSOUNDBUFFER DSBuffer;
 static LPDIRECTSOUNDNOTIFY DSNotify;
 static ACMSTREAMHEADER StreamHeaders[4];

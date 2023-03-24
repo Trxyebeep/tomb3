@@ -25,6 +25,7 @@
 
 static long rand_1 = 0xD371F947;
 static long rand_2 = 0xD371F947;
+static short saved_levels[24] = { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 long GetRandomControl()
 {

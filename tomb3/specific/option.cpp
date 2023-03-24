@@ -11,7 +11,7 @@
 #include "../game/objects.h"
 #include "../game/sound.h"
 #include "game.h"
-
+#include "../game/inventry.h"
 #ifdef TROYESTUFF
 #include "output.h"
 #include "smain.h"

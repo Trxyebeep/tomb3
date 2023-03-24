@@ -97,7 +97,13 @@ short gLevelSecrets[21] = { 0, 3, 3, 3, 3, 3, 0, 3, 1, 5, 5, 6, 1, 3, 2, 3, 3, 3
 #endif
 short LevelSecrets[21] = { 0, 6, 4, 5, 0, 3, 3, 3, 1, 5, 5, 6, 1, 3, 2, 3, 3, 3, 3, 0, 0 };
 
+ulong RequesterFlags1[24];
+ulong RequesterFlags2[24];
+ulong SaveGameReqFlags1[24];
+ulong SaveGameReqFlags2[24];
 short inv_colours[17];
+char Valid_Level_Strings[24][50];
+char Valid_Level_Strings2[24][50];
 
 void InitColours()
 {

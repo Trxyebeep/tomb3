@@ -7,6 +7,8 @@
 #include "../specific/draweffects.h"
 #include "effects.h"
 
+uchar LaserShades[32];
+
 static void LaserSplitterToggle(ITEM_INFO* item)
 {
 	FLOOR_INFO* floor;

@@ -60,7 +60,13 @@ extern GOURAUD_OUTLINE req_bgnd_gour2;
 extern GOURAUD_FILL req_sel_gour1;
 extern GOURAUD_OUTLINE req_sel_gour2;
 
+extern ulong RequesterFlags1[24];
+extern ulong RequesterFlags2[24];
+extern ulong SaveGameReqFlags1[24];
+extern ulong SaveGameReqFlags2[24];
 extern short inv_colours[17];
+extern char Valid_Level_Strings[24][50];
+extern char Valid_Level_Strings2[24][50];
 
 #ifdef TROYESTUFF
 extern short gLevelSecrets[21];

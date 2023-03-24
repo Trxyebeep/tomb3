@@ -4,6 +4,7 @@
 #include "../specific/game.h"
 #include "../3dsystem/phd_math.h"
 #include "effects.h"
+#include "objects.h"
 
 static BITE_INFO dog_bite = { 0, 0, 100, 3 };
 
