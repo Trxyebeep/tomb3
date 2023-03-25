@@ -46,15 +46,6 @@ do \
 #define SPR_BLEND_ADD		0x20000000
 #define SPR_BLEND_SUB		0x40000000
 
-	/**********************************/
-#define MALLOC	( (void*(__cdecl*)(size_t)) 0x004B6730 )
-#define REALLOC	( (void*(__cdecl*)(void*, size_t)) 0x004B6EA0 )
-#define FREE	( (void(__cdecl*)(void*)) 0x004B66E0 )
-
-#define GLOBALALLOC    ( *(HGLOBAL(__stdcall**)(UINT, SIZE_T)) 0x004C311C )
-#define GLOBALFREE    ( *(HGLOBAL(__stdcall**)(HGLOBAL)) 0x004C3120 )
-	/**********************************/
-
 /********************DX defs********************/
 #if (DIRECT3D_VERSION >= 0x900)
 #define LPDIRECT3DX				LPDIRECT3D9

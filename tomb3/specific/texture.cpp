@@ -188,7 +188,7 @@ void DXTextureCleanup(long index, DXTEXTURE* list)
 
 	if (tex->pData)
 	{
-		GLOBALFREE(tex->pData);
+		GlobalFree(tex->pData);
 		tex->pData = 0;
 	}
 
@@ -407,7 +407,7 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 	{
 		if (App.DXConfig.MMX)
 		{
-			tex->pData = (ulong*)GLOBALALLOC(GMEM_FIXED, 0x55400);
+			tex->pData = (ulong*)GlobalAlloc(GMEM_FIXED, 0x55400);
 			memcpy(tex->pData, desc.lpSurface, 0x40000);
 			MMXTextureCopy(tex->pData + 0x10000, (uchar*)desc.lpSurface, 2);
 			MMXTextureCopy(tex->pData + 0x14000, (uchar*)desc.lpSurface, 4);
@@ -416,7 +416,7 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 		}
 		else
 		{
-			tex->pData = (ulong*)GLOBALALLOC(GMEM_FIXED, 0x20000);
+			tex->pData = (ulong*)GlobalAlloc(GMEM_FIXED, 0x20000);
 			memcpy(tex->pData, desc.lpSurface, 0x20000);
 		}
 	}

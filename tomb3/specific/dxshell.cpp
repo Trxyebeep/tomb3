@@ -174,9 +174,9 @@ __inline void* AddStruct(void* p, long num, long size)	//Note: this function was
 	void* ptr;
 
 	if (!num)
-		ptr = MALLOC(size);
+		ptr = malloc(size);
 	else
-		ptr = REALLOC(p, size * (num + 1));
+		ptr = realloc(p, size * (num + 1));
 
 	memset((char*)ptr + size * num, 0, size);
 	return ptr;
@@ -381,21 +381,21 @@ void DXFreeDeviceInfo(DEVICEINFO* device)
 
 		for (int j = 0; j < dinfo->nD3DInfo; j++)
 		{
-			FREE(dinfo->D3DInfo[j].DisplayMode);
-			FREE(dinfo->D3DInfo[j].Texture);
+			free(dinfo->D3DInfo[j].DisplayMode);
+			free(dinfo->D3DInfo[j].Texture);
 		}
 
-		FREE(dinfo->D3DInfo);
-		FREE(dinfo->DisplayMode);
+		free(dinfo->D3DInfo);
+		free(dinfo->DisplayMode);
 	}
 
-	FREE(device->DDInfo);
+	free(device->DDInfo);
 
 	if (device->DSInfo)
-		FREE(device->DSInfo);
+		free(device->DSInfo);
 
 	if (device->DIInfo)
-		FREE(device->DIInfo);
+		free(device->DIInfo);
 
 	memset(device, 0, sizeof(DEVICEINFO));
 }

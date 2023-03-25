@@ -294,7 +294,7 @@ void WinFreeDX(bool free_dd)
 	}
 
 	if (App.unk)
-		FREE(App.unk);
+		free(App.unk);
 
 	if (free_dd)
 	{

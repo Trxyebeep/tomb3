@@ -94,14 +94,14 @@ void ShutdownGame()
 	FreeWinPlay();
 #endif
 
-	GLOBALFREE(TLVertexBuffer);
-	GLOBALFREE(TLUnRollBuffer);
+	GlobalFree(TLVertexBuffer);
+	GlobalFree(TLUnRollBuffer);
 	DXFreeTPages();
 	ACMClose();
 	DXSetCooperativeLevel(App.lpDD, App.WindowHandle, DDSCL_NORMAL);
 
 	if (malloc_buffer)
-		GLOBALFREE(malloc_buffer);
+		GlobalFree(malloc_buffer);
 
 	DXClearAllTextures(PictureTextures);
 	DI_Finish();
@@ -250,10 +250,10 @@ long S_InitialiseSystem()
 	InitZTable();
 	InitUVTable();
 
-	TLVertexBuffer = (D3DTLVERTEX*)GLOBALALLOC(GMEM_FIXED, MAX_TLVERTICES * sizeof(D3DTLVERTEX));
+	TLVertexBuffer = (D3DTLVERTEX*)GlobalAlloc(GMEM_FIXED, MAX_TLVERTICES * sizeof(D3DTLVERTEX));
 	VertexBuffer = (D3DTLVERTEX*)(((long)TLVertexBuffer + 32) & 0xFFFFFFE0);
 
-	TLUnRollBuffer = (D3DTLVERTEX*)GLOBALALLOC(GMEM_FIXED, MAX_TLVERTICES * sizeof(D3DTLVERTEX));
+	TLUnRollBuffer = (D3DTLVERTEX*)GlobalAlloc(GMEM_FIXED, MAX_TLVERTICES * sizeof(D3DTLVERTEX));
 	UnRollBuffer = (D3DTLVERTEX*)(((long)TLUnRollBuffer + 32) & 0xFFFFFFE0);
 
 	for (int i = 0; i < 1024; i++)
