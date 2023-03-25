@@ -68,6 +68,14 @@ extern short inv_colours[17];
 extern char Valid_Level_Strings[24][50];
 extern char Valid_Level_Strings2[24][50];
 
+extern TEXTSTRING* Inv_itemText[3];
+extern short inv_main_qtys[23];
+extern short inv_keys_qtys[23];
+extern INVENTORY_ITEM* inv_main_list[23];
+extern INVENTORY_ITEM* inv_keys_list[23];
+extern INVENTORY_ITEM* inv_option_list[5];
+extern INVENTORY_ITEM* inv_levelselect_list[1];
+
 #ifdef TROYESTUFF
 extern short gLevelSecrets[21];
 #endif

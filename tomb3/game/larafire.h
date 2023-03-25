@@ -14,3 +14,5 @@ void LaraGetNewTarget(WEAPON_INFO* winfo);
 void InitialiseNewWeapon();
 void LaraGun();
 void DoProperDetection(short item_number, long x, long y, long z, long xv, long yv, long zv);
+
+extern WEAPON_INFO weapons[11];

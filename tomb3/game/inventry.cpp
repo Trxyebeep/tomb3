@@ -23,6 +23,7 @@
 #endif
 
 long Inventory_ExtraData[8];
+uchar GlobeLevelComplete[6];
 
 long GetDebouncedInput(long in)
 {

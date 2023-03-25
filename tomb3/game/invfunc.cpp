@@ -105,6 +105,61 @@ short inv_colours[17];
 char Valid_Level_Strings[24][50];
 char Valid_Level_Strings2[24][50];
 
+TEXTSTRING* Inv_itemText[3];
+short inv_main_qtys[23] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+short inv_keys_qtys[23] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+INVENTORY_ITEM* inv_main_list[23] =
+{
+	&icompass_option,
+	&iflare_option,
+	&igun_option,
+	&ishotgun_option,
+	&imagnum_option,
+	&iuzi_option,
+	&im16_option,
+	&irocket_option,
+	&igrenade_option,
+	&iharpoon_option,
+	&ibigmedi_option,
+	&imedi_option,
+	&sgcrystal_option,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+INVENTORY_ITEM* inv_keys_list[23] =
+{
+	&ipuzzle1_option,
+	&ipuzzle2_option,
+	&ipuzzle3_option,
+	&ipuzzle4_option,
+	&ikey1_option,
+	&ikey2_option,
+	&ikey3_option,
+	&ikey4_option,
+	&ipickup1_option,
+	&ipickup2_option,
+	&icon1_option,
+	&icon2_option,
+	&icon3_option,
+	&icon4_option,
+	0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+INVENTORY_ITEM* inv_option_list[5] =
+{
+	&ipassport_option,
+	&icontrol_option,
+	&isound_option,
+	&idetail_option,
+	&iphoto_option
+};
+
+INVENTORY_ITEM* inv_levelselect_list[1] =
+{
+	&igamma_option
+};
+
 void InitColours()
 {
 	inv_colours[0] = S_COLOUR(0, 0, 0);

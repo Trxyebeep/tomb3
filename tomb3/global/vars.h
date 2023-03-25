@@ -398,20 +398,3 @@
 #define bInvItemsOff	VAR_(0x00626450, char)
 #define framedump	VAR_(0x006CF248, long)
 /**/
-
-/*arrays*/
-#define weapons	ARRAY_(0x004C7280, WEAPON_INFO, [11])	//put this in dll asap
-
-#define T_remapASCII	ARRAY_(0x004C7CE8, char, [95])
-#define T_textSpacing	ARRAY_(0x004C7C78, char, [110])
-#define T_textStrings	ARRAY_(0x006D0000, TEXTSTRING, [64])
-#define T_theStrings	ARRAY_(0x006D0F20, char, [4096])
-
-#define Inv_itemText	ARRAY_(0x00626420, TEXTSTRING*, [3])
-#define inv_main_qtys	ARRAY_(0x004C6AF8, short, [23])
-#define inv_keys_qtys	ARRAY_(0x004C6B88, short, [23])
-#define inv_main_list	ARRAY_(0x004C6B28, INVENTORY_ITEM*, [23])
-#define inv_keys_list	ARRAY_(0x004C6BB8, INVENTORY_ITEM*, [23])
-#define inv_option_list	ARRAY_(0x004C6C18, INVENTORY_ITEM*, [5])
-#define inv_levelselect_list	ARRAY_(0x004C6C2C, INVENTORY_ITEM*, [1])
-#define GlobeLevelComplete	ARRAY_(0x006D62C0, uchar, [6])
