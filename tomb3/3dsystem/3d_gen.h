@@ -14,6 +14,7 @@ void phd_TranslateAbs(long x, long y, long z);
 void AlterFOV(short fov);
 void phd_PushMatrix();
 void phd_PushUnitMatrix();
+void phd_PopMatrix();
 void SetZNear(long znear);
 void SetZFar(long zfar);
 void S_InsertRoom(short* objptr, long out);
@@ -27,11 +28,6 @@ void phd_NormaliseVector(long x, long y, long z, long* dest);
 void phd_GetVectorAngles(long x, long y, long z, short* angles);
 void phd_GenerateW2V(PHD_3DPOS* viewPos);
 void phd_LookAt(long sx, long sy, long sz, long tx, long ty, long tz, short roll);
-
-__inline void phd_PopMatrix()
-{
-	phd_mxptr -= indices_count;
-}
 
 extern void (*InsertLine)(long x1, long y1, long x2, long y2, long z, long c0, long c1);
 extern short* (*InsertObjectGT4)(short* pFaceInfo, long nFaces, sort_type nSortType);
@@ -50,5 +46,45 @@ extern long sort3d_bufferfb[MAX_SORTLISTS];
 extern short info3d_bufferbf[MAX_SORTLISTS];
 extern short info3d_bufferfb[MAX_SORTLISTS];
 
+extern long* phd_mxptr;
 extern long w2v_matrix[indices_count];
 extern long matrix_stack[40 * indices_count];
+
+extern float one;
+
+extern float f_centerx;
+extern float f_centery;
+extern float f_znear;
+extern float f_zfar;
+extern float f_persp;
+extern float f_oneopersp;
+extern float f_perspoznear;
+extern float f_oneoznear;
+extern float f_a;
+extern float f_b;
+extern float f_boo;
+
+extern long phd_centerx;
+extern long phd_centery;
+extern long phd_znear;
+extern long phd_zfar;
+extern long phd_persp;
+
+extern RECT phd_WindowRect;
+extern float phd_leftfloat;
+extern float phd_topfloat;
+extern float phd_rightfloat;
+extern float phd_bottomfloat;
+extern long phd_winwidth;
+extern long phd_winheight;
+extern long phd_right;
+extern long phd_left;
+extern long phd_bottom;
+extern long phd_top;
+extern long phd_scrwidth;
+extern long phd_scrheight;
+extern long phd_viewdist;
+extern short phd_winxmin;
+extern short phd_winxmax;
+extern short phd_winymin;
+extern short phd_winymax;

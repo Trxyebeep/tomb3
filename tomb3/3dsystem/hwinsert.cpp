@@ -3,6 +3,8 @@
 #include "../specific/hwrender.h"
 #include "../specific/file.h"
 #include "../specific/texture.h"
+#include "3d_gen.h"
+#include "../specific/init.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif

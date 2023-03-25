@@ -69,6 +69,13 @@ const char* game_malloc_types[47] =
 	"Sprite Infos"
 };
 
+D3DTLVERTEX* CurrentTLVertex;
+D3DTLVERTEX* VertexBuffer;
+D3DTLVERTEX* UnRollBuffer;
+
+static D3DTLVERTEX* TLVertexBuffer;
+static D3DTLVERTEX* TLUnRollBuffer;
+
 long RColorTable[33][33][33];
 long GColorTable[33][33][33];
 long BColorTable[33][33][33];

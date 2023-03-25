@@ -28,7 +28,12 @@ static long bound_list[128];
 
 long box_lines[12][2] = { {0, 1}, {1, 2}, {2, 3}, {3, 0}, {4, 5}, {5, 6}, {6, 7}, {7, 4}, {0, 4}, {1, 5}, {2, 6}, {3, 7} };
 short null_rotations[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+long* IMptr;
+long IM_rate;
+long IM_frac;
 long IMstack[768];
+
 long number_draw_rooms;
 short draw_rooms[100];
 char IsJointUnderwater[15];

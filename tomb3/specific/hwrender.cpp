@@ -4,6 +4,7 @@
 #include "texture.h"
 #include "picture.h"
 #include "../3dsystem/hwinsert.h"
+#include "init.h"
 #ifdef TROYESTUFF
 #include "drawbars.h"
 #include "../tomb3/tomb3.h"
@@ -19,7 +20,7 @@ uchar ColorTable[256];
 
 static bool zBufWriteEnabled;
 static bool zBufCompareEnabled;
-
+bool bAlphaTesting;
 
 void HWR_EnableZBuffer(bool write, bool compare)
 {

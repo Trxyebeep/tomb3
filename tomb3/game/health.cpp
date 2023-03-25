@@ -6,6 +6,7 @@
 #include "text.h"
 #include "../specific/specific.h"
 #include "gameflow.h"
+#include "../3dsystem/3d_gen.h"
 #ifdef TROYESTUFF
 #include "../specific/output.h"
 #include "../tomb3/tomb3.h"

@@ -14,6 +14,7 @@
 #include "../game/gameflow.h"
 #include "../game/box.h"
 #include "../game/sound.h"
+#include "../3dsystem/3d_gen.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif

@@ -39,3 +39,4 @@ extern HRESULT (*EndScene)();
 extern void (*DrawRoutine)(long, D3DTLVERTEX*, long, long);
 
 extern uchar ColorTable[256];
+extern bool bAlphaTesting;

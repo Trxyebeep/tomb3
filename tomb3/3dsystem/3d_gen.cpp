@@ -9,6 +9,7 @@
 #include "hwinsert.h"
 #include "../specific/game.h"
 #include "../specific/smain.h"
+#include "../specific/init.h"
 #ifdef TROYESTUFF
 #include "../specific/hwrender.h"
 #include "../tomb3/tomb3.h"
@@ -31,8 +32,49 @@ long sort3d_bufferfb[MAX_SORTLISTS];
 short info3d_bufferbf[MAX_SORTLISTS];
 short info3d_bufferfb[MAX_SORTLISTS];
 
+long* phd_mxptr;
 long w2v_matrix[indices_count];
 long matrix_stack[40 * indices_count];
+
+float one = 33554432.0F;
+static float LfAspectCorrection = 0;
+
+float f_centerx;
+float f_centery;
+float f_znear;
+float f_zfar;
+float f_persp;
+float f_oneopersp;
+float f_perspoznear;
+float f_oneoznear;
+float f_a;
+float f_b;
+float f_boo;
+
+long phd_centerx;
+long phd_centery;
+long phd_znear;
+long phd_zfar;
+long phd_persp;
+
+RECT phd_WindowRect;
+float phd_leftfloat;
+float phd_topfloat;
+float phd_rightfloat;
+float phd_bottomfloat;
+long phd_winwidth;
+long phd_winheight;
+long phd_right;
+long phd_left;
+long phd_bottom;
+long phd_top;
+long phd_scrwidth;
+long phd_scrheight;
+long phd_viewdist;
+short phd_winxmin;
+short phd_winxmax;
+short phd_winymin;
+short phd_winymax;
 
 void phd_PutPolygons(short* objptr, long clip)
 {
@@ -351,6 +393,11 @@ void phd_PushUnitMatrix()
 	phd_mxptr[M20] = 0;
 	phd_mxptr[M21] = 0;
 	phd_mxptr[M22] = 1 << W2V_SHIFT;
+}
+
+void phd_PopMatrix()
+{
+	phd_mxptr -= indices_count;
 }
 
 void SetZNear(long znear)

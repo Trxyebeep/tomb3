@@ -38,7 +38,12 @@ void DrawDummyItem(ITEM_INFO* item);
 
 extern long box_lines[12][2];
 extern short null_rotations[12];
+
+extern long* IMptr;
+extern long IM_rate;
+extern long IM_frac;
 extern long IMstack[768];
+
 extern long number_draw_rooms;
 extern short draw_rooms[100];
 extern char IsJointUnderwater[15];

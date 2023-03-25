@@ -98,6 +98,7 @@ WAKE_PTS WakePts[32][2];
 static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, short c, bool cFlag)
 {
 	float zv, zT;
+	float m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23;
 	char clipFlag;
 
 	m00 = float(phd_mxptr[M00]);
