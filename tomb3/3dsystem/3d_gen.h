@@ -41,16 +41,28 @@ extern void (*InsertTrans8)(PHD_VBUF* buf, short shade);
 extern void (*InsertSprite)(long zdepth, long x1, long y1, long x2, long y2, long nSprite, long shade, long shade1, long nDrawType, long offset);
 extern void (*InsertTransQuad)(long x, long y, long w, long h, long z);
 
+extern float outsideBackgroundTop;
+
 extern long sort3d_bufferbf[MAX_SORTLISTS];
-extern long sort3d_bufferfb[MAX_SORTLISTS];
 extern short info3d_bufferbf[MAX_SORTLISTS];
+extern long* sort3dptrbf;
+extern short* info3dptrbf;
+extern long surfacenumbf;
+
+extern long sort3d_bufferfb[MAX_SORTLISTS];
 extern short info3d_bufferfb[MAX_SORTLISTS];
+extern long* sort3dptrfb;
+extern short* info3dptrfb;
+extern long surfacenumfb;
 
 extern long* phd_mxptr;
 extern long w2v_matrix[indices_count];
 extern long matrix_stack[40 * indices_count];
 
 extern float one;
+
+extern PHD_VECTOR CamPos;
+extern PHD_VECTOR CamRot;
 
 extern float f_centerx;
 extern float f_centery;

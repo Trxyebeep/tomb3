@@ -22,3 +22,6 @@ void Log(const char* s, ...);		//NOT present in original code
 #ifdef DO_LOG
 extern FILE* logF;
 #endif
+
+extern WINAPP App;
+extern HWCONFIG HWConfig;

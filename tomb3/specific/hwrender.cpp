@@ -5,6 +5,7 @@
 #include "picture.h"
 #include "../3dsystem/hwinsert.h"
 #include "init.h"
+#include "winmain.h"
 #ifdef TROYESTUFF
 #include "drawbars.h"
 #include "../tomb3/tomb3.h"

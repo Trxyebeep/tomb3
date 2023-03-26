@@ -3,6 +3,8 @@
 #include "hwrender.h"
 #include "../3dsystem/3d_gen.h"
 #include "output.h"
+#include "../3dsystem/3d_gen.h"
+#include "winmain.h"
 
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"

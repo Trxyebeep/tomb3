@@ -87,7 +87,6 @@
 #define SmokeCountL	VAR_(0x006DB888, long)
 #define SmokeCountR	VAR_(0x006DB88C, long)
 #define SmokeWeapon	VAR_(0x006DCA60, long)
-#define App	VAR_(0x006CED80, WINAPP)
 #define distanceFogValue	VAR_(0x006CED7C, long)
 #define farz	VAR_(0x006CF250, long)
 #define CarcassItem	VAR_(0x006E2FFC, short)
@@ -309,7 +308,6 @@
 #define flipeffect	VAR_(0x004C5200, long)
 #define ExerciseNumber	VAR_(0x006261B8, long)
 #define fliptimer	VAR_(0x00625F68, long)
-#define lpDirectSound	VAR_(0x00632AC8, LPDIRECTSOUND)
 #define acm_volume	VAR_(0x00627470, long)
 #define SunsetTimer	VAR_(0x006E289C, long)
 #define DXPalette	VAR_(0x006CED58, LPDIRECTDRAWPALETTE)
@@ -318,19 +316,7 @@
 #define Stats_Requester	VAR_(0x00626490, REQUEST_INFO)
 #define slots_used	VAR_(0x00626794, long)
 #define nonlot_slots_used	VAR_(0x00626798, long)
-/*renderer/phd/matrix stuff*/
-#define sort3dptrbf	VAR_(0x005316E4, long*)
-#define info3dptrbf	VAR_(0x004D7910, short*)
-#define surfacenumbf	VAR_(0x0053171C, long)
-#define sort3dptrfb	VAR_(0x005316EC, long*)
-#define info3dptrfb	VAR_(0x004F6D40, short*)
-#define surfacenumfb	VAR_(0x004F6D54, long)
-#define nDrawnPoints	VAR_(0x00634000, long)
-#define outsideBackgroundTop	VAR_(0x006E2898, float)
-#define HWConfig	VAR_(0x006CED68, HWCONFIG)
-#define CamPos	VAR_(0x006CF800, PHD_VECTOR)
-#define CamRot	VAR_(0x006CF810, PHD_VECTOR)
-/**/
+
 /*debug stuff*/
 #define bLaraOn	VAR_(0x004CDC88, long)
 #define bRoomOn	VAR_(0x004CDC8C, long)

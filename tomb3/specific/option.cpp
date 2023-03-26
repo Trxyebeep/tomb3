@@ -13,6 +13,7 @@
 #include "game.h"
 #include "../game/inventry.h"
 #include "../3dsystem/3d_gen.h"
+#include "winmain.h"
 #ifdef TROYESTUFF
 #include "output.h"
 #include "smain.h"

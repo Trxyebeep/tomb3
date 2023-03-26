@@ -22,3 +22,4 @@ bool DS_MakeAdapterList();
 void DS_Init();
 
 extern LPDIRECTSOUNDBUFFER DS_Samples[32];
+extern LPDIRECTSOUND lpDirectSound;

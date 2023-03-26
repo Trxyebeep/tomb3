@@ -1,6 +1,7 @@
 #include "../tomb3/pch.h"
 #include "display.h"
 #include "../3dsystem/3d_gen.h"
+#include "winmain.h"
 
 static long fade_value = 0x100000;
 static long fade_limit = 0x100000;

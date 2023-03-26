@@ -1,5 +1,6 @@
 #include "../tomb3/pch.h"
 #include "utils.h"
+#include "winmain.h"
 
 static double start_us;
 static double start;

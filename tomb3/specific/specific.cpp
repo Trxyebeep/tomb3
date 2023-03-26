@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "ds.h"
 #include "audio.h"
+#include "winmain.h"
 
 static long MasterVolume;
 

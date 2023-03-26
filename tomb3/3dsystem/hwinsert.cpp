@@ -5,6 +5,7 @@
 #include "../specific/texture.h"
 #include "3d_gen.h"
 #include "../specific/init.h"
+#include "../specific/winmain.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
@@ -14,6 +15,8 @@ static VERTEX_INFO v_buffer[40];
 
 PHD_VBUF vbuf[1500];
 TEXTUREBUCKET Buckets[6];
+
+long nDrawnPoints;
 
 static __inline bool CheckDrawType(long nDrawType)
 {

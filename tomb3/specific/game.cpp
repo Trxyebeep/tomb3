@@ -18,6 +18,7 @@
 #include "../game/camera.h"
 #include "../game/control.h"
 #include "../game/draw.h"
+#include "winmain.h"
 #ifdef TROYESTUFF
 #include "option.h"
 #include "../tomb3/tomb3.h"

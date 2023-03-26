@@ -1,12 +1,14 @@
 #include "../tomb3/pch.h"
 #include "ds.h"
 #include <list>
+#include "winmain.h"
 
 static LPDIRECTSOUNDBUFFER DS_Buffers[256];
 static ulong DS_SampleFrequencies[256];
 static long DS_SamplesPlaying[32];
 
 LPDIRECTSOUNDBUFFER DS_Samples[32];
+LPDIRECTSOUND lpDirectSound;
 
 std::list<DXDIRECTSOUNDINFO> DS_AdapterList;
 std::list<DXDIRECTSOUNDINFO>::iterator PrimaryAdapter;

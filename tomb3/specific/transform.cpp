@@ -5,6 +5,7 @@
 #include "../3dsystem/hwinsert.h"
 #include "../game/effect2.h"
 #include "../3dsystem/3d_gen.h"
+#include "winmain.h"
 
 float ZTable[40960];
 static float m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23;

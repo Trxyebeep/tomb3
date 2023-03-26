@@ -12,6 +12,7 @@
 #include "../3dsystem/phd_math.h"
 #include "dd.h"
 #include "file.h"
+#include "winmain.h"
 #ifdef TROYESTUFF
 #include "../game/health.h"
 #include "../game/objects.h"

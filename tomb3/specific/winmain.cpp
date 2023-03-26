@@ -25,6 +25,9 @@
 FILE* logF = 0;
 #endif
 
+WINAPP App;
+HWCONFIG HWConfig;
+
 bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 {
 	DISPLAYMODE* dm;

@@ -7,6 +7,7 @@
 #include "../game/invfunc.h"
 #include "../game/objects.h"
 #include "../game/laramisc.h"
+#include "winmain.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif

@@ -19,6 +19,7 @@
 #include "file.h"
 #include "../game/laraelec.h"
 #include "../game/setup.h"
+#include "winmain.h"
 #ifdef TROYESTUFF
 #include "../game/sub.h"
 #include "../game/lara.h"

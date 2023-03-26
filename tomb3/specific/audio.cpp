@@ -1,6 +1,8 @@
 #include "../tomb3/pch.h"
 #include "audio.h"
 #include "file.h"
+#include "winmain.h"
+#include "ds.h"
 
 static TRACK_INFO TrackInfos[130];
 static LPDIRECTSOUNDBUFFER DSBuffer;

@@ -27,10 +27,19 @@ void (*InsertTrans8)(PHD_VBUF* buf, short shade);
 void (*InsertSprite)(long zdepth, long x1, long y1, long x2, long y2, long nSprite, long shade, long shade1, long nDrawType, long offset);
 void (*InsertTransQuad)(long x, long y, long w, long h, long z);
 
+float outsideBackgroundTop;
+
 long sort3d_bufferbf[MAX_SORTLISTS];
-long sort3d_bufferfb[MAX_SORTLISTS];
 short info3d_bufferbf[MAX_SORTLISTS];
+long* sort3dptrbf;
+short* info3dptrbf;
+long surfacenumbf;
+
+long sort3d_bufferfb[MAX_SORTLISTS];
 short info3d_bufferfb[MAX_SORTLISTS];
+long* sort3dptrfb;
+short* info3dptrfb;
+long surfacenumfb;
 
 long* phd_mxptr;
 long w2v_matrix[indices_count];
@@ -38,6 +47,9 @@ long matrix_stack[40 * indices_count];
 
 float one = 33554432.0F;
 static float LfAspectCorrection = 0;
+
+PHD_VECTOR CamPos;
+PHD_VECTOR CamRot;
 
 float f_centerx;
 float f_centery;

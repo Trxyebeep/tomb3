@@ -1,5 +1,6 @@
 #include "../tomb3/pch.h"
 #include "dd.h"
+#include "winmain.h"
 
 bool DD_SpinMessageLoop(bool wait)
 {

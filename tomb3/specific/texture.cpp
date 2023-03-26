@@ -1,6 +1,7 @@
 #include "../tomb3/pch.h"
 #include "texture.h"
 #include "dd.h"
+#include "winmain.h"
 
 DXTEXTURE* TPages[MAX_TPAGES];
 TEXTURE Textures[MAX_TPAGES];

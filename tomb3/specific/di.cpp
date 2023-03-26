@@ -1,5 +1,6 @@
 #include "../tomb3/pch.h"
 #include "di.h"
+#include "winmain.h"
 
 static LPDIRECTINPUTDEVICEX Keyboard;
 static LPDIRECTINPUTX lpDirectInput;
