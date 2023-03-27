@@ -81,7 +81,7 @@ void ArmySMGControl(short item_number)
 			army->enemy = 0;
 			best_dist = 0x7FFFFFFF;
 
-			for (lp = 0; lp < 5; lp++)
+			for (lp = 0; lp < MAX_LOT; lp++)
 			{
 				if (baddie_slots[lp].item_num == NO_ITEM || baddie_slots[lp].item_num == item_number)
 					continue;

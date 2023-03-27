@@ -253,7 +253,7 @@ void SealmuteControl(short item_number)
 			dz = lara_item->pos.z_pos - item->pos.z_pos;
 			larainfo.distance = SQUARE(dx) + SQUARE(dz);
 
-			for (lp = 0; lp < 5; lp++)
+			for (lp = 0; lp < MAX_LOT; lp++)
 			{
 				if (baddie_slots[lp].item_num == NO_ITEM || baddie_slots[lp].item_num == item_number)
 					continue;
