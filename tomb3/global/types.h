@@ -1335,8 +1335,13 @@ struct D3DTEXTUREINFO
 
 struct DXDIRECTSOUNDINFO
 {
+#ifdef TROYESTUFF
+	char Name[256];
+	char About[256];
+#else
 	char Name[30];
 	char About[80];
+#endif
 	LPGUID lpGuid;
 	GUID Guid;
 };

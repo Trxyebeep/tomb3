@@ -354,8 +354,8 @@ BOOL CALLBACK DXEnumDirectSound(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR 
 	DXDIRECTSOUNDINFO* sinfo;
 
 	device = (DEVICEINFO*)lpContext;
-	device->DSInfo = (DXDIRECTSOUNDINFO*)AddStruct(device->DSInfo, device->nDDInfo, sizeof(DXDIRECTSOUNDINFO));
-	sinfo = &device->DSInfo[device->nDDInfo];
+	device->DSInfo = (DXDIRECTSOUNDINFO*)AddStruct(device->DSInfo, device->nDSInfo, sizeof(DXDIRECTSOUNDINFO));
+	sinfo = &device->DSInfo[device->nDSInfo];
 
 	if (lpGuid)
 	{

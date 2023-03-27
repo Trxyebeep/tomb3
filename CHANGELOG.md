@@ -6,6 +6,7 @@
 
 - Fix Lara refusing to go in some crawlspaces.
 - Fix unsafe memory access in boss shield drawing routines.
+- Fix sound adapter names in the setup window.
 
 ### tomb3 additions
 
@@ -18,6 +19,7 @@
 - Fix Willard pathing.
 - Fix some issues with window creation.
 - Fix Tony flame.
+- Fix sound adapter enumeration.
 
 
 ## [1.6.0](https://github.com/Trxyebeep/tomb3/tree/V1.6.0) (Jan. 30 2023)
