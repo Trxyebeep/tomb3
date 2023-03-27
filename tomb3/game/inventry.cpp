@@ -17,6 +17,7 @@
 #include "demo.h"
 #include "health.h"
 #include "../specific/option.h"
+#include "gameflow.h"
 #ifdef TROYESTUFF
 #include "../newstuff/discord.h"
 #include "../tomb3/tomb3.h"

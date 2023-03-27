@@ -13,6 +13,8 @@
 #include "../specific/picture.h"
 #include "demo.h"
 
+GAMEFLOW_INFO gameflow;
+
 short* GF_level_sequence_list[24];
 short GF_Offsets[200];
 short GF_valid_demos[24];
@@ -20,6 +22,62 @@ short GF_CDtracks[16];
 char GF_Description[256];
 char GF_Add2InvItems[30];
 char GF_SecretInvItems[30];
+
+char** GF_picfilenames;
+char** GF_fmvfilenames;
+char** GF_titlefilenames;
+char** GF_levelfilenames;
+char** GF_cutscenefilenames;
+char** GF_Level_Names;
+char** GF_GameStrings;
+char** GF_PCStrings;
+char** GF_Pickup1Strings;
+char** GF_Pickup2Strings;
+char** GF_Puzzle1Strings;
+char** GF_Puzzle2Strings;
+char** GF_Puzzle3Strings;
+char** GF_Puzzle4Strings;
+char** GF_Key1Strings;
+char** GF_Key2Strings;
+char** GF_Key3Strings;
+char** GF_Key4Strings;
+
+char* GF_picfilenames_buffer;
+char* GF_fmvfilenames_buffer;
+char* GF_titlefilenames_buffer;
+char* GF_levelfilenames_buffer;
+char* GF_cutscenefilenames_buffer;
+char* GF_levelnames_buffer;
+char* GF_GameStrings_buffer;
+char* GF_PCStrings_buffer;
+char* GF_Pickup1Strings_buffer;
+char* GF_Pickup2Strings_buffer;
+char* GF_Puzzle1Strings_buffer;
+char* GF_Puzzle2Strings_buffer;
+char* GF_Puzzle3Strings_buffer;
+char* GF_Puzzle4Strings_buffer;
+char* GF_Key1Strings_buffer;
+char* GF_Key2Strings_buffer;
+char* GF_Key3Strings_buffer;
+char* GF_Key4Strings_buffer;
+
+short* GF_sequence_buffer;
+short* GF_frontendSequence;
+long GF_ScriptVersion;
+long GF_BonusLevelEnabled;
+long GF_PlayingFMV;
+long GF_LaraStartAnim;
+ushort GF_Cutscene_Orientation = 0x4000;
+short GF_LoadingPic = -1;
+short GF_NoFloor;
+short GF_DeadlyWater;
+short GF_SunsetEnabled;
+short GF_RemoveWeapons;
+short GF_NumSecrets;
+short GF_RemoveAmmo;
+char GF_StartGame;
+char GF_Kill2Complete;
+char GF_Playing_Story;
 
 long GF_LoadScriptFile(const char* name)
 {

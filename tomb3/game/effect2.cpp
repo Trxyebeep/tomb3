@@ -9,6 +9,7 @@
 #include "../3dsystem/phd_math.h"
 #include "sound.h"
 #include "fish.h"
+#include "gameflow.h"
 
 static short SplashRings[8][2] =
 {

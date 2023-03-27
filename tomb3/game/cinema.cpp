@@ -16,6 +16,7 @@
 #include "../specific/input.h"
 #include "hair.h"
 #include "../specific/specific.h"
+#include "gameflow.h"
 #ifdef TROYESTUFF
 #include "../newstuff/LaraDraw.h"
 #endif

@@ -13,6 +13,7 @@
 #include "dd.h"
 #include "file.h"
 #include "winmain.h"
+#include "../game/gameflow.h"
 #ifdef TROYESTUFF
 #include "../game/health.h"
 #include "../game/objects.h"

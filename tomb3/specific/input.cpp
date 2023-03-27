@@ -8,6 +8,7 @@
 #include "../game/objects.h"
 #include "../game/laramisc.h"
 #include "winmain.h"
+#include "../game/gameflow.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
