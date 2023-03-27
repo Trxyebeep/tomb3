@@ -5,8 +5,10 @@
 #include "ds.h"
 #include "audio.h"
 #include "winmain.h"
+#include "../game/sound.h"
 
 static long MasterVolume;
+char cd_drive;
 
 uchar SWR_FindNearestPaletteEntry(uchar* p, long r, long g, long b, bool ignoreSystemPalette)
 {

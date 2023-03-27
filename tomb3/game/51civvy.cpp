@@ -11,6 +11,7 @@
 #include "../3dsystem/phd_math.h"
 #include "people.h"
 #include "sound.h"
+#include "lara.h"
 
 static BITE_INFO civvy_hit = { 0, 0, 0, 13 };
 

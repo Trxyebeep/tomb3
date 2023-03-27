@@ -5,6 +5,8 @@
 #include "box.h"
 #include "objects.h"
 #include "effects.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO raptor_bite = { 0, 66, 318, 22 };
 

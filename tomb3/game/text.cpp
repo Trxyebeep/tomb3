@@ -7,6 +7,7 @@
 #include "../specific/frontend.h"
 #include "health.h"
 #include "../specific/output.h"
+#include "camera.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
@@ -32,6 +33,7 @@ static char T_textSpacing[110] =
 
 static TEXTSTRING T_textStrings[64];
 static char T_theStrings[4096];
+static short T_numStrings;
 
 short T_GetStringLen(const char* string)
 {

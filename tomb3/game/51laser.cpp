@@ -7,6 +7,7 @@
 #include "items.h"
 #include "collide.h"
 #include "effects.h"
+#include "lara.h"
 
 void InitialiseArea51Laser(short item_number)
 {

@@ -10,6 +10,7 @@
 #include "missile.h"
 #include "items.h"
 #include "sphere.h"
+#include "camera.h"
 
 short* ground_zone[4][2];
 short* fly_zone[2];

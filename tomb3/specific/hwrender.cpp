@@ -20,6 +20,7 @@ void (*DrawRoutine)(long, D3DTLVERTEX*, long, long);
 
 uchar ColorTable[256];
 
+static D3DPRIMITIVETYPE dpPrimitiveType;
 static bool zBufWriteEnabled;
 static bool zBufCompareEnabled;
 bool bAlphaTesting;

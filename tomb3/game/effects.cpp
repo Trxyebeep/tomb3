@@ -17,6 +17,8 @@
 #include "../specific/specific.h"
 #include "sphere.h"
 #include "footprnt.h"
+#include "camera.h"
+#include "savegame.h"
 
 void(*effect_routines[])(ITEM_INFO* item) =
 {
@@ -83,6 +85,15 @@ void(*effect_routines[])(ITEM_INFO* item) =
 };
 
 static long ExerciseNumber;
+
+long QuadbikeLapTime;
+long QuadbikeLapTimeDisplayTimer;
+long assault_timer_display;
+long assault_penalty_display_timer;
+long assault_timer_active;
+long assault_target_penalties;
+long assault_penalties;
+long assault_targets;
 
 void LaraBreath(ITEM_INFO* item)
 {
@@ -379,7 +390,7 @@ void floor_shake_effect(ITEM_INFO* item)
 	y = item->pos.y_pos - camera.pos.y;
 	z = item->pos.z_pos - camera.pos.z;
 
-	if ((abs(x) < 0x4000) && (abs(y) < 0x4000) && (abs(z) < 0x4000))
+	if (abs(x) < 0x4000 && abs(y) < 0x4000 && abs(z) < 0x4000)
 		camera.bounce = 100 * ((SQUARE(x) + SQUARE(y) + SQUARE(z)) / 256 - 0x100000) / 0x100000;
 }
 

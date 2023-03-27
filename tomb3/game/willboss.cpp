@@ -17,6 +17,7 @@
 #include "draw.h"
 #include "../specific/draweffects.h"
 #include "lara.h"
+#include "setup.h"
 
 static BITE_INFO willboss_bite_left = { 19, -13, 3, 20 };
 static BITE_INFO willboss_bite_right = { 19, -13, 3, 23 };

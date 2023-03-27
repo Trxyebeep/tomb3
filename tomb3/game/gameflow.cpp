@@ -12,6 +12,9 @@
 #include "inventry.h"
 #include "../specific/picture.h"
 #include "demo.h"
+#include "../specific/smain.h"
+#include "control.h"
+#include "lara.h"
 
 GAMEFLOW_INFO gameflow;
 
@@ -78,6 +81,8 @@ short GF_RemoveAmmo;
 char GF_StartGame;
 char GF_Kill2Complete;
 char GF_Playing_Story;
+
+short NextAdventure;
 
 long GF_LoadScriptFile(const char* name)
 {

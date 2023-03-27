@@ -18,6 +18,7 @@
 #include "draw.h"
 #include "../specific/draweffects.h"
 #include "laraelec.h"
+#include "setup.h"
 
 static BITE_INFO londonboss_points[3] =
 {

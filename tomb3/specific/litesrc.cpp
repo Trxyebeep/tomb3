@@ -4,6 +4,7 @@
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/hwinsert.h"
 #include "../game/effect2.h"
+#include "../game/control.h"
 
 PHD_VECTOR LPos[3];
 long LightPos[12];

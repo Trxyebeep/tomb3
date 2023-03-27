@@ -10,6 +10,7 @@
 #include "../3dsystem/phd_math.h"
 #include "control.h"
 #include "objects.h"
+#include "lara.h"
 
 static BITE_INFO londsec_gun = { 0, 160, 40, 13 };
 

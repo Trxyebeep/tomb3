@@ -10,6 +10,8 @@
 #include "../specific/output.h"
 #include "../3dsystem/3d_gen.h"
 #include "lot.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO monkey_hit = { 10, 10, 11, 13 };
 

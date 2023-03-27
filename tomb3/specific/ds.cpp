@@ -2,6 +2,7 @@
 #include "ds.h"
 #include <list>
 #include "winmain.h"
+#include "../game/camera.h"
 
 static LPDIRECTSOUNDBUFFER DS_Buffers[256];
 static ulong DS_SampleFrequencies[256];

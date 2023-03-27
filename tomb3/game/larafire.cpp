@@ -19,21 +19,9 @@
 #include "laraflar.h"
 #include "lara.h"
 #include "invfunc.h"
-
-/*
-LG_UNARMED,
-LG_PISTOLS,
-LG_MAGNUMS,
-LG_UZIS,
-LG_SHOTGUN,
-LG_M16,
-LG_ROCKET,
-LG_GRENADE,
-LG_HARPOON,
-LG_FLARE,
-LG_SKIDOO,
-NUM_WEAPONS
-*/
+#include "../specific/input.h"
+#include "camera.h"
+#include "savegame.h"
 
 WEAPON_INFO weapons[11] =
 {

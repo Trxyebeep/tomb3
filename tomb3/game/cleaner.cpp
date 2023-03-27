@@ -7,6 +7,7 @@
 #include "control.h"
 #include "items.h"
 #include "sphere.h"
+#include "lara.h"
 #include "../3dsystem/phd_math.h"
 
 static void TriggerElectricSparks(PHD_VECTOR* pos, short item_number, short Node)

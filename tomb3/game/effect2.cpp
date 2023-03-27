@@ -33,6 +33,8 @@ RIPPLE_STRUCT ripples[16];
 DYNAMIC dynamics[64];
 long number_dynamics;
 
+long wibble;
+
 void TriggerDynamic(long x, long y, long z, long falloff, long r, long g, long b)
 {
 	DYNAMIC* dl;

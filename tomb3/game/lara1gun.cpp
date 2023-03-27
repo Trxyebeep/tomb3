@@ -18,6 +18,9 @@
 #include "sound.h"
 #include "lara.h"
 #include "lara2gun.h"
+#include "../specific/input.h"
+#include "camera.h"
+#include "savegame.h"
 
 void ControlHarpoonBolt(short item_number)
 {

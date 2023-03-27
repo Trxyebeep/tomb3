@@ -6,6 +6,9 @@
 #include "lara.h"
 #include "effect2.h"
 #include "../specific/game.h"
+#include "../specific/input.h"
+#include "control.h"
+#include "camera.h"
 
 static PISTOL_DEF PistolTable[4]
 {

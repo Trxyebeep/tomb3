@@ -18,13 +18,25 @@
 #include "health.h"
 #include "../specific/option.h"
 #include "gameflow.h"
+#include "../specific/winmain.h"
+#include "../specific/smain.h"
+#include "control.h"
+#include "camera.h"
+#include "savegame.h"
 #ifdef TROYESTUFF
 #include "../newstuff/discord.h"
 #include "../tomb3/tomb3.h"
 #endif
 
 long Inventory_ExtraData[8];
+long GlobePointLight;
+short GlobeXRot;
+short GlobeYRot;
+short GlobeZRot;
+short GlobeLevel;
 uchar GlobeLevelComplete[6];
+
+long inputDB;
 
 long GetDebouncedInput(long in)
 {

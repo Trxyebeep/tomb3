@@ -13,11 +13,13 @@
 #include "effect2.h"
 #include "sound.h"
 #include "lara.h"
+#include "control.h"
+#include "inventry.h"
+#include "../specific/input.h"
+#include "savegame.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
-#include "control.h"
-#include "inventry.h"
 
 static short PickUpBounds[12] = { -256, 256, -100, 100, -256, 256, -1820, 1820, 0, 0, 0, 0 };
 static short PickUpBoundsUW[12] = { -512, 512, -512, 512, -512, 512, -8190, 8190, -8190, 8190, -8190, 8190 };

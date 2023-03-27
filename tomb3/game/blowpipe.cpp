@@ -10,6 +10,8 @@
 #include "sphere.h"
 #include "../3dsystem/3d_gen.h"
 #include "effect2.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO blow_biff_hit = { 0, 0, -200, 13 };
 static BITE_INFO blow_shoot_hit = { 8, 40, -248, 13 };

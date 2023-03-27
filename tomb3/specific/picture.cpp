@@ -7,6 +7,7 @@
 #include "file.h"
 #include "../3dsystem/3d_gen.h"
 #include "winmain.h"
+#include "../game/camera.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif

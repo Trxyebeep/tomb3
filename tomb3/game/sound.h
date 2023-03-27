@@ -386,3 +386,7 @@ enum sound_effect_names
 };
 
 extern short sample_lut[370];
+extern SAMPLE_INFO* sample_infos;
+extern long num_sample_infos;
+extern long sound_active;
+

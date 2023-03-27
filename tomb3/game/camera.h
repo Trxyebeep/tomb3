@@ -12,3 +12,8 @@ void CombatCamera(ITEM_INFO* item);
 void LookCamera(ITEM_INFO* item);
 void FixedCamera();
 void CalculateCamera();
+
+extern CAMERA_INFO camera;
+
+extern GAME_VECTOR ForcedFixedCamera;
+extern char UseForcedFixedCamera;

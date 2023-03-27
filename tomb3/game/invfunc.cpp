@@ -11,6 +11,11 @@
 #include "health.h"
 #include "items.h"
 #include "../specific/litesrc.h"
+#include "inventry.h"
+#include "../specific/input.h"
+#include "control.h"
+#include "savegame.h"
+#include "lara.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif

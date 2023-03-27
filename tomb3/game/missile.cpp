@@ -10,6 +10,7 @@
 #include "traps.h"
 #include "../specific/game.h"
 #include "draw.h"
+#include "lara.h"
 #include "../3dsystem/3d_gen.h"
 
 void ControlMissile(short fx_number)

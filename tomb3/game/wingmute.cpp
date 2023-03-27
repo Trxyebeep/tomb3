@@ -6,6 +6,8 @@
 #include "effect2.h"
 #include "effects.h"
 #include "sphere.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO wing_bite = { 0, 0, 0, 12 };
 

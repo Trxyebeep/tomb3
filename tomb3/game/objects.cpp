@@ -12,6 +12,8 @@
 #include "lara.h"
 #include "lot.h"
 #include "box.h"
+#include "camera.h"
+#include "savegame.h"
 
 static short final_boss_active;	//TR2 remnants
 static short final_boss_count;

@@ -3,9 +3,14 @@
 #include "../specific/specific.h"
 #include "../specific/game.h"
 #include "../3dsystem/phd_math.h"
+#include "control.h"
+#include "camera.h"
 
 static SOUND_SLOT LaSlot[32];
 short sample_lut[370];
+SAMPLE_INFO* sample_infos;
+long num_sample_infos;
+long sound_active;
 
 void SOUND_Init()
 {

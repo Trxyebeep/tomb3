@@ -7,6 +7,8 @@
 #include "larafire.h"
 #include "control.h"
 #include "laraswim.h"
+#include "../specific/input.h"
+#include "camera.h"
 
 void LaraSurface(ITEM_INFO* item, COLL_INFO* coll)
 {

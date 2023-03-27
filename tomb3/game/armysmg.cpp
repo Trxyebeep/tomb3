@@ -10,6 +10,8 @@
 #include "sound.h"
 #include "people.h"
 #include "lot.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO army_gun = { 0, 300, 64, 7 };
 

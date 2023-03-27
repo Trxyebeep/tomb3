@@ -14,6 +14,8 @@
 #include "../game/inventry.h"
 #include "../3dsystem/3d_gen.h"
 #include "winmain.h"
+#include "../game/savegame.h"
+#include "../game/control.h"
 #ifdef TROYESTUFF
 #include "output.h"
 #include "smain.h"
@@ -40,6 +42,8 @@ static TEXTSTRING* ctext[NLAYOUTKEYS];
 static TEXTSTRING* ctrltext[2];
 static long iconfig;
 static long keychange;
+
+long SavedGames;
 
 long GetRenderWidth()
 {

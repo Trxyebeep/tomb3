@@ -15,6 +15,7 @@
 #include "../3dsystem/3d_gen.h"
 #include "draw.h"
 #include "../specific/draweffects.h"
+#include "../specific/input.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif

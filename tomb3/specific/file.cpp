@@ -16,6 +16,10 @@
 #include "../game/sound.h"
 #include "../3dsystem/3d_gen.h"
 #include "winmain.h"
+#include "../game/demo.h"
+#include "../game/control.h"
+#include "../game/camera.h"
+#include "../game/effect2.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
@@ -27,6 +31,16 @@ main = (char**)GlobalAlloc(GMEM_FIXED, allocSize);\
 if (!main) return 0;\
 if (!Read_Strings(readSize, main, &buffer, &read, file)) return 0;\
 }
+
+CHANGE_STRUCT* changes;
+RANGE_STRUCT* ranges;
+short* aranges;
+short* frames;
+short* commands;
+short* floor_data;
+short* mesh_base;
+long number_cameras;
+long wet;
 
 PHDTEXTURESTRUCT phdtextinfo[MAX_TINFOS];
 PHDSPRITESTRUCT phdspriteinfo[512];

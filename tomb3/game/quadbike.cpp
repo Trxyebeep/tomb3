@@ -20,6 +20,9 @@
 #include "lara.h"
 #include "effects.h"
 #include "sphere.h"
+#include "../specific/input.h"
+#include "camera.h"
+#include "savegame.h"
 
 static BITE_INFO quad_bites[6] =
 {

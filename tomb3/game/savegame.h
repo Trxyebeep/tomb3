@@ -15,3 +15,5 @@ void ExtractSaveGameInfo();
 void save_tomb3_data();
 void load_tomb3_data();
 #endif
+
+extern SAVEGAME_INFO savegame;

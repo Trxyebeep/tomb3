@@ -10,6 +10,7 @@
 #include "lara.h"
 #include "laramisc.h"
 #include "../3dsystem/3d_gen.h"
+#include "../specific/input.h"
 
 static short MovingBlockBounds[12] = { -300, 300, 0, 0, -692, -512, -1820, 1820, -5460, 5460, -1820, 1820 };
 

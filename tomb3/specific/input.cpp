@@ -9,6 +9,9 @@
 #include "../game/laramisc.h"
 #include "winmain.h"
 #include "../game/gameflow.h"
+#include "../game/camera.h"
+#include "../game/control.h"
+#include "../game/lara.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
@@ -58,6 +61,18 @@ short layout[2][NLAYOUTKEYS] =
 #endif
 };
 
+long bLaraOn = 1;
+long bRoomOn = 1;
+long bObjectOn = 1;
+long bAObjectOn = 1;
+long bEffectOn = 1;
+char bInvItemsOff = 0;
+
+long input;
+long joy_fire;
+long joy_x;
+long joy_y;
+long FinishLevelCheat;
 long conflict[15];
 uchar keymap[256];
 

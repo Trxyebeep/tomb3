@@ -13,6 +13,19 @@
 #include "../tomb3/tomb3.h"
 #endif
 
+CAMERA_INFO camera;
+
+GAME_VECTOR ForcedFixedCamera;
+char UseForcedFixedCamera;
+
+static OLD_CAMERA old_cam;
+static GAME_VECTOR last_target;
+static GAME_VECTOR last_ideal;
+static GAME_VECTOR static_lookcamp;
+static GAME_VECTOR static_lookcamt;
+static PHD_VECTOR old_target;
+static char camerasnaps;
+
 void InitialiseCamera()
 {
 	camera.shift = lara_item->pos.y_pos - 1024;

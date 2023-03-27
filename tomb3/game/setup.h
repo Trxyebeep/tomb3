@@ -14,3 +14,4 @@ void InitialiseObjects();
 extern short IsRoomOutsideNo;
 extern char* OutsideRoomTable;
 extern short OutsideRoomOffsets[729];
+extern BOSS_STRUCT bossdata;

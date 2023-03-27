@@ -7,6 +7,10 @@
 #include "../specific/specific.h"
 #include "gameflow.h"
 #include "../3dsystem/3d_gen.h"
+#include "control.h"
+#include "savegame.h"
+#include "lara.h"
+#include "effects.h"
 #ifdef TROYESTUFF
 #include "../specific/output.h"
 #include "../tomb3/tomb3.h"

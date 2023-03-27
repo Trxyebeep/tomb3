@@ -4,6 +4,8 @@
 #include "objects.h"
 #include "effects.h"
 #include "../specific/game.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO mouse_bite = { 0, 0, 57, 2 };
 

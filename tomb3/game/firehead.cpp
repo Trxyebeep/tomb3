@@ -8,6 +8,7 @@
 #include "sound.h"
 #include "traps.h"
 #include "items.h"
+#include "lara.h"
 
 static void TriggerFireHeadFlame(long x, long y, long z, long angle, long speed)
 {

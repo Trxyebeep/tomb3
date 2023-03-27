@@ -14,6 +14,8 @@
 #include "laraelec.h"
 #include "../specific/draweffects.h"
 #include "pickup.h"
+#include "setup.h"
+#include "lara.h"
 
 BITE_INFO tribeboss_hit[6] =
 {
@@ -27,6 +29,9 @@ BITE_INFO tribeboss_hit[6] =
 
 SHIELD_POINTS TribeBossShield[40];
 PHD_VECTOR TrigDynamics[3];
+ITEM_INFO* TribeBossItem;
+char TribeBossShieldOn;
+char lizard_man_active;
 char shield_active;
 
 static long lizman_summon_coords[2][4] =

@@ -7,6 +7,15 @@
 #include "../specific/winmain.h"
 #include "text.h"
 #include "../specific/game.h"
+#include "../specific/smain.h"
+#include "../specific/input.h"
+#include "savegame.h"
+#include "lara.h"
+
+ulong* demoptr;
+long democount;
+long demo_loaded;
+long DemoPlay;
 
 void GetDemoInput()
 {

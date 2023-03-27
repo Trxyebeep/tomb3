@@ -14,4 +14,7 @@ void TribeBossControl(short item_number);
 extern BITE_INFO tribeboss_hit[6];
 extern SHIELD_POINTS TribeBossShield[40];
 extern PHD_VECTOR TrigDynamics[3];
+extern ITEM_INFO* TribeBossItem;
+extern char TribeBossShieldOn;
+extern char lizard_man_active;
 extern char shield_active;

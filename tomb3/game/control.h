@@ -29,6 +29,28 @@ long CheckNoColFloorTriangle(FLOOR_INFO* floor, long x, long z);
 long CheckNoColCeilingTriangle(FLOOR_INFO* floor, long x, long z);
 long IsRoomOutside(long x, long y, long z);
 
+extern ITEM_INFO* items;
+extern ANIM_STRUCT* anims;
+extern ROOM_INFO* room;
+extern short** meshes;
+extern long* bones;
+extern long level_items;
+extern short number_rooms;
+
+extern short* trigger_index;
+extern long tiltxoff;
+extern long tiltyoff;
+extern long OnObject;
+extern long height_type;
+extern uchar CurrentAtmosphere;
+extern uchar IsAtmospherePlaying;
+
+extern long CurrentLevel;
+extern long level_complete;
+
 extern long flipmap[10];
+extern long flip_status;
+extern long flipeffect;
+extern long fliptimer;
 extern char cd_flags[128];
 extern uchar HeavyTriggered;

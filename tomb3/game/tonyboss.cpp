@@ -15,6 +15,8 @@
 #include "pickup.h"
 #include "draw.h"
 #include "../specific/draweffects.h"
+#include "setup.h"
+#include "lara.h"
 
 static long heights[5] = { -1536, -1280, -832, -384, 0 };
 static long radii[5] = { 200, 400, 500, 500, 475 };

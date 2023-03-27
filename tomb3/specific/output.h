@@ -27,6 +27,7 @@ long GetFixedScale(long unit);
 long GetRenderScale(long unit);
 #endif
 
+extern long framedump;
 extern long SunsetTimer;
 extern long water_effect;
 extern bool bBlueEffect;

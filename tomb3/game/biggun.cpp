@@ -14,6 +14,8 @@
 #include "../specific/game.h"
 #include "control.h"
 #include "lara.h"
+#include "../specific/input.h"
+#include "camera.h"
 
 void BigGunInitialise(short item_number)
 {

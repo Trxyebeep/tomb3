@@ -5,6 +5,7 @@
 #include "control.h"
 #include "../specific/game.h"
 #include "effect2.h"
+#include "lara.h"
 
 void OrcaControl(short item_number)
 {

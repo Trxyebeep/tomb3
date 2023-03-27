@@ -15,6 +15,7 @@
 #include "audio.h"
 #include "display.h"
 #include "picture.h"
+#include "output.h"
 #ifdef TROYESTUFF
 #include "fmv.h"
 #include "../game/invfunc.h"
@@ -28,6 +29,7 @@ FILE* logF = 0;
 WINAPP App;
 HWCONFIG HWConfig;
 char* G_lpCmdLine;
+long game_closedown;
 
 bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 {

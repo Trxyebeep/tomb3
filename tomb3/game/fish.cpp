@@ -5,6 +5,7 @@
 #include "control.h"
 #include "objects.h"
 #include "effects.h"
+#include "lara.h"
 #include "../specific/smain.h"
 
 static uchar jungle_fish_ranges[1][3] =
@@ -62,6 +63,8 @@ static uchar rapids_fish_ranges[2][3]
 
 FISH_INFO fish[200];
 LEADER_INFO lead_info[8];
+short CarcassItem;
+static long PirahnaHitWait;
 
 void SetupShoal(long shoal_number)
 {

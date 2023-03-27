@@ -15,6 +15,8 @@
 #include "effect2.h"
 #include "effects.h"
 #include "../specific/game.h"
+#include "../specific/input.h"
+#include "camera.h"
 
 void InitialiseBoat(short item_number)
 {

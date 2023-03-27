@@ -15,6 +15,7 @@
 #include "invfunc.h"
 #include "larafire.h"
 #include "../3dsystem/phd_math.h"
+#include "savegame.h"
 
 #define FLARE_AGE		900
 #define FLARE_DYING		(FLARE_AGE - 90)

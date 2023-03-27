@@ -9,3 +9,4 @@ void ControlFish(short item_number);
 
 extern FISH_INFO fish[200];
 extern LEADER_INFO lead_info[8];
+extern short CarcassItem;;

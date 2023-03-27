@@ -26,12 +26,36 @@
 #include "draw.h"
 #include "moveblok.h"
 #include "setup.h"
+#include "../specific/file.h"
+#include "lara.h"
 #ifdef TROYESTUFF
 #include "../newstuff/pausemenu.h"
 #include "../newstuff/discord.h"
 #endif
 
+ITEM_INFO* items;
+ANIM_STRUCT* anims;
+ROOM_INFO* room;
+short** meshes;
+long* bones;
+long level_items;
+short number_rooms;
+
+short* trigger_index;
+long tiltxoff;
+long tiltyoff;
+long OnObject;
+long height_type;
+uchar CurrentAtmosphere;
+uchar IsAtmospherePlaying;
+
+long CurrentLevel;
+long level_complete;
+
 long flipmap[10];
+long flip_status;
+long flipeffect = -1;
+long fliptimer;
 char cd_flags[128];
 uchar HeavyTriggered;
 static long number_los_rooms;

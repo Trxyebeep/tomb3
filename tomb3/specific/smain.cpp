@@ -23,9 +23,12 @@
 #ifdef TROYESTUFF
 #include "init.h"
 #include "../newstuff/discord.h"
+#include "../game/control.h"
 #include "../tomb3/tomb3.h"
 #endif
 
+long HiResFlag;
+long title_loaded;
 char exit_message[128];
 
 #ifdef RANDO_STUFF

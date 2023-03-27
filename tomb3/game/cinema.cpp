@@ -17,6 +17,10 @@
 #include "hair.h"
 #include "../specific/specific.h"
 #include "gameflow.h"
+#include "../specific/smain.h"
+#include "sound.h"
+#include "camera.h"
+#include "lara.h"
 #ifdef TROYESTUFF
 #include "../newstuff/LaraDraw.h"
 #endif

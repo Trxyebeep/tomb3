@@ -10,6 +10,8 @@
 #include "box.h"
 #include "people.h"
 #include "lot.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO seal_gas = { 0, 48, 140, 10 };
 

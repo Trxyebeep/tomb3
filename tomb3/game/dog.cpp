@@ -5,6 +5,8 @@
 #include "../3dsystem/phd_math.h"
 #include "effects.h"
 #include "objects.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO dog_bite = { 0, 0, 100, 3 };
 

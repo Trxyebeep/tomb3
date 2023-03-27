@@ -88,6 +88,8 @@
 #include "lasers.h"
 #include "hair.h"
 #include "control.h"
+#include "demo.h"
+#include "camera.h"
 #ifdef TROYESTUFF
 #include "footprnt.h"
 #include "../newstuff/map.h"
@@ -97,6 +99,7 @@
 short IsRoomOutsideNo;
 char* OutsideRoomTable;
 short OutsideRoomOffsets[729];
+BOSS_STRUCT bossdata;
 
 void GetAIPickups()
 {

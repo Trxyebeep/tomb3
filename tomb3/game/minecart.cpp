@@ -13,6 +13,9 @@
 #include "sound.h"
 #include "lara.h"
 #include "items.h"
+#include "../specific/input.h"
+#include "camera.h"
+#include "effect2.h"
 
 void MineCartInitialise(short item_number)
 {

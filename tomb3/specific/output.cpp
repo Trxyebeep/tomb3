@@ -15,6 +15,7 @@
 #include "winmain.h"
 #include "../game/gameflow.h"
 #ifdef TROYESTUFF
+#include "../game/control.h"
 #include "../game/health.h"
 #include "../game/objects.h"
 #include "litesrc.h"
@@ -36,6 +37,7 @@ static short shadow[6 + (3 * 8)] =
 	0, 0, 0,
 };
 
+long framedump;
 long SunsetTimer;
 long water_effect;
 bool bBlueEffect;

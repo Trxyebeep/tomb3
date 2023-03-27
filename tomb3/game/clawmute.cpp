@@ -12,6 +12,7 @@
 #include "box.h"
 #include "sound.h"
 #include "people.h"
+#include "lara.h"
 
 static BITE_INFO claw_bite_left = { 19, -13, 3, 7 };
 static BITE_INFO claw_bite_right = { 19, -13, 3, 4 };

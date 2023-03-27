@@ -8,6 +8,8 @@
 #include "draw.h"
 #include "../3dsystem/3d_gen.h"
 #include "sound.h"
+#include "../specific/file.h"
+#include "lara.h"
 #ifdef TROYESTUFF
 #include "../newstuff/map.h"
 #endif

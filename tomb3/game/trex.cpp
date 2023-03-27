@@ -8,6 +8,7 @@
 #include "effects.h"
 #include "../3dsystem/phd_math.h"
 #include "draw.h"
+#include "control.h"
 
 static BITE_INFO trex_hit = { 0, 32, 64, 13 };
 

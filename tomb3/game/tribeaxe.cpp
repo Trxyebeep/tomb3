@@ -5,6 +5,8 @@
 #include "effects.h"
 #include "sound.h"
 #include "objects.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO tribeaxe_hit = { 0, 16, 265, 13 };
 

@@ -4,6 +4,8 @@
 #include "objects.h"
 #include "../specific/game.h"
 #include "effects.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO tiger_bite = { 19, -13, 3, 26 };
 

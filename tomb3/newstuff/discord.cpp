@@ -3,6 +3,9 @@
 #include "libs/discord/discord_rpc.h"
 #include "../game/gameflow.h"
 #include "../tomb3/tomb3.h"
+#include "../game/savegame.h"
+#include "../game/control.h"
+#include "../game/lara.h"
 
 bool RPC_title;
 

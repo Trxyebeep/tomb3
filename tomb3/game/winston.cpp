@@ -5,6 +5,8 @@
 #include "../specific/game.h"
 #include "objects.h"
 #include "lot.h"
+#include "control.h"
+#include "lara.h"
 
 void OldWinstonControl(short item_number)
 {

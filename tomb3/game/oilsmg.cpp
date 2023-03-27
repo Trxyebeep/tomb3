@@ -9,6 +9,8 @@
 #include "people.h"
 #include "sound.h"
 #include "../3dsystem/phd_math.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO oilsmg_gun = { 0, 400, 64, 7 };
 

@@ -3,6 +3,8 @@
 #include "box.h"
 #include "objects.h"
 #include "effects.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO croc_bite = { 5, -21, 467, 9 };
 

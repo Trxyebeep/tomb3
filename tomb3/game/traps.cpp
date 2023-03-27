@@ -16,6 +16,7 @@
 #include "collide.h"
 #include "lara.h"
 #include "../specific/init.h"
+#include "camera.h"
 
 static BITE_INFO teeth1a = { -23, 0, -1718, 0 };
 static BITE_INFO teeth1b = { 71, 0, -1718, 1 };

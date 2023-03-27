@@ -10,6 +10,8 @@
 #include "sound.h"
 #include "objects.h"
 #include "../3dsystem/phd_math.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO swat_gun = { 0, 300, 64, 7 };
 

@@ -18,6 +18,8 @@
 #include "health.h"
 #include "items.h"
 #include "../specific/smain.h"
+#include "../specific/input.h"
+#include "camera.h"
 #ifdef TROYESTUFF
 #include "../newstuff/LaraDraw.h"
 #include "../tomb3/tomb3.h"

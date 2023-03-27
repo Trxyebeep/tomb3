@@ -10,6 +10,7 @@
 #include "../specific/game.h"
 #include "../specific/smain.h"
 #include "../specific/init.h"
+#include "../game/control.h"
 #ifdef TROYESTUFF
 #include "../specific/hwrender.h"
 #include "../tomb3/tomb3.h"

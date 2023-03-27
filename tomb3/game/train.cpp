@@ -10,6 +10,7 @@
 #include "lara.h"
 #include "items.h"
 #include "effect2.h"
+#include "camera.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif

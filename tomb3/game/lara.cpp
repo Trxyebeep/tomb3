@@ -18,6 +18,8 @@
 #include "minecart.h"
 #include "larafire.h"
 #include "items.h"
+#include "../specific/input.h"
+#include "camera.h"
 #ifdef TROYESTUFF
 #include "../newstuff/LaraDraw.h"
 #include "../tomb3/tomb3.h"
@@ -25,6 +27,12 @@
 
 static short DeathSlideBounds[12] = { -256, 256, -100, 100, 256, 512, 0, 0, -4550, 4550, 0, 0 };
 static PHD_VECTOR DeathSlidePosition = { 0, 0, 371 };
+
+LARA_INFO lara;
+ITEM_INFO* lara_item;
+short DashTimer;
+short ExposureMeter;
+uchar LaraOnPad;
 
 #ifdef TROYESTUFF
 static void TiltHer(ITEM_INFO* item, long rad, long height)

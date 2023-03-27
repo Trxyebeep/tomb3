@@ -10,6 +10,9 @@
 #include "box.h"
 #include "people.h"
 #include "effects.h"
+#include "triboss.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO lizman_bite_hit = { 0, -120, 120, 10 };
 static BITE_INFO lizman_swipe_hit = { 0, 0, 0, 5 };

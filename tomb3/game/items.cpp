@@ -2,9 +2,20 @@
 #include "items.h"
 #include "effect2.h"
 #include "objects.h"
+#include "demo.h"
+#include "control.h"
+#include "savegame.h"
+#include "lara.h"
 #ifdef TROYESTUFF
 #include "../newstuff/map.h"
 #endif
+
+short next_item_active;
+static short next_item_free;
+short next_fx_active;
+static short next_fx_free;
+
+short body_bag;
 
 void InitialiseItemArray(short num_items)
 {

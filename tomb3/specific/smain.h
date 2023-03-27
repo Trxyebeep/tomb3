@@ -9,6 +9,8 @@ void CheckCheatMode();
 long TitleSequence();
 long GameMain();
 
+extern long HiResFlag;
+extern long title_loaded;
 extern char exit_message[128];
 extern bool inject_rando;
 

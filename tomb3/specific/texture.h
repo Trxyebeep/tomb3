@@ -21,5 +21,6 @@ void DXCreateMaxTPages(long create);
 void DXFreeTPages();
 
 extern DXTEXTURE* TPages[MAX_TPAGES];
+extern long nTPages;
 extern TEXTURE Textures[MAX_TPAGES];
 extern LPDIRECTDRAWPALETTE DXPalette;

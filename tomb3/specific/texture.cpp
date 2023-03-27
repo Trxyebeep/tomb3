@@ -4,6 +4,7 @@
 #include "winmain.h"
 
 DXTEXTURE* TPages[MAX_TPAGES];
+long nTPages;
 TEXTURE Textures[MAX_TPAGES];
 LPDIRECTDRAWPALETTE DXPalette;
 

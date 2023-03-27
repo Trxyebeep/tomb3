@@ -19,6 +19,7 @@
 #include "../game/control.h"
 #include "../game/draw.h"
 #include "winmain.h"
+#include "smain.h"
 #ifdef TROYESTUFF
 #include "option.h"
 #include "../tomb3/tomb3.h"
@@ -27,6 +28,7 @@
 static long rand_1 = 0xD371F947;
 static long rand_2 = 0xD371F947;
 static short saved_levels[24] = { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static long save_counter;
 
 long GetRandomControl()
 {

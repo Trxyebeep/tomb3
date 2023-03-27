@@ -12,6 +12,8 @@
 #include "effects.h"
 #include "traps.h"
 #include "../specific/smain.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO punk_hit = { 16, 48, 320, 13 };
 

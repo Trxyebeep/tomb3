@@ -26,3 +26,4 @@ extern FILE* logF;
 extern WINAPP App;
 extern HWCONFIG HWConfig;
 extern char* G_lpCmdLine;
+extern long game_closedown;

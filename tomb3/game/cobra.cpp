@@ -4,6 +4,8 @@
 #include "gameflow.h"
 #include "effects.h"
 #include "objects.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO cobra_hit = { 0, 0, 0, 13 };
 

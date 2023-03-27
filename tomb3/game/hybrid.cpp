@@ -5,6 +5,8 @@
 #include "people.h"
 #include "effects.h"
 #include "objects.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO hybrid_bite_left = { 19, -13, 3, 7 };
 static BITE_INFO hybrid_bite_right = { 19, -13, 3, 14 };

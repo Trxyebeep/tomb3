@@ -17,3 +17,7 @@ short CreateEffect(short room_num);
 void KillEffect(short fx_num);
 void EffectNewRoom(short fx_num, short room_num);
 void ClearBodyBag();
+
+extern short next_item_active;
+extern short next_fx_active;
+extern short body_bag;

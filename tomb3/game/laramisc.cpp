@@ -16,6 +16,9 @@
 #include "../specific/smain.h"
 #include "items.h"
 #include "larafire.h"
+#include "../specific/file.h"
+#include "camera.h"
+#include "savegame.h"
 #ifdef TROYESTUFF
 #include "effect2.h"
 #include "../specific/input.h"
@@ -232,6 +235,10 @@ void(*lara_collision_routines[89])(ITEM_INFO* item, COLL_INFO* coll) =
 	lara_void_func,
 	lara_col_crawl2hang
 };
+
+static COLL_INFO lara_coll;
+static COLL_INFO* mycoll = &lara_coll;
+static short cheat_hit_points;
 
 void LaraCheatGetStuff()
 {
@@ -689,7 +696,6 @@ void LaraControl(short item_number)
 				break;
 
 			case LARA_WADE:
-
 				camera.target_elevation = -4004;
 
 #ifdef TROYESTUFF

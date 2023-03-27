@@ -15,3 +15,6 @@ enum COMPY_STATES
 	COMPY_ATTACK,
 	COMPY_DEATH
 };
+
+extern long compy_scared_timer;
+extern long compys_attack_lara;

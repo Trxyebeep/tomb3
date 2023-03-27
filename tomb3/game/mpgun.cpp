@@ -12,6 +12,7 @@
 #include "../3dsystem/phd_math.h"
 #include "control.h"
 #include "lot.h"
+#include "lara.h"
 
 static BITE_INFO mpgun_gun = { 0, 160, 40, 13 };
 

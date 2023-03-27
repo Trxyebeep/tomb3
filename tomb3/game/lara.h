@@ -356,3 +356,9 @@ enum lara_anims
 	ANIM_CRAWL_TO_HANG = 302,
 	ANIM_DUCKPICKUPF = 312
 };
+
+extern LARA_INFO lara;
+extern ITEM_INFO* lara_item;
+extern short DashTimer;
+extern short ExposureMeter;
+extern uchar LaraOnPad;

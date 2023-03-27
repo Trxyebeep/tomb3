@@ -83,3 +83,12 @@ void DoLotsOfBlood(long x, long y, long z, short speed, short direction, short r
 void DoLotsOfBloodD(long x, long y, long z, short speed, short direction, short room_num, long num);
 
 extern void(*effect_routines[])(ITEM_INFO* item);
+
+extern long QuadbikeLapTime;
+extern long QuadbikeLapTimeDisplayTimer;
+extern long assault_timer_display;
+extern long assault_penalty_display_timer;
+extern long assault_timer_active;
+extern long assault_target_penalties;
+extern long assault_penalties;
+extern long assault_targets;

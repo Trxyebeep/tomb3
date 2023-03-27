@@ -24,3 +24,5 @@ void S_CDMute();
 #endif
 void S_CDVolume(long volume);
 long S_StartSyncedAudio(long track);
+
+extern char cd_drive;

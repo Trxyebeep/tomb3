@@ -3,6 +3,8 @@
 #include "lara.h"
 #include "control.h"
 #include "laramisc.h"
+#include "../specific/input.h"
+#include "camera.h"
 
 long LaraCheckForLetGo(ITEM_INFO* item, COLL_INFO* coll)
 {

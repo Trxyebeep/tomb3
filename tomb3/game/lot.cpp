@@ -3,6 +3,9 @@
 #include "../specific/init.h"
 #include "objects.h"
 #include "box.h"
+#include "control.h"
+#include "camera.h"
+#include "lara.h"
 
 long slots_used;
 CREATURE_INFO* baddie_slots;

@@ -7,6 +7,8 @@
 #include "collide.h"
 #include "larafire.h"
 #include "../specific/game.h"
+#include "../specific/input.h"
+#include "camera.h"
 
 void LaraUnderWater(ITEM_INFO* item, COLL_INFO* coll)
 {

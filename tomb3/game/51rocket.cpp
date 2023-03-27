@@ -7,6 +7,8 @@
 #include "sound.h"
 #include "items.h"
 #include "traps.h"
+#include "camera.h"
+#include "lara.h"
 
 static char strut_fall;
 

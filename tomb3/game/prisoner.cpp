@@ -7,6 +7,8 @@
 #include "../3dsystem/phd_math.h"
 #include "sound.h"
 #include "lot.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO bob_hit = { 10, 10, 11, 13 };
 

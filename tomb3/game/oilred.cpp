@@ -10,6 +10,7 @@
 #include "../3dsystem/phd_math.h"
 #include "control.h"
 #include "../specific/game.h"
+#include "lara.h"
 
 static BITE_INFO oilred_gun = { 0, 160, 40, 13 };
 

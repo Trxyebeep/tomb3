@@ -4,6 +4,8 @@
 #include "sound.h"
 #include "control.h"
 #include "objects.h"
+#include "lara.h"
+#include "effects.h"
 
 static long reset;
 

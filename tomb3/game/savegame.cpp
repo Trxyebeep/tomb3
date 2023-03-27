@@ -12,6 +12,12 @@
 #include "lot.h"
 #include "traps.h"
 #include "pickup.h"
+#include "triboss.h"
+#include "compy.h"
+#include "setup.h"
+#include "../specific/file.h"
+#include "camera.h"
+#include "lara.h"
 #ifdef TROYESTUFF
 #include "londboss.h"
 #include "../specific/draweffects.h"
@@ -19,6 +25,7 @@
 #include "../tomb3/tomb3.h"
 #endif
 
+SAVEGAME_INFO savegame;
 static char* SGpoint;
 static long SGcount;
 

@@ -3,6 +3,8 @@
 #include "objects.h"
 #include "items.h"
 #include "lot.h"
+#include "control.h"
+#include "lara.h"
 
 static short FlyItem[3] = { NO_ITEM, NO_ITEM, NO_ITEM };
 

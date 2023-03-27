@@ -19,6 +19,8 @@
 #include "sphere.h"
 #include "effect2.h"
 #include "effects.h"
+#include "../specific/input.h"
+#include "savegame.h"
 
 BITE_INFO sub_bites[6] =
 {

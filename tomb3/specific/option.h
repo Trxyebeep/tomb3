@@ -51,3 +51,5 @@ enum d_options
 	DOP_RESOLUTION,
 	DOP_NOPTS
 };
+
+extern long SavedGames;

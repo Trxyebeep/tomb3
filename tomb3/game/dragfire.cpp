@@ -8,6 +8,7 @@
 #include "control.h"
 #include "effects.h"
 #include "traps.h"
+#include "lara.h"
 
 static void TriggerFlamethrowerHitFlame(long x, long y, long z)
 {

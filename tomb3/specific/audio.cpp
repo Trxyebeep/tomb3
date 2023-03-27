@@ -3,6 +3,7 @@
 #include "file.h"
 #include "winmain.h"
 #include "ds.h"
+#include "../game/control.h"
 
 static TRACK_INFO TrackInfos[130];
 static LPDIRECTSOUNDBUFFER DSBuffer;
