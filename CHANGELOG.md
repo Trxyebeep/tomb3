@@ -12,6 +12,7 @@
 
 - Improve falling raptor physics.
 - Increase drawn vertices limit once more.
+- Increase internal memory from 3.6MBs to 15MBs.
 
 ### tomb3 bug fixes
 

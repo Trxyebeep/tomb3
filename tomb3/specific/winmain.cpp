@@ -27,6 +27,7 @@ FILE* logF = 0;
 
 WINAPP App;
 HWCONFIG HWConfig;
+char* G_lpCmdLine;
 
 bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 {

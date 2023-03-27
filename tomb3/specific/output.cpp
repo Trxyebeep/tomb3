@@ -35,6 +35,10 @@ static short shadow[6 + (3 * 8)] =
 	0, 0, 0,
 };
 
+long SunsetTimer;
+long water_effect;
+bool bBlueEffect;
+static long shade_effect;
 static long light_level[4];
 
 void S_PrintShadow(short size, short* box, ITEM_INFO* item)

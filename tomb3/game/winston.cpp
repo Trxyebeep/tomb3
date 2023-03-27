@@ -4,6 +4,7 @@
 #include "sound.h"
 #include "../specific/game.h"
 #include "objects.h"
+#include "lot.h"
 
 void OldWinstonControl(short item_number)
 {

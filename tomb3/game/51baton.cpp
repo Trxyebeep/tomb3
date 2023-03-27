@@ -7,6 +7,7 @@
 #include "../3dsystem/phd_math.h"
 #include "sound.h"
 #include "people.h"
+#include "lot.h"
 
 static BITE_INFO baton_hit = { 247, 10, 11, 13 };
 static BITE_INFO baton_kick = { 0, 0, 100, 6 };

@@ -31,6 +31,9 @@ static BITE_INFO quad_bites[6] =
 	{-90, 180, -32, 7}
 };
 
+static char dont_exit_quad;
+static char HandbrakeStarting;
+
 void QuadBikeDraw(ITEM_INFO* item)
 {
 	QUADINFO* quad;

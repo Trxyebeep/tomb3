@@ -6,6 +6,7 @@
 #include "../specific/game.h"
 #include "../3dsystem/phd_math.h"
 #include "sound.h"
+#include "lot.h"
 
 static BITE_INFO bob_hit = { 10, 10, 11, 13 };
 

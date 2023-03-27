@@ -4,6 +4,7 @@
 #include "winmain.h"
 #include "file.h"
 #include "input.h"
+#include "audio.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif

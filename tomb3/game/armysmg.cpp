@@ -9,6 +9,7 @@
 #include "../3dsystem/phd_math.h"
 #include "sound.h"
 #include "people.h"
+#include "lot.h"
 
 static BITE_INFO army_gun = { 0, 300, 64, 7 };
 

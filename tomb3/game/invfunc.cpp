@@ -109,6 +109,8 @@ TEXTSTRING* Inv_itemText[3];
 short inv_main_qtys[23] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 short inv_keys_qtys[23] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
+static REQUEST_INFO Stats_Requester;
+
 INVENTORY_ITEM* inv_main_list[23] =
 {
 	&icompass_option,

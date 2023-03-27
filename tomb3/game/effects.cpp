@@ -82,6 +82,8 @@ void(*effect_routines[])(ITEM_INFO* item) =
 	RumbleNoShake
 };
 
+static long ExerciseNumber;
+
 void LaraBreath(ITEM_INFO* item)
 {
 	PHD_VECTOR p;

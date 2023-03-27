@@ -22,3 +22,4 @@ void DXFreeTPages();
 
 extern DXTEXTURE* TPages[MAX_TPAGES];
 extern TEXTURE Textures[MAX_TPAGES];
+extern LPDIRECTDRAWPALETTE DXPalette;

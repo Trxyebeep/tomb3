@@ -37,6 +37,8 @@ static ulong acm_playpos = -1;
 static bool acm_paused = 0;
 #endif
 
+long acm_volume;
+
 BOOL __stdcall ACMEnumCallBack(HACMDRIVERID hadid, DWORD_PTR dwInstance, DWORD fdwSupport)
 {
 	ACMDRIVERDETAILS driver;

@@ -26,3 +26,7 @@ void S_InitialisePolyList(bool clearBackBuffer);
 long GetFixedScale(long unit);
 long GetRenderScale(long unit);
 #endif
+
+extern long SunsetTimer;
+extern long water_effect;
+extern bool bBlueEffect;

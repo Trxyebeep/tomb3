@@ -12,6 +12,7 @@
 #include "people.h"
 #include "sound.h"
 #include "../specific/smain.h"
+#include "lot.h"
 
 static BITE_INFO flamer_gun = { 0, 340, 64, 7 };
 

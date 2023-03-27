@@ -4,6 +4,11 @@
 #include "objects.h"
 #include "box.h"
 
+long slots_used;
+CREATURE_INFO* baddie_slots;
+static long nonlot_slots_used;
+static CREATURE_INFO* non_lot_slots;
+
 void InitialiseLOTarray()
 {
 	CREATURE_INFO* creature;

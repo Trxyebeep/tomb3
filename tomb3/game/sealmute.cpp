@@ -9,6 +9,7 @@
 #include "../3dsystem/phd_math.h"
 #include "box.h"
 #include "people.h"
+#include "lot.h"
 
 static BITE_INFO seal_gas = { 0, 48, 140, 10 };
 

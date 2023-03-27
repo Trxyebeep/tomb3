@@ -12,6 +12,9 @@ void* game_malloc(long size, long type);
 void game_free(long size, long type);
 long S_InitialiseSystem();
 
+extern char* malloc_ptr;
+extern char* malloc_buffer;
+
 extern D3DTLVERTEX* CurrentTLVertex;
 extern D3DTLVERTEX* VertexBuffer;
 extern D3DTLVERTEX* UnRollBuffer;

@@ -7,6 +7,16 @@ static long fade_value = 0x100000;
 static long fade_limit = 0x100000;
 static long fade_adder = 0x8000;
 
+double screen_sizer = 1.0;
+double game_sizer = 1.0;
+long VidSizeLocked;
+long BarsWidth = 100;
+short DumpX = 25;
+short DumpY = 25;
+short DumpWidth = 50;
+short DumpHeight = 1;
+char GtFullScreenClearNeeded;
+
 void setup_screen_size()
 {
 	DISPLAYMODE* dm;

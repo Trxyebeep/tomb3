@@ -127,6 +127,12 @@ do \
 #define MAX_WEATHER_ALIVE	8
 #endif
 
+#ifdef TROYESTUFF
+#define MALLOC_SIZE	15000000	//15 MB
+#else
+#define MALLOC_SIZE	0x380000	//about 3.6 MB
+#endif
+
 /*enums*/
 enum bite_offsets
 {

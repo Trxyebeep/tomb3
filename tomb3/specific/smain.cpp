@@ -591,7 +591,7 @@ long GameMain()
 	InitialiseStartInfo();
 	S_FrontEndCheck(&savegame, sizeof(SAVEGAME_INFO));
 	HiResFlag = -1;
-	malloc_buffer = (char*)GlobalAlloc(GMEM_FIXED, 0x380000);
+	malloc_buffer = (char*)GlobalAlloc(GMEM_FIXED, MALLOC_SIZE);
 
 	if (!malloc_buffer)
 	{

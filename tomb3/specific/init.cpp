@@ -13,6 +13,7 @@
 #include "../3dsystem/hwinsert.h"
 #include "picture.h"
 #include "smain.h"
+#include "display.h"
 #ifdef TROYESTUFF
 #include "fmv.h"
 #include "../newstuff/discord.h"
@@ -68,6 +69,12 @@ const char* game_malloc_types[47] =
 	"Texture Infos",
 	"Sprite Infos"
 };
+
+char* malloc_ptr;
+char* malloc_buffer;
+static long malloc_free;
+static long malloc_size;
+static long malloc_used;
 
 D3DTLVERTEX* CurrentTLVertex;
 D3DTLVERTEX* VertexBuffer;
@@ -273,7 +280,7 @@ long S_InitialiseSystem()
 		}
 	}
 
-	malloc_size = 0x380000;
+	malloc_size = MALLOC_SIZE;
 	return 1;
 }
 

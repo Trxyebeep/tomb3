@@ -5,6 +5,7 @@
 
 DXTEXTURE* TPages[MAX_TPAGES];
 TEXTURE Textures[MAX_TPAGES];
+LPDIRECTDRAWPALETTE DXPalette;
 
 static bool bSetColorKey = 1;
 static bool bMakeGrey;

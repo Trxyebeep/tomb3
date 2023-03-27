@@ -31,3 +31,4 @@ long IsRoomOutside(long x, long y, long z);
 
 extern long flipmap[10];
 extern char cd_flags[128];
+extern uchar HeavyTriggered;

@@ -33,6 +33,7 @@
 
 long flipmap[10];
 char cd_flags[128];
+uchar HeavyTriggered;
 static long number_los_rooms;
 static long los_rooms[20];
 

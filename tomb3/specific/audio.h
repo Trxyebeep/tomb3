@@ -18,3 +18,5 @@ long ACMHandleNotifications();
 long ACMSetupNotifications();
 bool ACMInit();
 void ACMClose();
+
+extern long acm_volume;
