@@ -7,6 +7,7 @@
 #include "../specific/init.h"
 #include "../specific/winmain.h"
 #include "../specific/output.h"
+#include "../game/draw.h"
 #ifdef TROYESTUFF
 #include "../game/control.h"
 #include "../tomb3/tomb3.h"

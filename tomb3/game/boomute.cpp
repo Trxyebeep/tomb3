@@ -8,6 +8,7 @@
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/phd_math.h"
 #include "control.h"
+#include "effects.h"
 
 static BITE_INFO seal_gas = { 0, 48, 140, 10 };
 

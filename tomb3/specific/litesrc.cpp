@@ -5,6 +5,7 @@
 #include "../3dsystem/hwinsert.h"
 #include "../game/effect2.h"
 #include "../game/control.h"
+#include "winmain.h"
 
 PHD_VECTOR LPos[3];
 long LightPos[12];
@@ -87,7 +88,7 @@ short* calc_vertice_light(short* objptr, short* objptr1)
 
 	if (nVtx <= 0)
 	{
-		fade = distanceFogValue << 14;
+		fade = distanceFogValue << W2V_SHIFT;
 
 		for (; nVtx < 0; nVtx++)
 		{
@@ -145,7 +146,7 @@ short* calc_vertice_light(short* objptr, short* objptr1)
 		LightPos[M21] = (LPos[2].x * phd_mxptr[M01] + LPos[2].y * phd_mxptr[M11] + LPos[2].z * phd_mxptr[M21]) >> W2V_SHIFT;
 		LightPos[M22] = (LPos[2].x * phd_mxptr[M02] + LPos[2].y * phd_mxptr[M12] + LPos[2].z * phd_mxptr[M22]) >> W2V_SHIFT;
 
-		fade = distanceFogValue << 14;
+		fade = distanceFogValue << W2V_SHIFT;
 
 		for (; nVtx > 0; nVtx--)
 		{

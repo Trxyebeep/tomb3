@@ -47,6 +47,15 @@ extern uchar IsAtmospherePlaying;
 
 extern long CurrentLevel;
 extern long level_complete;
+extern long chunky_flag;
+extern long GnGameMode;
+extern long reset_flag;
+extern long noinput_count;
+extern long overlay_flag;
+extern short FXType;
+extern short item_after_projectile;
+extern short cdtrack;
+extern char PoisonFlag;
 
 extern long flipmap[10];
 extern long flip_status;

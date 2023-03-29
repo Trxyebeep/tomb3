@@ -12,6 +12,7 @@
 #include "../game/camera.h"
 #include "../game/control.h"
 #include "../game/lara.h"
+#include "picture.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif

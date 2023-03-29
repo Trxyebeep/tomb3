@@ -22,6 +22,11 @@
 #define AMMO_XPOS_PS	-24
 #define AMMO_YPOS_PS	-24
 
+long health_bar_timer;
+TEXTSTRING* ammotext;
+static TEXTSTRING* LpModeTS;
+static long LnModeTSLife;
+
 #ifndef TROYESTUFF
 DISPLAYPU pickups[1];
 #else

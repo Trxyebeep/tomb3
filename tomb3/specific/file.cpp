@@ -19,7 +19,9 @@
 #include "../game/demo.h"
 #include "../game/control.h"
 #include "../game/camera.h"
+#include "../game/effects.h"
 #include "../game/effect2.h"
+#include "../game/cinema.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
@@ -41,6 +43,7 @@ short* floor_data;
 short* mesh_base;
 long number_cameras;
 long wet;
+long nTInfos;
 
 PHDTEXTURESTRUCT phdtextinfo[MAX_TINFOS];
 PHDSPRITESTRUCT phdspriteinfo[512];

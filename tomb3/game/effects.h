@@ -84,6 +84,10 @@ void DoLotsOfBloodD(long x, long y, long z, short speed, short direction, short 
 
 extern void(*effect_routines[])(ITEM_INFO* item);
 
+extern FX_INFO* effects;
+extern OBJECT_VECTOR* sound_effects;
+extern long number_sound_effects;
+
 extern long QuadbikeLapTime;
 extern long QuadbikeLapTimeDisplayTimer;
 extern long assault_timer_display;

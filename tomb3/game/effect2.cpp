@@ -29,6 +29,15 @@ static SP_DYNAMIC spark_dynamics[32];
 BAT_STRUCT bats[32];
 SPLASH_STRUCT splashes[4];
 RIPPLE_STRUCT ripples[16];
+SPLASH_SETUP splash_setup;
+
+long SplashCount;
+long KillEverythingFlag;
+long SmokeCountL;
+long SmokeCountR;
+long SmokeWeapon;
+long SmokeWindX;
+long SmokeWindZ;
 
 DYNAMIC dynamics[64];
 long number_dynamics;

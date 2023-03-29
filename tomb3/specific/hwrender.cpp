@@ -18,6 +18,7 @@ HRESULT (*BeginScene)();
 HRESULT (*EndScene)();
 void (*DrawRoutine)(long, D3DTLVERTEX*, long, long);
 
+float GammaOption = 3.0F;
 uchar ColorTable[256];
 
 static D3DPRIMITIVETYPE dpPrimitiveType;

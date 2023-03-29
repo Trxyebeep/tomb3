@@ -36,3 +36,5 @@ void SuperDrawBox(long x, long y, long z, short* bounds, long col);
 
 extern EXPLOSION_RING ExpRings[6];
 extern WAKE_PTS WakePts[32][2];
+extern uchar WakeShade;
+extern uchar CurrentStartWake;

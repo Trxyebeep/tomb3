@@ -84,6 +84,10 @@ void(*effect_routines[])(ITEM_INFO* item) =
 	RumbleNoShake
 };
 
+FX_INFO* effects;
+OBJECT_VECTOR* sound_effects;
+long number_sound_effects;
+
 static long ExerciseNumber;
 
 long QuadbikeLapTime;

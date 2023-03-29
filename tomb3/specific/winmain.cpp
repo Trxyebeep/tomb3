@@ -30,6 +30,10 @@ WINAPP App;
 HWCONFIG HWConfig;
 char* G_lpCmdLine;
 long game_closedown;
+bool GtWindowClosed;
+
+long distanceFogValue;
+long farz;
 
 bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 {

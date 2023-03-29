@@ -28,6 +28,7 @@
 #include "setup.h"
 #include "../specific/file.h"
 #include "lara.h"
+#include "health.h"
 #ifdef TROYESTUFF
 #include "../newstuff/pausemenu.h"
 #include "../newstuff/discord.h"
@@ -51,6 +52,15 @@ uchar IsAtmospherePlaying;
 
 long CurrentLevel;
 long level_complete;
+long chunky_flag;
+long GnGameMode;
+long reset_flag;
+long noinput_count;
+long overlay_flag = 1;
+short FXType;
+short item_after_projectile;
+short cdtrack = -1;
+char PoisonFlag;
 
 long flipmap[10];
 long flip_status;

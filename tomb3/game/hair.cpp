@@ -7,6 +7,7 @@
 #include "../specific/game.h"
 #include "../3dsystem/phd_math.h"
 #include "lara.h"
+#include "effect2.h"
 
 static PHD_3DPOS hair[7];
 static PHD_VECTOR hvel[7];

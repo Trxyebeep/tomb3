@@ -42,6 +42,8 @@ extern void (*InsertSprite)(long zdepth, long x1, long y1, long x2, long y2, lon
 extern void (*InsertTransQuad)(long x, long y, long w, long h, long z);
 
 extern float outsideBackgroundTop;
+extern long BlackGouraudIndex;
+extern bool bFixSkyColour;
 
 extern long sort3d_bufferbf[MAX_SORTLISTS];
 extern short info3d_bufferbf[MAX_SORTLISTS];

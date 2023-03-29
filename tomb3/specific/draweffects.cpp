@@ -20,6 +20,7 @@
 #include "../game/laraelec.h"
 #include "../game/setup.h"
 #include "winmain.h"
+#include "../game/effects.h"
 #ifdef TROYESTUFF
 #include "../game/sub.h"
 #include "../game/lara.h"
@@ -94,6 +95,8 @@ static RAINDROP uwparts[MAX_WEATHER];
 
 EXPLOSION_RING ExpRings[6];
 WAKE_PTS WakePts[32][2];
+uchar WakeShade;
+uchar CurrentStartWake;
 
 #ifdef TROYESTUFF
 static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, short c, bool cFlag)

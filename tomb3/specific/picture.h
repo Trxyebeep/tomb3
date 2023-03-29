@@ -26,6 +26,10 @@ void FreePictureTextures(long* indices);
 extern DXTEXTURE PictureTextures[MAX_TPAGES];
 extern long OldPicTexIndices[5];
 extern long CurPicTexIndices[5];
+extern long nLoadedPictures;
+extern bool forceFadeDown;
+extern bool pictureFading;
+extern bool dontFadePicture;
 
 #ifdef TROYESTUFF
 extern bool bDontGreyOut;

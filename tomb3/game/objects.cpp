@@ -14,6 +14,7 @@
 #include "box.h"
 #include "camera.h"
 #include "savegame.h"
+#include "cinema.h"
 
 static short final_boss_active;	//TR2 remnants
 static short final_boss_count;

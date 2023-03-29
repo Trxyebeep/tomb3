@@ -5,6 +5,7 @@
 #include "../specific/option.h"
 #include "../specific/input.h"
 #include "../specific/winmain.h"
+#include "../specific/hwrender.h"
 
 TOMB3_OPTIONS tomb3;
 TOMB3_SAVE tomb3_save;

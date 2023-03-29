@@ -15,6 +15,10 @@
 DXTEXTURE PictureTextures[MAX_TPAGES];
 long OldPicTexIndices[5];
 long CurPicTexIndices[5];
+long nLoadedPictures;
+bool forceFadeDown;
+bool pictureFading;
+bool dontFadePicture;
 
 #ifdef TROYESTUFF
 bool bDontGreyOut;

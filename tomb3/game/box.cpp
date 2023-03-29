@@ -12,6 +12,10 @@
 #include "sphere.h"
 #include "camera.h"
 
+BOX_INFO* boxes;
+long number_boxes;
+short* overlap;
+
 short* ground_zone[4][2];
 short* fly_zone[2];
 

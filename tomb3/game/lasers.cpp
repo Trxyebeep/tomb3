@@ -7,6 +7,7 @@
 #include "../specific/draweffects.h"
 #include "effects.h"
 #include "lara.h"
+#include "box.h"
 
 uchar LaserShades[32];
 

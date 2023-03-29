@@ -19,6 +19,8 @@
 #include "../specific/file.h"
 #include "camera.h"
 #include "savegame.h"
+#include "cinema.h"
+#include "../specific/picture.h"
 #ifdef TROYESTUFF
 #include "effect2.h"
 #include "../specific/input.h"

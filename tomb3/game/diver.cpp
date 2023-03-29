@@ -8,6 +8,7 @@
 #include "missile.h"
 #include "box.h"
 #include "lara.h"
+#include "effects.h"
 
 static BITE_INFO diver_poon = { 17, 164, 44, 18 };
 

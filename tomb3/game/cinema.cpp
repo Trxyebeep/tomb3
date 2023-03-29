@@ -21,9 +21,19 @@
 #include "sound.h"
 #include "camera.h"
 #include "lara.h"
+#include "effects.h"
 #ifdef TROYESTUFF
 #include "../newstuff/LaraDraw.h"
 #endif
+
+short* cine;
+PHD_3DPOS cinematic_pos;
+long cutscene_track = 1;
+short cine_loaded;
+short cine_frame;
+short num_cine_frames;
+static long actual_current_frame;
+static short cinematic_level;
 
 long DrawPhaseCinematic()
 {

@@ -27,6 +27,8 @@
 
 static uchar EnemyWeapon[16] = { 0, 1, 129, 0, 1, 1,  1 };
 static long bound_list[128];
+static long bound_start;
+static long bound_end;
 
 long box_lines[12][2] = { {0, 1}, {1, 2}, {2, 3}, {3, 0}, {4, 5}, {5, 6}, {6, 7}, {7, 4}, {0, 4}, {1, 5}, {2, 6}, {3, 7} };
 short null_rotations[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -40,6 +42,19 @@ long number_draw_rooms;
 short draw_rooms[100];
 char IsJointUnderwater[15];
 char GotJointPos[15];
+
+long nPolyType;
+long camera_underwater;
+long mid_sort = 0;
+
+long outside;
+static long outside_top;
+static long outside_left;
+static long outside_right;
+static long outside_bottom;
+
+MESH_INFO* CurrentMesh;
+long CurrentRoom;
 
 static BITE_INFO EnemyBites[16] =	//bite_offsets enum
 {

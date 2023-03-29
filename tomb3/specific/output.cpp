@@ -14,6 +14,7 @@
 #include "file.h"
 #include "winmain.h"
 #include "../game/gameflow.h"
+#include "../game/draw.h"
 #ifdef TROYESTUFF
 #include "../game/control.h"
 #include "../game/health.h"
@@ -43,6 +44,7 @@ long water_effect;
 bool bBlueEffect;
 static long shade_effect;
 static long light_level[4];
+static long objbcnt;
 
 void S_PrintShadow(short size, short* box, ITEM_INFO* item)
 {

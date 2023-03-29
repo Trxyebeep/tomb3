@@ -15,6 +15,7 @@
 #include "lot.h"
 #include "control.h"
 #include "lara.h"
+#include "effects.h"
 
 static BITE_INFO flamer_gun = { 0, 340, 64, 7 };
 

@@ -14,6 +14,7 @@
 #include "../tomb3/tomb3.h"
 #include "../specific/smain.h"
 #include "../game/camera.h"
+#include "../game/control.h"
 
 static TEXTSTRING* pause_text;
 static REQUEST_INFO Pause_Requester = {0};

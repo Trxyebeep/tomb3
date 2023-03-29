@@ -3,6 +3,7 @@
 #include "3d_gen.h"
 #include "hwinsert.h"
 #include "../specific/file.h"
+#include "../specific/winmain.h"
 #ifdef TROYESTUFF
 #include "../specific/output.h"
 #include "../tomb3/tomb3.h"

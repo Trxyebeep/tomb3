@@ -38,6 +38,7 @@ extern short* floor_data;
 extern short* mesh_base;
 extern long number_cameras;
 extern long wet;
+extern long nTInfos;
 
 extern PHDTEXTURESTRUCT phdtextinfo[MAX_TINFOS];
 extern PHDSPRITESTRUCT phdspriteinfo[512];

@@ -6,6 +6,7 @@
 #include "../3dsystem/3d_gen.h"
 #include "winmain.h"
 #include "display.h"
+#include "../game/control.h"
 
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"

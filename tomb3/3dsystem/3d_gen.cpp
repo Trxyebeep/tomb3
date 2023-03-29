@@ -11,6 +11,7 @@
 #include "../specific/smain.h"
 #include "../specific/init.h"
 #include "../game/control.h"
+#include "../game/draw.h"
 #ifdef TROYESTUFF
 #include "../specific/hwrender.h"
 #include "../tomb3/tomb3.h"
@@ -29,6 +30,8 @@ void (*InsertSprite)(long zdepth, long x1, long y1, long x2, long y2, long nSpri
 void (*InsertTransQuad)(long x, long y, long w, long h, long z);
 
 float outsideBackgroundTop;
+long BlackGouraudIndex = 0;
+bool bFixSkyColour = 0;
 
 long sort3d_bufferbf[MAX_SORTLISTS];
 short info3d_bufferbf[MAX_SORTLISTS];
@@ -493,7 +496,7 @@ void S_InsertBackground(short* objptr)
 	if (objptr)
 	{
 #ifdef TROYESTUFF
-		HWR_InitGamma(10);
+		HWR_InitGamma(10.0F);
 #endif
 		objptr = calc_back_light(objptr);
 		objptr = InsertObjectGT4(objptr + 1, objptr[0], BACK_SORT);

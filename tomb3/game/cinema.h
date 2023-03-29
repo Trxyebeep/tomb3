@@ -15,3 +15,10 @@ void InGameCinematicCamera();
 void ControlCinematicPlayer(short item_number);
 long DoCinematic(long nframes);
 long StartCinematic(long level_number);
+
+extern short* cine;
+extern PHD_3DPOS cinematic_pos;
+extern long cutscene_track;
+extern short cine_loaded;
+extern short cine_frame;
+extern short num_cine_frames;

@@ -6,6 +6,7 @@
 #include "control.h"
 #include "savegame.h"
 #include "lara.h"
+#include "effects.h"
 #ifdef TROYESTUFF
 #include "../newstuff/map.h"
 #endif

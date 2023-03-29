@@ -33,6 +33,8 @@ BITE_INFO sub_bites[6] =
 };
 
 SUB_WAKE_PTS SubWakePts[32][2];
+uchar SubWakeShade;
+uchar SubCurrentStartWake;
 
 void SubInitialise(short item_number)
 {
