@@ -539,16 +539,3 @@ void Log(const char* s, ...)		//NOT present in original code
 	fwrite(buf, strlen(buf), 1, logF);
 #endif
 }
-
-void inject_winmain(bool replace)
-{
-	INJECT(0x004B2F80, WinDXInit, replace);
-	INJECT(0x004B2C50, WinAppExit, replace);
-	INJECT(0x004B2E10, WinAppProc, replace);
-	INJECT(0x004B2D40, WinRegisterWindow, replace);
-	INJECT(0x004B2DC0, WinCreateWindow, replace);
-	INJECT(0x004B34D0, WinFrameRate, replace);
-	INJECT(0x004B2C60, WinFreeDX, replace);
-	INJECT(0x004B2940, WinMain, replace);
-	INJECT(0x004B37C0, S_ExitSystem, replace);
-}

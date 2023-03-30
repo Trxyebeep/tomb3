@@ -283,8 +283,3 @@ void DinoControl(short item_number)
 	else
 		item->collidable = 0;
 }
-
-void inject_trex(bool replace)
-{
-	INJECT(0x0046FD80, DinoControl, replace);
-}

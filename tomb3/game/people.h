@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_people(bool replace);
-
 short GunShot(long x, long y, long z, short speed, short yrot, short room_number);
 short GunHit(long x, long y, long z, short speed, short yrot, short room_number);
 short GunMiss(long x, long y, long z, short speed, short yrot, short room_number);

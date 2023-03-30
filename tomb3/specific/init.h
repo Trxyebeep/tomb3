@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_init(bool replace);
-
 void ShutdownGame();
 void CalculateWibbleTable();
 ushort GetRandom(WATERTAB* wt, long lp);

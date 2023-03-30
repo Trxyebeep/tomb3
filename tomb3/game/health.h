@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_health(bool replace);
-
 long FlashIt();
 void DrawAssaultTimer();
 void DrawAssaultPenalties(long type);

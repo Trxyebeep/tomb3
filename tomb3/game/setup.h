@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_setup(bool replace);
-
 void GetAIPickups();
 void GetCarriedItems();
 void InitialiseLevelFlags();

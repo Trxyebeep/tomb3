@@ -3,7 +3,6 @@
 #include "dd.h"
 #include "winmain.h"
 #include "hwrender.h"
-#include "mmx.h"
 #include "drawprimitive.h"
 #include "display.h"
 #include "picture.h"
@@ -592,10 +591,12 @@ void DXClearBuffers(ulong flags, ulong color)
 bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 {
 	DIRECT3DINFO* d3dinfo;
+#ifndef TROYESTUFF
 	LPDIRECTDRAWSURFACEX surf;
 	DDSURFACEDESCX desc;
 	DDSURFACEDESCX backDesc;
 	uchar* dest;
+#endif
 	ulong w;
 
 	App.nFrames++;
@@ -614,6 +615,7 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 	}
 	else
 	{
+#ifndef TROYESTUFF
 		memset(&desc, 0, sizeof(DDSURFACEDESCX));
 		memset(&backDesc, 0, sizeof(DDSURFACEDESCX));
 		desc.dwSize = sizeof(DDSURFACEDESCX);
@@ -673,6 +675,7 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 		}
 		else
 			App.lpFrontBuffer->Unlock(0);
+#endif
 	}
 
 	if (runMessageLoop)
@@ -1264,36 +1267,3 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 	return 1;
 }
 #endif
-
-void inject_dxshell(bool replace)
-{
-	INJECT(0x0048FDB0, BPPToDDBD, replace);
-	INJECT(0x0048FEE0, DXSetVideoMode, replace);
-	INJECT(0x0048FF10, DXCreateSurface, replace);
-	INJECT(0x0048FF60, DXGetAttachedSurface, replace);
-	INJECT(0x0048FF80, DXAddAttachedSurface, replace);
-	INJECT(0x0048FFA0, DXCreateDirect3DDevice, replace);
-	INJECT(0x0048FFC0, DXCreateViewPort, replace);
-	INJECT(0x004900B0, DXGetSurfaceDesc, replace);
-	INJECT(0x004900C0, DXSurfBlt, replace);
-	INJECT(0x0048F1C0, DXBitMask2ShiftCnt, replace);
-	INJECT(0x0048FE40, DXCreateDirectDraw, replace);
-	INJECT(0x0048FEA0, DXCreateDirect3D, replace);
-	INJECT(0x0048FEC0, DXSetCooperativeLevel, replace);
-	INJECT(0x0048ECE0, DXEnumDirectInput, replace);
-	INJECT(0x0048F1F0, DXEnumDisplayModes, replace);
-	INJECT(0x004B2E80, DXCreateZBuffer, replace);
-	INJECT(0x0048EFD0, DXEnumDirectDraw, replace);
-	INJECT(0x0048FBB0, DXEnumTextureFormats, replace);
-	INJECT(0x0048EDE0, DXEnumDirectSound, replace);
-	INJECT(0x0048EEE0, DXFreeDeviceInfo, replace);
-	INJECT(0x004B40A0, DXSaveScreen, replace);
-	INJECT(0x004B3A40, DXDoFlipWait, replace);
-	INJECT(0x004B3C50, DXCheckForLostSurfaces, replace);
-	INJECT(0x004B3A70, DXClearBuffers, replace);
-	INJECT(0x004B3D10, DXUpdateFrame, replace);
-	INJECT(0x0048EBB0, DXGetDeviceInfo, replace);
-	INJECT(0x004B4040, SWRBlit32to15, replace);
-	INJECT(0x0048F3C0, DXEnumDirect3D, replace);
-	INJECT(0x004B3550, DXSwitchVideoMode, replace);
-}

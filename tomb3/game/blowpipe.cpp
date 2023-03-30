@@ -313,8 +313,3 @@ void BlowpipeControl(short item_number)
 	CreatureJoint(item, 3, 0);
 	CreatureAnimation(item_number, angle, 0);
 }
-
-void inject_blowpipe(bool replace)
-{
-	INJECT(0x00411710, BlowpipeControl, replace);
-}

@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_tribeaxe(bool replace);
-
 void TribeAxeControl(short item_number);
 
 enum TRIBEAXE_STATES

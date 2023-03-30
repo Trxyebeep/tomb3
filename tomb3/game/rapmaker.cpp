@@ -96,9 +96,3 @@ void RaptorEmitterControl(short item_number)
 	ItemNewRoom(RaptorItem[lp], item->room_number);
 	EnableBaddieAI(RaptorItem[lp], 1);
 }
-
-void inject_rapmaker(bool replace)
-{
-	INJECT(0x00461010, InitialiseRaptorEmitter, replace);
-	INJECT(0x00460DA0, RaptorEmitterControl, replace);
-}

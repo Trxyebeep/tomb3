@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_firehead(bool replace);
-
 void InitialiseFireHead(short item_number);
 void ControlFireHead(short item_number);
 void ControlRotateyThing(short item_number);

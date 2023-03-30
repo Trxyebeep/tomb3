@@ -200,9 +200,3 @@ void BoomuteControl(short item_number)
 
 	AnimateItem(item);
 }
-
-void inject_boomute(bool replace)
-{
-	INJECT(0x004140A0, TriggerSealmuteGasThrower, replace);
-	INJECT(0x00413FF0, BoomuteControl, replace);
-}

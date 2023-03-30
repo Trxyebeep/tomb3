@@ -120,8 +120,3 @@ void MouseControl(short item_number)
 	CreatureJoint(item, 0, head);
 	CreatureAnimation(item_number, angle, 0);
 }
-
-void inject_rat(bool replace)
-{
-	INJECT(0x00461740, MouseControl, replace);
-}

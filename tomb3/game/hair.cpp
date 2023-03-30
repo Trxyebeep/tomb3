@@ -779,10 +779,3 @@ void HairControl(long in_cutscene)
 	}
 }
 #endif
-
-void inject_hair(bool replace)
-{
-	INJECT(0x00433790, InitialiseHair, replace);
-	INJECT(0x004342E0, DrawHair, replace);
-	INJECT(0x00433810, HairControl, replace);
-}

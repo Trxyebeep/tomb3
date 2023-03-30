@@ -96,8 +96,3 @@ void FlyEmitterControl(short item_number)
 	ItemNewRoom(FlyItem[lp], item->room_number);
 	EnableBaddieAI(FlyItem[lp], 1);
 }
-
-void inject_flymaker(bool replace)
-{
-	INJECT(0x00431C10, FlyEmitterControl, replace);
-}

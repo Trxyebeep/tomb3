@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_51baton(bool replace);
-
 void InitialiseBaton(short item_number);
 void BatonControl(short item_number);
 

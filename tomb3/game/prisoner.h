@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_prisoner(bool replace);
-
 void InitialisePrisoner(short item_number);
 void PrisonerControl(short item_number);
 

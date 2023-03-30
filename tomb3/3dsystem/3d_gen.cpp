@@ -788,32 +788,3 @@ void phd_LookAt(long sx, long sy, long sz, long tx, long ty, long tz, short roll
 	CamPos.z = sz;
 	phd_GenerateW2V(&viewPos);
 }
-
-void inject_3dgen(bool replace)
-{
-	INJECT(0x00401AF0, phd_PutPolygons, replace);
-	INJECT(0x004013E0, phd_RotX, replace);
-	INJECT(0x00401490, phd_RotY, replace);
-	INJECT(0x00401540, phd_RotZ, replace);
-	INJECT(0x004015F0, phd_RotYXZ, replace);
-	INJECT(0x004017D0, phd_RotYXZpack, replace);
-	INJECT(0x004019C0, phd_TranslateRel, replace);
-	INJECT(0x00401A70, phd_TranslateAbs, replace);
-	INJECT(0x00402030, AlterFOV, replace);
-	INJECT(0x004B4280, phd_PushMatrix, replace);
-	INJECT(0x004B429E, phd_PushUnitMatrix, replace);
-//	INJECT(----------, phd_PopMatrix, replace);
-	INJECT(0x00402130, SetZNear, replace);
-	INJECT(0x00402180, SetZFar, replace);
-	INJECT(0x00401BF0, S_InsertRoom, replace);
-	INJECT(0x00401CE0, calc_back_light, replace);
-	INJECT(0x00401D20, S_InsertBackground, inject_rando ? 1 : replace);
-	INJECT(0x004021A0, phd_InitWindow, replace);
-	INJECT(0x00401EC0, phd_InitPolyList, replace);
-	INJECT(0x00401F60, do_quickysorty, replace);
-	INJECT(0x00401F20, phd_SortPolyList, replace);
-	INJECT(0x00401350, phd_NormaliseVector, replace);
-	INJECT(0x004012D0, phd_GetVectorAngles, replace);
-	INJECT(0x00401000, phd_GenerateW2V, replace);
-	INJECT(0x004011D0, phd_LookAt, replace);
-}

@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_input(bool replace);
-
 long Key(long number);
 long S_UpdateInput();
 

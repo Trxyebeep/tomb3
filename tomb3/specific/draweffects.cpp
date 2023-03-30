@@ -5600,28 +5600,3 @@ void SuperDrawBox(long x, long y, long z, short* bounds, long col)
 	phd_PopMatrix();
 }
 #endif
-
-void inject_draweffects(bool replace)
-{
-	INJECT(0x00478600, LaraElectricDeath, replace);
-	INJECT(0x00479510, ClipLine, replace);
-	INJECT(0x0047F4C0, S_DrawWakeFX, replace);
-	INJECT(0x0047A4B0, DoRain, replace);
-	INJECT(0x0047AA80, DoSnow, replace);
-	INJECT(0x00476CA0, DrawExplosionRings, replace);
-	INJECT(0x0047C2A0, DrawSummonRings, replace);
-	INJECT(0x00477C30, DrawKnockBackRings, replace);
-	INJECT(0x0047E170, TriggerElectricBeam, replace);
-	INJECT(0x0047D4A0, TriggerTribeBossHeadElectricity, replace);
-	INJECT(0x0047CC10, DrawTonyBossShield, replace);
-	INJECT(0x0047EC30, DrawTribeBossShield, replace);
-	INJECT(0x00479C20, DrawLondonBossShield, replace);
-	INJECT(0x0047FC30, DrawWillBossShield, replace);
-	INJECT(0x00479810, S_DrawLaserBeam, replace);
-	INJECT(0x00476420, S_DrawBat, replace);
-	INJECT(0x0047B2C0, S_DrawSparks, replace);
-	INJECT(0x0047BAA0, S_DrawSplashes, replace);
-	INJECT(0x00478BF0, S_DrawLaserBolts, replace);
-	INJECT(0x004775C0, S_DrawFish, replace);
-	INJECT(0x00476A30, S_DrawDarts, replace);
-}

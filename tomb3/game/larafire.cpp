@@ -1422,19 +1422,3 @@ void DoProperDetection(short item_number, long x, long y, long z, long xv, long 
 	if (item->room_number != room_number)
 		ItemNewRoom(item_number, room_number);
 }
-
-void inject_larafire(bool replace)
-{
-	INJECT(0x0044AF50, WeaponObject, replace);
-	INJECT(0x0044A890, FireWeapon, inject_rando ? 1 : replace);
-	INJECT(0x0044AE20, HitTarget, replace);
-	INJECT(0x0044AEE0, SmashItem, replace);
-	INJECT(0x0044A7B0, AimWeapon, replace);
-	INJECT(0x0044A700, find_target_point, replace);
-	INJECT(0x0044A330, LaraTargetInfo, replace);
-	INJECT(0x0044A4D0, LaraGetNewTarget, replace);
-	INJECT(0x0044A1E0, InitialiseNewWeapon, replace);
-	INJECT(0x0044A1A0, CheckForHoldingState, replace);
-	INJECT(0x00449BB0, LaraGun, replace);
-	INJECT(0x0044AFB0, DoProperDetection, replace);
-}

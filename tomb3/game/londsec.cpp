@@ -433,8 +433,3 @@ void LondSecControl(short item_number)
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
 }
-
-void inject_londsec(bool replace)
-{
-	INJECT(0x004523C0, LondSecControl, replace);
-}

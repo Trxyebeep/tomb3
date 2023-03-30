@@ -476,11 +476,3 @@ void S_CalculateLight(long x, long y, long z, short room_number, ITEM_LIGHT* il)
 		LPos[i].z = z;
 	}
 }
-
-void inject_litesrc(bool replace)
-{
-	INJECT(0x00487550, S_CalculateStaticLight, replace);
-	INJECT(0x00487590, S_CalculateStaticMeshLight, replace);
-	INJECT(0x004866E0, calc_vertice_light, replace);
-	INJECT(0x00486BA0, S_CalculateLight, replace);
-}

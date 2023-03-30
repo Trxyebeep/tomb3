@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_savegame(bool replace);
-
 void ModifyStartInfo(long level);
 void InitialiseStartInfo();
 void CreateStartInfo(long level);

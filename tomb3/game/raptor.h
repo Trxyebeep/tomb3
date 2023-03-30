@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_raptor(bool replace);
-
 void RaptorControl(short item_number);
 
 enum RAPTOR_STATES

@@ -277,25 +277,3 @@ long S_StartSyncedAudio(long track)
 
 	return 0;
 }
-
-void inject_specific(bool replace)
-{
-	INJECT(0x0048D500, SWR_FindNearestPaletteEntry, replace);
-	INJECT(0x0048D2E0, CD_Init, replace);
-	INJECT(0x0048D0A0, CalcVolume, replace);
-	INJECT(0x0048D120, CalcPan, replace);
-	INJECT(0x0048D200, S_SoundSetMasterVolume, replace);
-	INJECT(0x0048D0D0, S_SoundPlaySample, replace);
-	INJECT(0x0048D150, S_SoundPlaySampleLooped, replace);
-	INJECT(0x0048D1A0, S_SoundSetPanAndVolume, replace);
-	INJECT(0x0048D1E0, S_SoundSetPitch, replace);
-	INJECT(0x0048D210, S_SoundStopSample, replace);
-	INJECT(0x0048D230, S_SoundStopAllSamples, replace);
-	INJECT(0x0048D240, S_SoundSampleIsPlaying, replace);
-	INJECT(0x0048D260, S_CDLoop, replace);
-	INJECT(0x0048D480, S_CDPlay, replace);
-	INJECT(0x0048D4A0, S_CDStop, replace);
-	INJECT(0x0048D4E0, S_CDGetLoc, replace);
-	INJECT(0x0048D4F0, S_CDVolume, replace);
-	INJECT(0x0048D4B0, S_StartSyncedAudio, replace);
-}

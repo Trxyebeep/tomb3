@@ -431,11 +431,3 @@ short* calc_roomvert(short* objptr, long far_clip)
 
 	return objptr;
 }
-
-void inject_transform(bool replace)
-{
-	INJECT(0x0048D6A0, InitZTable, replace);
-	INJECT(0x0048D6E0, calc_object_vertices, replace);
-	INJECT(0x0048E050, calc_object_verticesback, replace);
-	INJECT(0x0048D9B0, calc_roomvert, replace);
-}

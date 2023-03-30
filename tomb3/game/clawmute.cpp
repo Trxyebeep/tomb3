@@ -559,12 +559,3 @@ void ClawmuteControl(short item_number)
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
 }
-
-void inject_clawmute(bool replace)
-{
-	INJECT(0x0041C1F0, TriggerPlasmaBallFlame, replace);
-	INJECT(0x0041BDA0, TriggerPlasmaBall, replace);
-	INJECT(0x0041BBE0, TriggerPlasma, replace);
-	INJECT(0x0041BED0, ControlClawmutePlasmaBall, replace);
-	INJECT(0x0041B4F0, ClawmuteControl, replace);
-}

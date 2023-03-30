@@ -397,9 +397,6 @@
     <ClInclude Include="tomb3\specific\litesrc.h">
       <Filter>specific</Filter>
     </ClInclude>
-    <ClInclude Include="tomb3\specific\mmx.h">
-      <Filter>specific</Filter>
-    </ClInclude>
     <ClInclude Include="tomb3\specific\option.h">
       <Filter>specific</Filter>
     </ClInclude>
@@ -743,9 +740,6 @@
     <ClCompile Include="tomb3\tomb3\pch.cpp">
       <Filter>tomb3</Filter>
     </ClCompile>
-    <ClCompile Include="tomb3\tomb3\dllmain.cpp">
-      <Filter>tomb3</Filter>
-    </ClCompile>
     <ClCompile Include="tomb3\newstuff\LaraDraw.cpp">
       <Filter>newstuff</Filter>
     </ClCompile>
@@ -804,9 +798,6 @@
       <Filter>specific</Filter>
     </ClCompile>
     <ClCompile Include="tomb3\specific\litesrc.cpp">
-      <Filter>specific</Filter>
-    </ClCompile>
-    <ClCompile Include="tomb3\specific\mmx.cpp">
       <Filter>specific</Filter>
     </ClCompile>
     <ClCompile Include="tomb3\specific\option.cpp">

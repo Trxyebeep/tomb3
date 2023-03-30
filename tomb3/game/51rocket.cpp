@@ -383,12 +383,3 @@ void ControlArea51Struts(short item_number)
 
 	AnimateItem(item);
 }
-
-void inject_51rocket(bool replace)
-{
-	INJECT(0x0040FCC0, Trigger51BlastFire, replace);
-	INJECT(0x0040FAF0, Trigger51RocketSmoke, replace);
-	INJECT(0x0040F4E0, ControlArea51Rocket, replace);
-	INJECT(0x0040FE90, InitialiseArea51Struts, replace);
-	INJECT(0x0040FEA0, ControlArea51Struts, replace);
-}

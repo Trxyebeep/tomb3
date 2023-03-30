@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_option(bool replace);
-
 long GetRenderWidth();
 long GetRenderHeight();
 #ifdef TROYESTUFF

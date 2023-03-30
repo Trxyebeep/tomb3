@@ -159,10 +159,3 @@ void TrainControl(short item_number)
 		UseForcedFixedCamera = 1;
 	}
 }
-
-void inject_train(bool replace)
-{
-	INJECT(0x0046D150, TestHeight, replace);
-	INJECT(0x0046D1F0, TrainCollision, replace);
-	INJECT(0x0046CF40, TrainControl, replace);
-}

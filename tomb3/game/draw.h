@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_draw(bool replace);
-
 void phd_PopMatrix_I();
 void phd_PushMatrix_I();
 void phd_RotY_I(short angle);

@@ -85,8 +85,3 @@ void UpdateElectricityPoints()
 		*points++ = zv;
 	}
 }
-
-void inject_laraelec(bool replace)
-{
-	INJECT(0x00449A30, UpdateElectricityPoints, replace);
-}

@@ -83,8 +83,3 @@ void CrocControl(short item_number)
 	CreatureUnderwater(item, 256);
 	CreatureAnimation(item_number, 0, 0);
 }
-
-void inject_croc(bool replace)
-{
-	INJECT(0x004234F0, CrocControl, replace);
-}

@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_smain(bool replace);
-
 bool S_LoadSettings();
 void S_SaveSettings();
 void CheckCheatMode();

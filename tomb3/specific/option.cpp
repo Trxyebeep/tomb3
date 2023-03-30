@@ -2037,22 +2037,3 @@ void do_inventory_options(INVENTORY_ITEM* item)
 		break;
 	}
 }
-
-void inject_option(bool replace)
-{
-	INJECT(0x0048A200, GetRenderWidth, replace);
-	INJECT(0x0048A1F0, GetRenderHeight, replace);
-	INJECT(0x00488260, do_detail_option, replace);
-	INJECT(0x00487870, do_levelselect_option, replace);
-	INJECT(0x00487720, do_pickup_option, replace);
-	INJECT(0x00488F30, do_sound_option, replace);
-	INJECT(0x00489490, FlashConflicts, replace);
-	INJECT(0x00489510, DefaultConflict, replace);
-	INJECT(0x00489C70, S_ShowControls, replace);
-	INJECT(0x0048A100, S_ChangeCtrlText, replace);
-	INJECT(0x0048A1A0, S_RemoveCtrlText, replace);
-	INJECT(0x00489550, do_control_option, replace);
-	INJECT(0x004893D0, do_compass_option, replace);
-	INJECT(0x00487BE0, do_passport_option, replace);
-	INJECT(0x00487750, do_inventory_options, replace);
-}

@@ -501,18 +501,3 @@ void FlareControl(short item_number)
 
 	item->data = (void*)age;
 }
-
-void inject_laraflar(bool replace)
-{
-	INJECT(0x0044BBD0, DrawFlareInAir, replace);
-	INJECT(0x0044B940, DoFlareLight, replace);
-	INJECT(0x0044BAF0, DoFlareInHand, replace);
-	INJECT(0x0044BD90, CreateFlare, replace);
-	INJECT(0x0044BF80, set_flare_arm, replace);
-	INJECT(0x0044C3C0, draw_flare_meshes, replace);
-	INJECT(0x0044C3E0, undraw_flare_meshes, replace);
-	INJECT(0x0044C400, ready_flare, replace);
-	INJECT(0x0044BFD0, draw_flare, replace);
-	INJECT(0x0044C150, undraw_flare, replace);
-	INJECT(0x0044C440, FlareControl, replace);
-}

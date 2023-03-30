@@ -128,9 +128,3 @@ void CobraControl(short item_number)
 
 	CreatureAnimation(item_number, angle, 0);
 }
-
-void inject_cobra(bool replace)
-{
-	INJECT(0x0041D210, InitialiseCobra, replace);
-	INJECT(0x0041D290, CobraControl, replace);
-}

@@ -265,8 +265,3 @@ void TribeAxeControl(short item_number)
 	CreatureJoint(item, 1, head >> 1);
 	CreatureAnimation(item_number, angle, 0);
 }
-
-void inject_tribeaxe(bool replace)
-{
-	INJECT(0x00470530, TribeAxeControl, replace);
-}

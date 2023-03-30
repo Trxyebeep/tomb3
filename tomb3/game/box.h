@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_box(bool replace);
-
 void AlertNearbyGuards(ITEM_INFO* item);
 void InitialiseCreature(short item_number);
 long CreatureActive(short item_number);

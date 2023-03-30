@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_londsec(bool replace);
-
 void LondSecControl(short item_number);
 
 enum LONDSEC_STATES

@@ -1751,37 +1751,3 @@ void AdjustStopperFlag(ITEM_INFO* item, long dir, long set)
 	r = &room[room_number];
 	r->floor[((z - r->z) >> WALL_SHIFT) + r->x_size * ((x - r->x) >> WALL_SHIFT)].stopper = set;
 }
-
-void inject_box(bool replace)
-{
-	INJECT(0x00416A30, AlertNearbyGuards, replace);
-	INJECT(0x004142E0, InitialiseCreature, replace);
-	INJECT(0x00414330, CreatureActive, replace);
-	INJECT(0x00414390, CreatureAIInfo, replace);
-	INJECT(0x00414800, SearchLOT, replace);
-	INJECT(0x00414780, UpdateLOT, replace);
-	INJECT(0x00414A10, TargetBox, replace);
-	INJECT(0x00414AB0, EscapeBox, replace);
-	INJECT(0x00414B60, ValidBox, replace);
-	INJECT(0x004150C0, StalkBox, replace);
-	INJECT(0x004151C0, CalculateTarget, replace);
-	INJECT(0x00414E50, CreatureMood, replace);
-	INJECT(0x00414C10, GetCreatureMood, replace);
-	INJECT(0x00415780, BadFloor, replace);
-	INJECT(0x00415650, CreatureCreature, replace);
-	INJECT(0x00415820, CreatureDie, replace);
-	INJECT(0x00416400, CreatureTurn, replace);
-	INJECT(0x00415940, CreatureAnimation, replace);
-	INJECT(0x004164D0, CreatureTilt, replace);
-	INJECT(0x00416510, CreatureJoint, replace);
-	INJECT(0x00416570, CreatureFloat, replace);
-	INJECT(0x00416620, CreatureUnderwater, replace);
-	INJECT(0x00416670, CreatureEffect, replace);
-	INJECT(0x004166D0, CreatureVault, replace);
-	INJECT(0x00416840, CreatureKill, replace);
-	INJECT(0x00416AC0, AIGuard, replace);
-	INJECT(0x004169C0, AlertAllGuards, replace);
-	INJECT(0x00417110, SameZone, replace);
-	INJECT(0x00416B60, GetAITarget, replace);
-	INJECT(0x00417210, AdjustStopperFlag, replace);
-}

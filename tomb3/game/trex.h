@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_trex(bool replace);
-
 void DinoControl(short item_number);
 
 enum TREX_STATES

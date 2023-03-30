@@ -219,10 +219,3 @@ void WingmuteControl(short item_number)
 	TriggerWingMuteParticles(item_number);
 	CreatureAnimation(item_number, angle, 0);
 }
-
-void inject_wingmute(bool replace)
-{
-	INJECT(0x00473BA0, TriggerWingMuteParticles, replace);
-	INJECT(0x00473780, InitialiseWingmute, replace);
-	INJECT(0x004737E0, WingmuteControl, replace);
-}

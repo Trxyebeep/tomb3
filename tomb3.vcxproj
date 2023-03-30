@@ -28,13 +28,13 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -291,7 +291,6 @@
     <ClInclude Include="tomb3\specific\init.h" />
     <ClInclude Include="tomb3\specific\input.h" />
     <ClInclude Include="tomb3\specific\litesrc.h" />
-    <ClInclude Include="tomb3\specific\mmx.h" />
     <ClInclude Include="tomb3\specific\option.h" />
     <ClInclude Include="tomb3\specific\output.h" />
     <ClInclude Include="tomb3\specific\picture.h" />
@@ -430,7 +429,6 @@
     <ClCompile Include="tomb3\specific\init.cpp" />
     <ClCompile Include="tomb3\specific\input.cpp" />
     <ClCompile Include="tomb3\specific\litesrc.cpp" />
-    <ClCompile Include="tomb3\specific\mmx.cpp" />
     <ClCompile Include="tomb3\specific\option.cpp" />
     <ClCompile Include="tomb3\specific\output.cpp" />
     <ClCompile Include="tomb3\specific\picture.cpp" />
@@ -441,7 +439,6 @@
     <ClCompile Include="tomb3\specific\transform.cpp" />
     <ClCompile Include="tomb3\specific\utils.cpp" />
     <ClCompile Include="tomb3\specific\winmain.cpp" />
-    <ClCompile Include="tomb3\tomb3\dllmain.cpp" />
     <ClCompile Include="tomb3\tomb3\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

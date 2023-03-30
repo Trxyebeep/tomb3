@@ -464,10 +464,3 @@ void LizManControl(short item_number)
 		}
 	}
 }
-
-void inject_lizman(bool replace)
-{
-	INJECT(0x00450620, TriggerLizmanGas, replace);
-	INJECT(0x004503E0, TriggerLizmanGasThrower, replace);
-	INJECT(0x0044FBC0, LizManControl, replace);
-}

@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_texture(bool replace);
-
 long DXTextureNewPalette(uchar* palette);
 void DXResetPalette(DXTEXTURE* tex);
 void DXTextureSetGreyScale(bool set);

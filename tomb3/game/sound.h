@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_sound(bool replace);
-
 void SOUND_Init();
 void SOUND_Stop();
 void SOUND_EndScene();

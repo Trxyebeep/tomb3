@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_effect2(bool replace);
-
 void TriggerDynamic(long x, long y, long z, long falloff, long r, long g, long b);
 void ClearDynamics();
 void KillEverything();

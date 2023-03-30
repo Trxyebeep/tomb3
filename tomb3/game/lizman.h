@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_lizman(bool replace);
-
 void LizManControl(short item_number);
 
 enum LIZMAN_STATES

@@ -719,12 +719,3 @@ long GameMain()
 	ShutdownGame();
 	return 1;
 }
-
-void inject_smain(bool replace)
-{
-	INJECT(0x0048CBF0, S_LoadSettings, inject_rando ? 1 : replace);
-	INJECT(0x0048C8C0, S_SaveSettings, replace);
-	INJECT(0x0048C550, CheckCheatMode, replace);
-	INJECT(0x0048C410, TitleSequence, replace);
-	INJECT(0x0048C150, GameMain, replace);
-}

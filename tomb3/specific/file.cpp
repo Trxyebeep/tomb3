@@ -1053,32 +1053,3 @@ long S_LoadGameFlow(const char* name)
 	CloseHandle(file);
 	return 1;
 }
-
-void inject_file(bool replace)
-{
-	INJECT(0x00480D50, MyReadFile, replace);
-	INJECT(0x00481CA0, LoadPalette, replace);
-	INJECT(0x00480DA0, LoadTexturePages, replace);
-	INJECT(0x00480F70, LoadRooms, replace);
-	INJECT(0x004813D0, LoadObjects, replace);
-	INJECT(0x00481890, LoadSprites, replace);
-	INJECT(0x00481D50, LoadCameras, replace);
-	INJECT(0x00481DB0, LoadSoundEffects, replace);
-	INJECT(0x00481E10, LoadBoxes, replace);
-	INJECT(0x00482020, LoadAnimatedTextures, replace);
-	INJECT(0x004819D0, LoadItems, replace);
-	INJECT(0x00481BC0, LoadDepthQ, replace);
-	INJECT(0x00482140, LoadCinematic, replace);
-	INJECT(0x004821C0, LoadDemo, replace);
-	INJECT(0x004822F0, LoadSamples, replace);
-	INJECT(0x00482250, LoadDemFile, replace);
-	INJECT(0x004826C0, LoadLevel, replace);
-	INJECT(0x00482990, S_UnloadLevelFile, replace);
-	INJECT(0x00482910, S_LoadLevelFile, replace);
-	INJECT(0x004825D0, FindCDDrive, replace);
-	INJECT(0x004825A0, GetFullPath, replace);
-	INJECT(0x00482560, build_ext, replace);
-	INJECT(0x00481360, AdjustTextureUVs, replace);
-	INJECT(0x004829C0, Read_Strings, replace);
-	INJECT(0x00482A90, S_LoadGameFlow, replace);
-}

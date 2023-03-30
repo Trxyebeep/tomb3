@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_rat(bool replace);
-
 void MouseControl(short item_number);
 
 enum RAT_STATES

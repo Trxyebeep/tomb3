@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_objects(bool replace);
-
 long OnDrawBridge(ITEM_INFO* item, long z, long x);
 void DrawBridgeFloor(ITEM_INFO* item, long x, long y, long z, long* h);
 void DrawBridgeCeiling(ITEM_INFO* item, long x, long y, long z, long* c);

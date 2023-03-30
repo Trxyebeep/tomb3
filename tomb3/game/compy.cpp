@@ -326,10 +326,3 @@ void CarcassControl(short item_number)
 	else
 		CarcassItem = NO_ITEM;
 }
-
-void inject_compy(bool replace)
-{
-	INJECT(0x0041F730, InitialiseCompy, replace);
-	INJECT(0x0041F750, CompyControl, replace);
-	INJECT(0x0041FD50, CarcassControl, replace);
-}

@@ -787,16 +787,3 @@ void S_DrawTonyBoss(ITEM_INFO* item)
 			DrawTonyBossShield(item);
 	}
 }
-
-void inject_tonyboss(bool replace)
-{
-	INJECT(0x0046C460, TriggerTonyFlame, replace);
-	INJECT(0x0046C640, TriggerFireBall, replace);
-	INJECT(0x0046CD00, TriggerFireBallFlame, replace);
-	INJECT(0x0046C1C0, ExplodeTonyBoss, replace);
-	INJECT(0x0046C0D0, TonyBossDie, replace);
-	INJECT(0x0046C860, ControlTonyFireBall, replace);
-	INJECT(0x0046C120, InitialiseTonyBoss, replace);
-	INJECT(0x0046BA60, TonyBossControl, replace);
-	INJECT(0x0046C080, S_DrawTonyBoss, replace);
-}

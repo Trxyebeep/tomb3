@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_compy(bool replace);
-
 void InitialiseCompy(short item_number);
 void CompyControl(short item_number);
 void CarcassControl(short item_number);

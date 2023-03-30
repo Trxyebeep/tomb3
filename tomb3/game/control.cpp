@@ -2337,32 +2337,3 @@ long IsRoomOutside(long x, long y, long z)
 
 	return -2;
 }
-
-void inject_control(bool replace)
-{
-	INJECT(0x0041FFA0, ControlPhase, inject_rando ? 1 : replace);
-	INJECT(0x00420590, AnimateItem, replace);
-	INJECT(0x00420970, GetChange, replace);
-	INJECT(0x00420A20, TranslateItem, replace);
-	INJECT(0x00420A80, GetFloor, replace);
-	INJECT(0x00420C70, GetWaterHeight, replace);
-	INJECT(0x00420E10, GetHeight, replace);
-	INJECT(0x00421370, RefreshCamera, replace);
-	INJECT(0x00421460, TestTriggers, replace);
-	INJECT(0x00421D80, TriggerActive, replace);
-	INJECT(0x00421DE0, GetCeiling, replace);
-	INJECT(0x004222B0, GetDoor, replace);
-	INJECT(0x00422370, LOS, replace);
-	INJECT(0x00422410, zLOS, replace);
-	INJECT(0x00422700, xLOS, replace);
-	INJECT(0x004229F0, ClipTarget, replace);
-	INJECT(0x00422C30, ObjectOnLOS, replace);
-	INJECT(0x00422F40, FlipMap, replace);
-	INJECT(0x00423000, RemoveRoomFlipItems, replace);
-	INJECT(0x004230A0, AddRoomFlipItems, replace);
-	INJECT(0x00423110, TriggerCDTrack, replace);
-	INJECT(0x00423140, TriggerNormalCDTrack, replace);
-	INJECT(0x004231F0, CheckNoColFloorTriangle, replace);
-	INJECT(0x004232B0, CheckNoColCeilingTriangle, replace);
-	INJECT(0x004233B0, IsRoomOutside, replace);
-}

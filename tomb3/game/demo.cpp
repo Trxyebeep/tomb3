@@ -132,11 +132,3 @@ long StartDemo(long level)
 	//empty function call here
 	return lp;
 }
-
-void inject_demo(bool replace)
-{
-	INJECT(0x00423970, GetDemoInput, replace);
-	INJECT(0x004236B0, DoDemoSequence, replace);
-	INJECT(0x004238A0, LoadLaraDemoPos, replace);
-	INJECT(0x00423710, StartDemo, replace);
-}

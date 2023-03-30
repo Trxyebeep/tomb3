@@ -1210,16 +1210,3 @@ void CalculateCamera()
 
 	chunky_flag = 0;
 }
-
-void inject_camera(bool replace)
-{
-	INJECT(0x00417300, InitialiseCamera, replace);
-	INJECT(0x0041A641, mgLOS, replace);
-	INJECT(0x0041A0BE, CameraCollisionBounds, replace);
-	INJECT(0x0041743C, MoveCamera, replace);
-	INJECT(0x00417CA3, ChaseCamera, replace);
-	INJECT(0x0041835C, CombatCamera, replace);
-	INJECT(0x00418A56, LookCamera, replace);
-	INJECT(0x0041A000, FixedCamera, replace);
-	INJECT(0x004198FC, CalculateCamera, replace);
-}

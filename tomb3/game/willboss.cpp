@@ -858,15 +858,3 @@ void S_DrawWillBoss(ITEM_INFO* item)
 		}
 	}
 }
-
-void inject_willboss(bool replace)
-{
-	INJECT(0x00473570, TriggerPlasmaBallFlame, replace);
-	INJECT(0x004731B0, TriggerPlasmaBall, replace);
-	INJECT(0x00472FE0, TriggerPlasma, replace);
-	INJECT(0x00472D60, ExplodeWillBoss, replace);
-	INJECT(0x00473230, ControlWillbossPlasmaBall, replace);
-	INJECT(0x00472D20, InitialiseWillBoss, replace);
-	INJECT(0x00472000, WillBossControl, replace);
-	INJECT(0x00472CE0, S_DrawWillBoss, replace);
-}

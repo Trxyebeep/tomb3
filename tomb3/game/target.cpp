@@ -183,10 +183,3 @@ void ResetTargets()
 		reset = 1;
 	}
 }
-
-void inject_target(bool replace)
-{
-	INJECT(0x0046A8B0, InitialiseTarget, replace);
-	INJECT(0x0046A960, TargetControl, replace);
-	INJECT(0x0046AC00, ResetTargets, replace);
-}

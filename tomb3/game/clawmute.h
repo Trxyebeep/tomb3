@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_clawmute(bool replace);
-
 void ControlClawmutePlasmaBall(short fx_number);
 void ClawmuteControl(short item_number);
 

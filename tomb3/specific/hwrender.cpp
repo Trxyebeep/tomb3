@@ -966,29 +966,3 @@ void HWR_SetCurrentTexture(DXTEXTURE* tex)
 		lastTextureHandle = handle;
 	}
 }
-
-void inject_hwrender(bool replace)
-{
-	INJECT(0x00484E20, HWR_EnableZBuffer, replace);
-	INJECT(0x00484DE0, HWR_EnableColorKey, replace);
-	INJECT(0x00484BF0, HWR_EnableAlphaBlend, replace);
-	INJECT(0x00484A80, HWR_EnableColorAddition, replace);
-	INJECT(0x00484A40, HWR_ResetZBuffer, replace);
-	INJECT(0x00484A20, HWR_ResetColorKey, replace);
-	INJECT(0x00484AE0, HWR_EnablePerspCorrect, replace);
-	INJECT(0x00484B70, HWR_EnableFilter, replace);
-	INJECT(0x00484A10, HWR_ResetCurrentTexture, replace);
-	INJECT(0x00484EB0, HWR_BeginScene, replace);
-	INJECT(0x00484F00, HWR_EndScene, replace);
-	INJECT(0x00484F10, HWR_DrawRoutines, replace);
-	INJECT(0x00485130, HWR_DrawRoutinesStippledAlpha, replace);
-	INJECT(0x00485350, HWR_DrawRoutinesNoAlpha, replace);
-	INJECT(0x00484740, HWR_InitState, replace);
-	INJECT(0x00485A90, HWR_Init, replace);
-	INJECT(0x004854C0, HWR_DrawPolyList, replace);
-	INJECT(0x004855C0, HWR_DrawPolyListBF, replace);
-	INJECT(0x004859C0, HWR_FreeTexturePages, replace);
-	INJECT(0x00485A10, HWR_GetAllTextureHandles, replace);
-	INJECT(0x00485900, HWR_LoadTexturePages, replace);
-	INJECT(0x00484C30, HWR_SetCurrentTexture, replace);
-}

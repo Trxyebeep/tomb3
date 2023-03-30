@@ -271,11 +271,3 @@ void GetJointAbsPosition(ITEM_INFO* item, PHD_VECTOR* pos, long joint)
 	phd_mxptr = mx;
 	IMptr = imx;
 }
-
-void inject_sphere(bool replace)
-{
-	INJECT(0x00468580, InitInterpolate2, replace);
-	INJECT(0x00467F70, GetSpheres, replace);
-	INJECT(0x00467E40, TestCollision, replace);
-	INJECT(0x00468250, GetJointAbsPosition, replace);
-}

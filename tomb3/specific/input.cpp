@@ -342,9 +342,3 @@ long S_UpdateInput()
 	input = linput;
 	return GtWindowClosed;
 }
-
-void inject_input(bool replace)
-{
-	INJECT(0x00486140, Key, replace);
-	INJECT(0x00486260, S_UpdateInput, replace);
-}

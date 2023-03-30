@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_lara(bool replace);
-
 void LaraAboveWater(ITEM_INFO* item, COLL_INFO* coll);
 void lara_void_func(ITEM_INFO* item, COLL_INFO* coll);
 void extra_void_func(ITEM_INFO* item, COLL_INFO* coll);

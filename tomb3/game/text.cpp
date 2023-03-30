@@ -586,27 +586,3 @@ void T_DrawText()
 		string++;
 	}
 }
-
-void inject_text(bool replace)
-{
-	INJECT(0x0046B0C0, T_GetStringLen, replace);
-	INJECT(0x0046B090, T_RemovePrint, replace);
-	INJECT(0x0046AF40, T_BottomAlign, replace);
-	INJECT(0x0046AF20, T_RightAlign, replace);
-	INJECT(0x0046AF00, T_CentreV, replace);
-	INJECT(0x0046AEE0, T_CentreH, replace);
-	INJECT(0x0046AED0, T_RemoveOutline, replace);
-	INJECT(0x0046AEA0, T_AddOutline, replace);
-	INJECT(0x0046AE90, T_RemoveBackground, replace);
-	INJECT(0x0046AE00, T_AddBackground, replace);
-	INJECT(0x0046B6F0, GetTextScaleH, replace);
-	INJECT(0x0046B720, GetTextScaleV, replace);
-	INJECT(0x0046B120, draw_border, replace);
-	INJECT(0x0046AF60, T_GetTextWidth, replace);
-	INJECT(0x0046ADD0, T_FlashText, replace);
-	INJECT(0x0046AD90, T_ChangeText, replace);
-	INJECT(0x0046ACA0, T_Print, replace);
-	INJECT(0x0046AC70, T_InitPrint, replace);
-	INJECT(0x0046B340, T_DrawThisText, replace);
-	INJECT(0x0046B0F0, T_DrawText, replace);
-}

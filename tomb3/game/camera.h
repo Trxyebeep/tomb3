@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_camera(bool replace);
-
 void InitialiseCamera();
 long mgLOS(GAME_VECTOR* start, GAME_VECTOR* target, long push);
 long CameraCollisionBounds(GAME_VECTOR* ideal, long push, long yfirst);

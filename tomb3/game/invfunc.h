@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_invfunc(bool replace);
-
 void InitColours();
 
 void Init_Requester(REQUEST_INFO* req);

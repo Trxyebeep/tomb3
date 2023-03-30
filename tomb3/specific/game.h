@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_sgame(bool replace);
-
 long GetRandomControl();
 void SeedRandomControl(long seed);
 long GetRandomDraw();

@@ -474,10 +474,3 @@ void PunkControl(short item_number)
 		}
 	}
 }
-
-void inject_punk(bool replace)
-{
-	INJECT(0x0045E5E0, TriggerPunkFlame, replace);
-	INJECT(0x0045DBD0, InitialisePunk, replace);
-	INJECT(0x0045DC30, PunkControl, inject_rando ? 1 : replace);
-}

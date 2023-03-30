@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_laraelec(bool replace);
-
 void UpdateElectricityPoints();
 
 extern uchar lara_meshes[28];

@@ -835,17 +835,3 @@ long MineCartControl()
 
 	return lara.skidoo != NO_ITEM;
 }
-
-void inject_minecart(bool replace)
-{
-	INJECT(0x00453930, MineCartInitialise, replace);
-	INJECT(0x00453AB0, GetInMineCart, replace);
-	INJECT(0x00453960, MineCartCollision, replace);
-	INJECT(0x00454C00, CanGetOut, replace);
-	INJECT(0x00454D10, CartToBaddieCollision, replace);
-	INJECT(0x00453890, GetCollision, replace);
-	INJECT(0x004541F0, TestHeight, replace);
-	INJECT(0x004542A0, DoUserInput, replace);
-	INJECT(0x00453CA0, MoveCart, replace);
-	INJECT(0x00453B80, MineCartControl, replace);
-}

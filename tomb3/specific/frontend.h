@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_frontend(bool replace);
-
 ushort S_COLOUR(long r, long g, long b);
 void S_DrawScreenLine(long x, long y, long z, long w, long h, long c, GOURAUD_FILL* grdptr, ushort f);
 #ifdef TROYESTUFF

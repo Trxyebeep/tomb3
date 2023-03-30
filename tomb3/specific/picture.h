@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_picture(bool replace);
-
 void CrossFadePicture();
 void S_FadePicture();
 void DrawTile(long x, long y, long w, long h, long tpage, long tU, long tV, long tW, long tH, long c0, long c1, long c2, long c3, float z);

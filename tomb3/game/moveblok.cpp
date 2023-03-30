@@ -539,18 +539,3 @@ void DrawMovableBlock(ITEM_INFO* item)
 	else
 		DrawAnimatingItem(item);
 }
-
-void inject_moveblok(bool replace)
-{
-	INJECT(0x00456BA0, ClearMovableBlockSplitters, replace);
-	INJECT(0x00457690, AlterFloorHeight, replace);
-	INJECT(0x004573A0, TestBlockMovable, replace);
-	INJECT(0x004571E0, TestBlockPush, replace);
-	INJECT(0x004573F0, TestBlockPull, replace);
-	INJECT(0x00457790, DrawUnclippedItem, replace);
-	INJECT(0x00457800, SetupCleanerFromSavegame, replace);
-	INJECT(0x00456B50, InitialiseMovingBlock, replace);
-	INJECT(0x00456DD0, MovableBlock, replace);
-	INJECT(0x00456F40, MovableBlockCollision, replace);
-	INJECT(0x00457760, DrawMovableBlock, replace);
-}

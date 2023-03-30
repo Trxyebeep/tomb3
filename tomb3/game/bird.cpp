@@ -141,9 +141,3 @@ void VultureControl(short item_number)
 
 	CreatureAnimation(item_number, angle, 0);
 }
-
-void inject_bird(bool replace)
-{
-	INJECT(0x00411450, InitialiseVulture, replace);
-	INJECT(0x004114E0, VultureControl, replace);
-}

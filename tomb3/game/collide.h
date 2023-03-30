@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_collide(bool replace);
-
 void ShiftItem(ITEM_INFO* item, COLL_INFO* coll);
 void ObjectCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll);
 void ObjectCollisionSub(short item_num, ITEM_INFO* l, COLL_INFO* coll);

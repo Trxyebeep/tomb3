@@ -1167,24 +1167,3 @@ void BoatControl(short item_number)
 
 	UpdateWakeFX();
 }
-
-void inject_boat(bool replace)
-{
-	INJECT(0x00411FE0, InitialiseBoat, replace);
-	INJECT(0x00412040, BoatCheckGeton, replace);
-	INJECT(0x004121B0, BoatCollision, replace);
-	INJECT(0x00413CF0, DrawBoat, replace);
-	INJECT(0x00412330, BoatUserControl, replace);
-	INJECT(0x00412730, CanGetOff, replace);
-	INJECT(0x00412500, BoatAnimation, replace);
-	INJECT(0x00413290, TestWaterHeight, replace);
-	INJECT(0x00413900, DoShift, replace);
-	INJECT(0x00413B80, GetCollisionAnim, replace);
-	INJECT(0x00413C10, DoBoatShift, replace);
-	INJECT(0x00413390, DoBoatDynamics, replace);
-	INJECT(0x004133E0, BoatDynamics, replace);
-	INJECT(0x00413F00, BoatSplash, replace);
-	INJECT(0x00413D20, TriggerBoatMist, replace);
-	INJECT(0x004130C0, DoWake, replace);
-	INJECT(0x00412820, BoatControl, replace);
-}

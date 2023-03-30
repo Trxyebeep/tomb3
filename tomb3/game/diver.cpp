@@ -273,11 +273,3 @@ void DiverControl(short item_number)
 	else
 		item->pos.y_pos = surface - 512;
 }
-
-void inject_diver(bool replace)
-{
-	INJECT(0x00423D70, GetWaterSurface, replace);
-	INJECT(0x00423E80, ControlGhostGasEmitter, replace);
-	INJECT(0x00423CF0, Harpoon, replace);
-	INJECT(0x004239A0, DiverControl, replace);
-}

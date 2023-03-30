@@ -280,12 +280,3 @@ long SoundEffect(long sfx, PHD_3DPOS* pos, long flags)
 
 	return 0;
 }
-
-void inject_sound(bool replace)
-{
-	INJECT(0x00467E20, SOUND_Init, replace);
-	INJECT(0x00467DF0, SOUND_Stop, replace);
-	INJECT(0x00467D60, SOUND_EndScene, replace);
-	INJECT(0x00467D00, StopSoundEffect, replace);
-	INJECT(0x00467840, SoundEffect, replace);
-}

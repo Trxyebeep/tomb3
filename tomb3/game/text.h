@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_text(bool replace);
-
 short T_GetStringLen(const char* string);
 long T_RemovePrint(TEXTSTRING* textstring);
 void T_BottomAlign(TEXTSTRING* string, short flag);

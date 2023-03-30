@@ -3,8 +3,6 @@
 
 void BlowpipeControl(short item_number);
 
-void inject_blowpipe(bool replace);
-
 enum BLOW_STATES
 {
 	BLOW_EMPTY,

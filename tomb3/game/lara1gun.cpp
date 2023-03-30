@@ -1434,23 +1434,3 @@ void TriggerUnderwaterExplosion(ITEM_INFO* item)
 		}
 	}
 }
-
-void inject_lara1gun(bool replace)
-{
-	INJECT(0x004459B0, ControlHarpoonBolt, inject_rando ? 1 : replace);
-	INJECT(0x004461E0, ControlRocket, inject_rando ? 1 : replace);
-	INJECT(0x00446DD0, ControlGrenade, inject_rando ? 1 : replace);
-	INJECT(0x00445250, draw_shotgun_meshes, replace);
-	INJECT(0x00445290, undraw_shotgun_meshes, replace);
-	INJECT(0x004452C0, ready_shotgun, replace);
-	INJECT(0x004475D0, draw_shotgun, replace);
-	INJECT(0x00447770, undraw_shotgun, replace);
-	INJECT(0x00445820, FireHarpoon, replace);
-	INJECT(0x00445F50, FireRocket, replace);
-	INJECT(0x00446BA0, FireGrenade, replace);
-	INJECT(0x00445560, FireShotgun, replace);
-	INJECT(0x00445760, FireM16, replace);
-	INJECT(0x00447880, AnimateShotgun, replace);
-	INJECT(0x00445340, RifleHandler, replace);
-	INJECT(0x00447D90, TriggerUnderwaterExplosion, replace);
-}

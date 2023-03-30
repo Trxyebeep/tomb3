@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_file(bool replace);
-
 long MyReadFile(HANDLE hFile, LPVOID lpBuffer, ulong nNumberOfBytesToRead, ulong* lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped);
 bool LoadPalette(HANDLE file);
 long LoadTexturePages(HANDLE file);

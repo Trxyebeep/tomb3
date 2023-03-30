@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_oilred(bool replace);
-
 void OilRedControl(short item_number);
 
 enum OILRED_STATES

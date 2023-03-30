@@ -237,15 +237,3 @@ long S_IntroFMV(char* name1, char* name2)
 {
 	return FMV_PlayIntro(name1, name2);
 }
-
-void inject_frontend(bool replace)
-{
-	INJECT(0x004835E0, S_COLOUR, replace);
-	INJECT(0x00483610, S_DrawScreenLine, replace);
-	INJECT(0x00483650, S_DrawScreenBox, replace);
-	INJECT(0x00483770, S_DrawScreenFBox, replace);
-	INJECT(0x004837B0, S_FinishInventory, replace);
-	INJECT(0x004837D0, S_Wait, replace);
-	INJECT(0x00483830, S_PlayFMV, replace);
-	INJECT(0x00483840, S_IntroFMV, replace);
-}

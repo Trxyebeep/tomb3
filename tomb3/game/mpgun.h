@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_mpgun(bool replace);
-
 void MPGunControl(short item_number);
 
 enum MPGUN_STATES

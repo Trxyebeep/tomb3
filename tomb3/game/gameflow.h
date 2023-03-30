@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_gameflow(bool replace);
-
 long GF_LoadScriptFile(const char* name);
 long GF_DoFrontEndSequence();
 long GF_DoLevelSequence(long level, long type);

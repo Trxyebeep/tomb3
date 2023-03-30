@@ -121,15 +121,3 @@ bool DI_Create()
 	return SUCCEEDED(DirectInputCreate(App.hInstance, DIRECTINPUT_VERSION, &lpDirectInput, 0));	//this is the original line
 #endif
 }
-
-void inject_di(bool replace)
-{
-	INJECT(0x00475450, DI_ReadKeyboard, replace);
-	INJECT(0x004754B0, DI_ReadJoystick, replace);
-	INJECT(0x004755B0, DI_StartKeyboard, replace);
-	INJECT(0x00475680, DI_FinishKeyboard, replace);
-	INJECT(0x004756B0, DI_StartJoystick, replace);
-	INJECT(0x004756C0, DI_Start, replace);
-	INJECT(0x004756F0, DI_Finish, replace);
-	INJECT(0x00475400, DI_Create, replace);
-}

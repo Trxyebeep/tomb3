@@ -490,19 +490,3 @@ long StartCinematic(long level_number)
 	level_complete = 1;
 	return ret;
 }
-
-void inject_cinema(bool replace)
-{
-	INJECT(0x0041A890, DrawPhaseCinematic, replace);
-	INJECT(0x0041A8F0, InitialiseGenPlayer, replace);
-	INJECT(0x0041AA40, InitCinematicRooms, replace);
-	INJECT(0x0041AC20, GetCinematicRoom, replace);
-	INJECT(0x0041AB80, LaraControlCinematic, replace);
-	INJECT(0x0041AAD0, InitialisePlayer1, replace);
-	INJECT(0x0041AE10, UpdateLaraGuns, replace);
-	INJECT(0x0041B090, CalculateCinematicCamera, replace);
-	INJECT(0x0041B2A0, InGameCinematicCamera, replace);
-	INJECT(0x0041B1D0, ControlCinematicPlayer, replace);
-	INJECT(0x0041ACA0, DoCinematic, replace);
-	INJECT(0x0041A930, StartCinematic, replace);
-}

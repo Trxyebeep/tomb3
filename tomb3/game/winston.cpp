@@ -259,9 +259,3 @@ void WinstonControl(short item_number)
 
 	CreatureAnimation(item_number, angle, 0);
 }
-
-void inject_winston(bool replace)
-{
-	INJECT(0x00474110, OldWinstonControl, replace);
-	INJECT(0x00473D10, WinstonControl, replace);
-}

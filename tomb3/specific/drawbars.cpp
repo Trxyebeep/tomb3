@@ -622,11 +622,3 @@ void S_DrawColdBar(long percent)
 	GlobalAlpha = oldAlpha;
 #endif
 }
-
-void inject_drawbars(bool replace)
-{
-	INJECT(0x00475C70, S_DrawHealthBar, replace);
-	INJECT(0x00475A00, S_DrawDashBar, replace);
-	INJECT(0x00475F60, S_DrawAirBar, replace);
-	INJECT(0x004761C0, S_DrawColdBar, replace);
-}

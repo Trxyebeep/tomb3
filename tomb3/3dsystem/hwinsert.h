@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_hwinsert(bool replace);
-
 void HWI_InsertTrans8_Sorted(PHD_VBUF* buf, short shade);
 void SubdivideEdge(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* dest);
 void SubdivideGT4(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHD_VBUF* v4, PHDTEXTURESTRUCT* pTex, sort_type nSortType, ushort double_sided, long num);

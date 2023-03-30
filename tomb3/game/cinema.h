@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_cinema(bool replace);
-
 long DrawPhaseCinematic();
 void InitialiseGenPlayer(short item_number);
 void InitCinematicRooms();

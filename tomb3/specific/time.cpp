@@ -31,10 +31,3 @@ long Sync()
 	n = (long)f;
 	return n;
 }
-
-void inject_time(bool replace)
-{
-	INJECT(0x0048D5D0, TIME_Reset, replace);
-	INJECT(0x0048D5E0, TIME_Init, replace);
-	INJECT(0x0048D630, Sync, replace);
-}

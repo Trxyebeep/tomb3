@@ -1473,18 +1473,3 @@ void InitialiseLaraInventory(long level)
 	LaraInitialiseMeshes(level);
 	InitialiseNewWeapon();
 }
-
-void inject_laramisc(bool replace)
-{
-	INJECT(0x0044C630, LaraCheatGetStuff, replace);
-	INJECT(0x0044D1A0, LaraCheatyBits, replace);
-	INJECT(0x0044CFC0, LaraCheat, replace);
-	INJECT(0x0044D060, LaraInitialiseMeshes, replace);
-	INJECT(0x0044C6F0, LaraControl, inject_rando ? 1 : replace);
-	INJECT(0x0044D2A0, AnimateLara, replace);
-	INJECT(0x0044D690, UseItem, replace);
-	INJECT(0x0044D880, ControlLaraExtra, replace);
-	INJECT(0x0044D8A0, InitialiseLaraLoad, replace);
-	INJECT(0x0044D8D0, InitialiseLara, replace);
-	INJECT(0x0044DC00, InitialiseLaraInventory, replace);
-}

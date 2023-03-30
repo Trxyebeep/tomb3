@@ -1014,17 +1014,3 @@ void S_DrawLondonBoss(ITEM_INFO* item)
 		LaraElectricDeath(1, item);
 	}
 }
-
-void inject_londboss(bool replace)
-{
-	INJECT(0x00451DE0, TriggerPlasmaBall, replace);
-	INJECT(0x00452090, TriggerPlasmaBallFlame, replace);
-	INJECT(0x00451980, TriggerLaserBolt, replace);
-	INJECT(0x00451730, ExplodeLondonBoss, replace);
-	INJECT(0x00452240, KnockBackCollision, replace);
-	INJECT(0x00451E80, ControlLondBossPlasmaBall, replace);
-	INJECT(0x00451AB0, ControlLaserBolts, replace);
-	INJECT(0x004516A0, InitialiseLondonBoss, replace);
-	INJECT(0x00450800, LondonBossControl, replace);
-	INJECT(0x00451640, S_DrawLondonBoss, replace);
-}

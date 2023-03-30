@@ -322,9 +322,3 @@ void ArmySMGControl(short item_number)
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
 }
-
-void inject_armysmg(bool replace)
-{
-	INJECT(0x0040FEF0, InitialiseArmySMG, replace);
-	INJECT(0x0040FF50, ArmySMGControl, replace);
-}

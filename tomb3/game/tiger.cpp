@@ -140,8 +140,3 @@ void TigerControl(short item_number)
 	CreatureJoint(item, 0, head);
 	CreatureAnimation(item_number, angle, 0);
 }
-
-void inject_tiger(bool replace)
-{
-	INJECT(0x0046B750, TigerControl, replace);
-}

@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_larafire(bool replace);
-
 long WeaponObject(long weapon_type);
 long FireWeapon(long weapon_type, ITEM_INFO* target, ITEM_INFO* source, short* angles);
 void HitTarget(ITEM_INFO* item, GAME_VECTOR* hitpos, long damage);

@@ -531,23 +531,3 @@ void DXFreeTPages()
 
 	nTPages = 0;
 }
-
-void inject_texture(bool replace)
-{
-	INJECT(0x004B1B80, DXTextureNewPalette, replace);
-	INJECT(0x004B1FB0, DXResetPalette, replace);
-	INJECT(0x004B1B70, DXTextureSetGreyScale, replace);
-	INJECT(0x004B1FD0, DXTextureGetInterface, replace);
-	INJECT(0x004B2000, DXTextureFindTextureSlot, replace);
-	INJECT(0x004B2020, DXTextureMakeSystemSurface, replace);
-	INJECT(0x004B20C0, DXTextureMakeDeviceSurface, replace);
-	INJECT(0x004B21F0, DXClearAllTextures, replace);
-	INJECT(0x004B1BF0, DXCreateTextureSurface, replace);
-	INJECT(0x004B2180, DXTextureCleanup, replace);
-	INJECT(0x004B2230, DXRestoreSurfaceIfLost, replace);
-	INJECT(0x004B2280, DXTextureAddPal, replace);
-	INJECT(0x004B2370, MMXTextureCopy, replace);
-	INJECT(0x004B23D0, DXTextureAdd, replace);
-	INJECT(0x004B1D90, DXCreateMaxTPages, replace);
-	INJECT(0x004B1F10, DXFreeTPages, replace);
-}

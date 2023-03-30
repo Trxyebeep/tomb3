@@ -646,10 +646,3 @@ void DrawMonkey(ITEM_INFO* item)
 
 	phd_PopMatrix();
 }
-
-void inject_monkey(bool replace)
-{
-	INJECT(0x004559B0, InitialiseMonkey, replace);
-	INJECT(0x00455E30, MonkeyControl, replace);
-	INJECT(0x00455A10, DrawMonkey, replace);
-}

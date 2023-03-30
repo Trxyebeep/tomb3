@@ -246,8 +246,3 @@ void HybridControl(short item_number)
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
 }
-
-void inject_hybrid(bool replace)
-{
-	INJECT(0x00434E60, HybridControl, replace);
-}

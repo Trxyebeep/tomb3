@@ -283,15 +283,3 @@ long S_InitialiseSystem()
 	malloc_size = MALLOC_SIZE;
 	return 1;
 }
-
-void inject_init(bool replace)
-{
-	INJECT(0x00485EA0, ShutdownGame, replace);
-	INJECT(0x00486050, CalculateWibbleTable, replace);
-	INJECT(0x00485CA0, GetRandom, replace);
-	INJECT(0x00485AB0, init_water_table, replace);
-	INJECT(0x00485F60, init_game_malloc, replace);
-	INJECT(0x00485F90, game_malloc, replace);
-	INJECT(0x00486010, game_free, replace);
-	INJECT(0x00485CE0, S_InitialiseSystem, replace);
-}

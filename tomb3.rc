@@ -124,6 +124,17 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_SETUPDIALOG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // Dialog
 //
 
@@ -152,7 +163,7 @@ BEGIN
     PUSHBUTTON      "Test ",IDC_TEST,174,214,50,14,WS_GROUP
     DEFPUSHBUTTON   "OK",1,240,214,50,14
     PUSHBUTTON      "&Cancel",2,306,214,50,14
-    COMBOBOX        IDC_D3DTF,334,215,58,84,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_D3DTF,334,215,58,84,CBS_DROPDOWN | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
     GROUPBOX        "&Graphics Adapter",IDC_STATIC,142,7,246,27
     GROUPBOX        "Output Settings",IDC_STATIC,143,39,245,84,WS_GROUP
     LTEXT           "Resolution",IDC_STATIC,151,74,34,8
@@ -169,7 +180,7 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO
 BEGIN
-    101, DIALOG
+    IDD_SETUPDIALOG, DIALOG
     BEGIN
     END
 END

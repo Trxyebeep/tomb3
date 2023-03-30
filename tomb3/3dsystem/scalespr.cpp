@@ -277,11 +277,3 @@ void S_DrawSprite(ulong flags, long x, long y, long z, short sprnum, short shade
 	else
 		InsertSprite(zv, x1, y1, x2, y2, sprnum, shade, -1, DT_POLY_WGT, 0);
 }
-
-void inject_scalespr(bool replace)
-{
-	INJECT(0x0040D060, ins_room_sprite, replace);
-	INJECT(0x0040D1C0, S_DrawScreenSprite2d, replace);
-	INJECT(0x0040D320, S_DrawScreenSprite, replace);
-	INJECT(0x0040CD20, S_DrawSprite, replace);
-}

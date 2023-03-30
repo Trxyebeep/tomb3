@@ -161,9 +161,3 @@ void AutogunControl(short item_number)
 			gun->joint_rotation[0] += 0x8000;
 	}
 }
-
-void inject_autogun(bool replace)
-{
-	INJECT(0x00410750, InitialiseAutogun, replace);
-	INJECT(0x004107A0, AutogunControl, replace);
-}

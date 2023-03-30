@@ -2705,39 +2705,3 @@ long XYClipper(long n, VERTEX_INFO* in)
 
 	return nPoints;
 }
-
-void inject_hwinsert(bool replace)
-{
-	INJECT(0x0040A850, HWI_InsertTrans8_Sorted, replace);
-	INJECT(0x00406880, SubdivideEdge, replace);
-	INJECT(0x004069E0, SubdivideGT4, replace);
-	INJECT(0x00406D50, SubdivideGT3, replace);
-	INJECT(0x00406FA0, HWI_InsertGT4_Sorted, replace);
-	INJECT(0x00405980, HWI_InsertGT3_Sorted, replace);
-	INJECT(0x0040A690, HWI_InsertTransQuad_Sorted, replace);
-	INJECT(0x00405220, InitUVTable, replace);
-	INJECT(0x00406750, GETR, replace);
-	INJECT(0x00406780, GETG, replace);
-	INJECT(0x004067B0, PHD_VBUF_To_D3DTLVTX_WITHUV, replace);
-	INJECT(0x004094D0, PHD_VBUF_To_VERTEX_INFO, replace);
-	INJECT(0x004053E0, visible_zclip, replace);
-	INJECT(0x00405270, FindBucket, replace);
-	INJECT(0x004053A0, DrawBuckets, replace);
-	INJECT(0x00405450, HWI_InsertClippedPoly_Textured, replace);
-	INJECT(0x00405A80, HWI_InsertGT3_Poly, replace);
-	INJECT(0x0040A510, HWI_InsertLine_Sorted, replace);
-	INJECT(0x004070E0, HWI_InsertGT4_Poly, replace);
-	INJECT(0x00408940, HWI_InsertPoly_Gouraud, replace);
-	INJECT(0x0040BCD0, HWI_InsertPoly_GouraudRGB, replace);
-	INJECT(0x0040A030, HWI_InsertFlatRect_Sorted, replace);
-	INJECT(0x00409BB0, HWI_InsertSprite_Sorted, replace);
-	INJECT(0x0040B6F0, HWI_InsertAlphaSprite_Sorted, replace);
-	INJECT(0x00409560, HWI_InsertObjectG3_Sorted, replace);
-	INJECT(0x00408800, HWI_InsertObjectGT3_Sorted, replace);
-	INJECT(0x00408DA0, HWI_InsertObjectG4_Sorted, replace);
-	INJECT(0x004086B0, HWI_InsertObjectGT4_Sorted, replace);
-	INJECT(0x0040AA00, RoomZedClipper, replace);
-	INJECT(0x0040ABE0, RoomXYGUVClipper, replace);
-	INJECT(0x0040C0B0, XYGClipper, replace);
-	INJECT(0x0040CA50, XYClipper, replace);
-}

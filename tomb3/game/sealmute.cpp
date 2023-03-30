@@ -403,10 +403,3 @@ void SealmuteControl(short item_number)
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
 }
-
-void inject_sealmute(bool replace)
-{
-	INJECT(0x00463700, TriggerSealmuteGas, replace);
-	INJECT(0x004634C0, TriggerSealmuteGasThrower, replace);
-	INJECT(0x00462EA0, SealmuteControl, replace);
-}

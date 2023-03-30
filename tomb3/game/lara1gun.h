@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_lara1gun(bool replace);
-
 void ControlHarpoonBolt(short item_number);
 void ControlRocket(short item_number);
 void ControlGrenade(short item_number);

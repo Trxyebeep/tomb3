@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_audio(bool replace);
-
 BOOL __stdcall ACMEnumCallBack(HACMDRIVERID hadid, DWORD_PTR dwInstance, DWORD fdwSupport);
 void ACMCloseFile();
 bool ACMOpenFile(const char* name);

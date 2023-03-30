@@ -543,19 +543,3 @@ void ACMClose()
 
 	ACMCloseFile();
 }
-
-void inject_audio(bool replace)
-{
-	INJECT(0x004742A0, ACMEnumCallBack, replace);
-	INJECT(0x004748E0, ACMCloseFile, replace);
-	INJECT(0x004748B0, ACMOpenFile, replace);
-	INJECT(0x00474D50, ACMEmulateCDStop, replace);
-	INJECT(0x00474900, ACMEmulateCDPlay, replace);
-	INJECT(0x00474B30, ThreadACMEmulateCDPlay, replace);
-	INJECT(0x00475240, ACMGetTrackLocation, replace);
-	INJECT(0x00475280, ACMSetVolume, replace);
-	INJECT(0x00474D70, ACMHandleNotifications, replace);
-	INJECT(0x00475160, ACMSetupNotifications, replace);
-	INJECT(0x00474330, ACMInit, replace);
-	INJECT(0x00474760, ACMClose, replace);
-}

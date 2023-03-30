@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_draweffects(bool replace);
-
 void LaraElectricDeath(long lr, ITEM_INFO* item);
 bool ClipLine(long& x1, long& y1, long& x2, long& y2, long w, long h);
 void S_DrawWakeFX(ITEM_INFO* item);

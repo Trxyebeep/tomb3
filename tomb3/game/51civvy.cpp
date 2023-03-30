@@ -566,11 +566,3 @@ void CivvyControl(short item_number)
 		}
 	}
 }
-
-void inject_civvy(bool replace)
-{
-	INJECT(0x0040F080, TriggerFenceSparks, replace);
-	INJECT(0x0040ECA0, ControlElectricFence, inject_rando ? 1 : replace);
-	INJECT(0x0040E350, InitialiseCivvy, replace);
-	INJECT(0x0040E3B0, CivvyControl, replace);
-}

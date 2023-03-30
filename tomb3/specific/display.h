@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_display(bool replace);
-
 void setup_screen_size();
 void IncreaseScreenSize();
 void DecreaseScreenSize();

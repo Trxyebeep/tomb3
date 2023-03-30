@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_effects(bool replace);
-
 void LaraBreath(ITEM_INFO* item);
 long ItemNearLara(PHD_3DPOS* pos, long rad);
 void SoundEffects();

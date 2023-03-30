@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_utils(bool replace);
-
 double UT_GetAccurateTimer();
 void UT_InitAccurateTimer();
 void UT_CenterWindow(HWND hwnd);

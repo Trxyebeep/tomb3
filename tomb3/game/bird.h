@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_bird(bool replace);
-
 void InitialiseVulture(short item_number);
 void VultureControl(short item_number);
 

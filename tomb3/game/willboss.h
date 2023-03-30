@@ -6,8 +6,6 @@ void InitialiseWillBoss(short item_number);
 void WillBossControl(short item_number);
 void S_DrawWillBoss(ITEM_INFO* item);
 
-void inject_willboss(bool replace);
-
 enum WILLBOSS_STATES
 {
 	WILLBOSS_STOP,

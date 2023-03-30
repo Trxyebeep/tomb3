@@ -856,15 +856,3 @@ void load_tomb3_data()
 		lara_item->mesh_bits = tomb3_save.lara_meshbits;
 }
 #endif
-
-void inject_savegame(bool replace)
-{
-	INJECT(0x00461A60, ModifyStartInfo, replace);
-	INJECT(0x00461950, InitialiseStartInfo, replace);
-	INJECT(0x00461B50, CreateStartInfo, replace);
-	INJECT(0x00462DF0, ResetSG, replace);
-	INJECT(0x00462E10, WriteSG, replace);
-	INJECT(0x00462E60, ReadSG, replace);
-	INJECT(0x00461DD0, CreateSaveGameInfo, replace);
-	INJECT(0x004623F0, ExtractSaveGameInfo, replace);
-}

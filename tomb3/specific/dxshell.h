@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_dxshell(bool replace);
-
 long BPPToDDBD(long BPP);
 bool DXSetVideoMode(LPDIRECTDRAWX ddx, long w, long h, long bpp);
 bool DXCreateSurface(LPDIRECTDRAWX ddx, LPDDSURFACEDESCX desc, LPDIRECTDRAWSURFACEX surf);

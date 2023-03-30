@@ -453,8 +453,3 @@ void MPGunControl(short item_number)
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
 }
-
-void inject_mpgun(bool replace)
-{
-	INJECT(0x00457A40, MPGunControl, replace);
-}

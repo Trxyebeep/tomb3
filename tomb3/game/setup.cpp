@@ -2350,17 +2350,3 @@ void InitialiseObjects()
 	InitialiseHair();
 	InitialiseSparks();
 }
-
-void inject_setup(bool replace)
-{
-	INJECT(0x00466590, GetAIPickups, inject_rando ? 1 : replace);
-	INJECT(0x004664B0, GetCarriedItems, replace);
-	INJECT(0x00463B70, InitialiseLevelFlags, replace);
-	INJECT(0x00463B00, InitialiseGameFlags, replace);
-	INJECT(0x004638F0, InitialiseLevel, replace);
-	INJECT(0x004666C0, BuildOutsideTable, replace);
-	INJECT(0x00463C30, BaddyObjects, replace);
-	INJECT(0x00465240, TrapObjects, replace);
-	INJECT(0x00465820, ObjectObjects, replace);
-	INJECT(0x00463BC0, InitialiseObjects, replace);
-}

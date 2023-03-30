@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_3dgen(bool replace);
-
 void phd_PutPolygons(short* objptr, long clip);
 void phd_RotX(short angle);
 void phd_RotY(short angle);

@@ -374,10 +374,3 @@ void CleanerControl(short item_number)
 		TriggerDynamic(pos.x, pos.y, pos.z, 10, c >> 2, c >> 1, c);
 	}
 }
-
-void inject_cleaner(bool replace)
-{
-	INJECT(0x0041D0B0, TriggerElectricSparks, replace);
-	INJECT(0x0041C3E0, InitialiseCleaner, replace);
-	INJECT(0x0041C440, CleanerControl, replace);
-}

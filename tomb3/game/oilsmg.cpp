@@ -315,9 +315,3 @@ void OilSMGControl(short item_number)
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
 }
-
-void inject_oilsmg(bool replace)
-{
-	INJECT(0x0045AA00, InitialiseOilSMG, replace);
-	INJECT(0x0045AA60, OilSMGControl, replace);
-}

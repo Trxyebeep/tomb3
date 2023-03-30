@@ -228,10 +228,3 @@ void ControlFlameThrower(short fx_number)
 		}
 	}
 }
-
-void inject_dragfire(bool replace)
-{
-	INJECT(0x00424830, TriggerFlamethrowerHitFlame, replace);
-	INJECT(0x00424A10, TriggerFlamethrowerSmoke, replace);
-	INJECT(0x00424660, ControlFlameThrower, replace);
-}

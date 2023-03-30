@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_lara2gun(bool replace);
-
 void draw_pistol_meshes(long weapon_type);
 void undraw_pistol_mesh_right(long weapon_type);
 void undraw_pistol_mesh_left(long weapon_type);

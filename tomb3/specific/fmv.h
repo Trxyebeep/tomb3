@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_fmv(bool replace);
-
 #ifdef TROYESTUFF
 bool LoadWinPlay();
 void FreeWinPlay();

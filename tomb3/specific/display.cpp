@@ -118,14 +118,3 @@ void S_FadeOutInventory(long fade)
 		fade_adder = -0x8000;
 	}
 }
-
-void inject_display(bool replace)
-{
-	INJECT(0x00475800, setup_screen_size, replace);
-	INJECT(0x00475720, IncreaseScreenSize, replace);
-	INJECT(0x00475790, DecreaseScreenSize, replace);
-	INJECT(0x00475910, TempVideoAdjust, replace);
-	INJECT(0x00475950, TempVideoRemove, replace);
-	INJECT(0x00475990, S_FadeInInventory, replace);
-	INJECT(0x004759D0, S_FadeOutInventory, replace);
-}

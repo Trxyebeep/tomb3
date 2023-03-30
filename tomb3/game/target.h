@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_target(bool replace);
-
 void InitialiseTarget(short item_number);
 void TargetControl(short item_number);
 void ResetTargets();

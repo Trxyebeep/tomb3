@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_specific(bool replace);
-
 uchar SWR_FindNearestPaletteEntry(uchar* p, long r, long g, long b, bool ignoreSystemPalette);
 bool CD_Init();
 long CalcVolume(long volume);

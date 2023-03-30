@@ -508,9 +508,3 @@ void BatonControl(short item_number)
 		}
 	}
 }
-
-void inject_51baton(bool replace)
-{
-	INJECT(0x0040D5F0, InitialiseBaton, replace);
-	INJECT(0x0040D650, BatonControl, replace);
-}

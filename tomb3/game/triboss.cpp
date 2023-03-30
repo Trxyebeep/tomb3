@@ -875,18 +875,3 @@ void TribeBossControl(short item_number)
 	if (yrot == item->pos.y_rot)
 		turned = 0;
 }
-
-void inject_triboss(bool replace)
-{
-	INJECT(0x00471FB0, FindLizardManItemNumber, replace);
-	INJECT(0x00471570, InitialiseTribeBoss, replace);
-	INJECT(0x00471960, RotateHeadXAngle, replace);
-	INJECT(0x00471E30, TriggerSummonSmoke, replace);
-	INJECT(0x00471BD0, ExplodeTribeBoss, replace);
-	INJECT(0x00471520, TribeBossDie, replace);
-	INJECT(0x00471A30, TriggerLizardMan, replace);
-	INJECT(0x00471350, TriggerElectricSparks, replace);
-	INJECT(0x00471680, FindClosestShieldPoint, replace);
-	INJECT(0x004712F0, S_DrawTribeBoss, replace);
-	INJECT(0x00470B70, TribeBossControl, replace);
-}

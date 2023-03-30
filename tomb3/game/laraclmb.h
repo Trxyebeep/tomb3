@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_laraclmb(bool replace);
-
 long LaraCheckForLetGo(ITEM_INFO* item, COLL_INFO* coll);
 void LaraDoClimbLeftRight(ITEM_INFO* item, COLL_INFO* coll, long result, long shift);
 void lara_as_climbleft(ITEM_INFO* item, COLL_INFO* coll);

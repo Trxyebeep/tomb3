@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_lot(bool replace);
-
 void InitialiseLOTarray();
 void InitialiseNonLotAI(short item_number, long slot);
 long EnableNonLotAI(short item_number, long Always);

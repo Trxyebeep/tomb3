@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_laramisc(bool replace);
-
 void LaraCheatGetStuff();
 void LaraCheatyBits();
 void LaraCheat(ITEM_INFO* item, COLL_INFO* coll);

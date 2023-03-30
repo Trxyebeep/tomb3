@@ -273,24 +273,3 @@ void DS_Init()
 {
 	DS_MakeAdapterList();
 }
-
-void inject_ds(bool replace)
-{
-	INJECT(0x00480740, DS_IsChannelPlaying, replace);
-	INJECT(0x004808B0, DS_GetFreeChannel, replace);
-	INJECT(0x00480790, DS_StartSample, replace);
-	INJECT(0x00480600, DS_FreeAllSamples, replace);
-	INJECT(0x00480630, DS_MakeSample, replace);
-	INJECT(0x004808F0, DS_AdjustVolumeAndPan, replace);
-	INJECT(0x00480920, DS_AdjustPitch, replace);
-	INJECT(0x00480960, DS_StopSample, replace);
-	INJECT(0x00480C20, DS_Create, replace);
-	INJECT(0x00480D40, DS_IsSoundEnabled, replace);
-	INJECT(0x00480C40, DS_SetOutputFormat, replace);
-	INJECT(0x00480B80, DS_Start, replace);
-	INJECT(0x00480D10, DS_Finish, replace);
-	INJECT(0x00480A90, DS_EnumCallback, replace);
-	INJECT(0x00480A70, DS_EnumerateDevices, replace);
-	INJECT(0x004809D0, DS_MakeAdapterList, replace);
-	INJECT(0x004809C0, DS_Init, replace);
-}

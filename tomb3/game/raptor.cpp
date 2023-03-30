@@ -260,8 +260,3 @@ void RaptorControl(short item_number)
 	CreatureJoint(item, 3, neck);
 	CreatureAnimation(item_number, angle, tilt);
 }
-
-void inject_raptor(bool replace)
-{
-	INJECT(0x00461040, RaptorControl, replace);
-}

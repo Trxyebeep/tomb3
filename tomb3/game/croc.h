@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_croc(bool replace);
-
 void CrocControl(short item_number);
 
 enum CROC_STATES

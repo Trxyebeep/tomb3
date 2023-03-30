@@ -455,9 +455,3 @@ void PrisonerControl(short item_number)
 		}
 	}
 }
-
-void inject_prisoner(bool replace)
-{
-	INJECT(0x0045CFF0, InitialisePrisoner, replace);
-	INJECT(0x0045D050, PrisonerControl, replace);
-}

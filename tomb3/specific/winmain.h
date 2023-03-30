@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_winmain(bool replace);
-
 bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew);
 void WinAppExit();
 LRESULT CALLBACK WinAppProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

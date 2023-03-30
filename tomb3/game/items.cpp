@@ -450,21 +450,3 @@ void ClearBodyBag()
 		body_bag = NO_ITEM;
 	}
 }
-
-void inject_items(bool replace)
-{
-	INJECT(0x0043AA20, InitialiseItemArray, replace);
-	INJECT(0x0043AA90, KillItem, replace);
-	INJECT(0x0043ABE0, CreateItem, replace);
-	INJECT(0x0043AC30, InitialiseItem, replace);
-	INJECT(0x0043AE40, RemoveActiveItem, replace);
-	INJECT(0x0043AEE0, RemoveDrawnItem, replace);
-	INJECT(0x0043AF60, AddActiveItem, replace);
-	INJECT(0x0043AFD0, ItemNewRoom, replace);
-	INJECT(0x0043B080, GlobalItemReplace, replace);
-	INJECT(0x0043B100, InitialiseFXArray, replace);
-	INJECT(0x0043B130, CreateEffect, replace);
-	INJECT(0x0043B1A0, KillEffect, replace);
-	INJECT(0x0043B290, EffectNewRoom, replace);
-	INJECT(0x0043B330, ClearBodyBag, replace);
-}

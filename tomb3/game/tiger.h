@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_tiger(bool replace);
-
 void TigerControl(short item_number);
 
 enum TIGER_STATES

@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_orca(bool replace);
-
 void OrcaControl(short item_number);
 
 enum ORCA_STATES

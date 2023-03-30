@@ -62,8 +62,3 @@ void ControlFusebox(short item_number)
 
 	AnimateItem(item);
 }
-
-void inject_fusebox(bool replace)
-{
-	INJECT(0x0048EA30, ControlFusebox, inject_rando ? 1 : replace);
-}

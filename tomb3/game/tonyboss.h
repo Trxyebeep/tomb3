@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_tonyboss(bool replace);
-
 void ControlTonyFireBall(short fx_number);
 void InitialiseTonyBoss(short item_number);
 void TonyBossControl(short item_number);

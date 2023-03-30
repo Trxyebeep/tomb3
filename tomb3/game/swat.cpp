@@ -350,9 +350,3 @@ void SwatControl(short item_number)
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
 }
-
-void inject_swat(bool replace)
-{
-	INJECT(0x00469F80, InitialiseSwat, replace);
-	INJECT(0x00469FE0, SwatControl, replace);
-}

@@ -816,19 +816,3 @@ long PickupTrigger(short item_number)
 
 	return 0;
 }
-
-void inject_pickup(bool replace)
-{
-	INJECT(0x0045BC00, PickUpCollision, inject_rando ? 1 : replace);
-	INJECT(0x0045CDE0, BossDropIcon, replace);
-	INJECT(0x0045CE70, AnimatingPickUp, replace);
-	INJECT(0x0045C900, PuzzleHoleCollision, replace);
-	INJECT(0x0045C6B0, KeyHoleCollision, replace);
-	INJECT(0x0045C510, DetonatorCollision, replace);
-	INJECT(0x0045C170, SwitchCollision, replace);
-	INJECT(0x0045C400, SwitchCollision2, replace);
-	INJECT(0x0045CC60, SwitchControl, replace);
-	INJECT(0x0045CCB0, SwitchTrigger, replace);
-	INJECT(0x0045CD50, KeyTrigger, replace);
-	INJECT(0x0045CDA0, PickupTrigger, replace);
-}

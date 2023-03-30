@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_control(bool replace);
-
 long ControlPhase(long nframes, long demo_mode);
 void AnimateItem(ITEM_INFO* item);
 long GetChange(ITEM_INFO* item, ANIM_STRUCT* anim);

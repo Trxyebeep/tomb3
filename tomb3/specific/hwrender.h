@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_hwrender(bool replace);
-
 void HWR_EnableZBuffer(bool write, bool compare);
 void HWR_EnableColorKey(bool enable);
 void HWR_EnableAlphaBlend(bool enable);

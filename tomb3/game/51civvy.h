@@ -1,8 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-void inject_civvy(bool replace);
-
 void ControlElectricFence(short item_number);
 void InitialiseCivvy(short item_number);
 void CivvyControl(short item_number);
