@@ -37,6 +37,29 @@ short GlobeLevel;
 uchar GlobeLevelComplete[6];
 
 long inputDB;
+short Option_Music_Volume = 255;
+short Option_SFX_Volume = 165;
+long Inventory_Mode = INV_TITLE_MODE;
+TEXTSTRING* passport_text1;
+TEXTSTRING* Inv_ringText;
+TEXTSTRING* Inv_tagText;
+TEXTSTRING* Inv_upArrow1;
+TEXTSTRING* Inv_upArrow2;
+TEXTSTRING* Inv_downArrow1;
+TEXTSTRING* Inv_downArrow2;
+long Inventory_DemoMode;
+long OpenInvOnGym;
+long idelay;
+long idcount;
+short inv_keys_objects;
+short inv_keys_current;
+short inv_main_objects = 8;
+short inv_main_current;
+short Inventory_Displaying;
+short Inventory_Chosen;
+short inv_option_objects;
+short inv_option_current;
+short item_data;
 
 long GetDebouncedInput(long in)
 {

@@ -15,6 +15,7 @@
 #include "winmain.h"
 #include "../game/gameflow.h"
 #include "../game/draw.h"
+#include "../game/inventry.h"
 #ifdef TROYESTUFF
 #include "../game/control.h"
 #include "../game/health.h"

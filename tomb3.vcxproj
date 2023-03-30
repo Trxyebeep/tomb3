@@ -266,7 +266,6 @@
     <ClInclude Include="tomb3\game\winston.h" />
     <ClInclude Include="tomb3\global\math_tbls.h" />
     <ClInclude Include="tomb3\global\types.h" />
-    <ClInclude Include="tomb3\global\vars.h" />
     <ClInclude Include="tomb3\newstuff\discord.h" />
     <ClInclude Include="tomb3\newstuff\libs\discord\discord_register.h" />
     <ClInclude Include="tomb3\newstuff\libs\discord\discord_rpc.h" />
@@ -451,9 +450,6 @@
     </ClCompile>
     <ClCompile Include="tomb3\tomb3\registry.cpp" />
     <ClCompile Include="tomb3\tomb3\tomb3.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="tomb3\global\progress.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="tomb3.rc" />

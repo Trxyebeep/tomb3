@@ -22,6 +22,7 @@
 #include "camera.h"
 #include "lara.h"
 #include "effects.h"
+#include "inventry.h"
 #ifdef TROYESTUFF
 #include "../newstuff/LaraDraw.h"
 #endif

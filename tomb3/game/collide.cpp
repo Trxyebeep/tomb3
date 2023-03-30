@@ -10,6 +10,7 @@
 #include "sound.h"
 #include "../specific/file.h"
 #include "lara.h"
+#include "inventry.h"
 #ifdef TROYESTUFF
 #include "../newstuff/map.h"
 #endif

@@ -1,5 +1,5 @@
 #pragma once
-#include "../global/vars.h"
+#include "../global/types.h"
 
 void ControlWillbossPlasmaBall(short fx_number);
 void InitialiseWillBoss(short item_number);

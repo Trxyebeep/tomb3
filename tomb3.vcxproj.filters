@@ -336,9 +336,6 @@
     <ClInclude Include="tomb3\global\math_tbls.h">
       <Filter>global</Filter>
     </ClInclude>
-    <ClInclude Include="tomb3\global\vars.h">
-      <Filter>global</Filter>
-    </ClInclude>
     <ClInclude Include="tomb3\global\types.h">
       <Filter>global</Filter>
     </ClInclude>
@@ -848,11 +845,6 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="tomb3.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="tomb3\global\progress.txt">
-      <Filter>global</Filter>
-    </Text>
   </ItemGroup>
   <ItemGroup>
     <Library Include="tomb3\newstuff\libs\discord\discord-rpc.lib" />

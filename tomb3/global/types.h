@@ -1,4 +1,5 @@
 #pragma once
+#include "math_tbls.h"
 
 #pragma pack(push, 1)
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "../global/vars.h"
+#include "../global/types.h"
 
 void InitialiseMonkey(short item_number);
 void MonkeyControl(short item_number);

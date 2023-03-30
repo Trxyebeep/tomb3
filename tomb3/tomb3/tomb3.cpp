@@ -6,6 +6,7 @@
 #include "../specific/input.h"
 #include "../specific/winmain.h"
 #include "../specific/hwrender.h"
+#include "../game/inventry.h"
 
 TOMB3_OPTIONS tomb3;
 TOMB3_SAVE tomb3_save;

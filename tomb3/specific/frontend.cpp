@@ -6,6 +6,7 @@
 #include "input.h"
 #include "time.h"
 #include "fmv.h"
+#include "../game/inventry.h"
 #ifdef TROYESTUFF
 #include "output.h"
 #include "../3dsystem/hwinsert.h"

@@ -11,6 +11,7 @@
 #include "../specific/input.h"
 #include "savegame.h"
 #include "lara.h"
+#include "inventry.h"
 
 ulong* demoptr;
 long democount;

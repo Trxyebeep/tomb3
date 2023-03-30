@@ -9,6 +9,7 @@
 #include "../specific/specific.h"
 #include "cinema.h"
 #include "draw.h"
+#include "inventry.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif

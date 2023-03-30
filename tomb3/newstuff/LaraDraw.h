@@ -1,5 +1,5 @@
 #pragma once
-#include "../global/vars.h"
+#include "../global/types.h"
 
 void CalcLaraMatrices(long flag);
 void GetLaraMeshPos(PHD_VECTOR* pos, long node);
