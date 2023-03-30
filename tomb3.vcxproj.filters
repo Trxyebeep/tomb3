@@ -850,4 +850,8 @@
     <Library Include="tomb3\newstuff\libs\discord\discord-rpc.lib" />
     <Library Include="tomb3\newstuff\libs\discord\discord-rpcd.lib" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="setup.bmp" />
+    <Image Include="icon.ico" />
+  </ItemGroup>
 </Project>

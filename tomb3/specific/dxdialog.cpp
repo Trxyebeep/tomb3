@@ -1,30 +1,11 @@
 #include "../tomb3/pch.h"
 #include "dxdialog.h"
 #include "winmain.h"
+#include "../../resource.h"
 #ifdef TROYESTUFF
 #include "smain.h"
 #include "../tomb3/tomb3.h"
 #endif
-
-//these are the BOXES/BUTTONS not the text
-#define IDD_SETUPDIALOG			101
-#define IDC_GRAPHICS_ADAPTER	1000
-#define IDC_OUTPUT_SETTINGS		1001
-#define IDC_RESOLUTION			1002
-#define IDC_D3DTF				1003	//hidden
-#define IDC_ZBUFFER				1004
-#define IDC_DITHER				1005
-#define IDC_BILINEAR			1006
-#define IDC_HARDWARE			1007	//now "Fullscreen"
-#define IDC_SOFTWARE			1008	//now "Windowed"
-#define IDC_8BIT_TEXTURES		1009
-#define IDC_SOUND				1010
-#define IDC_JOYSTICK			1011
-#define IDC_AGPMEM				1012
-#define IDC_DISABLE_JOYSTICK	1014
-#define IDC_DISABLE_SOUND		1015
-#define IDC_VERSION				1016
-#define IDC_TEST				1019
 
 static DXCONFIG* G_DXConfig;
 static DEVICEINFO* G_DeviceInfo;

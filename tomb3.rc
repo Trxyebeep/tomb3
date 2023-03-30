@@ -82,7 +82,100 @@ BEGIN
     END
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP1             BITMAP                  "setup.bmp"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_DIALOG1 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON                    "icon.ico"
+
 #endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United Kingdom) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_SETUPDIALOG DIALOGEX 0, 0, 399, 235
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CLIENTEDGE
+CAPTION "Tomb Raider III Setup"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_GRAPHICS_ADAPTER,151,18,228,70,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_OUTPUT_SETTINGS,151,50,230,12,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_GROUP | WS_TABSTOP,WS_EX_CLIENTEDGE
+    COMBOBOX        IDC_RESOLUTION,191,71,117,59,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&Software Mode",IDC_SOFTWARE,"Button",BS_AUTORADIOBUTTON,151,90,83,10
+    CONTROL         "Hardware &Acceleration",IDC_HARDWARE,"Button",BS_AUTORADIOBUTTON,151,105,98,10
+    CONTROL         "&Dither",IDC_DITHER,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,273,90,35,10
+    CONTROL         "8 Bit &Textures",IDC_8BIT_TEXTURES,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,249,105,59,10
+    CONTROL         "&ZBuffer",IDC_ZBUFFER,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,336,75,39,10
+    CONTROL         "&Bilinear Filter",IDC_BILINEAR,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,320,90,55,10
+    CONTROL         "Use AGP &Mem",IDC_AGPMEM,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,312,105,63,10
+    GROUPBOX        "Sound Adapter",IDC_STATIC,143,130,245,37,WS_GROUP
+    CONTROL         "Disable",IDC_DISABLE_SOUND,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,344,130,40,10
+    COMBOBOX        IDC_SOUND,151,144,229,42,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    GROUPBOX        "Joystick Adapter",IDC_STATIC,143,175,245,34,WS_GROUP
+    CONTROL         "Disable",IDC_DISABLE_JOYSTICK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,344,175,40,10
+    COMBOBOX        IDC_JOYSTICK,151,188,229,45,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    PUSHBUTTON      "Test ",IDC_TEST,174,214,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",1,240,214,50,14
+    PUSHBUTTON      "&Cancel",2,306,214,50,14
+    COMBOBOX        IDC_D3DTF,334,215,58,84,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "&Graphics Adapter",IDC_STATIC,142,7,246,27
+    GROUPBOX        "Output Settings",IDC_STATIC,143,39,245,84,WS_GROUP
+    LTEXT           "Resolution",IDC_STATIC,151,74,34,8
+    CONTROL         IDB_BITMAP1,IDC_STATIC,"Static",SS_BITMAP | SS_SUNKEN | WS_BORDER,12,7,123,202
+    CTEXT           "Version 1.1",IDC_VERSION,14,212,120,8,NOT WS_GROUP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    101, DIALOG
+    BEGIN
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (United Kingdom) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

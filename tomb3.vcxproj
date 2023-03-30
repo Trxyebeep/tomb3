@@ -458,6 +458,10 @@
     <Library Include="tomb3\newstuff\libs\discord\discord-rpc.lib" />
     <Library Include="tomb3\newstuff\libs\discord\discord-rpcd.lib" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
+    <Image Include="setup.bmp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
