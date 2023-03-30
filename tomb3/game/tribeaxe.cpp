@@ -4,6 +4,9 @@
 #include "../specific/game.h"
 #include "effects.h"
 #include "sound.h"
+#include "objects.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO tribeaxe_hit = { 0, 16, 265, 13 };
 
@@ -261,9 +264,4 @@ void TribeAxeControl(short item_number)
 	CreatureJoint(item, 0, head >> 1);
 	CreatureJoint(item, 1, head >> 1);
 	CreatureAnimation(item_number, angle, 0);
-}
-
-void inject_tribeaxe(bool replace)
-{
-	INJECT(0x00470530, TribeAxeControl, replace);
 }

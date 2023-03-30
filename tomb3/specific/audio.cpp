@@ -1,7 +1,11 @@
 #include "../tomb3/pch.h"
 #include "audio.h"
 #include "file.h"
+#include "winmain.h"
+#include "ds.h"
+#include "../game/control.h"
 
+static TRACK_INFO TrackInfos[130];
 static LPDIRECTSOUNDBUFFER DSBuffer;
 static LPDIRECTSOUNDNOTIFY DSNotify;
 static ACMSTREAMHEADER StreamHeaders[4];
@@ -33,6 +37,8 @@ static volatile bool acm_locked;
 static ulong acm_playpos = -1;
 static bool acm_paused = 0;
 #endif
+
+long acm_volume;
 
 BOOL __stdcall ACMEnumCallBack(HACMDRIVERID hadid, DWORD_PTR dwInstance, DWORD fdwSupport)
 {
@@ -536,20 +542,4 @@ void ACMClose()
 		DSBuffer->Release();
 
 	ACMCloseFile();
-}
-
-void inject_audio(bool replace)
-{
-	INJECT(0x004742A0, ACMEnumCallBack, replace);
-	INJECT(0x004748E0, ACMCloseFile, replace);
-	INJECT(0x004748B0, ACMOpenFile, replace);
-	INJECT(0x00474D50, ACMEmulateCDStop, replace);
-	INJECT(0x00474900, ACMEmulateCDPlay, replace);
-	INJECT(0x00474B30, ThreadACMEmulateCDPlay, replace);
-	INJECT(0x00475240, ACMGetTrackLocation, replace);
-	INJECT(0x00475280, ACMSetVolume, replace);
-	INJECT(0x00474D70, ACMHandleNotifications, replace);
-	INJECT(0x00475160, ACMSetupNotifications, replace);
-	INJECT(0x00474330, ACMInit, replace);
-	INJECT(0x00474760, ACMClose, replace);
 }

@@ -10,6 +10,11 @@
 #include "../specific/litesrc.h"
 #include "../3dsystem/hwinsert.h"
 #include "../game/inventry.h"
+#include "../game/objects.h"
+#include "../game/control.h"
+#include "../game/lara.h"
+#include "../game/effects.h"
+#include "../specific/winmain.h"
 
 #define CAM_SPEED	128
 #define VIEW_DIST	(40 * WALL_SIZE)

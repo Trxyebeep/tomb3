@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_file(bool replace);
+#include "../global/types.h"
 
 long MyReadFile(HANDLE hFile, LPVOID lpBuffer, ulong nNumberOfBytesToRead, ulong* lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped);
 bool LoadPalette(HANDLE file);
@@ -29,4 +27,17 @@ void AdjustTextureUVs(bool reset);
 long Read_Strings(long num, char** strings, char** buffer, ulong* read, HANDLE file);
 long S_LoadGameFlow(const char* name);
 
+extern CHANGE_STRUCT* changes;
+extern RANGE_STRUCT* ranges;
+extern short* aranges;
+extern short* frames;
+extern short* commands;
+extern short* floor_data;
+extern short* mesh_base;
+extern long number_cameras;
+extern long wet;
+extern long nTInfos;
+
 extern PHDTEXTURESTRUCT phdtextinfo[MAX_TINFOS];
+extern PHDSPRITESTRUCT phdspriteinfo[512];
+extern uchar G_GouraudPalette[1024];

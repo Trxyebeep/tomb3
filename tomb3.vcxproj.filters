@@ -336,9 +336,6 @@
     <ClInclude Include="tomb3\global\math_tbls.h">
       <Filter>global</Filter>
     </ClInclude>
-    <ClInclude Include="tomb3\global\vars.h">
-      <Filter>global</Filter>
-    </ClInclude>
     <ClInclude Include="tomb3\global\types.h">
       <Filter>global</Filter>
     </ClInclude>
@@ -398,9 +395,6 @@
       <Filter>specific</Filter>
     </ClInclude>
     <ClInclude Include="tomb3\specific\litesrc.h">
-      <Filter>specific</Filter>
-    </ClInclude>
-    <ClInclude Include="tomb3\specific\mmx.h">
       <Filter>specific</Filter>
     </ClInclude>
     <ClInclude Include="tomb3\specific\option.h">
@@ -746,9 +740,6 @@
     <ClCompile Include="tomb3\tomb3\pch.cpp">
       <Filter>tomb3</Filter>
     </ClCompile>
-    <ClCompile Include="tomb3\tomb3\dllmain.cpp">
-      <Filter>tomb3</Filter>
-    </ClCompile>
     <ClCompile Include="tomb3\newstuff\LaraDraw.cpp">
       <Filter>newstuff</Filter>
     </ClCompile>
@@ -809,9 +800,6 @@
     <ClCompile Include="tomb3\specific\litesrc.cpp">
       <Filter>specific</Filter>
     </ClCompile>
-    <ClCompile Include="tomb3\specific\mmx.cpp">
-      <Filter>specific</Filter>
-    </ClCompile>
     <ClCompile Include="tomb3\specific\option.cpp">
       <Filter>specific</Filter>
     </ClCompile>
@@ -850,12 +838,11 @@
     <ResourceCompile Include="tomb3.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="tomb3\global\progress.txt">
-      <Filter>global</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
     <Library Include="tomb3\newstuff\libs\discord\discord-rpc.lib" />
     <Library Include="tomb3\newstuff\libs\discord\discord-rpcd.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="setup.bmp" />
+    <Image Include="icon.ico" />
   </ItemGroup>
 </Project>

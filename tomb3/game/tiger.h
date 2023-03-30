@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_tiger(bool replace);
+#include "../global/types.h"
 
 void TigerControl(short item_number);
 

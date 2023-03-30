@@ -1,6 +1,4 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_flymaker(bool replace);
+#include "../global/types.h"
 
 void FlyEmitterControl(short item_number);

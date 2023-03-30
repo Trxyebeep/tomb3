@@ -7,6 +7,7 @@
 #include "../specific/option.h"
 #include "../game/gameflow.h"
 #include "../game/text.h"
+#include "../game/inventry.h"
 
 void do_crystal_option(INVENTORY_ITEM* item)
 {

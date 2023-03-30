@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_draweffects(bool replace);
+#include "../global/types.h"
 
 void LaraElectricDeath(long lr, ITEM_INFO* item);
 bool ClipLine(long& x1, long& y1, long& x2, long& y2, long w, long h);
@@ -33,3 +31,8 @@ void S_DrawSubWakeFX(ITEM_INFO* item);
 void SuperDrawBox(short* bounds, long col);
 void SuperDrawBox(long x, long y, long z, short* bounds, long col);
 #endif
+
+extern EXPLOSION_RING ExpRings[6];
+extern WAKE_PTS WakePts[32][2];
+extern uchar WakeShade;
+extern uchar CurrentStartWake;

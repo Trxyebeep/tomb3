@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_option(bool replace);
+#include "../global/types.h"
 
 long GetRenderWidth();
 long GetRenderHeight();
@@ -51,3 +49,5 @@ enum d_options
 	DOP_RESOLUTION,
 	DOP_NOPTS
 };
+
+extern long SavedGames;

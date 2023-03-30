@@ -6,6 +6,11 @@
 #include "text.h"
 #include "../specific/specific.h"
 #include "gameflow.h"
+#include "../3dsystem/3d_gen.h"
+#include "control.h"
+#include "savegame.h"
+#include "lara.h"
+#include "effects.h"
 #ifdef TROYESTUFF
 #include "../specific/output.h"
 #include "../tomb3/tomb3.h"
@@ -16,6 +21,11 @@
 
 #define AMMO_XPOS_PS	-24
 #define AMMO_YPOS_PS	-24
+
+long health_bar_timer;
+TEXTSTRING* ammotext;
+static TEXTSTRING* LpModeTS;
+static long LnModeTSLife;
 
 #ifndef TROYESTUFF
 DISPLAYPU pickups[1];
@@ -565,21 +575,4 @@ void AddDisplayPickup(short objnum)
 	pickups[0].sprnum = objnum;
 	pickups[0].duration = 75;
 #endif
-}
-
-void inject_health(bool replace)
-{
-	INJECT(0x00434360, FlashIt, replace);
-	INJECT(0x00434390, DrawAssaultTimer, replace);
-	INJECT(0x00434510, DrawAssaultPenalties, replace);
-	INJECT(0x00434770, DrawQuadbikeLapTime, replace);
-	INJECT(0x00434A10, DrawHealthBar, replace);
-	INJECT(0x00434AE0, DrawAirBar, replace);
-	INJECT(0x00434BD0, RemoveAmmoText, replace);
-	INJECT(0x00434BF0, DrawAmmoInfo, replace);
-	INJECT(0x00434E30, DrawModeInfo, replace);
-	INJECT(0x00434DB0, DisplayModeInfo, replace);
-	INJECT(0x00434930, DrawGameInfo, replace);
-	INJECT(0x00434D50, InitialisePickUpDisplay, replace);
-	INJECT(0x00434D70, AddDisplayPickup, replace);
 }

@@ -14,6 +14,8 @@
 #include "../specific/game.h"
 #include "control.h"
 #include "lara.h"
+#include "../specific/input.h"
+#include "camera.h"
 
 void BigGunInitialise(short item_number)
 {
@@ -349,14 +351,4 @@ long BigGunControl(COLL_INFO* coll)
 	LaraBaddieCollision(lara_item, coll);
 	camera.target_elevation = -2730;
 	return 1;
-}
-
-void inject_biggun(bool replace)
-{
-	INJECT(0x00410D00, BigGunInitialise, replace);
-	INJECT(0x00410E60, CanUseGun, replace);
-	INJECT(0x00410D50, BigGunCollision, replace);
-	INJECT(0x00410EC0, BigGunDraw, replace);
-	INJECT(0x00410AF0, FireBigGun, replace);
-	INJECT(0x00411100, BigGunControl, replace);
 }

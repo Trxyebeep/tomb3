@@ -1,6 +1,7 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_footprnt(bool replace);
+#include "../global/types.h"
 
 void AddFootprint(ITEM_INFO* item);
+
+extern FOOTPRINT FootPrint[32];
+extern long FootPrintNum;

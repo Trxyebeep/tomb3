@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_traps(bool replace);
+#include "../global/types.h"
 
 void LaraBurn();
 void LavaBurn(ITEM_INFO* item);

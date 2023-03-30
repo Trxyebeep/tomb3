@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_mpgun(bool replace);
+#include "../global/types.h"
 
 void MPGunControl(short item_number);
 

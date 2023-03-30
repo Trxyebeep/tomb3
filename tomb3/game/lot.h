@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_lot(bool replace);
+#include "../global/types.h"
 
 void InitialiseLOTarray();
 void InitialiseNonLotAI(short item_number, long slot);
@@ -11,3 +9,6 @@ void ClearLOT(LOT_INFO* lot);
 void CreateZone(ITEM_INFO* item);
 void InitialiseSlot(short item_number, long slot);
 long EnableBaddieAI(short item_number, long Always);
+
+extern long slots_used;
+extern CREATURE_INFO* baddie_slots;

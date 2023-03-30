@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_scalespr(bool replace);
+#include "../global/types.h"
 
 short* ins_room_sprite(short* objptr, long num);
 void S_DrawScreenSprite2d(long x, long y, long z, long scaleH, long scaleV, short sprnum, short shade, ushort flags);

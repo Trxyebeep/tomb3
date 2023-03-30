@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_dxdialog(bool replace);
+#include "../global/types.h"
 
 BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lParam);
 bool DXUserDialog(DEVICEINFO* device, DXCONFIG* config, HINSTANCE hinstance);

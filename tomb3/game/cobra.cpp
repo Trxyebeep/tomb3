@@ -3,6 +3,9 @@
 #include "box.h"
 #include "gameflow.h"
 #include "effects.h"
+#include "objects.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO cobra_hit = { 0, 0, 0, 13 };
 
@@ -124,10 +127,4 @@ void CobraControl(short item_number)
 	}
 
 	CreatureAnimation(item_number, angle, 0);
-}
-
-void inject_cobra(bool replace)
-{
-	INJECT(0x0041D210, InitialiseCobra, replace);
-	INJECT(0x0041D290, CobraControl, replace);
 }

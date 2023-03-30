@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_tonyboss(bool replace);
+#include "../global/types.h"
 
 void ControlTonyFireBall(short fx_number);
 void InitialiseTonyBoss(short item_number);
@@ -18,3 +16,5 @@ enum TONYBOSS_STATES
 	TONYBOSS_BIGBOOM,
 	TONYBOSS_DEATH
 };
+
+extern SHIELD_POINTS TonyBossShield[40];

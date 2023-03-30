@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_larafire(bool replace);
+#include "../global/types.h"
 
 long WeaponObject(long weapon_type);
 long FireWeapon(long weapon_type, ITEM_INFO* target, ITEM_INFO* source, short* angles);
@@ -14,3 +12,5 @@ void LaraGetNewTarget(WEAPON_INFO* winfo);
 void InitialiseNewWeapon();
 void LaraGun();
 void DoProperDetection(short item_number, long x, long y, long z, long xv, long yv, long zv);
+
+extern WEAPON_INFO weapons[11];

@@ -1,4 +1,4 @@
 #pragma once
-#include "../global/vars.h"
+#include "../global/types.h"
 
 long S_Pause();

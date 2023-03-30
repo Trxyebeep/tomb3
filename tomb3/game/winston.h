@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_winston(bool replace);
+#include "../global/types.h"
 
 void OldWinstonControl(short item_number);
 void WinstonControl(short item_number);

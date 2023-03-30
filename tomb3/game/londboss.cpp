@@ -18,6 +18,7 @@
 #include "draw.h"
 #include "../specific/draweffects.h"
 #include "laraelec.h"
+#include "setup.h"
 
 static BITE_INFO londonboss_points[3] =
 {
@@ -33,6 +34,9 @@ static long dheights1[5] = { -7680, -4224, -768, 2688, 6144 };
 static long dheights2[5] = { -1536, -1152, -768, -384, 0 };
 static long death_radii[5];
 static long death_heights[5];
+
+SHIELD_POINTS LondonBossShield[40];
+EXPLOSION_RING KBRings[3];
 
 static void TriggerPlasmaBall(ITEM_INFO* item, long type, PHD_VECTOR* pos, short room_number, short angle)
 {
@@ -1009,18 +1013,4 @@ void S_DrawLondonBoss(ITEM_INFO* item)
 		LaraElectricDeath(0, item);
 		LaraElectricDeath(1, item);
 	}
-}
-
-void inject_londboss(bool replace)
-{
-	INJECT(0x00451DE0, TriggerPlasmaBall, replace);
-	INJECT(0x00452090, TriggerPlasmaBallFlame, replace);
-	INJECT(0x00451980, TriggerLaserBolt, replace);
-	INJECT(0x00451730, ExplodeLondonBoss, replace);
-	INJECT(0x00452240, KnockBackCollision, replace);
-	INJECT(0x00451E80, ControlLondBossPlasmaBall, replace);
-	INJECT(0x00451AB0, ControlLaserBolts, replace);
-	INJECT(0x004516A0, InitialiseLondonBoss, replace);
-	INJECT(0x00450800, LondonBossControl, replace);
-	INJECT(0x00451640, S_DrawLondonBoss, replace);
 }

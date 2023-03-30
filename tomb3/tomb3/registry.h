@@ -1,5 +1,5 @@
 #pragma once
-#include "../global/vars.h"
+#include "../global/types.h"
 
 bool OpenRegistry(LPCSTR SubKeyName);
 void CloseRegistry();

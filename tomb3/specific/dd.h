@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_dd(bool replace);
+#include "../global/types.h"
 
 bool DD_SpinMessageLoop(bool wait);
 HRESULT DD_LockSurface(LPDIRECTDRAWSURFACEX surf, DDSURFACEDESCX& desc, ulong flags);

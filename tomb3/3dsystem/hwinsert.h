@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_hwinsert(bool replace);
+#include "../global/types.h"
 
 void HWI_InsertTrans8_Sorted(PHD_VBUF* buf, short shade);
 void SubdivideEdge(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* dest);
@@ -41,3 +39,8 @@ long RoomZedClipper(long n, POINT_INFO* in, VERTEX_INFO* out);
 long RoomXYGUVClipper(long n, VERTEX_INFO* in);
 long XYGClipper(long n, VERTEX_INFO* in);
 long XYClipper(long n, VERTEX_INFO* in);
+
+extern PHD_VBUF vbuf[1500];
+extern TEXTUREBUCKET Buckets[6];
+extern long GlobalAlpha;
+extern long nDrawnPoints;

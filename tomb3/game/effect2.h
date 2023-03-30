@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_effect2(bool replace);
+#include "../global/types.h"
 
 void TriggerDynamic(long x, long y, long z, long falloff, long r, long g, long b);
 void ClearDynamics();
@@ -44,3 +42,19 @@ void KillAllCurrentItems(short item_number);
 void TriggerBats(long x, long y, long z, short ang);
 void BatEmitterControl(short item_number);
 void UpdateBats();
+
+extern SPARKS sparks[192];
+extern BAT_STRUCT bats[32];
+extern SPLASH_STRUCT splashes[4];
+extern RIPPLE_STRUCT ripples[16];
+extern SPLASH_SETUP splash_setup;
+extern long SplashCount;
+extern long KillEverythingFlag;
+extern long SmokeCountL;
+extern long SmokeCountR;
+extern long SmokeWeapon;
+extern long SmokeWindX;
+extern long SmokeWindZ;
+extern DYNAMIC dynamics[64];
+extern long number_dynamics;
+extern long wibble;

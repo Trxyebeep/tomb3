@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_firehead(bool replace);
+#include "../global/types.h"
 
 void InitialiseFireHead(short item_number);
 void ControlFireHead(short item_number);

@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_tribeaxe(bool replace);
+#include "../global/types.h"
 
 void TribeAxeControl(short item_number);
 

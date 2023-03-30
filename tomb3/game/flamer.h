@@ -1,6 +1,4 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_flamer(bool replace);
+#include "../global/types.h"
 
 void FlamerControl(short item_number);

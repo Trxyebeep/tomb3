@@ -7,6 +7,7 @@
 #include "items.h"
 #include "collide.h"
 #include "effects.h"
+#include "lara.h"
 
 void InitialiseArea51Laser(short item_number)
 {
@@ -117,10 +118,4 @@ void ControlArea51Laser(short item_number)
 	}
 
 	AnimateItem(item);
-}
-
-void inject_51laser(bool replace)
-{
-	INJECT(0x0040F460, InitialiseArea51Laser, replace);
-	INJECT(0x0040F190, ControlArea51Laser, replace);
 }

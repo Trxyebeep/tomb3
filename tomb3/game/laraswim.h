@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_laraswim(bool replace);
+#include "../global/types.h"
 
 void LaraUnderWater(ITEM_INFO* item, COLL_INFO* coll);
 void SwimTurn(ITEM_INFO* item);

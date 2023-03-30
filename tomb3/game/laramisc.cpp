@@ -16,8 +16,14 @@
 #include "../specific/smain.h"
 #include "items.h"
 #include "larafire.h"
+#include "../specific/file.h"
+#include "camera.h"
+#include "savegame.h"
+#include "cinema.h"
+#include "../specific/picture.h"
 #ifdef TROYESTUFF
 #include "effect2.h"
+#include "../specific/input.h"
 #include "../tomb3/tomb3.h"
 #endif
 
@@ -231,6 +237,10 @@ void(*lara_collision_routines[89])(ITEM_INFO* item, COLL_INFO* coll) =
 	lara_void_func,
 	lara_col_crawl2hang
 };
+
+static COLL_INFO lara_coll;
+static COLL_INFO* mycoll = &lara_coll;
+static short cheat_hit_points;
 
 void LaraCheatGetStuff()
 {
@@ -688,7 +698,6 @@ void LaraControl(short item_number)
 				break;
 
 			case LARA_WADE:
-
 				camera.target_elevation = -4004;
 
 #ifdef TROYESTUFF
@@ -1463,19 +1472,4 @@ void InitialiseLaraInventory(long level)
 	lara.request_gun_type = lara.last_gun_type;
 	LaraInitialiseMeshes(level);
 	InitialiseNewWeapon();
-}
-
-void inject_laramisc(bool replace)
-{
-	INJECT(0x0044C630, LaraCheatGetStuff, replace);
-	INJECT(0x0044D1A0, LaraCheatyBits, replace);
-	INJECT(0x0044CFC0, LaraCheat, replace);
-	INJECT(0x0044D060, LaraInitialiseMeshes, replace);
-	INJECT(0x0044C6F0, LaraControl, inject_rando ? 1 : replace);
-	INJECT(0x0044D2A0, AnimateLara, replace);
-	INJECT(0x0044D690, UseItem, replace);
-	INJECT(0x0044D880, ControlLaraExtra, replace);
-	INJECT(0x0044D8A0, InitialiseLaraLoad, replace);
-	INJECT(0x0044D8D0, InitialiseLara, replace);
-	INJECT(0x0044DC00, InitialiseLaraInventory, replace);
 }

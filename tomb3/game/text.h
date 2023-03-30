@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_text(bool replace);
+#include "../global/types.h"
 
 short T_GetStringLen(const char* string);
 long T_RemovePrint(TEXTSTRING* textstring);

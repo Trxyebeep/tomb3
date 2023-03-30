@@ -1,5 +1,6 @@
 #include "../tomb3/pch.h"
 #include "dd.h"
+#include "winmain.h"
 
 bool DD_SpinMessageLoop(bool wait)
 {
@@ -100,14 +101,4 @@ bool DD_ClearSurface(LPDIRECTDRAWSURFACEX surf, LPRECT rect, ulong col)
 	blt.dwSize = sizeof(DDBLTFX);
 	blt.dwFillColor = col;
 	return SUCCEEDED(surf->Blt(rect, 0, 0, DDBLT_WAIT | DDBLT_COLORFILL, &blt));
-}
-
-void inject_dd(bool replace)
-{
-	INJECT(0x004B3830, DD_SpinMessageLoop, replace);
-	INJECT(0x004B3900, DD_LockSurface, replace);
-	INJECT(0x004B3930, DD_UnlockSurface, replace);
-	INJECT(0x004B3950, DD_CreateSurface, replace);
-	INJECT(0x004B39A0, DD_EnsureSurfaceAvailable, replace);
-	INJECT(0x004B39F0, DD_ClearSurface, replace);
 }

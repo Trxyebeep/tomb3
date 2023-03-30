@@ -1,5 +1,6 @@
 #include "../tomb3/pch.h"
 #include "utils.h"
+#include "winmain.h"
 
 static double start_us;
 static double start;
@@ -92,14 +93,4 @@ bool UT_OKCancelBox(char* lpTemplateName, HWND hWndParent)
 	ret = DialogBoxParam(App.hInstance, lpTemplateName, hWndParent, UT_OKCB_DlgProc, 0) != 0;
 	ShowCursor(0);
 	return ret;
-}
-
-void inject_utils(bool replace)
-{
-	INJECT(0x0048E440, UT_GetAccurateTimer, replace);
-	INJECT(0x0048E3E0, UT_InitAccurateTimer, replace);
-	INJECT(0x0048E490, UT_CenterWindow, replace);
-	INJECT(0x0048E500, UT_FindArg, replace);
-	INJECT(0x0048E570, UT_OKCB_DlgProc, replace);
-	INJECT(0x0048E530, UT_OKCancelBox, replace);
 }

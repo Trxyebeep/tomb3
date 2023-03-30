@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_texture(bool replace);
+#include "../global/types.h"
 
 long DXTextureNewPalette(uchar* palette);
 void DXResetPalette(DXTEXTURE* tex);
@@ -21,4 +19,6 @@ void DXCreateMaxTPages(long create);
 void DXFreeTPages();
 
 extern DXTEXTURE* TPages[MAX_TPAGES];
+extern long nTPages;
 extern TEXTURE Textures[MAX_TPAGES];
+extern LPDIRECTDRAWPALETTE DXPalette;

@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_civvy(bool replace);
+#include "../global/types.h"
 
 void ControlElectricFence(short item_number);
 void InitialiseCivvy(short item_number);

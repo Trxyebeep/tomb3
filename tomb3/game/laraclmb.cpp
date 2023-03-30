@@ -3,6 +3,8 @@
 #include "lara.h"
 #include "control.h"
 #include "laramisc.h"
+#include "../specific/input.h"
+#include "camera.h"
 
 long LaraCheckForLetGo(ITEM_INFO* item, COLL_INFO* coll)
 {
@@ -597,24 +599,4 @@ long LaraTestClimbUpPos(ITEM_INFO* item, long front, long right, long* shift, lo
 	}
 
 	return 0;
-}
-
-void inject_laraclmb(bool replace)
-{
-	INJECT(0x00449310, LaraCheckForLetGo, replace);
-	INJECT(0x004493E0, LaraDoClimbLeftRight, replace);
-	INJECT(0x00449140, lara_as_climbleft, replace);
-	INJECT(0x00449180, lara_as_climbright, replace);
-	INJECT(0x004491C0, lara_as_climbstnc, replace);
-	INJECT(0x00449240, lara_as_climbing, replace);
-	INJECT(0x00449260, lara_as_climbend, replace);
-	INJECT(0x00449290, lara_as_climbdown, replace);
-	INJECT(0x004492B0, lara_col_climbleft, replace);
-	INJECT(0x004494D0, lara_col_climbright, replace);
-	INJECT(0x00449530, lara_col_climbstnc, replace);
-	INJECT(0x00449740, lara_col_climbing, replace);
-	INJECT(0x00449890, lara_col_climbdown, replace);
-	INJECT(0x00448BE0, LaraTestClimb, replace);
-	INJECT(0x00449090, LaraTestClimbPos, replace);
-	INJECT(0x00448E60, LaraTestClimbUpPos, replace);
 }

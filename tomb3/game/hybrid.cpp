@@ -4,6 +4,9 @@
 #include "../3dsystem/phd_math.h"
 #include "people.h"
 #include "effects.h"
+#include "objects.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO hybrid_bite_left = { 19, -13, 3, 7 };
 static BITE_INFO hybrid_bite_right = { 19, -13, 3, 14 };
@@ -242,9 +245,4 @@ void HybridControl(short item_number)
 	CreatureJoint(item, 1, torso_y);
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
-}
-
-void inject_hybrid(bool replace)
-{
-	INJECT(0x00434E60, HybridControl, replace);
 }

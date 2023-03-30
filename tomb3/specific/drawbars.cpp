@@ -3,6 +3,10 @@
 #include "hwrender.h"
 #include "../3dsystem/3d_gen.h"
 #include "output.h"
+#include "../3dsystem/3d_gen.h"
+#include "winmain.h"
+#include "display.h"
+#include "../game/control.h"
 
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
@@ -617,12 +621,4 @@ void S_DrawColdBar(long percent)
 
 	GlobalAlpha = oldAlpha;
 #endif
-}
-
-void inject_drawbars(bool replace)
-{
-	INJECT(0x00475C70, S_DrawHealthBar, replace);
-	INJECT(0x00475A00, S_DrawDashBar, replace);
-	INJECT(0x00475F60, S_DrawAirBar, replace);
-	INJECT(0x004761C0, S_DrawColdBar, replace);
 }

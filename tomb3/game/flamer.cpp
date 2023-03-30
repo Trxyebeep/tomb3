@@ -12,6 +12,10 @@
 #include "people.h"
 #include "sound.h"
 #include "../specific/smain.h"
+#include "lot.h"
+#include "control.h"
+#include "lara.h"
+#include "effects.h"
 
 static BITE_INFO flamer_gun = { 0, 340, 64, 7 };
 
@@ -544,12 +548,4 @@ void FlamerControl(short item_number)
 	CreatureJoint(item, 1, torso_x);
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
-}
-
-void inject_flamer(bool replace)
-{
-	INJECT(0x00431A80, TriggerPilotFlame, replace);
-	INJECT(0x00431890, TriggerFlamethrowerFlame, replace);
-	INJECT(0x00431650, TriggerFlameThrower, replace);
-	INJECT(0x00430DB0, FlamerControl, inject_rando ? 1 : replace);
 }

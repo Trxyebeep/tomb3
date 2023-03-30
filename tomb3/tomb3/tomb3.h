@@ -1,5 +1,5 @@
 #pragma once
-#include "../global/vars.h"
+#include "../global/types.h"
 
 void T3_SaveSettings();
 bool T3_LoadSettings();

@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_ds(bool replace);
+#include "../global/types.h"
 
 bool DS_IsChannelPlaying(long num);
 long DS_GetFreeChannel();
@@ -20,3 +18,6 @@ BOOL CALLBACK DS_EnumCallback(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lp
 bool DS_EnumerateDevices(LPVOID lpContext);
 bool DS_MakeAdapterList();
 void DS_Init();
+
+extern LPDIRECTSOUNDBUFFER DS_Samples[32];
+extern LPDIRECTSOUND lpDirectSound;

@@ -3,6 +3,14 @@
 #include "../specific/specific.h"
 #include "../specific/game.h"
 #include "../3dsystem/phd_math.h"
+#include "control.h"
+#include "camera.h"
+
+static SOUND_SLOT LaSlot[32];
+short sample_lut[370];
+SAMPLE_INFO* sample_infos;
+long num_sample_infos;
+long sound_active;
 
 void SOUND_Init()
 {
@@ -271,13 +279,4 @@ long SoundEffect(long sfx, PHD_3DPOS* pos, long flags)
 	}
 
 	return 0;
-}
-
-void inject_sound(bool replace)
-{
-	INJECT(0x00467E20, SOUND_Init, replace);
-	INJECT(0x00467DF0, SOUND_Stop, replace);
-	INJECT(0x00467D60, SOUND_EndScene, replace);
-	INJECT(0x00467D00, StopSoundEffect, replace);
-	INJECT(0x00467840, SoundEffect, replace);
 }

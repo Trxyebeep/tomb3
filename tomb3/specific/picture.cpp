@@ -5,11 +5,20 @@
 #include "time.h"
 #include "texture.h"
 #include "file.h"
+#include "../3dsystem/3d_gen.h"
+#include "winmain.h"
+#include "../game/camera.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
 
 DXTEXTURE PictureTextures[MAX_TPAGES];
+long OldPicTexIndices[5];
+long CurPicTexIndices[5];
+long nLoadedPictures;
+bool forceFadeDown;
+bool pictureFading;
+bool dontFadePicture;
 
 #ifdef TROYESTUFF
 bool bDontGreyOut;
@@ -560,27 +569,4 @@ void FreePictureTextures(long* indices)
 
 	for (int i = 0; i < nTPages; i++)
 		HWR_SetCurrentTexture(TPages[i]);
-}
-
-void inject_picture(bool replace)
-{
-	INJECT(0x0048AFD0, CrossFadePicture, replace);
-	INJECT(0x0048C0A0, S_FadePicture, replace);
-	INJECT(0x0048B7A0, DrawTile, replace);
-	INJECT(0x0048ADA0, DrawPictureAlpha, replace);
-	INJECT(0x0048BA30, TRDrawPicture, replace);
-	INJECT(0x0048B270, MemBlt, replace);
-	INJECT(0x0048B370, ConvertSurfaceToTextures16Bit, replace);
-	INJECT(0x0048B300, ConvertSurfaceToTextures, replace);
-	INJECT(0x0048BE60, CreateMonoScreen, replace);
-	INJECT(0x0048AD60, SetPictureToFade, replace);
-	INJECT(0x0048AD80, ForceFadeDown, replace);
-	INJECT(0x0048B0D0, LoadPicture, replace);
-	INJECT(0x0048BC70, FadePictureUp, replace);
-	INJECT(0x0048BD10, FadePictureDown, replace);
-	INJECT(0x0048BF40, S_FadeToBlack, replace);
-	INJECT(0x0048C010, DrawMonoScreen, replace);
-	INJECT(0x0048C030, RemoveMonoScreen, replace);
-	INJECT(0x0048C070, DoInventoryPicture, replace);
-	INJECT(0x0048B190, FreePictureTextures, replace);
 }

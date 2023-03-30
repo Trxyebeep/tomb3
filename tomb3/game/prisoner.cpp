@@ -6,6 +6,9 @@
 #include "../specific/game.h"
 #include "../3dsystem/phd_math.h"
 #include "sound.h"
+#include "lot.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO bob_hit = { 10, 10, 11, 13 };
 
@@ -69,7 +72,7 @@ void PrisonerControl(short item_number)
 			bob->enemy = 0;
 			best_dist = 0x7FFFFFFF;
 
-			for (lp = 0; lp < 5; lp++)
+			for (lp = 0; lp < MAX_LOT; lp++)
 			{
 				if (baddie_slots[lp].item_num == NO_ITEM || baddie_slots[lp].item_num == item_number)
 					continue;
@@ -451,10 +454,4 @@ void PrisonerControl(short item_number)
 			break;
 		}
 	}
-}
-
-void inject_prisoner(bool replace)
-{
-	INJECT(0x0045CFF0, InitialisePrisoner, replace);
-	INJECT(0x0045D050, PrisonerControl, replace);
 }

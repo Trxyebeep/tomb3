@@ -18,13 +18,43 @@
 #include "health.h"
 #include "items.h"
 #include "../specific/smain.h"
+#include "../specific/input.h"
+#include "camera.h"
 #ifdef TROYESTUFF
 #include "../newstuff/LaraDraw.h"
 #include "../tomb3/tomb3.h"
 #endif
 
-short null_rotations[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 static uchar EnemyWeapon[16] = { 0, 1, 129, 0, 1, 1,  1 };
+static long bound_list[128];
+static long bound_start;
+static long bound_end;
+
+long box_lines[12][2] = { {0, 1}, {1, 2}, {2, 3}, {3, 0}, {4, 5}, {5, 6}, {6, 7}, {7, 4}, {0, 4}, {1, 5}, {2, 6}, {3, 7} };
+short null_rotations[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+long* IMptr;
+long IM_rate;
+long IM_frac;
+long IMstack[768];
+
+long number_draw_rooms;
+short draw_rooms[100];
+char IsJointUnderwater[15];
+char GotJointPos[15];
+
+long nPolyType;
+long camera_underwater;
+long mid_sort = 0;
+
+long outside;
+static long outside_top;
+static long outside_left;
+static long outside_right;
+static long outside_bottom;
+
+MESH_INFO* CurrentMesh;
+long CurrentRoom;
 
 static BITE_INFO EnemyBites[16] =	//bite_offsets enum
 {
@@ -326,6 +356,7 @@ short* GetBoundsAccurate(ITEM_INFO* item)
 	short* frmptr[2];
 	short* bptr;
 	long frac, rate;
+	static short interpolated_bounds[6];
 
 	frac = GetFrames(item, frmptr, &rate);
 
@@ -2269,39 +2300,4 @@ void DrawAnimatingItem(ITEM_INFO* item)
 void DrawDummyItem(ITEM_INFO* item)
 {
 
-}
-
-void inject_draw(bool replace)
-{
-	INJECT(0x00429390, phd_PopMatrix_I, replace);
-	INJECT(0x004293C0, phd_PushMatrix_I, replace);
-	INJECT(0x004293F0, phd_RotY_I, replace);
-	INJECT(0x00429430, phd_RotX_I, replace);
-	INJECT(0x00429470, phd_RotZ_I, replace);
-	INJECT(0x004294B0, phd_TranslateRel_I, replace);
-	INJECT(0x00429500, phd_TranslateRel_ID, replace);
-	INJECT(0x00429550, phd_RotYXZ_I, replace);
-	INJECT(0x00429690, phd_PutPolygons_I, replace);
-	INJECT(0x004295E0, gar_RotYXZsuperpack, replace);
-	INJECT(0x004295A0, gar_RotYXZsuperpack_I, replace);
-	INJECT(0x00429350, InitInterpolate, replace);
-	INJECT(0x004296C0, InterpolateMatrix, replace);
-	INJECT(0x00429930, InterpolateArmMatrix, replace);
-	INJECT(0x00429DB0, GetFrames, replace);
-	INJECT(0x00429ED0, GetBestFrame, replace);
-	INJECT(0x00429E50, GetBoundsAccurate, replace);
-	INJECT(0x00425590, SetRoomBounds, replace);
-	INJECT(0x004253C0, GetRoomBounds, replace);
-	INJECT(0x00425910, ClipRoom, replace);
-	INJECT(0x00424FE0, PrintRooms, replace);
-	INJECT(0x00425D10, DrawEffect, replace);
-	INJECT(0x004250A0, PrintObjects, replace);
-	INJECT(0x00427E20, DrawLaraInt, replace);
-	INJECT(0x004265E0, DrawLara, replace);
-	INJECT(0x00429A30, DrawGunFlash, replace);
-	INJECT(0x00429BA0, CalculateObjectLighting, replace);
-	INJECT(0x00429D00, CalculateObjectLightingLara, replace);
-	INJECT(0x00424C60, DrawRooms, inject_rando ? 1 : replace);
-	INJECT(0x00424C20, DrawPhaseGame, replace);
-	INJECT(0x00425EA0, DrawAnimatingItem, replace);
 }

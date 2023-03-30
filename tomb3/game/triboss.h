@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_triboss(bool replace);
+#include "../global/types.h"
 
 void InitialiseTribeBoss(short item_number);
 void TriggerSummonSmoke(long x, long y, long z);
@@ -12,8 +10,9 @@ void S_DrawTribeBoss(ITEM_INFO* item);
 void TribeBossControl(short item_number);
 
 extern BITE_INFO tribeboss_hit[6];
-//extern SHIELD_POINTS TribeBossShield[40];
-//extern PHD_VECTOR TrigDynamics[3];
-#define TribeBossShield	ARRAY_(0x006CFB00, SHIELD_POINTS, [40])
-#define TrigDynamics	ARRAY_(0x006CFAC0, PHD_VECTOR, [3])
+extern SHIELD_POINTS TribeBossShield[40];
+extern PHD_VECTOR TrigDynamics[3];
+extern ITEM_INFO* TribeBossItem;
+extern char TribeBossShieldOn;
+extern char lizard_man_active;
 extern char shield_active;

@@ -1,10 +1,15 @@
 #include "../tomb3/pch.h"
 #include "ds.h"
 #include <list>
+#include "winmain.h"
+#include "../game/camera.h"
 
-#define DS_Buffers	ARRAY_(0x006326C8, LPDIRECTSOUNDBUFFER, [256])
-#define DS_SamplesPlaying	ARRAY_(0x00632AD0, long, [32])
-#define DS_SampleFrequencies	ARRAY_(0x006322B8, ulong, [256])
+static LPDIRECTSOUNDBUFFER DS_Buffers[256];
+static ulong DS_SampleFrequencies[256];
+static long DS_SamplesPlaying[32];
+
+LPDIRECTSOUNDBUFFER DS_Samples[32];
+LPDIRECTSOUND lpDirectSound;
 
 std::list<DXDIRECTSOUNDINFO> DS_AdapterList;
 std::list<DXDIRECTSOUNDINFO>::iterator PrimaryAdapter;
@@ -267,25 +272,4 @@ bool DS_MakeAdapterList()
 void DS_Init()
 {
 	DS_MakeAdapterList();
-}
-
-void inject_ds(bool replace)
-{
-	INJECT(0x00480740, DS_IsChannelPlaying, replace);
-	INJECT(0x004808B0, DS_GetFreeChannel, replace);
-	INJECT(0x00480790, DS_StartSample, replace);
-	INJECT(0x00480600, DS_FreeAllSamples, replace);
-	INJECT(0x00480630, DS_MakeSample, replace);
-	INJECT(0x004808F0, DS_AdjustVolumeAndPan, replace);
-	INJECT(0x00480920, DS_AdjustPitch, replace);
-	INJECT(0x00480960, DS_StopSample, replace);
-	INJECT(0x00480C20, DS_Create, replace);
-	INJECT(0x00480D40, DS_IsSoundEnabled, replace);
-	INJECT(0x00480C40, DS_SetOutputFormat, replace);
-	INJECT(0x00480B80, DS_Start, replace);
-	INJECT(0x00480D10, DS_Finish, replace);
-	INJECT(0x00480A90, DS_EnumCallback, replace);
-	INJECT(0x00480A70, DS_EnumerateDevices, replace);
-	INJECT(0x004809D0, DS_MakeAdapterList, replace);
-	INJECT(0x004809C0, DS_Init, replace);
 }

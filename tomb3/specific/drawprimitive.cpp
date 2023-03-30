@@ -54,13 +54,3 @@ void CloseDrawPrimitive()
 {
 	//does nothing for HWR.
 }
-
-void inject_drawprim(bool replace)
-{
-	INJECT(0x00490AE0, HWDrawPrimitive, replace);
-	INJECT(0x00490970, HWBeginScene, replace);
-	INJECT(0x00490990, HWEndScene, replace);
-	INJECT(0x00490A00, HWSetRenderState, replace);
-	INJECT(0x00490400, InitDrawPrimitive, replace);
-	INJECT(0x00490700, CloseDrawPrimitive, replace);
-}

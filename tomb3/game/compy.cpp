@@ -9,8 +9,12 @@
 #include "lara.h"
 #include "items.h"
 #include "effect2.h"
+#include "fish.h"
 
 static BITE_INFO compy_hit = { 0, 0, 0, 2 };
+
+long compy_scared_timer;
+long compys_attack_lara;
 
 void InitialiseCompy(short item_number)
 {
@@ -321,11 +325,4 @@ void CarcassControl(short item_number)
 		CarcassItem = item_number;
 	else
 		CarcassItem = NO_ITEM;
-}
-
-void inject_compy(bool replace)
-{
-	INJECT(0x0041F730, InitialiseCompy, replace);
-	INJECT(0x0041F750, CompyControl, replace);
-	INJECT(0x0041FD50, CarcassControl, replace);
 }

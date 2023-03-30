@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_compy(bool replace);
+#include "../global/types.h"
 
 void InitialiseCompy(short item_number);
 void CompyControl(short item_number);
@@ -15,3 +13,6 @@ enum COMPY_STATES
 	COMPY_ATTACK,
 	COMPY_DEATH
 };
+
+extern long compy_scared_timer;
+extern long compys_attack_lara;

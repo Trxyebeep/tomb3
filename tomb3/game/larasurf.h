@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_larasurf(bool replace);
+#include "../global/types.h"
 
 void LaraSurface(ITEM_INFO* item, COLL_INFO* coll);
 void lara_as_surfswim(ITEM_INFO* item, COLL_INFO* coll);

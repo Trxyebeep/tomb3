@@ -10,6 +10,7 @@
 #include "../3dsystem/phd_math.h"
 #include "control.h"
 #include "../specific/game.h"
+#include "lara.h"
 
 static BITE_INFO oilred_gun = { 0, 160, 40, 13 };
 
@@ -441,9 +442,4 @@ void OilRedControl(short item_number)
 	CreatureJoint(item, 1, torso_x);
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
-}
-
-void inject_oilred(bool replace)
-{
-	INJECT(0x00459E70, OilRedControl, replace);
 }

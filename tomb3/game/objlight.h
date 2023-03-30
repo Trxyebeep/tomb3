@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_objlight(bool replace);
+#include "../global/types.h"
 
 void ControlStrobeLight(short item_number);
 void ControlPulseLight(short item_number);

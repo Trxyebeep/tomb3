@@ -7,6 +7,7 @@
 #include "control.h"
 #include "items.h"
 #include "sphere.h"
+#include "lara.h"
 #include "../3dsystem/phd_math.h"
 
 static void TriggerElectricSparks(PHD_VECTOR* pos, short item_number, short Node)
@@ -372,11 +373,4 @@ void CleanerControl(short item_number)
 		c = (GetRandomControl() & 0xF) + 16;
 		TriggerDynamic(pos.x, pos.y, pos.z, 10, c >> 2, c >> 1, c);
 	}
-}
-
-void inject_cleaner(bool replace)
-{
-	INJECT(0x0041D0B0, TriggerElectricSparks, replace);
-	INJECT(0x0041C3E0, InitialiseCleaner, replace);
-	INJECT(0x0041C440, CleanerControl, replace);
 }

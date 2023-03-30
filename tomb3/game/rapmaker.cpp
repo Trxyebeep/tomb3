@@ -3,6 +3,8 @@
 #include "objects.h"
 #include "items.h"
 #include "lot.h"
+#include "control.h"
+#include "lara.h"
 
 short RaptorItem[3] = { NO_ITEM, NO_ITEM, NO_ITEM };
 
@@ -93,10 +95,4 @@ void RaptorEmitterControl(short item_number)
 	AddActiveItem(RaptorItem[lp]);
 	ItemNewRoom(RaptorItem[lp], item->room_number);
 	EnableBaddieAI(RaptorItem[lp], 1);
-}
-
-void inject_rapmaker(bool replace)
-{
-	INJECT(0x00461010, InitialiseRaptorEmitter, replace);
-	INJECT(0x00460DA0, RaptorEmitterControl, replace);
 }

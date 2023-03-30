@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_lizman(bool replace);
+#include "../global/types.h"
 
 void LizManControl(short item_number);
 

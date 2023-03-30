@@ -8,6 +8,7 @@
 #include "control.h"
 #include "effects.h"
 #include "traps.h"
+#include "lara.h"
 
 static void TriggerFlamethrowerHitFlame(long x, long y, long z)
 {
@@ -226,11 +227,4 @@ void ControlFlameThrower(short fx_number)
 			LaraBurn();
 		}
 	}
-}
-
-void inject_dragfire(bool replace)
-{
-	INJECT(0x00424830, TriggerFlamethrowerHitFlame, replace);
-	INJECT(0x00424A10, TriggerFlamethrowerSmoke, replace);
-	INJECT(0x00424660, ControlFlameThrower, replace);
 }

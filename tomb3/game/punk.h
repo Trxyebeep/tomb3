@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_punk(bool replace);
+#include "../global/types.h"
 
 void InitialisePunk(short item_number);
 void PunkControl(short item_number);

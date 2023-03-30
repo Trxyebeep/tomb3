@@ -134,7 +134,7 @@ static short phdsintab[1026] =
 	0x4000, 0x4000,
 };
 
-ulong __fastcall phd_sqrt(ulong num)
+ulong phd_sqrt(ulong num)
 {
 	ulong base, result, tmp;
 
@@ -162,7 +162,7 @@ ulong __fastcall phd_sqrt(ulong num)
 	return result;
 }
 
-long __fastcall phd_atan(long x, long y)
+long phd_atan(long x, long y)
 {
 	long octant, n, result;
 
@@ -200,7 +200,7 @@ long __fastcall phd_atan(long x, long y)
 	return result;
 }
 
-long __fastcall phd_sin(long angle)
+long phd_sin(long angle)
 {
 	long flip;
 
@@ -224,15 +224,7 @@ long __fastcall phd_sin(long angle)
 	return angle;
 }
 
-long __fastcall phd_cos(long angle)
+long phd_cos(long angle)
 {
 	return phd_sin(angle + 0x4000);
-}
-
-void inject_phdmath(bool replace)
-{
-	INJECT(0x004B4C93, phd_sqrt, replace);
-	INJECT(0x004B4C10, phd_atan, replace);
-	INJECT(0x004B4C5E, phd_sin, replace);
-	INJECT(0x004B4C58, phd_cos, replace);
 }

@@ -7,6 +7,8 @@
 #include "items.h"
 #include "missile.h"
 #include "box.h"
+#include "lara.h"
+#include "effects.h"
 
 static BITE_INFO diver_poon = { 17, 164, 44, 18 };
 
@@ -270,12 +272,4 @@ void DiverControl(short item_number)
 		CreatureUnderwater(item, 512);
 	else
 		item->pos.y_pos = surface - 512;
-}
-
-void inject_diver(bool replace)
-{
-	INJECT(0x00423D70, GetWaterSurface, replace);
-	INJECT(0x00423E80, ControlGhostGasEmitter, replace);
-	INJECT(0x00423CF0, Harpoon, replace);
-	INJECT(0x004239A0, DiverControl, replace);
 }

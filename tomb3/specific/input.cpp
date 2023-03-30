@@ -7,6 +7,12 @@
 #include "../game/invfunc.h"
 #include "../game/objects.h"
 #include "../game/laramisc.h"
+#include "winmain.h"
+#include "../game/gameflow.h"
+#include "../game/camera.h"
+#include "../game/control.h"
+#include "../game/lara.h"
+#include "picture.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
@@ -55,6 +61,21 @@ short layout[2][NLAYOUTKEYS] =
 	}
 #endif
 };
+
+long bLaraOn = 1;
+long bRoomOn = 1;
+long bObjectOn = 1;
+long bAObjectOn = 1;
+long bEffectOn = 1;
+char bInvItemsOff = 0;
+
+long input;
+long joy_fire;
+long joy_x;
+long joy_y;
+long FinishLevelCheat;
+long conflict[15];
+uchar keymap[256];
 
 long Key(long number)
 {
@@ -320,10 +341,4 @@ long S_UpdateInput()
 
 	input = linput;
 	return GtWindowClosed;
-}
-
-void inject_input(bool replace)
-{
-	INJECT(0x00486140, Key, replace);
-	INJECT(0x00486260, S_UpdateInput, replace);
 }

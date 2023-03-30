@@ -6,6 +6,8 @@
 #include "effect2.h"
 #include "effects.h"
 #include "sphere.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO wing_bite = { 0, 0, 0, 12 };
 
@@ -216,11 +218,4 @@ void WingmuteControl(short item_number)
 	TriggerWingMuteParticles(item_number);
 	TriggerWingMuteParticles(item_number);
 	CreatureAnimation(item_number, angle, 0);
-}
-
-void inject_wingmute(bool replace)
-{
-	INJECT(0x00473BA0, TriggerWingMuteParticles, replace);
-	INJECT(0x00473780, InitialiseWingmute, replace);
-	INJECT(0x004737E0, WingmuteControl, replace);
 }

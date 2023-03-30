@@ -5,6 +5,7 @@
 #include "control.h"
 #include "../specific/game.h"
 #include "effect2.h"
+#include "lara.h"
 
 void OrcaControl(short item_number)
 {
@@ -110,9 +111,4 @@ void OrcaControl(short item_number)
 		if (h != NO_HEIGHT && pos.y < h)
 			SetupRipple(pos.x, h, pos.z, -2 - (GetRandomControl() & 1), 0)->init = 0;
 	}
-}
-
-void inject_orca(bool replace)
-{
-	INJECT(0x0045B260, OrcaControl, replace);
 }

@@ -1,12 +1,10 @@
 #pragma once
-#include "../global/vars.h"
+#include "../global/types.h"
 
 void InitialiseBoat(short item_number);
 void BoatCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll);
 void DrawBoat(ITEM_INFO* item);
 void BoatControl(short item_number);
-
-void inject_boat(bool replace);
 
 enum BOAT_STATES
 {

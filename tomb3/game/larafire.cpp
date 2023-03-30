@@ -19,6 +19,177 @@
 #include "laraflar.h"
 #include "lara.h"
 #include "invfunc.h"
+#include "../specific/input.h"
+#include "camera.h"
+#include "savegame.h"
+
+WEAPON_INFO weapons[11] =
+{
+	{
+		0, 0, 0, 0,							//LG_UNARMED
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0
+	},
+
+	{
+		-10920, 10920, -10920, 10920,		//LG_PISTOLS
+		-30940, 10920, -14560, 14560,
+		-10920, 30940, -14560, 14560,
+		1820,
+		1456,
+		650,
+		8192,
+		1,
+		9,
+		3,
+		0,
+		SFX_LARA_FIRE
+	},
+
+	{
+		-10920, 10920, -10920, 10920,		//LG_MAGNUMS
+		-1820, 1820, -14560, 14560,
+		0, 0, 0, 0,
+		1820,
+		728,
+		650,
+		8192,
+		21,
+		16,
+		3,
+		0,
+		SFX_DESSERT_EAGLE_FIRE
+	},
+
+	{
+		-10920, 10920, -10920, 10920,		//LG_UZIS
+		-30940, 10920, -14560, 14560,
+		-10920, 30940, -14560, 14560,
+		1820,
+		1456,
+		650,
+		8192,
+		1,
+		3,
+		3,
+		0,
+		SFX_LARA_UZI_FIRE
+	},
+
+	{
+		-10920, 10920, -10010, 10010,		//LG_SHOTGUN
+		-14560, 14560, -11830, 11830,
+		-14560, 14560, -11830, 11830,
+		1820,
+		0,
+		500,
+		8192,
+		3,
+		9,
+		3,
+		10,
+		SFX_LARA_SHOTGUN
+	},
+
+	{
+		-10920, 10920, -10010, 10010,		//LG_M16
+		-14560, 14560, -11830, 11830,
+		-14560, 14560, -11830, 11830,
+		1820,
+		1456,
+		500,
+		12288,
+		4,
+		0,
+		3,
+		16,
+		0
+	},
+
+	{
+		-10920, 10920, -10010, 10010,		//LG_ROCKET
+		-14560, 14560, -11830, 11830,
+		-14560, 14560, -11830, 11830,
+		1820,
+		1456,
+		500,
+		8192,
+		30,
+		0,
+		2,
+		12,
+		SFX_BAZOOKA_FIRE
+	},
+
+	{
+		-10920, 10920, -10010, 10010,		//LG_GRENADE
+		-14560, 14560, -11830, 11830,
+		-14560, 14560, -11830, 11830,
+		1820,
+		1456,
+		500,
+		8192,
+		20,
+		0,
+		2,
+		10,
+		0
+	},
+
+	{
+		-10920, 10920, -11830, 11830,		//LG_HARPOON
+		-3640, 3640, -13650, 13650,
+		-14560, 14560, -13650, 13650,
+		1820,
+		1456,
+		500,
+		8192,
+		6,
+		0,
+		2,
+		10,
+		0
+	},
+
+	{
+		0, 0, 0, 0,							//LG_FLARE
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0
+	},
+
+	{
+		-5460, 5460, -10010, 10010,			//LG_SKIDOO
+		-5460, 5460, -10010, 10010,
+		-5460, 5460, -10010, 10010,
+		1820,
+		1456,
+		400,
+		8192,
+		3,
+		0,
+		2,
+		0,
+		SFX_LARA_UZI_FIRE
+	},
+};
 
 static short HoldStates[] =
 {
@@ -1250,20 +1421,4 @@ void DoProperDetection(short item_number, long x, long y, long z, long xv, long 
 
 	if (item->room_number != room_number)
 		ItemNewRoom(item_number, room_number);
-}
-
-void inject_larafire(bool replace)
-{
-	INJECT(0x0044AF50, WeaponObject, replace);
-	INJECT(0x0044A890, FireWeapon, inject_rando ? 1 : replace);
-	INJECT(0x0044AE20, HitTarget, replace);
-	INJECT(0x0044AEE0, SmashItem, replace);
-	INJECT(0x0044A7B0, AimWeapon, replace);
-	INJECT(0x0044A700, find_target_point, replace);
-	INJECT(0x0044A330, LaraTargetInfo, replace);
-	INJECT(0x0044A4D0, LaraGetNewTarget, replace);
-	INJECT(0x0044A1E0, InitialiseNewWeapon, replace);
-	INJECT(0x0044A1A0, CheckForHoldingState, replace);
-	INJECT(0x00449BB0, LaraGun, replace);
-	INJECT(0x0044AFB0, DoProperDetection, replace);
 }

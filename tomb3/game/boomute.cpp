@@ -8,6 +8,7 @@
 #include "../3dsystem/3d_gen.h"
 #include "../3dsystem/phd_math.h"
 #include "control.h"
+#include "effects.h"
 
 static BITE_INFO seal_gas = { 0, 48, 140, 10 };
 
@@ -198,10 +199,4 @@ void BoomuteControl(short item_number)
 	}
 
 	AnimateItem(item);
-}
-
-void inject_boomute(bool replace)
-{
-	INJECT(0x004140A0, TriggerSealmuteGasThrower, replace);
-	INJECT(0x00413FF0, BoomuteControl, replace);
 }

@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_specific(bool replace);
+#include "../global/types.h"
 
 uchar SWR_FindNearestPaletteEntry(uchar* p, long r, long g, long b, bool ignoreSystemPalette);
 bool CD_Init();
@@ -24,3 +22,5 @@ void S_CDMute();
 #endif
 void S_CDVolume(long volume);
 long S_StartSyncedAudio(long track);
+
+extern char cd_drive;

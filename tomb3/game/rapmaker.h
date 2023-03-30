@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_rapmaker(bool replace);
+#include "../global/types.h"
 
 void InitialiseRaptorEmitter(short item_number);
 void RaptorEmitterControl(short item_number);

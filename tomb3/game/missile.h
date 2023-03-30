@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_missile(bool replace);
+#include "../global/types.h"
 
 void ControlMissile(short fx_number);
 void ShootAtLara(FX_INFO* fx);

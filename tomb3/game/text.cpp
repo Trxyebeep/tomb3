@@ -7,9 +7,33 @@
 #include "../specific/frontend.h"
 #include "health.h"
 #include "../specific/output.h"
+#include "camera.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
+
+static char T_remapASCII[95] =
+{
+	0, 64, 66, 78, 77, 74, 78, 79, 69, 70, 92, 72, 63, 71, 62, 68, 52,
+	53, 54, 55, 56, 57, 58, 59, 60, 61, 73, 73, 66, 74, 75, 65, 0, 0,
+	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+	20, 21, 22, 23, 24, 25, 80, 76, 81, 97, 98, 77, 26, 27, 28, 29, 30,
+	31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+	48, 49, 50, 51, 100, 101, 102, 67
+};
+
+static char T_textSpacing[110] =
+{
+	14, 13, 14, 14, 13, 12, 15, 15, 9, 12, 15, 14, 17, 14, 15, 13, 15, 14, 11, 13, 13,
+	15, 17, 14, 14, 13, 10, 11, 9, 10, 9, 9, 10, 11, 6, 7, 12, 7, 16, 11, 10, 11, 11,
+	9, 8, 8, 11, 10, 15, 10, 10, 10, 12, 7, 10, 10, 10, 10, 10, 9, 10, 10, 5, 5, 5,
+	11, 9, 10, 8, 6, 6, 7, 7, 3, 11, 8, 13, 16, 9, 4, 12, 12, 7, 5, 7, 7, 7, 7, 7, 7,
+	7, 7, 16, 14, 14, 14, 14, 14, 14, 14, 14, 12, 14, 8, 8, 8, 8, 8, 8, 8
+};
+
+static TEXTSTRING T_textStrings[64];
+static char T_theStrings[4096];
+static short T_numStrings;
 
 short T_GetStringLen(const char* string)
 {
@@ -561,28 +585,4 @@ void T_DrawText()
 
 		string++;
 	}
-}
-
-void inject_text(bool replace)
-{
-	INJECT(0x0046B0C0, T_GetStringLen, replace);
-	INJECT(0x0046B090, T_RemovePrint, replace);
-	INJECT(0x0046AF40, T_BottomAlign, replace);
-	INJECT(0x0046AF20, T_RightAlign, replace);
-	INJECT(0x0046AF00, T_CentreV, replace);
-	INJECT(0x0046AEE0, T_CentreH, replace);
-	INJECT(0x0046AED0, T_RemoveOutline, replace);
-	INJECT(0x0046AEA0, T_AddOutline, replace);
-	INJECT(0x0046AE90, T_RemoveBackground, replace);
-	INJECT(0x0046AE00, T_AddBackground, replace);
-	INJECT(0x0046B6F0, GetTextScaleH, replace);
-	INJECT(0x0046B720, GetTextScaleV, replace);
-	INJECT(0x0046B120, draw_border, replace);
-	INJECT(0x0046AF60, T_GetTextWidth, replace);
-	INJECT(0x0046ADD0, T_FlashText, replace);
-	INJECT(0x0046AD90, T_ChangeText, replace);
-	INJECT(0x0046ACA0, T_Print, replace);
-	INJECT(0x0046AC70, T_InitPrint, replace);
-	INJECT(0x0046B340, T_DrawThisText, replace);
-	INJECT(0x0046B0F0, T_DrawText, replace);
 }

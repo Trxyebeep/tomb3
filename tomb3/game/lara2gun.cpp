@@ -6,6 +6,9 @@
 #include "lara.h"
 #include "effect2.h"
 #include "../specific/game.h"
+#include "../specific/input.h"
+#include "control.h"
+#include "camera.h"
 
 static PISTOL_DEF PistolTable[4]
 {
@@ -477,17 +480,4 @@ void PistolHandler(long weapon_type)
 		b = GetRandomControl() & 7;
 		TriggerDynamic(pos.x, pos.y, pos.z, 10, r, g, b);
 	}
-}
-
-void inject_lara2gun(bool replace)
-{
-	INJECT(0x00448350, draw_pistol_meshes, replace);
-	INJECT(0x00448400, undraw_pistol_mesh_right, replace);
-	INJECT(0x004483B0, undraw_pistol_mesh_left, replace);
-	INJECT(0x004482D0, ready_pistols, replace);
-	INJECT(0x00447FD0, set_arm_info, replace);
-	INJECT(0x00447F30, draw_pistols, replace);
-	INJECT(0x00448050, undraw_pistols, replace);
-	INJECT(0x00448650, AnimatePistols, replace);
-	INJECT(0x00448440, PistolHandler, replace);
 }

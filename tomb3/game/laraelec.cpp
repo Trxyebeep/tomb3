@@ -2,6 +2,12 @@
 #include "laraelec.h"
 #include "../specific/game.h"
 
+uchar lara_meshes[28] = { 0, 1, 1, 2, 2, 3, 0, 4, 4, 5, 5, 6, 0, 7, 7, 8, 8, 9, 9, 10, 7, 11, 11, 12, 12, 13, 7, 14 };
+uchar lara_last_points[14] = { 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1 };
+uchar lara_line_counts[6] = { 12, 12, 4, 12, 12, 4 };
+
+short electricity_points[32][6];
+
 void UpdateElectricityPoints()
 {
 	short* points;
@@ -78,9 +84,4 @@ void UpdateElectricityPoints()
 		*points++ = yv;
 		*points++ = zv;
 	}
-}
-
-void inject_laraelec(bool replace)
-{
-	INJECT(0x00449A30, UpdateElectricityPoints, replace);
 }

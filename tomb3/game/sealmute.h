@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_sealmute(bool replace);
+#include "../global/types.h"
 
 void SealmuteControl(short item_number);
 

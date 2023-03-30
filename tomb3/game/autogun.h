@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_autogun(bool replace);
+#include "../global/types.h"
 
 void InitialiseAutogun(short item_number);
 void AutogunControl(short item_number);

@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_objects(bool replace);
+#include "../global/types.h"
 
 long OnDrawBridge(ITEM_INFO* item, long z, long x);
 void DrawBridgeFloor(ITEM_INFO* item, long x, long y, long z, long* h);
@@ -166,3 +164,6 @@ enum static_types
 	DEBRIS0, DEBRIS1, DEBRIS2, DEBRIS3, DEBRIS4, DEBRIS5, DEBRIS6, DEBRIS7, DEBRIS8, DEBRIS9,
 	NUMBER_STATIC_OBJECTS
 };
+
+extern OBJECT_INFO objects[NUMBER_OBJECTS];
+extern STATIC_INFO static_objects[NUMBER_STATIC_OBJECTS];

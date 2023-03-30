@@ -19,6 +19,8 @@
 #include "sphere.h"
 #include "effect2.h"
 #include "effects.h"
+#include "../specific/input.h"
+#include "savegame.h"
 
 BITE_INFO sub_bites[6] =
 {
@@ -29,6 +31,10 @@ BITE_INFO sub_bites[6] =
 	{ 128, 0, -64, 2 },
 	{ 0, 0, -64, 2 }
 };
+
+SUB_WAKE_PTS SubWakePts[32][2];
+uchar SubWakeShade;
+uchar SubCurrentStartWake;
 
 void SubInitialise(short item_number)
 {
@@ -1078,22 +1084,4 @@ void SubEffects(short item_number)
 		sub->WeaponTimer--;
 
 	UpdateWakeFX();
-}
-
-void inject_sub(bool replace)
-{
-	INJECT(0x004685C0, SubInitialise, replace);
-	INJECT(0x00468780, GetOnSub, replace);
-	INJECT(0x00468610, SubCollision, replace);
-	INJECT(0x00468850, SubDraw, replace);
-	INJECT(0x00469980, CanGetOff, replace);
-	INJECT(0x00469320, UserInput, replace);
-	//DoCurrent is the kayak one, but I copied it to here
-	INJECT(0x00469010, FireSubHarpoon, replace);
-	INJECT(0x00469150, BackgroundCollision, replace);
-	INJECT(0x00468C10, SubControl, replace);
-	INJECT(0x00469E10, TriggerSubMist, replace);
-	INJECT(0x00469CF0, DoWake, replace);
-	INJECT(0x00469DE0, UpdateWakeFX, replace);
-	INJECT(0x00469A80, SubEffects, replace);
 }

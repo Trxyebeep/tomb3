@@ -2,6 +2,8 @@
 #include "sphere.h"
 #include "../3dsystem/3d_gen.h"
 #include "draw.h"
+#include "objects.h"
+#include "control.h"
 
 void InitInterpolate2(long frac, long rate)
 {
@@ -268,12 +270,4 @@ void GetJointAbsPosition(ITEM_INFO* item, PHD_VECTOR* pos, long joint)
 	pos->z = item->pos.z_pos + (phd_mxptr[M23] >> W2V_SHIFT);
 	phd_mxptr = mx;
 	IMptr = imx;
-}
-
-void inject_sphere(bool replace)
-{
-	INJECT(0x00468580, InitInterpolate2, replace);
-	INJECT(0x00467F70, GetSpheres, replace);
-	INJECT(0x00467E40, TestCollision, replace);
-	INJECT(0x00468250, GetJointAbsPosition, replace);
 }

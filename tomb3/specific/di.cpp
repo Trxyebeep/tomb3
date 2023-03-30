@@ -1,8 +1,9 @@
 #include "../tomb3/pch.h"
 #include "di.h"
+#include "winmain.h"
 
-#define Keyboard	VAR_(0x006302A8, LPDIRECTINPUTDEVICEX)
-#define lpDirectInput	VAR_(0x006302A4, LPDIRECTINPUTX)
+static LPDIRECTINPUTDEVICEX Keyboard;
+static LPDIRECTINPUTX lpDirectInput;
 
 void DI_ReadKeyboard(uchar* KeyMap)
 {
@@ -119,16 +120,4 @@ bool DI_Create()
 #else
 	return SUCCEEDED(DirectInputCreate(App.hInstance, DIRECTINPUT_VERSION, &lpDirectInput, 0));	//this is the original line
 #endif
-}
-
-void inject_di(bool replace)
-{
-	INJECT(0x00475450, DI_ReadKeyboard, replace);
-	INJECT(0x004754B0, DI_ReadJoystick, replace);
-	INJECT(0x004755B0, DI_StartKeyboard, replace);
-	INJECT(0x00475680, DI_FinishKeyboard, replace);
-	INJECT(0x004756B0, DI_StartJoystick, replace);
-	INJECT(0x004756C0, DI_Start, replace);
-	INJECT(0x004756F0, DI_Finish, replace);
-	INJECT(0x00475400, DI_Create, replace);
 }

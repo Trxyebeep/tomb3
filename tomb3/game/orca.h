@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_orca(bool replace);
+#include "../global/types.h"
 
 void OrcaControl(short item_number);
 

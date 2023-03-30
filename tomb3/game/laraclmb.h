@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_laraclmb(bool replace);
+#include "../global/types.h"
 
 long LaraCheckForLetGo(ITEM_INFO* item, COLL_INFO* coll);
 void LaraDoClimbLeftRight(ITEM_INFO* item, COLL_INFO* coll, long result, long shift);

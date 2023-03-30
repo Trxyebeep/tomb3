@@ -10,6 +10,8 @@
 #include "sphere.h"
 #include "../3dsystem/3d_gen.h"
 #include "effect2.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO blow_biff_hit = { 0, 0, -200, 13 };
 static BITE_INFO blow_shoot_hit = { 8, 40, -248, 13 };
@@ -310,9 +312,4 @@ void BlowpipeControl(short item_number)
 	CreatureJoint(item, 2, head - torso_y);
 	CreatureJoint(item, 3, 0);
 	CreatureAnimation(item_number, angle, 0);
-}
-
-void inject_blowpipe(bool replace)
-{
-	INJECT(0x00411710, BlowpipeControl, replace);
 }

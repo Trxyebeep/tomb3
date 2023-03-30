@@ -6,6 +6,9 @@
 
 static char footsounds[14] = { 0, 5, 3, 2, 1, 9, 9, 4, 6, 9, 3, 9, 4, 6 };
 
+FOOTPRINT FootPrint[32];
+long FootPrintNum;
+
 void AddFootprint(ITEM_INFO* item)
 {
 	FOOTPRINT* print;
@@ -38,9 +41,4 @@ void AddFootprint(ITEM_INFO* item)
 		print->Active = 512;
 		FootPrintNum = (FootPrintNum + 1) & 0x1F;
 	}
-}
-
-void inject_footprnt(bool replace)
-{
-	INJECT(0x00431F00, AddFootprint, replace);
 }

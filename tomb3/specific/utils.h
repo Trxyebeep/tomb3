@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_utils(bool replace);
+#include "../global/types.h"
 
 double UT_GetAccurateTimer();
 void UT_InitAccurateTimer();

@@ -15,6 +15,8 @@
 #include "pickup.h"
 #include "draw.h"
 #include "../specific/draweffects.h"
+#include "setup.h"
+#include "lara.h"
 
 static long heights[5] = { -1536, -1280, -832, -384, 0 };
 static long radii[5] = { 200, 400, 500, 500, 475 };
@@ -23,6 +25,8 @@ static long dheights1[5] = { -7680, -4224, -768, 2688, 6144 };
 static long dheights2[5] = { -1536, -1152, -768, -384, 0 };
 static long death_radii[5];
 static long death_heights[5];
+
+SHIELD_POINTS TonyBossShield[40];
 
 static void TriggerTonyFlame(short item_number, long node)
 {
@@ -782,17 +786,4 @@ void S_DrawTonyBoss(ITEM_INFO* item)
 		if (bossdata.explode_count && bossdata.explode_count <= 64)
 			DrawTonyBossShield(item);
 	}
-}
-
-void inject_tonyboss(bool replace)
-{
-	INJECT(0x0046C460, TriggerTonyFlame, replace);
-	INJECT(0x0046C640, TriggerFireBall, replace);
-	INJECT(0x0046CD00, TriggerFireBallFlame, replace);
-	INJECT(0x0046C1C0, ExplodeTonyBoss, replace);
-	INJECT(0x0046C0D0, TonyBossDie, replace);
-	INJECT(0x0046C860, ControlTonyFireBall, replace);
-	INJECT(0x0046C120, InitialiseTonyBoss, replace);
-	INJECT(0x0046BA60, TonyBossControl, replace);
-	INJECT(0x0046C080, S_DrawTonyBoss, replace);
 }

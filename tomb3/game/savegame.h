@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_savegame(bool replace);
+#include "../global/types.h"
 
 void ModifyStartInfo(long level);
 void InitialiseStartInfo();
@@ -15,3 +13,5 @@ void ExtractSaveGameInfo();
 void save_tomb3_data();
 void load_tomb3_data();
 #endif
+
+extern SAVEGAME_INFO savegame;

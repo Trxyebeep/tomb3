@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_moveblok(bool replace);
+#include "../global/types.h"
 
 void ClearMovableBlockSplitters(long x, long y, long z, short room_number);
 void AlterFloorHeight(ITEM_INFO* item, long height);

@@ -7,6 +7,8 @@
 #include "larafire.h"
 #include "control.h"
 #include "laraswim.h"
+#include "../specific/input.h"
+#include "camera.h"
 
 void LaraSurface(ITEM_INFO* item, COLL_INFO* coll)
 {
@@ -378,22 +380,4 @@ void LaraSurfaceCollision(ITEM_INFO* item, COLL_INFO* coll)
 		item->fallspeed = 80;
 		lara.water_status = LARA_UNDERWATER;
 	}
-}
-
-void inject_larasurf(bool replace)
-{
-	INJECT(0x0044E050, LaraSurface, replace);
-	INJECT(0x0044E1C0, lara_as_surfswim, replace);
-	INJECT(0x0044E230, lara_as_surfback, replace);
-	INJECT(0x0044E290, lara_as_surfleft, replace);
-	INJECT(0x0044E2F0, lara_as_surfright, replace);
-	INJECT(0x0044E350, lara_as_surftread, replace);
-	INJECT(0x0044E410, lara_col_surfswim, replace);
-	INJECT(0x0044E860, lara_col_surfback, replace);
-	INJECT(0x0044E890, lara_col_surfleft, replace);
-	INJECT(0x0044E8C0, lara_col_surfright, replace);
-	INJECT(0x0044E8F0, lara_col_surftread, replace);
-	INJECT(0x0044E450, LaraTestWaterClimbOut, replace);
-	INJECT(0x0044E770, LaraTestWaterStepOut, replace);
-	INJECT(0x0044E670, LaraSurfaceCollision, replace);
 }

@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_wingmute(bool replace);
+#include "../global/types.h"
 
 void InitialiseWingmute(short item_number);
 void WingmuteControl(short item_number);

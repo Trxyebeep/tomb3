@@ -13,11 +13,13 @@
 #include "effect2.h"
 #include "sound.h"
 #include "lara.h"
+#include "control.h"
+#include "inventry.h"
+#include "../specific/input.h"
+#include "savegame.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
-#include "control.h"
-#include "inventry.h"
 
 static short PickUpBounds[12] = { -256, 256, -100, 100, -256, 256, -1820, 1820, 0, 0, 0, 0 };
 static short PickUpBoundsUW[12] = { -512, 512, -512, 512, -512, 512, -8190, 8190, -8190, 8190, -8190, 8190 };
@@ -813,20 +815,4 @@ long PickupTrigger(short item_number)
 	}
 
 	return 0;
-}
-
-void inject_pickup(bool replace)
-{
-	INJECT(0x0045BC00, PickUpCollision, inject_rando ? 1 : replace);
-	INJECT(0x0045CDE0, BossDropIcon, replace);
-	INJECT(0x0045CE70, AnimatingPickUp, replace);
-	INJECT(0x0045C900, PuzzleHoleCollision, replace);
-	INJECT(0x0045C6B0, KeyHoleCollision, replace);
-	INJECT(0x0045C510, DetonatorCollision, replace);
-	INJECT(0x0045C170, SwitchCollision, replace);
-	INJECT(0x0045C400, SwitchCollision2, replace);
-	INJECT(0x0045CC60, SwitchControl, replace);
-	INJECT(0x0045CCB0, SwitchTrigger, replace);
-	INJECT(0x0045CD50, KeyTrigger, replace);
-	INJECT(0x0045CDA0, PickupTrigger, replace);
 }

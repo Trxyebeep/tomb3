@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_box(bool replace);
+#include "../global/types.h"
 
 void AlertNearbyGuards(ITEM_INFO* item);
 void InitialiseCreature(short item_number);
@@ -33,3 +31,10 @@ void AlertAllGuards(short item_number);
 short SameZone(CREATURE_INFO* creature, ITEM_INFO* target_item);
 void GetAITarget(CREATURE_INFO* creature);
 void AdjustStopperFlag(ITEM_INFO* item, long dir, long set);
+
+extern BOX_INFO* boxes;
+extern long number_boxes;
+extern short* overlap;
+
+extern short* ground_zone[4][2];
+extern short* fly_zone[2];

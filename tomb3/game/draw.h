@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_draw(bool replace);
+#include "../global/types.h"
 
 void phd_PopMatrix_I();
 void phd_PushMatrix_I();
@@ -36,4 +34,24 @@ long DrawPhaseGame();
 void DrawAnimatingItem(ITEM_INFO* item);
 void DrawDummyItem(ITEM_INFO* item);
 
+extern long box_lines[12][2];
 extern short null_rotations[12];
+
+extern long* IMptr;
+extern long IM_rate;
+extern long IM_frac;
+extern long IMstack[768];
+
+extern long number_draw_rooms;
+extern short draw_rooms[100];
+extern char IsJointUnderwater[15];
+extern char GotJointPos[15];
+
+extern long nPolyType;
+extern long camera_underwater;
+extern long mid_sort;
+
+extern long outside;
+
+extern MESH_INFO* CurrentMesh;
+extern long CurrentRoom;

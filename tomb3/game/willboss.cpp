@@ -17,6 +17,7 @@
 #include "draw.h"
 #include "../specific/draweffects.h"
 #include "lara.h"
+#include "setup.h"
 
 static BITE_INFO willboss_bite_left = { 19, -13, 3, 20 };
 static BITE_INFO willboss_bite_right = { 19, -13, 3, 23 };
@@ -27,12 +28,14 @@ static long dheights2[5] = { -1536, -1152, -768, -384, 0 };
 static long death_radii[5];
 static long death_heights[5];
 
-#define closest_ai_path	VAR_(0x004C7FB4, long)
-#define lara_ai_path	VAR_(0x004C7FB8, long)
-#define lara_junction	VAR_(0x004C7FBC, long)
-#define junction_index	ARRAY_(0x006271D0, long, [4])
-#define ai_path	ARRAY_(0x006271E0, PHD_3DPOS, [16])
-#define ai_junction	ARRAY_(0x00627170, PHD_3DPOS, [4])
+static long closest_ai_path = -1;
+static long lara_ai_path = -1;
+static long lara_junction = -1;
+static long junction_index[4];
+static PHD_3DPOS ai_path[16];
+static PHD_3DPOS ai_junction[4];
+
+SHIELD_POINTS WillBossShield[40];
 
 static void TriggerPlasmaBallFlame(short fx_number, long type, long xv, long yv, long zv)
 {
@@ -854,16 +857,4 @@ void S_DrawWillBoss(ITEM_INFO* item)
 				DrawWillBossShield(item);
 		}
 	}
-}
-
-void inject_willboss(bool replace)
-{
-	INJECT(0x00473570, TriggerPlasmaBallFlame, replace);
-	INJECT(0x004731B0, TriggerPlasmaBall, replace);
-	INJECT(0x00472FE0, TriggerPlasma, replace);
-	INJECT(0x00472D60, ExplodeWillBoss, replace);
-	INJECT(0x00473230, ControlWillbossPlasmaBall, replace);
-	INJECT(0x00472D20, InitialiseWillBoss, replace);
-	INJECT(0x00472000, WillBossControl, replace);
-	INJECT(0x00472CE0, S_DrawWillBoss, replace);
 }

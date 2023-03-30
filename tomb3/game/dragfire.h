@@ -1,6 +1,4 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_dragfire(bool replace);
+#include "../global/types.h"
 
 void ControlFlameThrower(short fx_number);

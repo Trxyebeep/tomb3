@@ -1,6 +1,17 @@
 #include "../tomb3/pch.h"
 #include "transform.h"
 #include "../3dsystem/phd_math.h"
+#include "init.h"
+#include "../3dsystem/hwinsert.h"
+#include "../game/effect2.h"
+#include "../3dsystem/3d_gen.h"
+#include "winmain.h"
+#include "output.h"
+#include "../game/control.h"
+#include "../game/draw.h"
+
+float ZTable[40960];
+static float m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23;
 
 void InitZTable()
 {
@@ -391,12 +402,12 @@ short* calc_roomvert(short* objptr, long far_clip)
 			buf->clip = clipFlag;
 		}
 
-		if (zv > distanceFogValue << 14)
+		if (zv > distanceFogValue << W2V_SHIFT)
 		{
 			z = (long)zv;
 
-			if (z > farz << 14)
-				z = farz << 14;
+			if (z > farz << W2V_SHIFT)
+				z = farz << W2V_SHIFT;
 
 			cR = ((buf->g >> 10) & 0x1F) << 3;
 			cG = ((buf->g >> 5) & 0x1F) << 3;
@@ -404,7 +415,7 @@ short* calc_roomvert(short* objptr, long far_clip)
 			cR += 7;
 			cG += 7;
 			cB += 7;
-			shade = 2048 - ((z - (distanceFogValue << 14)) >> 16);
+			shade = 2048 - ((z - (distanceFogValue << W2V_SHIFT)) >> 16);
 			cR *= shade;
 			cG *= shade;
 			cB *= shade;
@@ -419,12 +430,4 @@ short* calc_roomvert(short* objptr, long far_clip)
 	}
 
 	return objptr;
-}
-
-void inject_transform(bool replace)
-{
-	INJECT(0x0048D6A0, InitZTable, replace);
-	INJECT(0x0048D6E0, calc_object_vertices, replace);
-	INJECT(0x0048E050, calc_object_verticesback, replace);
-	INJECT(0x0048D9B0, calc_roomvert, replace);
 }

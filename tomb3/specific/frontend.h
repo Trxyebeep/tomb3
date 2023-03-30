@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_frontend(bool replace);
+#include "../global/types.h"
 
 ushort S_COLOUR(long r, long g, long b);
 void S_DrawScreenLine(long x, long y, long z, long w, long h, long c, GOURAUD_FILL* grdptr, ushort f);

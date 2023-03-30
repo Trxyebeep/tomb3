@@ -1,9 +1,22 @@
 #include "../tomb3/pch.h"
 #include "items.h"
 #include "effect2.h"
+#include "objects.h"
+#include "demo.h"
+#include "control.h"
+#include "savegame.h"
+#include "lara.h"
+#include "effects.h"
 #ifdef TROYESTUFF
 #include "../newstuff/map.h"
 #endif
+
+short next_item_active;
+static short next_item_free;
+short next_fx_active;
+static short next_fx_free;
+
+short body_bag;
 
 void InitialiseItemArray(short num_items)
 {
@@ -436,22 +449,4 @@ void ClearBodyBag()
 
 		body_bag = NO_ITEM;
 	}
-}
-
-void inject_items(bool replace)
-{
-	INJECT(0x0043AA20, InitialiseItemArray, replace);
-	INJECT(0x0043AA90, KillItem, replace);
-	INJECT(0x0043ABE0, CreateItem, replace);
-	INJECT(0x0043AC30, InitialiseItem, replace);
-	INJECT(0x0043AE40, RemoveActiveItem, replace);
-	INJECT(0x0043AEE0, RemoveDrawnItem, replace);
-	INJECT(0x0043AF60, AddActiveItem, replace);
-	INJECT(0x0043AFD0, ItemNewRoom, replace);
-	INJECT(0x0043B080, GlobalItemReplace, replace);
-	INJECT(0x0043B100, InitialiseFXArray, replace);
-	INJECT(0x0043B130, CreateEffect, replace);
-	INJECT(0x0043B1A0, KillEffect, replace);
-	INJECT(0x0043B290, EffectNewRoom, replace);
-	INJECT(0x0043B330, ClearBodyBag, replace);
 }

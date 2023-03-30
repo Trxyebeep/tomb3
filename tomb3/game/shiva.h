@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_shiva(bool replace);
+#include "../global/types.h"
 
 void InitialiseShiva(short item_number);
 void ShivaControl(short item_number);

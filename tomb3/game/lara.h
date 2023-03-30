@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_lara(bool replace);
+#include "../global/types.h"
 
 void LaraAboveWater(ITEM_INFO* item, COLL_INFO* coll);
 void lara_void_func(ITEM_INFO* item, COLL_INFO* coll);
@@ -356,3 +354,9 @@ enum lara_anims
 	ANIM_CRAWL_TO_HANG = 302,
 	ANIM_DUCKPICKUPF = 312
 };
+
+extern LARA_INFO lara;
+extern ITEM_INFO* lara_item;
+extern short DashTimer;
+extern short ExposureMeter;
+extern uchar LaraOnPad;

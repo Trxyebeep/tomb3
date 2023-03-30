@@ -6,6 +6,7 @@
 #include "input.h"
 #include "time.h"
 #include "fmv.h"
+#include "../game/inventry.h"
 #ifdef TROYESTUFF
 #include "output.h"
 #include "../3dsystem/hwinsert.h"
@@ -14,7 +15,11 @@
 
 ushort S_COLOUR(long r, long g, long b)
 {
+#ifdef TROYESTUFF
+	return 0;
+#else
 	return SWR_FindNearestPaletteEntry(game_palette, r, g, b, 0);
+#endif
 }
 
 void S_DrawScreenLine(long x, long y, long z, long w, long h, long c, GOURAUD_FILL* grdptr, ushort f)
@@ -231,16 +236,4 @@ long S_PlayFMV(char* name)
 long S_IntroFMV(char* name1, char* name2)
 {
 	return FMV_PlayIntro(name1, name2);
-}
-
-void inject_frontend(bool replace)
-{
-	INJECT(0x004835E0, S_COLOUR, replace);
-	INJECT(0x00483610, S_DrawScreenLine, replace);
-	INJECT(0x00483650, S_DrawScreenBox, replace);
-	INJECT(0x00483770, S_DrawScreenFBox, replace);
-	INJECT(0x004837B0, S_FinishInventory, replace);
-	INJECT(0x004837D0, S_Wait, replace);
-	INJECT(0x00483830, S_PlayFMV, replace);
-	INJECT(0x00483840, S_IntroFMV, replace);
 }

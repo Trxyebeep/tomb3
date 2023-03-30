@@ -25,10 +25,51 @@
 #include "pickup.h"
 #include "draw.h"
 #include "moveblok.h"
+#include "setup.h"
+#include "../specific/file.h"
+#include "lara.h"
+#include "health.h"
 #ifdef TROYESTUFF
 #include "../newstuff/pausemenu.h"
 #include "../newstuff/discord.h"
 #endif
+
+ITEM_INFO* items;
+ANIM_STRUCT* anims;
+ROOM_INFO* room;
+short** meshes;
+long* bones;
+long level_items;
+short number_rooms;
+
+short* trigger_index;
+long tiltxoff;
+long tiltyoff;
+long OnObject;
+long height_type;
+uchar CurrentAtmosphere;
+uchar IsAtmospherePlaying;
+
+long CurrentLevel;
+long level_complete;
+long chunky_flag;
+long GnGameMode;
+long reset_flag;
+long noinput_count;
+long overlay_flag = 1;
+short FXType;
+short item_after_projectile;
+short cdtrack = -1;
+char PoisonFlag;
+
+long flipmap[10];
+long flip_status;
+long flipeffect = -1;
+long fliptimer;
+char cd_flags[128];
+uchar HeavyTriggered;
+static long number_los_rooms;
+static long los_rooms[20];
 
 long ControlPhase(long nframes, long demo_mode)
 {
@@ -2295,33 +2336,4 @@ long IsRoomOutside(long x, long y, long z)
 	}
 
 	return -2;
-}
-
-void inject_control(bool replace)
-{
-	INJECT(0x0041FFA0, ControlPhase, inject_rando ? 1 : replace);
-	INJECT(0x00420590, AnimateItem, replace);
-	INJECT(0x00420970, GetChange, replace);
-	INJECT(0x00420A20, TranslateItem, replace);
-	INJECT(0x00420A80, GetFloor, replace);
-	INJECT(0x00420C70, GetWaterHeight, replace);
-	INJECT(0x00420E10, GetHeight, replace);
-	INJECT(0x00421370, RefreshCamera, replace);
-	INJECT(0x00421460, TestTriggers, replace);
-	INJECT(0x00421D80, TriggerActive, replace);
-	INJECT(0x00421DE0, GetCeiling, replace);
-	INJECT(0x004222B0, GetDoor, replace);
-	INJECT(0x00422370, LOS, replace);
-	INJECT(0x00422410, zLOS, replace);
-	INJECT(0x00422700, xLOS, replace);
-	INJECT(0x004229F0, ClipTarget, replace);
-	INJECT(0x00422C30, ObjectOnLOS, replace);
-	INJECT(0x00422F40, FlipMap, replace);
-	INJECT(0x00423000, RemoveRoomFlipItems, replace);
-	INJECT(0x004230A0, AddRoomFlipItems, replace);
-	INJECT(0x00423110, TriggerCDTrack, replace);
-	INJECT(0x00423140, TriggerNormalCDTrack, replace);
-	INJECT(0x004231F0, CheckNoColFloorTriangle, replace);
-	INJECT(0x004232B0, CheckNoColCeilingTriangle, replace);
-	INJECT(0x004233B0, IsRoomOutside, replace);
 }

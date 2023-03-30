@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_drawprim(bool replace);
+#include "../global/types.h"
 
 HRESULT HWDrawPrimitive(D3DPRIMITIVETYPE dptPrimitiveType, D3DVERTEXTYPE dwVertexTypeDesc, LPVOID lpvVertices, ulong dwVertexCount, ulong dwFlags);
 HRESULT HWBeginScene();

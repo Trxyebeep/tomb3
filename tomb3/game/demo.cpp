@@ -7,6 +7,16 @@
 #include "../specific/winmain.h"
 #include "text.h"
 #include "../specific/game.h"
+#include "../specific/smain.h"
+#include "../specific/input.h"
+#include "savegame.h"
+#include "lara.h"
+#include "inventry.h"
+
+ulong* demoptr;
+long democount;
+long demo_loaded;
+long DemoPlay;
 
 void GetDemoInput()
 {
@@ -121,12 +131,4 @@ long StartDemo(long level)
 	memcpy(s, &start, sizeof(START_INFO));
 	//empty function call here
 	return lp;
-}
-
-void inject_demo(bool replace)
-{
-	INJECT(0x00423970, GetDemoInput, replace);
-	INJECT(0x004236B0, DoDemoSequence, replace);
-	INJECT(0x004238A0, LoadLaraDemoPos, replace);
-	INJECT(0x00423710, StartDemo, replace);
 }

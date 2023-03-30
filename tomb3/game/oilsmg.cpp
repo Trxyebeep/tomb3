@@ -9,6 +9,8 @@
 #include "people.h"
 #include "sound.h"
 #include "../3dsystem/phd_math.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO oilsmg_gun = { 0, 400, 64, 7 };
 
@@ -312,10 +314,4 @@ void OilSMGControl(short item_number)
 	CreatureJoint(item, 1, torso_x);
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
-}
-
-void inject_oilsmg(bool replace)
-{
-	INJECT(0x0045AA00, InitialiseOilSMG, replace);
-	INJECT(0x0045AA60, OilSMGControl, replace);
 }

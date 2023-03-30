@@ -8,6 +8,7 @@
 #include "sound.h"
 #include "traps.h"
 #include "items.h"
+#include "lara.h"
 
 static void TriggerFireHeadFlame(long x, long y, long z, long angle, long speed)
 {
@@ -213,12 +214,4 @@ void ControlRotateyThing(short item_number)
 		AnimateItem(item);
 	else
 		KillItem(item_number);
-}
-
-void inject_firehead(bool replace)
-{
-	INJECT(0x0042FE30, TriggerFireHeadFlame, replace);
-	INJECT(0x0042FAF0, InitialiseFireHead, replace);
-	INJECT(0x0042FB50, ControlFireHead, replace);
-	INJECT(0x00430010, ControlRotateyThing, replace);
 }

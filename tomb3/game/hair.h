@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_hair(bool replace);
+#include "../global/types.h"
 
 void InitialiseHair();
 void DrawHair();

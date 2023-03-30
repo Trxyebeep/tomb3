@@ -12,13 +12,22 @@
 #include "lot.h"
 #include "traps.h"
 #include "pickup.h"
+#include "triboss.h"
+#include "compy.h"
+#include "setup.h"
+#include "../specific/file.h"
+#include "camera.h"
+#include "lara.h"
 #ifdef TROYESTUFF
+#include "londboss.h"
+#include "../specific/draweffects.h"
 #include "../newstuff/map.h"
 #include "../tomb3/tomb3.h"
 #endif
 
-#define SGcount	VAR_(0x006D588C, long)
-#define SGpoint	VAR_(0x006D2268, char*)
+SAVEGAME_INFO savegame;
+static char* SGpoint;
+static long SGcount;
 
 void ModifyStartInfo(long level)
 {
@@ -847,15 +856,3 @@ void load_tomb3_data()
 		lara_item->mesh_bits = tomb3_save.lara_meshbits;
 }
 #endif
-
-void inject_savegame(bool replace)
-{
-	INJECT(0x00461A60, ModifyStartInfo, replace);
-	INJECT(0x00461950, InitialiseStartInfo, replace);
-	INJECT(0x00461B50, CreateStartInfo, replace);
-	INJECT(0x00462DF0, ResetSG, replace);
-	INJECT(0x00462E10, WriteSG, replace);
-	INJECT(0x00462E60, ReadSG, replace);
-	INJECT(0x00461DD0, CreateSaveGameInfo, replace);
-	INJECT(0x004623F0, ExtractSaveGameInfo, replace);
-}

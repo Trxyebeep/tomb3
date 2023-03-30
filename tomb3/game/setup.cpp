@@ -87,10 +87,19 @@
 #include "dragfire.h"
 #include "lasers.h"
 #include "hair.h"
+#include "control.h"
+#include "demo.h"
+#include "camera.h"
 #ifdef TROYESTUFF
+#include "footprnt.h"
 #include "../newstuff/map.h"
 #include "../tomb3/tomb3.h"
 #endif
+
+short IsRoomOutsideNo;
+char* OutsideRoomTable;
+short OutsideRoomOffsets[729];
+BOSS_STRUCT bossdata;
 
 void GetAIPickups()
 {
@@ -2340,18 +2349,4 @@ void InitialiseObjects()
 	ObjectObjects();
 	InitialiseHair();
 	InitialiseSparks();
-}
-
-void inject_setup(bool replace)
-{
-	INJECT(0x00466590, GetAIPickups, inject_rando ? 1 : replace);
-	INJECT(0x004664B0, GetCarriedItems, replace);
-	INJECT(0x00463B70, InitialiseLevelFlags, replace);
-	INJECT(0x00463B00, InitialiseGameFlags, replace);
-	INJECT(0x004638F0, InitialiseLevel, replace);
-	INJECT(0x004666C0, BuildOutsideTable, replace);
-	INJECT(0x00463C30, BaddyObjects, replace);
-	INJECT(0x00465240, TrapObjects, replace);
-	INJECT(0x00465820, ObjectObjects, replace);
-	INJECT(0x00463BC0, InitialiseObjects, replace);
 }

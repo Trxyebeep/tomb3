@@ -3,6 +3,8 @@
 #include "box.h"
 #include "objects.h"
 #include "effects.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO croc_bite = { 5, -21, 467, 9 };
 
@@ -80,9 +82,4 @@ void CrocControl(short item_number)
 	CreatureJoint(item, 0, head);
 	CreatureUnderwater(item, 256);
 	CreatureAnimation(item_number, 0, 0);
-}
-
-void inject_croc(bool replace)
-{
-	INJECT(0x004234F0, CrocControl, replace);
 }

@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_audio(bool replace);
+#include "../global/types.h"
 
 BOOL __stdcall ACMEnumCallBack(HACMDRIVERID hadid, DWORD_PTR dwInstance, DWORD fdwSupport);
 void ACMCloseFile();
@@ -18,3 +16,5 @@ long ACMHandleNotifications();
 long ACMSetupNotifications();
 bool ACMInit();
 void ACMClose();
+
+extern long acm_volume;

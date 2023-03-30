@@ -17,10 +17,49 @@
 #include "demo.h"
 #include "health.h"
 #include "../specific/option.h"
+#include "gameflow.h"
+#include "../specific/winmain.h"
+#include "../specific/smain.h"
+#include "control.h"
+#include "camera.h"
+#include "savegame.h"
 #ifdef TROYESTUFF
 #include "../newstuff/discord.h"
 #include "../tomb3/tomb3.h"
 #endif
+
+long Inventory_ExtraData[8];
+long GlobePointLight;
+short GlobeXRot;
+short GlobeYRot;
+short GlobeZRot;
+short GlobeLevel;
+uchar GlobeLevelComplete[6];
+
+long inputDB;
+short Option_Music_Volume = 255;
+short Option_SFX_Volume = 165;
+long Inventory_Mode = INV_TITLE_MODE;
+TEXTSTRING* passport_text1;
+TEXTSTRING* Inv_ringText;
+TEXTSTRING* Inv_tagText;
+TEXTSTRING* Inv_upArrow1;
+TEXTSTRING* Inv_upArrow2;
+TEXTSTRING* Inv_downArrow1;
+TEXTSTRING* Inv_downArrow2;
+long Inventory_DemoMode;
+long OpenInvOnGym;
+long idelay;
+long idcount;
+short inv_keys_objects;
+short inv_keys_current;
+short inv_main_objects = 8;
+short inv_main_current;
+short Inventory_Displaying;
+short Inventory_Chosen;
+short inv_option_objects;
+short inv_option_current;
+short item_data;
 
 long GetDebouncedInput(long in)
 {
@@ -1052,15 +1091,4 @@ long Display_Inventory(long mode)
 	}
 
 	return 0;
-}
-
-void inject_inventry(bool replace)
-{
-	INJECT(0x00436FA0, GetDebouncedInput, replace);
-	INJECT(0x004369C0, SelectMeshes, replace);
-	INJECT(0x00436A50, AnimateInventoryItem, replace);
-	INJECT(0x00436AE0, DrawInventoryItem, replace);
-	INJECT(0x00436FC0, GetGlobeMeshFlags, replace);
-	INJECT(0x00436840, Construct_Inventory, replace);
-	INJECT(0x00435400, Display_Inventory, replace);
 }

@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_raptor(bool replace);
+#include "../global/types.h"
 
 void RaptorControl(short item_number);
 

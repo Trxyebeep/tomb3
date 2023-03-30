@@ -10,10 +10,22 @@
 #include "../game/lasers.h"
 #include "../game/triboss.h"
 #include "../game/londboss.h"
+#include "../game/tonyboss.h"
+#include "../game/willboss.h"
 #include "output.h"
+#include "transform.h"
+#include "../game/fish.h"
+#include "../game/effect2.h"
+#include "file.h"
+#include "../game/laraelec.h"
+#include "../game/setup.h"
+#include "winmain.h"
+#include "../game/effects.h"
 #ifdef TROYESTUFF
 #include "../game/sub.h"
 #include "../game/lara.h"
+#include "../game/footprnt.h"
+#include "../game/draw.h"
 #include "../tomb3/tomb3.h"
 #endif
 
@@ -81,10 +93,16 @@ static SNOWFLAKE snowflakes[MAX_WEATHER];
 static RAINDROP uwparts[MAX_WEATHER];
 #endif
 
+EXPLOSION_RING ExpRings[6];
+WAKE_PTS WakePts[32][2];
+uchar WakeShade;
+uchar CurrentStartWake;
+
 #ifdef TROYESTUFF
 static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, short c, bool cFlag)
 {
 	float zv, zT;
+	float m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23;
 	char clipFlag;
 
 	m00 = float(phd_mxptr[M00]);
@@ -2919,6 +2937,11 @@ void DrawTonyBossShield(ITEM_INFO* item)
 				c4 = s1->rgb;
 				s0++;
 				s1++;
+
+#ifdef TROYESTUFF
+				if (s1 - TonyBossShield >= sizeof(TonyBossShield) / sizeof(SHIELD_POINTS))
+					s1 = &TonyBossShield[39];
+#endif
 			}
 
 #ifdef TROYESTUFF
@@ -3135,6 +3158,11 @@ void DrawTribeBossShield(ITEM_INFO* item)
 				c4 = s1->rgb;
 				s0++;
 				s1++;
+
+#ifdef TROYESTUFF
+				if (s1 - TribeBossShield >= sizeof(TribeBossShield) / sizeof(SHIELD_POINTS))
+					s1 = &TribeBossShield[39];
+#endif
 			}
 
 #ifdef TROYESTUFF
@@ -3350,6 +3378,11 @@ void DrawLondonBossShield(ITEM_INFO* item)
 				c4 = s1->rgb;
 				s0++;
 				s1++;
+
+#ifdef TROYESTUFF
+				if (s1 - LondonBossShield >= sizeof(LondonBossShield) / sizeof(SHIELD_POINTS))
+					s1 = &LondonBossShield[39];
+#endif
 			}
 
 #ifdef TROYESTUFF
@@ -3565,6 +3598,11 @@ void DrawWillBossShield(ITEM_INFO* item)
 				c4 = s1->rgb;
 				s0++;
 				s1++;
+
+#ifdef TROYESTUFF
+				if (s1 - WillBossShield >= sizeof(WillBossShield) / sizeof(SHIELD_POINTS))
+					s1 = &WillBossShield[39];
+#endif
 			}
 
 #ifdef TROYESTUFF
@@ -5562,28 +5600,3 @@ void SuperDrawBox(long x, long y, long z, short* bounds, long col)
 	phd_PopMatrix();
 }
 #endif
-
-void inject_draweffects(bool replace)
-{
-	INJECT(0x00478600, LaraElectricDeath, replace);
-	INJECT(0x00479510, ClipLine, replace);
-	INJECT(0x0047F4C0, S_DrawWakeFX, replace);
-	INJECT(0x0047A4B0, DoRain, replace);
-	INJECT(0x0047AA80, DoSnow, replace);
-	INJECT(0x00476CA0, DrawExplosionRings, replace);
-	INJECT(0x0047C2A0, DrawSummonRings, replace);
-	INJECT(0x00477C30, DrawKnockBackRings, replace);
-	INJECT(0x0047E170, TriggerElectricBeam, replace);
-	INJECT(0x0047D4A0, TriggerTribeBossHeadElectricity, replace);
-	INJECT(0x0047CC10, DrawTonyBossShield, replace);
-	INJECT(0x0047EC30, DrawTribeBossShield, replace);
-	INJECT(0x00479C20, DrawLondonBossShield, replace);
-	INJECT(0x0047FC30, DrawWillBossShield, replace);
-	INJECT(0x00479810, S_DrawLaserBeam, replace);
-	INJECT(0x00476420, S_DrawBat, replace);
-	INJECT(0x0047B2C0, S_DrawSparks, replace);
-	INJECT(0x0047BAA0, S_DrawSplashes, replace);
-	INJECT(0x00478BF0, S_DrawLaserBolts, replace);
-	INJECT(0x004775C0, S_DrawFish, replace);
-	INJECT(0x00476A30, S_DrawDarts, replace);
-}

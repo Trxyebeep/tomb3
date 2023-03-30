@@ -3,6 +3,8 @@
 #include "objects.h"
 #include "items.h"
 #include "lot.h"
+#include "control.h"
+#include "lara.h"
 
 static short FlyItem[3] = { NO_ITEM, NO_ITEM, NO_ITEM };
 
@@ -93,9 +95,4 @@ void FlyEmitterControl(short item_number)
 	AddActiveItem(FlyItem[lp]);
 	ItemNewRoom(FlyItem[lp], item->room_number);
 	EnableBaddieAI(FlyItem[lp], 1);
-}
-
-void inject_flymaker(bool replace)
-{
-	INJECT(0x00431C10, FlyEmitterControl, replace);
 }

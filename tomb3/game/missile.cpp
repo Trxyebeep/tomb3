@@ -10,6 +10,7 @@
 #include "traps.h"
 #include "../specific/game.h"
 #include "draw.h"
+#include "lara.h"
 #include "../3dsystem/3d_gen.h"
 
 void ControlMissile(short fx_number)
@@ -328,12 +329,4 @@ void ControlBodyPart(short fx_number)
 
 	if (fx->room_number != room_number)
 		EffectNewRoom(fx_number, room_number);
-}
-
-void inject_missile(bool replace)
-{
-	INJECT(0x00454FB0, ControlMissile, replace);
-	INJECT(0x004552C0, ShootAtLara, replace);
-	INJECT(0x00455370, ExplodingDeath, replace);
-	INJECT(0x004557A0, ControlBodyPart, replace);
 }

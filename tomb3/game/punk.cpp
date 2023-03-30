@@ -12,6 +12,8 @@
 #include "effects.h"
 #include "traps.h"
 #include "../specific/smain.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO punk_hit = { 16, 48, 320, 13 };
 
@@ -471,11 +473,4 @@ void PunkControl(short item_number)
 			break;
 		}
 	}
-}
-
-void inject_punk(bool replace)
-{
-	INJECT(0x0045E5E0, TriggerPunkFlame, replace);
-	INJECT(0x0045DBD0, InitialisePunk, replace);
-	INJECT(0x0045DC30, PunkControl, inject_rando ? 1 : replace);
 }

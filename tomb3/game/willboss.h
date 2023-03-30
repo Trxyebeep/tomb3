@@ -1,12 +1,10 @@
 #pragma once
-#include "../global/vars.h"
+#include "../global/types.h"
 
 void ControlWillbossPlasmaBall(short fx_number);
 void InitialiseWillBoss(short item_number);
 void WillBossControl(short item_number);
 void S_DrawWillBoss(ITEM_INFO* item);
-
-void inject_willboss(bool replace);
 
 enum WILLBOSS_STATES
 {
@@ -22,3 +20,5 @@ enum WILLBOSS_STATES
 	WILLBOSS_180,
 	WILLBOSS_SHOOT
 };
+
+extern SHIELD_POINTS WillBossShield[40];

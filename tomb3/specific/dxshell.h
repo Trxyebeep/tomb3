@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_dxshell(bool replace);
+#include "../global/types.h"
 
 long BPPToDDBD(long BPP);
 bool DXSetVideoMode(LPDIRECTDRAWX ddx, long w, long h, long bpp);

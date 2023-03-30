@@ -1,6 +1,4 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_fusebox(bool replace);
+#include "../global/types.h"
 
 void ControlFusebox(short item_number);

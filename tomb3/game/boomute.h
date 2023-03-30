@@ -1,6 +1,4 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_boomute(bool replace);
+#include "../global/types.h"
 
 void BoomuteControl(short item_number);

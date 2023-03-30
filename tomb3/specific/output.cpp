@@ -12,7 +12,12 @@
 #include "../3dsystem/phd_math.h"
 #include "dd.h"
 #include "file.h"
+#include "winmain.h"
+#include "../game/gameflow.h"
+#include "../game/draw.h"
+#include "../game/inventry.h"
 #ifdef TROYESTUFF
+#include "../game/control.h"
 #include "../game/health.h"
 #include "../game/objects.h"
 #include "litesrc.h"
@@ -33,6 +38,14 @@ static short shadow[6 + (3 * 8)] =
 	0, 0, 0,
 	0, 0, 0,
 };
+
+long framedump;
+long SunsetTimer;
+long water_effect;
+bool bBlueEffect;
+static long shade_effect;
+static long light_level[4];
+static long objbcnt;
 
 void S_PrintShadow(short size, short* box, ITEM_INFO* item)
 {
@@ -703,26 +716,4 @@ void S_InitialisePolyList(bool clearBackBuffer)
 	HWR_BeginScene();
 	phd_InitPolyList();
 	objbcnt = 0;
-}
-
-void inject_output(bool replace)
-{
-	INJECT(0x0048A7B0, S_PrintShadow, replace);
-	INJECT(0x0048AB20, S_SetupAboveWater, replace);
-	INJECT(0x0048AAC0, S_SetupBelowWater, replace);
-	INJECT(0x0048A370, S_OutputPolyList, replace);
-	INJECT(0x0048A9B0, S_LightRoom, replace);
-	INJECT(0x0048A760, S_InsertBackPolygon, replace);
-	INJECT(0x0048A4C0, S_GetObjectBounds, replace);
-	INJECT(0x0048AC20, mCalcPoint, replace);
-	INJECT(0x0048ACC0, ProjectPCoord, replace);
-	INJECT(0x0048A2A0, S_DumpCine, replace);
-	INJECT(0x0048A330, S_InitialiseScreen, replace);
-	INJECT(0x0048AC00, ScreenPartialDump, replace);
-	INJECT(0x0048A2D0, S_DumpScreen, replace);
-	INJECT(0x0048AC10, ScreenClear, replace);
-	INJECT(0x0048A320, S_ClearScreen, replace);
-	INJECT(0x0048AA00, AnimateTextures, replace);
-	INJECT(0x0048AB50, S_AnimateTextures, replace);
-	INJECT(0x0048A210, S_InitialisePolyList, replace);
 }

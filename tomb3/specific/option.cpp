@@ -11,7 +11,11 @@
 #include "../game/objects.h"
 #include "../game/sound.h"
 #include "game.h"
-
+#include "../game/inventry.h"
+#include "../3dsystem/3d_gen.h"
+#include "winmain.h"
+#include "../game/savegame.h"
+#include "../game/control.h"
 #ifdef TROYESTUFF
 #include "output.h"
 #include "smain.h"
@@ -35,6 +39,11 @@ static TEXTSTRING* dtext[DT_NUMT];
 static TEXTSTRING* stext[4];
 static TEXTSTRING* btext[NLAYOUTKEYS];
 static TEXTSTRING* ctext[NLAYOUTKEYS];
+static TEXTSTRING* ctrltext[2];
+static long iconfig;
+static long keychange;
+
+long SavedGames;
 
 long GetRenderWidth()
 {
@@ -1050,10 +1059,6 @@ void do_sound_option(INVENTORY_ITEM* item)
 	}
 }
 
-#define iconfig	VAR_(0x006A0130, long)
-#define keychange	VAR_(0x006A0128, long)
-#define ctrltext	ARRAY_(0x006A0218, TEXTSTRING*, [2])
-
 static void FlashConflicts()
 {
 	short c;
@@ -2031,23 +2036,4 @@ void do_inventory_options(INVENTORY_ITEM* item)
 
 		break;
 	}
-}
-
-void inject_option(bool replace)
-{
-	INJECT(0x0048A200, GetRenderWidth, replace);
-	INJECT(0x0048A1F0, GetRenderHeight, replace);
-	INJECT(0x00488260, do_detail_option, replace);
-	INJECT(0x00487870, do_levelselect_option, replace);
-	INJECT(0x00487720, do_pickup_option, replace);
-	INJECT(0x00488F30, do_sound_option, replace);
-	INJECT(0x00489490, FlashConflicts, replace);
-	INJECT(0x00489510, DefaultConflict, replace);
-	INJECT(0x00489C70, S_ShowControls, replace);
-	INJECT(0x0048A100, S_ChangeCtrlText, replace);
-	INJECT(0x0048A1A0, S_RemoveCtrlText, replace);
-	INJECT(0x00489550, do_control_option, replace);
-	INJECT(0x004893D0, do_compass_option, replace);
-	INJECT(0x00487BE0, do_passport_option, replace);
-	INJECT(0x00487750, do_inventory_options, replace);
 }

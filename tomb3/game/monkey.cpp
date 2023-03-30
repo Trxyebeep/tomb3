@@ -9,6 +9,9 @@
 #include "draw.h"
 #include "../specific/output.h"
 #include "../3dsystem/3d_gen.h"
+#include "lot.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO monkey_hit = { 10, 10, 11, 13 };
 
@@ -642,11 +645,4 @@ void DrawMonkey(ITEM_INFO* item)
 	}
 
 	phd_PopMatrix();
-}
-
-void inject_monkey(bool replace)
-{
-	INJECT(0x004559B0, InitialiseMonkey, replace);
-	INJECT(0x00455E30, MonkeyControl, replace);
-	INJECT(0x00455A10, DrawMonkey, replace);
 }

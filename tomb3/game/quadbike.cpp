@@ -20,6 +20,9 @@
 #include "lara.h"
 #include "effects.h"
 #include "sphere.h"
+#include "../specific/input.h"
+#include "camera.h"
+#include "savegame.h"
 
 static BITE_INFO quad_bites[6] =
 {
@@ -30,6 +33,9 @@ static BITE_INFO quad_bites[6] =
 	{90, 180, -32, 6},
 	{-90, 180, -32, 7}
 };
+
+static char dont_exit_quad;
+static char HandbrakeStarting;
 
 void QuadBikeDraw(ITEM_INFO* item)
 {
@@ -1524,24 +1530,4 @@ long QuadBikeControl()
 	}
 
 	return SkidooCheckGetOff();
-}
-
-void inject_quadbike(bool replace)
-{
-	INJECT(0x0045EB20, QuadBikeDraw, replace);
-	INJECT(0x0045E7E0, InitialiseQuadBike, replace);
-	INJECT(0x0045E9E0, GetOnQuadBike, replace);
-	INJECT(0x0045E830, QuadBikeCollision, replace);
-	INJECT(0x0045F3C0, QuadbikeExplode, replace);
-	INJECT(0x0045F490, SkidooCheckGetOff, replace);
-	INJECT(0x0045F640, TestHeight, replace);
-	INJECT(0x00460BD0, TriggerExhaustSmoke, replace);
-	INJECT(0x004606A0, CanGetOff, replace);
-	INJECT(0x004601A0, GetCollisionAnim, replace);
-	INJECT(0x0045F720, DoDynamics, replace);
-	INJECT(0x0045FFB0, SkidooBaddieCollision, replace);
-	INJECT(0x0045F780, SkidooDynamics, replace);
-	INJECT(0x00460230, AnimateQuadBike, replace);
-	INJECT(0x004607A0, UserControl, replace);
-	INJECT(0x0045EE20, QuadBikeControl, replace);
 }

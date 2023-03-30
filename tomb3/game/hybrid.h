@@ -1,9 +1,7 @@
 #pragma once
-#include "../global/vars.h"
+#include "../global/types.h"
 
 void HybridControl(short item_number);
-
-void inject_hybrid(bool replace);
 
 enum HYBRID_STATES
 {

@@ -1,11 +1,9 @@
 #pragma once
-#include "../global/vars.h"
+#include "../global/types.h"
 
 void InitialiseMonkey(short item_number);
 void MonkeyControl(short item_number);
 void DrawMonkey(ITEM_INFO* item);
-
-void inject_monkey(bool replace);
 
 enum MONKEY_STATES
 {

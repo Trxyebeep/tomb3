@@ -12,11 +12,17 @@
 #include "lara.h"
 #include "lot.h"
 #include "box.h"
+#include "camera.h"
+#include "savegame.h"
+#include "cinema.h"
 
 static short final_boss_active;	//TR2 remnants
 static short final_boss_count;
 static short final_level_count;
 static short final_boss[5];
+
+OBJECT_INFO objects[NUMBER_OBJECTS];
+STATIC_INFO static_objects[NUMBER_STATIC_OBJECTS];
 
 long OnDrawBridge(ITEM_INFO* item, long z, long x)
 {
@@ -819,39 +825,4 @@ void FinalLevelCounter(short item_number)
 			cinematic_pos = item->pos;
 		}
 	}
-}
-
-void inject_objects(bool replace)
-{
-	INJECT(0x00459330, OnDrawBridge, replace);
-	INJECT(0x004593F0, DrawBridgeFloor, replace);
-	INJECT(0x00459450, DrawBridgeCeiling, replace);
-	INJECT(0x00459490, DrawBridgeCollision, replace);
-	INJECT(0x004594C0, InitialiseLift, replace);
-	INJECT(0x00459500, LiftControl, replace);
-	INJECT(0x004595E0, LiftFloorCeiling, replace);
-	INJECT(0x00459760, LiftFloor, replace);
-	INJECT(0x004597A0, LiftCeiling, replace);
-	INJECT(0x00459840, GetOffset, replace);
-	INJECT(0x004597E0, BridgeFlatFloor, replace);
-	INJECT(0x00459820, BridgeFlatCeiling, replace);
-	INJECT(0x00459880, BridgeTilt1Floor, replace);
-	INJECT(0x004598E0, BridgeTilt1Ceiling, replace);
-	INJECT(0x00459920, BridgeTilt2Floor, replace);
-	INJECT(0x00459980, BridgeTilt2Ceiling, replace);
-	INJECT(0x00458DC0, ShutThatDoor, replace);
-	INJECT(0x00458E10, OpenThatDoor, replace);
-	INJECT(0x00458E50, InitialiseDoor, replace);
-	INJECT(0x00459260, DoorControl, replace);
-	INJECT(0x00458C20, SmashWindow, replace);
-	INJECT(0x00458B90, InitialiseWindow, replace);
-	INJECT(0x00458D20, WindowControl, replace);
-	INJECT(0x004599C0, GeneralControl, replace);
-	INJECT(0x00459A50, DetonatorControl, replace);
-	INJECT(0x00459AD0, ControlAnimating_1_4, replace);
-	INJECT(0x00458AB0, MiniCopterControl, replace);
-	INJECT(0x00458660, EarthQuake, replace);
-	INJECT(0x004587F0, ControlCutShotgun, replace);
-	INJECT(0x00458840, InitialiseFinalLevel, replace);
-	INJECT(0x00458880, FinalLevelCounter, replace);
 }

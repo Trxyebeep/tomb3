@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_oilsmg(bool replace);
+#include "../global/types.h"
 
 void InitialiseOilSMG(short item_number);
 void OilSMGControl(short item_number);

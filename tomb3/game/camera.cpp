@@ -9,9 +9,23 @@
 #include "../specific/specific.h"
 #include "cinema.h"
 #include "draw.h"
+#include "inventry.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
+
+CAMERA_INFO camera;
+
+GAME_VECTOR ForcedFixedCamera;
+char UseForcedFixedCamera;
+
+static OLD_CAMERA old_cam;
+static GAME_VECTOR last_target;
+static GAME_VECTOR last_ideal;
+static GAME_VECTOR static_lookcamp;
+static GAME_VECTOR static_lookcamt;
+static PHD_VECTOR old_target;
+static char camerasnaps;
 
 void InitialiseCamera()
 {
@@ -1195,17 +1209,4 @@ void CalculateCamera()
 	}
 
 	chunky_flag = 0;
-}
-
-void inject_camera(bool replace)
-{
-	INJECT(0x00417300, InitialiseCamera, replace);
-	INJECT(0x0041A641, mgLOS, replace);
-	INJECT(0x0041A0BE, CameraCollisionBounds, replace);
-	INJECT(0x0041743C, MoveCamera, replace);
-	INJECT(0x00417CA3, ChaseCamera, replace);
-	INJECT(0x0041835C, CombatCamera, replace);
-	INJECT(0x00418A56, LookCamera, replace);
-	INJECT(0x0041A000, FixedCamera, replace);
-	INJECT(0x004198FC, CalculateCamera, replace);
 }

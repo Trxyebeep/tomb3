@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_output(bool replace);
+#include "../global/types.h"
 
 void S_PrintShadow(short size, short* box, ITEM_INFO* item);
 void S_SetupAboveWater(long underwater);
@@ -26,3 +24,8 @@ void S_InitialisePolyList(bool clearBackBuffer);
 long GetFixedScale(long unit);
 long GetRenderScale(long unit);
 #endif
+
+extern long framedump;
+extern long SunsetTimer;
+extern long water_effect;
+extern bool bBlueEffect;

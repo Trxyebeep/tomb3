@@ -5,6 +5,8 @@
 #include "box.h"
 #include "objects.h"
 #include "effects.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO raptor_bite = { 0, 66, 318, 22 };
 
@@ -53,7 +55,7 @@ void RaptorControl(short item_number)
 	{
 		if (!raptor->enemy || !(GetRandomControl() & 0x7F))
 		{
-			for (lp = 0; lp < 5; lp++)
+			for (lp = 0; lp < MAX_LOT; lp++)
 			{
 				if (baddie_slots[lp].item_num == NO_ITEM || baddie_slots[lp].item_num == item_number)
 					continue;
@@ -257,9 +259,4 @@ void RaptorControl(short item_number)
 	CreatureJoint(item, 2, neck);
 	CreatureJoint(item, 3, neck);
 	CreatureAnimation(item_number, angle, tilt);
-}
-
-void inject_raptor(bool replace)
-{
-	INJECT(0x00461040, RaptorControl, replace);
 }

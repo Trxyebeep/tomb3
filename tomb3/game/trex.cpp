@@ -7,6 +7,8 @@
 #include "../specific/game.h"
 #include "effects.h"
 #include "../3dsystem/phd_math.h"
+#include "draw.h"
+#include "control.h"
 
 static BITE_INFO trex_hit = { 0, 32, 64, 13 };
 
@@ -280,9 +282,4 @@ void DinoControl(short item_number)
 		item->collidable = 1;
 	else
 		item->collidable = 0;
-}
-
-void inject_trex(bool replace)
-{
-	INJECT(0x0046FD80, DinoControl, replace);
 }

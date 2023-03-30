@@ -10,6 +10,12 @@
 #include "objects.h"
 #include "health.h"
 #include "items.h"
+#include "../specific/litesrc.h"
+#include "inventry.h"
+#include "../specific/input.h"
+#include "control.h"
+#include "savegame.h"
+#include "lara.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
@@ -95,6 +101,130 @@ static ushort req_sel_gour2[9] = { 0x2000, 0x1010, 0x2000, 0x1400, 0x2000, 0x101
 short gLevelSecrets[21] = { 0, 3, 3, 3, 3, 3, 0, 3, 1, 5, 5, 6, 1, 3, 2, 3, 3, 3, 3, 0, 0 };
 #endif
 short LevelSecrets[21] = { 0, 6, 4, 5, 0, 3, 3, 3, 1, 5, 5, 6, 1, 3, 2, 3, 3, 3, 3, 0, 0 };
+
+ulong RequesterFlags1[24];
+ulong RequesterFlags2[24];
+ulong SaveGameReqFlags1[24];
+ulong SaveGameReqFlags2[24];
+short inv_colours[17];
+char Save_Game_Strings[24][50];
+char Save_Game_Strings2[24][50];
+char Valid_Level_Strings[24][50];
+char Valid_Level_Strings2[24][50];
+
+TEXTSTRING* Inv_itemText[3];
+short inv_main_qtys[23] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+short inv_keys_qtys[23] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+/*Main ring items*/
+INVENTORY_ITEM icompass_option = { 0, MAP_OPTION, 1, 0, 0, 0, 1, 1, 0, 4352, 0, -1536, 0, 0, 0, 0, -170, 0, 320, 0, 0xFFFFFFFF, 0xFFFFFFFF, MAP_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM igun_option = { 0, GUN_OPTION, 12, 0, 0, 11, 1, 1, 0, 3200, 0, 2848, 0, 0, -32768, 0, 38, 0, 352, 0, 0xFFFFFFFF, 0xFFFFFFFF, GUN_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM ishotgun_option = { 0, SHOTGUN_OPTION, 13, 0, 0, 12, 1, 1, 0, 3200, 0, 5120, 0, 0, 30720, 0, 0, 0, 228, 0, 0xFFFFFFFF, 0xFFFFFFFF, SGN_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM imagnum_option = { 0, MAGNUM_OPTION, 12, 0, 0, 11, 1, 1, 0, 3200, 0, 3360, 0, 0, -32768, 0, 0, 0, 362, 0, 0xFFFFFFFF, 0xFFFFFFFF, MAG_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM iuzi_option = { 0, UZI_OPTION, 13, 0, 0, 12, 1, 1, 0, 3200, 0, 2336, 0, 0, -32768, 0, 56, 0, 322, 0, 0xFFFFFFFF, 0xFFFFFFFF, UZI_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM im16_option = { 0, M16_OPTION, 12, 0, 0, 11, 1, 1, 0, 3200, 0, -224, 0, 0, -18432, 0, 84, 0, 296, 0, 0xFFFFFFFF, 0xFFFFFFFF, M16_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM irocket_option = { 0, ROCKET_OPTION, 12, 0, 0, 11, 1, 1, 0, 3200, 0, -224, 0, 0, 14336, 0, 56, 0, 296, 0, 0xFFFFFFFF, 0xFFFFFFFF, ROCKET_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM igrenade_option = { 0, GRENADE_OPTION, 12, 0, 0, 11, 1, 1, 0, 3200, 0, -224, 0, 0, 14336, 0, 56, 0, 296, 0, 0xFFFFFFFF, 0xFFFFFFFF, GRENADE_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM iharpoon_option = { 0, HARPOON_OPTION, 12, 0, 0, 11, 1, 1, 0, 3200, 0, -736, 0, 0, -19456, 0, 58, 0, 296, 0, 0xFFFFFFFF, 0xFFFFFFFF, HARPOON_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM iflare_option = { 0, FLAREBOX_OPTION, 31, 0, 0, 30, 1, 1, 0, 3200, 0, 0, 0, 0, -8192, 0, 0, 0, 296, 0, 0xFFFFFFFF, 0xFFFFFFFF, FLR_POS, 0, 0, 0, 0 };
+
+INVENTORY_ITEM igunammo_option = { 0, GUN_AMMO_OPTION, 1, 0, 0, 0, 1, 1, 0, 3200, 0, -3808, 0, 0, 0, 0, 0, 0, 296, 0, 0xFFFFFFFF, 0xFFFFFFFF, GUN_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM isgunammo_option = { 0, SG_AMMO_OPTION, 1, 0, 0, 0, 1, 1, 0, 3200, 0, -3808, 0, 0, 0, 0, 0, 0, 296, 0, 0xFFFFFFFF, 0xFFFFFFFF, SGN_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM imagammo_option = { 0, MAG_AMMO_OPTION, 1, 0, 0, 0, 1, 1, 0, 3200, 0, -3808, 0, 0, 0, 0, 0, 0, 296, 0, 0xFFFFFFFF, 0xFFFFFFFF, MAG_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM iuziammo_option = { 0, UZI_AMMO_OPTION, 1, 0, 0, 0, 1, 1, 0, 3200, 0, -3808, 0, 0, 0, 0, 0, 0, 296, 0, 0xFFFFFFFF, 0xFFFFFFFF, UZI_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM im16ammo_option = { 0, M16_AMMO_OPTION, 1, 0, 0, 0, 1, 1, 0, 3200, 0, -3808, 0, 0, 0, 0, 0, 0, 296, 0, 0xFFFFFFFF, 0xFFFFFFFF, M16_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM irocketammo_option = { 0, ROCKET_AMMO_OPTION, 1, 0, 0, 0, 1, 1, 0, 3200, 0, -3808, 0, 0, 0, 0, 0, 0, 296, 0, 0xFFFFFFFF, 0xFFFFFFFF, ROCKET_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM igrenadeammo_option = { 0, GRENADE_AMMO_OPTION, 1, 0, 0, 0, 1, 1, 0, 3200, 0, -3808, 0, 0, 0, 0, 0, 0, 296, 0, 0xFFFFFFFF, 0xFFFFFFFF, GRENADE_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM iharpoonammo_option = { 0, HARPOON_AMMO_OPTION, 1, 0, 0, 0, 1, 1, 0, 3200, 0, -3808, 0, 0, 0, 0, 0, 0, 296, 0, 0xFFFFFFFF, 0xFFFFFFFF, HARPOON_POS, 0, 0, 0, 0 };
+
+INVENTORY_ITEM ibigmedi_option = { 0, BIGMEDI_OPTION, 20, 0, 0, 19, 1, 1, 0, 3616, 0, -8160, 0, 0, -4096, 0, 0, 0, 352, 0, 0xFFFFFFFF, 0xFFFFFFFF, BGM_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM imedi_option = { 0, MEDI_OPTION, 26, 0, 0, 25, 1, 1, 0, 4032, 0, -7296, 0, 0, -4096, 0, 0, 0, 216, 0, 0xFFFFFFFF, 0xFFFFFFFF, MED_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM sgcrystal_option = { 0, SAVEGAME_CRYSTAL_OPTION, 1, 0, 0, 0, 1, 1, 0, 7200, 0, -4352, 0, 0, 0, 0, 0, 0, 256, 0, 0xFFFFFFFF, 0xFFFFFFFF, SGC_POS, 0, 0, 0, 0 };
+
+
+/*Options ring items*/
+INVENTORY_ITEM ipassport_option = { 0, PASSPORT_CLOSED, 30, 0, 0, 14, 1, 1, 0, 4640, 0, -4320, 0, 0, 0, 0, 0, 0, 384, 0, 0x11, 0x11, PAS_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM idetail_option = { 0, DETAIL_OPTION, 1, 0, 0, 0, 1, 1, 0, 4224, 0, -7232, 0, 0, 0, 0, -16, 0, 444, 0, 0xFFFFFFFF, 0xFFFFFFFF, DTL_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM isound_option = { 0, SOUND_OPTION, 1, 0, 0, 0, 1, 1, 0, 4832, 0, -5408, 0, 0, -3072, 0, -18, 0, 350, 0, 0xFFFFFFFF, 0xFFFFFFFF, SND_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM icontrol_option = { 0, CONTROL_OPTION, 1, 0, 0, 0, 1, 1, 0, 5504, 0, -2560, 5632, 5632, 13312, 0, 46, 0, 508, 0, 0xFFFFFFFF, 0xFFFFFFFF, CNT_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM igamma_option = { 0, GAMMA_OPTION, 160, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, -176, 0, 256, 0, 0xFFFFFFF7, 0xFFFFFFF7, GAM_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM iphoto_option = { 0, PHOTO_OPTION, 1, 0, 0, 0, 1, 1, 0, 4640, 0, -4320, 0, 0, 0, 0, 16, 0, 448, 0, 0xFFFFFFFF, 0xFFFFFFFF, PIC_POS, 0, 0, 0, 0 };
+
+
+/*Keys ring items*/
+INVENTORY_ITEM ikey1_option = { 0, KEY_OPTION1, 1, 0, 0, 0, 1, 1, 0, 7200, 0, -4352, 0, 0, 0, 0, 0, 0, 256, 0, 0xFFFFFFFF, 0xFFFFFFFF, KY1_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM ikey2_option = { 0, KEY_OPTION2, 1, 0, 0, 0, 1, 1, 0, 7200, 0, -4352, 0, 0, 0, 0, 0, 0, 256, 0, 0xFFFFFFFF, 0xFFFFFFFF, KY2_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM ikey3_option = { 0, KEY_OPTION3, 1, 0, 0, 0, 1, 1, 0, 7200, 0, -4352, 0, 0, 0, 0, 0, 0, 256, 0, 0xFFFFFFFF, 0xFFFFFFFF, KY3_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM ikey4_option = { 0, KEY_OPTION4, 1, 0, 0, 0, 1, 1, 0, 7200, 0, -4352, 0, 0, 0, 0, 0, 0, 256, 0, 0xFFFFFFFF, 0xFFFFFFFF, KY4_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM ipuzzle4_option = { 0, PUZZLE_OPTION4, 1, 0, 0, 0, 1, 1, 0, 7200, 0, -4352, 0, 0, 0, 0, 0, 0, 256, 0, 0xFFFFFFFF, 0xFFFFFFFF, PZ4_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM ipuzzle3_option = { 0, PUZZLE_OPTION3, 1, 0, 0, 0, 1, 1, 0, 7200, 0, -4352, 0, 0, 0, 0, 0, 0, 256, 0, 0xFFFFFFFF, 0xFFFFFFFF, PZ3_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM ipuzzle2_option = { 0, PUZZLE_OPTION2, 1, 0, 0, 0, 1, 1, 0, 7200, 0, -4352, 0, 0, 0, 0, 0, 0, 256, 0, 0xFFFFFFFF, 0xFFFFFFFF, PZ2_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM ipuzzle1_option = { 0, PUZZLE_OPTION1, 1, 0, 0, 0, 1, 1, 0, 7200, 0, -4352, 0, 0, 0, 0, 0, 0, 256, 0, 0xFFFFFFFF, 0xFFFFFFFF, PZ1_POS, 0, 0, 0, 0 };
+
+INVENTORY_ITEM ipickup2_option = { 0, PICKUP_OPTION2, 1, 0, 0, 0, 1, 1, 0, 7200, 0, -4352, 0, 0, 0, 0, 0, 0, 256, 0, 0xFFFFFFFF, 0xFFFFFFFF, PK2_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM ipickup1_option = { 0, PICKUP_OPTION1, 1, 0, 0, 0, 1, 1, 0, 7200, 0, 7200, 0, 0, -32768, 0, 0, 0, 256, 0, 0xFFFFFFFF, 0xFFFFFFFF, PK1_POS, 0, 0, 0, 0 };
+
+INVENTORY_ITEM icon1_option = { 0, ICON_PICKUP1_OPTION, 1, 0, 0, 0, 1, 1, 0, 7200, 0, -4352, 0, 0, 0, 0, 0, 0, 256, 0, 0xFFFFFFFF, 0xFFFFFFFF, IC1_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM icon2_option = { 0, ICON_PICKUP2_OPTION, 1, 0, 0, 0, 1, 1, 0, 7200, 0, -4352, 0, 0, 0, 0, 0, 0, 256, 0, 0xFFFFFFFF, 0xFFFFFFFF, IC2_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM icon3_option = { 0, ICON_PICKUP3_OPTION, 1, 0, 0, 0, 1, 1, 0, 7200, 0, -4352, 0, 0, 0, 0, 0, 0, 256, 0, 0xFFFFFFFF, 0xFFFFFFFF, IC3_POS, 0, 0, 0, 0 };
+INVENTORY_ITEM icon4_option = { 0, ICON_PICKUP4_OPTION, 1, 0, 0, 0, 1, 1, 0, 7200, 0, -4352, 0, 0, 0, 0, 0, 0, 256, 0, 0xFFFFFFFF, 0xFFFFFFFF, IC4_POS, 0, 0, 0, 0 };
+
+
+/*Requesters*/
+REQUEST_INFO Load_Game_Requester = { 0, 1, 0, 5, 0, 0, 296, 18, 0, -32, 0, 50, Save_Game_Strings[0], Save_Game_Strings2[0] };
+REQUEST_INFO Level_Select_Requester = { 0, 1, 0, 5, 0, 0, 272, 18, 0, -32, 0, 50, Valid_Level_Strings[0], Valid_Level_Strings2[0] };
+static REQUEST_INFO Stats_Requester;
+
+INVENTORY_ITEM* inv_main_list[23] =
+{
+	&icompass_option,
+	&iflare_option,
+	&igun_option,
+	&ishotgun_option,
+	&imagnum_option,
+	&iuzi_option,
+	&im16_option,
+	&irocket_option,
+	&igrenade_option,
+	&iharpoon_option,
+	&ibigmedi_option,
+	&imedi_option,
+	&sgcrystal_option,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+INVENTORY_ITEM* inv_keys_list[23] =
+{
+	&ipuzzle1_option,
+	&ipuzzle2_option,
+	&ipuzzle3_option,
+	&ipuzzle4_option,
+	&ikey1_option,
+	&ikey2_option,
+	&ikey3_option,
+	&ikey4_option,
+	&ipickup1_option,
+	&ipickup2_option,
+	&icon1_option,
+	&icon2_option,
+	&icon3_option,
+	&icon4_option,
+	0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+INVENTORY_ITEM* inv_option_list[5] =
+{
+	&ipassport_option,
+	&icontrol_option,
+	&isound_option,
+	&idetail_option,
+	&iphoto_option
+};
+
+INVENTORY_ITEM* inv_levelselect_list[1] =
+{
+	&igamma_option
+};
 
 void InitColours()
 {
@@ -2445,57 +2575,4 @@ void RemoveInventoryText()
 		T_RemovePrint(Inv_itemText[i]);
 		Inv_itemText[i] = 0;
 	}
-}
-
-void inject_invfunc(bool replace)
-{
-	INJECT(0x00437050, InitColours, replace);
-
-	INJECT(0x00439150, Init_Requester, replace);
-	INJECT(0x004391E0, Remove_Requester, replace);
-	INJECT(0x00439290, ReqItemCentreAlign, replace);
-	INJECT(0x004392B0, ReqItemLeftalign, replace);
-	INJECT(0x00439310, ReqItemRightalign, replace);
-	INJECT(0x00439370, Display_Requester, replace);
-	INJECT(0x00439B80, SetRequesterHeading, replace);
-	INJECT(0x00439C30, RemoveAllReqItems, replace);
-	INJECT(0x00439C50, ChangeRequesterItem, replace);
-	INJECT(0x00439D10, AddRequesterItem, replace);
-	INJECT(0x00439DC0, SetPCRequesterSize, replace);
-	INJECT(0x00439E00, AddAssaultTime, replace);
-	INJECT(0x00439E60, AddQuadbikeTime, replace);
-	INJECT(0x00439EC0, ShowGymStatsText, replace);
-	INJECT(0x0043A220, ShowStatsText, replace);
-	INJECT(0x0043A5B0, ShowEndStatsText, inject_rando ? 1 : replace);
-
-	INJECT(0x00438F30, Inv_RingMotionInit, replace);
-	INJECT(0x00438FA0, Inv_RingMotionSetup, replace);
-	INJECT(0x00438FD0, Inv_RingMotionRadius, replace);
-	INJECT(0x00439000, Inv_RingMotionRotation, replace);
-	INJECT(0x00439030, Inv_RingMotionCameraPos, replace);
-	INJECT(0x00439060, Inv_RingMotionCameraPitch, replace);
-	INJECT(0x00439080, Inv_RingMotionItemSelect, replace);
-	INJECT(0x004390E0, Inv_RingMotionItemDeselect, replace);
-	INJECT(0x00438D90, Inv_RingDoMotions, replace);
-
-	INJECT(0x004387A0, Inv_RingInit, replace);
-	INJECT(0x004388B0, Inv_RingGetView, replace);
-	INJECT(0x00438910, Inv_RingLight, replace);
-	INJECT(0x00438AB0, Inv_GlobeLight, replace);
-	INJECT(0x00438D60, Inv_RingCalcAdders, replace);
-	INJECT(0x00438ED0, Inv_RingRotateLeft, replace);
-	INJECT(0x00438F00, Inv_RingRotateRight, replace);
-	INJECT(0x00437160, RingIsOpen, replace);
-	INJECT(0x004372F0, RingIsNotOpen, replace);
-	INJECT(0x00437870, RingActive, replace);
-	INJECT(0x00437380, RingNotActive, replace);
-
-	INJECT(0x00438530, Inv_GetItemOption, replace);
-	INJECT(0x00438380, Inv_RequestItem, replace);
-	INJECT(0x00438250, Inv_InsertItem, replace);
-	INJECT(0x00438420, Inv_RemoveItem, replace);
-	INJECT(0x00438400, Inv_RemoveAllItems, replace);
-	INJECT(0x004378B0, Inv_AddItem, replace);
-
-	INJECT(0x00438770, RemoveInventoryText, replace);
 }

@@ -10,6 +10,18 @@
 #include "ds.h"
 #include "specific.h"
 #include "picture.h"
+#include "smain.h"
+#include "../game/gameflow.h"
+#include "../game/box.h"
+#include "../game/sound.h"
+#include "../3dsystem/3d_gen.h"
+#include "winmain.h"
+#include "../game/demo.h"
+#include "../game/control.h"
+#include "../game/camera.h"
+#include "../game/effects.h"
+#include "../game/effect2.h"
+#include "../game/cinema.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
@@ -17,13 +29,28 @@
 //gameflow loading checks
 #define LOAD_GF(main, allocSize, buffer, readSize)\
 {\
-main = (char**)GLOBALALLOC(GMEM_FIXED, allocSize);\
+main = (char**)GlobalAlloc(GMEM_FIXED, allocSize);\
 if (!main) return 0;\
 if (!Read_Strings(readSize, main, &buffer, &read, file)) return 0;\
 }
 
+CHANGE_STRUCT* changes;
+RANGE_STRUCT* ranges;
+short* aranges;
+short* frames;
+short* commands;
+short* floor_data;
+short* mesh_base;
+long number_cameras;
+long wet;
+long nTInfos;
+
 PHDTEXTURESTRUCT phdtextinfo[MAX_TINFOS];
+PHDSPRITESTRUCT phdspriteinfo[512];
+uchar G_GouraudPalette[1024];
 static uchar TexturesUVFlag[MAX_TINFOS];
+static uchar game_palette[768];
+static char LastLoadedLevelPath[256];
 #ifndef TROYESTUFF
 static char texture_page_ptrs[MAX_TPAGES];
 #endif
@@ -100,7 +127,7 @@ long LoadTexturePages(HANDLE file)
 
 	_16bit = !App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bPalette;
 	size = _16bit ? 0x20000 : 0x10000;
-	p = (uchar*)GLOBALALLOC(GMEM_FIXED, nPages * size);
+	p = (uchar*)GlobalAlloc(GMEM_FIXED, nPages * size);
 
 	if (!p)
 		return 0;
@@ -123,7 +150,7 @@ long LoadTexturePages(HANDLE file)
 		HWR_LoadTexturePages(nPages, p, game_palette);
 	}
 
-	GLOBALFREE(p);
+	GlobalFree(p);
 	return 1;
 }
 
@@ -544,6 +571,9 @@ long LoadItems(HANDLE file)
 long LoadDepthQ(HANDLE file)
 {
 	ulong read;
+	static uchar water_palette[768];
+	static char depthq_table[33][256];
+	static char gouraud_table[256][32];
 
 	MyReadFile(file, depthq_table, 0x2000, &read, 0);
 
@@ -930,7 +960,7 @@ long Read_Strings(long num, char** strings, char** buffer, ulong* read, HANDLE f
 
 	MyReadFile(file, GF_Offsets, sizeof(short) * num, read, 0);
 	MyReadFile(file, &size, sizeof(short), read, 0);
-	*buffer = (char*)GLOBALALLOC(GMEM_FIXED, size);
+	*buffer = (char*)GlobalAlloc(GMEM_FIXED, size);
 
 	if (!*buffer)
 		return 0;
@@ -985,7 +1015,7 @@ long S_LoadGameFlow(const char* name)
 
 	MyReadFile(file, GF_Offsets, sizeof(short) * (gameflow.num_levels + 1), &read, 0);
 	MyReadFile(file, &num, sizeof(short), &read, 0);
-	GF_sequence_buffer = (short*)GLOBALALLOC(GMEM_FIXED, num);
+	GF_sequence_buffer = (short*)GlobalAlloc(GMEM_FIXED, num);
 
 	if (!GF_sequence_buffer)
 		return 0;
@@ -1022,33 +1052,4 @@ long S_LoadGameFlow(const char* name)
 
 	CloseHandle(file);
 	return 1;
-}
-
-void inject_file(bool replace)
-{
-	INJECT(0x00480D50, MyReadFile, replace);
-	INJECT(0x00481CA0, LoadPalette, replace);
-	INJECT(0x00480DA0, LoadTexturePages, replace);
-	INJECT(0x00480F70, LoadRooms, replace);
-	INJECT(0x004813D0, LoadObjects, replace);
-	INJECT(0x00481890, LoadSprites, replace);
-	INJECT(0x00481D50, LoadCameras, replace);
-	INJECT(0x00481DB0, LoadSoundEffects, replace);
-	INJECT(0x00481E10, LoadBoxes, replace);
-	INJECT(0x00482020, LoadAnimatedTextures, replace);
-	INJECT(0x004819D0, LoadItems, replace);
-	INJECT(0x00481BC0, LoadDepthQ, replace);
-	INJECT(0x00482140, LoadCinematic, replace);
-	INJECT(0x004821C0, LoadDemo, replace);
-	INJECT(0x004822F0, LoadSamples, replace);
-	INJECT(0x00482250, LoadDemFile, replace);
-	INJECT(0x004826C0, LoadLevel, replace);
-	INJECT(0x00482990, S_UnloadLevelFile, replace);
-	INJECT(0x00482910, S_LoadLevelFile, replace);
-	INJECT(0x004825D0, FindCDDrive, replace);
-	INJECT(0x004825A0, GetFullPath, replace);
-	INJECT(0x00482560, build_ext, replace);
-	INJECT(0x00481360, AdjustTextureUVs, replace);
-	INJECT(0x004829C0, Read_Strings, replace);
-	INJECT(0x00482A90, S_LoadGameFlow, replace);
 }

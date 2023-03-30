@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_collide(bool replace);
+#include "../global/types.h"
 
 void ShiftItem(ITEM_INFO* item, COLL_INFO* coll);
 void ObjectCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll);

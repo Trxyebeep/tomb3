@@ -8,6 +8,7 @@
 #include "../specific/game.h"
 #include "../game/effect2.h"
 #include "../game/control.h"
+#include "../game/objects.h"
 
 //Calculate Lara's matrices twice (once for drawing another for mesh pos getting) every draw loop
 //instead of multiple times for every little thing.
@@ -40,8 +41,8 @@ static bool LeftFlash = 0;
 
 #define StoreMatrix(mx)\
 {\
-memcpy(mx, phd_mxptr, 48);\
-mx += 12;\
+memcpy(mx, phd_mxptr, indices_count * sizeof(long));\
+mx += indices_count;\
 }
 
 static void mInterpolateArmMatrix(long* mx)

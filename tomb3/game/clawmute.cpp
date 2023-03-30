@@ -12,6 +12,7 @@
 #include "box.h"
 #include "sound.h"
 #include "people.h"
+#include "lara.h"
 
 static BITE_INFO claw_bite_left = { 19, -13, 3, 7 };
 static BITE_INFO claw_bite_right = { 19, -13, 3, 4 };
@@ -557,13 +558,4 @@ void ClawmuteControl(short item_number)
 	CreatureJoint(item, 1, torso_y);
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
-}
-
-void inject_clawmute(bool replace)
-{
-	INJECT(0x0041C1F0, TriggerPlasmaBallFlame, replace);
-	INJECT(0x0041BDA0, TriggerPlasmaBall, replace);
-	INJECT(0x0041BBE0, TriggerPlasma, replace);
-	INJECT(0x0041BED0, ControlClawmutePlasmaBall, replace);
-	INJECT(0x0041B4F0, ClawmuteControl, replace);
 }

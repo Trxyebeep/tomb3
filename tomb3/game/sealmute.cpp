@@ -9,6 +9,10 @@
 #include "../3dsystem/phd_math.h"
 #include "box.h"
 #include "people.h"
+#include "lot.h"
+#include "control.h"
+#include "lara.h"
+#include "effects.h"
 
 static BITE_INFO seal_gas = { 0, 48, 140, 10 };
 
@@ -253,7 +257,7 @@ void SealmuteControl(short item_number)
 			dz = lara_item->pos.z_pos - item->pos.z_pos;
 			larainfo.distance = SQUARE(dx) + SQUARE(dz);
 
-			for (lp = 0; lp < 5; lp++)
+			for (lp = 0; lp < MAX_LOT; lp++)
 			{
 				if (baddie_slots[lp].item_num == NO_ITEM || baddie_slots[lp].item_num == item_number)
 					continue;
@@ -398,11 +402,4 @@ void SealmuteControl(short item_number)
 	CreatureJoint(item, 1, torso_y);
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
-}
-
-void inject_sealmute(bool replace)
-{
-	INJECT(0x00463700, TriggerSealmuteGas, replace);
-	INJECT(0x004634C0, TriggerSealmuteGasThrower, replace);
-	INJECT(0x00462EA0, SealmuteControl, replace);
 }

@@ -15,6 +15,7 @@
 #include "../3dsystem/3d_gen.h"
 #include "draw.h"
 #include "../specific/draweffects.h"
+#include "../specific/input.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
@@ -1367,28 +1368,4 @@ void KayakDraw(ITEM_INFO* item)
 	DrawAnimatingItem(item);
 	item->pos.y_pos -= 32;
 	S_DrawWakeFX(item);
-}
-
-void inject_kayak(bool replace)
-{
-	INJECT(0x0043B390, LaraRapidsDrown, replace);
-	INJECT(0x0043B410, KayakInitialise, replace);
-	INJECT(0x0043B620, GetInKayak, replace);
-	INJECT(0x0043B4C0, KayakCollision, replace);
-	INJECT(0x0043D4A0, DoRipple, replace);
-	INJECT(0x0043C840, TestHeight, replace);
-	INJECT(0x0043D550, CanGetOut, replace);
-	INJECT(0x0043CC00, KayakUserInput, replace);
-	INJECT(0x0043C6B0, DoCurrent, replace);
-	INJECT(0x0043C650, DoDynamics, replace);
-	INJECT(0x0043C960, DoShift, replace);
-	INJECT(0x0043C5C0, GetCollisionAnim, replace);
-	INJECT(0x0043BF40, KayakToBackground, replace);
-	INJECT(0x0043BD00, KayakSplash, replace);
-	INJECT(0x0043BAC0, DoWake, replace);
-	INJECT(0x0043BDF0, TriggerRapidsMist, replace);
-	INJECT(0x0043BCA0, UpdateWakeFX, replace);
-	INJECT(0x0043D5A0, KayakToBaddieCollision, replace);
-	INJECT(0x0043B730, KayakControl, replace);
-	INJECT(0x0043B490, KayakDraw, replace);
 }

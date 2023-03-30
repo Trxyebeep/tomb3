@@ -15,6 +15,7 @@
 #include "audio.h"
 #include "display.h"
 #include "picture.h"
+#include "output.h"
 #ifdef TROYESTUFF
 #include "fmv.h"
 #include "../game/invfunc.h"
@@ -24,6 +25,15 @@
 #ifdef DO_LOG
 FILE* logF = 0;
 #endif
+
+WINAPP App;
+HWCONFIG HWConfig;
+char* G_lpCmdLine;
+long game_closedown;
+bool GtWindowClosed;
+
+long distanceFogValue;
+long farz;
 
 bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 {
@@ -294,7 +304,7 @@ void WinFreeDX(bool free_dd)
 	}
 
 	if (App.unk)
-		FREE(App.unk);
+		free(App.unk);
 
 	if (free_dd)
 	{
@@ -528,17 +538,4 @@ void Log(const char* s, ...)		//NOT present in original code
 	va_end(list);
 	fwrite(buf, strlen(buf), 1, logF);
 #endif
-}
-
-void inject_winmain(bool replace)
-{
-	INJECT(0x004B2F80, WinDXInit, replace);
-	INJECT(0x004B2C50, WinAppExit, replace);
-	INJECT(0x004B2E10, WinAppProc, replace);
-	INJECT(0x004B2D40, WinRegisterWindow, replace);
-	INJECT(0x004B2DC0, WinCreateWindow, replace);
-	INJECT(0x004B34D0, WinFrameRate, replace);
-	INJECT(0x004B2C60, WinFreeDX, replace);
-	INJECT(0x004B2940, WinMain, replace);
-	INJECT(0x004B37C0, S_ExitSystem, replace);
 }

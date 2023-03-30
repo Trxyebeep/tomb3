@@ -18,6 +18,8 @@
 #include "../game/camera.h"
 #include "../game/control.h"
 #include "../game/draw.h"
+#include "winmain.h"
+#include "smain.h"
 #ifdef TROYESTUFF
 #include "option.h"
 #include "../tomb3/tomb3.h"
@@ -25,6 +27,8 @@
 
 static long rand_1 = 0xD371F947;
 static long rand_2 = 0xD371F947;
+static short saved_levels[24] = { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static long save_counter;
 
 long GetRandomControl()
 {
@@ -791,27 +795,4 @@ long StartGame(long level, long type)
 		return STARTGAME | (Inventory_ExtraData[1] + 1);
 	else
 		return STARTGAME | LV_FIRSTLEVEL;
-}
-
-void inject_sgame(bool replace)
-{
-	INJECT(0x004841F0, GetRandomControl, replace);
-	INJECT(0x00484210, SeedRandomControl, replace);
-	INJECT(0x00484220, GetRandomDraw, replace);
-	INJECT(0x00484240, SeedRandomDraw, replace);
-	INJECT(0x00484010, GameStats, replace);
-	INJECT(0x004838E0, SortOutAdventureSave, replace);
-	INJECT(0x00483FA0, Level2World, replace);
-	INJECT(0x00483FE0, World2Level, replace);
-	INJECT(0x00483B60, LevelStats, replace);
-	INJECT(0x00484250, GetValidLevelsList, replace);
-	INJECT(0x004842A0, GetSavedGamesList, replace);
-	INJECT(0x004842F0, DisplayCredits, replace);
-	INJECT(0x00483B50, LevelCompleteSequence, replace);
-	INJECT(0x00484410, S_FrontEndCheck, replace);
-	INJECT(0x004846A0, S_LoadGame, replace);
-	INJECT(0x00484580, S_SaveGame, replace);
-	INJECT(0x00483860, mGetAngle, replace);
-	INJECT(0x00483AA0, GameLoop, replace);
-	INJECT(0x00483960, StartGame, replace);
 }

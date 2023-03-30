@@ -590,12 +590,3 @@ void DrawShiva(ITEM_INFO* item)
 
 	phd_PopMatrix();
 }
-
-void inject_shiva(bool replace)
-{
-	INJECT(0x00466E00, TriggerShivaSmoke, replace);
-	INJECT(0x00467780, ShivaDamage, replace);
-	INJECT(0x00467010, InitialiseShiva, replace);
-	INJECT(0x00467070, ShivaControl, replace);
-	INJECT(0x00466990, DrawShiva, replace);
-}

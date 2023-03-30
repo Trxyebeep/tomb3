@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_drawbars(bool replace);
+#include "../global/types.h"
 
 void S_DrawHealthBar(long percent);
 void S_DrawDashBar(long percent);

@@ -7,6 +7,7 @@
 #include "../specific/game.h"
 #include "../3dsystem/phd_math.h"
 #include "lara.h"
+#include "effect2.h"
 
 static PHD_3DPOS hair[7];
 static PHD_VECTOR hvel[7];
@@ -778,10 +779,3 @@ void HairControl(long in_cutscene)
 	}
 }
 #endif
-
-void inject_hair(bool replace)
-{
-	INJECT(0x00433790, InitialiseHair, replace);
-	INJECT(0x004342E0, DrawHair, replace);
-	INJECT(0x00433810, HairControl, replace);
-}

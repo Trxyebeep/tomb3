@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_lara1gun(bool replace);
+#include "../global/types.h"
 
 void ControlHarpoonBolt(short item_number);
 void ControlRocket(short item_number);

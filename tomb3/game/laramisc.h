@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_laramisc(bool replace);
+#include "../global/types.h"
 
 void LaraCheatGetStuff();
 void LaraCheatyBits();

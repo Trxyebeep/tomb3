@@ -10,6 +10,7 @@
 #include "../3dsystem/phd_math.h"
 #include "control.h"
 #include "objects.h"
+#include "lara.h"
 
 static BITE_INFO londsec_gun = { 0, 160, 40, 13 };
 
@@ -431,9 +432,4 @@ void LondSecControl(short item_number)
 	CreatureJoint(item, 1, torso_x);
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
-}
-
-void inject_londsec(bool replace)
-{
-	INJECT(0x004523C0, LondSecControl, replace);
 }

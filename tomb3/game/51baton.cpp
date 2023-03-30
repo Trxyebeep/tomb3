@@ -7,6 +7,9 @@
 #include "../3dsystem/phd_math.h"
 #include "sound.h"
 #include "people.h"
+#include "lot.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO baton_hit = { 247, 10, 11, 13 };
 static BITE_INFO baton_kick = { 0, 0, 100, 6 };
@@ -504,10 +507,4 @@ void BatonControl(short item_number)
 			break;
 		}
 	}
-}
-
-void inject_51baton(bool replace)
-{
-	INJECT(0x0040D5F0, InitialiseBaton, replace);
-	INJECT(0x0040D650, BatonControl, replace);
 }

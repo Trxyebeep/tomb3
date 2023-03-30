@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_armysmg(bool replace);
+#include "../global/types.h"
 
 void InitialiseArmySMG(short item_number);
 void ArmySMGControl(short item_number);

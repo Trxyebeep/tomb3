@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_winmain(bool replace);
+#include "../global/types.h"
 
 bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew);
 void WinAppExit();
@@ -22,3 +20,11 @@ void Log(const char* s, ...);		//NOT present in original code
 #ifdef DO_LOG
 extern FILE* logF;
 #endif
+
+extern WINAPP App;
+extern HWCONFIG HWConfig;
+extern char* G_lpCmdLine;
+extern long game_closedown;
+extern bool GtWindowClosed;
+extern long distanceFogValue;
+extern long farz;

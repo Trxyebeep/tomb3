@@ -8,6 +8,9 @@
 #include "draw.h"
 #include "../3dsystem/3d_gen.h"
 #include "sound.h"
+#include "../specific/file.h"
+#include "lara.h"
+#include "inventry.h"
 #ifdef TROYESTUFF
 #include "../newstuff/map.h"
 #endif
@@ -1171,28 +1174,4 @@ void ItemPushLara(ITEM_INFO* item, ITEM_INFO* l, COLL_INFO* coll, long spaz, lon
 void AIPickupCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 {
 
-}
-
-void inject_collide(bool replace)
-{
-	INJECT(0x0041E690, ShiftItem, replace);
-	INJECT(0x0041EBD0, ObjectCollision, replace);
-	INJECT(0x0041EC30, ObjectCollisionSub, replace);
-	INJECT(0x0041E630, GetNewRoom, replace);
-	INJECT(0x0041E560, GetNearByRooms, replace);
-	INJECT(0x0041E730, GetTiltType, replace);
-	INJECT(0x0041E170, CollideStaticObjects, replace);
-	INJECT(0x0041E140, FindGridShift, replace);
-	INJECT(0x0041D500, GetCollisionInfo, replace);
-	INJECT(0x0041E6D0, UpdateLaraRoom, replace);
-	INJECT(0x0041EC90, DoorCollision, replace);
-	INJECT(0x0041ED10, TrapCollision, replace);
-	INJECT(0x0041F0E0, TestBoundsCollide, replace);
-	INJECT(0x0041F1B0, TestLaraPosition, replace);
-	INJECT(0x0041F2F0, AlignLaraPosition, replace);
-	INJECT(0x0041F5C0, Move3DPosTo3DPos, replace);
-	INJECT(0x0041F430, MoveLaraPosition, replace);
-	INJECT(0x0041EA60, CreatureCollision, replace);
-	INJECT(0x0041E8D0, LaraBaddieCollision, replace);
-	INJECT(0x0041EDA0, ItemPushLara, replace);
 }

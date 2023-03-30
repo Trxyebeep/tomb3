@@ -10,6 +10,9 @@
 #include "box.h"
 #include "people.h"
 #include "effects.h"
+#include "triboss.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO lizman_bite_hit = { 0, -120, 120, 10 };
 static BITE_INFO lizman_swipe_hit = { 0, 0, 0, 5 };
@@ -460,11 +463,4 @@ void LizManControl(short item_number)
 			break;
 		}
 	}
-}
-
-void inject_lizman(bool replace)
-{
-	INJECT(0x00450620, TriggerLizmanGas, replace);
-	INJECT(0x004503E0, TriggerLizmanGasThrower, replace);
-	INJECT(0x0044FBC0, LizManControl, replace);
 }

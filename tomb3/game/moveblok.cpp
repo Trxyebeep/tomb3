@@ -9,6 +9,8 @@
 #include "box.h"
 #include "lara.h"
 #include "laramisc.h"
+#include "../3dsystem/3d_gen.h"
+#include "../specific/input.h"
 
 static short MovingBlockBounds[12] = { -300, 300, 0, 0, -692, -512, -1820, 1820, -5460, 5460, -1820, 1820 };
 
@@ -536,19 +538,4 @@ void DrawMovableBlock(ITEM_INFO* item)
 		DrawUnclippedItem(item);
 	else
 		DrawAnimatingItem(item);
-}
-
-void inject_moveblok(bool replace)
-{
-	INJECT(0x00456BA0, ClearMovableBlockSplitters, replace);
-	INJECT(0x00457690, AlterFloorHeight, replace);
-	INJECT(0x004573A0, TestBlockMovable, replace);
-	INJECT(0x004571E0, TestBlockPush, replace);
-	INJECT(0x004573F0, TestBlockPull, replace);
-	INJECT(0x00457790, DrawUnclippedItem, replace);
-	INJECT(0x00457800, SetupCleanerFromSavegame, replace);
-	INJECT(0x00456B50, InitialiseMovingBlock, replace);
-	INJECT(0x00456DD0, MovableBlock, replace);
-	INJECT(0x00456F40, MovableBlockCollision, replace);
-	INJECT(0x00457760, DrawMovableBlock, replace);
 }

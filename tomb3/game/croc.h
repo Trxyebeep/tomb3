@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_croc(bool replace);
+#include "../global/types.h"
 
 void CrocControl(short item_number);
 

@@ -4,6 +4,9 @@
 #include "sound.h"
 #include "../specific/game.h"
 #include "objects.h"
+#include "lot.h"
+#include "control.h"
+#include "lara.h"
 
 void OldWinstonControl(short item_number)
 {
@@ -255,10 +258,4 @@ void WinstonControl(short item_number)
 		SoundEffect(SFX_LITTLE_SUB_START, &item->pos, SFX_DEFAULT);
 
 	CreatureAnimation(item_number, angle, 0);
-}
-
-void inject_winston(bool replace)
-{
-	INJECT(0x00474110, OldWinstonControl, replace);
-	INJECT(0x00473D10, WinstonControl, replace);
 }

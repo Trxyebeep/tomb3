@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_trex(bool replace);
+#include "../global/types.h"
 
 void DinoControl(short item_number);
 

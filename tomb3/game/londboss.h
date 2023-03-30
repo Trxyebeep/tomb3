@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_londboss(bool replace);
+#include "../global/types.h"
 
 long KnockBackCollision(EXPLOSION_RING* ring);
 void ControlLondBossPlasmaBall(short fx_number);
@@ -26,3 +24,6 @@ enum LONDONBOSSS_STATES
 	LONDONBOSS_VAULT4,
 	LONDONBOSS_GODOWN
 };
+
+extern SHIELD_POINTS LondonBossShield[40];
+extern EXPLOSION_RING KBRings[3];

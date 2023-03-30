@@ -9,6 +9,9 @@
 #include "../3dsystem/phd_math.h"
 #include "sound.h"
 #include "people.h"
+#include "lot.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO army_gun = { 0, 300, 64, 7 };
 
@@ -81,7 +84,7 @@ void ArmySMGControl(short item_number)
 			army->enemy = 0;
 			best_dist = 0x7FFFFFFF;
 
-			for (lp = 0; lp < 5; lp++)
+			for (lp = 0; lp < MAX_LOT; lp++)
 			{
 				if (baddie_slots[lp].item_num == NO_ITEM || baddie_slots[lp].item_num == item_number)
 					continue;
@@ -318,10 +321,4 @@ void ArmySMGControl(short item_number)
 	CreatureJoint(item, 1, torso_x);
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
-}
-
-void inject_armysmg(bool replace)
-{
-	INJECT(0x0040FEF0, InitialiseArmySMG, replace);
-	INJECT(0x0040FF50, ArmySMGControl, replace);
 }

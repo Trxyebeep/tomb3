@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_sound(bool replace);
+#include "../global/types.h"
 
 void SOUND_Init();
 void SOUND_Stop();
@@ -384,3 +382,9 @@ enum sound_effect_names
 
 	NumSamples
 };
+
+extern short sample_lut[370];
+extern SAMPLE_INFO* sample_infos;
+extern long num_sample_infos;
+extern long sound_active;
+

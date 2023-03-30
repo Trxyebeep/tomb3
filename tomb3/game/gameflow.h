@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_gameflow(bool replace);
+#include "../global/types.h"
 
 long GF_LoadScriptFile(const char* name);
 long GF_DoFrontEndSequence();
@@ -239,3 +237,68 @@ enum gf_event_types
 	GFE_KILL2COMPLETE,
 	GFE_REMOVE_AMMO
 };
+
+extern GAMEFLOW_INFO gameflow;
+
+extern short* GF_level_sequence_list[24];
+extern short GF_Offsets[200];
+extern short GF_valid_demos[24];
+extern short GF_CDtracks[16];
+extern char GF_Description[256];
+extern char GF_Add2InvItems[30];
+extern char GF_SecretInvItems[30];
+extern char** GF_picfilenames;
+extern char** GF_fmvfilenames;
+extern char** GF_titlefilenames;
+extern char** GF_levelfilenames;
+extern char** GF_cutscenefilenames;
+extern char** GF_Level_Names;
+extern char** GF_GameStrings;
+extern char** GF_PCStrings;
+extern char** GF_Pickup1Strings;
+extern char** GF_Pickup2Strings;
+extern char** GF_Puzzle1Strings;
+extern char** GF_Puzzle2Strings;
+extern char** GF_Puzzle3Strings;
+extern char** GF_Puzzle4Strings;
+extern char** GF_Key1Strings;
+extern char** GF_Key2Strings;
+extern char** GF_Key3Strings;
+extern char** GF_Key4Strings;
+extern char* GF_picfilenames_buffer;
+extern char* GF_fmvfilenames_buffer;
+extern char* GF_titlefilenames_buffer;
+extern char* GF_levelfilenames_buffer;
+extern char* GF_cutscenefilenames_buffer;
+extern char* GF_levelnames_buffer;
+extern char* GF_GameStrings_buffer;
+extern char* GF_PCStrings_buffer;
+extern char* GF_Pickup1Strings_buffer;
+extern char* GF_Pickup2Strings_buffer;
+extern char* GF_Puzzle1Strings_buffer;
+extern char* GF_Puzzle2Strings_buffer;
+extern char* GF_Puzzle3Strings_buffer;
+extern char* GF_Puzzle4Strings_buffer;
+extern char* GF_Key1Strings_buffer;
+extern char* GF_Key2Strings_buffer;
+extern char* GF_Key3Strings_buffer;
+extern char* GF_Key4Strings_buffer;
+extern short* GF_sequence_buffer;
+extern short* GF_frontendSequence;
+extern long GF_ScriptVersion;
+extern long GF_BonusLevelEnabled;
+extern long GF_PlayingFMV;
+extern long GF_LaraStartAnim;
+extern ushort GF_Cutscene_Orientation;
+extern short GF_LoadingPic;
+extern short GF_NoFloor;
+extern short GF_DeadlyWater;
+extern short GF_SunsetEnabled;
+extern short GF_RemoveWeapons;
+extern short GF_NumSecrets;
+extern short GF_RemoveAmmo;
+extern char GF_StartGame;
+extern char GF_Kill2Complete;
+extern char GF_Playing_Story;
+
+extern short NextAdventure;

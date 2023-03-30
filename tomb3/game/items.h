@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_items(bool replace);
+#include "../global/types.h"
 
 void InitialiseItemArray(short num_items);
 void KillItem(short item_num);
@@ -17,3 +15,7 @@ short CreateEffect(short room_num);
 void KillEffect(short fx_num);
 void EffectNewRoom(short fx_num, short room_num);
 void ClearBodyBag();
+
+extern short next_item_active;
+extern short next_fx_active;
+extern short body_bag;

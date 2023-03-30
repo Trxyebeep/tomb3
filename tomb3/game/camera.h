@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_camera(bool replace);
+#include "../global/types.h"
 
 void InitialiseCamera();
 long mgLOS(GAME_VECTOR* start, GAME_VECTOR* target, long push);
@@ -12,3 +10,8 @@ void CombatCamera(ITEM_INFO* item);
 void LookCamera(ITEM_INFO* item);
 void FixedCamera();
 void CalculateCamera();
+
+extern CAMERA_INFO camera;
+
+extern GAME_VECTOR ForcedFixedCamera;
+extern char UseForcedFixedCamera;

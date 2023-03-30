@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_quadbike(bool replace);
+#include "../global/types.h"
 
 void QuadBikeDraw(ITEM_INFO* item);
 void InitialiseQuadBike(short item_number);

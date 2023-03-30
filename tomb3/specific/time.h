@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_time(bool replace);
+#include "../global/types.h"
 
 void TIME_Reset();
 bool TIME_Init();

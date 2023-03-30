@@ -1,4 +1,5 @@
 #pragma once
+#include "math_tbls.h"
 
 #pragma pack(push, 1)
 
@@ -6,29 +7,6 @@
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 typedef unsigned long ulong;
-
-/*Injection macro, originally by Arsunt, modified by ChocolateFan to allow deinjection*/
-struct JMP
-{
-	uchar opCode;	// must be 0xE9;
-	ulong offset;	// jump offset
-};
-
-#define INJECT(from,to,replace) \
-do \
-{ \
-	if (replace) \
-		INJECT_JMP(from,to); \
-	else \
-		INJECT_JMP(to,from); \
-} while (false)
-
-#define INJECT_JMP(from,to) \
-do \
-{ \
-	((JMP*)(from))->opCode = 0xE9; \
-	((JMP*)(from))->offset = (DWORD)(to) - ((DWORD)(from) + sizeof(JMP)); \
-} while (false)
 
 #define SQUARE(x) ((x)*(x))
 #define	TRIGMULT2(a, b)	(((a) * (b)) >> W2V_SHIFT)
@@ -45,15 +23,6 @@ do \
 #define SPR_TINT			0x10000000
 #define SPR_BLEND_ADD		0x20000000
 #define SPR_BLEND_SUB		0x40000000
-
-	/**********************************/
-#define MALLOC	( (void*(__cdecl*)(size_t)) 0x004B6730 )
-#define REALLOC	( (void*(__cdecl*)(void*, size_t)) 0x004B6EA0 )
-#define FREE	( (void(__cdecl*)(void*)) 0x004B66E0 )
-
-#define GLOBALALLOC    ( *(HGLOBAL(__stdcall**)(UINT, SIZE_T)) 0x004C311C )
-#define GLOBALFREE    ( *(HGLOBAL(__stdcall**)(HGLOBAL)) 0x004C3120 )
-	/**********************************/
 
 /********************DX defs********************/
 #if (DIRECT3D_VERSION >= 0x900)
@@ -134,6 +103,12 @@ do \
 #define MAX_WEATHER_ALIVE	16
 #else
 #define MAX_WEATHER_ALIVE	8
+#endif
+
+#ifdef TROYESTUFF
+#define MALLOC_SIZE	15000000	//15 MB
+#else
+#define MALLOC_SIZE	0x380000	//about 3.6 MB
 #endif
 
 /*enums*/
@@ -1344,8 +1319,13 @@ struct D3DTEXTUREINFO
 
 struct DXDIRECTSOUNDINFO
 {
+#ifdef TROYESTUFF
+	char Name[256];
+	char About[256];
+#else
 	char Name[30];
 	char About[80];
+#endif
 	LPGUID lpGuid;
 	GUID Guid;
 };

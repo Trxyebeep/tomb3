@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_hwrender(bool replace);
+#include "../global/types.h"
 
 void HWR_EnableZBuffer(bool write, bool compare);
 void HWR_EnableColorKey(bool enable);
@@ -37,3 +35,7 @@ extern HRESULT (*SetRenderState)(D3DRENDERSTATETYPE, ulong);
 extern HRESULT (*BeginScene)();
 extern HRESULT (*EndScene)();
 extern void (*DrawRoutine)(long, D3DTLVERTEX*, long, long);
+
+extern float GammaOption;
+extern uchar ColorTable[256];
+extern bool bAlphaTesting;

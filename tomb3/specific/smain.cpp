@@ -23,8 +23,13 @@
 #ifdef TROYESTUFF
 #include "init.h"
 #include "../newstuff/discord.h"
+#include "../game/control.h"
 #include "../tomb3/tomb3.h"
 #endif
+
+long HiResFlag;
+long title_loaded;
+char exit_message[128];
 
 #ifdef RANDO_STUFF
 rando_info rando;
@@ -589,7 +594,7 @@ long GameMain()
 	InitialiseStartInfo();
 	S_FrontEndCheck(&savegame, sizeof(SAVEGAME_INFO));
 	HiResFlag = -1;
-	malloc_buffer = (char*)GLOBALALLOC(0, 0x380000);
+	malloc_buffer = (char*)GlobalAlloc(GMEM_FIXED, MALLOC_SIZE);
 
 	if (!malloc_buffer)
 	{
@@ -713,13 +718,4 @@ long GameMain()
 	S_SaveSettings();
 	ShutdownGame();
 	return 1;
-}
-
-void inject_smain(bool replace)
-{
-	INJECT(0x0048CBF0, S_LoadSettings, inject_rando ? 1 : replace);
-	INJECT(0x0048C8C0, S_SaveSettings, replace);
-	INJECT(0x0048C550, CheckCheatMode, replace);
-	INJECT(0x0048C410, TitleSequence, replace);
-	INJECT(0x0048C150, GameMain, replace);
 }

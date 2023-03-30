@@ -9,15 +9,88 @@
 #include "hwinsert.h"
 #include "../specific/game.h"
 #include "../specific/smain.h"
+#include "../specific/init.h"
+#include "../game/control.h"
+#include "../game/draw.h"
 #ifdef TROYESTUFF
 #include "../specific/hwrender.h"
 #include "../tomb3/tomb3.h"
 #endif
 
+void (*InsertLine)(long x1, long y1, long x2, long y2, long z, long c0, long c1);
+short* (*InsertObjectGT4)(short* pFaceInfo, long nFaces, sort_type nSortType);
+short* (*InsertObjectGT3)(short* pFaceInfo, long nFaces, sort_type nSortType);
+short* (*InsertObjectG4)(short* pFaceInfo, long nFaces, sort_type nSortType);
+short* (*InsertObjectG3)(short* pFaceInfo, long nFaces, sort_type nSortType);
+short* (*RoomInsertObjectGT4)(short* pFaceInfo, long nFaces, sort_type nSortType);
+short* (*RoomInsertObjectGT3)(short* pFaceInfo, long nFaces, sort_type nSortType);
+void (*InsertFlatRect)(long x1, long y1, long x2, long y2, long zdepth, long col);
+void (*InsertTrans8)(PHD_VBUF* buf, short shade);
+void (*InsertSprite)(long zdepth, long x1, long y1, long x2, long y2, long nSprite, long shade, long shade1, long nDrawType, long offset);
+void (*InsertTransQuad)(long x, long y, long w, long h, long z);
+
+float outsideBackgroundTop;
+long BlackGouraudIndex = 0;
+bool bFixSkyColour = 0;
+
 long sort3d_bufferbf[MAX_SORTLISTS];
-long sort3d_bufferfb[MAX_SORTLISTS];
 short info3d_bufferbf[MAX_SORTLISTS];
+long* sort3dptrbf;
+short* info3dptrbf;
+long surfacenumbf;
+
+long sort3d_bufferfb[MAX_SORTLISTS];
 short info3d_bufferfb[MAX_SORTLISTS];
+long* sort3dptrfb;
+short* info3dptrfb;
+long surfacenumfb;
+
+long* phd_mxptr;
+long w2v_matrix[indices_count];
+long matrix_stack[40 * indices_count];
+
+float one = 33554432.0F;
+static float LfAspectCorrection = 0;
+
+PHD_VECTOR CamPos;
+PHD_VECTOR CamRot;
+
+float f_centerx;
+float f_centery;
+float f_znear;
+float f_zfar;
+float f_persp;
+float f_oneopersp;
+float f_perspoznear;
+float f_oneoznear;
+float f_a;
+float f_b;
+float f_boo;
+
+long phd_centerx;
+long phd_centery;
+long phd_znear;
+long phd_zfar;
+long phd_persp;
+
+RECT phd_WindowRect;
+float phd_leftfloat;
+float phd_topfloat;
+float phd_rightfloat;
+float phd_bottomfloat;
+long phd_winwidth;
+long phd_winheight;
+long phd_right;
+long phd_left;
+long phd_bottom;
+long phd_top;
+long phd_scrwidth;
+long phd_scrheight;
+long phd_viewdist;
+short phd_winxmin;
+short phd_winxmax;
+short phd_winymin;
+short phd_winymax;
 
 void phd_PutPolygons(short* objptr, long clip)
 {
@@ -320,7 +393,7 @@ void AlterFOV(short fov)
 
 void phd_PushMatrix()
 {
-	memcpy(phd_mxptr + 12, phd_mxptr, 48);
+	memcpy(phd_mxptr + indices_count, phd_mxptr, indices_count * sizeof(long));
 	phd_mxptr += indices_count;
 }
 
@@ -336,6 +409,11 @@ void phd_PushUnitMatrix()
 	phd_mxptr[M20] = 0;
 	phd_mxptr[M21] = 0;
 	phd_mxptr[M22] = 1 << W2V_SHIFT;
+}
+
+void phd_PopMatrix()
+{
+	phd_mxptr -= indices_count;
 }
 
 void SetZNear(long znear)
@@ -418,7 +496,7 @@ void S_InsertBackground(short* objptr)
 	if (objptr)
 	{
 #ifdef TROYESTUFF
-		HWR_InitGamma(10);
+		HWR_InitGamma(10.0F);
 #endif
 		objptr = calc_back_light(objptr);
 		objptr = InsertObjectGT4(objptr + 1, objptr[0], BACK_SORT);
@@ -709,33 +787,4 @@ void phd_LookAt(long sx, long sy, long sz, long tx, long ty, long tz, short roll
 	CamPos.y = sy;
 	CamPos.z = sz;
 	phd_GenerateW2V(&viewPos);
-}
-
-void inject_3dgen(bool replace)
-{
-	INJECT(0x00401AF0, phd_PutPolygons, replace);
-	INJECT(0x004013E0, phd_RotX, replace);
-	INJECT(0x00401490, phd_RotY, replace);
-	INJECT(0x00401540, phd_RotZ, replace);
-	INJECT(0x004015F0, phd_RotYXZ, replace);
-	INJECT(0x004017D0, phd_RotYXZpack, replace);
-	INJECT(0x004019C0, phd_TranslateRel, replace);
-	INJECT(0x00401A70, phd_TranslateAbs, replace);
-	INJECT(0x00402030, AlterFOV, replace);
-	INJECT(0x004B4280, phd_PushMatrix, replace);
-	INJECT(0x004B429E, phd_PushUnitMatrix, replace);
-//	INJECT(----------, phd_PopMatrix, replace);
-	INJECT(0x00402130, SetZNear, replace);
-	INJECT(0x00402180, SetZFar, replace);
-	INJECT(0x00401BF0, S_InsertRoom, replace);
-	INJECT(0x00401CE0, calc_back_light, replace);
-	INJECT(0x00401D20, S_InsertBackground, inject_rando ? 1 : replace);
-	INJECT(0x004021A0, phd_InitWindow, replace);
-	INJECT(0x00401EC0, phd_InitPolyList, replace);
-	INJECT(0x00401F60, do_quickysorty, replace);
-	INJECT(0x00401F20, phd_SortPolyList, replace);
-	INJECT(0x00401350, phd_NormaliseVector, replace);
-	INJECT(0x004012D0, phd_GetVectorAngles, replace);
-	INJECT(0x00401000, phd_GenerateW2V, replace);
-	INJECT(0x004011D0, phd_LookAt, replace);
 }

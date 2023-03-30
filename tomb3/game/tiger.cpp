@@ -4,6 +4,8 @@
 #include "objects.h"
 #include "../specific/game.h"
 #include "effects.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO tiger_bite = { 19, -13, 3, 26 };
 
@@ -137,9 +139,4 @@ void TigerControl(short item_number)
 	CreatureTilt(item, 0);
 	CreatureJoint(item, 0, head);
 	CreatureAnimation(item_number, angle, 0);
-}
-
-void inject_tiger(bool replace)
-{
-	INJECT(0x0046B750, TigerControl, replace);
 }

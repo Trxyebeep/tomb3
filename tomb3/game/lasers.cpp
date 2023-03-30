@@ -6,6 +6,10 @@
 #include "objects.h"
 #include "../specific/draweffects.h"
 #include "effects.h"
+#include "lara.h"
+#include "box.h"
+
+uchar LaserShades[32];
 
 static void LaserSplitterToggle(ITEM_INFO* item)
 {
@@ -271,13 +275,4 @@ void S_DrawLaser(ITEM_INFO* item)
 
 		y -= 256;
 	}
-}
-
-void inject_lasers(bool replace)
-{
-	INJECT(0x0044F830, LaserSplitterToggle, replace);
-	INJECT(0x0044F580, LaraOnLOS, replace);
-	INJECT(0x0044F7A0, UpdateLaserShades, replace);
-	INJECT(0x0044F810, LaserControl, replace);
-	INJECT(0x0044F980, S_DrawLaser, replace);
 }

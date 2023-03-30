@@ -14,6 +14,8 @@
 #include "laraelec.h"
 #include "../specific/draweffects.h"
 #include "pickup.h"
+#include "setup.h"
+#include "lara.h"
 
 BITE_INFO tribeboss_hit[6] =
 {
@@ -25,8 +27,11 @@ BITE_INFO tribeboss_hit[6] =
 	{ 8, 32, 400, 8 },
 };
 
-//SHIELD_POINTS TribeBossShield[40];
-//PHD_VECTOR TrigDynamics[3];
+SHIELD_POINTS TribeBossShield[40];
+PHD_VECTOR TrigDynamics[3];
+ITEM_INFO* TribeBossItem;
+char TribeBossShieldOn;
+char lizard_man_active;
 char shield_active;
 
 static long lizman_summon_coords[2][4] =
@@ -324,6 +329,7 @@ void TriggerElectricSparks(GAME_VECTOR* pos, long shield)
 	if (dx < -0x5000 || dx > 0x5000 || dz < -0x5000 || dz > 0x5000)
 		return;
 
+	//This corrupts TribeBossShield, fixme
 	TrigDynamics[1].x = pos->x;
 	TrigDynamics[1].y = pos->y;
 	TrigDynamics[1].z = pos->z;
@@ -868,19 +874,4 @@ void TribeBossControl(short item_number)
 
 	if (yrot == item->pos.y_rot)
 		turned = 0;
-}
-
-void inject_triboss(bool replace)
-{
-	INJECT(0x00471FB0, FindLizardManItemNumber, replace);
-	INJECT(0x00471570, InitialiseTribeBoss, replace);
-	INJECT(0x00471960, RotateHeadXAngle, replace);
-	INJECT(0x00471E30, TriggerSummonSmoke, replace);
-	INJECT(0x00471BD0, ExplodeTribeBoss, replace);
-	INJECT(0x00471520, TribeBossDie, replace);
-	INJECT(0x00471A30, TriggerLizardMan, replace);
-	INJECT(0x00471350, TriggerElectricSparks, replace);
-	INJECT(0x00471680, FindClosestShieldPoint, replace);
-	INJECT(0x004712F0, S_DrawTribeBoss, replace);
-	INJECT(0x00470B70, TribeBossControl, replace);
 }

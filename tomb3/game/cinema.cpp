@@ -16,9 +16,25 @@
 #include "../specific/input.h"
 #include "hair.h"
 #include "../specific/specific.h"
+#include "gameflow.h"
+#include "../specific/smain.h"
+#include "sound.h"
+#include "camera.h"
+#include "lara.h"
+#include "effects.h"
+#include "inventry.h"
 #ifdef TROYESTUFF
 #include "../newstuff/LaraDraw.h"
 #endif
+
+short* cine;
+PHD_3DPOS cinematic_pos;
+long cutscene_track = 1;
+short cine_loaded;
+short cine_frame;
+short num_cine_frames;
+static long actual_current_frame;
+static short cinematic_level;
 
 long DrawPhaseCinematic()
 {
@@ -473,20 +489,4 @@ long StartCinematic(long level_number)
 	S_SoundStopAllSamples();
 	level_complete = 1;
 	return ret;
-}
-
-void inject_cinema(bool replace)
-{
-	INJECT(0x0041A890, DrawPhaseCinematic, replace);
-	INJECT(0x0041A8F0, InitialiseGenPlayer, replace);
-	INJECT(0x0041AA40, InitCinematicRooms, replace);
-	INJECT(0x0041AC20, GetCinematicRoom, replace);
-	INJECT(0x0041AB80, LaraControlCinematic, replace);
-	INJECT(0x0041AAD0, InitialisePlayer1, replace);
-	INJECT(0x0041AE10, UpdateLaraGuns, replace);
-	INJECT(0x0041B090, CalculateCinematicCamera, replace);
-	INJECT(0x0041B2A0, InGameCinematicCamera, replace);
-	INJECT(0x0041B1D0, ControlCinematicPlayer, replace);
-	INJECT(0x0041ACA0, DoCinematic, replace);
-	INJECT(0x0041A930, StartCinematic, replace);
 }

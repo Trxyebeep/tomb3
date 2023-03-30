@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_kayak(bool replace);
+#include "../global/types.h"
 
 void LaraRapidsDrown();
 void KayakInitialise(short item_number);

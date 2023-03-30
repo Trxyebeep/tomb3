@@ -10,6 +10,8 @@
 #include "sound.h"
 #include "objects.h"
 #include "../3dsystem/phd_math.h"
+#include "control.h"
+#include "lara.h"
 
 static BITE_INFO swat_gun = { 0, 300, 64, 7 };
 
@@ -347,10 +349,4 @@ void SwatControl(short item_number)
 	CreatureJoint(item, 1, torso_x);
 	CreatureJoint(item, 2, head);
 	CreatureAnimation(item_number, angle, 0);
-}
-
-void inject_swat(bool replace)
-{
-	INJECT(0x00469F80, InitialiseSwat, replace);
-	INJECT(0x00469FE0, SwatControl, replace);
 }

@@ -4,6 +4,7 @@
 #include "winmain.h"
 #include "file.h"
 #include "input.h"
+#include "audio.h"
 #ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
 #endif
@@ -223,12 +224,4 @@ void WinStopFMV(bool play)
 
 	if (play)
 		Player_ReturnPlaybackMode();
-}
-
-void inject_fmv(bool replace)
-{
-	INJECT(0x004834C0, FMV_Play, replace);
-	INJECT(0x00483540, FMV_PlayIntro, replace);
-	INJECT(0x00483170, WinPlayFMV, replace);
-	INJECT(0x00483470, WinStopFMV, replace);
 }

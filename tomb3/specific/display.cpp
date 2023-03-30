@@ -1,10 +1,21 @@
 #include "../tomb3/pch.h"
 #include "display.h"
 #include "../3dsystem/3d_gen.h"
+#include "winmain.h"
 
 static long fade_value = 0x100000;
 static long fade_limit = 0x100000;
 static long fade_adder = 0x8000;
+
+double screen_sizer = 1.0;
+double game_sizer = 1.0;
+long VidSizeLocked;
+long BarsWidth = 100;
+short DumpX = 25;
+short DumpY = 25;
+short DumpWidth = 50;
+short DumpHeight = 1;
+char GtFullScreenClearNeeded;
 
 void setup_screen_size()
 {
@@ -106,15 +117,4 @@ void S_FadeOutInventory(long fade)
 		fade_limit = 0x100000;
 		fade_adder = -0x8000;
 	}
-}
-
-void inject_display(bool replace)
-{
-	INJECT(0x00475800, setup_screen_size, replace);
-	INJECT(0x00475720, IncreaseScreenSize, replace);
-	INJECT(0x00475790, DecreaseScreenSize, replace);
-	INJECT(0x00475910, TempVideoAdjust, replace);
-	INJECT(0x00475950, TempVideoRemove, replace);
-	INJECT(0x00475990, S_FadeInInventory, replace);
-	INJECT(0x004759D0, S_FadeOutInventory, replace);
 }

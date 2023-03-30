@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_sphere(bool replace);
+#include "../global/types.h"
 
 void InitInterpolate2(long frac, long rate);
 long GetSpheres(ITEM_INFO* item, SPHERE* ptr, long WorldSpace);

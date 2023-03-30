@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_di(bool replace);
+#include "../global/types.h"
 
 void DI_ReadKeyboard(uchar* KeyMap);
 long DI_ReadJoystick(long& x, long& y);

@@ -1,7 +1,5 @@
 #pragma once
-#include "../global/vars.h"
-
-void inject_londsec(bool replace);
+#include "../global/types.h"
 
 void LondSecControl(short item_number);
 

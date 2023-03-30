@@ -7,6 +7,8 @@
 #include "collide.h"
 #include "larafire.h"
 #include "../specific/game.h"
+#include "../specific/input.h"
+#include "camera.h"
 
 void LaraUnderWater(ITEM_INFO* item, COLL_INFO* coll)
 {
@@ -561,26 +563,4 @@ void LaraSwimCollision(ITEM_INFO* item, COLL_INFO* coll)
 
 	if (lara.water_status != LARA_CHEAT && !lara.extra_anim)
 		LaraTestWaterDepth(item, coll);
-}
-
-void inject_laraswim(bool replace)
-{
-	INJECT(0x0044E950, LaraUnderWater, replace);
-	INJECT(0x0044EC10, SwimTurn, replace);
-	INJECT(0x0044EBA0, lara_as_swim, replace);
-	INJECT(0x0044ECA0, lara_as_glide, replace);
-	INJECT(0x0044ED20, lara_as_tread, replace);
-	INJECT(0x0044EDB0, lara_as_dive, replace);
-	INJECT(0x0044EDD0, lara_as_uwdeath, replace);
-	INJECT(0x0044EE30, lara_as_waterroll, replace);
-	INJECT(0x0044EE40, lara_col_swim, replace);
-	INJECT(0x0044F0A0, lara_col_glide, replace);
-	INJECT(0x0044F0C0, lara_col_tread, replace);
-	INJECT(0x0044F0E0, lara_col_dive, replace);
-	INJECT(0x0044F100, lara_col_uwdeath, replace);
-	INJECT(0x0044F160, lara_col_waterroll, replace);
-	INJECT(0x0044F180, GetWaterDepth, replace);
-	INJECT(0x0044EFC0, LaraTestWaterDepth, replace);
-	INJECT(0x0044F310, LaraWaterCurrent, replace);
-	INJECT(0x0044EE60, LaraSwimCollision, replace);
 }
