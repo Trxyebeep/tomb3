@@ -2,10 +2,8 @@
 #include "dxdialog.h"
 #include "winmain.h"
 #include "../../resource.h"
-#ifdef TROYESTUFF
 #include "smain.h"
 #include "../tomb3/tomb3.h"
-#endif
 
 static DXCONFIG* G_DXConfig;
 static DEVICEINFO* G_DeviceInfo;
@@ -21,14 +19,12 @@ BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lPara
 		DXInitDialogBox(dlg);
 		output_setting = GetDlgItem(dlg, IDC_OUTPUT_SETTINGS);
 		resolution = GetDlgItem(dlg, IDC_RESOLUTION);
-#ifdef TROYESTUFF
 		SendMessage(output_setting, CB_SETCURSEL, 1, 0);
 		DXInitD3DDrivers(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0));
 		DXInitVideoModes(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
 			SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
 		DXInitTextures(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
 			SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
-#endif
 		return 1;
 	}
 
@@ -51,15 +47,11 @@ BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lPara
 			G_DXConfig->Filter = (bool)SendMessage(GetDlgItem(dlg, IDC_BILINEAR), BM_GETCHECK, 0, 0);
 			G_DXConfig->sound = !(bool)SendMessage(GetDlgItem(dlg, IDC_DISABLE_SOUND), BM_GETCHECK, 0, 0);
 			G_DXConfig->Joystick = !(bool)SendMessage(GetDlgItem(dlg, IDC_DISABLE_JOYSTICK), BM_GETCHECK, 0, 0);
-#ifdef TROYESTUFF
 			tomb3.Windowed = (bool)SendMessage(GetDlgItem(dlg, IDC_SOFTWARE), BM_GETCHECK, 0, 0);
-#endif
 
 			if ((ushort)wParam == IDOK)
 			{
-#ifdef TROYESTUFF
 				S_SaveSettings();
-#endif
 				ShowWindow(App.WindowHandle, 1);
 				ShowCursor(0);
 				EndDialog(dlg, 1);
@@ -71,9 +63,7 @@ BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lPara
 				pass = WinDXInit(&App.DeviceInfo, &App.DXConfig, 1);
 				WinFreeDX(1);
 				ShowWindow(App.WindowHandle, 0);
-#ifdef TROYESTUFF
 				UpdateWindow(dlg);
-#endif
 				ShowCursor(1);
 
 				if (pass)
@@ -105,38 +95,14 @@ BOOL CALLBACK DXSetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM lPara
 		case IDC_SOFTWARE:
 
 			if (!HIWORD(wParam))
-			{
-#ifdef TROYESTUFF
 				SendMessage(GetDlgItem(dlg, IDC_HARDWARE), BM_SETCHECK, 0, 0);
-#else
-				SendMessage(output_setting, CB_SETCURSEL, 0, 0);
-				SendMessage(resolution, CB_SETCURSEL, 0, 0);
-				DXInitD3DDrivers(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0));
-				DXInitVideoModes(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
-					SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
-				DXInitTextures(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
-					SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
-				EnableWindow(GetDlgItem(dlg, IDC_8BIT_TEXTURES), 0);
-#endif
-			}
 
 			break;
 
 		case IDC_HARDWARE:
 
 			if (!HIWORD(wParam))
-			{
-#ifdef TROYESTUFF
 				SendMessage(GetDlgItem(dlg, IDC_SOFTWARE), BM_SETCHECK, 0, 0);
-#else
-				SendMessage(output_setting, CB_SETCURSEL, 1, 0);
-				DXInitD3DDrivers(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0));
-				DXInitVideoModes(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
-					SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
-				DXInitTextures(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
-					SendMessage(GetDlgItem(dlg, IDC_OUTPUT_SETTINGS), CB_GETCURSEL, 0, 0));
-#endif
-			}
 
 			break;
 
@@ -269,10 +235,6 @@ void DXInitD3DDrivers(HWND hwnd, long nDrivers)
 			SendMessage(agp_mem, BM_SETCHECK, 1, 0);
 		}
 
-#ifndef TROYESTUFF
-		SendMessage(HWR, BM_SETCHECK, 1, 0);
-		SendMessage(SWR, BM_SETCHECK, 0, 0);
-#endif
 		SendMessage(zbuffer, BM_SETCHECK, 1, 0);
 		SendMessage(filter, BM_SETCHECK, 1, 0);
 		SendMessage(dither, BM_SETCHECK, 1, 0);
@@ -280,33 +242,7 @@ void DXInitD3DDrivers(HWND hwnd, long nDrivers)
 	}
 	else
 	{
-#ifndef TROYESTUFF
-		SendMessage(zbuffer, BM_SETCHECK, 0, 0);
-		SendMessage(filter, BM_SETCHECK, 0, 0);
-		SendMessage(dither, BM_SETCHECK, 0, 0);
-		SendMessage(SWR, BM_SETCHECK, 1, 0);
-		SendMessage(HWR, BM_SETCHECK, 0, 0);
-		EnableWindow(zbuffer, 0);
-		EnableWindow(dither, 0);
 
-		if (G_DXConfig->MMX)
-		{
-			EnableWindow(filter, 1);
-			SendMessage(filter, BM_SETCHECK, 1, 0);
-		}
-		else
-			EnableWindow(filter, 0);
-
-		if (!G_DXConfig->MMX)
-			EnableWindow(tex_8bit, 0);
-
-		EnableWindow(agp_mem, 0);
-
-		if (!G_DXConfig->MMX)
-			SendMessage(tex_8bit, BM_SETCHECK, 0, 0);
-
-		SendMessage(agp_mem, BM_SETCHECK, 0, 0);
-#endif
 	}
 }
 
@@ -472,28 +408,6 @@ void DXInitTextures(HWND hwnd, long nDD, long nD3D)
 	else
 		EnableWindow(GetDlgItem(hwnd, IDC_8BIT_TEXTURES), 0);
 
-#ifndef TROYESTUFF
-	if (G_DXConfig->MMX && SendMessage(GetDlgItem(hwnd, IDC_SOFTWARE), BM_GETCHECK, 0, 0))
-	{
-		if (!found)
-		{
-			strcpy(bit, "8888");
-
-			for (int i = 0; i < d3dinfo->nTexture; i++)
-			{
-				SendMessage(format, CB_GETLBTEXT, i, (LPARAM)buf);
-
-				if (!strcmp(bit, buf))
-				{
-					nTF = i;
-					found = 1;
-					break;
-				}
-			}
-		}
-	}
-#endif
-
 	if (!found)
 	{
 		strcpy(bit, "5551");
@@ -628,112 +542,8 @@ void DXInitJoystickAdapter(HWND hwnd)
 
 void DXCheckMMXTechnology(HWND hwnd)
 {
-#ifndef TROYESTUFF
-	HWND version;
-	ulong maxCPUID, processorType, info, features, unk1, unk2;
-	long mmx;
-	char buf[32];
-	char name[13];
-
-	version = GetDlgItem(hwnd, IDC_VERSION);
-	maxCPUID = 0;
-	processorType = 0;
-	info = 0;
-	features = 0;
-	unk1 = 0;
-	unk2 = 0;
-	strcpy(name, "AnonymousCPU");
-
-	__asm
-	{
-		pushad
-		mov processorType, 4;
-		pushfd
-			pop eax
-			mov ecx, eax
-			xor eax, 200000h
-			push eax
-			popfd
-			pushfd
-			pop eax
-			xor eax, ecx
-			je end
-
-			mov maxCPUID, 0
-			mov eax, 0;	//get largest eax value, and CPU name
-		cpuid
-			mov maxCPUID, eax
-			mov dword ptr[name], ebx
-			mov dword ptr[name + 4], edx
-			mov dword ptr[name + 8], ecx
-
-			mov eax, 1;	//get version info and feature bits
-		cpuid
-			mov info, eax
-			mov features, edx
-
-			shr eax, 8; //actually getting the type now
-		and eax, 0Fh
-			mov processorType, eax
-
-			cmp eax, 5;	//no idea tbh
-		jl end
-			shr eax, 8
-			and eax, 100h
-			setne byte ptr unk1
-
-			and edx, 10h
-			je end
-			shr eax, 8
-			and eax, 4
-			sete byte ptr unk2
-
-			end :
-		popad
-	}
-
-	mmx = (features >> 23) & 1;
-
-	if (!strcmp("GenuineIntel", name))
-	{
-		if (processorType == 5)
-		{
-			if (mmx)
-				strcpy(buf, "Intel Pentium MMX");
-			else
-				strcpy(buf, "Intel Pentium");
-		}
-		else if (processorType == 6)
-		{
-			if (mmx)
-				strcpy(buf, "Intel Pentium Pro MMX");
-			else
-				strcpy(buf, "Intel Pentium Pro");
-		}
-	}
-
-	if (!strcmp("AuthenticAMD", name))
-	{
-		if (processorType == 5)
-			strcpy(buf, "AMD K5");
-		else if (processorType == 6)
-			strcpy(buf, "AMD K6");
-	}
-
-	if (!strcmp("CyrixInstead", name))
-	{
-		if (processorType == 5)
-			strcpy(buf, "Cyrix 6x86");
-		else if (processorType == 6)
-			strcpy(buf, "Cyrix M2");
-	}
-
-	SetWindowText(version, buf);
-	G_DXConfig->MMX = mmx;
-#else
 	SetWindowText(GetDlgItem(hwnd, IDC_VERSION), "");
 	G_DXConfig->MMX = 1;
-#endif
 }
 
 void DXInitDialogBox(HWND hwnd)
@@ -755,7 +565,6 @@ void DXInitDialogBox(HWND hwnd)
 	else
 		nDD = G_DeviceInfo->nDDInfo - 1;
 
-#ifdef TROYESTUFF
 	SendMessage(GetDlgItem(hwnd, IDOK), WM_SETTEXT, 0, (LPARAM)("Save"));
 
 	SendMessage(GetDlgItem(hwnd, IDC_HARDWARE), WM_SETTEXT, 0, (LPARAM)("Fullscreen"));
@@ -763,7 +572,6 @@ void DXInitDialogBox(HWND hwnd)
 
 	SendMessage(GetDlgItem(hwnd, IDC_SOFTWARE), WM_SETTEXT, 0, (LPARAM)("Windowed"));
 	SendMessage(GetDlgItem(hwnd, IDC_SOFTWARE), BM_SETCHECK, 0, 0);
-#endif
 
 	SendMessage(gfx, CB_SETCURSEL, nDD, 0);
 	DXCheckMMXTechnology(hwnd);

@@ -14,10 +14,8 @@
 #include "picture.h"
 #include "smain.h"
 #include "display.h"
-#ifdef TROYESTUFF
 #include "fmv.h"
 #include "../newstuff/discord.h"
-#endif
 
 const char* game_malloc_types[47] =
 {
@@ -96,11 +94,8 @@ static long SqrtTable[1024];
 
 void ShutdownGame()
 {
-#ifdef TROYESTUFF
 	RPC_close();
 	FreeWinPlay();
-#endif
-
 	GlobalFree(TLVertexBuffer);
 	GlobalFree(TLUnRollBuffer);
 	DXFreeTPages();

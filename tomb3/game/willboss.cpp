@@ -226,20 +226,12 @@ static void ExplodeWillBoss(ITEM_INFO* item)
 		ExpRings[bossdata.ring_count].on = 1;
 		bossdata.ring_count++;
 
-#ifdef TROYESTUFF
-		for (lp = 0; lp < 24; lp += 3)	//they originally used x for this loop then which messed up the TriggerExplosionSparks call
-#else
-		for (x = 0; x < 24; x += 3)
-#endif
+		for (lp = 0; lp < 24; lp += 3)
 		{
 			pos.x = 0;
 			pos.y = 0;
 			pos.z = 0;
-#ifdef TROYESTUFF
 			GetJointAbsPosition(item, &pos, lp);
-#else
-			GetJointAbsPosition(item, &pos, x);
-#endif
 			TriggerPlasmaBall(&pos, item->room_number, short(GetRandomControl() << 1), 4);
 		}
 

@@ -7,10 +7,8 @@
 #include "init.h"
 #include "winmain.h"
 #include "output.h"
-#ifdef TROYESTUFF
 #include "drawbars.h"
 #include "../tomb3/tomb3.h"
-#endif
 
 HRESULT (*DrawPrimitive)(D3DPRIMITIVETYPE, D3DVERTEXTYPE, LPVOID, ulong, ulong);
 HRESULT (*SetRenderState)(D3DRENDERSTATETYPE, ulong);
@@ -52,25 +50,20 @@ void HWR_EnableColorKey(bool enable)
 {
 	static bool enabled;
 
-#ifdef TROYESTUFF
 	if (tomb3.disable_ckey)
 		SetRenderState(D3DRENDERSTATE_COLORKEYENABLE, 0);
-	else
-#endif
+	else if (enable)
 	{
-		if (enable)
+		if (!enabled)
 		{
-			if (!enabled)
-			{
-				SetRenderState(D3DRENDERSTATE_COLORKEYENABLE, 1);
-				enabled = 1;
-			}
+			SetRenderState(D3DRENDERSTATE_COLORKEYENABLE, 1);
+			enabled = 1;
 		}
-		else if (enabled)
-		{
-			SetRenderState(D3DRENDERSTATE_COLORKEYENABLE, 0);
-			enabled = 0;
-		}
+	}
+	else if (enabled)
+	{
+		SetRenderState(D3DRENDERSTATE_COLORKEYENABLE, 0);
+		enabled = 0;
 	}
 }
 
@@ -93,7 +86,6 @@ void HWR_EnableAlphaBlend(bool enable)
 	}
 }
 
-#ifdef TROYESTUFF
 void HWR_EnableColorAddition(bool enable)
 {
 	if (enable)
@@ -121,28 +113,6 @@ void HWR_EnableColorSubtraction(bool enable)
 		SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	}
 }
-#else
-void HWR_EnableColorAddition(bool enable)
-{
-	static bool enabled;
-
-	if (enable)
-	{
-		if (!enabled)
-		{
-			enabled = 1;
-			SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ONE);
-			SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
-		}
-	}
-	else if (enabled)
-	{
-		enabled = 0;
-		SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
-		SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
-	}
-}
-#endif
 
 void HWR_ResetZBuffer()
 {
@@ -275,7 +245,6 @@ void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage)
 		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
 
-#ifdef TROYESTUFF
 	case DT_LINE_ALPHA:
 		HWR_SetCurrentTexture(0);
 		HWR_EnableAlphaBlend(1);
@@ -283,7 +252,6 @@ void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage)
 		HWR_EnableColorAddition(1);
 		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
-#endif
 
 	case DT_POLY_GA:
 		HWR_SetCurrentTexture(0);
@@ -301,7 +269,6 @@ void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage)
 		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
 
-#ifdef TROYESTUFF
 	case DT_POLY_COLSUB:
 		HWR_EnableZBuffer(0, 1);
 		HWR_SetCurrentTexture(TPages[TPage]);
@@ -310,7 +277,6 @@ void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage)
 		HWR_EnableColorKey(1);
 		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
-#endif
 
 	case DT_POLY_GTA:
 		HWR_SetCurrentTexture(0);
@@ -356,14 +322,12 @@ void HWR_DrawRoutinesStippledAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, 
 		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
 
-#ifdef TROYESTUFF
 	case DT_LINE_ALPHA:
 		HWR_SetCurrentTexture(0);
 		HWR_EnableAlphaBlend(1);
 		HWR_EnableColorKey(1);
 		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
-#endif
 
 	case DT_POLY_GA:
 		HWR_SetCurrentTexture(0);
@@ -384,7 +348,6 @@ void HWR_DrawRoutinesStippledAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, 
 		SetRenderState(D3DRENDERSTATE_STIPPLEDALPHA, 0);
 		return;
 
-#ifdef TROYESTUFF
 	case DT_POLY_COLSUB:
 		HWR_SetCurrentTexture(TPages[TPage]);
 		HWR_EnableColorSubtraction(1);
@@ -394,7 +357,6 @@ void HWR_DrawRoutinesStippledAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, 
 		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		SetRenderState(D3DRENDERSTATE_STIPPLEDALPHA, 0);
 		return;
-#endif
 
 	case DT_POLY_GTA:
 		HWR_SetCurrentTexture(0);
@@ -439,14 +401,12 @@ void HWR_DrawRoutinesNoAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long T
 		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
 
-#ifdef TROYESTUFF
 	case DT_LINE_ALPHA:
 		HWR_SetCurrentTexture(0);
 		HWR_EnableAlphaBlend(1);
 		HWR_EnableColorKey(1);
 		DrawPrimitive(D3DPT_LINELIST, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
-#endif
 
 	case DT_POLY_GA:
 		HWR_SetCurrentTexture(0);
@@ -461,19 +421,16 @@ void HWR_DrawRoutinesNoAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long T
 		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
 
-#ifdef TROYESTUFF
-	case DT_POLY_COLSUB:	//idk
+	case DT_POLY_COLSUB:
 		HWR_SetCurrentTexture(TPages[TPage]);
 		HWR_EnableColorSubtraction(1);
 		HWR_EnableAlphaBlend(1);
 		HWR_EnableColorKey(1);
 		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
-#endif
 	}
 }
 
-#ifdef TROYESTUFF
 __inline void HWR_InitGamma(float gamma)
 {
 	gamma = 1.0F / (gamma / 10.0F * 4.0F);
@@ -481,17 +438,14 @@ __inline void HWR_InitGamma(float gamma)
 	for (int i = 0; i < 256; i++)
 		ColorTable[i] = uchar(pow((double)i / 256.0F, gamma) * 256.0F);
 }
-#endif
 
 void HWR_InitState()
 {
 	DIRECT3DINFO* d3dinfo;
 	bool blendOne, stippledAlpha, blendAlpha;
 
-#ifdef TROYESTUFF
 	if (tomb3.disable_gamma)
 		GammaOption = 2.5F;
-#endif
 
 	HWR_InitGamma(GammaOption);		//og has the code directly here
 
@@ -567,9 +521,7 @@ void HWR_DrawPolyList(long num, long* pSort)
 	D3DTLVERTEX* vtx;
 	short* pInfo;
 	long polyType;
-#ifdef TROYESTUFF
 	long x0, y0, x1, y1, bar, p;
-#endif
 	short nVtx, nDrawType, TPage;
 
 	dpPrimitiveType = D3DPT_TRIANGLEFAN;
@@ -580,7 +532,6 @@ void HWR_DrawPolyList(long num, long* pSort)
 		{
 			pInfo = (short*)pSort[0];
 
-#ifdef TROYESTUFF
 			polyType = pSort[2];
 
 			if (polyType == POLYTYPE_HEALTHBAR ||
@@ -607,7 +558,6 @@ void HWR_DrawPolyList(long num, long* pSort)
 				pSort += 3;
 				continue;
 			}
-#endif
 
 			nDrawType = pInfo[0];
 			TPage = pInfo[1];
@@ -688,11 +638,7 @@ void HWR_DrawPolyListBF(long num, long* pSort)
 			nURVtx = 0;
 		}
 
-#ifdef TROYESTUFF
 		if (nDrawType1 == DT_LINE_SOLID || nDrawType1 == DT_LINE_ALPHA)
-#else
-		if (nDrawType1 == DT_LINE_SOLID)
-#endif
 		{
 			URvtx = &UnRollBuffer[nURVtx];
 			URvtx->sx = vtx->sx;

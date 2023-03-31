@@ -167,12 +167,6 @@ extern INVENTORY_ITEM* inv_main_list[23];
 extern INVENTORY_ITEM* inv_keys_list[23];
 extern INVENTORY_ITEM* inv_option_list[5];
 extern INVENTORY_ITEM* inv_levelselect_list[1];
-
-#ifdef TROYESTUFF
 extern short gLevelSecrets[21];
-#endif
 extern short LevelSecrets[21];
-
-#ifdef TROYESTUFF
 extern bool noAdditiveBG;
-#endif

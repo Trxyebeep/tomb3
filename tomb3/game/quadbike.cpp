@@ -44,9 +44,7 @@ void QuadBikeDraw(ITEM_INFO* item)
 	long* bone;
 	short* frm[2];
 	short* rot;
-#ifdef TROYESTUFF
 	short* rot2;
-#endif
 	long frac, rate, clip;
 
 	frac = GetFrames(item, frm, &rate);
@@ -66,7 +64,6 @@ void QuadBikeDraw(ITEM_INFO* item)
 	bone = &bones[objects[item->object_number].bone_index];
 	CalculateObjectLighting(item, frm[0]);
 
-#ifdef TROYESTUFF
 	if (frac)
 	{
 		InitInterpolate(frac, rate);
@@ -127,7 +124,6 @@ void QuadBikeDraw(ITEM_INFO* item)
 		phd_PopMatrix_I();
 	}
 	else
-#endif
 	{
 		phd_TranslateRel(frm[0][6], frm[0][7], frm[0][8]);
 		rot = frm[0] + 9;

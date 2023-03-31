@@ -20,10 +20,8 @@
 #include "items.h"
 #include "../specific/input.h"
 #include "camera.h"
-#ifdef TROYESTUFF
 #include "../newstuff/LaraDraw.h"
 #include "../tomb3/tomb3.h"
-#endif
 
 static short DeathSlideBounds[12] = { -256, 256, -100, 100, 256, 512, 0, 0, -4550, 4550, 0, 0 };
 static PHD_VECTOR DeathSlidePosition = { 0, 0, 371 };
@@ -34,7 +32,6 @@ short DashTimer;
 short ExposureMeter;
 uchar LaraOnPad;
 
-#ifdef TROYESTUFF
 static void TiltHer(ITEM_INFO* item, long rad, long height)
 {
 	FLOOR_INFO* floor;
@@ -127,7 +124,6 @@ static void TiltHer(ITEM_INFO* item, long rad, long height)
 	else if (item->pos.z_rot < -8192)
 		item->pos.z_rot = -8192;
 }
-#endif
 
 void LaraAboveWater(ITEM_INFO* item, COLL_INFO* coll)
 {
@@ -201,13 +197,11 @@ void LaraAboveWater(ITEM_INFO* item, COLL_INFO* coll)
 		item->pos.z_rot -= 182;
 	else item->pos.z_rot = 0;
 
-#ifdef TROYESTUFF
 	if (item->pos.x_rot < -182)
 		item->pos.x_rot += 182;
 	else if (item->pos.x_rot > 182)
 		item->pos.x_rot -= 182;
 	else item->pos.x_rot = 0;
-#endif
 
 	if (lara.turn_rate < -364)
 		lara.turn_rate += 364;
@@ -485,11 +479,9 @@ void lara_slide_slope(ITEM_INFO* item, COLL_INFO* coll)
 
 		if ((abs(coll->tilt_x)) <= 2 && (abs(coll->tilt_z)) <= 2)
 		{
-#ifdef TROYESTUFF
 			if (input & IN_FORWARD && item->anim_number == ANIM_SLIDE && tomb3.slide_to_run)
 				item->goal_anim_state = AS_RUN;
 			else
-#endif
 				item->goal_anim_state = AS_STOP;
 
 			StopSoundEffect(SFX_LARA_SLIPPING);
@@ -747,7 +739,6 @@ void lara_as_duck(ITEM_INFO* item, COLL_INFO* coll)
 		item->goal_anim_state = AS_ALL4S;
 	}
 
-#ifdef TROYESTUFF
 	if (!tomb3.duck_roll)
 		return;
 
@@ -772,7 +763,6 @@ void lara_as_duck(ITEM_INFO* item, COLL_INFO* coll)
 			}
 		}
 	}
-#endif
 }
 
 void lara_col_duck(ITEM_INFO* item, COLL_INFO* coll)
@@ -786,11 +776,7 @@ void lara_col_duck(ITEM_INFO* item, COLL_INFO* coll)
 	coll->bad_neg = -384;
 	coll->bad_ceiling = 0;
 	coll->slopes_are_walls = 1;
-#ifdef TROYESTUFF
 	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, -400);
-#else
-	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
-#endif
 
 	if (LaraFallen(item, coll))
 		lara.gun_status = LG_ARMLESS;
@@ -836,9 +822,7 @@ void lara_as_all4s(ITEM_INFO* item, COLL_INFO* coll)
 
 void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 {
-#ifdef TROYESTUFF
 	PHD_3DPOS old;
-#endif
 	long h;
 	short angle;
 
@@ -856,12 +840,8 @@ void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 	coll->bad_ceiling = 400;
 	coll->slopes_are_walls = 1;
 	coll->slopes_are_pits = 1;
-#ifdef TROYESTUFF
 	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, -400);
 	TiltHer(item, 140, 400);
-#else
-	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
-#endif
 
 	if (LaraFallen(item, coll))
 	{
@@ -883,7 +863,6 @@ void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 		return;
 	}
 
-#ifdef TROYESTUFF
 	if (tomb3.flexible_crawl)
 		h = item->anim_number != ANIM_ALL4S && item->anim_number != ANIM_ALL4S2 && item->anim_number != 266 && item->anim_number != 268;
 	else
@@ -891,11 +870,6 @@ void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 
 	if (h)
 		return;
-
-#else
-	if (item->anim_number != ANIM_ALL4S && item->anim_number != ANIM_ALL4S2)
-		return;
-#endif
 
 	if (input & IN_FORWARD)
 	{
@@ -921,9 +895,7 @@ void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 
 		if (input & IN_ACTION && h > 768 && !GetStaticObjects(item, item->pos.y_rot + 0x8000, 512, 50, 300))
 		{
-#ifdef TROYESTUFF
 			old = item->pos;
-#endif
 			angle = ushort(item->pos.y_rot + 0x2000) / 0x4000;
 
 			switch (angle)
@@ -949,13 +921,11 @@ void lara_col_all4s(ITEM_INFO* item, COLL_INFO* coll)
 				break;
 			}
 
-#ifdef TROYESTUFF
 			h = LaraFloorFront(item, item->pos.y_rot, 0);
 
 			if (h > 255 || h < -255 || height_type == BIG_SLOPE)
 				item->pos = old;
 			else
-#endif
 				item->goal_anim_state = AS_CRAWL2HANG;
 		}
 	}
@@ -1063,12 +1033,8 @@ void lara_col_crawl(ITEM_INFO* item, COLL_INFO* coll)
 	coll->slopes_are_walls = 1;
 	coll->slopes_are_pits = 1;
 	coll->facing = lara.move_angle;
-#ifdef TROYESTUFF
 	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, -400);
 	TiltHer(item, 140, 400);
-#else
-	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
-#endif
 
 	if (LaraDeflectEdgeDuck(item, coll))
 	{
@@ -1140,9 +1106,7 @@ void lara_as_all4turnl(ITEM_INFO* item, COLL_INFO* coll)
 void lara_col_all4turnl(ITEM_INFO* item, COLL_INFO* coll)
 {
 	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
-#ifdef TROYESTUFF
 	TiltHer(item, 140, 400);
-#endif
 }
 
 void lara_as_all4turnr(ITEM_INFO* item, COLL_INFO* coll)
@@ -1221,12 +1185,8 @@ void lara_col_crawlb(ITEM_INFO* item, COLL_INFO* coll)
 	coll->facing = lara.move_angle;
 	coll->slopes_are_walls = 1;
 	coll->slopes_are_pits = 1;
-#ifdef TROYESTUFF
 	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, -400);
 	TiltHer(item, 140, 400);
-#else
-	GetCollisionInfo(coll, item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, 400);
-#endif
 
 	if (LaraDeflectEdgeDuck(item, coll))
 	{
@@ -1312,7 +1272,6 @@ void lara_col_crawl2hang(ITEM_INFO* item, COLL_INFO* coll)
 	{
 		item->pos.y_pos += coll->front_floor - bounds[2];
 
-#ifdef TROYESTUFF
 		switch (ushort(item->pos.y_rot + 0x2000) / 0x4000)
 		{
 		case NORTH:
@@ -1335,10 +1294,6 @@ void lara_col_crawl2hang(ITEM_INFO* item, COLL_INFO* coll)
 			item->pos.z_pos += coll->shift.z;
 			break;
 		}
-#else
-		item->pos.x_pos += coll->shift.x;
-		item->pos.z_pos += coll->shift.z;
-#endif
 	}
 
 	item->gravity_status = 1;
@@ -1532,11 +1487,9 @@ void lara_as_dash(ITEM_INFO* item, COLL_INFO* coll)
 
 	if (input & IN_DUCK)
 	{
-#ifdef TROYESTUFF
 		if (tomb3.flexible_crawl)
 			item->goal_anim_state = AS_DUCK;
 		else
-#endif
 			item->goal_anim_state = AS_STOP;
 
 		return;
@@ -2448,9 +2401,7 @@ void lara_as_walk(ITEM_INFO* item, COLL_INFO* coll)
 void lara_as_run(ITEM_INFO* item, COLL_INFO* coll)
 {
 	static long jump_ok = 1;
-#ifdef TROYESTUFF
 	bool dash;
-#endif
 
 	if (item->hit_points <= 0)
 	{
@@ -2467,16 +2418,12 @@ void lara_as_run(ITEM_INFO* item, COLL_INFO* coll)
 		return;
 	}
 
-#ifdef TROYESTUFF
 	if (tomb3.flexible_sprint)
 		dash = input & IN_SPRINT && DashTimer;
 	else
 		dash = input & IN_SPRINT && DashTimer == 120;
 
 	if (dash)
-#else
-	if (input & IN_SPRINT && DashTimer == 120)
-#endif
 	{
 		item->goal_anim_state = AS_DASH;
 		return;
@@ -2484,11 +2431,9 @@ void lara_as_run(ITEM_INFO* item, COLL_INFO* coll)
 
 	if (input & IN_DUCK && lara.water_status != LARA_WADE)
 	{
-#ifdef TROYESTUFF
 		if (tomb3.flexible_crawl)
 			item->goal_anim_state = AS_DUCK;
 		else
-#endif
 			item->goal_anim_state = AS_STOP;
 
 		return;
@@ -3619,7 +3564,6 @@ long LaraTestHangJump(ITEM_INFO* item, COLL_INFO* coll)
 	{
 		item->pos.y_pos += coll->front_floor - bounds[2];
 
-#ifdef TROYESTUFF
 		switch (ushort(item->pos.y_rot + 0x2000) / 0x4000)
 		{
 		case NORTH:
@@ -3642,10 +3586,6 @@ long LaraTestHangJump(ITEM_INFO* item, COLL_INFO* coll)
 			item->pos.z_pos += coll->shift.z;
 			break;
 		}
-#else
-		item->pos.x_pos += coll->shift.x;
-		item->pos.z_pos += coll->shift.z;
-#endif
 	}
 
 	item->gravity_status = 1;
@@ -4204,7 +4144,6 @@ void LaraHangTest(ITEM_INFO* item, COLL_INFO* coll)
 	}
 }
 
-#ifdef TROYESTUFF
 void lara_as_duckroll(ITEM_INFO* item, COLL_INFO* coll)
 {
 	camera.target_elevation = -3640;
@@ -4247,302 +4186,9 @@ void lara_col_duckroll(ITEM_INFO* item, COLL_INFO* coll)
 			item->pos.y_pos += coll->mid_floor;
 	}
 }
-#endif
-
-static void AddJointPos(ITEM_INFO* item, long mesh)
-{
-	long x, y, z;
-	short room_number;
-
-	x = item->pos.x_pos + (phd_mxptr[M03] >> W2V_SHIFT);
-	y = item->pos.y_pos + (phd_mxptr[M13] >> W2V_SHIFT);
-	z = item->pos.z_pos + (phd_mxptr[M23] >> W2V_SHIFT);
-	room_number = item->room_number;
-	GetFloor(x, y, z, &room_number);
-	IsJointUnderwater[mesh] = room[room_number].flags & ROOM_UNDERWATER;
-	GotJointPos[mesh] = 1;
-}
-
-void GetLHAInt(ITEM_INFO* item, PHD_VECTOR* vec, short* frame1, short* frame2, long frac, long rate, long lr)
-{
-	long* bone;
-	short* rot1;
-	short* rot2;
-	long gun;
-
-	bone = &bones[objects[item->object_number].bone_index];
-	rot1 = frame1 + 9;
-	rot2 = frame2 + 9;
-
-	phd_PushUnitMatrix();
-	phd_mxptr[M03] = 0;
-	phd_mxptr[M13] = 0;
-	phd_mxptr[M23] = 0;
-	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
-
-	phd_PushMatrix();
-	phd_PushMatrix();
-	InitInterpolate(frac, rate);
-	phd_TranslateRel_ID(frame1[6], frame1[7], frame1[8], frame2[6], frame2[7], frame2[8]);
-	gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
-
-	if (!GotJointPos[HIPS])
-		AddJointPos(item, HIPS);
-
-	if (lr == LEFT_FOOT)
-	{
-		phd_TranslateRel_I(bone[1], bone[2], bone[3]);
-		gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
-
-		if (!GotJointPos[THIGH_L])
-			AddJointPos(item, THIGH_L);
-
-		phd_TranslateRel_I(bone[5], bone[6], bone[7]);
-		gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
-
-		if (!GotJointPos[CALF_L])
-			AddJointPos(item, CALF_L);
-
-		phd_TranslateRel_I(bone[9], bone[10], bone[11]);
-		gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
-
-		if (!GotJointPos[FOOT_L])
-			AddJointPos(item, FOOT_L);
-	}
-	else if (lr == RIGHT_FOOT)
-	{
-		phd_TranslateRel_I(bone[13], bone[14], bone[15]);
-		gar_RotYXZsuperpack_I(&rot1, &rot2, 3);
-
-		if (!GotJointPos[THIGH_R])
-			AddJointPos(item, THIGH_R);
-
-		phd_TranslateRel_I(bone[17], bone[18], bone[19]);
-		gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
-
-		if (!GotJointPos[CALF_R])
-			AddJointPos(item, CALF_R);
-
-		phd_TranslateRel_I(bone[21], bone[22], bone[23]);
-		gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
-
-		if (!GotJointPos[FOOT_R])
-			AddJointPos(item, FOOT_R);
-	}
-	else if (lr != LARA_HIPS)	//already got hips pos
-	{
-		phd_TranslateRel_I(bone[25], bone[26], bone[27]);
-
-		if (lara.weapon_item != NO_ITEM && lara.gun_type == LG_M16 &&
-			(items[lara.weapon_item].current_anim_state == 0 ||
-				items[lara.weapon_item].current_anim_state == 2 ||
-				items[lara.weapon_item].current_anim_state == 4))
-		{
-			rot2 = &lara.right_arm.frame_base[lara.right_arm.frame_number * (anims[lara.right_arm.anim_number].interpolation >> 8) + 9];
-			rot1 = rot2;
-			gar_RotYXZsuperpack_I(&rot1, &rot2, 7);
-		}
-		else
-			gar_RotYXZsuperpack_I(&rot1, &rot2, 6);
-
-		phd_RotYXZ_I(lara.torso_y_rot, lara.torso_x_rot, lara.torso_z_rot);
-
-		if (!GotJointPos[TORSO])
-			AddJointPos(item, TORSO);
-
-		if (lr == LARA_HEAD)
-		{
-			phd_TranslateRel_I(bone[53], bone[54], bone[55]);
-			gar_RotYXZsuperpack_I(&rot1, &rot2, 6);
-			phd_RotYXZ_I(lara.head_y_rot, lara.head_x_rot, lara.head_z_rot);
-
-			if (!GotJointPos[HEAD])
-				AddJointPos(item, HEAD);
-		}
-
-		if (lr == LEFT_HAND || lr == RIGHT_HAND)
-		{
-			if (lara.gun_status == LG_READY || lara.gun_status == LG_SPECIAL || lara.gun_status == LG_DRAW || lara.gun_status == LG_UNDRAW)
-				gun = lara.gun_type;
-			else
-				gun = LG_UNARMED;
-
-			if (lr == LEFT_HAND)
-			{
-				phd_TranslateRel_I(bone[41], bone[42], bone[43]);
-
-				switch (gun)
-				{
-				case LG_UNARMED:
-				case LG_FLARE:
-
-					if (lara.flare_control_left)
-					{
-						rot2 = &lara.left_arm.frame_base[(anims[lara.left_arm.anim_number].interpolation >> 8) *
-							(lara.left_arm.frame_number - anims[lara.left_arm.anim_number].frame_base) + 9];
-						rot1 = rot2;
-						gar_RotYXZsuperpack_I(&rot1, &rot2, 11);
-					}
-					else
-						gar_RotYXZsuperpack_I(&rot1, &rot2, 3);
-
-					if (!GotJointPos[UARM_L])
-						AddJointPos(item, UARM_L);
-
-					phd_TranslateRel_I(bone[45], bone[46], bone[47]);
-					gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
-
-					if (!GotJointPos[LARM_L])
-						AddJointPos(item, LARM_L);
-
-					phd_TranslateRel_I(bone[49], bone[50], bone[51]);
-					gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
-
-					if (!GotJointPos[HAND_L])
-						AddJointPos(item, HAND_L);
-
-					break;
-
-				case LG_PISTOLS:
-				case LG_MAGNUMS:
-				case LG_UZIS:
-					InterpolateArmMatrix();
-					phd_RotYXZ(lara.left_arm.y_rot, lara.left_arm.x_rot, lara.left_arm.z_rot);
-					rot1 = &lara.left_arm.frame_base[(anims[lara.left_arm.anim_number].interpolation >> 8) *
-						(lara.left_arm.frame_number - anims[lara.left_arm.anim_number].frame_base) + 9];
-
-					gar_RotYXZsuperpack(&rot1, 11);
-
-					phd_TranslateRel(bone[45], bone[46], bone[47]);
-					gar_RotYXZsuperpack(&rot1, 0);
-
-					phd_TranslateRel(bone[49], bone[50], bone[51]);
-					gar_RotYXZsuperpack(&rot1, 0);
-
-					phd_TranslateRel(vec->x, vec->y, vec->z);
-					vec->x = item->pos.x_pos + (phd_mxptr[M03] >> W2V_SHIFT);
-					vec->y = item->pos.y_pos + (phd_mxptr[M13] >> W2V_SHIFT);
-					vec->z = item->pos.z_pos + (phd_mxptr[M23] >> W2V_SHIFT);
-
-					phd_PopMatrix();
-					phd_PopMatrix();
-					phd_PopMatrix();
-					return;
-
-				case LG_SHOTGUN:
-				case LG_M16:
-				case LG_ROCKET:
-				case LG_GRENADE:
-				case LG_HARPOON:
-					rot2 = &lara.right_arm.frame_base[lara.right_arm.frame_number * (anims[lara.right_arm.anim_number].interpolation >> 8) + 9];
-					rot1 = rot2;
-
-					gar_RotYXZsuperpack_I(&rot1, &rot2, 11);
-
-					phd_TranslateRel_I(bone[45], bone[46], bone[47]);
-					gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
-
-					phd_TranslateRel_I(bone[49], bone[50], bone[51]);
-					gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
-					break;
-				}
-			}
-			else
-			{
-				switch (gun)
-				{
-				case LG_UNARMED:
-				case LG_FLARE:
-					phd_TranslateRel_I(bone[29], bone[30], bone[31]);
-					gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
-
-					if (!GotJointPos[UARM_R])
-						AddJointPos(item, UARM_R);
-
-					phd_TranslateRel_I(bone[33], bone[34], bone[35]);
-					gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
-
-					if (!GotJointPos[LARM_R])
-						AddJointPos(item, LARM_R);
-
-					phd_TranslateRel_I(bone[37], bone[38], bone[39]);
-					gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
-
-					if (!GotJointPos[HAND_R])
-						AddJointPos(item, HAND_R);
-
-					break;
-
-				case LG_PISTOLS:
-				case LG_MAGNUMS:
-				case LG_UZIS:
-					phd_TranslateRel_I(bone[29], bone[30], bone[31]);
-					InterpolateArmMatrix();
-					phd_RotYXZ(lara.right_arm.y_rot, lara.right_arm.x_rot, lara.right_arm.z_rot);
-					rot1 = &lara.right_arm.frame_base[(anims[lara.right_arm.anim_number].interpolation >> 8) *
-						(lara.right_arm.frame_number - anims[lara.right_arm.anim_number].frame_base) + 9];
-
-					gar_RotYXZsuperpack(&rot1, 8);
-
-					phd_TranslateRel(bone[33], bone[34], bone[35]);
-					gar_RotYXZsuperpack(&rot1, 0);
-
-					phd_TranslateRel(bone[37], bone[38], bone[39]);
-					gar_RotYXZsuperpack(&rot1, 0);
-					phd_TranslateRel(vec->x, vec->y, vec->z);
-					vec->x = item->pos.x_pos + (phd_mxptr[M03] >> W2V_SHIFT);
-					vec->y = item->pos.y_pos + (phd_mxptr[M13] >> W2V_SHIFT);
-					vec->z = item->pos.z_pos + (phd_mxptr[M23] >> W2V_SHIFT);
-
-					phd_PopMatrix();
-					phd_PopMatrix();
-					phd_PopMatrix();
-					return;
-
-				case LG_SHOTGUN:
-				case LG_M16:
-				case LG_ROCKET:
-				case LG_GRENADE:
-				case LG_HARPOON:
-					phd_TranslateRel_I(bone[29], bone[30], bone[31]);
-					rot2 = &lara.right_arm.frame_base[lara.right_arm.frame_number * (anims[lara.right_arm.anim_number].interpolation >> 8) + 9];
-					rot1 = rot2;
-
-					gar_RotYXZsuperpack_I(&rot1, &rot2, 8);
-
-					phd_TranslateRel_I(bone[33], bone[34], bone[35]);
-					gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
-
-					phd_TranslateRel_I(bone[37], bone[38], bone[39]);
-					gar_RotYXZsuperpack_I(&rot1, &rot2, 0);
-					break;
-				}
-			}
-		}
-	}
-
-	phd_TranslateRel_I(vec->x, vec->y, vec->z);
-	InterpolateMatrix();
-	vec->x = item->pos.x_pos + (phd_mxptr[M03] >> W2V_SHIFT);
-	vec->y = item->pos.y_pos + (phd_mxptr[M13] >> W2V_SHIFT);
-	vec->z = item->pos.z_pos + (phd_mxptr[M23] >> W2V_SHIFT);
-
-	phd_PopMatrix();
-	phd_PopMatrix();
-	phd_PopMatrix();
-}
 
 void GetLaraHandAbsPosition(PHD_VECTOR* vec, long lr)
 {
-	ITEM_INFO* item;
-	long* bone;
-	short* frm[2];
-	short* frame;
-	short* rot;
-	long frac, rate, gun;
-	short spaz;
-	
-#ifdef TROYESTUFF		//forgive me..
 	if (lr == LEFT_HAND)
 		lr = LMX_HAND_L;
 	else if (lr == RIGHT_HAND)
@@ -4559,258 +4205,6 @@ void GetLaraHandAbsPosition(PHD_VECTOR* vec, long lr)
 		lr = LMX_FOOT_R;
 
 	return GetLaraMeshPos(vec, lr);
-#endif
-
-	item = lara_item;
-
-	if (lara.hit_direction < 0)
-	{
-		frac = GetFrames(item, frm, &rate);
-
-		if (frac)
-			return GetLHAInt(item, vec, frm[0], frm[1], frac, rate, lr);
-
-		frame = frm[0];
-	}
-	else
-	{
-		switch (lara.hit_direction)
-		{
-		case EAST:
-			spaz = ANIM_SPAZ_RIGHT;
-			break;
-
-		case SOUTH:
-			spaz = ANIM_SPAZ_BACK;
-			break;
-
-		case WEST:
-			spaz = ANIM_SPAZ_LEFT;
-			break;
-
-		default:
-			spaz = ANIM_SPAZ_FORWARD;
-			break;
-		}
-
-		frame = &anims[spaz].frame_ptr[lara.hit_frame * (anims[spaz].interpolation >> 8)];
-	}
-
-	bone = &bones[objects[item->object_number].bone_index];
-	rot = frame + 9;
-
-	phd_PushUnitMatrix();
-	phd_mxptr[M03] = 0;
-	phd_mxptr[M13] = 0;
-	phd_mxptr[M23] = 0;
-	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
-
-	phd_PushMatrix();
-	phd_TranslateRel(frame[6], frame[7], frame[8]);
-	gar_RotYXZsuperpack(&rot, 0);
-
-	if (!GotJointPos[HIPS])
-		AddJointPos(item, HIPS);
-
-	if (lr == LEFT_FOOT)
-	{
-		phd_TranslateRel(bone[1], bone[2], bone[3]);
-		gar_RotYXZsuperpack(&rot, 0);
-
-		if (!GotJointPos[THIGH_L])
-			AddJointPos(item, THIGH_L);
-
-		phd_TranslateRel(bone[5], bone[6], bone[7]);
-		gar_RotYXZsuperpack(&rot, 0);
-
-		if (!GotJointPos[CALF_L])
-			AddJointPos(item, CALF_L);
-
-		phd_TranslateRel(bone[9], bone[10], bone[11]);
-		gar_RotYXZsuperpack(&rot, 0);
-
-		if (!GotJointPos[FOOT_L])
-			AddJointPos(item, FOOT_L);
-	}
-	else if (lr == RIGHT_FOOT)
-	{
-		phd_TranslateRel(bone[13], bone[14], bone[15]);
-		gar_RotYXZsuperpack(&rot, 3);
-
-		if (!GotJointPos[THIGH_R])
-			AddJointPos(item, THIGH_R);
-
-		phd_TranslateRel(bone[17], bone[18], bone[19]);
-		gar_RotYXZsuperpack(&rot, 0);
-
-		if (!GotJointPos[CALF_R])
-			AddJointPos(item, CALF_R);
-
-		phd_TranslateRel(bone[21], bone[22], bone[23]);
-		gar_RotYXZsuperpack(&rot, 0);
-
-		if (!GotJointPos[FOOT_R])
-			AddJointPos(item, FOOT_R);
-	}
-	else if (lr != LARA_HIPS)
-	{
-		phd_TranslateRel(bone[25], bone[26], bone[27]);
-
-		if (lara.weapon_item != NO_ITEM && lara.gun_type == LG_M16 &&
-			(items[lara.weapon_item].current_anim_state == 0 ||
-				items[lara.weapon_item].current_anim_state == 2 ||
-				items[lara.weapon_item].current_anim_state == 4))
-		{
-			rot = &lara.right_arm.frame_base[lara.right_arm.frame_number * (anims[lara.right_arm.anim_number].interpolation >> 8) + 9];
-			gar_RotYXZsuperpack(&rot, 7);
-		}
-		else
-			gar_RotYXZsuperpack(&rot, 6);
-
-		phd_RotYXZ(lara.torso_y_rot, lara.torso_x_rot, lara.torso_z_rot);
-
-		if (!GotJointPos[TORSO])
-			AddJointPos(item, TORSO);
-
-		if (lr == LARA_HEAD)
-		{
-			phd_TranslateRel(bone[53], bone[54], bone[55]);
-			gar_RotYXZsuperpack(&rot, 6);
-			phd_RotYXZ(lara.head_y_rot, lara.head_x_rot, lara.head_z_rot);
-
-			if (!GotJointPos[HEAD])
-				AddJointPos(item, HEAD);
-		}
-
-		if (lr == LEFT_HAND || lr == RIGHT_HAND)
-		{
-			if (lara.gun_status == LG_READY || lara.gun_status == LG_SPECIAL || lara.gun_status == LG_DRAW || lara.gun_status == LG_UNDRAW)
-				gun = lara.gun_type;
-			else
-				gun = 0;
-
-			if (lr == LEFT_HAND)
-			{
-				phd_TranslateRel(bone[41], bone[42], bone[43]);
-
-				switch (gun)
-				{
-				case LG_UNARMED:
-				case LG_FLARE:
-
-					if (lara.flare_control_left)
-					{
-						rot = &lara.left_arm.frame_base[(anims[lara.left_arm.anim_number].interpolation >> 8) *
-							(lara.left_arm.frame_number - anims[lara.left_arm.anim_number].frame_base) + 9];
-						gar_RotYXZsuperpack(&rot, 11);
-					}
-					else
-						gar_RotYXZsuperpack(&rot, 3);
-
-					break;
-
-				case LG_PISTOLS:
-				case LG_MAGNUMS:
-				case LG_UZIS:
-					phd_mxptr[M00] = phd_mxptr[M00 - indices_count];
-					phd_mxptr[M01] = phd_mxptr[M01 - indices_count];
-					phd_mxptr[M02] = phd_mxptr[M02 - indices_count];
-					phd_mxptr[M10] = phd_mxptr[M10 - indices_count];
-					phd_mxptr[M11] = phd_mxptr[M11 - indices_count];
-					phd_mxptr[M12] = phd_mxptr[M12 - indices_count];
-					phd_mxptr[M20] = phd_mxptr[M20 - indices_count];
-					phd_mxptr[M21] = phd_mxptr[M21 - indices_count];
-					phd_mxptr[M22] = phd_mxptr[M22 - indices_count];
-					phd_RotYXZ(lara.left_arm.y_rot, lara.left_arm.x_rot, lara.left_arm.z_rot);
-					rot = &lara.left_arm.frame_base[(anims[lara.left_arm.anim_number].interpolation >> 8) *
-						(lara.left_arm.frame_number - anims[lara.left_arm.anim_number].frame_base) + 9];
-					gar_RotYXZsuperpack(&rot, 11);
-					break;
-
-				default:
-					gar_RotYXZsuperpack(&rot, 3);
-					break;
-				}
-
-				if (!GotJointPos[UARM_L])
-					AddJointPos(item, UARM_L);
-
-				phd_TranslateRel(bone[45], bone[46], bone[47]);
-				gar_RotYXZsuperpack(&rot, 0);
-
-				if (!GotJointPos[LARM_L])
-					AddJointPos(item, LARM_L);
-
-				phd_TranslateRel(bone[49], bone[50], bone[51]);
-				gar_RotYXZsuperpack(&rot, 0);
-
-				if (!GotJointPos[HAND_L])
-					AddJointPos(item, HAND_L);
-			}
-			else
-			{
-				phd_TranslateRel(bone[29], bone[30], bone[31]);
-
-				switch (gun)
-				{
-				case LG_UNARMED:
-				case LG_FLARE:
-					gar_RotYXZsuperpack(&rot, 0);
-					break;
-
-				case LG_PISTOLS:
-				case LG_MAGNUMS:
-				case LG_UZIS:
-					phd_mxptr[M00] = phd_mxptr[M00 - indices_count];
-					phd_mxptr[M01] = phd_mxptr[M01 - indices_count];
-					phd_mxptr[M02] = phd_mxptr[M02 - indices_count];
-					phd_mxptr[M10] = phd_mxptr[M10 - indices_count];
-					phd_mxptr[M11] = phd_mxptr[M11 - indices_count];
-					phd_mxptr[M12] = phd_mxptr[M12 - indices_count];
-					phd_mxptr[M20] = phd_mxptr[M20 - indices_count];
-					phd_mxptr[M21] = phd_mxptr[M21 - indices_count];
-					phd_mxptr[M22] = phd_mxptr[M22 - indices_count];
-					phd_RotYXZ(lara.right_arm.y_rot, lara.right_arm.x_rot, lara.right_arm.z_rot);
-					rot = &lara.right_arm.frame_base[(anims[lara.right_arm.anim_number].interpolation >> 8) *
-						(lara.right_arm.frame_number - anims[lara.right_arm.anim_number].frame_base) + 9];
-					gar_RotYXZsuperpack(&rot, 8);
-					break;
-
-				case LG_SHOTGUN:
-				case LG_M16:
-				case LG_ROCKET:
-				case LG_GRENADE:
-				case LG_HARPOON:
-					rot = &lara.right_arm.frame_base[lara.right_arm.frame_number * (anims[lara.right_arm.anim_number].interpolation >> 8) + 9];
-					gar_RotYXZsuperpack(&rot, 8);
-					break;
-				}
-
-				if (!GotJointPos[UARM_R])
-					AddJointPos(item, UARM_R);
-
-				phd_TranslateRel(bone[33], bone[34], bone[35]);
-				gar_RotYXZsuperpack(&rot, 0);
-
-				if (!GotJointPos[LARM_R])
-					AddJointPos(item, LARM_R);
-
-				phd_TranslateRel(bone[37], bone[38], bone[39]);
-				gar_RotYXZsuperpack(&rot, 0);
-
-				if (!GotJointPos[HAND_R])
-					AddJointPos(item, HAND_R);
-			}
-		}
-	}
-
-	phd_TranslateRel(vec->x, vec->y, vec->z);
-	vec->x = item->pos.x_pos + (phd_mxptr[M03] >> W2V_SHIFT);
-	vec->y = item->pos.y_pos + (phd_mxptr[M13] >> W2V_SHIFT);
-	vec->z = item->pos.z_pos + (phd_mxptr[M23] >> W2V_SHIFT);
-
-	phd_PopMatrix();
-	phd_PopMatrix();
 }
 
 void LookUpDown()

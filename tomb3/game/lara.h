@@ -141,11 +141,8 @@ void lara_col_swandive(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_fastdive(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_wade(ITEM_INFO* item, COLL_INFO* coll);
 void LaraHangTest(ITEM_INFO* item, COLL_INFO* coll);
-#ifdef TROYESTUFF
 void lara_as_duckroll(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_duckroll(ITEM_INFO* item, COLL_INFO* coll);
-#endif
-void GetLHAInt(ITEM_INFO* item, PHD_VECTOR* vec, short* frame1, short* frame2, long frac, long rate, long lr);
 void GetLaraHandAbsPosition(PHD_VECTOR* vec, long lr);
 void LookUpDown();
 void LookLeftRight();

@@ -79,16 +79,10 @@ void ControlHarpoonBolt(short item_number)
 			nn1 < bounds[4] && on1 < bounds[4] || nn1 > bounds[5] && on1 > bounds[5])
 			continue;
 
-#ifdef RANDO_STUFF
-		if (obj_num == SMASH_OBJECT1 && rando.levels[RANDOLEVEL].original_id != LV_CRASH ||
-#else
-		if (obj_num == SMASH_OBJECT1 && CurrentLevel != LV_CRASH ||
-#endif
-			obj_num == SMASH_WINDOW || obj_num == SMASH_OBJECT2 || obj_num == SMASH_OBJECT3)
+		if (obj_num == SMASH_OBJECT1 && CurrentLevel != LV_CRASH || obj_num == SMASH_WINDOW || obj_num == SMASH_OBJECT2 || obj_num == SMASH_OBJECT3)
 			SmashWindow(target_num);
 		else if (obj_num == CARCASS || obj_num == EXTRAFX6)
 		{
-#ifdef TROYESTUFF	//original bug: checks item (the nade) instead of the target
 			if (target->status != ITEM_ACTIVE)
 			{
 				target->status = ITEM_ACTIVE;
@@ -96,13 +90,6 @@ void ControlHarpoonBolt(short item_number)
 				KillItem(item_number);
 				return;
 			}
-#else
-			if (item->status != ITEM_ACTIVE)
-			{
-				item->status = ITEM_ACTIVE;
-				AddActiveItem(target_num);
-			}
-#endif
 		}
 		else if (obj_num != SMASH_OBJECT1)
 		{
@@ -363,11 +350,7 @@ void ControlRocket(short item_number)
 				nn1 + rad < bounds[4] && on1 + rad < bounds[4] || nn1 - rad > bounds[5] && on1 - rad > bounds[5])
 				continue;
 
-#ifdef RANDO_STUFF
-			if (obj_num == SMASH_OBJECT1 && rando.levels[RANDOLEVEL].original_id == LV_CRASH)
-#else
 			if (obj_num == SMASH_OBJECT1 && CurrentLevel == LV_CRASH)
-#endif
 			{
 				if (item->item_flags[0] == 1)
 					SmashWindow(target_num);
@@ -380,16 +363,10 @@ void ControlRocket(short item_number)
 					break;
 				}
 			}
-#ifdef RANDO_STUFF
-			else if (obj_num == SMASH_OBJECT1 && rando.levels[RANDOLEVEL].original_id != LV_CRASH ||
-#else
-			else if (obj_num == SMASH_OBJECT1 && CurrentLevel != LV_CRASH ||
-#endif
-				obj_num == SMASH_WINDOW || obj_num == SMASH_OBJECT2 || obj_num == SMASH_OBJECT3)
+			else if (obj_num == SMASH_OBJECT1 && CurrentLevel != LV_CRASH || obj_num == SMASH_WINDOW || obj_num == SMASH_OBJECT2 || obj_num == SMASH_OBJECT3)
 				SmashWindow(target_num);
 			else if (obj_num == CARCASS || obj_num == EXTRAFX6)
 			{
-#ifdef TROYESTUFF	//original bug: checks item (the nade) instead of the target
 				if (target->status != ITEM_ACTIVE)
 				{
 					target->status = ITEM_ACTIVE;
@@ -403,13 +380,6 @@ void ControlRocket(short item_number)
 						break;
 					}
 				}
-#else
-				if (item->status != ITEM_ACTIVE)
-				{
-					item->status = ITEM_ACTIVE;
-					AddActiveItem(target_num);
-				}
-#endif
 			}
 			else if (obj_num != SMASH_OBJECT1)
 			{
@@ -422,10 +392,6 @@ void ControlRocket(short item_number)
 
 				if (target->hit_points <= 0)
 				{
-#ifndef TROYESTUFF
-					savegame.kills++;
-#endif
-
 					if (obj_num != TRIBEBOSS && obj_num != WILLARD_BOSS && obj_num != TONY && obj_num != LON_BOSS &&
 						obj_num != ELECTRIC_CLEANER && obj_num != WHALE && obj_num != FLYING_MUTANT_EMITTER)
 					{
@@ -629,17 +595,12 @@ void ControlGrenade(short item_number)
 				nn1 + rad < bounds[4] && on1 + rad < bounds[4] || nn1 - rad > bounds[5] && on1 - rad > bounds[5])
 				continue;
 
-#ifdef RANDO_STUFF
-			if (obj_num == SMASH_OBJECT1 && rando.levels[RANDOLEVEL].original_id != LV_CRASH)
-#else
 			if (obj_num == SMASH_OBJECT1 && CurrentLevel != LV_CRASH)
-#endif
 				SmashWindow(target_num);
 			else if (obj_num == SMASH_WINDOW || obj_num == SMASH_OBJECT2 || obj_num == SMASH_OBJECT3)
 				SmashWindow(target_num);
 			else if (obj_num == CARCASS || obj_num == EXTRAFX6)
 			{
-#ifdef TROYESTUFF	//original bug: checks item (the nade) instead of the target
 				if (target->status != ITEM_ACTIVE)
 				{
 					target->status = ITEM_ACTIVE;
@@ -653,13 +614,6 @@ void ControlGrenade(short item_number)
 						break;
 					}
 				}
-#else
-				if (item->status != ITEM_ACTIVE)	
-				{
-					item->status = ITEM_ACTIVE;
-					AddActiveItem(target_num);
-				}
-#endif
 			}
 			else if (obj_num != SMASH_OBJECT1)
 			{
@@ -672,10 +626,6 @@ void ControlGrenade(short item_number)
 
 				if (target->hit_points <= 0)
 				{
-#ifndef TROYESTUFF
-					savegame.kills++;
-#endif
-
 					if (obj_num != TRIBEBOSS && obj_num != WHALE && obj_num != WILLARD_BOSS && obj_num != TONY &&
 						obj_num != LON_BOSS && obj_num != ELECTRIC_CLEANER && obj_num != FLYING_MUTANT_EMITTER)
 					{
@@ -818,12 +768,7 @@ void undraw_shotgun(long weapon_type)
 		lara.right_arm.frame_number = 0;
 		lara.left_arm.frame_number = 0;
 	}
-	else if (item->current_anim_state == 3 &&
-#ifdef TROYESTUFF
-		item->frame_number - anims[item->anim_number].frame_base == (weapon_type == LG_GRENADE ? 16 : 21))
-#else
-		item->frame_number - anims[item->anim_number].frame_base == 21)
-#endif
+	else if (item->current_anim_state == 3 && item->frame_number - anims[item->anim_number].frame_base == (weapon_type == LG_GRENADE ? 16 : 21))
 		undraw_shotgun_meshes(weapon_type);
 
 	lara.right_arm.frame_base = anims[item->anim_number].frame_ptr;

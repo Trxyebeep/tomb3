@@ -5,9 +5,7 @@ void HWR_EnableZBuffer(bool write, bool compare);
 void HWR_EnableColorKey(bool enable);
 void HWR_EnableAlphaBlend(bool enable);
 void HWR_EnableColorAddition(bool enable);
-#ifdef TROYESTUFF
 void HWR_EnableColorSubtraction(bool enable);
-#endif
 void HWR_ResetZBuffer();
 void HWR_ResetColorKey();
 void HWR_EnablePerspCorrect(bool enable);
@@ -18,9 +16,7 @@ void HWR_EndScene();
 void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage);
 void HWR_DrawRoutinesStippledAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage);
 void HWR_DrawRoutinesNoAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage);
-#ifdef TROYESTUFF
 __inline void HWR_InitGamma(float gamma);
-#endif
 void HWR_InitState();
 bool HWR_Init();
 void HWR_DrawPolyList(long num, long* pSort);

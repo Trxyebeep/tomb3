@@ -260,25 +260,16 @@ void CarcassControl(short item_number)
 	if (item->room_number != room_number)
 		ItemNewRoom(item_number, room_number);
 
-#ifdef TROYESTUFF
 	h -= 64;
-#endif
 
 	if (item->pos.y_pos >= h)
 	{
 		item->pos.y_pos = h;
 		item->fallspeed = 0;
-#ifdef TROYESTUF
-		item->pos.z_rot = 0x4000;
-#else
 		item->pos.z_rot = 0x6000;
-#endif
 		return;
 	}
 
-#ifdef TROYESTUF
-	item->pos.z_rot += item->fallspeed;
-#else
 	if (room[room_number].flags & ROOM_UNDERWATER)
 		item->pos.z_rot += item->fallspeed << 3;
 	else
@@ -286,7 +277,7 @@ void CarcassControl(short item_number)
 
 	if (item->pos.z_rot > 0x6000)
 		item->pos.z_rot = 0x6000;
-#endif
+
 	item->fallspeed += room[room_number].flags & ROOM_UNDERWATER ? 1 : 8;
 	maxfs = room[old_room].flags & ROOM_UNDERWATER ? 64 : 512;
 

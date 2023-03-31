@@ -7,9 +7,7 @@
 #include "savegame.h"
 #include "lara.h"
 #include "effects.h"
-#ifdef TROYESTUFF
 #include "../newstuff/map.h"
-#endif
 
 short next_item_active;
 static short next_item_free;
@@ -258,13 +256,11 @@ void ItemNewRoom(short item_num, short room_num)
 
 	item = &items[item_num];
 
-#ifdef TROYESTUFF
 	if (item_num == lara.item_number)
 	{
 		if (!RoomVisited[room_num])
 			RoomVisited[room_num] = 1;
 	}
-#endif
 
 	if (item->room_number != NO_ROOM)
 	{

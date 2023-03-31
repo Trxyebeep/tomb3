@@ -115,13 +115,8 @@ long StartDemo(long level)
 	}
 
 	LoadLaraDemoPos();
-#ifdef TROYESTUFF
 	demoText = T_Print(0, -16, 0, GF_PCStrings[PCSTR_DEMOMODE]);
 	T_BottomAlign(demoText, 1);
-#else
-	demoText = T_Print(0, DumpHeight / 2 - 16, 0, GF_PCStrings[PCSTR_DEMOMODE]);
-	T_CentreV(demoText, 1);
-#endif
 	T_FlashText(demoText, 1, 20);
 	T_CentreH(demoText, 1);
 	Inventory_DemoMode = 1;

@@ -20,10 +20,8 @@
 #include "../specific/smain.h"
 #include "../specific/input.h"
 #include "camera.h"
-#ifdef TROYESTUFF
 #include "../newstuff/LaraDraw.h"
 #include "../tomb3/tomb3.h"
-#endif
 
 static uchar EnemyWeapon[16] = { 0, 1, 129, 0, 1, 1,  1 };
 static long bound_list[128];
@@ -220,7 +218,6 @@ void InterpolateMatrix()
 {
 	if (IM_rate == 2 || (IM_frac == 2 && IM_rate == 4))
 	{
-#ifdef TROYESTUFF	//fix overflow
 		phd_mxptr[M00] += (IMptr[M00] - phd_mxptr[M00]) >> 1;
 		phd_mxptr[M01] += (IMptr[M01] - phd_mxptr[M01]) >> 1;
 		phd_mxptr[M02] += (IMptr[M02] - phd_mxptr[M02]) >> 1;
@@ -233,20 +230,6 @@ void InterpolateMatrix()
 		phd_mxptr[M21] += (IMptr[M21] - phd_mxptr[M21]) >> 1;
 		phd_mxptr[M22] += (IMptr[M22] - phd_mxptr[M22]) >> 1;
 		phd_mxptr[M23] += (IMptr[M23] - phd_mxptr[M23]) >> 1;
-#else
-		phd_mxptr[M00] = (phd_mxptr[M00] + IMptr[M00]) >> 1;
-		phd_mxptr[M01] = (phd_mxptr[M01] + IMptr[M01]) >> 1;
-		phd_mxptr[M02] = (phd_mxptr[M02] + IMptr[M02]) >> 1;
-		phd_mxptr[M03] = (phd_mxptr[M03] + IMptr[M03]) >> 1;
-		phd_mxptr[M10] = (phd_mxptr[M10] + IMptr[M10]) >> 1;
-		phd_mxptr[M11] = (phd_mxptr[M11] + IMptr[M11]) >> 1;
-		phd_mxptr[M12] = (phd_mxptr[M12] + IMptr[M12]) >> 1;
-		phd_mxptr[M13] = (phd_mxptr[M13] + IMptr[M13]) >> 1;
-		phd_mxptr[M20] = (phd_mxptr[M20] + IMptr[M20]) >> 1;
-		phd_mxptr[M21] = (phd_mxptr[M21] + IMptr[M21]) >> 1;
-		phd_mxptr[M22] = (phd_mxptr[M22] + IMptr[M22]) >> 1;
-		phd_mxptr[M23] = (phd_mxptr[M23] + IMptr[M23]) >> 1;
-#endif
 	}
 	else if (IM_frac == 1)
 	{
@@ -1842,7 +1825,6 @@ void CalculateObjectLightingLara()
 	S_CalculateLight(pos.x, pos.y, pos.z, room_number, &lara_item->il);
 }
 
-#ifdef TROYESTUFF
 static void SwapLaraWithCamera(bool lr)
 {
 	static long x, y, z;
@@ -1868,17 +1850,15 @@ static void SwapLaraWithCamera(bool lr)
 		lara_item->room_number = rn;
 	}
 }
-#endif
 
 void DrawRooms(short current_room)
 {
 	ROOM_INFO* r;
 	OBJECT_INFO* obj;
 	short* rot;
-#ifdef TROYESTUFF
-	bool fx = 0;
-#endif
+	bool fx;
 
+	fx = 0;
 	CurrentRoom = current_room;
 	r = &room[current_room];
 	r->test_left = 0;
@@ -1932,13 +1912,7 @@ void DrawRooms(short current_room)
 			phd_mxptr[M23] = 0;
 			rot = anims[obj->anim_index].frame_ptr + 9;
 			gar_RotYXZsuperpack(&rot, 0);
-
-#ifdef TROYESTUFF
 			S_InitialisePolyList(1);
-#else
-			S_InitialisePolyList(0);
-#endif
-
 			S_InsertBackground(meshes[obj->mesh_index]);
 			phd_PopMatrix();
 		}
@@ -1949,11 +1923,7 @@ void DrawRooms(short current_room)
 		}
 	}
 	else
-#ifdef TROYESTUFF
-		S_InitialisePolyList(1);	//fill the back buffer with black, fixes untextured areas showing previous textures
-#else
-		S_InitialisePolyList(0);
-#endif
+		S_InitialisePolyList(1);
 
 	obj = &objects[LARA];
 
@@ -1972,11 +1942,7 @@ void DrawRooms(short current_room)
 		nPolyType = 2;
 
 		if (bLaraOn)
-#ifdef TROYESTUFF
 			NewDrawLara(lara_item);
-#else
-			DrawLara(lara_item);
-#endif
 	}
 
 	if (bRoomOn)
@@ -1992,37 +1958,24 @@ void DrawRooms(short current_room)
 
 	if (bEffectOn)
 	{
-#ifdef TROYESTUFF
 		SwapLaraWithCamera(0);
-#endif
+
 		nPolyType = 6;
 		S_DrawSparks();
 		S_DrawSplashes();
 		S_DrawBat();
 
-#ifdef RANDO_STUFF
-		if (rando.levels[RANDOLEVEL].hasSnow)
-#else
 		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_CHAMBER)
-#endif
 			DoSnow();
 
-#ifdef RANDO_STUFF
-		if (rando.levels[RANDOLEVEL].hasRain)
-#elif TROYESTUFF
 		if (tomb3.gold)
 			fx = CurrentLevel == LV_JUNGLE || CurrentLevel == LV_ROOFTOPS;
 		else
-			fx = CurrentLevel == LV_JUNGLE || CurrentLevel == LV_QUADBIKE || CurrentLevel == LV_ROOFTOPS ||
-			CurrentLevel == LV_OFFICE || CurrentLevel == LV_STPAULS;
+			fx = CurrentLevel == LV_JUNGLE || CurrentLevel == LV_QUADBIKE || CurrentLevel == LV_ROOFTOPS || CurrentLevel == LV_OFFICE || CurrentLevel == LV_STPAULS;
 
 		if (fx)
-#else
-		if (CurrentLevel == LV_JUNGLE || CurrentLevel == LV_ROOFTOPS)
-#endif
 			DoRain();
 
-#ifdef TROYESTUFF
 		S_DrawFootPrints();
 
 		if (!tomb3.gold)
@@ -2030,11 +1983,8 @@ void DrawRooms(short current_room)
 			if (CurrentLevel == LV_RAPIDS || CurrentLevel == LV_SEWER || CurrentLevel == LV_TOWER)
 				DoUwEffect();
 		}
-#endif
 
-#ifdef TROYESTUFF
 		SwapLaraWithCamera(1);
-#endif
 	}
 
 	if (lara.electric)
@@ -2050,14 +2000,12 @@ void DrawRooms(short current_room)
 
 long DrawPhaseGame()
 {
-#ifdef TROYESTUFF
 	CalcLaraMatrices(0);
 	phd_PushUnitMatrix();
 	CalcLaraMatrices(1);
 	phd_PopMatrix();
 
 	SetLaraUnderwaterNodes();
-#endif
 
 	DrawRooms(camera.pos.room_number);
 	DrawGameInfo(1);
@@ -2175,7 +2123,6 @@ void DrawAnimatingItem(ITEM_INFO* item)
 				item->fired_weapon--;
 			}
 
-#ifdef TROYESTUFF
 			if (i == (EnemyBites[obj->bite_offset].mesh_num - 1) && EnemyWeapon[obj->bite_offset] & 0x80)
 			{
 				if (item->hit_points > 0 || item->frame_number != anims[item->anim_number].frame_end)
@@ -2202,7 +2149,6 @@ void DrawAnimatingItem(ITEM_INFO* item)
 					S_DrawLaserBeam(&src, &dest, 255, 2, 3);
 				}
 			}
-#endif
 		}
 	}
 	else

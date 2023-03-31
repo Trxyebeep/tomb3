@@ -29,10 +29,8 @@
 #include "../specific/file.h"
 #include "lara.h"
 #include "health.h"
-#ifdef TROYESTUFF
 #include "../newstuff/pausemenu.h"
 #include "../newstuff/discord.h"
-#endif
 
 ITEM_INFO* items;
 ANIM_STRUCT* anims;
@@ -84,9 +82,8 @@ long ControlPhase(long nframes, long demo_mode)
 
 	for (framecount += nframes; framecount > 0; framecount -= 2)
 	{
-#ifdef TROYESTUFF
 		RPC_Update();
-#endif
+
 		if (cdtrack > 0)
 			S_CDLoop();
 
@@ -192,13 +189,11 @@ long ControlPhase(long nframes, long demo_mode)
 			}
 		}
 
-#ifdef TROYESTUFF
 		if (input & IN_PAUSE && !lara.death_count && !lara.extra_anim)
 		{
 			if (S_Pause())
 				return 1;
 		}
-#endif
 
 		ClearDynamics();
 		item_number = next_item_active;
@@ -298,11 +293,7 @@ long ControlPhase(long nframes, long demo_mode)
 		CalculateCamera();
 		wibble = (wibble + 4) & 0xFC;
 
-#ifdef RANDO_STUFF
-		if (rando.levels[RANDOLEVEL].freezingWater)
-#else
 		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_MINES)
-#endif
 			LaraBreath(lara_item);
 
 		UpdateSparks();

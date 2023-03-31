@@ -8,9 +8,7 @@
 #include "health.h"
 #include "../specific/output.h"
 #include "camera.h"
-#ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
-#endif
 
 static char T_remapASCII[95] =
 {
@@ -143,17 +141,10 @@ void T_AddBackground(TEXTSTRING* string, short xsize, short ysize, short x, shor
 	if (string)
 	{
 		string->flags |= T_ADDBACKGROUND;
-#ifdef TROYESTUFF
 		string->bgndSizeX = xsize;
 		string->bgndSizeY = ysize;
 		string->bgndOffX = x;
 		string->bgndOffY = y;
-#else
-		string->bgndSizeX = (xsize * h) >> 16;
-		string->bgndSizeY = (ysize * v) >> 16;
-		string->bgndOffX = (x * h) >> 16;
-		string->bgndOffY = (y * v) >> 16;
-#endif
 		string->bgndOffZ = z;
 		string->bgndGour = gourptr;
 		string->bgndColour = color;
@@ -163,34 +154,12 @@ void T_AddBackground(TEXTSTRING* string, short xsize, short ysize, short x, shor
 
 ulong GetTextScaleH(ulong h)
 {
-	long w;
-
-#ifdef TROYESTUFF
 	return GetRenderScale(h);
-#endif
-
-	w = GetRenderWidth();
-
-	if (w < 640)
-		w = 640;
-
-	return (h >> 8) * (((w << 16) / w) >> 8);
 }
 
 ulong GetTextScaleV(ulong v)
 {
-	long h;
-
-#ifdef TROYESTUFF
 	return GetRenderScale(v);
-#endif
-
-	h = GetRenderHeight();
-
-	if (h < 480)
-		h = 480;
-
-	return (v >> 8) * (((h << 16) / h) >> 8);
 }
 
 void draw_border(long x, long y, long z, long w, long h)
@@ -224,13 +193,8 @@ long T_GetTextWidth(TEXTSTRING* string)
 	char* pStr;
 	ulong h, v, letter, width;
 
-#ifdef TROYESTUFF
 	h = string->scaleH;
 	v = string->scaleV;
-#else
-	h = GetTextScaleH(string->scaleH);
-	v = GetTextScaleV(string->scaleV);
-#endif
 	pStr = string->string;
 	letter = 0;
 	width = 0;
@@ -284,11 +248,7 @@ long T_GetTextWidth(TEXTSTRING* string)
 			width += (12 * h) >> 16;
 	}
 
-#ifdef TROYESTUFF
 	return width;
-#else
-	return (width - string->letterSpacing) & 0xFFFE;
-#endif
 }
 
 void T_FlashText(TEXTSTRING* string, short flash, short rate)
@@ -389,15 +349,10 @@ void T_DrawThisText(TEXTSTRING* string)
 	char* pStr;
 	ulong h, v, letter;
 	long x, y, z, w, bX, bY, bW, bH, sprite;
-#ifdef TROYESTUFF
 	long sx, sy, sh, sv;
 
 	h = string->scaleH;
 	v = string->scaleV;
-#else
-	h = GetTextScaleH(string->scaleH);
-	v = GetTextScaleV(string->scaleV);
-#endif
 	bW = 0;
 	bH = 0;
 	
@@ -417,7 +372,6 @@ void T_DrawThisText(TEXTSTRING* string)
 	pStr = string->string;
 	w = T_GetTextWidth(string);
 
-#ifdef TROYESTUFF
 	if (string->flags & T_CENTRE_H)
 		x += (GetRenderWidthDownscaled() - w) / 2;
 	else if (string->flags & T_RIGHTALIGN)
@@ -429,19 +383,6 @@ void T_DrawThisText(TEXTSTRING* string)
 		y += GetRenderHeightDownscaled() / 2;
 	else if (string->flags & T_BOTTOMALIGN)
 		y += GetRenderHeightDownscaled();
-#else
-	if (string->flags & T_CENTRE_H)
-		x += (GetRenderWidth() - w) / 2;
-	else if (string->flags & T_RIGHTALIGN)
-		x += GetRenderWidth() - w;
-	else if (string->flags & T_RIGHTJUSTIFY)
-		x -= w;
-
-	if (string->flags & T_CENTRE_V)
-		y += GetRenderHeight() / 2;
-	else if (string->flags & T_BOTTOMALIGN)
-		y += GetRenderHeight();
-#endif
 
 	bX = x + string->bgndOffX - ((2 * h) >> 16);
 	bY = y + string->bgndOffY - ((4 * v) >> 16) - ((11 * v) >> 16);
@@ -478,7 +419,6 @@ void T_DrawThisText(TEXTSTRING* string)
 		if (letter >= '0' && letter <= '9')
 			x += (h * ((12 - T_textSpacing[sprite]) / 2)) >> 16;
 
-#ifdef TROYESTUFF
 		if (x > 0 && x < GetRenderWidthDownscaled() && y > 0 && y < GetRenderHeightDownscaled())
 		{
 			sx = GetTextScaleH(x);
@@ -487,10 +427,6 @@ void T_DrawThisText(TEXTSTRING* string)
 			sv = GetTextScaleV(v);
 			S_DrawScreenSprite2d(sx, sy, z, sh, sv, short(objects[ALPHABET].mesh_index + sprite), string->Colour, string->textflags);
 		}
-#else
-		if (x > 0 && x < GetRenderWidth() && y > 0 && y < GetRenderHeight())
-			S_DrawScreenSprite2d(x, y, z, h, v, short(objects[ALPHABET].mesh_index + sprite), string->Colour, string->textflags);
-#endif
 
 		if (letter == '(' || letter == ')' || letter == '$' || letter == '~')
 			continue;
@@ -501,19 +437,7 @@ void T_DrawThisText(TEXTSTRING* string)
 			continue;
 		}
 
-#ifdef TROYESTUFF
 		x += (h * (string->letterSpacing + T_textSpacing[sprite])) >> 16;
-#else
-		if (h == 0x10000)
-		{
-			if (sprite == 108 || sprite == 109)
-				x += 14;
-			else
-				x += string->letterSpacing + T_textSpacing[sprite];
-		}
-		else
-			x += h * (string->letterSpacing + T_textSpacing[sprite]);
-#endif
 	}
 
 	if (string->flags & T_ADDBACKGROUND || string->flags & T_ADDOUTLINE)
@@ -533,7 +457,6 @@ void T_DrawThisText(TEXTSTRING* string)
 			bH = (16 * v) >> 16;
 	}
 
-#ifdef TROYESTUFF
 	sx = GetTextScaleH(bX);
 	sy = GetTextScaleV(bY);
 	sh = GetTextScaleH(bW);
@@ -556,20 +479,6 @@ void T_DrawThisText(TEXTSTRING* string)
 		else
 			draw_border(sx, sy, 0, sh, sv);
 	}
-#else
-	if (string->flags & T_ADDBACKGROUND)
-	{
-		if (string->bgndGour)
-			bgndGour = string->bgndGour;
-		else
-			bgndGour = 0;
-
-		S_DrawScreenFBox(bX, bY, string->bgndOffZ + z + 2, bW, bH, string->bgndColour, bgndGour, string->bgndflags);
-	}
-
-	if (string->flags & T_ADDOUTLINE)
-		draw_border(bX, bY, 0, bW, bH);
-#endif
 }
 
 void T_DrawText()

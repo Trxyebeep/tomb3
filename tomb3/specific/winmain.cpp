@@ -16,11 +16,9 @@
 #include "display.h"
 #include "picture.h"
 #include "output.h"
-#ifdef TROYESTUFF
 #include "fmv.h"
 #include "../game/invfunc.h"
 #include "../tomb3/tomb3.h"
-#endif
 
 #ifdef DO_LOG
 FILE* logF = 0;
@@ -37,103 +35,7 @@ long farz;
 
 bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 {
-	DISPLAYMODE* dm;
-	DIRECT3DINFO* d3d;
-	DDSURFACEDESCX desc;
-	D3DMATERIALX m;
-	DDSCAPSX caps;
-	D3DMATERIALHANDLE handle;
-
-#ifdef TROYESTUFF
 	return DXStartRenderer(device, config, createNew, tomb3.Windowed);
-#endif
-
-	App.nRenderMode = 1;
-
-	if (createNew)
-	{
-		if (!DXCreateDirectDraw(device, config, &App.lpDD) || !DXCreateDirect3D(App.lpDD, &App.lpD3D))
-			return 0;
-	}
-
-	if (!DXSetCooperativeLevel(App.lpDD, App.WindowHandle, DDSCL_FULLSCREEN | DDSCL_EXCLUSIVE))
-		return 0;
-
-	dm = &device->DDInfo[config->nDD].D3DInfo[config->nD3D].DisplayMode[config->nVMode];
-
-	if (!DXSetVideoMode(App.lpDD, dm->w, dm->h, dm->bpp))
-		return 0;
-
-	memset(&desc, 0, sizeof(DDSURFACEDESCX));
-	desc.dwSize = sizeof(DDSURFACEDESCX);
-	desc.dwBackBufferCount = 1;
-	desc.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
-	desc.ddsCaps.dwCaps = DDSCAPS_COMPLEX | DDSCAPS_FLIP | DDSCAPS_PRIMARYSURFACE | DDSCAPS_3DDEVICE;
-
-	if (!DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACEX)&App.lpFrontBuffer))
-		return 0;
-
-	App.lpFrontBuffer->GetSurfaceDesc(&desc);
-	d3d = &device->DDInfo[config->nDD].D3DInfo[config->nD3D];
-	dm = &d3d->DisplayMode[config->nVMode];
-
-	DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwRBitMask, &dm->rshift, &dm->rbpp);
-	DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwGBitMask, &dm->gshift, &dm->gbpp);
-	DXBitMask2ShiftCnt(desc.ddpfPixelFormat.dwBBitMask, &dm->bshift, &dm->bbpp);
-
-	if (d3d->bHardware)
-	{
-		caps.dwCaps = DDSCAPS_BACKBUFFER;
-
-		if (!DXGetAttachedSurface(App.lpFrontBuffer, &caps, &App.lpBackBuffer))
-			return 0;
-	}
-	else
-	{
-		App.unk = (ulong*)malloc(4 * dm->w * dm->h);
-		caps.dwCaps = DDSCAPS_BACKBUFFER;
-		DXGetAttachedSurface(App.lpFrontBuffer, &caps, &App.lpBackBuffer);
-	}
-
-	if (!DXCreateZBuffer(device, config))
-		return 0;
-
-	if (!DXCreateDirect3DDevice(App.lpD3D, d3d->Guid, App.lpBackBuffer, &App.lpD3DDevice))
-		return 0;
-
-	dm = &device->DDInfo[config->nDD].D3DInfo[config->nD3D].DisplayMode[config->nVMode];
-
-	if (!DXCreateViewPort(App.lpD3D, App.lpD3DDevice, dm->w, dm->h, &App.lpViewPort))
-		return 0;
-
-	memset(&m, 0, sizeof(D3DMATERIALX));
-	m.dwSize = sizeof(D3DMATERIALX);
-
-	App.lpD3D->CreateMaterial(&App.lpViewPortMaterial, 0);
-	App.lpViewPortMaterial->SetMaterial(&m);
-	App.lpViewPortMaterial->GetHandle(App.lpD3DDevice, &handle);
-	App.lpViewPort->SetBackground(handle);
-
-	memset(&desc, 0, sizeof(DDSURFACEDESCX));
-	desc.dwSize = sizeof(DDSURFACEDESCX);
-	desc.dwWidth = 640;
-	desc.dwHeight = 480;
-	desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH;
-	desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-	DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACEX)&App.lpPictureBuffer);
-	DXClearBuffers(11, 0);
-	InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer, App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware);
-	HWR_InitState();
-
-	if (device->DDInfo[config->nDD].D3DInfo[config->nD3D].bHardware)
-	{
-		DXCreateMaxTPages(1);
-
-		if (!nTPages)
-			return 0;
-	}
-
-	return 1;
 }
 
 void WinAppExit()
@@ -147,9 +49,6 @@ LRESULT CALLBACK WinAppProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 	case WM_CREATE:
-#ifndef TROYESTUFF
-		ShowCursor(0);
-#endif
 		break;
 
 	case WM_ACTIVATE:
@@ -173,11 +72,9 @@ LRESULT CALLBACK WinAppProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 
-#ifdef TROYESTUFF
 	case WM_MOVE:
 		DXMove((short)lParam, short((lParam >> 16) & 0xFFFF));
 		break;
-#endif
 	}
 
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -194,13 +91,10 @@ long WinRegisterWindow(HINSTANCE hinstance)
 	App.WindowClass.lpfnWndProc = WinAppProc;
 	App.WindowClass.cbClsExtra = 0;
 	App.WindowClass.cbWndExtra = 0;
-#ifdef TROYESTUFF
 	App.WindowClass.hCursor = LoadCursor(0, IDC_ARROW);
-#endif
 	return RegisterClass(&App.WindowClass);
 }
 
-#ifdef TROYESTUFF
 static bool WinCreateWindow()
 {
 	App.WindowHandle = CreateWindowEx(WS_EX_APPWINDOW, "Window Class", "Tomb Raider III", WS_OVERLAPPEDWINDOW,
@@ -212,22 +106,6 @@ static bool WinCreateWindow()
 
 	return 1;
 }
-#else
-HWND WinCreateWindow(HINSTANCE hinstance, long nCmdShow)
-{
-	HWND hwnd;
-
-	hwnd = CreateWindowEx(WS_EX_APPWINDOW, "Window Class", "Tomb Raider III", WS_POPUP, 0, 0, 0, 0, 0, 0, hinstance, 0);
-
-	if (hwnd)
-	{
-		ShowWindow(hwnd, nCmdShow);
-		UpdateWindow(hwnd);
-	}
-
-	return hwnd;
-}
-#endif
 
 float WinFrameRate()
 {
@@ -322,7 +200,6 @@ void WinFreeDX(bool free_dd)
 	}
 }
 
-#ifdef TROYESTUFF
 void WinSetStyle(bool fullscreen, ulong& set)
 {
 	ulong style;
@@ -341,26 +218,20 @@ void WinSetStyle(bool fullscreen, ulong& set)
 	if (set)
 		set = style;
 }
-#endif
 
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nShowCmd)
 {
 	DIRECT3DINFO* d3dinfo;
-#ifdef TROYESTUFF
 	HWND desktop;
 	HDC hdc;
 	DEVMODE devmode;
 	static ulong bpp;
-#endif
 	bool hw;
 
 	G_lpCmdLine = lpCmdLine;
 	memset(&App, 0, sizeof(WINAPP));
 	App.hInstance = hInstance;
-
-#ifdef TROYESTUFF
 	tomb3.WindowStyle = WS_OVERLAPPEDWINDOW;
-#endif
 
 	if (!hPrevInstance && !WinRegisterWindow(hInstance))
 	{
@@ -368,40 +239,24 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 		return 0;
 	}
 
-#ifdef TROYESTUFF
 	if (!WinCreateWindow())
-#else
-	App.WindowHandle = WinCreateWindow(hInstance, nShowCmd);
-
-	if (!App.WindowHandle)
-#endif
 	{
 		MessageBox(0, "Unable To Create Window", "", MB_OK);
 		return 0;
 	}
 
-#ifdef TROYESTUFF
 	ShowWindow(App.WindowHandle, SW_HIDE);
 	UpdateWindow(App.WindowHandle);
-#endif
-
-#ifndef TROYESTUFF	//nocd
-	if (!CD_Init())
-		return 0;
-#endif
 
 	DXGetDeviceInfo(&App.DeviceInfo, App.WindowHandle, App.hInstance);
 	App.DXConfigPtr = &App.DXConfig;
 	App.DeviceInfoPtr = &App.DeviceInfo;
 
-#ifdef TROYESTUFF
 	tomb3.gold = UT_FindArg("gold");
 
 	if (tomb3.gold)
 		memcpy(LevelSecrets, gLevelSecrets, sizeof(LevelSecrets));
-#endif
 
-#ifdef TROYESTUFF
 	if ((!S_LoadSettings() || UT_FindArg("setup")))
 	{
 		DXUserDialog(&App.DeviceInfo, &App.DXConfig, App.hInstance);
@@ -421,15 +276,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 		ChangeDisplaySettings(&devmode, 0);
 		return 0;
 	}
-#else
-	if ((!S_LoadSettings() || UT_FindArg("setup")) && !DXUserDialog(&App.DeviceInfo, &App.DXConfig, App.hInstance))
-	{
-		DXFreeDeviceInfo(&App.DeviceInfo);
-		return 0;
-	}
-#endif
 
-#ifdef TROYESTUFF
 	tomb3.WinPlayLoaded = LoadWinPlay();
 
 	if (!tomb3.WinPlayLoaded)
@@ -440,7 +287,6 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	hdc = GetDC(desktop);
 	bpp = GetDeviceCaps(hdc, BITSPIXEL);
 	ReleaseDC(desktop, hdc);
-#endif
 
 	if (!WinDXInit(&App.DeviceInfo, &App.DXConfig, 1))
 	{
@@ -451,7 +297,6 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 		return 0;
 	}
 
-#ifdef TROYESTUFF
 	if (tomb3.Windowed)
 	{
 		WinSetStyle(0, tomb3.WindowStyle);
@@ -467,7 +312,6 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 
 	UpdateWindow(App.WindowHandle);
 	ShowWindow(App.WindowHandle, nShowCmd);
-#endif
 
 	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
 
@@ -501,7 +345,6 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	GtFullScreenClearNeeded = 0;
 	GameMain();
 
-#ifdef TROYESTUFF
 	desktop = GetDesktopWindow();
 	hdc = GetDC(desktop);
 	devmode.dmSize = sizeof(DEVMODE);
@@ -509,8 +352,6 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	ReleaseDC(desktop, hdc);
 	devmode.dmFields = DM_BITSPERPEL;
 	ChangeDisplaySettings(&devmode, 0);
-#endif
-
 	return 0;
 }
 

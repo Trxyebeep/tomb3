@@ -11,9 +11,7 @@
 #include "../specific/file.h"
 #include "lara.h"
 #include "inventry.h"
-#ifdef TROYESTUFF
 #include "../newstuff/map.h"
-#endif
 
 void ShiftItem(ITEM_INFO* item, COLL_INFO* coll)
 {
@@ -345,13 +343,9 @@ void GetCollisionInfo(COLL_INFO* coll, long x, long y, long z, short room_number
 	FLOOR_INFO* floor;
 	static long xfront, zfront;
 	long yT, h, c, tx, tz;
-	long ang, xright, xleft, zright, zleft, xright2, xleft2, zright2, zleft2, hit_left, hit_right;
-#ifdef TROYESTUFF
-	long reset_room;
-#endif
+	long reset_room, ang, xright, xleft, zright, zleft, xright2, xleft2, zright2, zleft2, hit_left, hit_right;
 	short room_num, room_num2, tilt;
 
-#ifdef TROYESTUFF
 	reset_room = 0;
 
 	if (hite < 0)
@@ -359,7 +353,6 @@ void GetCollisionInfo(COLL_INFO* coll, long x, long y, long z, short room_number
 		hite = -hite;
 		reset_room = 1;
 	}
-#endif
 
 	coll->coll_type = CT_NONE;
 	coll->shift.x = 0;
@@ -444,10 +437,8 @@ void GetCollisionInfo(COLL_INFO* coll, long x, long y, long z, short room_number
 		break;
 	}
 
-#ifdef TROYESTUFF
 	if (reset_room)
 		room_num = room_number;
-#endif
 
 	/*front*/
 	tx = x + xfront;
@@ -655,16 +646,6 @@ void GetCollisionInfo(COLL_INFO* coll, long x, long y, long z, short room_number
 		coll->coll_type = CT_TOP;
 	}
 
-#ifndef TROYESTUFF	//fix lara getting stuck in corners
-	if (hit_left && hit_right)
-	{
-		coll->shift.x = coll->old.x - x;
-		coll->shift.z = coll->old.z - z;
-		coll->coll_type = CT_FRONT;
-		return;
-	}
-#endif
-
 	if (coll->front_floor > coll->bad_pos || coll->front_floor < coll->bad_neg || coll->front_ceiling > coll->bad_ceiling)
 	{
 		if (coll->front_type == DIAGONAL || coll->front_type == SPLIT_TRI)
@@ -774,10 +755,8 @@ void UpdateLaraRoom(ITEM_INFO* item, long height)
 	if (item->room_number != room_number)
 		ItemNewRoom(lara.item_number, room_number);
 
-#ifdef TROYESTUFF
 	if (!RoomVisited[room_number])
 		RoomVisited[room_number] = 1;
-#endif
 }
 
 void DoorCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
@@ -993,11 +972,7 @@ void CreatureCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 	if (!TestBoundsCollide(item, l, coll->radius) || !TestCollision(item, l))
 		return;
 
-#ifdef TROYESTUFF
 	if (lara.water_status != LARA_UNDERWATER && lara.water_status != LARA_SURFACE)
-#else
-	if (lara.water_status != LARA_UNDERWATER && !lara.water_status != LARA_SURFACE)
-#endif
 	{
 		if (coll->enable_baddie_push)
 			ItemPushLara(item, l, coll, coll->enable_spaz, 0);

@@ -22,9 +22,7 @@
 #include "../game/effects.h"
 #include "../game/effect2.h"
 #include "../game/cinema.h"
-#ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
-#endif
 
 //gameflow loading checks
 #define LOAD_GF(main, allocSize, buffer, readSize)\
@@ -51,9 +49,6 @@ uchar G_GouraudPalette[1024];
 static uchar TexturesUVFlag[MAX_TINFOS];
 static uchar game_palette[768];
 static char LastLoadedLevelPath[256];
-#ifndef TROYESTUFF
-static char texture_page_ptrs[MAX_TPAGES];
-#endif
 
 long MyReadFile(HANDLE hFile, LPVOID lpBuffer, ulong nNumberOfBytesToRead, ulong* lpNumberOfBytesRead, LPOVERLAPPED lpOverlapped)
 {
@@ -108,23 +103,6 @@ long LoadTexturePages(HANDLE file)
 	bool _16bit;
 
 	MyReadFile(file, &nPages, sizeof(long), &read, 0);
-
-#ifndef TROYESTUFF
-	if (!App.nRenderMode)
-	{
-		for (int i = 0; i < nPages; i++)
-		{
-			if (!texture_page_ptrs[i])
-				texture_page_ptrs[i] = (char*)game_malloc(0x10000, 1);
-
-			MyReadFile(file, texture_page_ptrs[i], 0x10000, &read, 0);
-		}
-
-		SetFilePointer(file, nPages << 17, 0, FILE_CURRENT);
-		return 1;
-	}
-#endif
-
 	_16bit = !App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bPalette;
 	size = _16bit ? 0x20000 : 0x10000;
 	p = (uchar*)GlobalAlloc(GMEM_FIXED, nPages * size);
@@ -669,11 +647,9 @@ long LoadSamples(HANDLE file)
 
 	MyReadFile(file, used_samples, sizeof(long) * nSamples, &read, 0);
 
-#ifdef TROYESTUFF
 	if (tomb3.gold)
 		sfxFile = CreateFile(GetFullPath("datag\\main.sfx"), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	else
-#endif
 		sfxFile = CreateFile(GetFullPath("data\\main.sfx"), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (sfxFile == INVALID_HANDLE_VALUE)
@@ -807,15 +783,8 @@ long LoadLevel(const char* name, long number)
 
 void S_UnloadLevelFile()
 {
-#ifndef TROYESTUFF
-	if (App.nRenderMode == 1)
-#endif
-		HWR_FreeTexturePages();
-
+	HWR_FreeTexturePages();
 	LastLoadedLevelPath[0] = 0;
-#ifndef TROYESTUFF
-	memset(texture_page_ptrs, 0, sizeof(texture_page_ptrs));
-#endif
 	nTInfos = 0;
 }
 
@@ -823,15 +792,12 @@ long S_LoadLevelFile(char* name, long number, long type)
 {
 	long loaded;
 	bool fade;
-#ifdef TROYESTUFF
 	char buf[128];
-#endif
 
 	S_UnloadLevelFile();
 	S_CDStop();
 	fade = 0;
 
-#ifdef TROYESTUFF
 	if (type && type != 6 && type != 3 && (type != 4 || GF_Playing_Story))
 	{
 		strcpy(buf, GF_picfilenames[GF_LoadingPic]);
@@ -840,11 +806,6 @@ long S_LoadLevelFile(char* name, long number, long type)
 			T3_GoldifyString(buf);
 
 		LoadPicture(buf, App.lpPictureBuffer, 1);
-#else
-	if (type && type != 6 && (type != 4 || GF_Playing_Story))
-	{
-		LoadPicture(GF_picfilenames[GF_LoadingPic], App.lpPictureBuffer, 1);
-#endif
 		FadePictureUp(32);
 		fade = 1;
 	}
@@ -899,11 +860,7 @@ const char* GetFullPath(const char* name)
 {
 	static char path[128];
 
-#if 0
-	wsprintf(path, "%c:\\%s", cd_drive, name);	//original code
-#else
-	wsprintf(path, "%s", name);					//Steam no cd
-#endif
+	wsprintf(path, "%s", name);
 	return path;
 }
 

@@ -156,11 +156,7 @@ long ShotLara(ITEM_INFO* item, AI_INFO* info, BITE_INFO* bite, short extra_rotat
 	t.z = enemy->pos.z_pos;
 	objLos = ObjectOnLOS(&s, &t);
 
-#ifdef RANDO_STUFF
-	if (objLos != NO_ITEM && (items[objLos].object_number != SMASH_OBJECT1 || rando.levels[RANDOLEVEL].original_id != LV_CRASH))
-#else
 	if (objLos != NO_ITEM && (items[objLos].object_number != SMASH_OBJECT1 || CurrentLevel != LV_CRASH))
-#endif
 		SmashItem((short)objLos, 0);
 
 	return targetable;

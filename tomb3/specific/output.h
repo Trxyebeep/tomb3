@@ -19,11 +19,8 @@ void S_ClearScreen();
 void AnimateTextures(long n);
 void S_AnimateTextures(long n);
 void S_InitialisePolyList(bool clearBackBuffer);
-
-#ifdef TROYESTUFF
 long GetFixedScale(long unit);
 long GetRenderScale(long unit);
-#endif
 
 extern long framedump;
 extern long SunsetTimer;

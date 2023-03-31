@@ -10,9 +10,7 @@
 #include "cinema.h"
 #include "draw.h"
 #include "inventry.h"
-#ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
-#endif
 
 CAMERA_INFO camera;
 
@@ -1018,9 +1016,7 @@ void CalculateCamera()
 {
 	ITEM_INFO* item;
 	short* bounds;
-#ifdef TROYESTUFF
 	float vol;
-#endif
 	long fixed_camera, y, shift, dx, dz;
 	short angle, tilt;
 
@@ -1040,13 +1036,11 @@ void CalculateCamera()
 
 		if (!camera.underwater)
 		{
-#ifdef TROYESTUFF
 			vol = (1.0F - tomb3.unwater_music_mute) * float(25 * Option_Music_Volume + 5);
 
 			if (Option_Music_Volume > 0 && vol >= 1)
 				S_CDVolume((long)vol);
 			else
-#endif
 				S_CDVolume(0);
 
 			camera.underwater = 1;

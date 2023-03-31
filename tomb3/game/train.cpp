@@ -11,9 +11,7 @@
 #include "items.h"
 #include "effect2.h"
 #include "camera.h"
-#ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
-#endif
 
 static long TestHeight(ITEM_INFO* item, long x, long z, short* room_number)
 {
@@ -71,14 +69,11 @@ void TrainControl(short item_number)
 	ITEM_INFO* item;
 	FLOOR_INFO* floor;
 	long s, c, mid, front, x, y, z;
-#ifdef TROYESTUFF
 	static short speed = 260;
-#endif
 	short room_number;
 
 	item = &items[item_number];
 
-#ifdef TROYESTUFF
 	if (tomb3.gold)
 	{
 		if (CurrentLevel == 4)
@@ -88,20 +83,14 @@ void TrainControl(short item_number)
 		else
 			speed = 260;
 	}
-#endif
 
 	if (!TriggerActive(item))
 		return;
 
 	if (!item->item_flags[0])
 	{
-#ifdef TROYESTUFF
 		item->item_flags[0] = tomb3.gold ? speed : 260;
 		item->item_flags[1] = tomb3.gold ? speed : 260;
-#else
-		item->item_flags[0] = 260;
-		item->item_flags[1] = 260;
-#endif
 	}
 
 	s = phd_sin(item->pos.y_rot);
@@ -132,11 +121,7 @@ void TrainControl(short item_number)
 	z = item->pos.z_pos + ((3072 * c) >> W2V_SHIFT);
 	TriggerDynamic(x, y, z, 16, 31, 31, 31);
 
-#ifdef TROYESTUFF
 	if (item->item_flags[1] == (tomb3.gold ? speed : 260))
-#else
-	if (item->item_flags[1] == 260)
-#endif
 	{
 		SoundEffect(SFX_TUBE_LOOP, &item->pos, SFX_ALWAYS);
 		return;

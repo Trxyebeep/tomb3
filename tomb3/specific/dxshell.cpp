@@ -7,9 +7,7 @@
 #include "display.h"
 #include "picture.h"
 #include "texture.h"
-#ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
-#endif
 
 static LPDIRECTDRAWX G_ddraw;
 static LPDIRECT3DX G_d3d;
@@ -405,9 +403,7 @@ void DXSaveScreen(LPDIRECTDRAWSURFACEX surf)
 	DDSURFACEDESCX desc;
 	ushort* pSurf;
 	short* pDest;
-#ifdef TROYESTUFF
 	char* pM;
-#endif
 	long r, g, b;
 	static long num;
 	ushort c;
@@ -420,16 +416,8 @@ void DXSaveScreen(LPDIRECTDRAWSURFACEX surf)
 	if (FAILED(surf->GetSurfaceDesc(&desc)))
 		return;
 
-#ifdef TROYESTUFF
 	if (FAILED(surf->Lock(0, &desc, DDLOCK_WAIT, 0)))
 		return;
-#else
-	memset(&desc, 0, sizeof(DDSURFACEDESCX));
-	desc.dwSize = sizeof(DDSURFACEDESCX);
-
-	if (FAILED(DD_LockSurface(surf, desc, DDLOCK_WAIT | DDLOCK_WRITEONLY)))
-		return;
-#endif
 
 	pSurf = (ushort*)desc.lpSurface;
 	sprintf(buf, "tomb%04d.tga", num);
@@ -441,13 +429,8 @@ void DXSaveScreen(LPDIRECTDRAWSURFACEX surf)
 		*(short*)&tga_header[12] = (short)desc.dwWidth;
 		*(short*)&tga_header[14] = (short)desc.dwHeight;
 		fwrite(tga_header, sizeof(tga_header), 1, file);
-
-#ifdef TROYESTUFF
 		pM = (char*)malloc(2 * desc.dwWidth * desc.dwHeight);
 		pDest = (short*)pM;
-#else
-		pDest = (short*)malloc_ptr;
-#endif
 		pSurf += desc.dwHeight * (desc.lPitch / 2);
 
 		for (ulong h = 0; h < desc.dwHeight; h++)
@@ -458,11 +441,7 @@ void DXSaveScreen(LPDIRECTDRAWSURFACEX surf)
 
 				if (desc.ddpfPixelFormat.dwRBitMask == 0xF800)
 				{
-#ifdef TROYESTUFF
 					r = (c >> 11) & 0x1F;
-#else
-					r = c >> 11;
-#endif
 					g = (c >> 6) & 0x1F;
 					b = c & 0x1F;
 					*pDest++ = short(r << 10 | g << 5 | b);
@@ -474,12 +453,8 @@ void DXSaveScreen(LPDIRECTDRAWSURFACEX surf)
 			pSurf -= desc.lPitch / 2;
 		}
 
-#ifdef TROYESTUFF
 		fwrite(pM, 2 * desc.dwWidth * desc.dwHeight, 1, file);
 		free(pM);
-#else
-		fwrite(malloc_ptr, 2 * desc.dwWidth * desc.dwHeight, 1, file);
-#endif
 		fclose(file);
 
 		buf[7]++;
@@ -514,11 +489,7 @@ bool DXCheckForLostSurfaces()
 
 	pass = pass || SUCCEEDED(DD_EnsureSurfaceAvailable(App.lpPictureBuffer, 0, 0));
 
-#ifdef TROYESTUFF
 	if (pass && !GtWindowClosed)
-#else
-	if (pass && !GtWindowClosed && App.nRenderMode == 1)
-#endif
 		HWR_GetAllTextureHandles();
 
 	return pass;
@@ -538,31 +509,22 @@ void DXClearBuffers(ulong flags, ulong color)
 	r.right = dm->w;
 	r.bottom = dm->h;
 
-#ifndef TROYESTUFF
-	if (App.nRenderMode == 1)
-#endif
+	sflags = 0;
+
+	if (flags & 2)
+		sflags = 1;
+
+	if (flags & 8)
+		sflags |= 2;
+
+	if (sflags)
 	{
-		sflags = 0;
-
-		if (flags & 2)
-			sflags = 1;
-
-		if (flags & 8)
-			sflags |= 2;
-
-		if (sflags)
-		{
-			vr.x1 = 0;
-			vr.y1 = 0;
-			vr.x2 = dm->w;
-			vr.y2 = dm->h;
-			App.lpViewPort->Clear(1, &vr, sflags);
-		}
+		vr.x1 = 0;
+		vr.y1 = 0;
+		vr.x2 = dm->w;
+		vr.y2 = dm->h;
+		App.lpViewPort->Clear(1, &vr, sflags);
 	}
-#ifndef TROYESTUFF
-	else if (flags & 2)
-		DD_ClearSurface(App.lpBackBuffer, &r, color);
-#endif
 
 	if (flags & 1)
 		DD_ClearSurface(App.lpFrontBuffer, &r, color);
@@ -591,12 +553,6 @@ void DXClearBuffers(ulong flags, ulong color)
 bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 {
 	DIRECT3DINFO* d3dinfo;
-#ifndef TROYESTUFF
-	LPDIRECTDRAWSURFACEX surf;
-	DDSURFACEDESCX desc;
-	DDSURFACEDESCX backDesc;
-	uchar* dest;
-#endif
 	ulong w;
 
 	App.nFrames++;
@@ -606,76 +562,14 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 
 	if (d3dinfo->bHardware)
 	{
-#ifdef TROYESTUFF
 		if (tomb3.Windowed)
 			App.lpFrontBuffer->Blt(&tomb3.rScreen, App.lpBackBuffer, &tomb3.rViewport, DDBLT_WAIT, 0);
 		else
-#endif
 			App.lpFrontBuffer->Flip(0, DDFLIP_WAIT);
 	}
 	else
 	{
-#ifndef TROYESTUFF
-		memset(&desc, 0, sizeof(DDSURFACEDESCX));
-		memset(&backDesc, 0, sizeof(DDSURFACEDESCX));
-		desc.dwSize = sizeof(DDSURFACEDESCX);
-		backDesc.dwSize = sizeof(DDSURFACEDESCX);
-		DXGetSurfaceDesc(App.lpBackBuffer, &backDesc);
 
-		if (backDesc.ddsCaps.dwCaps & DDSCAPS_VIDEOMEMORY)
-			surf = App.lpBackBuffer;
-		else
-			surf = App.lpFrontBuffer;
-
-		surf->Lock(0, &desc, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, 0);
-		dest = (uchar*)desc.lpSurface;
-
-		if (App.DXConfig.MMX)
-		{
-			if (desc.ddpfPixelFormat.dwRGBBitCount == 32)
-			{
-				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += w)
-					memcpy(dest + desc.lPitch * i, &App.unk[n], w * 4);
-			}
-
-			if (desc.ddpfPixelFormat.dwRGBBitCount == 16 && desc.ddpfPixelFormat.dwGBitMask == 0x3E0)
-			{
-				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += w)
-					MMXBlit32to15(dest + desc.lPitch * i, &App.unk[n], w);
-			}
-			else if (desc.ddpfPixelFormat.dwRGBBitCount == 16 && desc.ddpfPixelFormat.dwGBitMask == 0x7E0)
-			{
-				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += w)
-					MMXBlit32to16(dest + desc.lPitch * i, &App.unk[n], w);
-			}
-			else if (desc.ddpfPixelFormat.dwRGBBitCount == 24)
-			{
-				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += w)
-					MMXBlit32to24(dest + desc.lPitch * i, &App.unk[n], w);
-			}
-		}
-		else
-		{
-			if (desc.ddpfPixelFormat.dwGBitMask == 0x3E0)
-			{
-				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += 2 * w)
-					SWRBlit32to15((ulong*)(dest + desc.lPitch * i), (ulong*)((uchar*)App.unk + n), w);
-			}
-			else
-			{
-				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += 2 * w)
-					memcpy(dest + desc.lPitch * i, (uchar*)App.unk + n, 2 * w);
-			}
-		}
-
-		if (backDesc.ddsCaps.dwCaps & DDSCAPS_VIDEOMEMORY)
-		{
-			App.lpBackBuffer->Unlock(0);
-			App.lpFrontBuffer->Flip(0, DDFLIP_WAIT);
-		}
-		else
-			App.lpFrontBuffer->Unlock(0);
-#endif
 	}
 
 	if (runMessageLoop)
@@ -687,84 +581,12 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance)
 {
 	LPDIRECTINPUTX lpDinput;
-#ifndef TROYESTUFF
-	ulong maxCPUID, processorType, info, features, unk1, unk2;
-	char name[13];
 
-	maxCPUID = 0;
-	processorType = 0;
-	info = 0;
-	features = 0;
-	unk1 = 0;
-	unk2 = 0;
-	G_hwnd = hWnd;
-	memset(device, 0, sizeof(DEVICEINFO));
-
-	//MMX check...
-	strcpy(name, "AnonymousCPU");
-	
-	__asm
-	{
-		pushad
-		mov processorType, 4;
-		pushfd
-		pop eax
-		mov ecx, eax
-		xor eax, 200000h
-		push eax
-		popfd
-		pushfd
-		pop eax
-		xor eax, ecx
-		je end
-
-		mov maxCPUID, 0
-		mov eax, 0;	//get largest eax value, and CPU name
-		cpuid
-		mov maxCPUID, eax
-		mov dword ptr[name], ebx
-		mov dword ptr[name + 4], edx
-		mov dword ptr[name + 8], ecx
-
-		mov eax, 1;	//get version info and feature bits
-		cpuid
-		mov info, eax
-		mov features, edx
-
-		shr eax, 8; //actually getting the type now
-		and eax, 0Fh
-		mov processorType, eax
-
-		cmp eax, 5;	//no idea tbh
-		jl end
-		shr eax, 8
-		and eax, 100h
-		setne byte ptr unk1
-
-		and edx, 10h
-		je end
-		shr eax, 8
-		and eax, 4
-		sete byte ptr unk2
-
-	end:
-		popad
-	}
-
-	MMXSupported = (features >> 23) & 1;
-#else
 	MMXSupported = 1;
-#endif
 	DirectDrawEnumerate(DXEnumDirectDraw, device);
 	DirectSoundEnumerate(DXEnumDirectSound, device);
-
-#ifdef TROYESTUFF
 	DirectInput8Create(hInstance, DIRECTINPUT_VERSION, DIGUID, (LPVOID*)&lpDinput, 0);
 	lpDinput->EnumDevices(DI8DEVTYPE_JOYSTICK, DXEnumDirectInput, device, 1);
-#else
-	DirectInputCreate(hInstance, DIRECTINPUT_VERSION, &lpDinput, 0);
-	lpDinput->EnumDevices(DIDEVTYPE_JOYSTICK, DXEnumDirectInput, device, 1);
-#endif
 	lpDinput->Release();
 }
 
@@ -799,28 +621,10 @@ HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LP
 			return D3DENUMRET_OK;
 	}
 
-#ifdef TROYESTUFF
 	SoftwareRenderer = 0;
 
 	if (!lpHWDesc->dwFlags)		//disable software
 		return D3DENUMRET_OK;
-#else
-	if (!lpHWDesc->dwFlags)
-	{
-		SoftwareRenderer = 1;
-
-		if (MMXSupported)
-		{
-			strcpy(description, "Core Design MMX Hardware Card Emulation");
-			strcpy(name, "MMX Emulation");
-		}
-		else
-		{
-			strcpy(description, "Core Design RGB Hardware Card Emulation");
-			strcpy(name, "RGB Emulation");
-		}
-	}
-#endif
 
 	if (lpHWDesc->dwFlags && !lpHWDesc->dpcTriCaps.dwTextureCaps)
 		return D3DENUMRET_OK;
@@ -1034,7 +838,6 @@ bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer)
 	return change;
 }
 
-#ifdef TROYESTUFF
 long DXToggleFullScreen()
 {
 	if (tomb3.Windowed)
@@ -1266,4 +1069,3 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 	Log("DXStartRenderer finished successfully");
 	return 1;
 }
-#endif

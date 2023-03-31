@@ -23,10 +23,8 @@
 #include "control.h"
 #include "camera.h"
 #include "savegame.h"
-#ifdef TROYESTUFF
 #include "../newstuff/discord.h"
 #include "../tomb3/tomb3.h"
-#endif
 
 long Inventory_ExtraData[8];
 long GlobePointLight;
@@ -302,9 +300,7 @@ void GetGlobeMeshFlags()
 void Construct_Inventory()
 {
 	INVENTORY_ITEM* item;
-#ifdef TROYESTUFF
 	float scale;
-#endif
 
 	S_SetupAboveWater(0);
 
@@ -370,8 +366,6 @@ void Construct_Inventory()
 	}
 
 	item_data = 0;
-
-#ifdef TROYESTUFF
 	scale = (float)GetRenderScale(480) / (float)GetRenderHeight();
 
 	if (scale < 1.5F)
@@ -380,7 +374,6 @@ void Construct_Inventory()
 		icompass_option.ytrans_sel = long(-15 - (scale - 1.5F) * 35.0F);
 	else
 		icompass_option.ytrans_sel = long(-22 - (scale - 1.7F) / 0.0075F);
-#endif
 }
 
 long Display_Inventory(long mode)
@@ -389,9 +382,7 @@ long Display_Inventory(long mode)
 	RING_INFO ring;
 	IMOTION_INFO imo;
 	PHD_3DPOS viewer;
-#ifdef TROYESTUFF
 	float vol;
-#endif
 	static long nframes;
 	long demo_needed, pass_open, dy, busy;
 	static short JustSaved;
@@ -440,13 +431,11 @@ long Display_Inventory(long mode)
 
 	if (mode != INV_TITLE_MODE && mode != INV_LEVELSELECT_MODE)
 	{
-#ifdef TROYESTUFF
 		vol = (1.0F - tomb3.inv_music_mute) * float(25 * Option_Music_Volume + 5);
 
 		if (vol >= 1)
 			S_CDVolume((long)vol);
 		else
-#endif
 			S_CDVolume(0);
 	}
 
@@ -484,11 +473,10 @@ long Display_Inventory(long mode)
 
 	do
 	{
-#ifdef TROYESTUFF
 		RPC_title = mode == INV_TITLE_MODE;
 		RPC_Update();
 		RPC_title = 0;
-#endif
+
 		GlobePointLight = (GlobePointLight + 16) & 0xFF;
 
 		if ((mode == INV_TITLE_MODE || mode == INV_LEVELSELECT_MODE) && cdtrack > 0)
@@ -1022,7 +1010,6 @@ long Display_Inventory(long mode)
 	{
 		if (mode != INV_TITLE_MODE && Option_Music_Volume)
 		{
-#ifdef TROYESTUFF
 			if (camera.underwater)
 			{
 				vol = (1.0F - tomb3.unwater_music_mute) * float(25 * Option_Music_Volume + 5);
@@ -1033,7 +1020,6 @@ long Display_Inventory(long mode)
 					S_CDVolume(0);
 			}
 			else
-#endif
 				S_CDVolume(25 * Option_Music_Volume + 5);
 		}
 
@@ -1075,7 +1061,6 @@ long Display_Inventory(long mode)
 
 	if (mode != INV_TITLE_MODE && mode != INV_LEVELSELECT_MODE && Option_Music_Volume)
 	{
-#ifdef TROYESTUFF
 		if (camera.underwater)
 		{
 			vol = (1.0F - tomb3.unwater_music_mute) * float(25 * Option_Music_Volume + 5);
@@ -1086,7 +1071,6 @@ long Display_Inventory(long mode)
 				S_CDVolume(0);
 		}
 		else
-#endif
 			S_CDVolume(25 * Option_Music_Volume + 5);
 	}
 

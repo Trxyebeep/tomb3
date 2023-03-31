@@ -28,7 +28,4 @@ extern long nLoadedPictures;
 extern bool forceFadeDown;
 extern bool pictureFading;
 extern bool dontFadePicture;
-
-#ifdef TROYESTUFF
 extern bool bDontGreyOut;
-#endif

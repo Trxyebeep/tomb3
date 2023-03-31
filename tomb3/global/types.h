@@ -73,43 +73,23 @@ typedef unsigned long ulong;
 #define MAX_LOT		5
 #define MAX_NONLOT	12
 
-#ifdef TROYESTUFF	//*8
+//*8
 #define MAX_TLVERTICES	0x12000
 #define MAX_SORTLISTS	0x17700
-#else
-#define MAX_TLVERTICES	0x2400
-#define MAX_SORTLISTS	0x2EE0
-#endif
 
-#ifdef TROYESTUFF	//*4
+
+//*4
 #define MAX_TPAGES	128
 #define MAX_TINFOS	0x4000
-#else
-#define MAX_TPAGES	32
-#define MAX_TINFOS	0x1000
-#endif
 
 #define MAX_ITEMS	256
-
-#ifdef TROYESTUFF
 #define NLAYOUTKEYS		15
-#else
-#define NLAYOUTKEYS		14
-#endif
-
 #define MAX_WEATHER			256
 
-#ifdef TROYESTUFF	//*2
+//*2
 #define MAX_WEATHER_ALIVE	16
-#else
-#define MAX_WEATHER_ALIVE	8
-#endif
 
-#ifdef TROYESTUFF
 #define MALLOC_SIZE	15000000	//15 MB
-#else
-#define MALLOC_SIZE	0x380000	//about 3.6 MB
-#endif
 
 /*enums*/
 enum bite_offsets
@@ -214,14 +194,9 @@ enum draw_types
 	DT_LINE_SOLID = 12,			//Solid Line
 	DT_POLY_GA = 13,			//Gouraud + Alpha
 	DT_POLY_WGTA = 14,			//Gouraud + Textured + Color key + Alpha
-	DT_UNUSED = 15,				//Unused
-#ifdef TROYESTUFF
 	DT_POLY_COLSUB = 15,		//colsub
-#endif
 	DT_POLY_GTA = 16,			//Gouraud + Textured + Alpha
-#ifdef TROYESTUFF
 	DT_LINE_ALPHA = 17,			//line + color key + alpha
-#endif
 };
 
 enum T_flags
@@ -1319,13 +1294,8 @@ struct D3DTEXTUREINFO
 
 struct DXDIRECTSOUNDINFO
 {
-#ifdef TROYESTUFF
 	char Name[256];
 	char About[256];
-#else
-	char Name[30];
-	char About[80];
-#endif
 	LPGUID lpGuid;
 	GUID Guid;
 };
@@ -2084,7 +2054,7 @@ struct SVECTOR
 	short pad;
 };
 
-#ifdef TROYESTUFF
+// new stuff
 struct FVECTOR
 {
 	float x;
@@ -2186,5 +2156,4 @@ struct TOMB3_OPTIONS
 	bool Windowed;
 	bool WinPlayLoaded;
 };
-#endif
 #pragma pack(pop)

@@ -8,9 +8,7 @@
 #include "../3dsystem/3d_gen.h"
 #include "winmain.h"
 #include "../game/camera.h"
-#ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
-#endif
 
 DXTEXTURE PictureTextures[MAX_TPAGES];
 long OldPicTexIndices[5];
@@ -19,10 +17,7 @@ long nLoadedPictures;
 bool forceFadeDown;
 bool pictureFading;
 bool dontFadePicture;
-
-#ifdef TROYESTUFF
 bool bDontGreyOut;
-#endif
 
 void CrossFadePicture()
 {
@@ -309,7 +304,6 @@ void CreateMonoScreen()
 {
 	DISPLAYMODE* dm;
 
-#ifdef TROYESTUFF
 	if (bDontGreyOut)
 	{
 		if (tomb3.psx_mono)
@@ -320,12 +314,10 @@ void CreateMonoScreen()
 		bDontGreyOut = 0;
 	}
 	else
-#endif
 		DXTextureSetGreyScale(1);
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 
-#ifdef TROYESTUFF
 	if (tomb3.Windowed)
 	{
 		if (dm->w == 640 && dm->h == 480)
@@ -337,7 +329,6 @@ void CreateMonoScreen()
 		}
 	}
 	else
-#endif
 	{
 		if (dm->w == 640 && dm->h == 480)
 			ConvertSurfaceToTextures(App.lpFrontBuffer);
@@ -457,7 +448,6 @@ void S_FadeToBlack()
 
 	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
 
-#ifdef TROYESTUFF
 	if (tomb3.Windowed)
 	{
 		if (dm->w == 640 && dm->h == 480)
@@ -468,7 +458,6 @@ void S_FadeToBlack()
 			ConvertSurfaceToTextures(App.lpPictureBuffer);
 		}
 	}
-#endif
 	else
 	{
 		if (dm->w == 640 && dm->h == 480)
@@ -491,7 +480,6 @@ void S_FadeToBlack()
 
 void DrawMonoScreen(long r, long g, long b)	//do not call this function with a value higher than 127
 {
-#ifdef TROYESTUFF
 	long x[4];
 	long y[4];
 	static long screenX[4] = { 0, 256, 512, 640 };
@@ -527,7 +515,6 @@ void DrawMonoScreen(long r, long g, long b)	//do not call this function with a v
 		HWR_EnablePerspCorrect(1);
 	}
 	else
-#endif
 		TRDrawPicture(0, CurPicTexIndices, f_zfar);
 }
 
