@@ -18,7 +18,7 @@
 
 - Fix PSX shadow not following Lara during some animations.
 - Fix Willard pathing.
-- Fix some issues with window creation.
+- Fix some window creation/style.
 - Fix Tony flame.
 - Fix sound adapter enumeration.
 
