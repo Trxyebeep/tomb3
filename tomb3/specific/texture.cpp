@@ -406,24 +406,6 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 		h--;
 	}
 
-	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-	{
-		if (App.DXConfig.MMX)
-		{
-			tex->pData = (ulong*)GlobalAlloc(GMEM_FIXED, 0x55400);
-			memcpy(tex->pData, desc.lpSurface, 0x40000);
-			MMXTextureCopy(tex->pData + 0x10000, (uchar*)desc.lpSurface, 2);
-			MMXTextureCopy(tex->pData + 0x14000, (uchar*)desc.lpSurface, 4);
-			MMXTextureCopy(tex->pData + 0x15000, (uchar*)desc.lpSurface, 8);
-			MMXTextureCopy(tex->pData + 0x15400, (uchar*)desc.lpSurface, 16);
-		}
-		else
-		{
-			tex->pData = (ulong*)GlobalAlloc(GMEM_FIXED, 0x20000);
-			memcpy(tex->pData, desc.lpSurface, 0x20000);
-		}
-	}
-
 	if (flags == 8 && !App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bAlpha)
 	{
 		ckey.dwColorSpaceLowValue = 0;
@@ -432,12 +414,6 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 	}
 
 	DD_UnlockSurface(tex->pSystemSurface, desc);
-
-	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-	{
-		tex->pSystemSurface->Release();
-		tex->pSystemSurface = 0;
-	}
 
 	if (oldTF != -1)
 		App.DXConfigPtr->D3DTF = oldTF;
@@ -453,10 +429,6 @@ void DXCreateMaxTPages(long create)
 	long n, oldTF;
 
 	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
-
-	if (!d3dinfo->bHardware)
-		return;
-
 	ddpf = &d3dinfo->Texture[App.DXConfigPtr->D3DTF].ddsd.ddpfPixelFormat;
 	DXCreateTextureSurface(Textures, ddpf);
 	n = 1;
@@ -496,9 +468,6 @@ void DXFreeTPages()
 {
 	TEXTURE* tex;
 	DXTEXTURE* DXTex;
-
-	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-		return;
 
 	for (int i = 0; i < MAX_TPAGES; i++)
 	{

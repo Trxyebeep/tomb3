@@ -137,45 +137,12 @@ void HWR_ResetColorKey()
 
 void HWR_EnablePerspCorrect(bool enable)
 {
-	static bool enabled;
-
-	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-		SetRenderState(D3DRENDERSTATE_TEXTUREPERSPECTIVE, 1);
-	else if (enable)
-	{
-		if (!enabled)
-		{
-			enabled = 1;
-			SetRenderState(D3DRENDERSTATE_TEXTUREPERSPECTIVE, 1);
-		}
-	}
-	else if (enabled)
-	{
-		enabled = 0;
-		SetRenderState(D3DRENDERSTATE_TEXTUREPERSPECTIVE, 0);
-	}
+	SetRenderState(D3DRENDERSTATE_TEXTUREPERSPECTIVE, 1);
 }
 
 void HWR_EnableFilter(bool enable)
 {
-	static bool enabled;
 
-	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-	{
-		if (enable)
-		{
-			if (!enabled)
-			{
-				enabled = 1;
-				SetRenderState(D3DRENDERSTATE_TEXTUREMIN, D3DFILTER_MIPNEAREST);
-			}
-		}
-		else if (enabled)
-		{
-			enabled = 0;
-			SetRenderState(D3DRENDERSTATE_TEXTUREMIN, D3DFILTER_NEAREST);
-		}
-	}
 }
 
 void HWR_ResetCurrentTexture()
@@ -473,13 +440,6 @@ void HWR_InitState()
 
 	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
 
-	if (!d3dinfo->bHardware)
-	{
-		GlobalAlpha = 0xFF000000;
-		DrawRoutine = HWR_DrawRoutines;
-		return;
-	}
-
 	if (d3dinfo->DeviceDesc.dpcTriCaps.dwAlphaCmpCaps & D3DPCMPCAPS_NOTEQUAL)
 	{
 		SetRenderState(D3DRENDERSTATE_ALPHAREF, 0);
@@ -526,81 +486,43 @@ void HWR_DrawPolyList(long num, long* pSort)
 
 	dpPrimitiveType = D3DPT_TRIANGLEFAN;
 
-	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+	for (int i = 0; i < num; i++)
 	{
-		for (int i = 0; i < num; i++)
+		pInfo = (short*)pSort[0];
+
+		polyType = pSort[2];
+
+		if (polyType == POLYTYPE_HEALTHBAR ||
+			polyType == POLYTYPE_AIRBAR ||
+			polyType == POLYTYPE_DASHBAR ||
+			polyType == POLYTYPE_COLDBAR)
 		{
-			pInfo = (short*)pSort[0];
+			x0 = pInfo[0];
+			y0 = pInfo[1];
+			x1 = pInfo[2];
+			y1 = pInfo[3];
+			bar = pInfo[4];
+			p = pInfo[5];
 
-			polyType = pSort[2];
+			if (polyType == POLYTYPE_HEALTHBAR)
+				DoPSXHealthBar(x0, y0, x1, y1, bar, p);
+			else if (polyType == POLYTYPE_DASHBAR)
+				DoPSXDashBar(x0, y0, x1, y1, bar, p);
+			else if (polyType == POLYTYPE_AIRBAR)
+				DoPSXAirBar(x0, y0, x1, y1, bar, p);
+			else if (polyType == POLYTYPE_COLDBAR)
+				DoPSXColdBar(x0, y0, x1, y1, bar, p);
 
-			if (polyType == POLYTYPE_HEALTHBAR ||
-				polyType == POLYTYPE_AIRBAR ||
-				polyType == POLYTYPE_DASHBAR ||
-				polyType == POLYTYPE_COLDBAR)
-			{
-				x0 = pInfo[0];
-				y0 = pInfo[1];
-				x1 = pInfo[2];
-				y1 = pInfo[3];
-				bar = pInfo[4];
-				p = pInfo[5];
-
-				if (polyType == POLYTYPE_HEALTHBAR)
-					DoPSXHealthBar(x0, y0, x1, y1, bar, p);
-				else if (polyType == POLYTYPE_DASHBAR)
-					DoPSXDashBar(x0, y0, x1, y1, bar, p);
-				else if (polyType == POLYTYPE_AIRBAR)
-					DoPSXAirBar(x0, y0, x1, y1, bar, p);
-				else if (polyType == POLYTYPE_COLDBAR)
-					DoPSXColdBar(x0, y0, x1, y1, bar, p);
-
-				pSort += 3;
-				continue;
-			}
-
-			nDrawType = pInfo[0];
-			TPage = pInfo[1];
-			nVtx = pInfo[2];
-			vtx = *((D3DTLVERTEX**)(pInfo + 3));
-			DrawRoutine(nVtx, vtx, nDrawType, TPage);
 			pSort += 3;
+			continue;
 		}
-	}
-	else
-	{
-		for (int i = 0; i < num; i++)
-		{
-			pInfo = (short*)pSort[0];
-			polyType = pSort[2];
-			nDrawType = pInfo[0];
-			TPage = pInfo[1];
-			nVtx = pInfo[2];
-			vtx = *((D3DTLVERTEX**)(pInfo + 3));
 
-			switch (polyType)
-			{
-			case 1:
-			case 2:
-			case 5:
-				HWR_EnablePerspCorrect(0);
-				HWR_EnableFilter(0);
-				break;
-
-			case 3:
-				HWR_EnablePerspCorrect(1);
-				HWR_EnableFilter(1);
-				break;
-
-			default:
-				HWR_EnablePerspCorrect(1);
-				HWR_EnableFilter(0);
-				break;
-			}
-
-			DrawRoutine(nVtx, vtx, nDrawType, TPage);
-			pSort += 3;
-		}
+		nDrawType = pInfo[0];
+		TPage = pInfo[1];
+		nVtx = pInfo[2];
+		vtx = *((D3DTLVERTEX**)(pInfo + 3));
+		DrawRoutine(nVtx, vtx, nDrawType, TPage);
+		pSort += 3;
 	}
 }
 
@@ -837,74 +759,67 @@ void HWR_SetCurrentTexture(DXTEXTURE* tex)
 
 	handle = 0;
 
-	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+	if (!nTPages)
+		return;
+
+	if (tex)
 	{
-		if (!nTPages)
-			return;
-
-		if (tex)
+		for (int i = 0; i < MAX_TPAGES; i++)
 		{
-			for (int i = 0; i < MAX_TPAGES; i++)
+			if (Textures[i].DXTex == tex)
 			{
-				if (Textures[i].DXTex == tex)
-				{
-					handle = Textures[i].handle;
-					Textures[i].nFrames = App.nFrames;
-					break;
-				}
-			}
-
-			if (!handle)
-			{
-				n = 0;
-				tdata = (TEXTURE*)tex;
-
-				for (int i = 0; i < nTPages; i++)
-				{
-					temp = &Textures[i];
-
-					if (!temp->DXTex && tex->bpp == temp->bpp)
-					{
-						tdata = temp;
-						break;
-					}
-
-					if (App.nFrames - temp->nFrames >= n && tex->bpp == temp->bpp)
-					{
-						n = App.nFrames - temp->nFrames;
-						tdata = &temp[-1];
-					}
-				}
-
-				handle = tdata->handle;
-
-				if (!n)
-					SetRenderState(D3DRENDERSTATE_FLUSHBATCH, 0);
-
-				if (tdata->pSurf->IsLost() == DDERR_SURFACELOST)
-					tdata->pSurf->Restore();
-
-				if (tex->pSystemSurface)
-				{
-					d3dtex = DXTextureGetInterface(tex->pSystemSurface);
-
-					if (tdata->pTexture->Load(d3dtex) != D3D_OK)
-					{
-						d3dtex = DXTextureGetInterface(tex->pSystemSurface);
-						tdata->pTexture->Load(d3dtex);
-					}
-				}
-
-				tdata->DXTex = tex;
-				tdata->nFrames = App.nFrames;
-				tex->tex = tdata;
+				handle = Textures[i].handle;
+				Textures[i].nFrames = App.nFrames;
+				break;
 			}
 		}
+
+		if (!handle)
+		{
+			n = 0;
+			tdata = (TEXTURE*)tex;
+
+			for (int i = 0; i < nTPages; i++)
+			{
+				temp = &Textures[i];
+
+				if (!temp->DXTex && tex->bpp == temp->bpp)
+				{
+					tdata = temp;
+					break;
+				}
+
+				if (App.nFrames - temp->nFrames >= n && tex->bpp == temp->bpp)
+				{
+					n = App.nFrames - temp->nFrames;
+					tdata = &temp[-1];
+				}
+			}
+
+			handle = tdata->handle;
+
+			if (!n)
+				SetRenderState(D3DRENDERSTATE_FLUSHBATCH, 0);
+
+			if (tdata->pSurf->IsLost() == DDERR_SURFACELOST)
+				tdata->pSurf->Restore();
+
+			if (tex->pSystemSurface)
+			{
+				d3dtex = DXTextureGetInterface(tex->pSystemSurface);
+
+				if (tdata->pTexture->Load(d3dtex) != D3D_OK)
+				{
+					d3dtex = DXTextureGetInterface(tex->pSystemSurface);
+					tdata->pTexture->Load(d3dtex);
+				}
+			}
+
+			tdata->DXTex = tex;
+			tdata->nFrames = App.nFrames;
+			tex->tex = tdata;
+		}
 	}
-	else if (tex)
-		SetRenderState(D3DRENDERSTATE_TEXTUREHANDLE, (ulong)tex->pData);
-	else
-		SetRenderState(D3DRENDERSTATE_TEXTUREHANDLE, 0);
 
 	if (handle != lastTextureHandle)
 	{

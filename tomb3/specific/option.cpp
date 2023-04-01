@@ -163,29 +163,8 @@ void do_detail_option(INVENTORY_ITEM* item)
 		for (int i = 0; i < DOP_NOPTS; i++)
 			available[i] = 1;
 
-		if (dinfo->bHardware)
-		{
-			T_ChangeText(dtext[DT_OP_TRUEALPHA], GF_PCStrings[PCSTR_SPARE8]);
-			available[DOP_TRUEALPHA] = 0;
-		}
-		else
-		{
-			T_ChangeText(dtext[DT_OP_DITHER], GF_PCStrings[PCSTR_SPARE8]);
-			T_ChangeText(dtext[DOP_ZBUFFER], GF_PCStrings[PCSTR_SPARE8]);
-			available[DOP_DITHER] = 0;
-			available[DOP_ZBUFFER] = 0;
-
-			if (App.DXConfigPtr->MMX)
-			{
-				T_ChangeText(dtext[DT_OP_TRUEALPHA], GF_PCStrings[PCSTR_SPARE8]);
-				available[DOP_TRUEALPHA] = 0;
-			}
-			else
-			{
-				T_ChangeText(dtext[DT_OP_FILTER], GF_PCStrings[PCSTR_SPARE8]);
-				available[DOP_FILTER] = 0;
-			}
-		}
+		T_ChangeText(dtext[DT_OP_TRUEALPHA], GF_PCStrings[PCSTR_SPARE8]);
+		available[DOP_TRUEALPHA] = 0;
 
 		if (tomb3.disable_gamma)
 		{
@@ -287,8 +266,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 				HWConfig.TrueAlpha = 1;
 			}
 
-			CloseDrawPrimitive();
-			InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer, dinfo->bHardware);
+			InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer);
 			HWR_InitState();
 			break;
 
@@ -325,30 +303,27 @@ void do_detail_option(INVENTORY_ITEM* item)
 
 		case DOP_ZBUFFER:
 
-			if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
+			if (App.lpZBuffer)
 			{
-				if (App.lpZBuffer)
-				{
-					App.DXConfigPtr->bZBuffer = 0;
-					DXSwitchVideoMode(selected_res, selected_res, 0);
-					T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_OFF]);
-					App.lpZBuffer = 0;
-				}
+				App.DXConfigPtr->bZBuffer = 0;
+				DXSwitchVideoMode(selected_res, selected_res, 0);
+				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_OFF]);
+				App.lpZBuffer = 0;
+			}
+			else
+			{
+				App.DXConfigPtr->bZBuffer = 1;
+
+				if (DXSwitchVideoMode(selected_res, selected_res, 1))
+					T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_ON]);
 				else
 				{
-					App.DXConfigPtr->bZBuffer = 1;
-
-					if (DXSwitchVideoMode(selected_res, selected_res, 1))
-						T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_ON]);
-					else
-					{
-						App.DXConfigPtr->bZBuffer = 0;
-						App.lpZBuffer = 0;
-					}
+					App.DXConfigPtr->bZBuffer = 0;
+					App.lpZBuffer = 0;
 				}
-
-				HWR_InitState();
 			}
+
+			HWR_InitState();
 
 			break;
 		}

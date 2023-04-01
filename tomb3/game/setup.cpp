@@ -261,7 +261,6 @@ long InitialiseLevel(long level, long type)
 	effects = (FX_INFO*)game_malloc(sizeof(FX_INFO) * 50, 32);
 	InitialiseFXArray();
 	InitialiseLOTarray();
-	InitColours();
 	T_InitPrint();
 	InitialisePickUpDisplay();
 	S_InitialiseScreen(type);

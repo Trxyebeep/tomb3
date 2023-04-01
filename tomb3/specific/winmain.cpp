@@ -225,7 +225,6 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	HDC hdc;
 	DEVMODE devmode;
 	static ulong bpp;
-	bool hw;
 
 	G_lpCmdLine = lpCmdLine;
 	memset(&App, 0, sizeof(WINAPP));
@@ -324,12 +323,11 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	HWConfig.nFillMode = D3DFILL_SOLID;
 	HWConfig.TrueAlpha = 0;
 
-	hw = App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware;
 	framedump = 0;
-	App.nUVAdd = hw ? 256 : 128;
+	App.nUVAdd = 256;
 	UT_InitAccurateTimer();
 	DXResetPalette(PictureTextures);
-	InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer, hw);
+	InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer);
 	farz = 0x5000;
 	distanceFogValue = 0x3000;
 	DS_Init();

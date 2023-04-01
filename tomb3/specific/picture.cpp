@@ -414,7 +414,7 @@ void FadePictureDown(long steps)
 
 	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
 
-	if (forceFadeDown || d3dinfo->Texture[App.DXConfigPtr->D3DTF].bPalette || !d3dinfo->bHardware || !d3dinfo->bAlpha)
+	if (forceFadeDown || d3dinfo->Texture[App.DXConfigPtr->D3DTF].bPalette || !d3dinfo->bAlpha)
 	{
 		for (int i = 0; i < steps; i++)
 		{

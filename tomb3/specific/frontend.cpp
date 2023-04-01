@@ -9,41 +9,19 @@
 #include "../game/inventry.h"
 #include "output.h"
 #include "../3dsystem/hwinsert.h"
+#include "../game/invfunc.h"
 #include "../tomb3/tomb3.h"
-
-ushort S_COLOUR(long r, long g, long b)
-{
-	return 0;
-}
 
 void S_DrawScreenLine(long x, long y, long z, long w, long h, long c, GOURAUD_FILL* grdptr, ushort f)
 {
 	InsertLine(x, y, x + w, y + h, phd_znear + 8 * z, (char)c, c);
 }
 
-ulong flat_cols[17] =	//inv_colors but 32bit color!
-{
-	0xFF000000,
-	0xFF404040,
-	0xFFFFFFFF,
-	0xFFFF0000,
-	0xFFFF8000,
-	0xFFFFFF00,
-
-	0, 0, 0, 0, 0, 0,
-
-	0xFF008000,
-	0xFF00FF00,
-	0xFF00FFFF,
-	0xFF0000FF,
-	0xFFFF00FF
-};
-
 static void MakeFlatGour(char c, GOURAUD_OUTLINE* grdptr)
 {
 	ulong col;
 
-	col = flat_cols[c];
+	col = inv_colours[c];
 
 	for (int i = 0; i < 9; i++)
 		grdptr->clr[i] = col;

@@ -108,10 +108,6 @@ void ShutdownGame()
 	DXClearAllTextures(PictureTextures);
 	DI_Finish();
 	DS_Finish();
-
-	if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bHardware)
-		CloseDrawPrimitive();
-
 	WinFreeDX(1);
 	DXFreeDeviceInfo(&App.DeviceInfo);
 

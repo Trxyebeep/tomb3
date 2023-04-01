@@ -1,7 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-uchar SWR_FindNearestPaletteEntry(uchar* p, long r, long g, long b, bool ignoreSystemPalette);
 bool CD_Init();
 long CalcVolume(long volume);
 long CalcPan(short angle);

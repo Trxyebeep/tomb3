@@ -11,7 +11,6 @@
 
 static LPDIRECTDRAWX G_ddraw;
 static LPDIRECT3DX G_d3d;
-static bool SoftwareRenderer;
 static HWND G_hwnd;
 static bool MMXSupported;
 
@@ -247,12 +246,7 @@ bool DXCreateZBuffer(DEVICEINFO* device, DXCONFIG* config)
 	desc.dwSize = sizeof(DDSURFACEDESCX);
 	desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_ZBUFFERBITDEPTH;
 	desc.ddsCaps.dwCaps = DDSCAPS_ZBUFFER;
-
-	if ((*dinfopp)[config->nD3D].bHardware)
-		desc.ddsCaps.dwCaps |= DDSCAPS_VIDEOMEMORY;
-	else
-		desc.ddsCaps.dwCaps |= DDSCAPS_SYSTEMMEMORY;
-
+	desc.ddsCaps.dwCaps |= DDSCAPS_VIDEOMEMORY;
 	desc.dwWidth = (*dinfopp)[config->nD3D].DisplayMode[config->nVMode].w;
 	desc.dwHeight = (*dinfopp)[config->nD3D].DisplayMode[config->nVMode].h;
 	desc.dwMipMapCount = 16;
@@ -301,7 +295,6 @@ BOOL CALLBACK DXEnumDirectDraw(GUID FAR* lpGUID, LPSTR lpDriverDescription, LPST
 	G_ddraw->SetCooperativeLevel(0, DDSCL_FULLSCREEN | DDSCL_NOWINDOWCHANGES | DDSCL_NORMAL | DDSCL_ALLOWMODEX);
 	G_ddraw->EnumDisplayModes(0, 0, (LPVOID)info, DXEnumDisplayModes);
 	G_ddraw->QueryInterface(D3DGUID, (LPVOID*)&G_d3d);
-	SoftwareRenderer = 0;
 	G_d3d->EnumDevices(DXEnumDirect3D, info);
 	G_ddraw->SetCooperativeLevel(0, DDSCL_NORMAL);
 	G_d3d->Release();
@@ -497,7 +490,6 @@ bool DXCheckForLostSurfaces()
 
 void DXClearBuffers(ulong flags, ulong color)
 {
-	DIRECT3DINFO* d3d;
 	DISPLAYMODE* dm;
 	RECT r;
 	D3DRECT vr;
@@ -537,17 +529,6 @@ void DXClearBuffers(ulong flags, ulong color)
 		r.bottom = 480;
 		DD_ClearSurface(App.lpPictureBuffer, &r, color);
 	}
-
-	d3d = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
-
-	if (!d3d->bHardware)
-	{
-		if (flags & 2)
-		{
-			dm = &d3d->DisplayMode[App.DXConfigPtr->nVMode];
-			memset(App.unk, 0, 4 * dm->w * dm->h);
-		}
-	}
 }
 
 bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
@@ -560,17 +541,10 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
 	w = d3dinfo->DisplayMode[App.DXConfigPtr->nVMode].w;
 
-	if (d3dinfo->bHardware)
-	{
-		if (tomb3.Windowed)
-			App.lpFrontBuffer->Blt(&tomb3.rScreen, App.lpBackBuffer, &tomb3.rViewport, DDBLT_WAIT, 0);
-		else
-			App.lpFrontBuffer->Flip(0, DDFLIP_WAIT);
-	}
+	if (tomb3.Windowed)
+		App.lpFrontBuffer->Blt(&tomb3.rScreen, App.lpBackBuffer, &tomb3.rViewport, DDBLT_WAIT, 0);
 	else
-	{
-
-	}
+		App.lpFrontBuffer->Flip(0, DDFLIP_WAIT);
 
 	if (runMessageLoop)
 		return DD_SpinMessageLoop(0);
@@ -590,20 +564,6 @@ void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance)
 	lpDinput->Release();
 }
 
-void SWRBlit32to15(ulong* dest, ulong* src, ulong w)
-{
-	w >>= 1;
-
-	do
-	{
-		dest[0] = src[0] & 0x1F001F | ((src[0] & 0xFFC0FFC0) >> 1);
-		dest[1] = src[1] & 0x1F001F | ((src[1] & 0xFFC0FFC0) >> 1);
-		src += 2;
-		dest += 2;
-		w--;
-	} while (w);
-}
-
 HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LPD3DDEVICEDESC lpHWDesc, LPD3DDEVICEDESC lpHELDesc, LPVOID lpContext)
 {
 	DIRECTDRAWINFO* ddinfo;
@@ -611,17 +571,8 @@ HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LP
 	static LPDIRECTDRAWSURFACEX surf;
 	static LPDIRECT3DDEVICEX d3dDevice;
 	DDSURFACEDESCX desc;
-	long goin;
 
 	ddinfo = (DIRECTDRAWINFO*)lpContext;
-
-	if (!lpHWDesc->dwFlags)
-	{
-		if (lpHELDesc->dcmColorModel & D3DCOLOR_MONO || SoftwareRenderer == 1)
-			return D3DENUMRET_OK;
-	}
-
-	SoftwareRenderer = 0;
 
 	if (!lpHWDesc->dwFlags)		//disable software
 		return D3DENUMRET_OK;
@@ -642,57 +593,19 @@ HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LP
 
 	lstrcpy(d3dinfo->About, description);
 	lstrcpy(d3dinfo->Name, name);
-
-	if (lpHWDesc->dwFlags)
-	{
-		d3dinfo->bHardware = 1;
-		memcpy(&d3dinfo->DeviceDesc, lpHWDesc, sizeof(D3DDEVICEDESC));
-	}
-	else
-	{
-		d3dinfo->bHardware = 0;
-		memcpy(&d3dinfo->DeviceDesc, lpHELDesc, sizeof(D3DDEVICEDESC));
-	}
+	memcpy(&d3dinfo->DeviceDesc, lpHWDesc, sizeof(D3DDEVICEDESC));
 
 	d3dinfo->bAlpha = d3dinfo->DeviceDesc.dpcTriCaps.dwShadeCaps & D3DPSHADECAPS_ALPHAFLATBLEND;
 	d3dinfo->bAGP = d3dinfo->DeviceDesc.dwDevCaps & D3DDEVCAPS_TEXTURENONLOCALVIDMEM;
 
-	if (SoftwareRenderer)
+	for (int i = 0; i < ddinfo->nDisplayMode; i++)
 	{
-		for (int i = 0; i < ddinfo->nDisplayMode; i++)
-		{
-			if (!(BPPToDDBD(ddinfo->DisplayMode[i].bpp) & d3dinfo->DeviceDesc.dwDeviceRenderBitDepth))
-				continue;
+		if (!(BPPToDDBD(ddinfo->DisplayMode[i].bpp) & d3dinfo->DeviceDesc.dwDeviceRenderBitDepth))
+			continue;
 
-			goin = 0;
-
-			if (MMXSupported)
-			{
-				if (ddinfo->DisplayMode[i].bpp == 16 || ddinfo->DisplayMode[i].bpp == 24 || ddinfo->DisplayMode[i].bpp == 32)	//check me
-					goin = 1;
-			}
-			else if (ddinfo->DisplayMode[i].bpp == 16)
-				goin = 1;
-
-			if (!goin)
-				continue;
-
-			d3dinfo->DisplayMode = (DISPLAYMODE*)AddStruct(d3dinfo->DisplayMode, d3dinfo->nDisplayMode, sizeof(DISPLAYMODE));
-			memcpy(&d3dinfo->DisplayMode[d3dinfo->nDisplayMode], &ddinfo->DisplayMode[i], sizeof(DISPLAYMODE));
-			d3dinfo->nDisplayMode++;
-		}
-	}
-	else
-	{
-		for (int i = 0; i < ddinfo->nDisplayMode; i++)
-		{
-			if (!(BPPToDDBD(ddinfo->DisplayMode[i].bpp) & d3dinfo->DeviceDesc.dwDeviceRenderBitDepth))
-				continue;
-
-			d3dinfo->DisplayMode = (DISPLAYMODE*)AddStruct(d3dinfo->DisplayMode, d3dinfo->nDisplayMode, sizeof(DISPLAYMODE));
-			memcpy(&d3dinfo->DisplayMode[d3dinfo->nDisplayMode], &ddinfo->DisplayMode[i], sizeof(DISPLAYMODE));
-			d3dinfo->nDisplayMode++;
-		}
+		d3dinfo->DisplayMode = (DISPLAYMODE*)AddStruct(d3dinfo->DisplayMode, d3dinfo->nDisplayMode, sizeof(DISPLAYMODE));
+		memcpy(&d3dinfo->DisplayMode[d3dinfo->nDisplayMode], &ddinfo->DisplayMode[i], sizeof(DISPLAYMODE));
+		d3dinfo->nDisplayMode++;
 	}
 
 	memset(&desc, 0, sizeof(DDSURFACEDESCX));
@@ -808,9 +721,6 @@ bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer)
 
 	for (int i = 0; i < MAX_TPAGES; i++)
 		PictureTextures[i].tex = 0;
-
-	if (!d3dinfo->bHardware)
-		CloseDrawPrimitive();
 
 	WinFreeDX(0);
 
@@ -1056,7 +966,7 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 	desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
 	DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACEX)&App.lpPictureBuffer);
 	DXClearBuffers(11, 0);
-	InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer, 1);
+	InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer);
 	HWR_InitState();
 	DXCreateMaxTPages(1);
 

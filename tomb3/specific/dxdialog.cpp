@@ -193,7 +193,7 @@ void DXInitD3DDrivers(HWND hwnd, long nDrivers)
 		sprintf(abt, "%s", ddinfo->D3DInfo[i].About);
 		SendMessage(output_setting, CB_ADDSTRING, 0, (LPARAM)abt);
 
-		if (selected == -1 && !bSoftwareDefault && ddinfo->D3DInfo[i].bHardware)
+		if (selected == -1 && !bSoftwareDefault)
 			nHWDriver = i;
 
 		if (!strcmp(buf, abt))
@@ -219,31 +219,23 @@ void DXInitD3DDrivers(HWND hwnd, long nDrivers)
 	selected = nHWDriver;
 
 	d3dinfo = &G_DeviceInfo->DDInfo[nDrivers].D3DInfo[nHWDriver];
+	EnableWindow(zbuffer, 1);
+	EnableWindow(dither, 1);
+	EnableWindow(filter, 1);
+	EnableWindow(tex_8bit, 1);
+	EnableWindow(agp_mem, 0);
+	SendMessage(agp_mem, BM_SETCHECK, 0, 0);
 
-	if (d3dinfo->bHardware)
+	if (d3dinfo->bAGP)
 	{
-		EnableWindow(zbuffer, 1);
-		EnableWindow(dither, 1);
-		EnableWindow(filter, 1);
-		EnableWindow(tex_8bit, 1);
-		EnableWindow(agp_mem, 0);
-		SendMessage(agp_mem, BM_SETCHECK, 0, 0);
-
-		if (d3dinfo->bAGP)
-		{
-			EnableWindow(agp_mem, 1);
-			SendMessage(agp_mem, BM_SETCHECK, 1, 0);
-		}
-
-		SendMessage(zbuffer, BM_SETCHECK, 1, 0);
-		SendMessage(filter, BM_SETCHECK, 1, 0);
-		SendMessage(dither, BM_SETCHECK, 1, 0);
-		SendMessage(tex_8bit, BM_SETCHECK, 0, 0);
+		EnableWindow(agp_mem, 1);
+		SendMessage(agp_mem, BM_SETCHECK, 1, 0);
 	}
-	else
-	{
 
-	}
+	SendMessage(zbuffer, BM_SETCHECK, 1, 0);
+	SendMessage(filter, BM_SETCHECK, 1, 0);
+	SendMessage(dither, BM_SETCHECK, 1, 0);
+	SendMessage(tex_8bit, BM_SETCHECK, 0, 0);
 }
 
 void DXInitVideoModes(HWND hwnd, long nDD, long nD3D)

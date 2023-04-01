@@ -69,6 +69,24 @@ GOURAUD_OUTLINE req_sel_gour2 =
 	0xFF000000, 0xFF38F080, 0xFF000000,
 };
 
+ulong inv_colours[17] =	//now 32bit color
+{
+	0xFF000000,
+	0xFF404040,
+	0xFFFFFFFF,
+	0xFFFF0000,
+	0xFFFF8000,
+	0xFFFFFF00,
+
+	0, 0, 0, 0, 0, 0,
+
+	0xFF008000,
+	0xFF00FF00,
+	0xFF00FFFF,
+	0xFF0000FF,
+	0xFFFF00FF
+};
+
 short gLevelSecrets[21] = { 0, 3, 3, 3, 3, 3, 0, 3, 1, 5, 5, 6, 1, 3, 2, 3, 3, 3, 3, 0, 0 };
 short LevelSecrets[21] = { 0, 6, 4, 5, 0, 3, 3, 3, 1, 5, 5, 6, 1, 3, 2, 3, 3, 3, 3, 0, 0 };
 
@@ -76,7 +94,7 @@ ulong RequesterFlags1[24];
 ulong RequesterFlags2[24];
 ulong SaveGameReqFlags1[24];
 ulong SaveGameReqFlags2[24];
-short inv_colours[17];
+
 char Save_Game_Strings[24][50];
 char Save_Game_Strings2[24][50];
 char Valid_Level_Strings[24][50];
@@ -195,21 +213,6 @@ INVENTORY_ITEM* inv_levelselect_list[1] =
 {
 	&igamma_option
 };
-
-void InitColours()
-{
-	inv_colours[0] = S_COLOUR(0, 0, 0);
-	inv_colours[1] = S_COLOUR(64, 64, 64);
-	inv_colours[2] = S_COLOUR(255, 255, 255);
-	inv_colours[3] = S_COLOUR(255, 0, 0);
-	inv_colours[4] = S_COLOUR(255, 128, 0);
-	inv_colours[5] = S_COLOUR(255, 255, 0);
-	inv_colours[12] = S_COLOUR(0, 128, 0);
-	inv_colours[13] = S_COLOUR(0, 255, 0);
-	inv_colours[14] = S_COLOUR(0, 255, 255);
-	inv_colours[15] = S_COLOUR(0, 0, 255);
-	inv_colours[16] = S_COLOUR(255, 0, 255);
-}
 
 /************Requester stuff************/
 

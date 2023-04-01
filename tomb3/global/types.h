@@ -1308,7 +1308,6 @@ struct DIRECT3DINFO
 	GUID Guid;
 	D3DDEVICEDESC DeviceDesc;
 	bool bAlpha;
-	bool bHardware;
 	bool bAGP;
 	long nDisplayMode;
 	DISPLAYMODE* DisplayMode;
