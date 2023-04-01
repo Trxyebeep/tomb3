@@ -59,8 +59,6 @@ static void T3_InitSettings()
 {
 	Option_Music_Volume = 7;
 	Option_SFX_Volume = 10;
-	S_CDVolume(25 * Option_Music_Volume + 5);
-	S_SoundSetMasterVolume(6 * Option_SFX_Volume + 4);
 	tomb3.Windowed = 0;
 
 	tomb3.footprints = 1;
@@ -257,8 +255,6 @@ bool T3_LoadSettings()
 	REG_ReadFloat((char*)"unwater_music_mute", tomb3.unwater_music_mute, 0.8F);
 	REG_ReadFloat((char*)"inv_music_mute", tomb3.inv_music_mute, 0.8F);
 
-	S_CDVolume(25 * Option_Music_Volume + 5);
-	S_SoundSetMasterVolume(6 * Option_SFX_Volume + 4);
 	CloseRegistry();
 	return 1;
 }

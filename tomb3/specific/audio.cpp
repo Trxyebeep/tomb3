@@ -4,6 +4,8 @@
 #include "winmain.h"
 #include "ds.h"
 #include "../game/control.h"
+#include "specific.h"
+#include "../game/inventry.h"
 
 static TRACK_INFO TrackInfos[130];
 static LPDIRECTSOUNDBUFFER DSBuffer;
@@ -476,6 +478,13 @@ bool ACMInit()
 	}
 
 	DSBuffer->Unlock(pAudioWrite, audio_buffer_size, 0, 0);
+	S_CDVolume(25 * Option_Music_Volume + 5);
+
+	if (Option_SFX_Volume)
+		S_SoundSetMasterVolume(6 * Option_SFX_Volume + 4);
+	else
+		S_SoundSetMasterVolume(0);
+
 	return 1;
 }
 

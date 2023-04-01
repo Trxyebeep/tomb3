@@ -7,6 +7,8 @@
 - Fix Lara refusing to go in some crawlspaces.
 - Fix unsafe memory access in boss shield drawing routines.
 - Fix sound adapter names in the setup window.
+- Fix volume options not applying correctly when launching the game.
+- Fix SFX volume not completely muting when setting it to 0.
 
 ### tomb3 additions
 

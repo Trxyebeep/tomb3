@@ -97,7 +97,7 @@ bool CD_Init()
 
 long CalcVolume(long volume)
 {
-	if (!volume)
+	if (!volume || !MasterVolume)
 		return DSBVOLUME_MIN;
 
 	return long((float(MasterVolume * volume) * 0.00019074068F - 400.0F) * 6.0F);
