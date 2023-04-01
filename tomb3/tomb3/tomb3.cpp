@@ -1,6 +1,6 @@
 #include "../tomb3/pch.h"
 #include "tomb3.h"
-#include "registry.h"
+#include "../newstuff/registry.h"
 #include "../specific/specific.h"
 #include "../specific/option.h"
 #include "../specific/input.h"

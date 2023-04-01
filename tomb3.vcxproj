@@ -302,7 +302,7 @@
     <ClInclude Include="tomb3\specific\utils.h" />
     <ClInclude Include="tomb3\specific\winmain.h" />
     <ClInclude Include="tomb3\tomb3\pch.h" />
-    <ClInclude Include="tomb3\tomb3\registry.h" />
+    <ClInclude Include="tomb3\newstuff\registry.h" />
     <ClInclude Include="tomb3\tomb3\tomb3.h" />
   </ItemGroup>
   <ItemGroup>
@@ -444,7 +444,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="tomb3\tomb3\registry.cpp" />
+    <ClCompile Include="tomb3\newstuff\registry.cpp" />
     <ClCompile Include="tomb3\tomb3\tomb3.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -318,7 +318,7 @@
     <ClInclude Include="tomb3\3dsystem\scalespr.h">
       <Filter>3dsystem</Filter>
     </ClInclude>
-    <ClInclude Include="tomb3\tomb3\registry.h">
+    <ClInclude Include="tomb3\newstuff\registry.h">
       <Filter>tomb3</Filter>
     </ClInclude>
     <ClInclude Include="tomb3\tomb3\tomb3.h">
@@ -731,7 +731,7 @@
     <ClCompile Include="tomb3\tomb3\tomb3.cpp">
       <Filter>tomb3</Filter>
     </ClCompile>
-    <ClCompile Include="tomb3\tomb3\registry.cpp">
+    <ClCompile Include="tomb3\newstuff\registry.cpp">
       <Filter>tomb3</Filter>
     </ClCompile>
     <ClCompile Include="tomb3\tomb3\pch.cpp">
