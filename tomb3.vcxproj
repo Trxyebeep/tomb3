@@ -301,7 +301,6 @@
     <ClInclude Include="tomb3\specific\transform.h" />
     <ClInclude Include="tomb3\specific\utils.h" />
     <ClInclude Include="tomb3\specific\winmain.h" />
-    <ClInclude Include="tomb3\tomb3\framework.h" />
     <ClInclude Include="tomb3\tomb3\pch.h" />
     <ClInclude Include="tomb3\tomb3\registry.h" />
     <ClInclude Include="tomb3\tomb3\tomb3.h" />

@@ -327,9 +327,6 @@
     <ClInclude Include="tomb3\tomb3\pch.h">
       <Filter>tomb3</Filter>
     </ClInclude>
-    <ClInclude Include="tomb3\tomb3\framework.h">
-      <Filter>tomb3</Filter>
-    </ClInclude>
     <ClInclude Include="tomb3\game\people.h">
       <Filter>game</Filter>
     </ClInclude>
