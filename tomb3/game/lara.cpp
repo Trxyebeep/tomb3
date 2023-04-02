@@ -4187,26 +4187,6 @@ void lara_col_duckroll(ITEM_INFO* item, COLL_INFO* coll)
 	}
 }
 
-void GetLaraHandAbsPosition(PHD_VECTOR* vec, long lr)
-{
-	if (lr == LEFT_HAND)
-		lr = LMX_HAND_L;
-	else if (lr == RIGHT_HAND)
-		lr = LMX_HAND_R;
-	else if (lr == LARA_HIPS)
-		lr = LMX_HIPS;
-	else if (lr == LARA_TORSO)
-		lr = LMX_TORSO;
-	else if (lr == LARA_HEAD)
-		lr = LMX_HEAD;
-	else if (lr == LEFT_FOOT)
-		lr = LMX_FOOT_L;
-	else if (lr == RIGHT_FOOT)
-		lr = LMX_FOOT_R;
-
-	return GetLaraMeshPos(vec, lr);
-}
-
 void LookUpDown()
 {
 	camera.type = LOOK_CAMERA;

@@ -921,14 +921,16 @@ void NewDrawLara(ITEM_INFO* item)
 		pos.x = 8;
 		pos.y = 36;
 		pos.z = 32;
-		GetLaraHandAbsPosition(&pos, 0);
+		GetLaraMeshPos(&pos, LMX_HAND_L);
+
 		x = pos.x;
 		y = pos.y;
 		z = pos.z;
+
 		pos.x = 8;
 		pos.y = 36;
 		pos.z = (GetRandomDraw() & 0xFF) + 1024;
-		GetLaraHandAbsPosition(&pos, 0);
+		GetLaraMeshPos(&pos, LMX_HAND_L);
 
 		for (int i = 0; i < (GetRandomDraw() & 3) + 4; i++)
 			TriggerFlareSparks(x, y, z, pos.x - x, pos.y - y, pos.z - z, i >> 2, 0);

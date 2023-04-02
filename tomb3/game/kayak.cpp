@@ -17,6 +17,7 @@
 #include "../specific/draweffects.h"
 #include "../specific/input.h"
 #include "../tomb3/tomb3.h"
+#include "../newstuff/LaraDraw.h"
 
 void LaraRapidsDrown()
 {
@@ -549,7 +550,7 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 			pos.x = 0;
 			pos.y = 350;
 			pos.z = 500;
-			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			GetLaraMeshPos(&pos, LMX_HIPS);
 			l->pos.x_pos = pos.x;
 			l->pos.y_pos = pos.y;
 			l->pos.z_pos = pos.z;
@@ -575,7 +576,7 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 			pos.x = 0;
 			pos.y = 350;
 			pos.z = 500;
-			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			GetLaraMeshPos(&pos, LMX_HIPS);
 			l->pos.x_pos = pos.x;
 			l->pos.y_pos = pos.y;
 			l->pos.z_pos = pos.z;

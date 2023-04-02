@@ -16,6 +16,7 @@
 #include "larafire.h"
 #include "../3dsystem/phd_math.h"
 #include "savegame.h"
+#include "../newstuff/LaraDraw.h"
 
 #define FLARE_AGE		900
 #define FLARE_DYING		(FLARE_AGE - 90)
@@ -146,7 +147,7 @@ void DoFlareInHand(long flare_age)
 	pos.x = 11;
 	pos.y = 32;
 	pos.z = 41;
-	GetLaraHandAbsPosition(&pos, LEFT_HAND);
+	GetLaraMeshPos(&pos, LMX_HAND_L);
 	lara.left_arm.flash_gun = (short)DoFlareLight(&pos, flare_age);
 
 	if (lara.flare_age < FLARE_AGE)
@@ -183,10 +184,11 @@ void CreateFlare(long thrown)
 	item = &items[item_num];
 	item->object_number = FLARE_ITEM;
 	item->room_number = lara_item->room_number;
+
 	pos.x = -16;
 	pos.y = 32;
 	pos.z = 42;
-	GetLaraHandAbsPosition(&pos, LEFT_HAND);
+	GetLaraMeshPos(&pos, LMX_HAND_L);
 
 	floor = GetFloor(pos.x, pos.y, pos.z, &item->room_number);
 	h = GetHeight(floor, pos.x, pos.y, pos.z);

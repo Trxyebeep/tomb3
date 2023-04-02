@@ -11,6 +11,7 @@
 #include "draw.h"
 #include "inventry.h"
 #include "../tomb3/tomb3.h"
+#include "../newstuff/LaraDraw.h"
 
 CAMERA_INFO camera;
 
@@ -732,7 +733,7 @@ void LookCamera(ITEM_INFO* item)
 	pos1.x = 0;
 	pos1.y = 16;
 	pos1.z = 64;
-	GetLaraHandAbsPosition(&pos1, LARA_HEAD);
+	GetLaraMeshPos(&pos1, LMX_HEAD);
 	clipped = 0;
 	room_number = lara_item->room_number;
 	floor = GetFloor(pos1.x, pos1.y + 256, pos1.z, &room_number);
@@ -752,7 +753,7 @@ void LookCamera(ITEM_INFO* item)
 		pos1.x = 0;
 		pos1.y = 16;
 		pos1.z = 0;
-		GetLaraHandAbsPosition(&pos1, LARA_HEAD);
+		GetLaraMeshPos(&pos1, LMX_HEAD);
 		clipped = 0;
 		room_number = lara_item->room_number;
 		floor = GetFloor(pos1.x, pos1.y + 256, pos1.z, &room_number);
@@ -772,18 +773,20 @@ void LookCamera(ITEM_INFO* item)
 			pos1.x = 0;
 			pos1.y = 16;
 			pos1.z = -64;
-			GetLaraHandAbsPosition(&pos1, LARA_HEAD);
+			GetLaraMeshPos(&pos1, LMX_HEAD);
 		}
 	}
 
 	pos2.x = 0;
 	pos2.y = 0;
 	pos2.z = -1024;
-	GetLaraHandAbsPosition(&pos2, LARA_HEAD);
+	GetLaraMeshPos(&pos2, LMX_HEAD);
+
 	pos3.x = 0;
 	pos3.y = 0;
 	pos3.z = 2048;
-	GetLaraHandAbsPosition(&pos3, LARA_HEAD);
+	GetLaraMeshPos(&pos3, LMX_HEAD);
+
 	dx = (pos2.x - pos1.x) >> 3;
 	dy = (pos2.y - pos1.y) >> 3;
 	dz = (pos2.z - pos1.z) >> 3;

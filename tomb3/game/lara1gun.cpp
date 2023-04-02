@@ -21,6 +21,7 @@
 #include "../specific/input.h"
 #include "camera.h"
 #include "savegame.h"
+#include "../newstuff/LaraDraw.h"
 
 void ControlHarpoonBolt(short item_number)
 {
@@ -801,7 +802,7 @@ void FireHarpoon()
 	pos.x = -2;
 	pos.y = 373;
 	pos.z = 77;
-	GetLaraHandAbsPosition((PHD_VECTOR*)&pos, RIGHT_HAND);
+	GetLaraMeshPos((PHD_VECTOR*)&pos, LMX_HAND_R);
 	item->pos.x_pos = pos.x;
 	item->pos.y_pos = pos.y;
 	item->pos.z_pos = pos.z;
@@ -855,17 +856,21 @@ void FireRocket()
 	item = &items[item_number];
 	item->object_number = ROCKET;
 	item->room_number = lara_item->room_number;
+
 	pos.x = 0;
 	pos.y = 180;
 	pos.z = 72;
-	GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+	GetLaraMeshPos(&pos, LMX_HAND_R);
+
 	item->pos.x_pos = pos.x;
 	item->pos.y_pos = pos.y;
 	item->pos.z_pos = pos.z;
+
 	pos2.x = 0;
 	pos2.y = 1204;
 	pos2.z = 72;
-	GetLaraHandAbsPosition(&pos2, RIGHT_HAND);
+	GetLaraMeshPos(&pos2, LMX_HAND_R);
+
 	SmokeCountL = 32;
 	SmokeWeapon = LG_ROCKET;
 
@@ -944,17 +949,20 @@ void FireGrenade()
 	item->shade = -0x3DF0;
 	item->object_number = GRENADE;
 	item->room_number = lara_item->room_number;
+
 	pos.x = 0;
 	pos.y = 276;
 	pos.z = 80;
-	GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+	GetLaraMeshPos(&pos, LMX_HAND_R);
+
 	item->pos.x_pos = pos.x;
 	item->pos.y_pos = pos.y;
 	item->pos.z_pos = pos.z;
+
 	pos2.x = 0;
 	pos2.y = 1204;
 	pos2.z = 72;
-	GetLaraHandAbsPosition(&pos2, RIGHT_HAND);
+	GetLaraMeshPos(&pos2, LMX_HAND_R);
 
 	floor = GetFloor(pos.x, pos.y, pos.z, &item->room_number);
 	h = GetHeight(floor, pos.x, pos.y, pos.z);
@@ -970,7 +978,8 @@ void FireGrenade()
 	pos.x = 0;
 	pos.y = 1204;
 	pos.z = 80;
-	GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+	GetLaraMeshPos(&pos, LMX_HAND_R);
+
 	SmokeCountL = 32;
 	SmokeWeapon = LG_GRENADE;
 
@@ -1035,12 +1044,12 @@ void FireShotgun()
 		pos.x = 0;
 		pos.y = 228;
 		pos.z = 32;
-		GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+		GetLaraMeshPos(&pos, LMX_HAND_R);
 
 		pos2.x = 0;
 		pos2.y = 1508;
 		pos2.z = 32;
-		GetLaraHandAbsPosition(&pos2, RIGHT_HAND);
+		GetLaraMeshPos(&pos2, LMX_HAND_R);
 
 		SmokeCountL = 32;
 		SmokeWeapon = LG_SHOTGUN;
@@ -1126,7 +1135,7 @@ void AnimateShotgun(long weapon_type)
 			break;
 		}
 
-		GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+		GetLaraMeshPos(&pos, LMX_HAND_R);
 		TriggerGunSmoke(pos.x, pos.y, pos.z, 0, 0, 0, 0, SmokeWeapon, SmokeCountL);
 	}
 
@@ -1327,7 +1336,7 @@ void RifleHandler(long weapon_type)
 			pos.x = (GetRandomControl() & 0xFF) - 128;
 			pos.y = (GetRandomControl() & 0x7F) - 63;
 			pos.z = (GetRandomControl() & 0xFF) - 128;
-			GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+			GetLaraMeshPos(&pos, LMX_HAND_R);
 			TriggerDynamic(pos.x, pos.y, pos.z, 12, r, g, b);
 		}
 	}

@@ -143,7 +143,6 @@ void lara_col_wade(ITEM_INFO* item, COLL_INFO* coll);
 void LaraHangTest(ITEM_INFO* item, COLL_INFO* coll);
 void lara_as_duckroll(ITEM_INFO* item, COLL_INFO* coll);
 void lara_col_duckroll(ITEM_INFO* item, COLL_INFO* coll);
-void GetLaraHandAbsPosition(PHD_VECTOR* vec, long lr);
 void LookUpDown();
 void LookLeftRight();
 void ResetLook();

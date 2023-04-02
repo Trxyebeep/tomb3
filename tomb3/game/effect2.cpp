@@ -10,6 +10,7 @@
 #include "sound.h"
 #include "fish.h"
 #include "gameflow.h"
+#include "../newstuff/LaraDraw.h"
 
 static short SplashRings[8][2] =
 {
@@ -2113,7 +2114,7 @@ void TriggerGunShell(short lr, long objNum, long weapon)
 			break;
 		}
 
-		GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+		GetLaraMeshPos(&pos, LMX_HAND_R);
 	}
 	else
 	{
@@ -2138,7 +2139,7 @@ void TriggerGunShell(short lr, long objNum, long weapon)
 			break;
 		}
 
-		GetLaraHandAbsPosition(&pos, LEFT_HAND);
+		GetLaraMeshPos(&pos, LMX_HAND_L);
 	}
 
 	if (weapon == LG_SHOTGUN)

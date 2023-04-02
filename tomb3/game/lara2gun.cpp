@@ -9,6 +9,7 @@
 #include "../specific/input.h"
 #include "control.h"
 #include "camera.h"
+#include "../newstuff/LaraDraw.h"
 
 static PISTOL_DEF PistolTable[4]
 {
@@ -230,7 +231,7 @@ void AnimatePistols(long weapon_type)
 			break;
 		}
 
-		GetLaraHandAbsPosition(&pos, LEFT_HAND);
+		GetLaraMeshPos(&pos, LMX_HAND_L);
 		TriggerGunSmoke(pos.x, pos.y, pos.z, 0, 0, 0, 0, SmokeWeapon, SmokeCountL);
 	}
 
@@ -257,7 +258,7 @@ void AnimatePistols(long weapon_type)
 			break;
 		}
 
-		GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+		GetLaraMeshPos(&pos, LMX_HAND_R);
 		TriggerGunSmoke(pos.x, pos.y, pos.z, 0, 0, 0, 0, SmokeWeapon, SmokeCountR);
 	}
 
@@ -282,7 +283,7 @@ void AnimatePistols(long weapon_type)
 					{
 						SmokeCountR = 28;
 						SmokeWeapon = weapon_type;
-						TriggerGunShell(RIGHT_HAND, GUNSHELL, weapon_type);
+						TriggerGunShell(1, GUNSHELL, weapon_type);
 						lara.right_arm.flash_gun = weapons[weapon_type].flash_time;
 						SoundEffect(SFX_EXPLOSION1, &lara_item->pos, 0x2000000 | SFX_SETPITCH);
 						SoundEffect(weapons[weapon_type].sample_num, &lara_item->pos, SFX_DEFAULT);
@@ -349,14 +350,14 @@ void AnimatePistols(long weapon_type)
 					{
 						SmokeCountR = 28;
 						SmokeWeapon = 2;
-						TriggerGunShell(RIGHT_HAND, GUNSHELL, 2);
+						TriggerGunShell(1, GUNSHELL, 2);
 						lara.right_arm.flash_gun = winfo->flash_time;
 					}
 					else
 					{
 						SmokeCountL = 28;
 						SmokeWeapon = weapon_type;
-						TriggerGunShell(LEFT_HAND, GUNSHELL, weapon_type);
+						TriggerGunShell(0, GUNSHELL, weapon_type);
 						lara.left_arm.flash_gun = winfo->flash_time;
 					}
 
@@ -471,9 +472,9 @@ void PistolHandler(long weapon_type)
 		pos.z = (GetRandomControl() & 0xFF) - 128;
 
 		if (lara.left_arm.flash_gun)
-			GetLaraHandAbsPosition(&pos, LEFT_HAND);
+			GetLaraMeshPos(&pos, LMX_HAND_L);
 		else
-			GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+			GetLaraMeshPos(&pos, LMX_HAND_R);
 
 		r = (GetRandomControl() & 7) + 24;
 		g = (GetRandomControl() & 3) + 16;

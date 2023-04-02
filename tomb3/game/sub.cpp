@@ -21,6 +21,7 @@
 #include "effects.h"
 #include "../specific/input.h"
 #include "savegame.h"
+#include "../newstuff/LaraDraw.h"
 
 BITE_INFO sub_bites[6] =
 {
@@ -292,7 +293,8 @@ static void UserInput(ITEM_INFO* item, ITEM_INFO* l, SUBINFO* sub)
 			pos.x = 0;
 			pos.y = 0;
 			pos.z = 0;
-			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			GetLaraMeshPos(&pos, LMX_HIPS);
+
 			l->pos.x_pos = pos.x;
 			l->pos.y_pos = pos.y;
 			l->pos.z_pos = pos.z;
@@ -325,7 +327,7 @@ static void UserInput(ITEM_INFO* item, ITEM_INFO* l, SUBINFO* sub)
 			else
 				wsd = l->pos.y_pos - wh;
 
-			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			GetLaraMeshPos(&pos, LMX_HIPS);
 			l->pos.x_pos = pos.x;
 			l->pos.y_pos = pos.y;
 			l->pos.z_pos = pos.z;
@@ -466,7 +468,7 @@ static void UserInput(ITEM_INFO* item, ITEM_INFO* l, SUBINFO* sub)
 			pos.x = 0;
 			pos.y = 0;
 			pos.z = 0;
-			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			GetLaraMeshPos(&pos, LMX_HIPS);
 
 			s.x = item->pos.x_pos;
 			s.y = item->pos.y_pos;

@@ -26,6 +26,7 @@
 #include "../game/footprnt.h"
 #include "../game/draw.h"
 #include "../tomb3/tomb3.h"
+#include "../newstuff/LaraDraw.h"
 
 static BITE_INFO NodeOffsets[16] =
 {
@@ -4676,7 +4677,8 @@ void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 		pos.x = 0;
 		pos.y = 0;
 		pos.z = 0;
-		GetLaraHandAbsPosition(&pos, LARA_HIPS);
+		GetLaraMeshPos(&pos, LMX_HIPS);
+
 		s = item->room_number;
 		y = GetHeight(GetFloor(pos.x, pos.y, pos.z, &s), pos.x, pos.y, pos.z);
 

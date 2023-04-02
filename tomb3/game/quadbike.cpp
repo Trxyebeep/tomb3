@@ -23,6 +23,7 @@
 #include "../specific/input.h"
 #include "camera.h"
 #include "savegame.h"
+#include "../newstuff/LaraDraw.h"
 
 static BITE_INFO quad_bites[6] =
 {
@@ -373,10 +374,12 @@ static long SkidooCheckGetOff()
 			lara_item->anim_number = ANIM_FASTFALL;
 			lara_item->frame_number = anims[ANIM_FASTFALL].frame_base;
 			lara_item->current_anim_state = AS_FASTFALL;
+
 			pos.x = 0;
 			pos.y = 0;
 			pos.z = 0;
-			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			GetLaraMeshPos(&pos, LMX_HIPS);
+
 			lara_item->pos.x_pos = pos.x;
 			lara_item->pos.y_pos = pos.y;
 			lara_item->pos.z_pos = pos.z;
