@@ -12,10 +12,10 @@
 #include "../tomb3/tomb3.h"
 
 static float UVTable[65536];
-static VERTEX_INFO v_buffer[40];
+static VERTEX_INFO v_buffer[MAX_VINFO];
 
-PHD_VBUF vbuf[1500];
-TEXTUREBUCKET Buckets[6];
+PHD_VBUF vbuf[MAX_VBUF];
+TEXTUREBUCKET Buckets[MAX_BUCKETS];
 
 long GlobalAlpha;
 long nDrawnPoints;
@@ -613,14 +613,14 @@ long FindBucket(DXTEXTURE* TPage)
 								//so instead of failing to draw, immediately go find fullest bucket, draw it, and use it.
 								//TODO: make sure it's actually a useless limit and remove it, otherwise raise it.
 	{
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < MAX_BUCKETS; i++)
 		{
 			bucket = &Buckets[i];
 
-			if (bucket->TPage == TPage && bucket->nVtx < 256)
+			if (bucket->TPage == TPage && bucket->nVtx < (BUCKET_VERTS - BUCKET_EXTRA))
 				return i;
 
-			if (bucket->nVtx > 256)
+			if (bucket->nVtx > (BUCKET_VERTS - BUCKET_EXTRA))
 			{
 				HWR_EnableZBuffer(1, 1);
 				HWR_SetCurrentTexture(bucket->TPage);
@@ -635,7 +635,7 @@ long FindBucket(DXTEXTURE* TPage)
 	nVtx = 0;
 	fullest = 0;
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < MAX_BUCKETS; i++)
 	{
 		bucket = &Buckets[i];
 
@@ -665,7 +665,7 @@ void DrawBuckets()
 {
 	TEXTUREBUCKET* bucket;
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < MAX_BUCKETS; i++)
 	{
 		bucket = &Buckets[i];
 

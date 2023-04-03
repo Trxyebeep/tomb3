@@ -38,7 +38,7 @@ long RoomXYGUVClipper(long n, VERTEX_INFO* in);
 long XYGClipper(long n, VERTEX_INFO* in);
 long XYClipper(long n, VERTEX_INFO* in);
 
-extern PHD_VBUF vbuf[1500];
-extern TEXTUREBUCKET Buckets[6];
+extern PHD_VBUF vbuf[MAX_VBUF];
+extern TEXTUREBUCKET Buckets[MAX_BUCKETS];
 extern long GlobalAlpha;
 extern long nDrawnPoints;

@@ -311,7 +311,7 @@ static void OutputPickupDisplay()
 
 	if (App.lpZBuffer)
 	{
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < MAX_BUCKETS; i++)
 		{
 			Buckets[i].TPage = (DXTEXTURE*)-1;
 			Buckets[i].nVtx = 0;

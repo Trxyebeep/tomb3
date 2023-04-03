@@ -62,34 +62,40 @@ typedef unsigned long ulong;
 /***********************************************/
 
 //constants
-#define NO_HEIGHT -32512
+#define NO_HEIGHT	-32512
 #define DONT_TARGET	-16384
-#define NO_ITEM	-1
+#define NO_ITEM		-1
 #define W2V_SHIFT	14
-#define NO_ROOM	255
+#define NO_ROOM		255
 #define WALL_SHIFT	10
 #define WALL_SIZE	(1 << WALL_SHIFT)
 #define WALL_MASK	(WALL_SIZE - 1)
 #define MAX_LOT		5
 #define MAX_NONLOT	12
 
+#define MAX_BUCKETS		6
+#define BUCKET_EXTRA	32
+#define BUCKET_VERTS	(256 + BUCKET_EXTRA)
+
 //*8
 #define MAX_TLVERTICES	0x12000
 #define MAX_SORTLISTS	0x17700
+#define MAX_VBUF		12000
+#define MAX_VINFO		320
 
 
 //*4
 #define MAX_TPAGES	128
 #define MAX_TINFOS	0x4000
 
-#define MAX_ITEMS	256
+#define MAX_ITEMS		256
 #define NLAYOUTKEYS		15
-#define MAX_WEATHER			256
+#define MAX_WEATHER		256
 
 //*2
 #define MAX_WEATHER_ALIVE	16
 
-#define MALLOC_SIZE	15000000	//15 MB
+#define MALLOC_SIZE	15000000	//15 MB (was around 3.6 MB)
 
 /*enums*/
 enum bite_offsets
@@ -1503,7 +1509,7 @@ struct TEXTUREBUCKET
 {
 	DXTEXTURE* TPage;
 	long nVtx;
-	D3DTLVERTEX vtx[288];
+	D3DTLVERTEX vtx[BUCKET_VERTS];
 };
 
 struct POINT_INFO
