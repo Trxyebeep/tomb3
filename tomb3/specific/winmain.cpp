@@ -8,7 +8,6 @@
 #include "specific.h"
 #include "smain.h"
 #include "utils.h"
-#include "dxdialog.h"
 #include "ds.h"
 #include "time.h"
 #include "di.h"
@@ -18,6 +17,7 @@
 #include "output.h"
 #include "fmv.h"
 #include "../game/invfunc.h"
+#include "../newstuff/setupdlg.h"
 #include "../tomb3/tomb3.h"
 
 #ifdef DO_LOG
@@ -257,7 +257,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 
 	if ((!S_LoadSettings() || UT_FindArg("setup")))
 	{
-		DXUserDialog(&App.DeviceInfo, &App.DXConfig, App.hInstance);
+		SetupDialog(&App.DeviceInfo, &App.DXConfig, App.hInstance);
 		DXFreeDeviceInfo(&App.DeviceInfo);
 
 		desktop = GetDesktopWindow();

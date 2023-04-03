@@ -364,9 +364,6 @@
     <ClInclude Include="tomb3\specific\ds.h">
       <Filter>specific</Filter>
     </ClInclude>
-    <ClInclude Include="tomb3\specific\dxdialog.h">
-      <Filter>specific</Filter>
-    </ClInclude>
     <ClInclude Include="tomb3\specific\dxshell.h">
       <Filter>specific</Filter>
     </ClInclude>
@@ -429,6 +426,7 @@
     <ClInclude Include="tomb3\newstuff\libs\discord\discord_register.h" />
     <ClInclude Include="tomb3\newstuff\libs\discord\discord_rpc.h" />
     <ClInclude Include="tomb3\newstuff\discord.h" />
+    <ClInclude Include="tomb3\newstuff\setupdlg.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tomb3\game\51baton.cpp">
@@ -767,9 +765,6 @@
     <ClCompile Include="tomb3\specific\ds.cpp">
       <Filter>specific</Filter>
     </ClCompile>
-    <ClCompile Include="tomb3\specific\dxdialog.cpp">
-      <Filter>specific</Filter>
-    </ClCompile>
     <ClCompile Include="tomb3\specific\dxshell.cpp">
       <Filter>specific</Filter>
     </ClCompile>
@@ -830,6 +825,7 @@
     <ClCompile Include="tomb3\newstuff\psxsaves.cpp" />
     <ClCompile Include="tomb3\newstuff\map.cpp" />
     <ClCompile Include="tomb3\newstuff\discord.cpp" />
+    <ClCompile Include="tomb3\newstuff\setupdlg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="tomb3.rc" />

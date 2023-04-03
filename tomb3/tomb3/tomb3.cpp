@@ -199,7 +199,7 @@ bool T3_LoadSettings()
 
 	REG_ReadLong((char*)"VM", (ulong&)App.DXConfigPtr->nVMode, 0);
 	REG_ReadLong((char*)"zbuffer", (ulong&)App.DXConfigPtr->bZBuffer, 0);
-	REG_ReadLong((char*)"dither", (ulong&)App.DXConfigPtr->Dither, 0);//
+	REG_ReadLong((char*)"dither", (ulong&)App.DXConfigPtr->Dither, 0);
 	REG_ReadLong((char*)"filter", (ulong&)App.DXConfigPtr->Filter, 0);
 	REG_ReadLong((char*)"AGP", (ulong&)App.DXConfigPtr->AGP, 0);
 	REG_ReadLong((char*)"sound", (ulong&)App.DXConfigPtr->sound, 0);
