@@ -597,6 +597,26 @@ static void BaddyObjects()
 		bones[obj->bone_index + 100] |= 8;
 	}
 
+	obj = &objects[DOG];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseDog;
+		obj->control = DogControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 16;
+		obj->pivot_length = 300;
+		obj->radius = 341;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 8] |= 8;
+		bones[obj->bone_index + 8] |= 4;
+	}
+
 	obj = &objects[HUSKIE];
 
 	if (obj->loaded)
