@@ -9,13 +9,14 @@
 - Fix sound adapter names in the setup window.
 - Fix volume options not applying correctly when launching the game.
 - Fix SFX volume not completely muting when setting it to 0.
+- Fix blood sparks not using scale.
 
 ### tomb3 additions
 
 - Improve falling raptor physics.
 - Increase drawn vertices limit once more.
 - Increase internal memory from 3.6MBs to 15MBs.
-- Increase many internal renderer limits (vertex buffers, buckets, etc.).
+- Increase some more internal renderer limits.
 
 ### tomb3 bug fixes
 

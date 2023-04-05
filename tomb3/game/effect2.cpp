@@ -727,7 +727,7 @@ void TriggerBlood(long x, long y, long z, long angle, long num)
 		sptr->Yvel = -128 - (GetRandomControl() & 0xFF);
 		sptr->Zvel = (rad * rcossin_tbl[(ang << 1) + 1]) >> 5;
 		sptr->Friction = 4;
-		sptr->Flags = SF_BLOOD;
+		sptr->Flags = SF_BLOOD | SF_SCALE;
 		sptr->Scalar = 3;
 		sptr->MaxYvel = 0;
 		sptr->Gravity = (GetRandomControl() & 0x1F) + 31;
