@@ -11,6 +11,7 @@
 - Fix SFX volume not completely muting when setting it to 0.
 - Fix blood sparks not using scale.
 - Make underwater blood match normal blood on German version.
+- Fix explosion dynamic lighting transferring to other sparks.
 
 ### tomb3 additions
 
