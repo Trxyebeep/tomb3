@@ -257,33 +257,33 @@ long FireWeapon(long weapon_type, ITEM_INFO* target, ITEM_INFO* source, short* a
 		ammo = &lara.magnums;
 
 		if (savegame.bonus_flag)
-			ammo->ammo = 1000;
+			ammo->ammo = 10000;
 	}
 	else if (weapon_type == LG_UZIS)
 	{
 		ammo = &lara.uzis;
 
 		if (savegame.bonus_flag)
-			ammo->ammo = 1000;
+			ammo->ammo = 10000;
 	}
 	else if (weapon_type == LG_SHOTGUN)
 	{
 		ammo = &lara.shotgun;
 
 		if (savegame.bonus_flag)
-			ammo->ammo = 1000;
+			ammo->ammo = 10000;
 	}
 	else if (weapon_type == LG_M16)
 	{
 		ammo = &lara.m16;
 
 		if (savegame.bonus_flag)
-			ammo->ammo = 1000;
+			ammo->ammo = 10000;
 	}
 	else
 	{
 		ammo = &lara.pistols;
-		ammo->ammo = 1000;
+		ammo->ammo = 10000;
 	}
 
 	if (ammo->ammo <= 0)

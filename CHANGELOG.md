@@ -12,6 +12,7 @@
 - Fix blood sparks not using scale.
 - Make underwater blood match normal blood on German version.
 - Fix explosion dynamic lighting transferring to other sparks.
+- Fix the harpoon gun reloading at every shot in NG+.
 
 ### tomb3 additions
 
@@ -19,6 +20,7 @@
 - Increase drawn vertices limit once more.
 - Increase internal memory from 3.6MBs to 15MBs.
 - Increase some more internal renderer limits.
+- Increase static mesh limit from 50 to 256.
 
 ### tomb3 bug fixes
 

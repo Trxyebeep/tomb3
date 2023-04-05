@@ -112,7 +112,7 @@ void ModifyStartInfo(long level)
 		pInfo->m16_ammo = 10000;
 		pInfo->rocket_ammo = 10000;
 		pInfo->grenade_ammo = 10000;
-		pInfo->harpoon_ammo = 10000;
+		pInfo->harpoon_ammo = 10001;
 		pInfo->gun_type = LG_ROCKET;
 		pInfo->num_flares = 255;
 		pInfo->num_sgcrystals = 50;
