@@ -10,6 +10,7 @@
 - Fix volume options not applying correctly when launching the game.
 - Fix SFX volume not completely muting when setting it to 0.
 - Fix blood sparks not using scale.
+- Make underwater blood match normal blood on German version.
 
 ### tomb3 additions
 

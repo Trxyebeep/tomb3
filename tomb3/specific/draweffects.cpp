@@ -25,8 +25,9 @@
 #include "../game/lara.h"
 #include "../game/footprnt.h"
 #include "../game/draw.h"
-#include "../tomb3/tomb3.h"
+#include "../game/gameflow.h"
 #include "../newstuff/LaraDraw.h"
+#include "../tomb3/tomb3.h"
 
 static BITE_INFO NodeOffsets[16] =
 {
@@ -4169,7 +4170,11 @@ void S_DrawSplashes()
 			{
 				nSprite = objects[EXPLOSION1].mesh_index;
 				c1 = ripple->life >> 3;
-				c = c1 << 10;	//only red
+
+				if (gameflow.language == 2)
+					c = (c1 >> 1) << 10 | c1;	//g 0
+				else
+					c = c1 << 10;	//only red
 			}
 			else
 			{
