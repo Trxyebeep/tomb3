@@ -77,17 +77,14 @@ typedef unsigned long ulong;
 #define BUCKET_EXTRA	32
 #define BUCKET_VERTS	(256 + BUCKET_EXTRA)
 
-//*8
-#define MAX_TLVERTICES	0x12000
-#define MAX_SORTLISTS	0x17700
-#define MAX_VBUF		12000
-#define MAX_VINFO		320
+#define MAX_TLVERTICES	0x12000	//*8
+#define MAX_SORTLISTS	0x17700	//*8
+#define MAX_VBUF		12000	//*8
+#define MAX_VINFO		320		//*8
+#define MAX_TPAGES		128		//*4
+#define MAX_TINFOS		0x4000	//*4
 
-
-//*4
-#define MAX_TPAGES	128
-#define MAX_TINFOS	0x4000
-
+#define MAX_STATICS		256		//was 50
 #define MAX_ITEMS		256
 #define NLAYOUTKEYS		15
 #define MAX_WEATHER		256
