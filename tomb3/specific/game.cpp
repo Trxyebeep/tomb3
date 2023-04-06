@@ -431,7 +431,7 @@ static void DisplayGoldCredits()
 	S_StartSyncedAudio(121);
 	LoadPicture("pixg\\theend.bmp", App.lpPictureBuffer, 1);
 	FadePictureUp(32);
-	S_Wait(300, 0);
+	S_Wait(150 * TICKS_PER_FRAME, 0);
 	FadePictureDown(32);
 
 	for (int i = 1; i < 10; i++)
@@ -439,7 +439,7 @@ static void DisplayGoldCredits()
 		buf[12] = i + '0';
 		LoadPicture(buf, App.lpPictureBuffer, 1);
 		FadePictureUp(32);
-		S_Wait(300, 0);
+		S_Wait(150 * TICKS_PER_FRAME, 0);
 		FadePictureDown(32);
 	}
 
@@ -464,7 +464,7 @@ void DisplayCredits()
 	S_StartSyncedAudio(121);
 	LoadPicture("pix\\theend.bmp", App.lpPictureBuffer, 1);
 	FadePictureUp(32);
-	S_Wait(300, 0);
+	S_Wait(150 * TICKS_PER_FRAME, 0);
 	FadePictureDown(32);
 
 	for (int i = 1; i < 10; i++)
@@ -472,7 +472,7 @@ void DisplayCredits()
 		buf[11] = i + '0';
 		LoadPicture(buf, App.lpPictureBuffer, 1);
 		FadePictureUp(32);
-		S_Wait(300, 0);
+		S_Wait(150 * TICKS_PER_FRAME, 0);
 		FadePictureDown(32);
 	}
 

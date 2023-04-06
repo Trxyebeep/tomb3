@@ -200,7 +200,6 @@ void InitialiseGameFlags()
 	for (int i = 0; i < NUMBER_OBJECTS; i++)
 		objects[i].loaded = 0;
 
-	SunsetTimer = 0;
 	ammotext = 0;
 	level_complete = 0;
 	flipeffect = -1;

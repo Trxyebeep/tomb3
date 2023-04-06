@@ -1,11 +1,14 @@
 #include "../tomb3/pch.h"
 #include "time.h"
 
-static __int64 counter, frequency;
+static __int64 frequency, ticks;
 
-void TIME_Reset()
+static void UpdateTicks()
 {
+	__int64 counter;
+
 	QueryPerformanceCounter((LARGE_INTEGER*)&counter);
+	ticks = counter;
 }
 
 bool TIME_Init()
@@ -15,19 +18,35 @@ bool TIME_Init()
 	if (!QueryPerformanceFrequency((LARGE_INTEGER*)&pfq))
 		return 0;
 
-	frequency = pfq / 60;
-	TIME_Reset();
+	frequency = pfq / TICKS_PER_SECOND;
+	UpdateTicks();
 	return 1;
 }
 
-long Sync()
+ulong Sync()
 {
-	__int64 PerformanceCount, f;
-	long n;
+	__int64 last;
 
-	QueryPerformanceCounter((LARGE_INTEGER*)&PerformanceCount);
-	f = (PerformanceCount - counter) / frequency;
-	counter += frequency * f;
-	n = (long)f;
-	return n;
+	last = ticks;
+	UpdateTicks();
+	return ulong(double(ticks - last) / frequency);
+}
+
+ulong SyncTicks(long skip)
+{
+	double passed, dskip;
+	__int64 last;
+
+	passed = 0;
+	dskip = (double)skip;
+	last = ticks;
+
+	do
+	{
+		UpdateTicks();
+		passed = double(ticks - last) / frequency;
+	}
+	while (passed < dskip);
+
+	return (ulong)passed;
 }

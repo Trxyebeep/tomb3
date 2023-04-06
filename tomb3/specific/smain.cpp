@@ -363,7 +363,7 @@ long GameMain()
 		LoadPicture("pix\\legal.bmp", App.lpPictureBuffer, 1);
 
 	FadePictureUp(32);
-	S_Wait(300, 1);
+	S_Wait(150 * TICKS_PER_FRAME, 1);
 	ForceFadeDown(1);
 	FadePictureDown(32);
 	s = GF_DoFrontEndSequence();

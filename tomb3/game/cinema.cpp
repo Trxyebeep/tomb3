@@ -453,13 +453,13 @@ long StartCinematic(long level_number)
 	do
 	{
 		DrawPhaseCinematic();
-		nframes = actual_current_frame + 2 * (4 - cine_frame);
+		nframes = actual_current_frame + TICKS_PER_FRAME * (4 - cine_frame);
 
-		if (nframes < 2)
-			nframes = 2;
+		if (nframes < TICKS_PER_FRAME)
+			nframes = TICKS_PER_FRAME;
 
 		if (framedump)
-			nframes = 2;
+			nframes = TICKS_PER_FRAME;
 
 		ret = DoCinematic(nframes);
 

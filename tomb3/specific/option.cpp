@@ -604,14 +604,14 @@ void do_sound_option(INVENTORY_ITEM* item)
 		if (input & IN_LEFT && Option_SFX_Volume > 0)
 		{
 			idelay = 1;
-			idcount = 10;
+			idcount = 5 * TICKS_PER_FRAME;
 			Option_SFX_Volume--;
 			goin = 1;
 		}
 		else if (input & IN_RIGHT && Option_SFX_Volume < 10)
 		{
 			idelay = 1;
-			idcount = 10;
+			idcount = 5 * TICKS_PER_FRAME;
 			Option_SFX_Volume++;
 			goin = 1;
 		}

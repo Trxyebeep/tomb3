@@ -11,6 +11,7 @@
 #include "../3dsystem/hwinsert.h"
 #include "../game/invfunc.h"
 #include "../tomb3/tomb3.h"
+#include "winmain.h"
 
 void S_DrawScreenLine(long x, long y, long z, long w, long h, long c, GOURAUD_FILL* grdptr, ushort f)
 {
@@ -162,33 +163,29 @@ void S_FinishInventory()
 
 void S_Wait(long nFrames, long skip)
 {
-	long s;
-
-	if (skip)
+	while (nFrames > 0)
 	{
-		while (nFrames > 0)
-		{
-			if (!input)
-				break;
+		if (!skip || !input)
+			break;
 
-			S_UpdateInput();
+		S_UpdateInput();
 
-			do { s = Sync(); } while (!s);
+		if (GtWindowClosed)
+			return;
 
-			nFrames -= s;
-		}
+		SyncTicks(1);
+		nFrames--;
 	}
 
 	while (nFrames > 0)
 	{
 		S_UpdateInput();
 
-		if (skip && input)
-			break;
+		if (GtWindowClosed || (skip && input))
+			return;
 
-		do { s = Sync(); } while (!s);
-
-		nFrames -= s;
+		SyncTicks(1);
+		nFrames--;
 	}
 }
 

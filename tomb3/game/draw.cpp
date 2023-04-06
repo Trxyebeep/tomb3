@@ -740,7 +740,6 @@ void PrintRooms(short current_room)
 	phd_right = r->right;
 	phd_top = r->top;
 	phd_bottom = r->bottom;
-	S_LightRoom(r);
 
 	if (outside > 0 && !(r->flags & ROOM_INSIDE))
 		S_InsertRoom(r->data, 1);

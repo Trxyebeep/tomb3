@@ -40,7 +40,6 @@ short* commands;
 short* floor_data;
 short* mesh_base;
 long number_cameras;
-long wet;
 long nTInfos;
 
 PHDTEXTURESTRUCT phdtextinfo[MAX_TINFOS];
@@ -565,8 +564,6 @@ long LoadDepthQ(HANDLE file)
 		for (int j = 0; j < 256; j++)
 			gouraud_table[j][i] = depthq_table[i][j];
 	}
-
-	wet = 0;
 
 	for (int i = 0; i < 768; i += 3)
 	{

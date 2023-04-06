@@ -94,6 +94,10 @@ typedef unsigned long ulong;
 
 #define MALLOC_SIZE	15000000	//15 MB (was around 3.6 MB)
 
+#define FRAMES_PER_SECOND	30
+#define TICKS_PER_FRAME		2
+#define TICKS_PER_SECOND	(FRAMES_PER_SECOND * TICKS_PER_FRAME)
+
 /*enums*/
 enum bite_offsets
 {

@@ -77,10 +77,10 @@ long ControlPhase(long nframes, long demo_mode)
 	long return_val, falloff, r, g, b;
 	short item_number, nex, room_number;
 
-	if (nframes > 10)
-		nframes = 10;
+	if (nframes > TICKS_PER_FRAME * 5)
+		nframes = TICKS_PER_FRAME * 5;
 
-	for (framecount += nframes; framecount > 0; framecount -= 2)
+	for (framecount += nframes; framecount > 0; framecount -= TICKS_PER_FRAME)
 	{
 		RPC_Update();
 

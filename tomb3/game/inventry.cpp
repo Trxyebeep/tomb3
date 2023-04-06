@@ -419,7 +419,7 @@ long Display_Inventory(long mode)
 
 	AlterFOV(14560);
 	Inventory_Mode = mode;
-	nframes = 2;
+	nframes = TICKS_PER_FRAME;
 	Construct_Inventory();
 
 	if (mode == INV_TITLE_MODE || mode == INV_LEVELSELECT_MODE)
@@ -469,7 +469,7 @@ long Display_Inventory(long mode)
 	if (mode != INV_TITLE_MODE)
 		SoundEffect(SFX_MENU_SPININ, 0, SFX_ALWAYS);
 
-	nframes = 2;
+	nframes = TICKS_PER_FRAME;
 
 	do
 	{
@@ -651,7 +651,7 @@ long Display_Inventory(long mode)
 
 		/*control phase*/
 		if (CurrentLevel)
-			savegame.timer += nframes / 2;
+			savegame.timer += nframes / TICKS_PER_FRAME;
 
 		if (ring.rotating)
 			continue;
