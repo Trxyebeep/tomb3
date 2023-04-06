@@ -143,7 +143,7 @@ long S_Pause()
 	S_FadeInInventory(1);
 	SOUND_Stop();
 	S_CDVolume(0);
-	TempVideoAdjust(HiResFlag, 1);
+	TempVideoAdjust(HiResFlag, 1.0);
 	VidSizeLocked = 1;
 	S_SetupAboveWater(0);
 	CreateMonoScreen();

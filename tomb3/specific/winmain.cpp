@@ -330,7 +330,6 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer);
 	farz = 0x5000;
 	distanceFogValue = 0x3000;
-	DS_Init();
 	TIME_Init();
 	HWR_Init();
 	DS_Start(0);

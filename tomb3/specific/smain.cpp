@@ -354,7 +354,7 @@ long GameMain()
 	}
 
 	HiResFlag = 0;
-	TempVideoAdjust(1, 1.0F);
+	TempVideoAdjust(1, 1.0);
 	S_UpdateInput();
 
 	if (tomb3.gold)

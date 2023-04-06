@@ -14,10 +14,6 @@ bool DS_IsSoundEnabled();
 bool DS_SetOutputFormat();
 void DS_Start(HWND hwnd);
 void DS_Finish();
-BOOL CALLBACK DS_EnumCallback(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext);
-bool DS_EnumerateDevices(LPVOID lpContext);
-bool DS_MakeAdapterList();
-void DS_Init();
 
 extern LPDIRECTSOUNDBUFFER DS_Samples[32];
 extern LPDIRECTSOUND lpDirectSound;

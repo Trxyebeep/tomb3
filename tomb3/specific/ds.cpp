@@ -11,9 +11,6 @@ static long DS_SamplesPlaying[32];
 LPDIRECTSOUNDBUFFER DS_Samples[32];
 LPDIRECTSOUND lpDirectSound;
 
-std::list<DXDIRECTSOUNDINFO> DS_AdapterList;
-std::list<DXDIRECTSOUNDINFO>::iterator PrimaryAdapter;
-
 bool DS_IsChannelPlaying(long num)
 {
 	LPDIRECTSOUNDBUFFER buffer;
@@ -222,54 +219,4 @@ void DS_Finish()
 		lpDirectSound->Release();
 		lpDirectSound = 0;
 	}
-}
-
-BOOL CALLBACK DS_EnumCallback(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext)
-{
-	std::list<DXDIRECTSOUNDINFO>* pAdapter;
-	DXDIRECTSOUNDINFO adapter;
-
-	pAdapter = static_cast<std::list<DXDIRECTSOUNDINFO>*>(lpContext);
-	pAdapter->insert(pAdapter->end(), adapter);
-
-	if (lpGuid)
-	{
-		adapter.Guid = *lpGuid;
-		adapter.lpGuid = &adapter.Guid;
-	}
-	else
-	{
-		memset(&adapter.Guid, 0, sizeof(GUID));
-		adapter.lpGuid = 0;
-	}
-
-	strcpy(adapter.Name, lpcstrModule);
-	strcpy(adapter.About, lpcstrDescription);
-	return 1;
-}
-
-bool DS_EnumerateDevices(LPVOID lpContext)
-{
-	return SUCCEEDED(DirectSoundEnumerate(DS_EnumCallback, lpContext));
-}
-
-bool DS_MakeAdapterList()
-{
-	DS_AdapterList.clear();
-
-	if (!DS_EnumerateDevices(&DS_AdapterList))
-		return 0;
-
-	for (PrimaryAdapter = DS_AdapterList.begin(); PrimaryAdapter != DS_AdapterList.end(); PrimaryAdapter++)
-	{
-		if (!PrimaryAdapter->lpGuid)
-			break;
-	}
-
-	return 1;
-}
-
-void DS_Init()
-{
-	DS_MakeAdapterList();
 }
