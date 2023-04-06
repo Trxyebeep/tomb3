@@ -173,11 +173,7 @@ void PunkControl(short item_number)
 		punk->enemy = lara_item;
 
 		if (item->hit_status || (lara_info.distance < 0x100000 || TargetVisible(item, &lara_info)) &&
-#ifdef RANDO_STUFF
-			abs(lara_item->pos.y_pos - item->pos.y_pos) < 1280 && rando.levels[RANDOLEVEL].original_id != LV_TOWER && !(item->ai_bits & 0x10))
-#else
 			abs(lara_item->pos.y_pos - item->pos.y_pos) < 1280 && CurrentLevel != LV_TOWER && !(item->ai_bits & 0x10))
-#endif
 		{
 			if (!punk->alerted)
 				SoundEffect(SFX_ENGLISH_HOY, &item->pos, SFX_DEFAULT);

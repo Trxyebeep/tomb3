@@ -189,11 +189,7 @@ static void ExplodeLondonBoss(ITEM_INFO* item)
 		ExpRings[bossdata.ring_count].x = x;
 		ExpRings[bossdata.ring_count].y = y;
 		ExpRings[bossdata.ring_count].z = z;
-#ifdef TROYESTUFF
 		ExpRings[bossdata.ring_count].on = 3;
-#else
-		ExpRings[bossdata.ring_count].on = 1;
-#endif
 		bossdata.ring_count++;
 		TriggerExplosionSparks(x, y, z, 3, -2, 2, 0);
 
@@ -825,11 +821,7 @@ void LondonBossControl(short item_number)
 					if (!ExpRings[lp].on)
 					{
 						r = GetRandomControl() & 0x3FF;
-#ifdef TROYESTUFF
 						ExpRings[lp].on = 3;
-#else
-						ExpRings[lp].on = 1;
-#endif
 						ExpRings[lp].life = 64;
 						ExpRings[lp].speed = (GetRandomControl() & 0xF) + 16;
 						ExpRings[lp].x = item->pos.x_pos;

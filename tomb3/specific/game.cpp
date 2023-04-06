@@ -20,10 +20,8 @@
 #include "../game/draw.h"
 #include "winmain.h"
 #include "smain.h"
-#ifdef TROYESTUFF
 #include "option.h"
 #include "../tomb3/tomb3.h"
-#endif
 
 static long rand_1 = 0xD371F947;
 static long rand_2 = 0xD371F947;
@@ -99,42 +97,37 @@ long GameStats(long level_num, long type)
 			num += LevelSecrets[i];
 		}
 
-#ifdef TROYESTUFF
 		if (tomb3.gold)
 		{
 			savegame.bonus_flag = 1;
 			GF_BonusLevelEnabled = 0;
 		}
+		else if (numsecrets >= num - 1)
+		{
+			GF_BonusLevelEnabled = 1;
+			FadePictureDown(32);
+			FreePictureTextures(CurPicTexIndices);
+			FreePictureTextures(OldPicTexIndices);
+			LoadPicture("pix\\theend2.bmp", App.lpPictureBuffer, 1);
+			nLoadedPictures = 1;
+		}
 		else
-#endif
-			if (numsecrets >= num - 1)
-			{
-				GF_BonusLevelEnabled = 1;
-				FadePictureDown(32);
-				FreePictureTextures(CurPicTexIndices);
-				FreePictureTextures(OldPicTexIndices);
-				LoadPicture("pix\\theend2.bmp", App.lpPictureBuffer, 1);
-				nLoadedPictures = 1;
-			}
-#ifdef TROYESTUFF
-			else
-			{
-				//The above block goes to Hallows, these are also reset when you finish Hallows.
-				//Else reset these here if the player didn't get all secrets
-				GF_BonusLevelEnabled = 0;
-				savegame.WorldRequired = 0;
-				savegame.IndiaComplete = 0;
-				savegame.SPacificComplete = 0;
-				savegame.LondonComplete = 0;
-				savegame.NevadaComplete = 0;
-				savegame.AntarcticaComplete = 0;
-				savegame.PeruComplete = 0;
-				savegame.AfterIndia = 0;
-				savegame.AfterSPacific = 0;
-				savegame.AfterLondon = 0;
-				savegame.AfterNevada = 0;
-			}
-#endif
+		{
+			//The above block goes to Hallows, these are also reset when you finish Hallows.
+			//Else reset these here if the player didn't get all secrets
+			GF_BonusLevelEnabled = 0;
+			savegame.WorldRequired = 0;
+			savegame.IndiaComplete = 0;
+			savegame.SPacificComplete = 0;
+			savegame.LondonComplete = 0;
+			savegame.NevadaComplete = 0;
+			savegame.AntarcticaComplete = 0;
+			savegame.PeruComplete = 0;
+			savegame.AfterIndia = 0;
+			savegame.AfterSPacific = 0;
+			savegame.AfterLondon = 0;
+			savegame.AfterNevada = 0;
+		}
 	}
 
 	return 0;
@@ -196,9 +189,7 @@ long LevelStats(long level)
 {
 	long ret, s, world;
 	char buf[32];
-#ifdef TROYESTUFF
 	char name[128];
-#endif
 
 	ret = 0;
 	savegame.start[level].timer = savegame.timer;
@@ -216,25 +207,18 @@ long LevelStats(long level)
 
 	if (!GF_PlayingFMV || CurrentLevel == LV_ANTARC || CurrentLevel == LV_STPAULS)
 	{
-#ifdef TROYESTUFF
 		bDontGreyOut = 1;
-#endif
 		CreateMonoScreen();
 	}
 	else
 	{
 		DXTextureSetGreyScale(1);
-#ifdef TROYESTUFF
 		strcpy(name, GF_picfilenames[GF_LoadingPic]);
 
 		if (tomb3.gold)
 			T3_GoldifyString(name);
 
 		LoadPicture(name, App.lpPictureBuffer, 1);
-#else
-		LoadPicture(GF_picfilenames[GF_LoadingPic], App.lpPictureBuffer, 1);
-#endif
-
 		FadePictureUp(32);
 		DXTextureSetGreyScale(0);
 	}
@@ -254,26 +238,22 @@ long LevelStats(long level)
 			input = IN_SELECT;
 
 		inputDB = GetDebouncedInput(input);
-#ifdef TROYESTUFF
+
 		noAdditiveBG = 1;
 		ShowStatsText(buf, 0);
 		noAdditiveBG = 0;
-#else
-		ShowStatsText(buf, 0);
-#endif
+
 		T_DrawText();
 		S_OutputPolyList();
 		S_DumpScreen();
 	} while (!(input & IN_SELECT));
 
-#ifdef TROYESTUFF
 	if (tomb3.gold)
 	{
 		FadePictureDown(32);
 		TempVideoRemove();
 		return 0;
 	}
-#endif
 
 	if (level != gameflow.num_levels - gameflow.num_demos - 1)
 		S_LoadLevelFile(GF_titlefilenames[0], 0, 6);
@@ -395,7 +375,6 @@ long LevelStats(long level)
 		for (int i = LV_FIRSTLEVEL; i < gameflow.num_levels; i++)
 			ModifyStartInfo(i);
 
-#ifdef TROYESTUFF
 		GF_BonusLevelEnabled = 0;
 		savegame.WorldRequired = 0;
 		savegame.IndiaComplete = 0;
@@ -408,7 +387,6 @@ long LevelStats(long level)
 		savegame.AfterSPacific = 0;
 		savegame.AfterLondon = 0;
 		savegame.AfterNevada = 0;
-#endif
 	}
 
 	if (!ret)
@@ -430,11 +408,7 @@ void GetValidLevelsList(REQUEST_INFO* req)
 
 void GetSavedGamesList(REQUEST_INFO* req)
 {
-#ifdef TROYESTUFF
 	SetPassportRequesterSize(req);
-#else
-	SetPCRequesterSize(req, 10, -32);
-#endif
 
 	if (req->selected >= req->vis_lines)
 		req->line_offset = req->selected - req->vis_lines + 1;
@@ -443,7 +417,6 @@ void GetSavedGamesList(REQUEST_INFO* req)
 	memcpy(RequesterFlags2, SaveGameReqFlags2, sizeof(RequesterFlags2));
 }
 
-#ifdef TROYESTUFF
 static void DisplayGoldCredits()
 {
 	char buf[64];
@@ -473,16 +446,13 @@ static void DisplayGoldCredits()
 	LoadPicture("pixg\\theend2.bmp", App.lpPictureBuffer, 1);
 	FadePictureUp(32);
 }
-#endif
 
 void DisplayCredits()
 {
 	char buf[64];
 
-#ifdef TROYESTUFF
 	if (tomb3.gold)
 		return DisplayGoldCredits();
-#endif
 
 	strcpy(buf, "pix\\credit0?.bmp");
 	memset(&buf[17], 0, sizeof(buf) - 17);
@@ -515,7 +485,6 @@ long LevelCompleteSequence()
 	return EXIT_TO_TITLE;
 }
 
-#ifdef TROYESTUFF
 static void SetSaveDir(char* dest, long size, long slot)
 {
 	if (tomb3.gold)
@@ -523,7 +492,6 @@ static void SetSaveDir(char* dest, long size, long slot)
 	else
 		snprintf(dest, size, ".\\saves\\savegame.%d", slot);
 }
-#endif
 
 long S_FrontEndCheck(SAVEGAME_INFO* pData, long nBytes)
 {
@@ -538,11 +506,7 @@ long S_FrontEndCheck(SAVEGAME_INFO* pData, long nBytes)
 
 	for (int i = 0; i < 16; i++)
 	{
-#ifdef TROYESTUFF
 		SetSaveDir(name, sizeof(name), i);
-#else
-		wsprintf(name, "savegame.%d", i);
-#endif
 		handle = CreateFile(name, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 		if (handle == INVALID_HANDLE_VALUE)
@@ -582,11 +546,7 @@ long S_LoadGame(LPVOID data, long size, long slot)
 	long value;
 	char buffer[80];
 
-#ifdef TROYESTUFF
 	SetSaveDir(buffer, sizeof(buffer), slot);
-#else
-	wsprintf(buffer, "savegame.%d", slot);
-#endif
 	file = CreateFile(buffer, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (file != INVALID_HANDLE_VALUE)
@@ -594,9 +554,7 @@ long S_LoadGame(LPVOID data, long size, long slot)
 		ReadFile(file, buffer, 75, &bytes, 0);
 		ReadFile(file, &value, sizeof(long), &bytes, 0);
 		ReadFile(file, data, size, &bytes, 0);
-#ifdef TROYESTUFF
 		ReadFile(file, &tomb3_save, sizeof(TOMB3_SAVE), &tomb3_save_size, 0);
-#endif
 		CloseHandle(file);
 		return 1;
 	}
@@ -610,11 +568,7 @@ long S_SaveGame(LPVOID data, long size, long slot)
 	ulong bytes;
 	char buffer[80], counter[16];
 
-#ifdef TROYESTUFF
 	SetSaveDir(buffer, sizeof(buffer), slot);
-#else
-	wsprintf(buffer, "savegame.%d", slot);
-#endif
 	file = CreateFile(buffer, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (file != INVALID_HANDLE_VALUE)
@@ -623,9 +577,7 @@ long S_SaveGame(LPVOID data, long size, long slot)
 		WriteFile(file, buffer, 75, &bytes, 0);
 		WriteFile(file, &save_counter, sizeof(long), &bytes, 0);
 		WriteFile(file, data, size, &bytes, 0);
-#ifdef TROYESTUFF
 		WriteFile(file, &tomb3_save, sizeof(TOMB3_SAVE), &bytes, 0);
-#endif
 		CloseHandle(file);
 
 		wsprintf(counter, "%d", save_counter);
@@ -698,10 +650,8 @@ long GameLoop(long demo_mode)
 	else
 		GnGameMode = GAMEMODE_IN_GAME;
 
-#ifdef TROYESTUFF
 	if (tomb3.gold && CurrentLevel == 5)
 		Inv_RemoveItem(ICON_PICKUP1_ITEM);
-#endif
 
 	lp = ControlPhase(1, demo_mode);
 

@@ -1028,10 +1028,7 @@ static short rcossin_tbl[8192] =
 	-25, 4096, -19, 4096, -13, 4096, -6, 4096
 };
 
-static long phdtan2[8]
-{
-	 0, -0x4000, -0xFFFF, 0xC000, -0x8000, 0x4000, 0x8000, -0xC000,
-};
+static long phdtan2[8]{ 0, -0x4000, -0xFFFF, 0xC000, -0x8000, 0x4000, 0x8000, -0xC000 };
 
 static short phdtantab[2050] =
 {

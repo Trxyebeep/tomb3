@@ -115,9 +115,5 @@ void DI_Finish()
 
 bool DI_Create()
 {
-#if (DIRECTINPUT_VERSION >= 0x800)
 	return SUCCEEDED(DirectInput8Create(App.hInstance, DIRECTINPUT_VERSION, DIGUID, (LPVOID*)&lpDirectInput, 0));
-#else
-	return SUCCEEDED(DirectInputCreate(App.hInstance, DIRECTINPUT_VERSION, &lpDirectInput, 0));	//this is the original line
-#endif
 }

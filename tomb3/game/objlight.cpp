@@ -18,11 +18,7 @@ void ControlStrobeLight(short item_number)
 	if (!TriggerActive(item))
 		return;
 
-#ifdef RANDO_STUFF
-	if (rando.levels[RANDOLEVEL].original_id == LV_AREA51 && !item->really_active)
-#else
 	if (CurrentLevel == LV_AREA51 && !item->really_active)
-#endif
 		return;
 
 	item->pos.y_rot += 2912;

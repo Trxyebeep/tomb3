@@ -16,11 +16,8 @@
 #include "control.h"
 #include "savegame.h"
 #include "lara.h"
-#ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
-#endif
 
-#ifdef TROYESTUFF
 GOURAUD_FILL req_main_gour1 =
 {
 	{
@@ -71,42 +68,33 @@ GOURAUD_OUTLINE req_sel_gour2 =
 	0xFF38F080, 0xFF000000, 0xFFFFFFFF,
 	0xFF000000, 0xFF38F080, 0xFF000000,
 };
-#else
-static ushort req_bgnd_gour1[16] =
+
+ulong inv_colours[17] =	//now 32bit color
 {
-	0x1E00, 0x1E00, 0x1A00, 0x1E00, 0x1E00, 0x1E00, 0x1E00, 0x1A00,
-	0x1A00, 0x1E00, 0x1E00, 0x1E00, 0x1E00, 0x1A00, 0x1E00,0x1E00
+	0xFF000000,
+	0xFF404040,
+	0xFFFFFFFF,
+	0xFFFF0000,
+	0xFFFF8000,
+	0xFFFFFF00,
+
+	0, 0, 0, 0, 0, 0,
+
+	0xFF008000,
+	0xFF00FF00,
+	0xFF00FFFF,
+	0xFF0000FF,
+	0xFFFF00FF
 };
 
-static ushort req_bgnd_gour2[9] = { 0x1A00, 0x1800, 0x1E00, 0x2000, 0x2000, 0x1E00, 0x1C00, 0x1C00, 0x1A00 };
-
-static ushort req_main_gour1[16] =
-{
-	0x2000, 0x2000, 0x1800, 0x2000, 0x2000, 0x2000, 0x2000, 0x1800,
-	0x1800, 0x2000, 0x2000, 0x2000, 0x2000, 0x1800, 0x2000, 0x2000
-};
-
-static ushort req_main_gour2[9] = { 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x2000 };
-
-static ushort req_sel_gour1[16] =
-{
-	0x2000, 0x2000, 0x1A00, 0x2000, 0x2000, 0x2000, 0x2000, 0x1A00,
-	0x1A00, 0x2000, 0x2000, 0x2000, 0x2000, 0x1A00, 0x2000, 0x2000
-};
-
-static ushort req_sel_gour2[9] = { 0x2000, 0x1010, 0x2000, 0x1400, 0x2000, 0x1010, 0x2000, 0x1400, 0x2000 };
-#endif
-
-#ifdef TROYESTUFF
 short gLevelSecrets[21] = { 0, 3, 3, 3, 3, 3, 0, 3, 1, 5, 5, 6, 1, 3, 2, 3, 3, 3, 3, 0, 0 };
-#endif
 short LevelSecrets[21] = { 0, 6, 4, 5, 0, 3, 3, 3, 1, 5, 5, 6, 1, 3, 2, 3, 3, 3, 3, 0, 0 };
 
 ulong RequesterFlags1[24];
 ulong RequesterFlags2[24];
 ulong SaveGameReqFlags1[24];
 ulong SaveGameReqFlags2[24];
-short inv_colours[17];
+
 char Save_Game_Strings[24][50];
 char Save_Game_Strings2[24][50];
 char Valid_Level_Strings[24][50];
@@ -226,40 +214,15 @@ INVENTORY_ITEM* inv_levelselect_list[1] =
 	&igamma_option
 };
 
-void InitColours()
-{
-	inv_colours[0] = S_COLOUR(0, 0, 0);
-	inv_colours[1] = S_COLOUR(64, 64, 64);
-	inv_colours[2] = S_COLOUR(255, 255, 255);
-	inv_colours[3] = S_COLOUR(255, 0, 0);
-	inv_colours[4] = S_COLOUR(255, 128, 0);
-	inv_colours[5] = S_COLOUR(255, 255, 0);
-	inv_colours[12] = S_COLOUR(0, 128, 0);
-	inv_colours[13] = S_COLOUR(0, 255, 0);
-	inv_colours[14] = S_COLOUR(0, 255, 255);
-	inv_colours[15] = S_COLOUR(0, 0, 255);
-	inv_colours[16] = S_COLOUR(255, 0, 255);
-}
-
 /************Requester stuff************/
 
 #define STATS_LN_COUNT	7
-
-#ifdef TROYESTUFF
 #define STATS_Y_POS		-44
 #define REQ_LN_HEIGHT	15
-#else
-#define STATS_Y_POS		-32
-#define REQ_LN_HEIGHT	18
-#endif
 
-#ifdef TROYESTUFF
 bool noAdditiveBG;
 
 #define bgFlag	noAdditiveBG ? 0 : 1
-#else
-#define bgFlag	1
-#endif
 
 void Init_Requester(REQUEST_INFO* req)
 {
@@ -285,13 +248,8 @@ void Init_Requester(REQUEST_INFO* req)
 
 	req->itemtexts1_flags = RequesterFlags1;
 	req->itemtexts2_flags = RequesterFlags2;
-#ifdef TROYESTUFF
 	req->original_render_width = GetRenderWidthDownscaled();
 	req->original_render_height = GetRenderHeightDownscaled();
-#else
-	req->original_render_width = GetRenderWidth();
-	req->original_render_height = GetRenderHeight();
-#endif
 }
 
 void Remove_Requester(REQUEST_INFO* req)
@@ -336,11 +294,7 @@ void ReqItemLeftalign(REQUEST_INFO* req, TEXTSTRING* txt)
 	short bgndOffX;
 
 	h = GetTextScaleH(txt->scaleH);
-#ifdef TROYESTUFF
 	bgndOffX = short((req->pixwidth - T_GetTextWidth(txt)) / 2 - 8);
-#else
-	bgndOffX = short(((h * req->pixwidth) >> 17) - ((8 * h) >> 16) - T_GetTextWidth(txt) / 2);
-#endif
 
 	if (txt)
 	{
@@ -355,11 +309,7 @@ void ReqItemRightalign(REQUEST_INFO* req, TEXTSTRING* txt)
 	short bgndOffX;
 
 	h = GetTextScaleH(txt->scaleH);
-#ifdef TROYESTUFF
 	bgndOffX = short((req->pixwidth - T_GetTextWidth(txt)) / 2 - 8);
-#else
-	bgndOffX = short(((h * req->pixwidth) >> 17) - ((8 * h) >> 16) - T_GetTextWidth(txt) / 2);
-#endif
 
 	if (txt)
 	{
@@ -376,13 +326,8 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 
 	lHeight = req->vis_lines * req->line_height + 10;
 	lOff = req->ypos - lHeight;
-#ifdef TROYESTUFF
 	rw = GetRenderWidthDownscaled();
 	rh = GetRenderHeightDownscaled();
-#else
-	rw = GetRenderWidth();
-	rh = GetRenderHeight();
-#endif
 
 	if (rw != req->original_render_width || rh != req->original_render_height)
 	{
@@ -590,11 +535,7 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 			if (req->item > req->vis_lines + req->line_offset)
 			{
 				req->line_offset++;
-				SoundEffect(SFX_MENU_PASSPORT, 0, 0x4000000 | SFX_SETPITCH
-#ifdef TROYESTUFF
-				| SFX_ALWAYS
-#endif
-				);
+				SoundEffect(SFX_MENU_PASSPORT, 0, 0x4000000 | SFX_SETPITCH | SFX_ALWAYS);
 			}
 		}
 		else
@@ -602,11 +543,7 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 			if (req->selected < req->item - 1)
 			{
 				req->selected++;
-				SoundEffect(SFX_MENU_PASSPORT, 0, 0x4000000 | SFX_SETPITCH
-#ifdef TROYESTUFF
-					| SFX_ALWAYS
-#endif
-				);
+				SoundEffect(SFX_MENU_PASSPORT, 0, 0x4000000 | SFX_SETPITCH | SFX_ALWAYS);
 			}
 
 			req->line_oldoffset = req->line_offset;
@@ -624,11 +561,7 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 			if (req->line_offset)
 			{
 				req->line_offset--;
-				SoundEffect(SFX_MENU_PASSPORT, 0, 0x4000000 | SFX_SETPITCH
-#ifdef TROYESTUFF
-					| SFX_ALWAYS
-#endif
-				);
+				SoundEffect(SFX_MENU_PASSPORT, 0, 0x4000000 | SFX_SETPITCH | SFX_ALWAYS);
 			}
 		}
 		else
@@ -636,11 +569,7 @@ long Display_Requester(REQUEST_INFO* req, long des, long backgrounds)
 			if (req->selected)
 			{
 				req->selected--;
-				SoundEffect(SFX_MENU_PASSPORT, 0, 0x4000000 | SFX_SETPITCH
-#ifdef TROYESTUFF
-					| SFX_ALWAYS
-#endif
-				);
+				SoundEffect(SFX_MENU_PASSPORT, 0, 0x4000000 | SFX_SETPITCH | SFX_ALWAYS);
 			}
 
 			req->line_oldoffset = req->line_offset;
@@ -761,11 +690,7 @@ void SetPCRequesterSize(REQUEST_INFO* req, long nLines, long y)
 {
 	long h;
 
-#ifdef TROYESTUFF
 	h = GetRenderHeightDownscaled() / 2 / REQ_LN_HEIGHT;
-#else
-	h = GetRenderHeight() / 2 / REQ_LN_HEIGHT;
-#endif
 
 	if (h > nLines)
 		h = nLines;
@@ -833,9 +758,7 @@ void ShowGymStatsText(const char* time, long type)
 
 	if (mode == 1)
 	{
-#ifdef TROYESTUFF
 		noAdditiveBG = 1;
-#endif
 
 		if (Display_Requester(&Stats_Requester, 1, 1))
 			mode = 0;
@@ -845,9 +768,7 @@ void ShowGymStatsText(const char* time, long type)
 			input = 0;
 		}
 
-#ifdef TROYESTUFF
 		noAdditiveBG = 0;
-#endif
 		return;
 	}
 
@@ -1047,9 +968,8 @@ void ShowEndStatsText()
 
 	if (mode == 1)
 	{
-#ifdef TROYESTUFF
 		noAdditiveBG = 1;
-#endif
+
 		if (Display_Requester(&Stats_Requester, 0, 1))
 			mode = 0;
 		else
@@ -1058,9 +978,7 @@ void ShowEndStatsText()
 			input = 0;
 		}
 
-#ifdef TROYESTUFF
 		noAdditiveBG = 0;
-#endif
 		return;
 	}
 
@@ -1091,20 +1009,12 @@ void ShowEndStatsText()
 	numsecrets = 0;
 	pS = &savegame.start[0].secrets_found;
 
-#ifdef RANDO_STUFF	//No bonus level secrets please
-	totallevels--;
-#endif
-
 	for (num = 0, i = 0; i < totallevels; i++, pS += sizeof(START_INFO))
 	{
 		numsecrets += (*pS & 1) + ((*pS >> 1) & 1) + ((*pS >> 2) & 1) + ((*pS >> 3) & 1) +
 			((*pS >> 4) & 1) + ((*pS >> 5) & 1) + ((*pS >> 6) & 1) + ((*pS >> 7) & 1);
 		num += LevelSecrets[i];
 	}
-
-#ifdef RANDO_STUFF
-	totallevels++;
-#endif
 
 	sprintf(txt, "%d %s %d", numsecrets, GF_GameStrings[GT_OF], num);
 	AddRequesterItem(&Stats_Requester, GF_GameStrings[GT_STAT_SECRETS], R_LEFTALIGN, txt, R_RIGHTALIGN);
@@ -2008,13 +1918,11 @@ long Inv_GetItemOption(long item_number)
 	case ICON_PICKUP4_OPTION:
 		return ICON_PICKUP4_OPTION;
 
-#ifdef TROYESTUFF
 	case SAVEGAME_CRYSTAL_ITEM:
 	case SAVEGAME_CRYSTAL_OPTION:
 		
 		if (tomb3.psx_saving)
 			return SAVEGAME_CRYSTAL_OPTION;
-#endif
 	}
 
 	return NO_ITEM;
@@ -2551,7 +2459,6 @@ long Inv_AddItem(long item_number)
 		Inv_InsertItem(&icon4_option);
 		return 1;
 
-#ifdef TROYESTUFF
 	case SAVEGAME_CRYSTAL_ITEM:
 	case SAVEGAME_CRYSTAL_OPTION:
 
@@ -2560,7 +2467,6 @@ long Inv_AddItem(long item_number)
 			Inv_InsertItem(&sgcrystal_option);
 			return 1;
 		}
-#endif
 	}
 
 	return 0;

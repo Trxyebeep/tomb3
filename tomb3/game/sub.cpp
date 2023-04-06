@@ -21,6 +21,7 @@
 #include "effects.h"
 #include "../specific/input.h"
 #include "savegame.h"
+#include "../newstuff/LaraDraw.h"
 
 BITE_INFO sub_bites[6] =
 {
@@ -236,11 +237,7 @@ void SubDraw(ITEM_INFO* item)
 	phd_PopMatrix();
 
 	if (TriggerActive(item))
-#ifdef TROYESTUFF
 		S_DrawSubWakeFX(item);
-#else
-		S_DrawWakeFX(item);
-#endif
 }
 
 static long CanGetOff(ITEM_INFO* item)
@@ -296,7 +293,8 @@ static void UserInput(ITEM_INFO* item, ITEM_INFO* l, SUBINFO* sub)
 			pos.x = 0;
 			pos.y = 0;
 			pos.z = 0;
-			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			GetLaraMeshPos(&pos, LMX_HIPS);
+
 			l->pos.x_pos = pos.x;
 			l->pos.y_pos = pos.y;
 			l->pos.z_pos = pos.z;
@@ -329,7 +327,7 @@ static void UserInput(ITEM_INFO* item, ITEM_INFO* l, SUBINFO* sub)
 			else
 				wsd = l->pos.y_pos - wh;
 
-			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			GetLaraMeshPos(&pos, LMX_HIPS);
 			l->pos.x_pos = pos.x;
 			l->pos.y_pos = pos.y;
 			l->pos.z_pos = pos.z;
@@ -470,7 +468,7 @@ static void UserInput(ITEM_INFO* item, ITEM_INFO* l, SUBINFO* sub)
 			pos.x = 0;
 			pos.y = 0;
 			pos.z = 0;
-			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			GetLaraMeshPos(&pos, LMX_HIPS);
 
 			s.x = item->pos.x_pos;
 			s.y = item->pos.y_pos;
@@ -959,11 +957,7 @@ static void DoWake(ITEM_INFO* item, short lr)
 
 	if (TriggerActive(item) && !SubWakePts[SubCurrentStartWake][lr].life)
 	{
-#ifdef TROYESTUFF
 		SubWakePts[SubCurrentStartWake][lr].life = 64;
-#else
-		SubWakePts[SubCurrentStartWake][lr].life = 32;
-#endif
 
 		for (int i = 0; i < 2; i++)
 		{
@@ -1074,11 +1068,7 @@ void SubEffects(short item_number)
 			SubWakeShade--;
 	}
 	else if (SubWakeShade < 16)
-#ifdef TROYESTUFF
 		SubWakeShade += 2;
-#else
-		SubWakeShade++;
-#endif
 
 	if (sub->WeaponTimer)
 		sub->WeaponTimer--;

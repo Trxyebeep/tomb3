@@ -3,6 +3,7 @@
 #include "lara.h"
 #include "control.h"
 #include "sound.h"
+#include "../newstuff/LaraDraw.h"
 
 static char footsounds[14] = { 0, 5, 3, 2, 1, 9, 9, 4, 6, 9, 3, 9, 4, 6 };
 
@@ -21,9 +22,9 @@ void AddFootprint(ITEM_INFO* item)
 	pos.z = 0;
 
 	if (FXType == 0x4000)
-		GetLaraHandAbsPosition(&pos, LEFT_FOOT);
+		GetLaraMeshPos(&pos, LMX_FOOT_L);
 	else
-		GetLaraHandAbsPosition(&pos, RIGHT_FOOT);
+		GetLaraMeshPos(&pos, LMX_FOOT_R);
 
 	room_num = item->room_number;
 	floor = GetFloor(pos.x, pos.y, pos.z, &room_num);

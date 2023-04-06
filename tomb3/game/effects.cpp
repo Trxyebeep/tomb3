@@ -19,6 +19,7 @@
 #include "footprnt.h"
 #include "camera.h"
 #include "savegame.h"
+#include "../newstuff/LaraDraw.h"
 
 void(*effect_routines[])(ITEM_INFO* item) =
 {
@@ -123,12 +124,12 @@ void LaraBreath(ITEM_INFO* item)
 	p.x = 0;
 	p.y = -4;
 	p.z = 64;
-	GetLaraHandAbsPosition(&p, LARA_HEAD);
+	GetLaraMeshPos(&p, LMX_HEAD);
 
 	v.x = (GetRandomControl() & 7) - 4;
 	v.y = (GetRandomControl() & 7) - 8;
 	v.z = (GetRandomControl() & 0x7F) + 64;
-	GetLaraHandAbsPosition(&v, LARA_HEAD);
+	GetLaraMeshPos(&v, LMX_HEAD);
 
 	TriggerBreath(p.x, p.y, p.z, v.x - p.x, v.y - p.y, v.z - p.z);
 }
@@ -218,7 +219,7 @@ void LaraBubbles(ITEM_INFO* item)
 	pos.x = 0;
 	pos.y = -4;
 	pos.z = 64;
-	GetLaraHandAbsPosition(&pos, LARA_HEAD);
+	GetLaraMeshPos(&pos, LMX_HEAD);
 
 	for (int i = (GetRandomControl() & 3) + 2; i > 0; i--)
 		CreateBubble((PHD_3DPOS*)&pos, item->room_number, 8, 8);

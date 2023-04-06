@@ -92,7 +92,7 @@ static const char* RPC_GetLevelPic()
 		return "ruins";
 
 	case LV_QUADBIKE:
-			return "ganges";
+		return "ganges";
 
 	case LV_INDIABOSS:
 		return "kaliya";

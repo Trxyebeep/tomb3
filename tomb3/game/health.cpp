@@ -11,10 +11,8 @@
 #include "savegame.h"
 #include "lara.h"
 #include "effects.h"
-#ifdef TROYESTUFF
 #include "../specific/output.h"
 #include "../tomb3/tomb3.h"
-#endif
 
 #define AMMO_XPOS_PC	-10
 #define AMMO_YPOS_PC	50
@@ -27,9 +25,6 @@ TEXTSTRING* ammotext;
 static TEXTSTRING* LpModeTS;
 static long LnModeTSLife;
 
-#ifndef TROYESTUFF
-DISPLAYPU pickups[1];
-#else
 DISPLAYPU pickups[8];
 short PickupX, PickupY, PickupVel, CurrentPickup;
 
@@ -80,7 +75,6 @@ static void DrawPickups()
 			CurrentPickup = 0;
 	}
 }
-#endif
 
 long FlashIt()
 {
@@ -114,8 +108,6 @@ void DrawAssaultTimer()
 			timer = 0;
 
 		sprintf(buffer, "%d:%02d.%02d", timer / 30 / 60, timer / 30 % 60, 334 * (timer % 30) / 100);
-
-#ifdef TROYESTUFF
 		x = (phd_winxmax >> 1) - GetRenderScale(50);
 		y = GetRenderScale(36);
 		h = GetRenderScale(0x10000);
@@ -123,15 +115,6 @@ void DrawAssaultTimer()
 		d0 = GetRenderScale(-6);
 		d1 = GetRenderScale(14);
 		d2 = GetRenderScale(20);
-#else
-		x = (phd_winxmax >> 1) - 50;
-		y = 36;
-		h = 0x10000;
-		v = 0x10000;
-		d0 = -6;
-		d1 = 14;
-		d2 = 20;
-#endif
 
 		for (txt = buffer; *txt; txt++)
 		{
@@ -172,13 +155,8 @@ void DrawAssaultPenalties(long type)
 			if (assault_target_penalties > 0x1A5DD)
 				assault_target_penalties = 0x1A5DD;
 
-#ifdef TROYESTUFF
 			x = (phd_winxmax >> 1) - GetRenderScale(193);
 			y = !assault_penalties ? GetRenderScale(36) : GetRenderScale(64);
-#else
-			x = (phd_winxmax >> 1) - 193;
-			y = !assault_penalties ? 36 : 64;
-#endif
 			timer = assault_target_penalties;
 			sprintf(buffer, "T %d:%02d s", timer / 30 / 60, timer / 30 % 60);
 		}
@@ -190,18 +168,12 @@ void DrawAssaultPenalties(long type)
 			if (assault_penalties > 0x1A5DD)
 				assault_penalties = 0x1A5DD;
 
-#ifdef TROYESTUFF
 			x = (phd_winxmax >> 1) - GetRenderScale(175);
 			y = GetRenderScale(36);
-#else
-			x = (phd_winxmax >> 1) - 175;
-			y = 36;
-#endif
 			timer = assault_penalties;
 			sprintf(buffer, "%d:%02d s", timer / 30 / 60, timer / 30 % 60);
 		}
 
-#ifdef TROYESTUFF
 		h = GetRenderScale(0x10000);
 		v = GetRenderScale(0x10000);
 		p = GetRenderScale(1);
@@ -209,15 +181,6 @@ void DrawAssaultPenalties(long type)
 		d1 = GetRenderScale(14);
 		d2 = GetRenderScale(20);
 		d3 = GetRenderScale(8);
-#else
-		h = 0x10000;
-		v = 0x10000;
-		p = 1;
-		d0 = -6;
-		d1 = 14;
-		d2 = 20;
-		d3 = 8;
-#endif
 
 		for (txt = buffer; *txt; txt++)
 		{
@@ -272,40 +235,22 @@ void DrawQuadbikeLapTime()
 				timer = savegame.best_quadbike_times[0] / 0x1E;
 				col = 10;
 				hundredth = 334 * (savegame.best_quadbike_times[0] % 0x1E) / 0x64;
-#ifdef TROYESTUFF
 				x = (phd_winxmax >> 1) + GetRenderScale(100);
-#else
-				x = (phd_winxmax >> 1) + 100;
-#endif
 			}
 			else
 			{
 				col = 9;
 				timer = QuadbikeLapTime / 30;
 				hundredth = 334 * (QuadbikeLapTime % 30) / 100;
-#ifdef TROYESTUFF
 				x = (phd_winxmax >> 1) - GetRenderScale(50);
-#else
-				x = (phd_winxmax >> 1) - 50;
-#endif
 			}
 
-#ifdef TROYESTUFF
 			y = GetRenderScale(36);
 			h = GetRenderScale(0x10000);
 			v = GetRenderScale(0x10000);
 			d0 = GetRenderScale(-6);
 			d1 = GetRenderScale(14);
 			d2 = GetRenderScale(20);
-#else
-			y = 36;
-			h = 0x10000;
-			v = 0x10000;
-			d0 = -6;
-			d1 = 14;
-			d2 = 20;
-#endif
-
 			sprintf(buffer, "%d:%02d.%02d", timer / 60, timer % 60, hundredth);
 
 			for (txt = buffer; *txt; txt++)
@@ -450,7 +395,6 @@ void DrawAmmoInfo()
 
 	RemoveAmmoText();
 
-#ifdef TROYESTUFF
 	if (tomb3.ammo_counter == ACTR_PSX || tomb3.bar_pos == BPOS_PSX)	//PSX bar pos forces the PSX ammo counter.
 	{
 		ammotext = T_Print(AMMO_XPOS_PS, AMMO_YPOS_PS, 3, txt);
@@ -458,10 +402,6 @@ void DrawAmmoInfo()
 	}
 	else
 		ammotext = T_Print(AMMO_XPOS_PC, AMMO_YPOS_PC, 0, txt);
-
-#else
-	ammotext = T_Print(AMMO_XPOS_PC, AMMO_YPOS_PC, 0, txt);
-#endif
 
 	T_RightAlign(ammotext, 1);
 }
@@ -518,9 +458,7 @@ void DrawGameInfo(long timed)
 		DrawQuadbikeLapTime();
 		DrawHealthBar(flash_state);
 		DrawAirBar(flash_state);
-#ifdef TROYESTUFF
 		DrawPickups();
-#endif
 
 		if (DashTimer < 120)
 			S_DrawDashBar(100 * DashTimer / 120);
@@ -539,7 +477,6 @@ void DrawGameInfo(long timed)
 
 void InitialisePickUpDisplay()
 {
-#ifdef TROYESTUFF
 	for (int i = 0; i < 8; i++)
 		pickups[i].duration = -1;
 
@@ -547,10 +484,6 @@ void InitialisePickUpDisplay()
 	PickupX = 128;
 	PickupVel = 0;
 	CurrentPickup = 0;
-#else
-	for (int i = 0; i < 1; i++)
-		pickups[i].duration = 0;
-#endif
 }
 
 void AddDisplayPickup(short objnum)
@@ -558,7 +491,6 @@ void AddDisplayPickup(short objnum)
 	if (objnum == SECRET_ITEM1 || objnum == SECRET_ITEM2 || objnum == SECRET_ITEM3)
 		S_CDPlay(gameflow.secret_track, 0);
 
-#ifdef TROYESTUFF
 	if (!tomb3.pickup_display)
 		return;
 
@@ -571,8 +503,4 @@ void AddDisplayPickup(short objnum)
 			break;
 		}
 	}
-#else
-	pickups[0].sprnum = objnum;
-	pickups[0].duration = 75;
-#endif
 }

@@ -207,11 +207,7 @@ void ShivaControl(short item_number)
 			{
 				shiva->flags++;
 				x = (GetRandomControl() & 0x5FF) + item->pos.x_pos - 768;
-#ifdef TROYESTUFF
 				y = item->pos.y_pos - (GetRandomControl() & 0x5FF);	//typo maybe?
-#else
-				y = pos.y - (GetRandomControl() & 0x5FF);
-#endif
 				z = (GetRandomControl() & 0x5FF) + item->pos.z_pos - 768;
 				TriggerShivaSmoke(x, y, z, 1);
 			}

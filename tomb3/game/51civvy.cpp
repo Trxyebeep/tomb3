@@ -131,11 +131,7 @@ void ControlElectricFence(short item_number)
 		else
 			ez += GetRandomControl() & za;
 
-#ifdef RANDO_STUFF
-		if (rando.levels[RANDOLEVEL].original_id == LV_OFFICE)
-#else
 		if (CurrentLevel == LV_OFFICE)
-#endif
 			ey = item->pos.y_pos - (GetRandomControl() & 0x1F);
 		else
 			ey = item->pos.y_pos - (GetRandomControl() & 0x7FF) - (GetRandomControl() & 0x3FF);
@@ -155,11 +151,7 @@ void ControlElectricFence(short item_number)
 		}
 	}
 
-#ifdef RANDO_STUFF
-	if (lara.electric || rando.levels[RANDOLEVEL].original_id == LV_OFFICE ||
-#else
 	if (lara.electric || CurrentLevel == LV_OFFICE ||
-#endif
 		lara_item->pos.x_pos < x - xs || lara_item->pos.x_pos > x + xs ||
 		lara_item->pos.z_pos < z - zs || lara_item->pos.z_pos > z + zs ||
 		lara_item->pos.y_pos > item->pos.y_pos + 32 || lara_item->pos.y_pos < item->pos.y_pos - 3072)

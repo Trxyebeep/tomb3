@@ -10,9 +10,8 @@
 #include "cinema.h"
 #include "draw.h"
 #include "inventry.h"
-#ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
-#endif
+#include "../newstuff/LaraDraw.h"
 
 CAMERA_INFO camera;
 
@@ -734,7 +733,7 @@ void LookCamera(ITEM_INFO* item)
 	pos1.x = 0;
 	pos1.y = 16;
 	pos1.z = 64;
-	GetLaraHandAbsPosition(&pos1, LARA_HEAD);
+	GetLaraMeshPos(&pos1, LMX_HEAD);
 	clipped = 0;
 	room_number = lara_item->room_number;
 	floor = GetFloor(pos1.x, pos1.y + 256, pos1.z, &room_number);
@@ -754,7 +753,7 @@ void LookCamera(ITEM_INFO* item)
 		pos1.x = 0;
 		pos1.y = 16;
 		pos1.z = 0;
-		GetLaraHandAbsPosition(&pos1, LARA_HEAD);
+		GetLaraMeshPos(&pos1, LMX_HEAD);
 		clipped = 0;
 		room_number = lara_item->room_number;
 		floor = GetFloor(pos1.x, pos1.y + 256, pos1.z, &room_number);
@@ -774,18 +773,20 @@ void LookCamera(ITEM_INFO* item)
 			pos1.x = 0;
 			pos1.y = 16;
 			pos1.z = -64;
-			GetLaraHandAbsPosition(&pos1, LARA_HEAD);
+			GetLaraMeshPos(&pos1, LMX_HEAD);
 		}
 	}
 
 	pos2.x = 0;
 	pos2.y = 0;
 	pos2.z = -1024;
-	GetLaraHandAbsPosition(&pos2, LARA_HEAD);
+	GetLaraMeshPos(&pos2, LMX_HEAD);
+
 	pos3.x = 0;
 	pos3.y = 0;
 	pos3.z = 2048;
-	GetLaraHandAbsPosition(&pos3, LARA_HEAD);
+	GetLaraMeshPos(&pos3, LMX_HEAD);
+
 	dx = (pos2.x - pos1.x) >> 3;
 	dy = (pos2.y - pos1.y) >> 3;
 	dz = (pos2.z - pos1.z) >> 3;
@@ -1018,9 +1019,7 @@ void CalculateCamera()
 {
 	ITEM_INFO* item;
 	short* bounds;
-#ifdef TROYESTUFF
 	float vol;
-#endif
 	long fixed_camera, y, shift, dx, dz;
 	short angle, tilt;
 
@@ -1040,13 +1039,11 @@ void CalculateCamera()
 
 		if (!camera.underwater)
 		{
-#ifdef TROYESTUFF
 			vol = (1.0F - tomb3.unwater_music_mute) * float(25 * Option_Music_Volume + 5);
 
 			if (Option_Music_Volume > 0 && vol >= 1)
 				S_CDVolume((long)vol);
 			else
-#endif
 				S_CDVolume(0);
 
 			camera.underwater = 1;

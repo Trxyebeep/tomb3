@@ -45,14 +45,9 @@ void ControlMissile(short fx_number)
 		{
 			TriggerFireFlame(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, -1, 0);
 			TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, 24, 31, 24, GetRandomControl() & 7);
-#ifndef TROYESTUFF
-			KillEffect(fx_number);
-#endif
 		}
 
-#ifdef TROYESTUFF
 		KillEffect(fx_number);
-#endif
 		return;
 	}
 

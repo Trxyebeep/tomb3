@@ -133,15 +133,12 @@ void lara_as_swim(ITEM_INFO* item, COLL_INFO* coll)
 		SwimTurn(item);
 		item->fallspeed += 8;
 
-#ifdef TROYESTUFF
 		if (lara.water_status == LARA_CHEAT)
 		{
 			if (item->fallspeed > 400)
 				item->fallspeed = 400;
 		}
-		else
-#endif
-			if (item->fallspeed > 200)
+		else if (item->fallspeed > 200)
 				item->fallspeed = 200;
 
 		if (!(input & IN_JUMP))

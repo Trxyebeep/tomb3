@@ -59,22 +59,14 @@ void LavaBurn(ITEM_INFO* item)
 
 		if (item->floor == h)
 		{
-#ifdef RANDO_STUFF
-			if (rando.levels[RANDOLEVEL].original_id == LV_RAPIDS)
-#else
 			if (CurrentLevel == LV_RAPIDS)
-#endif
 				LaraRapidsDrown();
 			else
 			{
 				item->hit_status = 1;
 				item->hit_points = -1;
 
-#ifdef RANDO_STUFF
-				if (rando.levels[RANDOLEVEL].original_id == LV_AREA51 || rando.levels[RANDOLEVEL].original_id == LV_OFFICE)
-#else
 				if (CurrentLevel == LV_AREA51 || CurrentLevel == LV_OFFICE)
-#endif
 					lara.electric = 1;
 				else
 					LaraBurn();
@@ -89,19 +81,11 @@ void SpikeControl(short item_number)
 
 	item = &items[item_number];
 
-#ifdef RANDO_STUFF
-	if (TriggerActive(item) && (rando.levels[RANDOLEVEL].original_id == LV_SHORE || rando.levels[RANDOLEVEL].original_id == LV_RAPIDS))
-#else
 	if (TriggerActive(item) && (CurrentLevel == LV_SHORE || CurrentLevel == LV_RAPIDS))
-#endif
 	{
 		if (item->frame_number == anims[item->anim_number].frame_base)
 		{
-#ifdef RANDO_STUFF
-			if (rando.levels[RANDOLEVEL].original_id == LV_SHORE)
-#else
 			if (CurrentLevel == LV_SHORE)
-#endif
 				SoundEffect(SFX_SHIVA_SWORD_2, &item->pos, SFX_ALWAYS);
 			else
 				SoundEffect(SFX_LARA_GETOUT, &item->pos, SFX_ALWAYS);
@@ -134,11 +118,7 @@ void PropellerControl(short item_number)
 
 		if (item->touch_bits & 6)
 		{
-#ifdef RANDO_STUFF
-			if (rando.levels[RANDOLEVEL].original_id == LV_ROOFTOPS)
-#else
 			if (CurrentLevel == LV_ROOFTOPS)
-#endif
 			{
 				lara_item->hit_points = -1;
 				DoLotsOfBlood(lara_item->pos.x_pos, lara_item->pos.y_pos - 512, lara_item->pos.z_pos,
@@ -308,7 +288,6 @@ void FlameControl(short fx_number)
 		}
 		else
 		{
-#ifdef TROYESTUFF
 			if (lara.water_status == LARA_CHEAT)
 			{
 				fx->counter = 0;
@@ -316,7 +295,6 @@ void FlameControl(short fx_number)
 				lara.burn = 0;
 				return;
 			}
-#endif
 
 			for (int i = 0; i < NUM_LARA_MESHES; i++)
 			{
@@ -341,13 +319,7 @@ void FlameControl(short fx_number)
 			wh = GetWaterHeight(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, fx->room_number);
 
 			if (wh == NO_HEIGHT || fx->pos.y_pos <= wh || (room[fx->room_number].flags & ROOM_SWAMP &&
-#ifdef RANDO_STUFF
-				(rando.levels[RANDOLEVEL].original_id == LV_CITY ||
-				rando.levels[RANDOLEVEL].original_id == LV_INDIABOSS ||
-				rando.levels[RANDOLEVEL].original_id == LV_CHAMBER)))
-#else
 				(CurrentLevel == LV_CITY || CurrentLevel == LV_INDIABOSS || CurrentLevel == LV_CHAMBER)))
-#endif
 			{
 				SoundEffect(SFX_LOOP_FOR_SMALL_FIRES, &fx->pos, SFX_DEFAULT);
 				lara_item->hit_points -= 7;
@@ -424,11 +396,7 @@ void FlameControl(short fx_number)
 			{
 				fx->flag1 = 128;
 
-#ifdef RANDO_STUFF
-				if (rando.levels[RANDOLEVEL].original_id == LV_RAPIDS)
-#else
 				if (CurrentLevel == LV_RAPIDS)
-#endif
 					fx->flag2 = 120;
 				else
 					fx->flag2 = 60;

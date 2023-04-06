@@ -263,11 +263,7 @@ void FlamerControl(short item_number)
 	{
 		if (item->ai_bits)
 			GetAITarget(flamer);
-#ifdef RANDO_STUFF
-		else if (flamer->hurt_by_lara || rando.levels[RANDOLEVEL].original_id == LV_CHAMBER)
-#else
 		else if (flamer->hurt_by_lara || CurrentLevel == LV_CHAMBER)
-#endif
 			flamer->enemy = lara_item;
 		else
 		{
@@ -308,11 +304,7 @@ void FlamerControl(short item_number)
 			lara_info.angle = info.angle;
 			lara_info.distance = info.distance;
 
-#ifdef RANDO_STUFF
-			if (!flamer->hurt_by_lara && rando.levels[RANDOLEVEL].original_id != LV_CHAMBER)
-#else
 			if (!flamer->hurt_by_lara && CurrentLevel != LV_CHAMBER)
-#endif
 				flamer->enemy = 0;
 		}
 		else
@@ -329,11 +321,7 @@ void FlamerControl(short item_number)
 		angle = CreatureTurn(item, flamer->maximum_turn);
 		enemy = flamer->enemy;
 
-#ifdef RANDO_STUFF
-		if (item->hit_status || (lara_info.distance < 0x100000 || TargetVisible(item, &lara_info)) && rando.levels[RANDOLEVEL].original_id == LV_CHAMBER)
-#else
 		if (item->hit_status || (lara_info.distance < 0x100000 || TargetVisible(item, &lara_info)) && CurrentLevel == LV_CHAMBER)
-#endif
 		{
 			if (!flamer->alerted)
 				SoundEffect(SFX_AMERCAN_HOY, &item->pos, SFX_DEFAULT);
@@ -359,11 +347,7 @@ void FlamerControl(short item_number)
 				item->goal_anim_state = 2;
 			else if (flamer->mood == ESCAPE_MOOD)
 				item->goal_anim_state = 2;
-#ifdef RANDO_STUFF
-			else if (Targetable(item, &info) && (enemy != lara_item || flamer->hurt_by_lara || rando.levels[RANDOLEVEL].original_id == LV_CHAMBER))
-#else
 			else if (Targetable(item, &info) && (enemy != lara_item || flamer->hurt_by_lara || CurrentLevel == LV_CHAMBER))
-#endif
 			{
 				if (info.distance >= 0x1000000)
 					item->goal_anim_state = 2;
@@ -393,11 +377,7 @@ void FlamerControl(short item_number)
 				item->goal_anim_state = 2;
 			else if (flamer->mood == ESCAPE_MOOD)
 				item->goal_anim_state = 2;
-#ifdef RANDO_STUFF
-			else if (Targetable(item, &info) && (enemy != lara_item || flamer->hurt_by_lara || rando.levels[RANDOLEVEL].original_id == LV_CHAMBER))
-#else
 			else if (Targetable(item, &info) && (enemy != lara_item || flamer->hurt_by_lara || CurrentLevel == LV_CHAMBER))
-#endif
 			{
 				if (info.distance >= 0x1000000)
 					item->goal_anim_state = 9;
@@ -421,12 +401,8 @@ void FlamerControl(short item_number)
 				if (!(GetRandomControl() & 0xFF))
 					item->goal_anim_state = 1;
 			}
-			else if (Targetable(item, &info) && info.distance < 0x1000000 &&
-#ifdef RANDO_STUFF
-			(enemy != lara_item || flamer->hurt_by_lara || rando.levels[RANDOLEVEL].original_id == LV_CHAMBER) || flamer->mood != BORED_MOOD)
-#else
-				(enemy != lara_item || flamer->hurt_by_lara || CurrentLevel == LV_CHAMBER) || flamer->mood != BORED_MOOD)
-#endif
+			else if (Targetable(item, &info) && info.distance < 0x1000000 && (enemy != lara_item || flamer->hurt_by_lara || CurrentLevel == LV_CHAMBER) ||
+				flamer->mood != BORED_MOOD)
 				item->goal_anim_state = 1;
 
 			break;
@@ -441,11 +417,7 @@ void FlamerControl(short item_number)
 				torso_y = info.angle;
 				torso_x = info.x_angle;
 
-#ifdef RANDO_STUFF
-				if (Targetable(item, &info) && info.distance < 0x1000000 && (enemy != lara_item || flamer->hurt_by_lara || rando.levels[RANDOLEVEL].original_id == LV_CHAMBER))
-#else
 				if (Targetable(item, &info) && info.distance < 0x1000000 && (enemy != lara_item || flamer->hurt_by_lara || CurrentLevel == LV_CHAMBER))
-#endif
 					item->goal_anim_state = 6;
 				else
 					item->goal_anim_state = 2;
@@ -474,11 +446,7 @@ void FlamerControl(short item_number)
 				torso_y = info.angle;
 				torso_x = info.x_angle;
 
-#ifdef RANDO_STUFF
-				if (Targetable(item, &info) && info.distance < 0x1000000 && (enemy != lara_item || flamer->hurt_by_lara || rando.levels[RANDOLEVEL].original_id == LV_CHAMBER))
-#else
 				if (Targetable(item, &info) && info.distance < 0x1000000 && (enemy != lara_item || flamer->hurt_by_lara || CurrentLevel == LV_CHAMBER))
-#endif
 					item->goal_anim_state = 6;
 				else
 					item->goal_anim_state = 2;
@@ -494,11 +462,7 @@ void FlamerControl(short item_number)
 				torso_y = info.angle;
 				torso_x = info.x_angle;
 
-#ifdef RANDO_STUFF
-				if (Targetable(item, &info) && info.distance < 0x1000000 && (enemy != lara_item || flamer->hurt_by_lara || rando.levels[RANDOLEVEL].original_id == LV_CHAMBER))
-#else
 				if (Targetable(item, &info) && info.distance < 0x1000000 && (enemy != lara_item || flamer->hurt_by_lara || CurrentLevel == LV_CHAMBER))
-#endif
 					item->goal_anim_state = 11;
 				else
 					item->goal_anim_state = 1;
@@ -516,11 +480,7 @@ void FlamerControl(short item_number)
 				torso_y = info.angle;
 				torso_x = info.x_angle;
 
-#ifdef RANDO_STUFF
-				if (Targetable(item, &info) && info.distance < 0x1000000 && (enemy != lara_item || flamer->hurt_by_lara || rando.levels[RANDOLEVEL].original_id == LV_CHAMBER))
-#else
 				if (Targetable(item, &info) && info.distance < 0x1000000 && (enemy != lara_item || flamer->hurt_by_lara || CurrentLevel == LV_CHAMBER))
-#endif
 					item->goal_anim_state = 11;
 				else
 					item->goal_anim_state = 1;

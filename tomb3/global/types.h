@@ -48,8 +48,8 @@ typedef unsigned long ulong;
 #define LPDDSURFACEDESCX		DDSURFACEDESCX*
 #define DDSCAPSX				DDSCAPS
 #define LPDDSCAPSX				DDSCAPSX*
-#define LPDIRECTINPUTX			LPDIRECTINPUT
-#define LPDIRECTINPUTDEVICEX	LPDIRECTINPUTDEVICE
+#define LPDIRECTINPUTX			LPDIRECTINPUT8
+#define LPDIRECTINPUTDEVICEX	LPDIRECTINPUTDEVICE8
 
 #if (DIRECT3D_VERSION < 0x900)
 #define DDSGUID					IID_IDirectDrawSurface3
@@ -62,54 +62,37 @@ typedef unsigned long ulong;
 /***********************************************/
 
 //constants
-#define NO_HEIGHT -32512
-#define DONT_TARGET	-16384
-#define NO_ITEM	-1
-#define W2V_SHIFT	14
-#define NO_ROOM	255
-#define WALL_SHIFT	10
-#define WALL_SIZE	(1 << WALL_SHIFT)
-#define WALL_MASK	(WALL_SIZE - 1)
-#define MAX_LOT		5
-#define MAX_NONLOT	12
+#define NO_HEIGHT		-32512
+#define DONT_TARGET		-16384
+#define NO_ITEM			-1
+#define W2V_SHIFT		14
+#define NO_ROOM			255
+#define WALL_SHIFT		10
+#define WALL_SIZE		(1 << WALL_SHIFT)
+#define WALL_MASK		(WALL_SIZE - 1)
+#define MAX_LOT			20		//was 5
+#define MAX_NONLOT		20		//was 12
 
-#ifdef TROYESTUFF	//*8
-#define MAX_TLVERTICES	0x12000
-#define MAX_SORTLISTS	0x17700
-#else
-#define MAX_TLVERTICES	0x2400
-#define MAX_SORTLISTS	0x2EE0
-#endif
+#define MAX_BUCKETS		6
+#define BUCKET_EXTRA	32
+#define BUCKET_VERTS	(256 + BUCKET_EXTRA)
 
-#ifdef TROYESTUFF	//*4
-#define MAX_TPAGES	128
-#define MAX_TINFOS	0x4000
-#else
-#define MAX_TPAGES	32
-#define MAX_TINFOS	0x1000
-#endif
+#define MAX_TLVERTICES	0x12000	//*8
+#define MAX_SORTLISTS	0x17700	//*8
+#define MAX_VBUF		12000	//*8
+#define MAX_VINFO		320		//*8
+#define MAX_TPAGES		128		//*4
+#define MAX_TINFOS		0x4000	//*4
 
-#define MAX_ITEMS	256
-
-#ifdef TROYESTUFF
+#define MAX_STATICS		256		//was 50
+#define MAX_ITEMS		1024	//was 256
 #define NLAYOUTKEYS		15
-#else
-#define NLAYOUTKEYS		14
-#endif
+#define MAX_WEATHER		256
 
-#define MAX_WEATHER			256
-
-#ifdef TROYESTUFF	//*2
+//*2
 #define MAX_WEATHER_ALIVE	16
-#else
-#define MAX_WEATHER_ALIVE	8
-#endif
 
-#ifdef TROYESTUFF
-#define MALLOC_SIZE	15000000	//15 MB
-#else
-#define MALLOC_SIZE	0x380000	//about 3.6 MB
-#endif
+#define MALLOC_SIZE	15000000	//15 MB (was around 3.6 MB)
 
 /*enums*/
 enum bite_offsets
@@ -214,14 +197,9 @@ enum draw_types
 	DT_LINE_SOLID = 12,			//Solid Line
 	DT_POLY_GA = 13,			//Gouraud + Alpha
 	DT_POLY_WGTA = 14,			//Gouraud + Textured + Color key + Alpha
-	DT_UNUSED = 15,				//Unused
-#ifdef TROYESTUFF
 	DT_POLY_COLSUB = 15,		//colsub
-#endif
 	DT_POLY_GTA = 16,			//Gouraud + Textured + Alpha
-#ifdef TROYESTUFF
 	DT_LINE_ALPHA = 17,			//line + color key + alpha
-#endif
 };
 
 enum T_flags
@@ -490,17 +468,6 @@ enum LARA_MESHES
 	HAND_L,
 	HEAD,
 	NUM_LARA_MESHES
-};
-
-enum lara_get_meshes
-{
-	LEFT_HAND,
-	RIGHT_HAND,
-	LARA_HIPS,
-	LARA_TORSO,
-	LARA_HEAD,
-	LEFT_FOOT,
-	RIGHT_FOOT
 };
 
 enum sort_type
@@ -1319,13 +1286,8 @@ struct D3DTEXTUREINFO
 
 struct DXDIRECTSOUNDINFO
 {
-#ifdef TROYESTUFF
 	char Name[256];
 	char About[256];
-#else
-	char Name[30];
-	char About[80];
-#endif
 	LPGUID lpGuid;
 	GUID Guid;
 };
@@ -1338,7 +1300,6 @@ struct DIRECT3DINFO
 	GUID Guid;
 	D3DDEVICEDESC DeviceDesc;
 	bool bAlpha;
-	bool bHardware;
 	bool bAGP;
 	long nDisplayMode;
 	DISPLAYMODE* DisplayMode;
@@ -1545,7 +1506,7 @@ struct TEXTUREBUCKET
 {
 	DXTEXTURE* TPage;
 	long nVtx;
-	D3DTLVERTEX vtx[288];
+	D3DTLVERTEX vtx[BUCKET_VERTS];
 };
 
 struct POINT_INFO
@@ -2084,7 +2045,7 @@ struct SVECTOR
 	short pad;
 };
 
-#ifdef TROYESTUFF
+// new stuff
 struct FVECTOR
 {
 	float x;
@@ -2186,5 +2147,4 @@ struct TOMB3_OPTIONS
 	bool Windowed;
 	bool WinPlayLoaded;
 };
-#endif
 #pragma pack(pop)

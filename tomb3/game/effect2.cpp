@@ -10,6 +10,7 @@
 #include "sound.h"
 #include "fish.h"
 #include "gameflow.h"
+#include "../newstuff/LaraDraw.h"
 
 static short SplashRings[8][2] =
 {
@@ -726,7 +727,7 @@ void TriggerBlood(long x, long y, long z, long angle, long num)
 		sptr->Yvel = -128 - (GetRandomControl() & 0xFF);
 		sptr->Zvel = (rad * rcossin_tbl[(ang << 1) + 1]) >> 5;
 		sptr->Friction = 4;
-		sptr->Flags = SF_BLOOD;
+		sptr->Flags = SF_BLOOD | SF_SCALE;
 		sptr->Scalar = 3;
 		sptr->MaxYvel = 0;
 		sptr->Gravity = (GetRandomControl() & 0x1F) + 31;
@@ -2020,55 +2021,55 @@ void UpdateSparks()
 
 		pDL = &spark_dynamics[sptr->Dynamic];
 
-		if (pDL->Flags & 3)
+		if (!pDL->On)
+			continue;
+
+		rnd = GetRandomControl();
+		x = sptr->x + ((rnd & 0xF) << 4);
+		y = sptr->y + (rnd & 0xF0);
+		z = sptr->z + ((rnd >> 4) & 0xF0);
+		falloff = sptr->sLife - sptr->Life - 1;
+
+		if (falloff < 2)
 		{
-			rnd = GetRandomControl();
-			x = sptr->x + ((rnd & 0xF) << 4);
-			y = sptr->y + (rnd & 0xF0);
-			z = sptr->z + ((rnd >> 4) & 0xF0);
-			falloff = sptr->sLife - sptr->Life - 1;
+			if (pDL->Falloff < 28)
+				pDL->Falloff += 6;
 
-			if (falloff < 2)
-			{
-				if (pDL->Falloff < 28)
-					pDL->Falloff += 6;
-
-				r = 31 - (rnd & 3) - falloff;
-				g = 31 - (rnd & 3) - (falloff << 1);
-				b = 31 - (rnd & 3) - (falloff << 3);
-			}
-			else if (falloff < 4)
-			{
-				if (pDL->Falloff < 28)
-					pDL->Falloff += 6;
-
-				r = 31 - (rnd & 3) - falloff;
-				g = 16 - falloff;
-				b = (4 - falloff) << 2;
-
-				if (b < 0)
-					b = 0;
-			}
-			else
-			{
-				if (pDL->Falloff)
-					pDL->Falloff--;
-
-				r = (rnd & 3) + 28;
-				g = ((rnd >> 4) & 3) + 16;
-				b = (rnd >> 8) & 7;
-			}
-
-			falloff = pDL->Falloff;
-
-			if (falloff > 31)
-				falloff = 31;
-
-			if (sptr->Flags & SF_GREEN)
-				TriggerDynamic(x, y, z, falloff, b, r, g);
-			else
-				TriggerDynamic(x, y, z, falloff, r, g, b);
+			r = 31 - (rnd & 3) - falloff;
+			g = 31 - (rnd & 3) - (falloff << 1);
+			b = 31 - (rnd & 3) - (falloff << 3);
 		}
+		else if (falloff < 4)
+		{
+			if (pDL->Falloff < 28)
+				pDL->Falloff += 6;
+
+			r = 31 - (rnd & 3) - falloff;
+			g = 16 - falloff;
+			b = (4 - falloff) << 2;
+
+			if (b < 0)
+				b = 0;
+		}
+		else
+		{
+			if (pDL->Falloff)
+				pDL->Falloff--;
+
+			r = (rnd & 3) + 28;
+			g = ((rnd >> 4) & 3) + 16;
+			b = (rnd >> 8) & 7;
+		}
+
+		falloff = pDL->Falloff;
+
+		if (falloff > 31)
+			falloff = 31;
+
+		if (sptr->Flags & SF_GREEN)
+			TriggerDynamic(x, y, z, falloff, b, r, g);
+		else
+			TriggerDynamic(x, y, z, falloff, r, g, b);
 	}
 }
 
@@ -2113,7 +2114,7 @@ void TriggerGunShell(short lr, long objNum, long weapon)
 			break;
 		}
 
-		GetLaraHandAbsPosition(&pos, RIGHT_HAND);
+		GetLaraMeshPos(&pos, LMX_HAND_R);
 	}
 	else
 	{
@@ -2138,7 +2139,7 @@ void TriggerGunShell(short lr, long objNum, long weapon)
 			break;
 		}
 
-		GetLaraHandAbsPosition(&pos, LEFT_HAND);
+		GetLaraMeshPos(&pos, LMX_HAND_L);
 	}
 
 	if (weapon == LG_SHOTGUN)

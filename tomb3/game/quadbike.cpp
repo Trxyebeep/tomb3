@@ -23,6 +23,7 @@
 #include "../specific/input.h"
 #include "camera.h"
 #include "savegame.h"
+#include "../newstuff/LaraDraw.h"
 
 static BITE_INFO quad_bites[6] =
 {
@@ -44,9 +45,7 @@ void QuadBikeDraw(ITEM_INFO* item)
 	long* bone;
 	short* frm[2];
 	short* rot;
-#ifdef TROYESTUFF
 	short* rot2;
-#endif
 	long frac, rate, clip;
 
 	frac = GetFrames(item, frm, &rate);
@@ -66,7 +65,6 @@ void QuadBikeDraw(ITEM_INFO* item)
 	bone = &bones[objects[item->object_number].bone_index];
 	CalculateObjectLighting(item, frm[0]);
 
-#ifdef TROYESTUFF
 	if (frac)
 	{
 		InitInterpolate(frac, rate);
@@ -127,7 +125,6 @@ void QuadBikeDraw(ITEM_INFO* item)
 		phd_PopMatrix_I();
 	}
 	else
-#endif
 	{
 		phd_TranslateRel(frm[0][6], frm[0][7], frm[0][8]);
 		rot = frm[0] + 9;
@@ -377,10 +374,12 @@ static long SkidooCheckGetOff()
 			lara_item->anim_number = ANIM_FASTFALL;
 			lara_item->frame_number = anims[ANIM_FASTFALL].frame_base;
 			lara_item->current_anim_state = AS_FASTFALL;
+
 			pos.x = 0;
 			pos.y = 0;
 			pos.z = 0;
-			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			GetLaraMeshPos(&pos, LMX_HIPS);
+
 			lara_item->pos.x_pos = pos.x;
 			lara_item->pos.y_pos = pos.y;
 			lara_item->pos.z_pos = pos.z;

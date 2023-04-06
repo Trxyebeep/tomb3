@@ -5,9 +5,7 @@
 #include "file.h"
 #include "input.h"
 #include "audio.h"
-#ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
-#endif
 
 long fmv_playing;
 
@@ -15,7 +13,6 @@ static LPVOID MovieContext;
 static LPVOID FmvContext;
 static LPVOID FmvSoundContext;
 
-#ifdef TROYESTUFF
 #define GET_DLL_PROC(dll, proc) \
 { \
 	*(FARPROC*)&(proc) = GetProcAddress(dll, #proc); \
@@ -109,14 +106,11 @@ void FreeWinPlay()
 		hWinPlay = 0;
 	}
 }
-#endif
 
 long FMV_Play(char* name)
 {
-#ifdef TROYESTUFF
 	if (tomb3.Windowed || !tomb3.WinPlayLoaded)
 		return 0;
-#endif
 
 	fmv_playing = 1;
 	S_CDStop();
@@ -135,10 +129,8 @@ long FMV_Play(char* name)
 
 long FMV_PlayIntro(char* name1, char* name2)
 {
-#ifdef TROYESTUFF
 	if (tomb3.Windowed || !tomb3.WinPlayLoaded)
 		return 0;
-#endif
 
 	fmv_playing = 1;
 	ShowCursor(0);

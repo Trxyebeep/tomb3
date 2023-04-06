@@ -7,13 +7,10 @@
 #include "display.h"
 #include "picture.h"
 #include "texture.h"
-#ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
-#endif
 
 static LPDIRECTDRAWX G_ddraw;
 static LPDIRECT3DX G_d3d;
-static bool SoftwareRenderer;
 static HWND G_hwnd;
 static bool MMXSupported;
 
@@ -249,12 +246,7 @@ bool DXCreateZBuffer(DEVICEINFO* device, DXCONFIG* config)
 	desc.dwSize = sizeof(DDSURFACEDESCX);
 	desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_ZBUFFERBITDEPTH;
 	desc.ddsCaps.dwCaps = DDSCAPS_ZBUFFER;
-
-	if ((*dinfopp)[config->nD3D].bHardware)
-		desc.ddsCaps.dwCaps |= DDSCAPS_VIDEOMEMORY;
-	else
-		desc.ddsCaps.dwCaps |= DDSCAPS_SYSTEMMEMORY;
-
+	desc.ddsCaps.dwCaps |= DDSCAPS_VIDEOMEMORY;
 	desc.dwWidth = (*dinfopp)[config->nD3D].DisplayMode[config->nVMode].w;
 	desc.dwHeight = (*dinfopp)[config->nD3D].DisplayMode[config->nVMode].h;
 	desc.dwMipMapCount = 16;
@@ -303,7 +295,6 @@ BOOL CALLBACK DXEnumDirectDraw(GUID FAR* lpGUID, LPSTR lpDriverDescription, LPST
 	G_ddraw->SetCooperativeLevel(0, DDSCL_FULLSCREEN | DDSCL_NOWINDOWCHANGES | DDSCL_NORMAL | DDSCL_ALLOWMODEX);
 	G_ddraw->EnumDisplayModes(0, 0, (LPVOID)info, DXEnumDisplayModes);
 	G_ddraw->QueryInterface(D3DGUID, (LPVOID*)&G_d3d);
-	SoftwareRenderer = 0;
 	G_d3d->EnumDevices(DXEnumDirect3D, info);
 	G_ddraw->SetCooperativeLevel(0, DDSCL_NORMAL);
 	G_d3d->Release();
@@ -405,9 +396,7 @@ void DXSaveScreen(LPDIRECTDRAWSURFACEX surf)
 	DDSURFACEDESCX desc;
 	ushort* pSurf;
 	short* pDest;
-#ifdef TROYESTUFF
 	char* pM;
-#endif
 	long r, g, b;
 	static long num;
 	ushort c;
@@ -420,16 +409,8 @@ void DXSaveScreen(LPDIRECTDRAWSURFACEX surf)
 	if (FAILED(surf->GetSurfaceDesc(&desc)))
 		return;
 
-#ifdef TROYESTUFF
 	if (FAILED(surf->Lock(0, &desc, DDLOCK_WAIT, 0)))
 		return;
-#else
-	memset(&desc, 0, sizeof(DDSURFACEDESCX));
-	desc.dwSize = sizeof(DDSURFACEDESCX);
-
-	if (FAILED(DD_LockSurface(surf, desc, DDLOCK_WAIT | DDLOCK_WRITEONLY)))
-		return;
-#endif
 
 	pSurf = (ushort*)desc.lpSurface;
 	sprintf(buf, "tomb%04d.tga", num);
@@ -441,13 +422,8 @@ void DXSaveScreen(LPDIRECTDRAWSURFACEX surf)
 		*(short*)&tga_header[12] = (short)desc.dwWidth;
 		*(short*)&tga_header[14] = (short)desc.dwHeight;
 		fwrite(tga_header, sizeof(tga_header), 1, file);
-
-#ifdef TROYESTUFF
 		pM = (char*)malloc(2 * desc.dwWidth * desc.dwHeight);
 		pDest = (short*)pM;
-#else
-		pDest = (short*)malloc_ptr;
-#endif
 		pSurf += desc.dwHeight * (desc.lPitch / 2);
 
 		for (ulong h = 0; h < desc.dwHeight; h++)
@@ -458,11 +434,7 @@ void DXSaveScreen(LPDIRECTDRAWSURFACEX surf)
 
 				if (desc.ddpfPixelFormat.dwRBitMask == 0xF800)
 				{
-#ifdef TROYESTUFF
 					r = (c >> 11) & 0x1F;
-#else
-					r = c >> 11;
-#endif
 					g = (c >> 6) & 0x1F;
 					b = c & 0x1F;
 					*pDest++ = short(r << 10 | g << 5 | b);
@@ -474,12 +446,8 @@ void DXSaveScreen(LPDIRECTDRAWSURFACEX surf)
 			pSurf -= desc.lPitch / 2;
 		}
 
-#ifdef TROYESTUFF
 		fwrite(pM, 2 * desc.dwWidth * desc.dwHeight, 1, file);
 		free(pM);
-#else
-		fwrite(malloc_ptr, 2 * desc.dwWidth * desc.dwHeight, 1, file);
-#endif
 		fclose(file);
 
 		buf[7]++;
@@ -514,11 +482,7 @@ bool DXCheckForLostSurfaces()
 
 	pass = pass || SUCCEEDED(DD_EnsureSurfaceAvailable(App.lpPictureBuffer, 0, 0));
 
-#ifdef TROYESTUFF
 	if (pass && !GtWindowClosed)
-#else
-	if (pass && !GtWindowClosed && App.nRenderMode == 1)
-#endif
 		HWR_GetAllTextureHandles();
 
 	return pass;
@@ -526,7 +490,6 @@ bool DXCheckForLostSurfaces()
 
 void DXClearBuffers(ulong flags, ulong color)
 {
-	DIRECT3DINFO* d3d;
 	DISPLAYMODE* dm;
 	RECT r;
 	D3DRECT vr;
@@ -538,31 +501,22 @@ void DXClearBuffers(ulong flags, ulong color)
 	r.right = dm->w;
 	r.bottom = dm->h;
 
-#ifndef TROYESTUFF
-	if (App.nRenderMode == 1)
-#endif
+	sflags = 0;
+
+	if (flags & 2)
+		sflags = 1;
+
+	if (flags & 8)
+		sflags |= 2;
+
+	if (sflags)
 	{
-		sflags = 0;
-
-		if (flags & 2)
-			sflags = 1;
-
-		if (flags & 8)
-			sflags |= 2;
-
-		if (sflags)
-		{
-			vr.x1 = 0;
-			vr.y1 = 0;
-			vr.x2 = dm->w;
-			vr.y2 = dm->h;
-			App.lpViewPort->Clear(1, &vr, sflags);
-		}
+		vr.x1 = 0;
+		vr.y1 = 0;
+		vr.x2 = dm->w;
+		vr.y2 = dm->h;
+		App.lpViewPort->Clear(1, &vr, sflags);
 	}
-#ifndef TROYESTUFF
-	else if (flags & 2)
-		DD_ClearSurface(App.lpBackBuffer, &r, color);
-#endif
 
 	if (flags & 1)
 		DD_ClearSurface(App.lpFrontBuffer, &r, color);
@@ -575,28 +529,11 @@ void DXClearBuffers(ulong flags, ulong color)
 		r.bottom = 480;
 		DD_ClearSurface(App.lpPictureBuffer, &r, color);
 	}
-
-	d3d = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
-
-	if (!d3d->bHardware)
-	{
-		if (flags & 2)
-		{
-			dm = &d3d->DisplayMode[App.DXConfigPtr->nVMode];
-			memset(App.unk, 0, 4 * dm->w * dm->h);
-		}
-	}
 }
 
 bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 {
 	DIRECT3DINFO* d3dinfo;
-#ifndef TROYESTUFF
-	LPDIRECTDRAWSURFACEX surf;
-	DDSURFACEDESCX desc;
-	DDSURFACEDESCX backDesc;
-	uchar* dest;
-#endif
 	ulong w;
 
 	App.nFrames++;
@@ -604,79 +541,10 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
 	w = d3dinfo->DisplayMode[App.DXConfigPtr->nVMode].w;
 
-	if (d3dinfo->bHardware)
-	{
-#ifdef TROYESTUFF
-		if (tomb3.Windowed)
-			App.lpFrontBuffer->Blt(&tomb3.rScreen, App.lpBackBuffer, &tomb3.rViewport, DDBLT_WAIT, 0);
-		else
-#endif
-			App.lpFrontBuffer->Flip(0, DDFLIP_WAIT);
-	}
+	if (tomb3.Windowed)
+		App.lpFrontBuffer->Blt(&tomb3.rScreen, App.lpBackBuffer, &tomb3.rViewport, DDBLT_WAIT, 0);
 	else
-	{
-#ifndef TROYESTUFF
-		memset(&desc, 0, sizeof(DDSURFACEDESCX));
-		memset(&backDesc, 0, sizeof(DDSURFACEDESCX));
-		desc.dwSize = sizeof(DDSURFACEDESCX);
-		backDesc.dwSize = sizeof(DDSURFACEDESCX);
-		DXGetSurfaceDesc(App.lpBackBuffer, &backDesc);
-
-		if (backDesc.ddsCaps.dwCaps & DDSCAPS_VIDEOMEMORY)
-			surf = App.lpBackBuffer;
-		else
-			surf = App.lpFrontBuffer;
-
-		surf->Lock(0, &desc, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, 0);
-		dest = (uchar*)desc.lpSurface;
-
-		if (App.DXConfig.MMX)
-		{
-			if (desc.ddpfPixelFormat.dwRGBBitCount == 32)
-			{
-				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += w)
-					memcpy(dest + desc.lPitch * i, &App.unk[n], w * 4);
-			}
-
-			if (desc.ddpfPixelFormat.dwRGBBitCount == 16 && desc.ddpfPixelFormat.dwGBitMask == 0x3E0)
-			{
-				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += w)
-					MMXBlit32to15(dest + desc.lPitch * i, &App.unk[n], w);
-			}
-			else if (desc.ddpfPixelFormat.dwRGBBitCount == 16 && desc.ddpfPixelFormat.dwGBitMask == 0x7E0)
-			{
-				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += w)
-					MMXBlit32to16(dest + desc.lPitch * i, &App.unk[n], w);
-			}
-			else if (desc.ddpfPixelFormat.dwRGBBitCount == 24)
-			{
-				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += w)
-					MMXBlit32to24(dest + desc.lPitch * i, &App.unk[n], w);
-			}
-		}
-		else
-		{
-			if (desc.ddpfPixelFormat.dwGBitMask == 0x3E0)
-			{
-				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += 2 * w)
-					SWRBlit32to15((ulong*)(dest + desc.lPitch * i), (ulong*)((uchar*)App.unk + n), w);
-			}
-			else
-			{
-				for (ulong i = 0, n = 0; i < desc.dwHeight; i++, n += 2 * w)
-					memcpy(dest + desc.lPitch * i, (uchar*)App.unk + n, 2 * w);
-			}
-		}
-
-		if (backDesc.ddsCaps.dwCaps & DDSCAPS_VIDEOMEMORY)
-		{
-			App.lpBackBuffer->Unlock(0);
-			App.lpFrontBuffer->Flip(0, DDFLIP_WAIT);
-		}
-		else
-			App.lpFrontBuffer->Unlock(0);
-#endif
-	}
+		App.lpFrontBuffer->Flip(0, DDFLIP_WAIT);
 
 	if (runMessageLoop)
 		return DD_SpinMessageLoop(0);
@@ -687,99 +555,13 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance)
 {
 	LPDIRECTINPUTX lpDinput;
-#ifndef TROYESTUFF
-	ulong maxCPUID, processorType, info, features, unk1, unk2;
-	char name[13];
 
-	maxCPUID = 0;
-	processorType = 0;
-	info = 0;
-	features = 0;
-	unk1 = 0;
-	unk2 = 0;
-	G_hwnd = hWnd;
-	memset(device, 0, sizeof(DEVICEINFO));
-
-	//MMX check...
-	strcpy(name, "AnonymousCPU");
-	
-	__asm
-	{
-		pushad
-		mov processorType, 4;
-		pushfd
-		pop eax
-		mov ecx, eax
-		xor eax, 200000h
-		push eax
-		popfd
-		pushfd
-		pop eax
-		xor eax, ecx
-		je end
-
-		mov maxCPUID, 0
-		mov eax, 0;	//get largest eax value, and CPU name
-		cpuid
-		mov maxCPUID, eax
-		mov dword ptr[name], ebx
-		mov dword ptr[name + 4], edx
-		mov dword ptr[name + 8], ecx
-
-		mov eax, 1;	//get version info and feature bits
-		cpuid
-		mov info, eax
-		mov features, edx
-
-		shr eax, 8; //actually getting the type now
-		and eax, 0Fh
-		mov processorType, eax
-
-		cmp eax, 5;	//no idea tbh
-		jl end
-		shr eax, 8
-		and eax, 100h
-		setne byte ptr unk1
-
-		and edx, 10h
-		je end
-		shr eax, 8
-		and eax, 4
-		sete byte ptr unk2
-
-	end:
-		popad
-	}
-
-	MMXSupported = (features >> 23) & 1;
-#else
 	MMXSupported = 1;
-#endif
 	DirectDrawEnumerate(DXEnumDirectDraw, device);
 	DirectSoundEnumerate(DXEnumDirectSound, device);
-
-#ifdef TROYESTUFF
 	DirectInput8Create(hInstance, DIRECTINPUT_VERSION, DIGUID, (LPVOID*)&lpDinput, 0);
 	lpDinput->EnumDevices(DI8DEVTYPE_JOYSTICK, DXEnumDirectInput, device, 1);
-#else
-	DirectInputCreate(hInstance, DIRECTINPUT_VERSION, &lpDinput, 0);
-	lpDinput->EnumDevices(DIDEVTYPE_JOYSTICK, DXEnumDirectInput, device, 1);
-#endif
 	lpDinput->Release();
-}
-
-void SWRBlit32to15(ulong* dest, ulong* src, ulong w)
-{
-	w >>= 1;
-
-	do
-	{
-		dest[0] = src[0] & 0x1F001F | ((src[0] & 0xFFC0FFC0) >> 1);
-		dest[1] = src[1] & 0x1F001F | ((src[1] & 0xFFC0FFC0) >> 1);
-		src += 2;
-		dest += 2;
-		w--;
-	} while (w);
 }
 
 HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LPD3DDEVICEDESC lpHWDesc, LPD3DDEVICEDESC lpHELDesc, LPVOID lpContext)
@@ -789,38 +571,11 @@ HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LP
 	static LPDIRECTDRAWSURFACEX surf;
 	static LPDIRECT3DDEVICEX d3dDevice;
 	DDSURFACEDESCX desc;
-	long goin;
 
 	ddinfo = (DIRECTDRAWINFO*)lpContext;
 
-	if (!lpHWDesc->dwFlags)
-	{
-		if (lpHELDesc->dcmColorModel & D3DCOLOR_MONO || SoftwareRenderer == 1)
-			return D3DENUMRET_OK;
-	}
-
-#ifdef TROYESTUFF
-	SoftwareRenderer = 0;
-
 	if (!lpHWDesc->dwFlags)		//disable software
 		return D3DENUMRET_OK;
-#else
-	if (!lpHWDesc->dwFlags)
-	{
-		SoftwareRenderer = 1;
-
-		if (MMXSupported)
-		{
-			strcpy(description, "Core Design MMX Hardware Card Emulation");
-			strcpy(name, "MMX Emulation");
-		}
-		else
-		{
-			strcpy(description, "Core Design RGB Hardware Card Emulation");
-			strcpy(name, "RGB Emulation");
-		}
-	}
-#endif
 
 	if (lpHWDesc->dwFlags && !lpHWDesc->dpcTriCaps.dwTextureCaps)
 		return D3DENUMRET_OK;
@@ -838,57 +593,19 @@ HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LP
 
 	lstrcpy(d3dinfo->About, description);
 	lstrcpy(d3dinfo->Name, name);
-
-	if (lpHWDesc->dwFlags)
-	{
-		d3dinfo->bHardware = 1;
-		memcpy(&d3dinfo->DeviceDesc, lpHWDesc, sizeof(D3DDEVICEDESC));
-	}
-	else
-	{
-		d3dinfo->bHardware = 0;
-		memcpy(&d3dinfo->DeviceDesc, lpHELDesc, sizeof(D3DDEVICEDESC));
-	}
+	memcpy(&d3dinfo->DeviceDesc, lpHWDesc, sizeof(D3DDEVICEDESC));
 
 	d3dinfo->bAlpha = d3dinfo->DeviceDesc.dpcTriCaps.dwShadeCaps & D3DPSHADECAPS_ALPHAFLATBLEND;
 	d3dinfo->bAGP = d3dinfo->DeviceDesc.dwDevCaps & D3DDEVCAPS_TEXTURENONLOCALVIDMEM;
 
-	if (SoftwareRenderer)
+	for (int i = 0; i < ddinfo->nDisplayMode; i++)
 	{
-		for (int i = 0; i < ddinfo->nDisplayMode; i++)
-		{
-			if (!(BPPToDDBD(ddinfo->DisplayMode[i].bpp) & d3dinfo->DeviceDesc.dwDeviceRenderBitDepth))
-				continue;
+		if (!(BPPToDDBD(ddinfo->DisplayMode[i].bpp) & d3dinfo->DeviceDesc.dwDeviceRenderBitDepth))
+			continue;
 
-			goin = 0;
-
-			if (MMXSupported)
-			{
-				if (ddinfo->DisplayMode[i].bpp == 16 || ddinfo->DisplayMode[i].bpp == 24 || ddinfo->DisplayMode[i].bpp == 32)	//check me
-					goin = 1;
-			}
-			else if (ddinfo->DisplayMode[i].bpp == 16)
-				goin = 1;
-
-			if (!goin)
-				continue;
-
-			d3dinfo->DisplayMode = (DISPLAYMODE*)AddStruct(d3dinfo->DisplayMode, d3dinfo->nDisplayMode, sizeof(DISPLAYMODE));
-			memcpy(&d3dinfo->DisplayMode[d3dinfo->nDisplayMode], &ddinfo->DisplayMode[i], sizeof(DISPLAYMODE));
-			d3dinfo->nDisplayMode++;
-		}
-	}
-	else
-	{
-		for (int i = 0; i < ddinfo->nDisplayMode; i++)
-		{
-			if (!(BPPToDDBD(ddinfo->DisplayMode[i].bpp) & d3dinfo->DeviceDesc.dwDeviceRenderBitDepth))
-				continue;
-
-			d3dinfo->DisplayMode = (DISPLAYMODE*)AddStruct(d3dinfo->DisplayMode, d3dinfo->nDisplayMode, sizeof(DISPLAYMODE));
-			memcpy(&d3dinfo->DisplayMode[d3dinfo->nDisplayMode], &ddinfo->DisplayMode[i], sizeof(DISPLAYMODE));
-			d3dinfo->nDisplayMode++;
-		}
+		d3dinfo->DisplayMode = (DISPLAYMODE*)AddStruct(d3dinfo->DisplayMode, d3dinfo->nDisplayMode, sizeof(DISPLAYMODE));
+		memcpy(&d3dinfo->DisplayMode[d3dinfo->nDisplayMode], &ddinfo->DisplayMode[i], sizeof(DISPLAYMODE));
+		d3dinfo->nDisplayMode++;
 	}
 
 	memset(&desc, 0, sizeof(DDSURFACEDESCX));
@@ -1005,9 +722,6 @@ bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer)
 	for (int i = 0; i < MAX_TPAGES; i++)
 		PictureTextures[i].tex = 0;
 
-	if (!d3dinfo->bHardware)
-		CloseDrawPrimitive();
-
 	WinFreeDX(0);
 
 	if (WinDXInit(App.DeviceInfoPtr, App.DXConfigPtr, 0))
@@ -1034,7 +748,6 @@ bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer)
 	return change;
 }
 
-#ifdef TROYESTUFF
 long DXToggleFullScreen()
 {
 	if (tomb3.Windowed)
@@ -1253,7 +966,7 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 	desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
 	DXCreateSurface(App.lpDD, &desc, (LPDIRECTDRAWSURFACEX)&App.lpPictureBuffer);
 	DXClearBuffers(11, 0);
-	InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer, 1);
+	InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer);
 	HWR_InitState();
 	DXCreateMaxTPages(1);
 
@@ -1266,4 +979,3 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 	Log("DXStartRenderer finished successfully");
 	return 1;
 }
-#endif

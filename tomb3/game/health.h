@@ -18,6 +18,4 @@ void AddDisplayPickup(short objnum);
 extern long health_bar_timer;
 extern TEXTSTRING* ammotext;
 extern DISPLAYPU pickups[];
-#ifdef TROYESTUFF
 extern short PickupX, PickupY, PickupVel, CurrentPickup;
-#endif

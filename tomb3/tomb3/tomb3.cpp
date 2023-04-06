@@ -1,6 +1,6 @@
 #include "../tomb3/pch.h"
 #include "tomb3.h"
-#include "registry.h"
+#include "../newstuff/registry.h"
 #include "../specific/specific.h"
 #include "../specific/option.h"
 #include "../specific/input.h"
@@ -59,8 +59,6 @@ static void T3_InitSettings()
 {
 	Option_Music_Volume = 7;
 	Option_SFX_Volume = 10;
-	S_CDVolume(25 * Option_Music_Volume + 5);
-	S_SoundSetMasterVolume(6 * Option_SFX_Volume + 4);
 	tomb3.Windowed = 0;
 
 	tomb3.footprints = 1;
@@ -201,7 +199,7 @@ bool T3_LoadSettings()
 
 	REG_ReadLong((char*)"VM", (ulong&)App.DXConfigPtr->nVMode, 0);
 	REG_ReadLong((char*)"zbuffer", (ulong&)App.DXConfigPtr->bZBuffer, 0);
-	REG_ReadLong((char*)"dither", (ulong&)App.DXConfigPtr->Dither, 0);//
+	REG_ReadLong((char*)"dither", (ulong&)App.DXConfigPtr->Dither, 0);
 	REG_ReadLong((char*)"filter", (ulong&)App.DXConfigPtr->Filter, 0);
 	REG_ReadLong((char*)"AGP", (ulong&)App.DXConfigPtr->AGP, 0);
 	REG_ReadLong((char*)"sound", (ulong&)App.DXConfigPtr->sound, 0);
@@ -257,8 +255,6 @@ bool T3_LoadSettings()
 	REG_ReadFloat((char*)"unwater_music_mute", tomb3.unwater_music_mute, 0.8F);
 	REG_ReadFloat((char*)"inv_music_mute", tomb3.inv_music_mute, 0.8F);
 
-	S_CDVolume(25 * Option_Music_Volume + 5);
-	S_SoundSetMasterVolume(6 * Option_SFX_Volume + 4);
 	CloseRegistry();
 	return 1;
 }

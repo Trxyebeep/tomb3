@@ -8,9 +8,7 @@ void SubdivideGT3(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHDTEXTURESTRUCT* pT
 void HWI_InsertGT4_Sorted(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHD_VBUF* v4, PHDTEXTURESTRUCT* pTex, sort_type nSortType, ushort double_sided);
 void HWI_InsertGT3_Sorted(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHDTEXTURESTRUCT* pTex, ushort* uv1, ushort* uv2, ushort* uv3, sort_type nSortType, ushort double_sided);
 void HWI_InsertTransQuad_Sorted(long x, long y, long w, long h, long z);
-#ifdef TROYESTUFF
 void HWI_InsertGourQuad_Sorted(long x0, long y0, long x1, long y1, long z, ulong c0, ulong c1, ulong c2, ulong c3, bool add);
-#endif
 void InitUVTable();
 long GETR(long col);
 long GETG(long col);
@@ -40,7 +38,7 @@ long RoomXYGUVClipper(long n, VERTEX_INFO* in);
 long XYGClipper(long n, VERTEX_INFO* in);
 long XYClipper(long n, VERTEX_INFO* in);
 
-extern PHD_VBUF vbuf[1500];
-extern TEXTUREBUCKET Buckets[6];
+extern PHD_VBUF vbuf[MAX_VBUF];
+extern TEXTUREBUCKET Buckets[MAX_BUCKETS];
 extern long GlobalAlpha;
 extern long nDrawnPoints;

@@ -4,10 +4,8 @@
 #include "hwinsert.h"
 #include "../specific/file.h"
 #include "../specific/winmain.h"
-#ifdef TROYESTUFF
 #include "../specific/output.h"
 #include "../tomb3/tomb3.h"
-#endif
 
 ulong TextLight[12] =
 {
@@ -71,7 +69,6 @@ short* ins_room_sprite(short* objptr, long num)
 	return objptr;
 }
 
-#ifdef TROYESTUFF
 static void SetPSXTextColor()
 {
 	TextLight[0] = 0x808080;
@@ -100,13 +97,11 @@ static void SetPSXTextColor()
 	TextDark[10] = 0x004040;
 	TextDark[11] = 0x101040;
 }
-#endif
 
 void S_DrawScreenSprite2d(long x, long y, long z, long scaleH, long scaleV, short sprnum, short shade, ushort flags)
 {
 	PHDSPRITESTRUCT* sprite;
 	long x1, y1, x2, y2, r, g, b, shade1, shade2, p;
-#ifdef TROYESTUFF
 	static bool set = 0;
 
 	if (!set)
@@ -116,7 +111,6 @@ void S_DrawScreenSprite2d(long x, long y, long z, long scaleH, long scaleV, shor
 
 		set = 1;
 	}
-#endif
 
 	sprite = &phdspriteinfo[sprnum];
 	y1 = y + ((scaleV * sprite->y1) >> 16);
@@ -140,11 +134,7 @@ void S_DrawScreenSprite2d(long x, long y, long z, long scaleH, long scaleV, shor
 			InsertSprite(phd_znear, x1, y1, x2, y2, sprnum, shade1, shade2, DT_POLY_WGT, 0);
 		else
 		{
-#ifdef TROYESTUFF
 			p = GetRenderScale(1);
-#else
-			p = 1;
-#endif
 			InsertSprite(phd_znear + 0x28000, x1, y1, x2, y2, sprnum, shade1, shade2, DT_POLY_WGT, 0);
 			InsertSprite(phd_znear + 0x3C000, x1 + p, y1 + p, x2 + p, y2 + p, sprnum, 0, 0, DT_POLY_WGT, 0);
 		}

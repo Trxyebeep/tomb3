@@ -90,11 +90,9 @@
 #include "control.h"
 #include "demo.h"
 #include "camera.h"
-#ifdef TROYESTUFF
 #include "footprnt.h"
 #include "../newstuff/map.h"
 #include "../tomb3/tomb3.h"
-#endif
 
 short IsRoomOutsideNo;
 char* OutsideRoomTable;
@@ -123,12 +121,7 @@ void GetAIPickups()
 					item->ai_bits |= 1 << (ai_item->object_number - AI_GUARD);
 					item->item_flags[3] = ai_item->pos.y_rot;
 
-					if (!(ai_item->object_number == AI_PATROL1 &&
-#ifdef RANDO_STUFF
-						(rando.levels[RANDOLEVEL].original_id == LV_AREA51 || rando.levels[RANDOLEVEL].original_id == LV_COMPOUND)))
-#else
-						(CurrentLevel == LV_AREA51 || CurrentLevel == LV_COMPOUND)))
-#endif
+					if (!(ai_item->object_number == AI_PATROL1 && (CurrentLevel == LV_AREA51 || CurrentLevel == LV_COMPOUND)))
 					{
 						KillItem(ai_item_number);
 						ai_item->room_number = NO_ROOM;
@@ -215,7 +208,6 @@ void InitialiseGameFlags()
 	compys_attack_lara = 0;
 }
 
-#ifdef TROYESTUFF
 static long DoLevelLoad(long level, long type)
 {
 	char name[128];
@@ -235,7 +227,6 @@ static long DoLevelLoad(long level, long type)
 
 	return 1;
 }
-#endif
 
 long InitialiseLevel(long level, long type)
 {
@@ -255,26 +246,8 @@ long InitialiseLevel(long level, long type)
 	lara.item_number = NO_ITEM;
 	title_loaded = 0;
 
-#ifdef TROYESTUFF
 	if (!DoLevelLoad(level, type))
 		return 0;
-#else
-	if (!type)
-	{
-		if (!S_LoadLevelFile(GF_titlefilenames[0], level, 0))
-			return 0;
-	}
-	else if (type == 2 || type != 4)
-	{
-		if (!S_LoadLevelFile(GF_levelfilenames[level], level, type))
-			return 0;
-	}
-	else
-	{
-		if (!S_LoadLevelFile(GF_cutscenefilenames[level], level, 4))
-			return 0;
-	}
-#endif
 
 	if (lara.item_number != NO_ITEM)
 		InitialiseLara(type);
@@ -288,17 +261,14 @@ long InitialiseLevel(long level, long type)
 	effects = (FX_INFO*)game_malloc(sizeof(FX_INFO) * 50, 32);
 	InitialiseFXArray();
 	InitialiseLOTarray();
-	InitColours();
 	T_InitPrint();
 	InitialisePickUpDisplay();
 	S_InitialiseScreen(type);
 	health_bar_timer = 100;
 	SOUND_Stop();
 
-#ifdef TROYESTUFF
 	for (int i = 0; i < 255; i++)
 		RoomVisited[i] = 0;
-#endif
 
 	if (type == 2)
 		ExtractSaveGameInfo();
@@ -308,12 +278,10 @@ long InitialiseLevel(long level, long type)
 	if (objects[FINAL_LEVEL].loaded)
 		InitialiseFinalLevel();
 
-#ifdef TROYESTUFF
+	//	if (type == 2 && savegame.mid_level_save)
+
 	if (type == 2)	//mid_level_save is not used on PC (right now), on PSX it means any save that's NOT from the level stats prompt
 					//so on PC this check will never pass, although it should since PC cannot save other than "mid level".
-#else
-	if (type == 2 && savegame.mid_level_save)
-#endif
 	{
 		S_CDPlay(CurrentAtmosphere, 1);
 		IsAtmospherePlaying = 1;
@@ -349,13 +317,10 @@ long InitialiseLevel(long level, long type)
 	assault_timer_display = 0;
 	camera.underwater = 0;
 
-#ifdef TROYESTUFF
 	for (int i = 0; i < 32; i++)
 		FootPrint[i].Active = 0;
 
 	FootPrintNum = 0;
-#endif
-
 	return 1;
 }
 
@@ -630,6 +595,26 @@ static void BaddyObjects()
 		bones[obj->bone_index + 84] |= 8;
 		bones[obj->bone_index + 92] |= 8;
 		bones[obj->bone_index + 100] |= 8;
+	}
+
+	obj = &objects[DOG];
+
+	if (obj->loaded)
+	{
+		obj->initialise = InitialiseDog;
+		obj->control = DogControl;
+		obj->collision = CreatureCollision;
+		obj->shadow_size = 128;
+		obj->hit_points = 16;
+		obj->pivot_length = 300;
+		obj->radius = 341;
+		obj->intelligent = 1;
+		obj->save_position = 1;
+		obj->save_hitpoints = 1;
+		obj->save_flags = 1;
+		obj->save_anim = 1;
+		bones[obj->bone_index + 8] |= 8;
+		bones[obj->bone_index + 8] |= 4;
 	}
 
 	obj = &objects[HUSKIE];

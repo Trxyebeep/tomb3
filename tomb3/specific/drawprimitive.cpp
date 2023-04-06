@@ -26,31 +26,11 @@ HRESULT HWSetRenderState(D3DRENDERSTATETYPE dwRenderStateType, ulong dwRenderSta
 	return D3DDev->SetRenderState(dwRenderStateType, dwRenderState);
 }
 
-void InitDrawPrimitive(LPDIRECT3DDEVICEX lpD3DDev, LPDIRECTDRAWSURFACEX surf, bool hw)
+void InitDrawPrimitive(LPDIRECT3DDEVICEX lpD3DDev, LPDIRECTDRAWSURFACEX surf)
 {
 	D3DDev = lpD3DDev;
-
-	if (hw)
-	{
-		DrawPrimitive = HWDrawPrimitive;
-		BeginScene = HWBeginScene;
-		EndScene = HWEndScene;
-		SetRenderState = HWSetRenderState;
-	}
-	else	//obv software isn't empty in the original codebase.
-	{
-		if (App.DXConfig.MMX)
-		{
-
-		}
-		else
-		{
-
-		}
-	}
-}
-
-void CloseDrawPrimitive()
-{
-	//does nothing for HWR.
+	DrawPrimitive = HWDrawPrimitive;
+	BeginScene = HWBeginScene;
+	EndScene = HWEndScene;
+	SetRenderState = HWSetRenderState;
 }

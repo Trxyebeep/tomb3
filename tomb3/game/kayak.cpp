@@ -16,9 +16,8 @@
 #include "draw.h"
 #include "../specific/draweffects.h"
 #include "../specific/input.h"
-#ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
-#endif
+#include "../newstuff/LaraDraw.h"
 
 void LaraRapidsDrown()
 {
@@ -551,7 +550,7 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 			pos.x = 0;
 			pos.y = 350;
 			pos.z = 500;
-			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			GetLaraMeshPos(&pos, LMX_HIPS);
 			l->pos.x_pos = pos.x;
 			l->pos.y_pos = pos.y;
 			l->pos.z_pos = pos.z;
@@ -577,7 +576,7 @@ static void KayakUserInput(ITEM_INFO* item, ITEM_INFO* l, KAYAKINFO* kayak)
 			pos.x = 0;
 			pos.y = 350;
 			pos.z = 500;
-			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			GetLaraMeshPos(&pos, LMX_HIPS);
 			l->pos.x_pos = pos.x;
 			l->pos.y_pos = pos.y;
 			l->pos.z_pos = pos.z;
@@ -1236,9 +1235,7 @@ long KayakControl()
 	ITEM_INFO* item;
 	KAYAKINFO* kayak;
 	FLOOR_INFO* floor;
-#ifdef TROYESTUFF
 	PHD_VECTOR pos;
-#endif
 	long ofs, h, wh, damage, x, y, z;
 	short room_number;
 	static short MistXPos[10] = { 32, 96, 170, 220, 300, 400, 400, 300,  200, 64 };
@@ -1327,7 +1324,6 @@ long KayakControl()
 			phd_PushUnitMatrix();
 			phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 
-#ifdef TROYESTUFF
 			if (tomb3.kayak_mist)
 			{
 				pos.x = (phd_mxptr[M00] * x + phd_mxptr[M01] * y + phd_mxptr[M02] * z) >> W2V_SHIFT;	//fixes mist being all over the place
@@ -1335,12 +1331,7 @@ long KayakControl()
 				pos.z = (phd_mxptr[M20] * x + phd_mxptr[M21] * y + phd_mxptr[M22] * z) >> W2V_SHIFT;
 				TriggerRapidsMist(item->pos.x_pos + pos.x, item->pos.y_pos + pos.y, item->pos.z_pos + pos.z);
 			}
-#else
-			x = item->pos.x_pos + ((phd_mxptr[M00] * x + phd_mxptr[M01] * y + phd_mxptr[M02] * z) >> W2V_SHIFT);
-			y = item->pos.y_pos + ((phd_mxptr[M10] * x + phd_mxptr[M11] * y + phd_mxptr[M12] * z) >> W2V_SHIFT);
-			z = item->pos.z_pos + ((phd_mxptr[M20] * x + phd_mxptr[M21] * y + phd_mxptr[M22] * z) >> W2V_SHIFT);
-			TriggerRapidsMist(x, y, z);
-#endif
+
 			phd_PopMatrix();
 		}
 	}

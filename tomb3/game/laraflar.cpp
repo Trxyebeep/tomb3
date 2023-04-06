@@ -16,6 +16,7 @@
 #include "larafire.h"
 #include "../3dsystem/phd_math.h"
 #include "savegame.h"
+#include "../newstuff/LaraDraw.h"
 
 #define FLARE_AGE		900
 #define FLARE_DYING		(FLARE_AGE - 90)
@@ -28,13 +29,7 @@ void DrawFlareInAir(ITEM_INFO* item)
 
 	GetFrames(item, frame, &rate);
 	phd_PushMatrix();
-
-#ifdef TROYESTUFF
 	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos - GetBoundsAccurate(item)[3], item->pos.z_pos);
-#else
-	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
-#endif
-
 	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 	clip = S_GetObjectBounds(frame[0]);
 
@@ -50,11 +45,9 @@ void DrawFlareInAir(ITEM_INFO* item)
 			S_CalculateStaticLight(2048);
 
 			phd_PushUnitMatrix();
-#ifdef TROYESTUFF					//fixes the sparks detaching after restarting the game
 			phd_mxptr[M03] = 0;
 			phd_mxptr[M13] = 0;
 			phd_mxptr[M23] = 0;
-#endif
 			phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 
 			phd_PushMatrix();
@@ -154,7 +147,7 @@ void DoFlareInHand(long flare_age)
 	pos.x = 11;
 	pos.y = 32;
 	pos.z = 41;
-	GetLaraHandAbsPosition(&pos, LEFT_HAND);
+	GetLaraMeshPos(&pos, LMX_HAND_L);
 	lara.left_arm.flash_gun = (short)DoFlareLight(&pos, flare_age);
 
 	if (lara.flare_age < FLARE_AGE)
@@ -191,10 +184,11 @@ void CreateFlare(long thrown)
 	item = &items[item_num];
 	item->object_number = FLARE_ITEM;
 	item->room_number = lara_item->room_number;
+
 	pos.x = -16;
 	pos.y = 32;
 	pos.z = 42;
-	GetLaraHandAbsPosition(&pos, LEFT_HAND);
+	GetLaraMeshPos(&pos, LMX_HAND_L);
 
 	floor = GetFloor(pos.x, pos.y, pos.z, &item->room_number);
 	h = GetHeight(floor, pos.x, pos.y, pos.z);

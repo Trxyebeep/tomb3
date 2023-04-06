@@ -273,6 +273,7 @@
     <ClInclude Include="tomb3\newstuff\map.h" />
     <ClInclude Include="tomb3\newstuff\pausemenu.h" />
     <ClInclude Include="tomb3\newstuff\psxsaves.h" />
+    <ClInclude Include="tomb3\newstuff\setupdlg.h" />
     <ClInclude Include="tomb3\specific\audio.h" />
     <ClInclude Include="tomb3\specific\dd.h" />
     <ClInclude Include="tomb3\specific\di.h" />
@@ -281,7 +282,6 @@
     <ClInclude Include="tomb3\specific\draweffects.h" />
     <ClInclude Include="tomb3\specific\drawprimitive.h" />
     <ClInclude Include="tomb3\specific\ds.h" />
-    <ClInclude Include="tomb3\specific\dxdialog.h" />
     <ClInclude Include="tomb3\specific\dxshell.h" />
     <ClInclude Include="tomb3\specific\file.h" />
     <ClInclude Include="tomb3\specific\fmv.h" />
@@ -301,9 +301,8 @@
     <ClInclude Include="tomb3\specific\transform.h" />
     <ClInclude Include="tomb3\specific\utils.h" />
     <ClInclude Include="tomb3\specific\winmain.h" />
-    <ClInclude Include="tomb3\tomb3\framework.h" />
     <ClInclude Include="tomb3\tomb3\pch.h" />
-    <ClInclude Include="tomb3\tomb3\registry.h" />
+    <ClInclude Include="tomb3\newstuff\registry.h" />
     <ClInclude Include="tomb3\tomb3\tomb3.h" />
   </ItemGroup>
   <ItemGroup>
@@ -411,6 +410,7 @@
     <ClCompile Include="tomb3\newstuff\map.cpp" />
     <ClCompile Include="tomb3\newstuff\pausemenu.cpp" />
     <ClCompile Include="tomb3\newstuff\psxsaves.cpp" />
+    <ClCompile Include="tomb3\newstuff\setupdlg.cpp" />
     <ClCompile Include="tomb3\specific\audio.cpp" />
     <ClCompile Include="tomb3\specific\dd.cpp" />
     <ClCompile Include="tomb3\specific\di.cpp" />
@@ -419,7 +419,6 @@
     <ClCompile Include="tomb3\specific\draweffects.cpp" />
     <ClCompile Include="tomb3\specific\drawprimitive.cpp" />
     <ClCompile Include="tomb3\specific\ds.cpp" />
-    <ClCompile Include="tomb3\specific\dxdialog.cpp" />
     <ClCompile Include="tomb3\specific\dxshell.cpp" />
     <ClCompile Include="tomb3\specific\file.cpp" />
     <ClCompile Include="tomb3\specific\fmv.cpp" />
@@ -445,7 +444,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="tomb3\tomb3\registry.cpp" />
+    <ClCompile Include="tomb3\newstuff\registry.cpp" />
     <ClCompile Include="tomb3\tomb3\tomb3.cpp" />
   </ItemGroup>
   <ItemGroup>

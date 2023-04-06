@@ -16,6 +16,7 @@
 #include "../specific/input.h"
 #include "camera.h"
 #include "effect2.h"
+#include "../newstuff/LaraDraw.h"
 
 void MineCartInitialise(short item_number)
 {
@@ -289,7 +290,8 @@ static void DoUserInput(ITEM_INFO* item, ITEM_INFO* l, CARTINFO* cart)
 			pos.x = 0;
 			pos.y = 640;
 			pos.z = 0;
-			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			GetLaraMeshPos(&pos, LMX_HIPS);
+
 			l->pos.x_pos = pos.x;
 			l->pos.y_pos = pos.y;
 			l->pos.z_pos = pos.z;
@@ -313,7 +315,8 @@ static void DoUserInput(ITEM_INFO* item, ITEM_INFO* l, CARTINFO* cart)
 			pos.x = 0;
 			pos.y = 640;
 			pos.z = 0;
-			GetLaraHandAbsPosition(&pos, LARA_HIPS);
+			GetLaraMeshPos(&pos, LMX_HIPS);
+
 			l->pos.x_pos = pos.x;
 			l->pos.y_pos = pos.y;
 			l->pos.z_pos = pos.z;

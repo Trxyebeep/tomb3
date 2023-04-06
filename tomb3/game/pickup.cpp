@@ -17,9 +17,7 @@
 #include "inventry.h"
 #include "../specific/input.h"
 #include "savegame.h"
-#ifdef TROYESTUFF
 #include "../tomb3/tomb3.h"
-#endif
 
 static short PickUpBounds[12] = { -256, 256, -100, 100, -256, 256, -1820, 1820, 0, 0, 0, 0 };
 static short PickUpBoundsUW[12] = { -512, 512, -512, 512, -512, 512, -8190, 8190, -8190, 8190, -8190, 8190 };
@@ -75,11 +73,7 @@ void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
 					if (item->object_number == ICON_PICKUP1_ITEM || item->object_number == ICON_PICKUP2_ITEM ||
 						item->object_number == ICON_PICKUP3_ITEM || item->object_number == ICON_PICKUP4_ITEM)
 					{
-#ifdef RANDO_STUFF
-						if (rando.levels[RANDOLEVEL].original_id == LV_CHAMBER)
-#else
 						if (CurrentLevel == LV_CHAMBER)
-#endif
 							KillItem(item_num);
 						else
 							level_complete = 1;
@@ -102,14 +96,8 @@ void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
 					lara.gun_status = LG_SPECIAL;
 					lara.flare_age = (long)item->data & 0x7FFF;
 					KillItem(item_num);
-#ifdef TROYESTUFF
 					return;
-#endif
 				}
-
-#ifndef TROYESTUFF
-				return;
-#endif
 			}
 			else if (input & IN_ACTION && l->current_anim_state == AS_ALL4S)
 				l->goal_anim_state = AS_DUCK;
@@ -161,15 +149,9 @@ void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
 
 						item->status = ITEM_INVISIBLE;
 						RemoveDrawnItem(item_num);
-#ifdef TROYESTUFF
 						return;
-#endif
 					}
 				}
-
-#ifndef TROYESTUFF
-				return;
-#endif
 			}
 			else if (l->current_anim_state == AS_FLAREPICKUP)
 			{
@@ -182,14 +164,8 @@ void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
 					lara.flare_age = (long)item->data & 0x7FFF;
 					draw_flare_meshes();
 					KillItem(item_num);
-#ifdef TROYESTUFF
 					return;
-#endif
 				}
-
-#ifndef TROYESTUFF
-				return;
-#endif
 			}
 			else if (input & IN_ACTION && l->current_anim_state == AS_TREAD && lara.gun_status == LG_ARMLESS && (lara.gun_type != LG_FLARE || item->object_number != FLARE_ITEM))
 			{
@@ -212,10 +188,6 @@ void PickUpCollision(short item_num, ITEM_INFO* l, COLL_INFO* coll)
 						l->goal_anim_state = AS_TREAD;
 					}
 				}
-
-#ifndef TROYESTUFF
-				return;
-#endif
 			}
 		}
 	}
@@ -272,11 +244,9 @@ void AnimatingPickUp(short item_number)
 	{
 		item->pos.y_pos = item->item_flags[2] - abs(ang >> 4) - 64;
 
-#ifdef TROYESTUFF
 		if (tomb3.blue_crystal_light)
 			TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 8, 0, c >> 2, c);
 		else
-#endif
 			TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 8, 0, c, 0);
 
 		dx = abs(item->pos.x_pos - lara_item->pos.x_pos);
@@ -285,14 +255,12 @@ void AnimatingPickUp(short item_number)
 
 		if (dx < 256 && dy < 1024 && dz < 256)
 		{
-#ifdef TROYESTUFF
 			if (tomb3.psx_saving)
 			{
 				Inv_AddItem(SAVEGAME_CRYSTAL_ITEM);
 				SoundEffect(SFX_SAVE_CRYSTAL, &lara_item->pos, SFX_DEFAULT);
 			}
 			else
-#endif
 			{
 				lara.poisoned = 0;
 				lara_item->hit_points += 500;
@@ -300,11 +268,9 @@ void AnimatingPickUp(short item_number)
 				if (lara_item->hit_points > 1000)
 					lara_item->hit_points = 1000;
 
-#ifdef TROYESTUFF
 				if (tomb3.psx_crystal_sfx)
 					SoundEffect(SFX_SAVE_CRYSTAL, &lara_item->pos, SFX_DEFAULT);
 				else
-#endif
 					SoundEffect(SFX_MENU_MEDI, &lara_item->pos, SFX_DEFAULT);
 			}
 

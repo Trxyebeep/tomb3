@@ -21,11 +21,9 @@
 #include "savegame.h"
 #include "cinema.h"
 #include "../specific/picture.h"
-#ifdef TROYESTUFF
 #include "effect2.h"
 #include "../specific/input.h"
 #include "../tomb3/tomb3.h"
-#endif
 
 void(*extra_control_routines[13])(ITEM_INFO* item, COLL_INFO* coll) =
 {
@@ -118,11 +116,7 @@ void(*lara_control_routines[89])(ITEM_INFO* item, COLL_INFO* coll) =
 	lara_void_func,
 	lara_as_deathslide,
 	lara_as_duck,
-#ifdef TROYESTUFF
 	lara_as_duckroll,
-#else
-	lara_as_duck,
-#endif
 	lara_as_dash,
 	lara_as_dashdive,
 	lara_as_hang2,
@@ -215,11 +209,7 @@ void(*lara_collision_routines[89])(ITEM_INFO* item, COLL_INFO* coll) =
 	lara_void_func,
 	lara_void_func,
 	lara_col_duck,
-#ifdef TROYESTUFF
 	lara_col_duckroll,
-#else
-	lara_col_duck,
-#endif
 	lara_col_dash,
 	lara_col_dashdive,
 	lara_col_hang2,
@@ -244,7 +234,6 @@ static short cheat_hit_points;
 
 void LaraCheatGetStuff()
 {
-#ifdef TROYESTUFF
 	if (objects[M16_ITEM].loaded)
 		Inv_AddItem(M16_ITEM);
 
@@ -309,34 +298,10 @@ void LaraCheatGetStuff()
 	lara.rocket.ammo = 1000;
 	lara.grenade.ammo = 1000;
 	lara.m16.ammo = 1000;
-#else
-	Inv_AddItem(M16_ITEM);
-	Inv_AddItem(SHOTGUN_ITEM);
-	Inv_AddItem(UZI_ITEM);
-	Inv_AddItem(MAGNUM_ITEM);
-	Inv_AddItem(GUN_ITEM);
-	Inv_AddItem(ROCKET_GUN_ITEM);
-	Inv_AddItem(GRENADE_GUN_ITEM);
-
-	for (int i = 0; i < 1; i++)
-	{
-		Inv_AddItem(FLAREBOX_ITEM);
-		Inv_AddItem(MEDI_ITEM);
-		Inv_AddItem(BIGMEDI_ITEM);
-	}
-
-	lara.magnums.ammo = 250;
-	lara.uzis.ammo = 1000;
-	lara.shotgun.ammo = 300;
-	lara.m16.ammo = 300;
-	lara.grenade.ammo = 1000;
-#endif
 }
 
 void LaraCheatyBits()
 {
-#ifdef TROYESTUFF
-
 #ifdef _DEBUG
 	uchar s;
 
@@ -392,41 +357,6 @@ void LaraCheatyBits()
 			savegame.secrets = s;
 		}
 	}
-#endif //_DEBUG
-
-#else
-	if (!gameflow.cheat_enable && !gameflow.dozy_cheat_enabled)
-		return;
-
-	if (input & IN_D)
-	{
-		LaraCheatGetStuff();
-		lara_item->hit_points = 1000;
-	}
-
-	if (input & IN_C)
-	{
-		lara_item->pos.y_pos -= 128;
-
-		if (lara.water_status != LARA_CHEAT)
-		{
-			lara_item->anim_number = ANIM_SWIMCHEAT;
-			lara_item->frame_number = anims[ANIM_SWIMCHEAT].frame_base;
-			lara_item->current_anim_state = AS_SWIM;
-			lara_item->goal_anim_state = AS_SWIM;
-			lara.water_status = LARA_CHEAT;
-			lara_item->gravity_status = 0;
-			lara_item->pos.x_rot = 5460;
-			lara_item->fallspeed = 30;
-			lara.air = 1800;
-			lara.death_count = 0;
-			lara.torso_x_rot = 0;
-			lara.torso_y_rot = 0;
-			lara.head_x_rot = 0;
-			lara.head_y_rot = 0;
-			cheat_hit_points = lara_item->hit_points;
-		}
-	}
 #endif
 }
 
@@ -435,10 +365,8 @@ void LaraCheat(ITEM_INFO* item, COLL_INFO* coll)
 	lara_item->hit_points = 1000;
 	LaraUnderWater(item, coll);
 
-#ifdef TROYESTUFF
 	if (input & IN_ACTION)
 		TriggerDynamic(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos, 31, 31, 31, 31);
-#endif
 
 	if (input & IN_WALK && !(input & IN_LOOK))
 	{
@@ -452,11 +380,6 @@ void LaraCheat(ITEM_INFO* item, COLL_INFO* coll)
 		lara.head_x_rot = 0;
 		lara.head_y_rot = 0;
 		lara.gun_status = LG_ARMLESS;
-#ifndef TROYESTUFF
-		LaraInitialiseMeshes(1);
-		lara.mesh_effects = 0;
-		lara_item->hit_points = cheat_hit_points;
-#endif
 	}
 }
 
@@ -515,11 +438,7 @@ void LaraControl(short item_number)
 {
 	long room_water_state, wd, wh, hfw, dx, dy, dz;
 
-#ifndef TROYESTUFF
-	if (gameflow.cheat_enable || gameflow.dozy_cheat_enabled)
-#endif
-		LaraCheatyBits();
-
+	LaraCheatyBits();
 	lara.last_pos.x = lara_item->pos.x_pos;
 	lara.last_pos.y = lara_item->pos.y_pos;
 	lara.last_pos.z = lara_item->pos.z_pos;
@@ -700,11 +619,7 @@ void LaraControl(short item_number)
 			case LARA_WADE:
 				camera.target_elevation = -4004;
 
-#ifdef TROYESTUFF
 				if (hfw <= 256)
-#else
-				if (hfw < 256)
-#endif
 				{
 					lara.water_status = 0;
 
@@ -811,11 +726,7 @@ void LaraControl(short item_number)
 
 		LaraAboveWater(lara_item, mycoll);
 
-#ifdef RANDO_STUFF
-		if (rando.levels[RANDOLEVEL].freezingWater)
-#else
 		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_MINES)
-#endif
 		{
 			if (lara.water_status == LARA_WADE)
 				ExposureMeter--;
@@ -845,11 +756,7 @@ void LaraControl(short item_number)
 
 		LaraUnderWater(lara_item, mycoll);
 
-#ifdef RANDO_STUFF
-		if (rando.levels[RANDOLEVEL].freezingWater)
-#else
 		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_MINES)
-#endif
 			ExposureMeter -= 2;
 
 		break;
@@ -866,21 +773,13 @@ void LaraControl(short item_number)
 
 		LaraSurface(lara_item, mycoll);
 
-#ifdef RANDO_STUFF
-		if (rando.levels[RANDOLEVEL].freezingWater)
-#else
 		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_MINES)
-#endif
 			ExposureMeter--;
 
 		break;
 
 	case LARA_CHEAT:
-
-#ifndef TROYESTUFF
-		if (gameflow.cheat_enable || gameflow.dozy_cheat_enabled)
-#endif
-			LaraCheat(lara_item, mycoll);
+		LaraCheat(lara_item, mycoll);
 
 		break;
 	}
@@ -1446,9 +1345,7 @@ void InitialiseLaraInventory(long level)
 	for (int i = 0; i < start->num_big_medis; i++)
 		Inv_AddItem(BIGMEDI_ITEM);
 
-#ifdef TROYESTUFF
 	if (!tomb3.gold)
-#endif
 	{
 		for (int i = 0; i < start->num_sgcrystals; i++)
 			Inv_AddItem(SAVEGAME_CRYSTAL_ITEM);

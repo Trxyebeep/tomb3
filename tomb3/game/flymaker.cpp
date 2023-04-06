@@ -63,11 +63,7 @@ void FlyEmitterControl(short item_number)
 
 	for (lp = 0; lp < 3; lp++)
 	{
-#ifdef TROYESTUFF
 		if (!items[FlyItem[lp]].data && items[FlyItem[lp]].status != ITEM_ACTIVE)
-#else
-		if (!items[FlyItem[lp]].data && item[FlyItem[lp]].status != ITEM_ACTIVE)
-#endif
 			break;
 	}
 

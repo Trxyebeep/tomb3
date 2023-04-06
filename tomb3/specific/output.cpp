@@ -16,14 +16,12 @@
 #include "../game/gameflow.h"
 #include "../game/draw.h"
 #include "../game/inventry.h"
-#ifdef TROYESTUFF
 #include "../game/control.h"
 #include "../game/health.h"
 #include "../game/objects.h"
 #include "litesrc.h"
 #include "draweffects.h"
 #include "../tomb3/tomb3.h"
-#endif
 
 static short shadow[6 + (3 * 8)] =
 {
@@ -51,13 +49,11 @@ void S_PrintShadow(short size, short* box, ITEM_INFO* item)
 {
 	long x0, x1, z0, z1, midX, midZ, xAdd, zAdd;
 
-#ifdef TROYESTUFF
 	if (tomb3.shadow_mode == SHADOW_PSX && GnGameMode != GAMEMODE_IN_CUTSCENE)
 	{
 		S_PrintSpriteShadow(size, box, item);
 		return;
 	}
-#endif
 
 	x0 = box[0];
 	x1 = box[1];
@@ -126,7 +122,6 @@ void S_SetupBelowWater(long underwater)
 	bBlueEffect = 1;
 }
 
-#ifdef TROYESTUFF
 long GetFixedScale(long unit)	//some things require fixed scale to look proper all the time. mostly effects, like snow and rain etc.
 {
 	long w, h, x, y;
@@ -316,7 +311,7 @@ static void OutputPickupDisplay()
 
 	if (App.lpZBuffer)
 	{
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < MAX_BUCKETS; i++)
 		{
 			Buckets[i].TPage = (DXTEXTURE*)-1;
 			Buckets[i].nVtx = 0;
@@ -365,7 +360,6 @@ static void OutputPickupDisplay()
 		HWR_DrawPolyList(surfacenumbf, sort3d_bufferbf);
 	}
 }
-#endif
 
 void S_OutputPolyList()
 {
@@ -404,10 +398,8 @@ void S_OutputPolyList()
 		HWR_DrawPolyList(surfacenumbf, sort3d_bufferbf);
 	}
 
-#ifdef TROYESTUFF
 	if (pickups[CurrentPickup].duration != -1 && !Inventory_Displaying)
 		OutputPickupDisplay();
-#endif
 
 	S_FadePicture();
 	HWR_EndScene();
@@ -430,11 +422,7 @@ void S_LightRoom(ROOM_INFO* r)
 
 void S_InsertBackPolygon(long xmin, long ymin, long xmax, long ymax, long col)
 {
-#ifdef TROYESTUFF
 	InsertFlatRect(phd_winxmin + xmin, phd_winymin + ymin, phd_winxmin + xmax, phd_winymin + ymax, phd_zfar, 0);
-#else
-	InsertFlatRect(phd_winxmin + xmin, phd_winymin + ymin, phd_winxmin + xmax, phd_winymin + ymax, phd_zfar, inv_colours[0]);
-#endif
 }
 
 long S_GetObjectBounds(short* box)
@@ -586,12 +574,7 @@ void S_InitialiseScreen(long type)
 	if (type > 0)
 		TempVideoRemove();
 
-	//Empty function call here
-
-#ifndef TROYESTUFF
-	if (App.nRenderMode)
-#endif
-		HWR_InitState();
+	HWR_InitState();
 }
 
 void ScreenPartialDump()
@@ -698,19 +681,12 @@ void S_InitialisePolyList(bool clearBackBuffer)
 		clearBackBuffer = 0;
 	}
 
-#ifndef TROYESTUFF
-	if (!App.nRenderMode)
-		flags = 272;
+	if (clearBackBuffer || HWConfig.nFillMode < D3DFILL_SOLID)
+		flags = 258;
 	else
-#endif
-	{
-		if (clearBackBuffer || HWConfig.nFillMode < D3DFILL_SOLID)
-			flags = 258;
-		else
-			flags = 256;
+		flags = 256;
 
-		flags |= 8;
-	}
+	flags |= 8;
 
 	DXClearBuffers(flags, 0);
 	HWR_BeginScene();

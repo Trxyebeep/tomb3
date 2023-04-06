@@ -294,18 +294,12 @@ short* calc_roomvert(short* objptr, long far_clip)
 
 						if (dist < falloff)
 						{
-#ifdef TROYESTUFF
 							if (!dist)
 								dist++;
 
 							cR += RColorTable[falloff][dist][dl->r];
 							cG += GColorTable[falloff][dist][dl->g];
 							cB += BColorTable[falloff][dist][dl->b];
-#else
-							cR += RColorTable[falloff][dist + 1][dl->r];
-							cG += GColorTable[falloff][dist + 1][dl->g];
-							cB += BColorTable[falloff][dist + 1][dl->b];
-#endif
 						}
 					}
 				}

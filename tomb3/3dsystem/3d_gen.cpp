@@ -12,10 +12,8 @@
 #include "../specific/init.h"
 #include "../game/control.h"
 #include "../game/draw.h"
-#ifdef TROYESTUFF
 #include "../specific/hwrender.h"
 #include "../tomb3/tomb3.h"
-#endif
 
 void (*InsertLine)(long x1, long y1, long x2, long y2, long z, long c0, long c1);
 short* (*InsertObjectGT4)(short* pFaceInfo, long nFaces, sort_type nSortType);
@@ -365,7 +363,6 @@ void phd_TranslateAbs(long x, long y, long z)
 
 void AlterFOV(short fov)
 {
-#ifdef TROYESTUFF	//by Arsunt
 	long fov_width;
 
 	fov /= 2;
@@ -375,19 +372,12 @@ void AlterFOV(short fov)
 	else
 		fov_width = phd_winheight * 320 / 240;
 
-	LfAspectCorrection = 1.0F; // must always be 1.0 for unstretched view
+	LfAspectCorrection = 1.0F;
 	phd_persp = (fov_width / 2) * phd_cos(fov) / phd_sin(fov);
-#else
-	fov /= 2;
-	phd_persp = ((phd_winwidth / 2) * phd_cos(fov)) / phd_sin(fov);
-#endif
 
 	f_persp = (float)phd_persp;
 	f_oneopersp = one / f_persp;
 	f_perspoznear = f_persp / f_znear;
-#ifndef TROYESTUFF
-	LfAspectCorrection = (4.0F / 3.0F) / (float(phd_winwidth) / float(phd_winheight));
-#endif
 	InitZTable();
 }
 
@@ -495,9 +485,7 @@ void S_InsertBackground(short* objptr)
 
 	if (objptr)
 	{
-#ifdef TROYESTUFF
 		HWR_InitGamma(10.0F);
-#endif
 		objptr = calc_back_light(objptr);
 		objptr = InsertObjectGT4(objptr + 1, objptr[0], BACK_SORT);
 		objptr = InsertObjectGT3(objptr + 1, objptr[0], BACK_SORT);
@@ -505,11 +493,7 @@ void S_InsertBackground(short* objptr)
 
 		if (bFixSkyColour)
 		{
-#ifdef RANDO_STUFF
-			if (rando.levels[RANDOLEVEL].original_id == LV_CHAMBER)
-#else
 			if (CurrentLevel == LV_CHAMBER)
-#endif
 				triPtr = objptr + 4;
 			else
 				triPtr = objptr + 68;
@@ -526,10 +510,7 @@ void S_InsertBackground(short* objptr)
 		}
 
 		InsertObjectG3(objptr + 1, objptr[0], BACK_SORT);
-
-#ifdef TROYESTUFF
 		HWR_InitGamma(GammaOption);
-#endif
 	}
 
 	if (CurrentLevel == LV_GYM)
@@ -567,22 +548,17 @@ void phd_InitWindow(long x, long y, long w, long h, long znear, long zfar, long 
 	phd_WindowRect.top = phd_winymin;
 	phd_WindowRect.right = phd_winxmin + phd_winwidth;
 
-#ifndef TROYESTUFF
-	if (!App.nRenderMode || App.nRenderMode == 1)
-#endif
-	{
-		InsertObjectGT3 = HWI_InsertObjectGT3_Sorted;
-		InsertObjectGT4 = HWI_InsertObjectGT4_Sorted;
-		InsertObjectG3 = HWI_InsertObjectG3_Sorted;
-		InsertObjectG4 = HWI_InsertObjectG4_Sorted;
-		InsertFlatRect = HWI_InsertFlatRect_Sorted;
-		InsertLine = HWI_InsertLine_Sorted;
-		RoomInsertObjectGT3 = HWI_InsertObjectGT3_Sorted;
-		RoomInsertObjectGT4 = HWI_InsertObjectGT4_Sorted;
-		InsertSprite = HWI_InsertSprite_Sorted;
-		InsertTrans8 = HWI_InsertTrans8_Sorted;
-		InsertTransQuad = HWI_InsertTransQuad_Sorted;
-	}
+	InsertObjectGT3 = HWI_InsertObjectGT3_Sorted;
+	InsertObjectGT4 = HWI_InsertObjectGT4_Sorted;
+	InsertObjectG3 = HWI_InsertObjectG3_Sorted;
+	InsertObjectG4 = HWI_InsertObjectG4_Sorted;
+	InsertFlatRect = HWI_InsertFlatRect_Sorted;
+	InsertLine = HWI_InsertLine_Sorted;
+	RoomInsertObjectGT3 = HWI_InsertObjectGT3_Sorted;
+	RoomInsertObjectGT4 = HWI_InsertObjectGT4_Sorted;
+	InsertSprite = HWI_InsertSprite_Sorted;
+	InsertTrans8 = HWI_InsertTrans8_Sorted;
+	InsertTransQuad = HWI_InsertTransQuad_Sorted;
 }
 
 void phd_InitPolyList()

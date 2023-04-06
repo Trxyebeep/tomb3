@@ -3,10 +3,8 @@
 
 long GetRenderWidth();
 long GetRenderHeight();
-#ifdef TROYESTUFF
 long GetRenderWidthDownscaled();
 long GetRenderHeightDownscaled();
-#endif
 void do_detail_option(INVENTORY_ITEM* item);
 void do_levelselect_option(INVENTORY_ITEM* item);
 void do_pickup_option(INVENTORY_ITEM* item);
@@ -14,9 +12,7 @@ void do_sound_option(INVENTORY_ITEM* item);
 void DefaultConflict();
 void do_control_option(INVENTORY_ITEM* item);
 void do_compass_option(INVENTORY_ITEM* item);
-#ifdef TROYESTUFF
 void SetPassportRequesterSize(REQUEST_INFO* req);
-#endif
 void do_passport_option(INVENTORY_ITEM* item);
 void do_inventory_options(INVENTORY_ITEM* item);
 

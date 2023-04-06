@@ -8,28 +8,22 @@
 #include "../specific/winmain.h"
 #include "../specific/output.h"
 #include "../game/draw.h"
-#ifdef TROYESTUFF
 #include "../game/control.h"
 #include "../tomb3/tomb3.h"
-#endif
 
 static float UVTable[65536];
-static VERTEX_INFO v_buffer[40];
+static VERTEX_INFO v_buffer[MAX_VINFO];
 
-PHD_VBUF vbuf[1500];
-TEXTUREBUCKET Buckets[6];
+PHD_VBUF vbuf[MAX_VBUF];
+TEXTUREBUCKET Buckets[MAX_BUCKETS];
 
 long GlobalAlpha;
 long nDrawnPoints;
 
 static __inline bool CheckDrawType(long nDrawType)
 {
-#ifdef TROYESTUFF
 	return nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_GA || nDrawType == DT_POLY_GTA ||
 		nDrawType == DT_LINE_SOLID || nDrawType == DT_LINE_ALPHA;
-#else
-	return nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_GA || nDrawType == DT_LINE_SOLID || nDrawType == DT_POLY_GTA;
-#endif
 }
 
 #define	SetBufferPtrs(sort, info, nDrawType, pass)\
@@ -407,7 +401,6 @@ void HWI_InsertTransQuad_Sorted(long x, long y, long w, long h, long z)
 	CurrentTLVertex = v + 4;
 }
 
-#ifdef TROYESTUFF
 void HWI_InsertGourQuad_Sorted(long x0, long y0, long x1, long y1, long z, ulong c0, ulong c1, ulong c2, ulong c3, bool add)
 {
 	D3DTLVERTEX* v;
@@ -451,7 +444,6 @@ void HWI_InsertGourQuad_Sorted(long x0, long y0, long x1, long y1, long z, ulong
 	v[3].color = c0;
 	CurrentTLVertex = v + 4;
 }
-#endif
 
 void InitUVTable()
 {
@@ -461,10 +453,7 @@ void InitUVTable()
 
 long GETR(long col)
 {
-#ifdef TROYESTUFF
-	long w;
-#endif
-	long r;
+	long w, r;
 
 	r = (col >> 10) & 0x1F;
 	r <<= 3;
@@ -472,14 +461,12 @@ long GETR(long col)
 
 	if (bBlueEffect)
 	{
-#ifdef TROYESTUFF
 		if (tomb3.custom_water_color)
 		{
 			w = RGB_GETRED(water_color[CurrentLevel]);
 			return (w * r) >> 8;
 		}
 		else
-#endif
 			return (128 * r) >> 8;
 	}
 
@@ -488,10 +475,7 @@ long GETR(long col)
 
 long GETG(long col)
 {
-#ifdef TROYESTUFF
-	long w;
-#endif
-	long g;
+	long w, g;
 
 	g = (col >> 5) & 0x1F;
 	g <<= 3;
@@ -499,14 +483,12 @@ long GETG(long col)
 
 	if (bBlueEffect)
 	{
-#ifdef TROYESTUFF
 		if (tomb3.custom_water_color)
 		{
 			w = RGB_GETGREEN(water_color[CurrentLevel]);
 			return (w * g) >> 8;
 		}
 		else
-#endif
 			return (224 * g) >> 8;
 	}
 
@@ -515,16 +497,12 @@ long GETG(long col)
 
 long GETB(long col)
 {
-#ifdef TROYESTUFF
-	long w;
-#endif
-	long b;
+	long w, b;
 
 	b = (col & 0x1F);
 	b <<= 3;
 	b = ColorTable[b];
 
-#ifdef TROYESTUFF
 	if (bBlueEffect)
 	{
 		if (tomb3.custom_water_color)
@@ -533,20 +511,8 @@ long GETB(long col)
 			return (w * b) >> 8;
 		}
 	}
-#endif
 
 	return b;
-}
-
-static ulong RGB_TO_TLVTX_COLOR(long r, long g, long b)
-{
-	if (bBlueEffect)
-	{
-		r = (128 * r) >> 8;
-		g = (224 * g) >> 8;
-	}
-
-	return GlobalAlpha | (r << 16) | (g << 8) | b;
 }
 
 static void PHD_VBUF_To_D3DTLVTX(PHD_VBUF* phdV, D3DTLVERTEX* v)
@@ -643,23 +609,18 @@ long FindBucket(DXTEXTURE* TPage)
 	TEXTUREBUCKET* bucket;
 	long nVtx, fullest;
 
-#ifndef TROYESTUFF
-	if (nDrawnPoints > 2700)
-		return -1;
-#else
 	if (nDrawnPoints <= 2700)	//HACK: this seems to be a useless artifical limit (not sure though),
 								//so instead of failing to draw, immediately go find fullest bucket, draw it, and use it.
 								//TODO: make sure it's actually a useless limit and remove it, otherwise raise it.
-#endif
 	{
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < MAX_BUCKETS; i++)
 		{
 			bucket = &Buckets[i];
 
-			if (bucket->TPage == TPage && bucket->nVtx < 256)
+			if (bucket->TPage == TPage && bucket->nVtx < (BUCKET_VERTS - BUCKET_EXTRA))
 				return i;
 
-			if (bucket->nVtx > 256)
+			if (bucket->nVtx > (BUCKET_VERTS - BUCKET_EXTRA))
 			{
 				HWR_EnableZBuffer(1, 1);
 				HWR_SetCurrentTexture(bucket->TPage);
@@ -674,7 +635,7 @@ long FindBucket(DXTEXTURE* TPage)
 	nVtx = 0;
 	fullest = 0;
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < MAX_BUCKETS; i++)
 	{
 		bucket = &Buckets[i];
 
@@ -704,7 +665,7 @@ void DrawBuckets()
 {
 	TEXTUREBUCKET* bucket;
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < MAX_BUCKETS; i++)
 	{
 		bucket = &Buckets[i];
 
@@ -728,11 +689,7 @@ void HWI_InsertClippedPoly_Textured(long nPoints, float zdepth, long nDrawType, 
 
 	vtxbuf = v_buffer;
 
-#ifdef TROYESTUFF
 	if (App.lpZBuffer && nDrawType != DT_POLY_WGTA && nDrawType != DT_POLY_WGT && nDrawType != DT_POLY_COLSUB)
-#else
-	if (App.lpZBuffer && nDrawType != DT_POLY_WGTA && nDrawType != DT_POLY_WGT)
-#endif
 	{
 		nBucket = FindBucket(TPages[nTPage]);
 
@@ -862,17 +819,11 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 		if (!nPoints)
 			return;
 
-#ifdef TROYESTUFF
 	drawtextured:
-#endif
 		phd_leftfloat = (float)phd_winxmin;
 		phd_rightfloat = float(phd_winxmin + phd_winwidth);
 		phd_topfloat = (float)phd_winymin;
 		phd_bottomfloat = float(phd_winymin + phd_winheight);
-
-#ifndef TROYESTUFF
-	drawtextured:
-#endif
 		nPoints = RoomXYGUVClipper(nPoints, v_buffer);
 
 		if (nPoints)
@@ -892,12 +843,9 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 			else
 				zdepth = 1000000000;
 
-#ifdef TROYESTUFF
 			if (pTex->drawtype == 3)
 				nDrawType = DT_POLY_COLSUB;
-			else
-#endif
-			if (pTex->drawtype > 1)
+			else if (pTex->drawtype > 1)
 				nDrawType = DT_POLY_WGTA;
 			else
 				nDrawType = pTex->drawtype + DT_POLY_GT;
@@ -943,12 +891,9 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 		goto drawtextured;
 	}
 
-#ifdef TROYESTUFF
 	if (pTex->drawtype == 3)
 		nDrawType = DT_POLY_COLSUB;
-	else
-#endif
-	if (pTex->drawtype > 1)
+	else if (pTex->drawtype > 1)
 		nDrawType = DT_POLY_WGTA;
 	else
 		nDrawType = pTex->drawtype + DT_POLY_GT;
@@ -965,11 +910,7 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 			outsideBackgroundTop = v2->ys;
 	}
 
-#ifdef TROYESTUFF
 	if (!App.lpZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_COLSUB)
-#else
-	if (!App.lpZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT)
-#endif
 	{
 		if (nSortType == MID_SORT)
 			zdepth = (v0->zv + v1->zv + v2->zv) * 0.33333334F;
@@ -1036,14 +977,12 @@ void HWI_InsertLine_Sorted(long x1, long y1, long x2, long y2, long z, long c0, 
 	sort[0] = (long)info;
 	sort[1] = z;
 
-#ifdef TROYESTUFF
 	if (GlobalAlpha == 0xDEADBEEF)
 	{
 		info[0] = DT_LINE_ALPHA;
 		GlobalAlpha = 0xFF000000;
 	}
 	else
-#endif
 		info[0] = DT_LINE_SOLID;
 
 	info[1] = 0;
@@ -1144,12 +1083,9 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 		return;
 	}
 
-#ifdef TROYESTUFF
 	if (pTex->drawtype == 3)
 		nDrawType = DT_POLY_COLSUB;
-	else
-#endif
-	if (pTex->drawtype > 1)
+	else if (pTex->drawtype > 1)
 		nDrawType = DT_POLY_WGTA;
 	else
 		nDrawType = pTex->drawtype + DT_POLY_GT;
@@ -1169,12 +1105,7 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 			outsideBackgroundTop = v3->ys;
 	}
 
-
-#ifdef TROYESTUFF
 	if (!App.lpZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_COLSUB)
-#else
-	if (!App.lpZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT)
-#endif
 	{
 		if (nSortType == MID_SORT)
 			zdepth = (v0->zv + v1->zv + v2->zv + v3->zv) * 0.25F;
@@ -1543,15 +1474,8 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 	D3DTLVERTEX* v;
 	long* sort;
 	short* info;
-#ifndef TROYESTUFF
-	uchar* pC;
-#endif
 	float z;
 	long nBucket;
-
-#ifndef TROYESTUFF
-	pC = &game_palette[3 * col];
-#endif
 
 	if (x2 <= x1 || y2 <= y1)
 		return;
@@ -1584,11 +1508,7 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 		v->sy = (float)y1;
 		v->rhw = z;
 		v->sz = f_a - v->rhw * f_boo;
-#ifdef TROYESTUFF
 		v->color = col;
-#else
-		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
-#endif
 		v->specular = 0;
 
 		v = &bucket->vtx[bucket->nVtx + 1];
@@ -1596,11 +1516,7 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 		v->sy = (float)y1;
 		v->rhw = z;
 		v->sz = f_a - v->rhw * f_boo;
-#ifdef TROYESTUFF
 		v->color = col;
-#else
-		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
-#endif
 		v->specular = 0;
 
 		v = &bucket->vtx[bucket->nVtx + 2];
@@ -1608,11 +1524,7 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 		v->sy = (float)y2;
 		v->rhw = z;
 		v->sz = f_a - v->rhw * f_boo;
-#ifdef TROYESTUFF
 		v->color = col;
-#else
-		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
-#endif
 		v->specular = 0;
 
 		v = &bucket->vtx[bucket->nVtx + 3];
@@ -1620,11 +1532,7 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 		v->sy = (float)y1;
 		v->rhw = z;
 		v->sz = f_a - v->rhw * f_boo;
-#ifdef TROYESTUFF
 		v->color = col;
-#else
-		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
-#endif
 		v->specular = 0;
 
 		v = &bucket->vtx[bucket->nVtx + 4];
@@ -1632,11 +1540,7 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 		v->sy = (float)y2;
 		v->rhw = z;
 		v->sz = f_a - v->rhw * f_boo;
-#ifdef TROYESTUFF
 		v->color = col;
-#else
-		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
-#endif
 		v->specular = 0;
 
 		v = &bucket->vtx[bucket->nVtx + 5];
@@ -1644,11 +1548,7 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 		v->sy = (float)y2;
 		v->rhw = z;
 		v->sz = f_a - v->rhw * f_boo;
-#ifdef TROYESTUFF
 		v->color = col;
-#else
-		v->color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
-#endif
 		v->specular = 0;
 
 		bucket->nVtx += 6;
@@ -1669,45 +1569,28 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 		v[0].sy = (float)y1;
 		v[0].rhw = z;
 		v[0].sz = f_a - v[0].rhw * f_boo;
-
-#ifdef TROYESTUFF
 		v[0].color = col;
-#else
-		v[0].color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
-#endif
 		v[0].specular = 0;
 
 		v[1].sx = (float)x2;
 		v[1].sy = (float)y1;
 		v[1].rhw = z;
 		v[1].sz = f_a - v[1].rhw * f_boo;
-#ifdef TROYESTUFF
 		v[1].color = col;
-#else
-		v[1].color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
-#endif
 		v[1].specular = 0;
 
 		v[2].sx = (float)x2;
 		v[2].sy = (float)y2;
 		v[2].rhw = z;
 		v[2].sz = f_a - v[2].rhw * f_boo;
-#ifdef TROYESTUFF
 		v[2].color = col;
-#else
-		v[2].color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
-#endif
 		v[2].specular = 0;
 
 		v[3].sx = (float)x1;
 		v[3].sy = (float)y2;
 		v[3].rhw = z;
 		v[3].sz = f_a - v[3].rhw * f_boo;
-#ifdef TROYESTUFF
 		v[3].color = col;
-#else
-		v[3].color = RGB_TO_TLVTX_COLOR(pC[0], pC[1], pC[2]);
-#endif
 		v[3].specular = 0;
 
 		CurrentTLVertex = v + 4;
@@ -1725,10 +1608,8 @@ void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, lo
 	if (x2 <= x1 || y2 <= y1 || x2 <= 0 || y2 <= 0 || x1 >= phd_winxmax || y1 >= phd_winymax)
 		return;
 
-#ifdef TROYESTUFF
-	blueEffect = bBlueEffect;	//moving this here fixes the blue text shit
+	blueEffect = bBlueEffect;
 	bBlueEffect = 0;
-#endif
 
 	x1 += phd_winxmin;
 	y1 += phd_winymin;
@@ -1804,20 +1685,9 @@ void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, lo
 	}
 
 	if (nPoints)
-	{
-#ifdef TROYESTUFF
 		HWI_InsertClippedPoly_Textured(nPoints, (float)zdepth, nDrawType, sprite->tpage);
-#else
-		blueEffect = bBlueEffect;
-		bBlueEffect = 0;
-		HWI_InsertClippedPoly_Textured(nPoints, (float)zdepth, nDrawType, sprite->tpage);
-		bBlueEffect = blueEffect;
-#endif
-	}
 
-#ifdef TROYESTUFF
 	bBlueEffect = blueEffect;
-#endif
 }
 
 void HWI_InsertAlphaSprite_Sorted(long x1, long y1, long z1, long shade1, long x2, long y2, long z2, long shade2,

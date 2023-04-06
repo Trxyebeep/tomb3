@@ -237,11 +237,7 @@ void LiftCeiling(ITEM_INFO* item, long x, long y, long z, long* c)
 long GetOffset(ITEM_INFO* item, long x, long z)
 {
 	if (!item->pos.y_rot)
-#ifdef TROYESTUFF			// Fixes bridge bug
 		return ~x & WALL_MASK;
-#else
-		return -x & WALL_MASK;
-#endif
 	
 	if (item->pos.y_rot == -0x8000)
 		return x & WALL_MASK;
@@ -249,11 +245,7 @@ long GetOffset(ITEM_INFO* item, long x, long z)
 	if (item->pos.y_rot == 0x4000)
 		return z & WALL_MASK;
 
-#ifdef TROYESTUFF
 	return ~z & WALL_MASK;
-#else
-	return -z & WALL_MASK;
-#endif
 }
 
 void BridgeFlatFloor(ITEM_INFO* item, long x, long y, long z, long* h)

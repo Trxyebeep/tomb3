@@ -257,33 +257,33 @@ long FireWeapon(long weapon_type, ITEM_INFO* target, ITEM_INFO* source, short* a
 		ammo = &lara.magnums;
 
 		if (savegame.bonus_flag)
-			ammo->ammo = 1000;
+			ammo->ammo = 10000;
 	}
 	else if (weapon_type == LG_UZIS)
 	{
 		ammo = &lara.uzis;
 
 		if (savegame.bonus_flag)
-			ammo->ammo = 1000;
+			ammo->ammo = 10000;
 	}
 	else if (weapon_type == LG_SHOTGUN)
 	{
 		ammo = &lara.shotgun;
 
 		if (savegame.bonus_flag)
-			ammo->ammo = 1000;
+			ammo->ammo = 10000;
 	}
 	else if (weapon_type == LG_M16)
 	{
 		ammo = &lara.m16;
 
 		if (savegame.bonus_flag)
-			ammo->ammo = 1000;
+			ammo->ammo = 10000;
 	}
 	else
 	{
 		ammo = &lara.pistols;
-		ammo->ammo = 1000;
+		ammo->ammo = 10000;
 	}
 
 	if (ammo->ammo <= 0)
@@ -343,11 +343,7 @@ long FireWeapon(long weapon_type, ITEM_INFO* target, ITEM_INFO* source, short* a
 			if (!los)
 				Richochet(&dest);
 		}
-#ifdef RANDO_STUFF
-		else if (items[objLos].object_number == SMASH_OBJECT1 && rando.levels[RANDOLEVEL].original_id == LV_CRASH)
-#else
 		else if (items[objLos].object_number == SMASH_OBJECT1 && CurrentLevel == LV_CRASH)
-#endif
 			Richochet(&dest);
 		else
 			SmashItem((short)objLos, weapon_type);
@@ -361,11 +357,7 @@ long FireWeapon(long weapon_type, ITEM_INFO* target, ITEM_INFO* source, short* a
 	dest.z = start.z + ((bestdist * phd_mxptr[M22]) >> W2V_SHIFT);
 	objLos = ObjectOnLOS(&start, &dest);
 
-#ifdef RANDO_STUFF
-	if (objLos != NO_ITEM && (items[objLos].object_number != SMASH_OBJECT1 || rando.levels[RANDOLEVEL].original_id != LV_CRASH))
-#else
 	if (objLos != NO_ITEM && (items[objLos].object_number != SMASH_OBJECT1 || CurrentLevel != LV_CRASH))
-#endif
 		SmashItem((short)objLos, weapon_type);
 
 	obj_num = target->object_number;

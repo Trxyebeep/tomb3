@@ -23,9 +23,7 @@
 #include "lara.h"
 #include "effects.h"
 #include "inventry.h"
-#ifdef TROYESTUFF
 #include "../newstuff/LaraDraw.h"
-#endif
 
 short* cine;
 PHD_3DPOS cinematic_pos;
@@ -38,14 +36,12 @@ static short cinematic_level;
 
 long DrawPhaseCinematic()
 {
-#ifdef TROYESTUFF
 	CalcLaraMatrices(0);
 	phd_PushUnitMatrix();
 	CalcLaraMatrices(1);
 	phd_PopMatrix();
 
 	ResetLaraUnderwaterNodes();
-#endif
 
 	camera_underwater = 0;
 	DrawRooms(camera.pos.room_number);
@@ -386,18 +382,10 @@ long DoCinematic(long nframes)
 		if (S_UpdateInput())
 			return 3;
 
-#ifdef TROYESTUFF
 		if (input & IN_ACTION && !pictureFading)
-#else
-		if (input & IN_ACTION)
-#endif
 			return 1;
 
-#ifdef TROYESTUFF
 		if (input & IN_OPTION && !pictureFading)
-#else
-		if (input & IN_OPTION)
-#endif
 			return 2;
 
 		ClearDynamics();

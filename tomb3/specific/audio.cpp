@@ -4,6 +4,8 @@
 #include "winmain.h"
 #include "ds.h"
 #include "../game/control.h"
+#include "specific.h"
+#include "../game/inventry.h"
 
 static TRACK_INFO TrackInfos[130];
 static LPDIRECTSOUNDBUFFER DSBuffer;
@@ -33,10 +35,8 @@ static bool acm_done;
 static bool acm_loop_track;
 static bool acm_eof;
 static volatile bool acm_locked;
-#ifdef TROYESTUFF
 static ulong acm_playpos = -1;
 static bool acm_paused = 0;
-#endif
 
 long acm_volume;
 
@@ -188,7 +188,6 @@ long ACMGetTrackLocation()
 	return long((float(timeGetTime() - acm_start_time) / (float)CLOCKS_PER_SEC) * 60.0F);
 }
 
-#ifdef TROYESTUFF
 static bool ACMIsTrackPlaying()
 {
 	ulong status;
@@ -211,11 +210,9 @@ void ACMMute()
 	if (DSBuffer)
 		DSBuffer->SetVolume(acm_volume);
 }
-#endif
 
 void ACMSetVolume(long volume)
 {
-#ifdef TROYESTUFF
 	if (!DSBuffer)
 		return;
 
@@ -243,12 +240,6 @@ void ACMSetVolume(long volume)
 		if (DSBuffer)
 			DSBuffer->SetVolume(acm_volume);
 	}
-#else
-	acm_volume = long(float(volume * 1.5625F - 400.0F) * 6.0F);
-
-	if (DSBuffer)
-		DSBuffer->SetVolume(acm_volume);
-#endif
 }
 
 long ACMHandleNotifications()
@@ -487,6 +478,13 @@ bool ACMInit()
 	}
 
 	DSBuffer->Unlock(pAudioWrite, audio_buffer_size, 0, 0);
+	S_CDVolume(25 * Option_Music_Volume + 5);
+
+	if (Option_SFX_Volume)
+		S_SoundSetMasterVolume(6 * Option_SFX_Volume + 4);
+	else
+		S_SoundSetMasterVolume(0);
+
 	return 1;
 }
 

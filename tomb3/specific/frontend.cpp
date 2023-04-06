@@ -7,50 +7,21 @@
 #include "time.h"
 #include "fmv.h"
 #include "../game/inventry.h"
-#ifdef TROYESTUFF
 #include "output.h"
 #include "../3dsystem/hwinsert.h"
+#include "../game/invfunc.h"
 #include "../tomb3/tomb3.h"
-#endif
-
-ushort S_COLOUR(long r, long g, long b)
-{
-#ifdef TROYESTUFF
-	return 0;
-#else
-	return SWR_FindNearestPaletteEntry(game_palette, r, g, b, 0);
-#endif
-}
 
 void S_DrawScreenLine(long x, long y, long z, long w, long h, long c, GOURAUD_FILL* grdptr, ushort f)
 {
 	InsertLine(x, y, x + w, y + h, phd_znear + 8 * z, (char)c, c);
 }
 
-#ifdef TROYESTUFF
-ulong flat_cols[17] =	//inv_colors but 32bit color!
-{
-	0xFF000000,
-	0xFF404040,
-	0xFFFFFFFF,
-	0xFFFF0000,
-	0xFFFF8000,
-	0xFFFFFF00,
-
-	0, 0, 0, 0, 0, 0,
-
-	0xFF008000,
-	0xFF00FF00,
-	0xFF00FFFF,
-	0xFF0000FF,
-	0xFFFF00FF
-};
-
 static void MakeFlatGour(char c, GOURAUD_OUTLINE* grdptr)
 {
 	ulong col;
 
-	col = flat_cols[c];
+	col = inv_colours[c];
 
 	for (int i = 0; i < 9; i++)
 		grdptr->clr[i] = col;
@@ -115,7 +86,6 @@ void S_DrawBorder(long x, long y, long z, long w, long h, char c, GOURAUD_OUTLIN
 		grdptr->clr[8], grdptr->clr[8],
 		grdptr->clr[7], grdptr->clr[7], add);
 }
-#endif
 
 void S_DrawScreenBox(long x, long y, long z, long w, long h, long sprnum, GOURAUD_FILL* grdptr, ushort f)
 {
@@ -136,7 +106,6 @@ void S_DrawScreenBox(long x, long y, long z, long w, long h, long sprnum, GOURAU
 void S_DrawScreenFBox(long x, long y, long z, long w, long h, long c, GOURAUD_FILL* grdptr, ushort f)
 {
 	long adder;
-#ifdef TROYESTUFF
 	long bx[3];
 	long by[3];
 	bool add;
@@ -149,14 +118,10 @@ void S_DrawScreenFBox(long x, long y, long z, long w, long h, long c, GOURAUD_FI
 	}
 	else
 		adder = 2;
-#else
-	adder = 1;
-#endif
 
 	w += adder;
 	h += adder;
 
-#ifdef TROYESTUFF
 	if (tomb3.psx_boxes && grdptr)
 	{
 		add = 0;
@@ -185,7 +150,6 @@ void S_DrawScreenFBox(long x, long y, long z, long w, long h, long c, GOURAUD_FI
 
 		return;
 	}
-#endif
 
 	InsertTransQuad(phd_winxmin + x, phd_winymin + y, w, h, phd_znear + 0x50000);
 }

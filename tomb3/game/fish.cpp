@@ -72,31 +72,19 @@ void SetupShoal(long shoal_number)
 
 	leader = &lead_info[shoal_number];
 
-#ifdef RANDO_STUFF
-	if (rando.levels[RANDOLEVEL].original_id == LV_JUNGLE)
-#else
 	if (CurrentLevel == LV_JUNGLE)
-#endif
 	{
 		leader->Xrange = (jungle_fish_ranges[shoal_number][0] + 2) << 8;
 		leader->Yrange = jungle_fish_ranges[shoal_number][2] << 8;
 		leader->Zrange = (jungle_fish_ranges[shoal_number][1] + 2) << 8;
 	}
-#ifdef RANDO_STUFF
-	else if (rando.levels[RANDOLEVEL].original_id == LV_TEMPLE)
-#else
 	else if (CurrentLevel == LV_TEMPLE)
-#endif
 	{
 		leader->Xrange = (temple_fish_ranges[shoal_number][0] + 2) << 8;
 		leader->Yrange = temple_fish_ranges[shoal_number][2] << 8;
 		leader->Zrange = (temple_fish_ranges[shoal_number][1] + 2) << 8;
 	}
-#ifdef RANDO_STUFF
-	else if (rando.levels[RANDOLEVEL].original_id == LV_QUADBIKE)
-#else
 	else if (CurrentLevel == LV_QUADBIKE)
-#endif
 	{
 		leader->Xrange = (quadchase_fish_ranges[shoal_number][0] + 2) << 8;
 		leader->Yrange = quadchase_fish_ranges[shoal_number][2] << 8;
@@ -108,31 +96,19 @@ void SetupShoal(long shoal_number)
 		leader->Yrange = house_fish_ranges[shoal_number][2] << 8;
 		leader->Zrange = (house_fish_ranges[shoal_number][1] + 2) << 8;
 	}
-#ifdef RANDO_STUFF
-	else if (rando.levels[RANDOLEVEL].original_id == LV_SHORE)
-#else
 	else if (CurrentLevel == LV_SHORE)
-#endif
 	{
 		leader->Xrange = (shore_fish_ranges[shoal_number][0] + 2) << 8;
 		leader->Yrange = shore_fish_ranges[shoal_number][2] << 8;
 		leader->Zrange = (shore_fish_ranges[shoal_number][1] + 2) << 8;
 	}
-#ifdef RANDO_STUFF
-	else if (rando.levels[RANDOLEVEL].original_id == LV_CRASH)
-#else
 	else if (CurrentLevel == LV_CRASH)
-#endif
 	{
 		leader->Xrange = (crash_fish_ranges[shoal_number][0] + 2) << 8;
 		leader->Yrange = (crash_fish_ranges[shoal_number][2]) << 8;
 		leader->Zrange = (crash_fish_ranges[shoal_number][1] + 2) << 8;
 	}
-#ifdef RANDO_STUFF
-	else if (rando.levels[RANDOLEVEL].original_id == LV_RAPIDS)
-#else
 	else if (CurrentLevel == LV_RAPIDS)
-#endif
 	{
 		leader->Xrange = (rapids_fish_ranges[shoal_number][0] + 2) << 8;
 		leader->Yrange = rapids_fish_ranges[shoal_number][2] << 8;
@@ -144,17 +120,6 @@ void SetupShoal(long shoal_number)
 		leader->Zrange = 256;
 		leader->Yrange = 256;
 	}
-
-#ifdef RANDO_STUFF
-	if (!leader->Xrange)
-		leader->Xrange = 256;
-
-	if (!leader->Yrange)
-		leader->Yrange = 256;
-
-	if (!leader->Zrange)
-		leader->Zrange = 256;
-#endif
 }
 
 void SetupFish(long leader, ITEM_INFO* item)
@@ -165,17 +130,6 @@ void SetupFish(long leader, ITEM_INFO* item)
 
 	pLeader = &lead_info[leader];
 	pFish = &fish[leader];
-
-#ifdef RANDO_STUFF
-	if (!pLeader->Xrange)
-		pLeader->Xrange = 256;
-
-	if (!pLeader->Yrange)
-		pLeader->Yrange = 256;
-
-	if (!pLeader->Zrange)
-		pLeader->Zrange = 256;
-#endif
 
 	x = pLeader->Xrange;
 	y = pLeader->Yrange;
@@ -242,12 +196,7 @@ void ControlFish(short item_number)
 
 		if (item->object_number == PIRAHNAS)
 		{
-
-#ifdef RANDO_STUFF
-			if (rando.levels[RANDOLEVEL].original_id != LV_CRASH)
-#else
 			if (CurrentLevel != LV_CRASH)
-#endif
 				pirahna_attack = lara_item->room_number == item->room_number;
 			else if (CarcassItem != NO_ITEM)
 				pirahna_attack = 2;

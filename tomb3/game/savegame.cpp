@@ -18,12 +18,10 @@
 #include "../specific/file.h"
 #include "camera.h"
 #include "lara.h"
-#ifdef TROYESTUFF
 #include "londboss.h"
 #include "../specific/draweffects.h"
 #include "../newstuff/map.h"
 #include "../tomb3/tomb3.h"
-#endif
 
 SAVEGAME_INFO savegame;
 static char* SGpoint;
@@ -89,10 +87,8 @@ void ModifyStartInfo(long level)
 		pInfo->num_big_medis = 1;
 		pInfo->num_sgcrystals = 1;
 
-#ifdef TROYESTUFF
 		pInfo->got_shotgun = 0;
 		pInfo->shotgun_ammo = 0;
-#endif
 	}
 
 	pInfo->gun_status = LG_ARMLESS;
@@ -116,7 +112,7 @@ void ModifyStartInfo(long level)
 		pInfo->m16_ammo = 10000;
 		pInfo->rocket_ammo = 10000;
 		pInfo->grenade_ammo = 10000;
-		pInfo->harpoon_ammo = 10000;
+		pInfo->harpoon_ammo = 10001;
 		pInfo->gun_type = LG_ROCKET;
 		pInfo->num_flares = 255;
 		pInfo->num_sgcrystals = 50;
@@ -177,9 +173,7 @@ void InitialiseStartInfo()
 		fread(&savegame.best_assault_times, sizeof(long), sizeof(savegame.best_assault_times) / sizeof(long), file);
 		fread(&savegame.best_quadbike_times, sizeof(long), sizeof(savegame.best_quadbike_times) / sizeof(long), file);
 		fread(&savegame.QuadbikeKeyFlag, sizeof(long), 1, file);
-#ifdef TROYESTUFF
 		fclose(file);
-#endif
 	}
 }
 
@@ -508,9 +502,7 @@ void CreateSaveGameInfo()
 		}
 	}
 
-#ifdef TROYESTUFF
 	save_tomb3_data();
-#endif
 }
 
 void ExtractSaveGameInfo()
@@ -811,12 +803,9 @@ void ExtractSaveGameInfo()
 		item->data = (void*)age;
 	}
 
-#ifdef TROYESTUFF
 	load_tomb3_data();
-#endif
 }
 
-#ifdef TROYESTUFF
 void save_tomb3_data()
 {
 	memcpy(tomb3_save.RoomsVisited, RoomVisited, 255);
@@ -855,4 +844,3 @@ void load_tomb3_data()
 	if (tomb3_save_size > offsetof(TOMB3_SAVE, lara_meshbits))
 		lara_item->mesh_bits = tomb3_save.lara_meshbits;
 }
-#endif

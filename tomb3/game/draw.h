@@ -24,8 +24,6 @@ void ClipRoom(ROOM_INFO* r);
 void PrintRooms(short current_room);
 void DrawEffect(short fx_number);
 void PrintObjects(short room_number);
-void DrawLaraInt(ITEM_INFO* item, short* frame1, short* frame2, long frac, long rate);
-void DrawLara(ITEM_INFO* item);
 void DrawGunFlash(long gun_type, long clip);
 void CalculateObjectLighting(ITEM_INFO* item, short* frame);
 void CalculateObjectLightingLara();

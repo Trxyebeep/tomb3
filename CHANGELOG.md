@@ -7,18 +7,28 @@
 - Fix Lara refusing to go in some crawlspaces.
 - Fix unsafe memory access in boss shield drawing routines.
 - Fix sound adapter names in the setup window.
+- Fix volume options not applying correctly when launching the game.
+- Fix SFX volume not completely muting when setting it to 0.
+- Fix blood sparks not using scale.
+- Make underwater blood match normal blood on German version.
+- Fix explosion dynamic lighting transferring to other sparks.
+- Fix the harpoon gun reloading at every shot in NG+.
 
 ### tomb3 additions
 
 - Improve falling raptor physics.
 - Increase drawn vertices limit once more.
 - Increase internal memory from 3.6MBs to 15MBs.
+- Increase some more internal renderer limits.
+- Increase static mesh limit from 50 to 256.
+- Increase items limit from 256 to 1024.
+- Increase AI/nonlot enemy limit from 5/12 to 20/20, respectively.
 
 ### tomb3 bug fixes
 
 - Fix PSX shadow not following Lara during some animations.
 - Fix Willard pathing.
-- Fix some issues with window creation.
+- Fix some window creation/style.
 - Fix Tony flame.
 - Fix sound adapter enumeration.
 
