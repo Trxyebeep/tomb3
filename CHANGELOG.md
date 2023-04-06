@@ -22,6 +22,7 @@
 - Increase some more internal renderer limits.
 - Increase static mesh limit from 50 to 256.
 - Increase items limit from 256 to 1024.
+- Increase AI/nonlot enemy limit from 5/12 to 20/20, respectively.
 
 ### tomb3 bug fixes
 

@@ -62,16 +62,16 @@ typedef unsigned long ulong;
 /***********************************************/
 
 //constants
-#define NO_HEIGHT	-32512
-#define DONT_TARGET	-16384
-#define NO_ITEM		-1
-#define W2V_SHIFT	14
-#define NO_ROOM		255
-#define WALL_SHIFT	10
-#define WALL_SIZE	(1 << WALL_SHIFT)
-#define WALL_MASK	(WALL_SIZE - 1)
-#define MAX_LOT		5
-#define MAX_NONLOT	12
+#define NO_HEIGHT		-32512
+#define DONT_TARGET		-16384
+#define NO_ITEM			-1
+#define W2V_SHIFT		14
+#define NO_ROOM			255
+#define WALL_SHIFT		10
+#define WALL_SIZE		(1 << WALL_SHIFT)
+#define WALL_MASK		(WALL_SIZE - 1)
+#define MAX_LOT			20		//was 5
+#define MAX_NONLOT		20		//was 12
 
 #define MAX_BUCKETS		6
 #define BUCKET_EXTRA	32
