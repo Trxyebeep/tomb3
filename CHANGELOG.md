@@ -21,6 +21,7 @@
 - Increase internal memory from 3.6MBs to 15MBs.
 - Increase some more internal renderer limits.
 - Increase static mesh limit from 50 to 256.
+- Increase items limit from 256 to 1024.
 
 ### tomb3 bug fixes
 

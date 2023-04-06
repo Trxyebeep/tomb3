@@ -85,7 +85,7 @@ typedef unsigned long ulong;
 #define MAX_TINFOS		0x4000	//*4
 
 #define MAX_STATICS		256		//was 50
-#define MAX_ITEMS		256
+#define MAX_ITEMS		1024	//was 256
 #define NLAYOUTKEYS		15
 #define MAX_WEATHER		256
 
