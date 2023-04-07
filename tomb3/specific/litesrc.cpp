@@ -47,9 +47,9 @@ void S_CalculateStaticMeshLight(long x, long y, long z, short shade, short shade
 		if (dist <= falloff)
 		{
 			falloff = 0x1FFF - 0x1FFF * dist / falloff;
-			r += short((falloff * dynamic->r) >> 10);
-			g += short((falloff * dynamic->g) >> 10);
-			b += short((falloff * dynamic->b) >> 10);
+			r += short((falloff * dynamic->r) >> 13);
+			g += short((falloff * dynamic->g) >> 13);
+			b += short((falloff * dynamic->b) >> 13);
 		}
 	}
 
@@ -422,18 +422,18 @@ void S_CalculateLight(long x, long y, long z, short room_number, ITEM_LIGHT* il)
 			il->dynamic.x += (ls.x - il->dynamic.x) >> 1;
 			il->dynamic.y += (ls.y - il->dynamic.y) >> 1;
 			il->dynamic.z += (ls.z - il->dynamic.z) >> 1;
-			il->dynamicr += uchar((((brightest * dl2->r) >> 10) - il->dynamicr) >> 1);
-			il->dynamicg += uchar((((brightest * dl2->g) >> 10) - il->dynamicg) >> 1);
-			il->dynamicb += uchar((((brightest * dl2->b) >> 10) - il->dynamicb) >> 1);
+			il->dynamicr += uchar((((brightest * dl2->r) >> 13) - il->dynamicr) >> 1);
+			il->dynamicg += uchar((((brightest * dl2->g) >> 13) - il->dynamicg) >> 1);
+			il->dynamicb += uchar((((brightest * dl2->b) >> 13) - il->dynamicb) >> 1);
 		}
 		else
 		{
 			il->dynamic.x = ls.x;
 			il->dynamic.y = ls.y;
 			il->dynamic.z = ls.z;
-			il->dynamicr = uchar((brightest * dl2->r) >> 10);
-			il->dynamicg = uchar((brightest * dl2->g) >> 10);
-			il->dynamicb = uchar((brightest * dl2->b) >> 10);
+			il->dynamicr = uchar((brightest * dl2->r) >> 13);
+			il->dynamicg = uchar((brightest * dl2->g) >> 13);
+			il->dynamicb = uchar((brightest * dl2->b) >> 13);
 		}
 
 		LPos[2].x = il->dynamic.x >> 2;

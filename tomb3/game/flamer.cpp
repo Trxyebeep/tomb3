@@ -223,7 +223,7 @@ void FlamerControl(short item_number)
 	AI_INFO info;
 	AI_INFO lara_info;
 	PHD_VECTOR pos;
-	long dx, dz, dist, best_dist;
+	long dx, dz, dist, best_dist, r, g, b;
 	short rnd, torso_y, torso_x, angle, head;
 
 	if (!CreatureActive(item_number))
@@ -243,10 +243,18 @@ void FlamerControl(short item_number)
 	rnd = (short)GetRandomControl();
 
 	if (item->current_anim_state == 6 || item->current_anim_state == 11)
-		TriggerDynamic(pos.x, pos.y, pos.z, (rnd & 3) + 10, 31 - ((rnd >> 4) & 3), 24 - ((rnd >> 6) & 3), rnd & 7);
+	{
+		r = 255 - ((rnd >> 4) & 0x1F);
+		g = 192 - ((rnd >> 6) & 0x1F);
+		b = rnd & 0x3F;
+		TriggerDynamic(pos.x, pos.y, pos.z, (rnd & 3) + 10, r, g, b);
+	}
 	else
 	{
-		TriggerDynamic(pos.x, pos.y, pos.z, (rnd & 3) + 6, 24 - ((rnd >> 4) & 3), 16 - ((rnd >> 6) & 3), rnd & 3);
+		r = 192 - ((rnd >> 4) & 0x1F);
+		g = 128 - ((rnd >> 6) & 0x1F);
+		b = rnd & 0x1F;
+		TriggerDynamic(pos.x, pos.y, pos.z, (rnd & 3) + 6, r, g, b);
 		TriggerPilotFlame(item_number);
 	}
 

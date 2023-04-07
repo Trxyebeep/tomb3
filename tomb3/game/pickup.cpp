@@ -240,6 +240,8 @@ void AnimatingPickUp(short item_number)
 	if (c > 31)
 		c = 31;
 
+	c <<= 3;
+
 	if (item->object_number == SAVEGAME_CRYSTAL_ITEM)
 	{
 		item->pos.y_pos = item->item_flags[2] - abs(ang >> 4) - 64;

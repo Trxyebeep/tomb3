@@ -223,9 +223,9 @@ void SealmuteControl(short item_number)
 			}
 
 			b = GetRandomControl();
-			r = (c * (31 - ((b >> 4) & 3))) >> 4;
-			g = (c * (24 - ((b >> 6) & 7))) >> 4;
-			b = (c * (b & 7)) >> 4;
+			r = (c * (255 - ((b >> 4) & 0x1F))) >> 4;
+			g = (c * (192 - ((b >> 6) & 0x3F))) >> 4;
+			b = (c * (b & 0x3F)) >> 4;
 			TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 12, r, g, b);
 		}
 		else if (item->frame_number >= anims[item->anim_number].frame_base + 1 && item->frame_number <= anims[item->anim_number].frame_end - 8)

@@ -59,7 +59,7 @@ void ArmySMGControl(short item_number)
 		pos.y = army_gun.y;
 		pos.z = army_gun.z;
 		GetJointAbsPosition(item, &pos, army_gun.mesh_num);
-		TriggerDynamic(pos.x, pos.y, pos.z, (item->fired_weapon << 1) + 8, 24, 16, 4);
+		TriggerDynamic(pos.x, pos.y, pos.z, (item->fired_weapon << 1) + 8, 192, 128, 32);
 		phd_PopMatrix();
 	}
 

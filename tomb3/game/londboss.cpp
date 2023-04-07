@@ -351,9 +351,9 @@ void ControlLondBossPlasmaBall(short fx_number)
 		EffectNewRoom(fx_number, room_number);
 
 	c = GetRandomControl();
-	r = c & 7;
-	g = 31 - ((c >> 4) & 3);
-	b = 24 - ((c >> 6) & 3);
+	r = c & 0x3F;
+	g = 255 - ((c >> 4) & 0x1F);
+	b = 192 - ((c >> 6) & 0x1F);
 	TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, falloffs[fx->flag1], r, g, b);
 }
 
@@ -440,7 +440,7 @@ void ControlLaserBolts(short item_number)
 		}
 	}
 
-	g = 31 - (GetRandomControl() & 7);
+	g = 255 - (GetRandomControl() & 0x3F);
 	b = g >> 1;
 
 	if (item->item_flags[0] < 0)
@@ -534,16 +534,16 @@ void LondonBossControl(short item_number)
 		if (item->item_flags[2] < 12)
 		{
 			f = (GetRandomControl() & 1) - (item->item_flags[2] << 1) + 25;
-			r = (GetRandomControl() & 7) - item->item_flags[2] + 16;
-			g = 32 - item->item_flags[2];
-			b = 31;
+			r = (GetRandomControl() & 0x3F) - (item->item_flags[2] << 3) + 128;
+			g = 256 - (item->item_flags[2] << 3);
+			b = 255;
 		}
 		else
 		{
 			f = (GetRandomControl() & 3) + 8;
 			r = 0;
-			g = (GetRandomControl() & 7) + 8;
-			b = (GetRandomControl() & 7) + 16;
+			g = (GetRandomControl() & 0x3F) + 64;
+			b = (GetRandomControl() & 0x3F) + 128;
 		}
 
 		TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, f, r, g, b);
@@ -948,6 +948,7 @@ void LondonBossControl(short item_number)
 	if (g > 31)
 		g = 31;
 
+	g <<= 3;
 	TriggerDynamic(points[1].x, points[1].y, points[1].z, 10, 0, g >> 1, g >> 2);
 	item->item_flags[1] = (item->item_flags[1] + 1) & 0x3F;
 

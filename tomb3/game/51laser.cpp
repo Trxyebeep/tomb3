@@ -37,7 +37,7 @@ void ControlArea51Laser(short item_number)
 
 	item->current_anim_state = 0;
 	TriggerDynamic(item->pos.x_pos, item->pos.y_pos - 64, item->pos.z_pos,
-		(GetRandomControl() & 1) + 8, (GetRandomControl() & 3) + 24, GetRandomControl() & 3, GetRandomControl() & 1);
+		(GetRandomControl() & 1) + 8, (GetRandomControl() & 0x1F) + 192, GetRandomControl() & 0x1F, GetRandomControl() & 7);
 	item->mesh_bits = -1 - (GetRandomControl() & 0x14);
 	dx = abs(((item->item_flags[1] & 0xFF) << 9) - item->pos.x_pos);
 	dz = abs(((item->item_flags[1] & 0xFF00) << 1) - item->pos.z_pos);

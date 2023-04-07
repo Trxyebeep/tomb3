@@ -302,7 +302,7 @@ void ControlWillbossPlasmaBall(short fx_number)
 	FLOOR_INFO* floor;
 	PHD_VECTOR pos;
 	PHD_VECTOR oldPos;
-	long speed, h, c;
+	long speed, h, c, r, g, b;
 	short room_number;
 	short ang[2];
 	char falloffs[5];
@@ -391,7 +391,10 @@ void ControlWillbossPlasmaBall(short fx_number)
 		if (falloffs[fx->flag1])
 		{
 			c = GetRandomControl();
-			TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, falloffs[fx->flag1], c & 7, 31 - ((c >> 4) & 3), 24 - ((c >> 6) & 3));
+			r = c & 0x3F;
+			g = 255 - ((c >> 4) & 0x1F);
+			b = 192 - ((c >> 6) & 0x1F);
+			TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, falloffs[fx->flag1], r, g, b);
 		}
 	}
 }
@@ -813,9 +816,9 @@ void WillBossControl(short item_number)
 			GetJointAbsPosition(item, &pos, 17);
 
 			b = GetRandomControl();
-			r = (f * (b & 7)) >> 4;
-			g = (f * (31 - ((b >> 4) & 3))) >> 4;
-			b = (f * (24 - ((b >> 6) & 3))) >> 4;
+			r = (f * (b & 0x3F)) >> 4;
+			g = (f * (255 - ((b >> 4) & 0x1F))) >> 4;
+			b = (f * (192 - ((b >> 6) & 0x1F))) >> 4;
 
 			TriggerDynamic(pos.x, pos.y, pos.z, 12, r, g, b);
 			TriggerPlasma(item_number, 7, f << 2);

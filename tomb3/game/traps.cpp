@@ -233,7 +233,7 @@ void FlameControl(short fx_number)
 {
 	FX_INFO* fx;
 	PHD_3DPOS pos;
-	long rnd, x, y, z, angle, rad, s, c, dist, f2, wh;
+	long rnd, x, y, z, angle, rad, s, c, dist, f2, wh, r, g, b;
 	uchar xzoffs[16][2] =
 	{
 		{ 9, 9 },
@@ -309,9 +309,19 @@ void FlameControl(short fx_number)
 			}
 
 			if (lara.BurnGreen)
-				TriggerDynamic(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos, 13, (rnd >> 2) & 7, (rnd & 7) + 24, ((rnd >> 4) & 3) + 12);
+			{
+				r = (rnd >> 2) & 0x3F;
+				g = (rnd & 0x3F) + 192;
+				b = ((rnd >> 4) & 0x1F) + 96;
+			}
 			else
-				TriggerDynamic(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos, 13, (rnd & 7) + 24, ((rnd >> 4) & 3) + 12, 0);
+			{
+				r = (rnd & 0x3F) + 192;
+				g = ((rnd >> 4) & 0x1F) + 96;
+				b = 0;
+			}
+
+			TriggerDynamic(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos, 13, r, g, b);
 
 			if (lara_item->room_number != fx->room_number)
 				EffectNewRoom(fx_number, lara_item->room_number);
@@ -407,6 +417,9 @@ void FlameControl(short fx_number)
 	x = fx->pos.x_pos + ((rnd & 0xF) << 5);
 	y = fx->pos.y_pos + ((rnd & 0xF0) << 1);
 	z = fx->pos.z_pos + ((rnd >> 3) & 0x1E0);
+	r = (rnd & 0x3F) + 192;
+	g = ((rnd >> 4) & 0x1F) + 96;
+	b = 0;
 
 	if (fx->frame_number == SIDE_FIRE)
 	{
@@ -422,11 +435,10 @@ void FlameControl(short fx_number)
 		angle = (((fx->pos.y_rot >> 3) & 0xFFFE) - 4096) & 0x1FFE;
 		s = (rad * rcossin_tbl[angle]) >> (W2V_SHIFT - 2);
 		c = (rad * rcossin_tbl[angle + 1]) >> (W2V_SHIFT - 2);
-		TriggerDynamic(x + s, y, z + c, fx->flag2 ? 6 : 13,
-			(rnd & 7) + 24, ((rnd >> 4) & 3) + 12, 0);
+		TriggerDynamic(x + s, y, z + c, fx->flag2 ? 6 : 13, r, g, b);
 	}
 	else
-		TriggerDynamic(x, y, z, 16 - (fx->frame_number << 2), (rnd & 7) + 24, ((rnd >> 4) & 3) + 12, 0);
+		TriggerDynamic(x, y, z, 16 - (fx->frame_number << 2), r, g, b);
 
 	SoundEffect(SFX_LOOP_FOR_SMALL_FIRES, &fx->pos, SFX_DEFAULT);
 
@@ -1031,6 +1043,7 @@ void Pendulum(short item_number)
 	ITEM_INFO* item;
 	FLOOR_INFO* floor;
 	PHD_VECTOR pos;
+	long r, g;
 
 	item = &items[item_number];
 
@@ -1063,7 +1076,9 @@ void Pendulum(short item_number)
 		pos.y = -512;
 		pos.z = 0;
 		GetJointAbsPosition(item, &pos, 5);
-		TriggerDynamic(pos.x, pos.y, pos.z, 11, (GetRandomControl() & 7) + 24, (GetRandomControl() & 3) + 12, 0);
+		r = (GetRandomControl() & 0x3F) + 192;
+		g = (GetRandomControl() & 0x1F) + 96;
+		TriggerDynamic(pos.x, pos.y, pos.z, 11, r, g, 0);
 	}
 
 	AnimateItem(item);

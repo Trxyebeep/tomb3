@@ -119,7 +119,7 @@ void TrainControl(short item_number)
 	x = item->pos.x_pos + ((3072 * s) >> W2V_SHIFT);
 	y = item->pos.y_pos;
 	z = item->pos.z_pos + ((3072 * c) >> W2V_SHIFT);
-	TriggerDynamic(x, y, z, 16, 31, 31, 31);
+	TriggerDynamic(x, y, z, 16, 255, 255, 255);
 
 	if (item->item_flags[1] == (tomb3.gold ? speed : 260))
 	{

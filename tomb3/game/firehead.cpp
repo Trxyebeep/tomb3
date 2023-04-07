@@ -96,8 +96,8 @@ void ControlFireHead(short item_number)
 	}
 
 	angle = (((item->pos.y_rot >> 3) & 0xFFFE) + 0x800) & 0x1FFE;
-	r = (GetRandomControl() & 7) + 24;
-	g = (GetRandomControl() & 3) + 12;
+	r = (GetRandomControl() & 0x3F) + 192;
+	g = (GetRandomControl() & 0x1F) + 96;
 
 	if (item->current_anim_state == FIREHEAD_REAR)
 	{

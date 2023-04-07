@@ -500,9 +500,9 @@ void ControlTonyFireBall(short fx_number)
 	if (falloffs[fx->flag1])
 	{
 		type = GetRandomControl();
-		r = 31 - ((type >> 4) & 3);
-		g = 24 - ((type >> 6) & 3);
-		b = type & 7;
+		r = 255 - ((type >> 4) & 0x1F);
+		g = 192 - ((type >> 6) & 0x1F);
+		b = type & 0x3F;
 		TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, falloffs[fx->flag1], r, g, b);
 	}
 }
@@ -727,9 +727,9 @@ void TonyBossControl(short item_number)
 		}
 
 		b = GetRandomControl();
-		r = (f * (31 - ((b >> 4) & 3))) >> 4;
-		g = (f * (24 - ((b >> 6) & 3))) >> 4;
-		b = (f * (b & 7)) >> 4;
+		r = (f * (255 - ((b >> 4) & 0x1F))) >> 4;
+		g = (f * (192 - ((b >> 6) & 0x1F))) >> 4;
+		b = (f * (b & 0x3F)) >> 4;
 
 		pos.x = 0;
 		pos.y = 0;

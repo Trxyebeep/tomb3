@@ -233,7 +233,7 @@ void UpdateLaraGuns()
 		TriggerDynamic(pos->x + (GetRandomControl() & 0xFF) - 128,
 			pos->y - (GetRandomControl() & 0x7F) + 63,
 			pos->z + (GetRandomControl() & 0xFF) - 128,
-			10, (GetRandomControl() & 7) + 24, (GetRandomControl() & 3) + 16, GetRandomControl() & 7);
+			10, (GetRandomControl() & 0x3F) + 192, (GetRandomControl() & 0x1F) + 128, GetRandomControl() & 0x3F);
 	}
 
 	if (SmokeCountL)

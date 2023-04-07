@@ -44,7 +44,7 @@ void LondSecControl(short item_number)
 		pos.y = londsec_gun.y;
 		pos.z = londsec_gun.z;
 		GetJointAbsPosition(item, &pos, londsec_gun.mesh_num);
-		TriggerDynamic(pos.x, pos.y, pos.z, (item->fired_weapon << 1) + 4, 24, 16, 4);
+		TriggerDynamic(pos.x, pos.y, pos.z, (item->fired_weapon << 1) + 4, 192, 128, 32);
 		phd_PopMatrix();
 	}
 

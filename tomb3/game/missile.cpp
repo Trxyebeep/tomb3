@@ -44,7 +44,7 @@ void ControlMissile(short fx_number)
 		else if (fx->object_number == DRAGON_FIRE)
 		{
 			TriggerFireFlame(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, -1, 0);
-			TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, 24, 31, 24, GetRandomControl() & 7);
+			TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, 24, 255, 192, GetRandomControl() & 0x3F);
 		}
 
 		KillEffect(fx_number);
@@ -89,7 +89,7 @@ void ControlMissile(short fx_number)
 	}
 	else if (fx->object_number == DRAGON_FIRE && !fx->counter--)
 	{
-		TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, 24, 31, 24, GetRandomControl() & 7);
+		TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, 24, 255, 192, GetRandomControl() & 0x3F);
 		SoundEffect(SFX_SECURITY_GUARD_FIRE, &fx->pos, 0);
 		KillEffect(fx_number);
 	}

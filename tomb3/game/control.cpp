@@ -274,14 +274,16 @@ long ControlPhase(long nframes, long demo_mode)
 			{
 				r = (GetRandomControl() & 7) - lara.electric + 16;
 				g = 32 - lara.electric;
-				b = 31;
+				b = 255;
 				falloff = (GetRandomControl() & 1) - 2 * lara.electric + 25;
+				r <<= 3;
+				g <<= 3;
 			}
 			else
 			{
 				r = 0;
-				g = (GetRandomControl() & 7) + 8;
-				b = (GetRandomControl() & 7) + 16;
+				g = (GetRandomControl() & 0x3F) + 64;
+				b = (GetRandomControl() & 0x3F) + 128;
 				falloff = (GetRandomControl() & 3) + 8;
 			}
 

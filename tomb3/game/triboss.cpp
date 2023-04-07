@@ -598,8 +598,8 @@ void TribeBossControl(short item_number)
 			z = TrigDynamics[0].z;
 			f = (GetRandomControl() & 3) + 8;
 			r = 0;
-			g = (GetRandomControl() & 7) + 8;
-			b = (GetRandomControl() & 7) + 16;
+			g = (GetRandomControl() & 0x3F) + 64;
+			b = (GetRandomControl() & 0x3F) + 128;
 		}
 		else if (i == 1)
 		{
@@ -607,13 +607,13 @@ void TribeBossControl(short item_number)
 
 			if (bossdata.attack_type)
 			{
-				g = (GetRandomControl() & 7) + 16;
-				b = (GetRandomControl() & 7) + 8;
+				g = (GetRandomControl() & 0x3F) + 128;
+				b = (GetRandomControl() & 0x3F) + 64;
 			}
 			else
 			{
-				g = (GetRandomControl() & 7) + 8;
-				b = (GetRandomControl() & 7) + 16;
+				g = (GetRandomControl() & 0x3F) + 64;
+				b = (GetRandomControl() & 0x3F) + 128;
 			}
 
 			f = (GetRandomControl() & 7) + 8;
@@ -634,17 +634,17 @@ void TribeBossControl(short item_number)
 			if (f <= 0)
 				continue;
 
-			r = f >> 2;
+			r = f << 1;
 
 			if (bossdata.attack_type)
 			{
-				g = (GetRandomControl() & 7) + 24;
-				b = (GetRandomControl() & 7) + 16;
+				g = (GetRandomControl() & 0x3F) + 192;
+				b = (GetRandomControl() & 0x3F) + 128;
 			}
 			else
 			{
-				g = (GetRandomControl() & 7) + 16;
-				b = (GetRandomControl() & 7) + 24;
+				g = (GetRandomControl() & 0x3F) + 128;
+				b = (GetRandomControl() & 0x3F) + 192;
 			}
 			
 			x = TrigDynamics[2].x;
