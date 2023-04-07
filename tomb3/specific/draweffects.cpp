@@ -165,7 +165,7 @@ static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, ulong c, bool cFlag)
 		v->color = RGB_MAKE(c, c, c);
 }
 
-static __inline void ClipCheckPoint(PHD_VBUF* v, long x, long y, long z, long xv, long yv)
+static void ClipCheckPoint(PHD_VBUF* v, long x, long y, long z, long xv, long yv)
 {
 	char clipFlag;
 
@@ -195,7 +195,7 @@ static __inline void ClipCheckPoint(PHD_VBUF* v, long x, long y, long z, long xv
 	v->ooz = f_persp / (float)z * f_oneopersp;
 }
 
-static __inline void ClipCheckPoint(PHD_VBUF* v, long x, long y, long z)
+static void ClipCheckPoint(PHD_VBUF* v, long x, long y, long z)
 {
 	char clipFlag;
 
@@ -218,7 +218,7 @@ static __inline void ClipCheckPoint(PHD_VBUF* v, long x, long y, long z)
 	v->ooz = f_persp / (float)z * f_oneopersp;
 }
 
-static __inline void setXYZ3(PHD_VBUF* v,
+static void setXYZ3(PHD_VBUF* v,
 	long x1, long y1, long z1, long xv1, long yv1, long c1,
 	long x2, long y2, long z2, long xv2, long yv2, long c2,
 	long x3, long y3, long z3, long xv3, long yv3, long c3)
@@ -231,7 +231,7 @@ static __inline void setXYZ3(PHD_VBUF* v,
 	v[2].color = c3;
 }
 
-static __inline void setXYZ3(PHD_VBUF* v,
+static void setXYZ3(PHD_VBUF* v,
 	long x1, long y1, long z1, long c1,
 	long x2, long y2, long z2, long c2,
 	long x3, long y3, long z3, long c3)
@@ -245,36 +245,72 @@ static __inline void setXYZ3(PHD_VBUF* v,
 	v[2].color = c3;
 }
 
-static __inline void setXYZ4(PHD_VBUF* v,
+static void setXYZ4(PHD_VBUF* v,
 	long x1, long y1, long z1, long xv1, long yv1, long c1,
 	long x2, long y2, long z2, long xv2, long yv2, long c2,
 	long x3, long y3, long z3, long xv3, long yv3, long c3,
 	long x4, long y4, long z4, long xv4, long yv4, long c4)
 {
+	long r, g, b;
+
 	ClipCheckPoint(&v[0], x1, y1, z1, xv1, yv1);
 	ClipCheckPoint(&v[1], x2, y2, z2, xv2, yv2);
 	ClipCheckPoint(&v[2], x3, y3, z3, xv3, yv3);
 	ClipCheckPoint(&v[3], x4, y4, z4, xv4, yv4);
-	v[0].color = c1;
-	v[1].color = c2;
-	v[2].color = c3;
-	v[3].color = c4;
+
+	r = RGB_GETBLUE(c1);
+	g = RGB_GETGREEN(c1);
+	b = RGB_GETRED(c1);
+	v[0].color = RGB_MAKE(r, g, b);
+
+	r = RGB_GETBLUE(c2);
+	g = RGB_GETGREEN(c2);
+	b = RGB_GETRED(c2);
+	v[1].color = RGB_MAKE(r, g, b);
+
+	r = RGB_GETBLUE(c3);
+	g = RGB_GETGREEN(c3);
+	b = RGB_GETRED(c3);
+	v[2].color = RGB_MAKE(r, g, b);
+
+	r = RGB_GETBLUE(c4);
+	g = RGB_GETGREEN(c4);
+	b = RGB_GETRED(c4);
+	v[3].color = RGB_MAKE(r, g, b);
 }
 
-static __inline void setXYZ4(PHD_VBUF* v,
+static void setXYZ4(PHD_VBUF* v,
 	long x1, long y1, long z1, long c1,
 	long x2, long y2, long z2, long c2,
 	long x3, long y3, long z3, long c3,
 	long x4, long y4, long z4, long c4)
 {
+	long r, g, b;
+
 	ClipCheckPoint(&v[0], x1, y1, z1);
 	ClipCheckPoint(&v[1], x2, y2, z2);
 	ClipCheckPoint(&v[2], x3, y3, z3);
 	ClipCheckPoint(&v[3], x4, y4, z4);
-	v[0].color = c1;
-	v[1].color = c2;
-	v[2].color = c3;
-	v[3].color = c4;
+
+	r = RGB_GETBLUE(c1);
+	g = RGB_GETGREEN(c1);
+	b = RGB_GETRED(c1);
+	v[0].color = RGB_MAKE(r, g, b);
+
+	r = RGB_GETBLUE(c2);
+	g = RGB_GETGREEN(c2);
+	b = RGB_GETRED(c2);
+	v[1].color = RGB_MAKE(r, g, b);
+
+	r = RGB_GETBLUE(c3);
+	g = RGB_GETGREEN(c3);
+	b = RGB_GETRED(c3);
+	v[2].color = RGB_MAKE(r, g, b);
+
+	r = RGB_GETBLUE(c4);
+	g = RGB_GETGREEN(c4);
+	b = RGB_GETRED(c4);
+	v[3].color = RGB_MAKE(r, g, b);
 }
 
 void LaraElectricDeath(long lr, ITEM_INFO* item)
@@ -1273,7 +1309,7 @@ void DrawExplosionRings()
 				r = (r * ring->life) >> 5;
 				g = (g * ring->life) >> 5;
 				b = (b * ring->life) >> 5;
-				vtx->rgb = r | (g << 8) | (b << 16);
+				vtx->rgb = RGB_MAKE(b, g, r);
 
 				ang = (ang + 512) & 0xFFF;
 
@@ -1504,7 +1540,7 @@ void DrawSummonRings()
 					r = (r * cval) >> 7;
 					g = (g * cval) >> 7;
 					b = (b * cval) >> 7;
-					vtx->rgb = r | (g << 8) | (b << 16);
+					vtx->rgb = RGB_MAKE(b, g, r);
 				}
 
 				ang = (ang + 512) & 0xFFF;
@@ -1752,7 +1788,7 @@ void DrawKnockBackRings()
 				r = (r * cval) >> 5;
 				g = (g * cval) >> 5;
 				b = (b * cval) >> 5;
-				vtx->rgb = r | (g << 8) | (b << 16);
+				vtx->rgb = RGB_MAKE(b, g, r);
 
 				ang = (ang + 512) & 0xFFF;
 
@@ -2682,7 +2718,7 @@ void DrawTonyBossShield(ITEM_INFO* item)
 				if (b < 0)
 					b = 0;
 
-				s0->rgb = r | (g << 8) | (b << 16);
+				s0->rgb = RGB_MAKE(b, g, r);
 			}
 		}
 
@@ -2875,7 +2911,7 @@ void DrawTribeBossShield(ITEM_INFO* item)
 				if (b < 0)
 					b = 0;
 
-				s0->rgb = r | (g << 8) | (b << 16);
+				s0->rgb = RGB_MAKE(b, g, r);
 			}
 		}
 
@@ -3065,7 +3101,7 @@ void DrawLondonBossShield(ITEM_INFO* item)
 				if (b < 0)
 					b = 0;
 
-				s0->rgb = r | (g << 8) | (b << 16);
+				s0->rgb = RGB_MAKE(b, g, r);
 			}
 		}
 
@@ -3255,7 +3291,7 @@ void DrawWillBossShield(ITEM_INFO* item)
 				if (b < 0)
 					b = 0;
 
-				s0->rgb = r | (g << 8) | (b << 16);
+				s0->rgb = RGB_MAKE(b, g, r);
 			}
 		}
 
@@ -3483,8 +3519,8 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 
 		if (z1 > 32 && z2 > 32 && ClipLine(x1, y1, x2, y2, w, h))
 		{
-			c1 = (r1 << 16) | (g1 << 8) | b1;
-			c2 = (r2 << 16) | (g2 << 8) | b2;
+			c1 = RGB_MAKE(r1, g1, b1);
+			c2 = RGB_MAKE(r2, g2, b2);
 
 			if (tomb3.improved_lasers)
 			{
