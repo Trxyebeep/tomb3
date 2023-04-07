@@ -42,7 +42,7 @@ void KayakInitialise(short item_number)
 	KAYAKINFO* kayak;
 
 	item = &items[item_number];
-	kayak = (KAYAKINFO*)game_malloc(sizeof(KAYAKINFO), 0);
+	kayak = (KAYAKINFO*)game_malloc(sizeof(KAYAKINFO));
 	item->data = kayak;
 	kayak->Flags = 0;
 	kayak->Rot = 0;

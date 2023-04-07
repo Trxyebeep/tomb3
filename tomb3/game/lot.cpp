@@ -16,18 +16,18 @@ void InitialiseLOTarray()
 {
 	CREATURE_INFO* creature;
 
-	baddie_slots = (CREATURE_INFO*)game_malloc(MAX_LOT * sizeof(CREATURE_INFO), 33);
+	baddie_slots = (CREATURE_INFO*)game_malloc(MAX_LOT * sizeof(CREATURE_INFO));
 
 	for (int i = 0; i < MAX_LOT; i++)
 	{
 		creature = &baddie_slots[i];
 		creature->item_num = NO_ITEM;
-		creature->LOT.node = (BOX_NODE*)game_malloc(sizeof(BOX_NODE) * number_boxes, 34);
+		creature->LOT.node = (BOX_NODE*)game_malloc(sizeof(BOX_NODE) * number_boxes);
 	}
 
 	slots_used = 0;
 
-	non_lot_slots = (CREATURE_INFO*)game_malloc(MAX_NONLOT * sizeof(CREATURE_INFO), 33);
+	non_lot_slots = (CREATURE_INFO*)game_malloc(MAX_NONLOT * sizeof(CREATURE_INFO));
 
 	for (int i = 0; i < MAX_NONLOT; i++)
 	{

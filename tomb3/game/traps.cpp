@@ -1397,7 +1397,7 @@ void InitialiseRollingBall(short item_number)
 	GAME_VECTOR* pos;
 
 	item = &items[item_number];
-	item->data = (GAME_VECTOR*)game_malloc(sizeof(GAME_VECTOR), 38);
+	item->data = (GAME_VECTOR*)game_malloc(sizeof(GAME_VECTOR));
 	pos = (GAME_VECTOR*)item->data;
 	pos->x = item->pos.x_pos;
 	pos->y = item->pos.y_pos;

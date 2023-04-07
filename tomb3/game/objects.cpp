@@ -82,7 +82,7 @@ void InitialiseLift(short item_number)
 	LIFT_INFO* lift;
 
 	item = &items[item_number];
-	lift = (LIFT_INFO*)game_malloc(sizeof(LIFT_INFO), 0);
+	lift = (LIFT_INFO*)game_malloc(sizeof(LIFT_INFO));
 	item->data = lift;
 	lift->start_height = item->pos.y_pos;
 	lift->wait_time = 0;
@@ -362,7 +362,7 @@ void InitialiseDoor(short item_number)
 	short box_number, room_number, two_room;
 
 	item = &items[item_number];
-	door = (DOOR_DATA*)game_malloc(sizeof(DOOR_DATA), 31);
+	door = (DOOR_DATA*)game_malloc(sizeof(DOOR_DATA));
 	item->data = door;
 	dx = 0;
 	dy = 0;

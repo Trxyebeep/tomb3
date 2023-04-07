@@ -43,7 +43,7 @@ void SubInitialise(short item_number)
 	SUBINFO* sub;
 
 	item = &items[item_number];
-	sub = (SUBINFO*)game_malloc(sizeof(SUBINFO), 0);
+	sub = (SUBINFO*)game_malloc(sizeof(SUBINFO));
 	item->data = sub;
 	sub->Rot = 0;
 	sub->Vel = 0;

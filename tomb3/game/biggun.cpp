@@ -23,7 +23,7 @@ void BigGunInitialise(short item_number)
 	BIGGUNINFO* gun;
 
 	item = &items[item_number];
-	gun = (BIGGUNINFO*)game_malloc(sizeof(BIGGUNINFO), 0);
+	gun = (BIGGUNINFO*)game_malloc(sizeof(BIGGUNINFO));
 	item->data = gun;
 	gun->FireCount = 0;
 	gun->Flags = 0;

@@ -17,57 +17,6 @@
 #include "fmv.h"
 #include "../newstuff/discord.h"
 
-const char* game_malloc_types[47] =
-{
-	"Temp Alloc",
-	"Texture Pages",
-	"Mesh Pointers",
-	"Meshes",
-	"Anims",
-	"Structs",
-	"Ranges",
-	"Commands",
-	"Bones",
-	"Frames",
-	"Room Textures",
-	"Room Infos",
-	"Room Mesh",
-	"Room Door",
-	"Room Floor",
-	"Room Lights",
-	"Room Static Mesh Infos",
-	"Floor Data",
-	"ITEMS!!",
-	"Cameras",
-	"Sound FX",
-	"Boxes",
-	"Overlaps",
-	"GroundZone",
-	"FlyZone",
-	"Animating Texture Ranges",
-	"Cinematic Frames",
-	"LoadDemo Buffer",
-	"SaveDemo Buffer",
-	"Cinematic Effects",
-	"Mummy Head Turn",
-	"Extra Door stuff",
-	"Effects_Array",
-	"Creature Data",
-	"Creature LOT",
-	"Sample Infos",
-	"Samples",
-	"Sample Offsets",
-	"Rolling Ball Stuff",
-	"Skidoo Stuff",
-	"Load Piccy Buffer",
-	"FMV Buffers",
-	"Polygon Buffers",
-	"Order Tables",
-	"CLUTs",
-	"Texture Infos",
-	"Sprite Infos"
-};
-
 char* malloc_ptr;
 char* malloc_buffer;
 static long malloc_free;
@@ -84,11 +33,6 @@ static D3DTLVERTEX* TLUnRollBuffer;
 long DynamicColorTable[33][33][256];
 WATERTAB WaterTable[22][64];
 float wibble_table[32];
-
-static short shade_table[32];
-static long rand_table[32];
-static long wibble_light[32][32];
-static long SqrtTable[1024];
 
 void ShutdownGame()
 {
@@ -117,17 +61,12 @@ void ShutdownGame()
 
 void CalculateWibbleTable()
 {
-	long sin;
+	long s;
 
 	for (int i = 0; i < 32; i++)
 	{
-		sin = phd_sin(i * 0x10000 / 32);
-		wibble_table[i] = float((2 * sin) >> W2V_SHIFT);
-		shade_table[i] = short((768 * sin) >> W2V_SHIFT);
-		rand_table[i] = (GetRandomDraw() >> 5) - 511;
-
-		for (int j = 0; j < 31; j++)
-			wibble_light[i][j] = ((j - 16 * i) << 9) / 31;
+		s = phd_sin(i * 0x10000 / 32);
+		wibble_table[i] = float((2 * s) >> W2V_SHIFT);
 	}
 }
 
@@ -151,7 +90,7 @@ ushort GetRandom(WATERTAB* wt, long lp)
 
 void init_water_table()
 {
-	short sin;
+	short s;
 	static short water_shimmer[4] = { 31, 63, 95, 127 };
 	static short water_choppy[4] = { 16, 53, 90, 127 };
 	static uchar water_abs[4] = { 4, 8, 12, 16 };
@@ -160,28 +99,28 @@ void init_water_table()
 
 	for (int i = 0; i < 64; i++)
 	{
-		sin = rcossin_tbl[i << 7];
-		WaterTable[0][i].shimmer = (63 * sin) >> 15;
-		WaterTable[0][i].choppy = (16 * sin) >> 12;
+		s = rcossin_tbl[i << 7];
+		WaterTable[0][i].shimmer = (63 * s) >> 15;
+		WaterTable[0][i].choppy = (16 * s) >> 12;
 		WaterTable[0][i].random = (uchar)GetRandom(&WaterTable[0][0], i);
 		WaterTable[0][i].abs = 0;
 
-		WaterTable[1][i].shimmer = (32 * sin) >> 15;
+		WaterTable[1][i].shimmer = (32 * s) >> 15;
 		WaterTable[1][i].choppy = 0;
 		WaterTable[1][i].random = (uchar)GetRandom(&WaterTable[1][0], i);
 		WaterTable[1][i].abs = -3;
 
-		WaterTable[2][i].shimmer = (64 * sin) >> 15;
+		WaterTable[2][i].shimmer = (64 * s) >> 15;
 		WaterTable[2][i].choppy = 0;
 		WaterTable[2][i].random = (uchar)GetRandom(&WaterTable[2][0], i);
 		WaterTable[2][i].abs = 0;
 
-		WaterTable[3][i].shimmer = (96 * sin) >> 15;
+		WaterTable[3][i].shimmer = (96 * s) >> 15;
 		WaterTable[3][i].choppy = 0;
 		WaterTable[3][i].random = (uchar)GetRandom(&WaterTable[3][0], i);
 		WaterTable[3][i].abs = 4;
 
-		WaterTable[4][i].shimmer = (127 * sin) >> 15;
+		WaterTable[4][i].shimmer = (127 * s) >> 15;
 		WaterTable[4][i].choppy = 0;
 		WaterTable[4][i].random = (uchar)GetRandom(&WaterTable[4][0], i);
 		WaterTable[4][i].abs = 8;
@@ -190,8 +129,8 @@ void init_water_table()
 		{
 			for (int m = 0; m < 4; m++)
 			{
-				WaterTable[k + m][i].shimmer = -((sin * water_shimmer[m]) >> 15);
-				WaterTable[k + m][i].choppy = sin * water_choppy[j] >> 12;
+				WaterTable[k + m][i].shimmer = -((s * water_shimmer[m]) >> 15);
+				WaterTable[k + m][i].choppy = s * water_choppy[j] >> 12;
 				WaterTable[k + m][i].random = (uchar)GetRandom(&WaterTable[k + m][0], i);
 				WaterTable[k + m][i].abs = water_abs[m];
 			}
@@ -206,7 +145,7 @@ void init_game_malloc()
 	malloc_used = 0;
 }
 
-void* game_malloc(long size, long type)
+void* game_malloc(long size)
 {
 	void* ptr;
 
@@ -214,7 +153,7 @@ void* game_malloc(long size, long type)
 
 	if (size > malloc_free)
 	{
-		wsprintf(exit_message, "game_malloc(): OUT OF MEMORY %s %d", game_malloc_types[type], size);
+		wsprintf(exit_message, "game_malloc(): OUT OF MEMORY. Needed: %d, Free: %d", size, malloc_free);
 		S_ExitSystem(exit_message);
 	}
 
@@ -225,7 +164,7 @@ void* game_malloc(long size, long type)
 	return ptr;
 }
 
-void game_free(long size, long type)
+void game_free(long size)
 {
 	size = (size + 3) & ~3;
 	malloc_ptr -= size;
@@ -251,9 +190,6 @@ long S_InitialiseSystem()
 
 	TLUnRollBuffer = (D3DTLVERTEX*)GlobalAlloc(GMEM_FIXED, MAX_TLVERTICES * sizeof(D3DTLVERTEX));
 	UnRollBuffer = (D3DTLVERTEX*)(((long)TLUnRollBuffer + 32) & 0xFFFFFFE0);
-
-	for (int i = 0; i < 1024; i++)
-		SqrtTable[i] = (long)sqrt((float)i);
 
 	for (int a = 1; a < 33; a++)
 	{

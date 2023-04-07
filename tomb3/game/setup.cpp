@@ -257,7 +257,7 @@ long InitialiseLevel(long level, long type)
 		GetAIPickups();
 	}
 
-	effects = (FX_INFO*)game_malloc(sizeof(FX_INFO) * 50, 32);
+	effects = (FX_INFO*)game_malloc(sizeof(FX_INFO) * 50);
 	InitialiseFXArray();
 	InitialiseLOTarray();
 	T_InitPrint();
@@ -333,7 +333,7 @@ void BuildOutsideTable()
 	long x, y, i, rx, ry, lp;
 
 	max_slots = 0;
-	OutsideRoomTable = (char*)game_malloc(0xB640, 0);
+	OutsideRoomTable = (char*)game_malloc(0xB640);
 	memset(OutsideRoomTable, 0xFF, 0xB640);
 	printf("X %d, Y %d, Z %d, Xs %d, Ys %d\n", room->x, room->y, room->z, room->x_size, room->y_size);
 
@@ -431,7 +431,7 @@ void BuildOutsideTable()
 		}
 	}
 
-	game_free(((long)OutsideRoomTable - (long)oTable + 0xB643) & ~3, 0);	//free unused space (get rid of this asap btw)
+	game_free(((long)OutsideRoomTable - (long)oTable + 0xB643) & ~3);	//free unused space (get rid of this asap btw)
 	printf("Ouside room table = %d bytes, max_slots = %d\n", (long)oTable - (long)OutsideRoomTable, max_slots);
 }
 

@@ -24,7 +24,7 @@ void InitialiseBoat(short item_number)
 	BOAT_INFO* boat;
 
 	item = &items[item_number];
-	boat = (BOAT_INFO*)game_malloc(sizeof(BOAT_INFO), 0);
+	boat = (BOAT_INFO*)game_malloc(sizeof(BOAT_INFO));
 	item->data = boat;
 	boat->boat_turn = 0;
 	boat->right_fallspeed = 0;

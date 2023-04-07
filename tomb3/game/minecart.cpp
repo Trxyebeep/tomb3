@@ -23,7 +23,7 @@ void MineCartInitialise(short item_number)
 	ITEM_INFO* item;
 
 	item = &items[item_number];
-	item->data = game_malloc(sizeof(CARTINFO), 0);
+	item->data = game_malloc(sizeof(CARTINFO));
 }
 
 static long GetInMineCart(ITEM_INFO* item, ITEM_INFO* l, COLL_INFO* coll)
