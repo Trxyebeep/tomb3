@@ -4242,6 +4242,7 @@ void S_DrawLaserBolts(ITEM_INFO* item)
 	pz = (speed * phd_cos(item->pos.y_rot)) >> W2V_SHIFT;
 
 	phd_PushUnitMatrix();
+	phd_SetTrans(0, 0, 0);
 	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 
 	d = item->item_flags[1];
@@ -4683,9 +4684,7 @@ void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 	}
 
 	phd_PushUnitMatrix();
-	phd_mxptr[M03] = 0;
-	phd_mxptr[M13] = 0;
-	phd_mxptr[M23] = 0;
+	phd_SetTrans(0, 0, 0);
 	s = item->current_anim_state;
 
 	if (item == lara_item && s != AS_ALL4S && s != AS_CRAWL && s != AS_CRAWLBACK && s != AS_ALL4TURNL && s != AS_ALL4TURNR)
@@ -4855,9 +4854,7 @@ void S_DrawFootPrints()
 		pos[2].z = 64;
 
 		phd_PushUnitMatrix();
-		phd_mxptr[M03] = 0;
-		phd_mxptr[M13] = 0;
-		phd_mxptr[M23] = 0;
+		phd_SetTrans(0, 0, 0);
 		phd_TranslateRel(print->x, print->y - 16, print->z);
 		phd_RotY(print->YRot);
 

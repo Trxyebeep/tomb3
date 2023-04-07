@@ -224,9 +224,7 @@ void ControlRocket(short item_number)
 	item->shade = -0x3DF0;
 
 	phd_PushUnitMatrix();
-	phd_mxptr[M03] = 0;
-	phd_mxptr[M13] = 0;
-	phd_mxptr[M23] = 0;
+	phd_SetTrans(0, 0, 0);
 	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 
 	phd_PushMatrix();
@@ -490,9 +488,7 @@ void ControlGrenade(short item_number)
 	}
 
 	phd_PushUnitMatrix();
-	phd_mxptr[M03] = 0;
-	phd_mxptr[M13] = 0;
-	phd_mxptr[M23] = 0;
+	phd_SetTrans(0, 0, 0);
 	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 	phd_TranslateRel(0, 0, -64);
 	pos.x = phd_mxptr[M03] >> W2V_SHIFT;
@@ -898,9 +894,7 @@ void FireRocket()
 	savegame.ammo_used++;
 
 	phd_PushUnitMatrix();
-	phd_mxptr[M03] = 0;
-	phd_mxptr[M13] = 0;
-	phd_mxptr[M23] = 0;
+	phd_SetTrans(0, 0, 0);
 	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 
 	phd_PushMatrix();

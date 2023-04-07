@@ -122,9 +122,7 @@ void HairControl(long in_cutscene)
 	}
 
 	phd_PushUnitMatrix();
-	phd_mxptr[M03] = lara_item->pos.x_pos << W2V_SHIFT;
-	phd_mxptr[M13] = lara_item->pos.y_pos << W2V_SHIFT;
-	phd_mxptr[M23] = lara_item->pos.z_pos << W2V_SHIFT;
+	phd_SetTrans(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos);
 	phd_RotYXZ(lara_item->pos.y_rot, lara_item->pos.x_rot, lara_item->pos.z_rot);
 
 	if (frac)
@@ -313,9 +311,7 @@ void HairControl(long in_cutscene)
 		for (int i = 0; i < 6; i++)
 		{
 			phd_PushUnitMatrix();
-			phd_mxptr[M03] = hair[i].x_pos << W2V_SHIFT;
-			phd_mxptr[M13] = hair[i].y_pos << W2V_SHIFT;
-			phd_mxptr[M23] = hair[i].z_pos << W2V_SHIFT;
+			phd_SetTrans(hair[i].x_pos, hair[i].y_pos, hair[i].z_pos);
 			phd_RotYXZ(hair[i].y_rot, hair[i].x_rot, 0);
 			phd_TranslateRel(bone[1], bone[2], bone[3]);
 			hair[i + 1].x_pos = phd_mxptr[M03] >> W2V_SHIFT;
@@ -454,9 +450,7 @@ void HairControl(long in_cutscene)
 		hair[i - 1].x_rot = (short)-phd_atan(dist, hair[i].y_pos - hair[i - 1].y_pos);
 
 		phd_PushUnitMatrix();
-		phd_mxptr[M03] = hair[i - 1].x_pos << W2V_SHIFT;
-		phd_mxptr[M13] = hair[i - 1].y_pos << W2V_SHIFT;
-		phd_mxptr[M23] = hair[i - 1].z_pos << W2V_SHIFT;
+		phd_SetTrans(hair[i - 1].x_pos, hair[i - 1].y_pos, hair[i - 1].z_pos);
 		phd_RotYXZ(hair[i - 1].y_rot, hair[i - 1].x_rot, 0);
 
 		if (i == 6)

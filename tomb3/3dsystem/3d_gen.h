@@ -12,6 +12,7 @@ void phd_TranslateAbs(long x, long y, long z);
 void AlterFOV(short fov);
 void phd_PushMatrix();
 void phd_PushUnitMatrix();
+void phd_SetTrans(long x, long y, long z);
 void phd_PopMatrix();
 void SetZNear(long znear);
 void SetZFar(long zfar);

@@ -45,9 +45,7 @@ void DrawFlareInAir(ITEM_INFO* item)
 			S_CalculateStaticLight(2048);
 
 			phd_PushUnitMatrix();
-			phd_mxptr[M03] = 0;
-			phd_mxptr[M13] = 0;
-			phd_mxptr[M23] = 0;
+			phd_SetTrans(0, 0, 0);
 			phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 
 			phd_PushMatrix();

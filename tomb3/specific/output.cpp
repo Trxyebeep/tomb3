@@ -288,9 +288,7 @@ static void DrawPickup(short obj_num)
 	phd_LookAt(0, -1024, 0, 0, 0, 0, 0);
 
 	phd_PushUnitMatrix();
-	phd_mxptr[M03] = 0;
-	phd_mxptr[M13] = 0;
-	phd_mxptr[M23] = 1024 << W2V_SHIFT;
+	phd_SetTrans(0, 0, 1024);
 	phd_RotYXZ(PickupY, rotx, rotz);
 	phd_PutPolygonsPickup(meshes[objects[obj_num].mesh_index], x + PickupX, y);	
 	phd_PopMatrix();

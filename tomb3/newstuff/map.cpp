@@ -322,6 +322,7 @@ static void DrawMapRooms(long nList, short* rList)
 
 	CalcLaraMatrices(0);
 	phd_PushUnitMatrix();
+	phd_SetTrans(0, 0, 0);
 	CalcLaraMatrices(1);
 	phd_PopMatrix();
 	SetLaraUnderwaterNodes();

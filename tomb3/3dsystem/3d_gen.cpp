@@ -401,6 +401,13 @@ void phd_PushUnitMatrix()
 	phd_mxptr[M22] = 1 << W2V_SHIFT;
 }
 
+void phd_SetTrans(long x, long y, long z)
+{
+	phd_mxptr[M03] = x << W2V_SHIFT;
+	phd_mxptr[M13] = y << W2V_SHIFT;
+	phd_mxptr[M23] = z << W2V_SHIFT;
+}
+
 void phd_PopMatrix()
 {
 	phd_mxptr -= indices_count;

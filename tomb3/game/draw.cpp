@@ -976,9 +976,7 @@ void CalculateObjectLighting(ITEM_INFO* item, short* frame)
 	else
 	{
 		phd_PushUnitMatrix();
-		phd_mxptr[M03] = 0;
-		phd_mxptr[M13] = 0;
-		phd_mxptr[M23] = 0;
+		phd_SetTrans(0, 0, 0);
 		phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 		x = (phd_mxptr[M03] >> W2V_SHIFT) + item->pos.x_pos;
 		y = (phd_mxptr[M13] >> W2V_SHIFT) + item->pos.y_pos;
@@ -1189,6 +1187,7 @@ long DrawPhaseGame()
 {
 	CalcLaraMatrices(0);
 	phd_PushUnitMatrix();
+	phd_SetTrans(0, 0, 0);
 	CalcLaraMatrices(1);
 	phd_PopMatrix();
 
