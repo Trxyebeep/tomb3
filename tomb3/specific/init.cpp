@@ -81,9 +81,7 @@ D3DTLVERTEX* UnRollBuffer;
 static D3DTLVERTEX* TLVertexBuffer;
 static D3DTLVERTEX* TLUnRollBuffer;
 
-long RColorTable[33][33][33];
-long GColorTable[33][33][33];
-long BColorTable[33][33][33];
+long DynamicColorTable[33][33][256];
 WATERTAB WaterTable[22][64];
 float wibble_table[32];
 
@@ -261,12 +259,10 @@ long S_InitialiseSystem()
 	{
 		for (int b = 1; b < 33; b++)
 		{
-			for (int c = 1; c < 33; c++)
+			for (int c = 1; c < 256; c++)
 			{
 				cval = ((a - b) * c) / a;
-				RColorTable[a][b][c] = cval << 10;
-				GColorTable[a][b][c] = cval << 5;
-				BColorTable[a][b][c] = cval;
+				DynamicColorTable[a][b][c] = cval;
 			}
 		}
 	}

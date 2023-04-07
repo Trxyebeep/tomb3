@@ -10,9 +10,9 @@ void HWI_InsertGT3_Sorted(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHDTEXTUREST
 void HWI_InsertTransQuad_Sorted(long x, long y, long w, long h, long z);
 void HWI_InsertGourQuad_Sorted(long x0, long y0, long x1, long y1, long z, ulong c0, ulong c1, ulong c2, ulong c3, bool add);
 void InitUVTable();
-long GETR(long col);
-long GETG(long col);
-long GETB(long col);
+long GETR(ulong col);
+long GETG(ulong col);
+long GETB(ulong col);
 void PHD_VBUF_To_D3DTLVTX_WITHUV(PHD_VBUF* phdV, D3DTLVERTEX* v, ushort* uv);
 void PHD_VBUF_To_VERTEX_INFO(PHD_VBUF* phdV, VERTEX_INFO* v);
 long visible_zclip(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2);
@@ -25,7 +25,7 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 void HWI_InsertPoly_Gouraud(long nPoints, float zdepth, long r, long g, long b, long nDrawType);
 void HWI_InsertPoly_GouraudRGB(long nPoints, float zdepth, long nDrawType);
 void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, long col);
-void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, long nSprite, long shade, long shade1, long nDrawType, long offset);
+void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, long nSprite, ulong shade, ulong shade1, long nDrawType, long offset);
 void HWI_InsertAlphaSprite_Sorted(long x1, long y1, long z1, long shade1, long x2, long y2, long z2, long shade2,
 	long x3, long y3, long z3, long shade3, long x4, long y4, long z4, long shade4,
 	long nSprite, long nDrawtype, long double_sided);

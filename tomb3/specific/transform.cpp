@@ -222,6 +222,7 @@ short* calc_roomvert(short* objptr, long far_clip)
 	DYNAMIC* dl;
 	float fMidSort, fx, fy, fz, zv, zv2;
 	long nVtx, x, y, z, cR, cG, cB, dx, dy, dz, dist, falloff, rnd, shade, shimmer, abs;
+	uchar random;
 	char clipFlag;
 
 	r = &room[CurrentRoom];
@@ -248,7 +249,11 @@ short* calc_roomvert(short* objptr, long far_clip)
 
 	for (; nVtx > 0; nVtx--)
 	{
-		buf->g = objptr[5];
+		cR = ((objptr[5] & 0x7C00) >> 10) << 3;
+		cG = ((objptr[5] & 0x3E0) >> 5) << 3;
+		cB = (objptr[5] & 0x1F) << 3;
+		buf->color = RGB_MAKE(cR, cG, cB);
+
 		x = objptr[0];
 		y = objptr[1];
 		z = objptr[2];
@@ -272,9 +277,9 @@ short* calc_roomvert(short* objptr, long far_clip)
 				buf->zv = f_zfar;
 
 			buf->ooz = zv2 * f_oneopersp;
-			cR = buf->g & 0x7C00;
-			cG = buf->g & 0x3E0;
-			cB = buf->g & 0x1F;
+			cR = RGB_GETRED(buf->color);
+			cG = RGB_GETGREEN(buf->color);
+			cB = RGB_GETBLUE(buf->color);
 
 			for (int j = 0; j < number_dynamics; j++)
 			{
@@ -297,42 +302,47 @@ short* calc_roomvert(short* objptr, long far_clip)
 							if (!dist)
 								dist++;
 
-							cR += RColorTable[falloff][dist][dl->r];
-							cG += GColorTable[falloff][dist][dl->g];
-							cB += BColorTable[falloff][dist][dl->b];
+							cR += DynamicColorTable[falloff][dist][dl->r << 3];
+							cG += DynamicColorTable[falloff][dist][dl->g << 3];
+							cB += DynamicColorTable[falloff][dist][dl->b << 3];
 						}
 					}
 				}
 			}
 
-			if (cR > 0x7C00)
-				cR = 0x7C00;
+			if (cR > 255)
+				cR = 255;
 
-			if (cG > 0x3E0)
-				cG = 0x3E0;
+			if (cG > 255)
+				cG = 255;
 
-			if (cB > 0x1F)
-				cB = 0x1F;
+			if (cB > 255)
+				cB = 255;
 
-			buf->g = short(cR | cG | cB);
+			buf->color = RGB_MAKE(cR, cG, cB);
 			rnd = (((x + r->x) >> 6) + ((y + r->y) >> 6) + ((z + r->z) >> 7)) & 0xFC;
 
 			if (objptr[4] & 0x2000)
 			{
-				buf->yv += float(WaterTable[r->MeshEffect][((wibble >> 2) + WaterTable[r->MeshEffect][rnd & 0x3F].random) & 0x3F].choppy << W2V_SHIFT);
-				shade = -WaterTable[r->MeshEffect][((wibble >> 2) + WaterTable[r->MeshEffect][rnd & 0x3F].random) & 0x3F].choppy >> 4;
-				cR = shade + ((buf->g >> 10) & 0x1F);
-				cG = shade + ((buf->g >> 5) & 0x1F);
-				cB = shade + (buf->g & 0x1F);
+				cR = RGB_GETRED(buf->color);
+				cG = RGB_GETGREEN(buf->color);
+				cB = RGB_GETBLUE(buf->color);
 
-				if (cR > 31)
-					cR = 31;
+				random = WaterTable[r->MeshEffect][rnd & 0x3F].random;
+				buf->yv += float(WaterTable[r->MeshEffect][(random + (wibble >> 2)) & 0x3F].choppy << W2V_SHIFT);
+				shade = -WaterTable[r->MeshEffect][(random + (wibble >> 2)) & 0x3F].choppy >> 1;
+				cR += shade;
+				cG += shade;
+				cB += shade;
 
-				if (cG > 31)
-					cG = 31;
+				if (cR > 255)
+					cR = 255;
 
-				if (cB > 31)
-					cB = 31;
+				if (cG > 255)
+					cG = 255;
+
+				if (cB > 255)
+					cB = 255;
 
 				if (cR < 0)
 					cR = 0;
@@ -343,7 +353,7 @@ short* calc_roomvert(short* objptr, long far_clip)
 				if (cB < 0)
 					cB = 0;
 
-				buf->g = short(cR << 10 | cG << 5 | cB);
+				buf->color = RGB_MAKE(cR, cG, cB);
 			}
 
 			buf->xs = zv2 * buf->xv + f_centerx;
@@ -351,22 +361,27 @@ short* calc_roomvert(short* objptr, long far_clip)
 
 			if (objptr[4] & 0x4000)
 			{
-				shimmer = WaterTable[r->MeshEffect][((wibble >> 2) + WaterTable[r->MeshEffect][rnd & 0x3F].random) & 0x3F].shimmer;
-				abs = WaterTable[r->MeshEffect][((wibble >> 2) + WaterTable[r->MeshEffect][rnd & 0x3F].random) & 0x3F].abs;
-				shade = shimmer + abs;
+				cR = RGB_GETRED(buf->color);
+				cG = RGB_GETGREEN(buf->color);
+				cB = RGB_GETBLUE(buf->color);
 
-				cR = shade + ((buf->g >> 10) & 0x1F);
-				cG = shade + ((buf->g >> 5) & 0x1F);
-				cB = shade + (buf->g & 0x1F);
+				random = WaterTable[r->MeshEffect][rnd & 0x3F].random;
+				shimmer = WaterTable[r->MeshEffect][(random + (wibble >> 2)) & 0x3F].shimmer;
+				abs = WaterTable[r->MeshEffect][(random + (wibble >> 2)) & 0x3F].abs;
+				shade = (shimmer + abs) << 3;
 
-				if (cR > 31)
-					cR = 31;
+				cR += shade;
+				cG += shade;
+				cB += shade;
 
-				if (cG > 31)
-					cG = 31;
+				if (cR > 255)
+					cR = 255;
 
-				if (cB > 31)
-					cB = 31;
+				if (cG > 255)
+					cG = 255;
+
+				if (cB > 255)
+					cB = 255;
 
 				if (cR < 0)
 					cR = 0;
@@ -377,7 +392,7 @@ short* calc_roomvert(short* objptr, long far_clip)
 				if (cB < 0)
 					cB = 0;
 
-				buf->g = short(cR << 10 | cG << 5 | cB);
+				buf->color = RGB_MAKE(cR, cG, cB);
 			}
 
 			if (water_effect && objptr[4] >= 0)
@@ -403,9 +418,9 @@ short* calc_roomvert(short* objptr, long far_clip)
 			if (z > farz << W2V_SHIFT)
 				z = farz << W2V_SHIFT;
 
-			cR = ((buf->g >> 10) & 0x1F) << 3;
-			cG = ((buf->g >> 5) & 0x1F) << 3;
-			cB = (buf->g & 0x1F) << 3;
+			cR = RGB_GETRED(buf->color);
+			cG = RGB_GETGREEN(buf->color);
+			cB = RGB_GETBLUE(buf->color);
 			cR += 7;
 			cG += 7;
 			cB += 7;
@@ -413,10 +428,10 @@ short* calc_roomvert(short* objptr, long far_clip)
 			cR *= shade;
 			cG *= shade;
 			cB *= shade;
-			cR >>= 14;
-			cG >>= 14;
-			cB >>= 14;
-			buf->g = short(cR << 10 | cG << 5 | cB);
+			cR /= 2048;
+			cG /= 2048;
+			cB /= 2048;
+			buf->color = RGB_MAKE(cR, cG, cB);
 		}
 
 		objptr += 6;

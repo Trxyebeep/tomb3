@@ -96,7 +96,7 @@ WAKE_PTS WakePts[32][2];
 uchar WakeShade;
 uchar CurrentStartWake;
 
-static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, short c, bool cFlag)
+static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, ulong c, bool cFlag)
 {
 	float zv, zT;
 	float m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23;
@@ -160,9 +160,9 @@ static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, short c, bool cFlag)
 	v->clip = clipFlag;
 
 	if (cFlag)
-		v->g = c;
+		v->color = c;
 	else
-		v->g = c << 10 | c << 5 | c;
+		v->color = RGB_MAKE(c, c, c);
 }
 
 static __inline void ClipCheckPoint(PHD_VBUF* v, long x, long y, long z, long xv, long yv)
@@ -218,22 +218,7 @@ static __inline void ClipCheckPoint(PHD_VBUF* v, long x, long y, long z)
 	v->ooz = f_persp / (float)z * f_oneopersp;
 }
 
-static __inline void setColor(PHD_VBUF* v, long c, char flag)
-{
-	long r, g, b;
-
-	if (!flag)
-	{
-		r = (c >> 3) & 0x1F;
-		g = (c >> 11) & 0x1F;
-		b = (c >> 19) & 0x1F;
-		v->g = short(r << 10 | g << 5 | b);
-	}
-	else
-		v->g = (short)c;
-}
-
-static __inline void setXYZ3(PHD_VBUF* v, char cFlag,
+static __inline void setXYZ3(PHD_VBUF* v,
 	long x1, long y1, long z1, long xv1, long yv1, long c1,
 	long x2, long y2, long z2, long xv2, long yv2, long c2,
 	long x3, long y3, long z3, long xv3, long yv3, long c3)
@@ -241,12 +226,12 @@ static __inline void setXYZ3(PHD_VBUF* v, char cFlag,
 	ClipCheckPoint(&v[0], x1, y1, z1, xv1, yv1);
 	ClipCheckPoint(&v[1], x2, y2, z2, xv2, yv2);
 	ClipCheckPoint(&v[2], x3, y3, z3, xv3, yv3);
-	setColor(&v[0], c1, cFlag);
-	setColor(&v[1], c2, cFlag);
-	setColor(&v[2], c3, cFlag);
+	v[0].color = c1;
+	v[1].color = c2;
+	v[2].color = c3;
 }
 
-static __inline void setXYZ3(PHD_VBUF* v, char cFlag,
+static __inline void setXYZ3(PHD_VBUF* v,
 	long x1, long y1, long z1, long c1,
 	long x2, long y2, long z2, long c2,
 	long x3, long y3, long z3, long c3)
@@ -255,12 +240,12 @@ static __inline void setXYZ3(PHD_VBUF* v, char cFlag,
 	ClipCheckPoint(&v[0], x1, y1, z1);
 	ClipCheckPoint(&v[1], x2, y2, z2);
 	ClipCheckPoint(&v[2], x3, y3, z3);
-	setColor(&v[0], c1, cFlag);
-	setColor(&v[1], c2, cFlag);
-	setColor(&v[2], c3, cFlag);
+	v[0].color = c1;
+	v[1].color = c2;
+	v[2].color = c3;
 }
 
-static __inline void setXYZ4(PHD_VBUF* v, char cFlag,
+static __inline void setXYZ4(PHD_VBUF* v,
 	long x1, long y1, long z1, long xv1, long yv1, long c1,
 	long x2, long y2, long z2, long xv2, long yv2, long c2,
 	long x3, long y3, long z3, long xv3, long yv3, long c3,
@@ -270,14 +255,13 @@ static __inline void setXYZ4(PHD_VBUF* v, char cFlag,
 	ClipCheckPoint(&v[1], x2, y2, z2, xv2, yv2);
 	ClipCheckPoint(&v[2], x3, y3, z3, xv3, yv3);
 	ClipCheckPoint(&v[3], x4, y4, z4, xv4, yv4);
-
-	setColor(&v[0], c1, cFlag);
-	setColor(&v[1], c2, cFlag);
-	setColor(&v[2], c3, cFlag);
-	setColor(&v[3], c4, cFlag);
+	v[0].color = c1;
+	v[1].color = c2;
+	v[2].color = c3;
+	v[3].color = c4;
 }
 
-static __inline void setXYZ4(PHD_VBUF* v, char cFlag,
+static __inline void setXYZ4(PHD_VBUF* v,
 	long x1, long y1, long z1, long c1,
 	long x2, long y2, long z2, long c2,
 	long x3, long y3, long z3, long c3,
@@ -287,11 +271,10 @@ static __inline void setXYZ4(PHD_VBUF* v, char cFlag,
 	ClipCheckPoint(&v[1], x2, y2, z2);
 	ClipCheckPoint(&v[2], x3, y3, z3);
 	ClipCheckPoint(&v[3], x4, y4, z4);
-
-	setColor(&v[0], c1, cFlag);
-	setColor(&v[1], c2, cFlag);
-	setColor(&v[2], c3, cFlag);
-	setColor(&v[3], c4, cFlag);
+	v[0].color = c1;
+	v[1].color = c2;
+	v[2].color = c3;
+	v[3].color = c4;
 }
 
 void LaraElectricDeath(long lr, ITEM_INFO* item)
@@ -723,16 +706,36 @@ void S_DrawWakeFX(ITEM_INFO* item)
 				y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
 			{
 				cval = c12 >> 2;
-				s1 = cval << 10 | cval << 5 | cval;
+				cval <<= 3;
+
+				if (cval > 255)
+					cval = 255;
+
+				s1 = RGB_MAKE(cval, cval, cval);
 
 				cval = c12 >> 1;
-				s2 = cval << 10 | cval << 5 | cval;
+				cval <<= 3;
+
+				if (cval > 255)
+					cval = 255;
+
+				s2 = RGB_MAKE(cval, cval, cval);
 
 				cval = c34 >> 1;
-				s3 = cval << 10 | cval << 5 | cval;
+				cval <<= 3;
+
+				if (cval > 255)
+					cval = 255;
+
+				s3 = RGB_MAKE(cval, cval, cval);
 
 				cval = c34 >> 2;
-				s4 = cval << 10 | cval << 5 | cval;
+				cval <<= 3;
+
+				if (cval > 255)
+					cval = 255;
+
+				s4 = RGB_MAKE(cval, cval, cval);
 
 				HWI_InsertAlphaSprite_Sorted(x1, y1, z1, s1, x2, y2, z2, s2, x3, y3, z3, s3, x4, y4, z4, s4, -1, 16, 1);
 			}
@@ -900,19 +903,19 @@ void DoRain()
 
 				v[0].xs = (float)x1;
 				v[0].ys = (float)y1;
-				v[0].g = 0;
+				v[0].color = 0;
 
 				v[1].xs = (float)x1 + rnd;
 				v[1].ys = (float)y1;
-				v[1].g = 0;
+				v[1].color = 0;
 
 				v[2].xs = (float)x2 + rnd;
 				v[2].ys = (float)y2;
-				v[2].g = (12 << 10) | (16 << 5) | 24;
+				v[2].color = 0x6080C0;
 
 				v[3].xs = (float)x2;
 				v[3].ys = (float)y2;
-				v[3].g = v[2].g;
+				v[3].color = v[2].color;
 
 				for (int i = 0; i < 4; i++)
 				{
@@ -947,9 +950,9 @@ void DoSnow()
 	PHD_VECTOR pos;
 	PHD_VBUF v[3];
 	float zv;
+	ulong c;
 	long w, h, rad, angle, ox, oy, oz, r, tx, ty, tz, x, y, z, size;
 	ushort u1, v1, u2, v2;
-	short c;
 	char clipFlag;
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
@@ -1157,21 +1160,17 @@ void DoSnow()
 		tex.tpage = sprite->tpage;
 
 		if ((snow->yv & 7) < 7)
-		{
 			c = snow->yv & 7;
-			c = c << 10 | c << 5 | c;
-		}
 		else if (snow->life > 18)
-			c = 0x3DEF;
+			c = 15;
 		else
-		{
 			c = snow->life;
-			c = c << 10 | c << 5 | c;
-		}
 
-		v[0].g = c;
-		v[1].g = c;
-		v[2].g = c;
+		c <<= 3;
+		c = RGB_MAKE(c, c, c);
+		v[0].color = c;
+		v[1].color = c;
+		v[2].color = c;
 		HWI_InsertGT3_Poly(&v[0], &v[1], &v[2], &tex, &v[0].u, &v[1].u, &v[2].u, MID_SORT, 0);
 	}
 
@@ -1376,7 +1375,7 @@ void DrawExplosionRings()
 
 			if (col1 || col2 || col3 || col4)
 			{
-				setXYZ4(v, 0, x1, y1, z1, xv1, yv1,  col1, x2, y2, z2, xv2, yv2, col2, x4, y4, z4, xv4, yv4, col4, x3, y3, z3, xv3, yv3, col3);
+				setXYZ4(v, x1, y1, z1, xv1, yv1, col1, x2, y2, z2, xv2, yv2, col2, x4, y4, z4, xv4, yv4, col4, x3, y3, z3, xv3, yv3, col3);
 				tex.u1 = u1;
 				tex.u2 = u2;
 				tex.u3 = u1;
@@ -1612,7 +1611,7 @@ void DrawSummonRings()
 			if (tomb3.sophia_rings == SRINGS_PC)
 				z1 = (z1 + z2 + z3 + z4) >> 4;
 
-			setXYZ4(v, 0, x1, y1, z1, xv1, yv1, col1, x2, y2, z2, xv2, yv2, col2, x4, y4, z4, xv4, yv4, col4, x3, y3, z3, xv3, yv3, col3);
+			setXYZ4(v, x1, y1, z1, xv1, yv1, col1, x2, y2, z2, xv2, yv2, col2, x4, y4, z4, xv4, yv4, col4, x3, y3, z3, xv3, yv3, col3);
 
 			if (tomb3.sophia_rings == SRINGS_PSX)
 				tex.tpage = 0;	//make it a semitransparent quad, no sprite, like PSX.
@@ -1862,7 +1861,7 @@ void DrawKnockBackRings()
 
 			if (col1 | col2 | col3 | col4)
 			{
-				setXYZ4(v, 0, x1, y1, z1, xv1, yv1, col1, x2, y2, z2, xv2, yv2, col2, x4, y4, z4, xv4, yv4, col4, x3, y3, z4, xv3, yv3, col3);
+				setXYZ4(v, x1, y1, z1, xv1, yv1, col1, x2, y2, z2, xv2, yv2, col2, x4, y4, z4, xv4, yv4, col4, x3, y3, z4, xv3, yv3, col3);
 					
 				if (tomb3.sophia_rings == SRINGS_PSX || tomb3.sophia_rings == SRINGS_IMPROVED_PC)
 				{
@@ -2131,59 +2130,55 @@ void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy)
 		{
 			if (c1 || c2 || c3 || c4)
 			{
-				if (x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 &&
-					y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128)
+				if (x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 &&
+					x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
 				{
-					if (x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
-						y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
+					if (bossdata.attack_type)
 					{
-						if (bossdata.attack_type)
-						{
-							r = (c1 & 0xC0) >> 5;
-							g = c1 >> 4;
-							b = (c1 & 0xC0) >> 5;
-							c1 = r << 10 | g << 5 | b;
+						r = (c1 & 0xC0) >> 2;
+						g = c1 >> 1;
+						b = (c1 & 0xC0) >> 2;
+						c1 = RGB_MAKE(r, g, b);
 
-							r = (c2 & 0xC0) >> 5;
-							g = c2 >> 4;
-							b = (c2 & 0xC0) >> 5;
-							c2 = r << 10 | g << 5 | b;
+						r = (c2 & 0xC0) >> 2;
+						g = c2 >> 1;
+						b = (c2 & 0xC0) >> 2;
+						c2 = RGB_MAKE(r, g, b);
 
-							r = (c3 & 0xC0) >> 5;
-							g = c3 >> 4;
-							b = (c3 & 0xC0) >> 5;
-							c3 = r << 10 | g << 5 | b;
+						r = (c3 & 0xC0) >> 2;
+						g = c3 >> 1;
+						b = (c3 & 0xC0) >> 2;
+						c3 = RGB_MAKE(r, g, b);
 
-							r = (c4 & 0xC0) >> 5;
-							g = c4 >> 4;
-							b = (c4 & 0xC0) >> 5;
-							c4 = r << 10 | g << 5 | b;
-						}
-						else
-						{
-							r = (c1 & 0xC0) >> 5;
-							g = c1 >> 4;
-							b = c1 >> 4;
-							c1 = r << 10 | g << 5 | b;
-
-							r = (c2 & 0xC0) >> 5;
-							g = c2 >> 4;
-							b = c2 >> 4;
-							c2 = r << 10 | g << 5 | b;
-
-							r = (c3 & 0xC0) >> 5;
-							g = c3 >> 4;
-							b = c3 >> 4;
-							c3 = r << 10 | g << 5 | b;
-
-							r = (c4 & 0xC0) >> 5;
-							g = c4 >> 4;
-							b = c4 >> 4;
-							c4 = r << 10 | g << 5 | b;
-						}
-
-						HWI_InsertAlphaSprite_Sorted(x2, y2, z2, c2, x1, y1, z1, c2, x4, y4, z4, c3, x3, y3, z3, c4, -1, 16, 1);
+						r = (c4 & 0xC0) >> 2;
+						g = c4 >> 1;
+						b = (c4 & 0xC0) >> 2;
+						c4 = RGB_MAKE(r, g, b);
 					}
+					else
+					{
+						r = (c1 & 0xC0) >> 2;
+						g = c1 >> 1;
+						b = c1 >> 1;
+						c1 = RGB_MAKE(r, g, b);
+
+						r = (c2 & 0xC0) >> 2;
+						g = c2 >> 1;
+						b = c2 >> 1;
+						c2 = RGB_MAKE(r, g, b);
+
+						r = (c3 & 0xC0) >> 2;
+						g = c3 >> 1;
+						b = c3 >> 1;
+						c3 = RGB_MAKE(r, g, b);
+
+						r = (c4 & 0xC0) >> 2;
+						g = c4 >> 1;
+						b = c4 >> 1;
+						c4 = RGB_MAKE(r, g, b);
+					}
+
+					HWI_InsertAlphaSprite_Sorted(x2, y2, z2, c2, x1, y1, z1, c2, x4, y4, z4, c3, x3, y3, z3, c4, -1, 16, 1);
 				}
 			}
 		}
@@ -2787,7 +2782,7 @@ void DrawTonyBossShield(ITEM_INFO* item)
 
 			if (c1 || c2 || c3 || c4)
 			{
-				setXYZ4(v, 0, x1, y1, z1, xv1, yv1, c1, x2, y2, z2, xv2, yv2, c2, x4, y4, z4, xv4, yv4, c4, x3, y3, z3, xv3, yv3, c3);
+				setXYZ4(v, x1, y1, z1, xv1, yv1, c1, x2, y2, z2, xv2, yv2, c2, x4, y4, z4, xv4, yv4, c4, x3, y3, z3, xv3, yv3, c3);
 				tex.u1 = u1;
 				tex.u2 = u2;
 				tex.u3 = u2;
@@ -2978,7 +2973,7 @@ void DrawTribeBossShield(ITEM_INFO* item)
 
 			if (c1 || c2 || c3 || c4)
 			{
-				setXYZ4(v, 0, x1, y1, z1, xv1, yv1, c1, x2, y2, z2, xv2, yv2, c2, x4, y4, z4, xv4, yv4, c4, x3, y3, z3, xv3, yv3, c3);
+				setXYZ4(v, x1, y1, z1, xv1, yv1, c1, x2, y2, z2, xv2, yv2, c2, x4, y4, z4, xv4, yv4, c4, x3, y3, z3, xv3, yv3, c3);
 				tex.u1 = u1;
 				tex.u2 = u2;
 				tex.u3 = u2;
@@ -3168,7 +3163,7 @@ void DrawLondonBossShield(ITEM_INFO* item)
 
 			if (c1 || c2 || c3 || c4)
 			{
-				setXYZ4(v, 0, x1, y1, z1, xv1, yv1, c1, x2, y2, z2, xv2, yv2, c2, x4, y4, z4, xv4, yv4, c4, x3, y3, z3, xv3, yv3, c3);
+				setXYZ4(v, x1, y1, z1, xv1, yv1, c1, x2, y2, z2, xv2, yv2, c2, x4, y4, z4, xv4, yv4, c4, x3, y3, z3, xv3, yv3, c3);
 				tex.u1 = u1;
 				tex.u2 = u2;
 				tex.u3 = u2;
@@ -3358,7 +3353,7 @@ void DrawWillBossShield(ITEM_INFO* item)
 
 			if (c1 || c2 || c3 || c4)
 			{
-				setXYZ4(v, 0, x1, y1, z1, xv1, yv1, c1, x2, y2, z2, xv2, yv2, c2, x4, y4, z4, xv4, yv4, c4, x3, y3, z3, xv3, yv3, c3);
+				setXYZ4(v, x1, y1, z1, xv1, yv1, c1, x2, y2, z2, xv2, yv2, c2, x4, y4, z4, xv4, yv4, c4, x3, y3, z3, xv3, yv3, c3);
 				tex.u1 = u1;
 				tex.u2 = u2;
 				tex.u3 = u2;
@@ -3607,7 +3602,7 @@ void S_DrawBat()
 				(y1 < 0 && y2 < 0 && y3 < 0) || (y1 >= h && y2 >= h && y3 >= h))
 				continue;
 
-			setXYZ3(v, 1, x1, y1, z1, 0x7E8C, x2, y2, z2, 0x7E8C, x3, y3, z3, 0x7E8C);
+			setXYZ3(v, x1, y1, z1, 0x60A0F8, x2, y2, z2, 0x60A0F8, x3, y3, z3, 0x60A0F8);
 			sprite = &phdspriteinfo[objects[EXPLOSION1].mesh_index + 12];
 			u1 = (sprite->offset << 8) & 0xFF00;
 			v1 = sprite->offset & 0xFF00;
@@ -3811,14 +3806,14 @@ void S_DrawSparks()
 				r = sptr->R;
 				g = sptr->G;
 				b = sptr->B;
-				c = (r >> 3) << 10 | (g >> 3) << 5 | (b >> 3);
+				c = RGB_MAKE(r, g, b);
 
 				if (z > distanceFogValue << W2V_SHIFT)
 				{
 					f = 2048 - ((z - (distanceFogValue << W2V_SHIFT)) >> 16);
-					r = (r * f) >> W2V_SHIFT;
-					g = (g * f) >> W2V_SHIFT;
-					b = (b * f) >> W2V_SHIFT;
+					r = (r * f) / 2048;
+					g = (g * f) / 2048;
+					b = (b * f) / 2048;
 
 					if (r < 0)
 						r = 0;
@@ -3829,7 +3824,7 @@ void S_DrawSparks()
 					if (b < 0)
 						b = 0;
 
-					c = r << 10 | g << 5 | b;
+					c = RGB_MAKE(r, g, b);
 				}
 
 				if (sptr->TransType == 3)
@@ -3862,14 +3857,14 @@ void S_DrawSparks()
 				r = sptr->R;
 				g = sptr->G;
 				b = sptr->B;
-				c = (r >> 3) << 10 | (g >> 3) << 5 | (b >> 3);
+				c = RGB_MAKE(r, g, b);
 
 				if (z > distanceFogValue << W2V_SHIFT)
 				{
 					f = 2048 - ((z - (distanceFogValue << W2V_SHIFT)) >> 16);
-					r = (r * f) >> W2V_SHIFT;
-					g = (g * f) >> W2V_SHIFT;
-					b = (b * f) >> W2V_SHIFT;
+					r = (r * f) / 2048;
+					g = (g * f) / 2048;
+					b = (b * f) / 2048;
 
 					if (r < 0)
 						r = 0;
@@ -3880,7 +3875,7 @@ void S_DrawSparks()
 					if (b < 0)
 						b = 0;
 
-					c = r << 10 | g << 5 | b;
+					c = RGB_MAKE(r, g, b);
 				}
 
 				if (sptr->TransType == 3)
@@ -3948,14 +3943,14 @@ void S_DrawSparks()
 			r = sptr->R;
 			g = sptr->G;
 			b = sptr->B;
-			c = (r >> 3) << 10 | (g >> 3) << 5 | (b >> 3);
+			c = RGB_MAKE(r, g, b);
 
 			if (z > distanceFogValue << W2V_SHIFT)
 			{
 				f = 2048 - ((z - (distanceFogValue << W2V_SHIFT)) >> 16);
-				r = (r * f) >> W2V_SHIFT;
-				g = (g * f) >> W2V_SHIFT;
-				b = (b * f) >> W2V_SHIFT;
+				r = (r * f) / 2048;
+				g = (g * f) / 2048;
+				b = (b * f) / 2048;
 
 				if (r < 0)
 					r = 0;
@@ -3966,7 +3961,7 @@ void S_DrawSparks()
 				if (b < 0)
 					b = 0;
 
-				c = r << 10 | g << 5 | b;
+				c = RGB_MAKE(r, g, b);
 			}
 			
 			if (sptr->TransType == 3)
@@ -4082,11 +4077,19 @@ void S_DrawSplashes()
 				if (z4 < phd_znear || z4 > phd_zfar)
 					continue;
 
-				c = splash->life >> 2;
-				c1 = c << 10 | c << 5 | c;
+				c = splash->life << 1;
 
-				c -= splash->life >> 4;
-				c2 = c << 10 | c << 5 | c;
+				if (c > 255)
+					c = 255;
+
+				c1 = RGB_MAKE(c, c, c);
+
+				c = (splash->life - (splash->life >> 2)) << 1;
+
+				if (c > 255)
+					c = 255;
+
+				c2 = RGB_MAKE(c, c, c);
 
 				if ((x3 - x2) * (y1 - y2) - (y3 - y2) * (x1 - x2) >= 0)
 					HWI_InsertAlphaSprite_Sorted(x1, y1, z1, c1, x2, y2, z2, c1, x4, y4, z4, c2, x3, y3, z3, c2, nSprite, DT_POLY_WGTA, 0);
@@ -4169,12 +4172,12 @@ void S_DrawSplashes()
 			if (ripple->flags & 0x20)
 			{
 				nSprite = objects[EXPLOSION1].mesh_index;
-				c1 = ripple->life >> 3;
+				c1 = ripple->life;
 
 				if (gameflow.language == 2)
-					c = (c1 >> 1) << 10 | c1;	//g 0
+					c = RGB_MAKE(c1 >> 1, 0, c1);
 				else
-					c = c1 << 10;	//only red
+					c = RGB_MAKE(c1, 0, 0);
 			}
 			else
 			{
@@ -4183,7 +4186,12 @@ void S_DrawSplashes()
 				else
 					c1 = ripple->life >> 2;
 
-				c = c1 << 10 | c1 << 5 | c1;
+				c1 <<= 3;
+
+				if (c1 > 255)
+					c1 = 255;
+
+				c = RGB_MAKE(c1, c1, c1);
 			}
 		}
 		else
@@ -4193,7 +4201,12 @@ void S_DrawSplashes()
 			else
 				c1 = ripple->life >> 1;
 
-			c = c1 << 10 | c1 << 5 | c1;
+			c1 <<= 3;
+
+			if (c1 > 255)
+				c1 = 255;
+
+			c = RGB_MAKE(c1, c1, c1);
 		}
 
 		if ((x3 - x2) * (y1 - y2) - (y3 - y2) * (x1 - x2) >= 0)
@@ -4417,15 +4430,15 @@ void S_DrawLaserBolts(ITEM_INFO* item)
 			if (z4 < phd_znear)
 				z4 = phd_znear;
 
-			r = c12 >> 5;
-			g = c12 >> 3;
-			b = c12 >> 4;
-			c0 = r << 10 | g << 5 | b;
+			r = c12 >> 2;
+			g = c12;
+			b = c12 >> 1;
+			c0 = RGB_MAKE(r, g, b);
 
-			r = c34 >> 5;
-			g = c34 >> 3;
-			b = c34 >> 4;
-			c1 = r << 10 | g << 5 | b;
+			r = c34 >> 3;
+			g = c34;
+			b = c34 >> 1;
+			c1 = RGB_MAKE(r, g, b);
 
 			HWI_InsertAlphaSprite_Sorted(x1, y1, z1, c0, x2, y2, z2, c0, x3, y3, z3, c1, x4, y4, z4, c1, -1, DT_POLY_GTA, 1);
 			num++;
@@ -4447,12 +4460,12 @@ void S_DrawFish(ITEM_INFO* item)
 	FISH_INFO* pFish;
 	PHD_VBUF v[3];
 	PHDTEXTURESTRUCT tex;
+	ulong c;
 	long w, h, sx, sy, x, y, z, ang, size;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3;
 	long XYZ[3][3];	//3 fishies x 3 vertices
 	long point[3];
 	ushort u1, v1, u2, v2;
-	short g;
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w;
@@ -4534,14 +4547,13 @@ void S_DrawFish(ITEM_INFO* item)
 			ang = 128;
 
 		ang += 80;
-		ang >>= 3;
-		g = short(ang << 10 | ang << 5 | ang);
+		c = RGB_MAKE(ang, ang, ang);
 
 		z1 <<= W2V_SHIFT;
 		z2 <<= W2V_SHIFT;
 		z3 <<= W2V_SHIFT;
 
-		setXYZ3(v, 1, x1, y1, z1, g, x2, y2, z2, g, x3, y3, z3, g);
+		setXYZ3(v, x1, y1, z1, c, x2, y2, z2, c, x3, y3, z3, c);
 		u1 = (sprite->offset << 8) & 0xFF00;
 		v1 = sprite->offset & 0xFF00;
 		u2 = ushort(u1 + sprite->width - App.nUVAdd);
@@ -4552,11 +4564,11 @@ void S_DrawFish(ITEM_INFO* item)
 		tex.tpage = sprite->tpage;
 
 		if (item->object_number == PIRAHNAS)
-			g = (i & 1) != 0;
+			c = (i & 1) != 0;
 		else
-			g = (item->hit_points & 1) != 0;
+			c = (item->hit_points & 1) != 0;
 
-		if (g)
+		if (c)
 		{
 			v[0].u = u1;
 			v[0].v = v1;
@@ -4653,10 +4665,9 @@ void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 	hXZ = hxz;
 
 	c = short((4096 - abs(item->floor - lara_item->pos.y_pos)) >> 4) - 1;
-	c >>= 3;
 
-	if (c < 4)
-		c = 4;
+	if (c < 32)
+		c = 32;
 
 	for (int i = 0; i < LINE_POINTS; i++, z -= zDist)
 	{
@@ -4834,8 +4845,6 @@ void S_DrawFootPrints()
 			c = print->Active << 2;
 		else
 			c = 112;
-
-		c >>= 3;
 
 		memset(pos, 0, sizeof(pos));
 		pos[0].x = 0;
@@ -5028,19 +5037,15 @@ void DoUwEffect()
 		y3 = y + size;
 
 		if ((p->yv & 7) < 7)
-		{
 			c = p->yv & 7;
-			c = c << 10 | c << 5 | c;
-		}
 		else if (p->life > 18)
-			c = 0x3DEF;
+			c = 15;
 		else
-		{
 			c = p->life;
-			c = c << 10 | c << 5 | c;
-		}
 		
-		setXYZ3(v, 1, x1, y1, z, c, x2, y2, z, c, x3, y3, z, c);
+		c <<= 3;
+		c = RGB_MAKE(c, c, c);
+		setXYZ3(v, x1, y1, z, c, x2, y2, z, c, x3, y3, z, c);
 
 		tex.drawtype = 2;
 		tex.tpage = sprite->tpage;
@@ -5197,16 +5202,26 @@ void S_DrawSubWakeFX(ITEM_INFO* item)
 				y1 < h + 512 && y2 < h + 512 && y3 < h + 512 && y4 < h + 512)
 			{
 				cval = 0;
-				s1 = cval << 10 | cval << 5 | cval;
+				s1 = RGB_MAKE(cval, cval, cval);
 
 				cval = c12 >> 1;
-				s2 = cval << 10 | cval << 5 | cval;
+				cval <<= 3;
+
+				if (cval > 255)
+					cval = 255;
+
+				s2 = RGB_MAKE(cval, cval, cval);
 
 				cval = c34 >> 1;
-				s3 = cval << 10 | cval << 5 | cval;
+				cval <<= 3;
+
+				if (cval > 255)
+					cval = 255;
+
+				s3 = RGB_MAKE(cval, cval, cval);
 
 				cval = 0;
-				s4 = cval << 10 | cval << 5 | cval;
+				s4 = RGB_MAKE(cval, cval, cval);
 
 				HWI_InsertAlphaSprite_Sorted(x1, y1, z1, s1, x2, y2, z2, s2, x3, y3, z3, s3, x4, y4, z4, s4, -1, 16, 1);
 			}

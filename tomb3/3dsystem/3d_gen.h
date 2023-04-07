@@ -36,7 +36,7 @@ extern short* (*RoomInsertObjectGT4)(short* pFaceInfo, long nFaces, sort_type nS
 extern short* (*RoomInsertObjectGT3)(short* pFaceInfo, long nFaces, sort_type nSortType);
 extern void (*InsertFlatRect)(long x1, long y1, long x2, long y2, long zdepth, long col);
 extern void (*InsertTrans8)(PHD_VBUF* buf, short shade);
-extern void (*InsertSprite)(long zdepth, long x1, long y1, long x2, long y2, long nSprite, long shade, long shade1, long nDrawType, long offset);
+extern void (*InsertSprite)(long zdepth, long x1, long y1, long x2, long y2, long nSprite, ulong shade, ulong shade1, long nDrawType, long offset);
 extern void (*InsertTransQuad)(long x, long y, long w, long h, long z);
 
 extern float outsideBackgroundTop;

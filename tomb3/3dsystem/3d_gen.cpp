@@ -24,7 +24,7 @@ short* (*RoomInsertObjectGT4)(short* pFaceInfo, long nFaces, sort_type nSortType
 short* (*RoomInsertObjectGT3)(short* pFaceInfo, long nFaces, sort_type nSortType);
 void (*InsertFlatRect)(long x1, long y1, long x2, long y2, long zdepth, long col);
 void (*InsertTrans8)(PHD_VBUF* buf, short shade);
-void (*InsertSprite)(long zdepth, long x1, long y1, long x2, long y2, long nSprite, long shade, long shade1, long nDrawType, long offset);
+void (*InsertSprite)(long zdepth, long x1, long y1, long x2, long y2, long nSprite, ulong shade, ulong shade1, long nDrawType, long offset);
 void (*InsertTransQuad)(long x, long y, long w, long h, long z);
 
 float outsideBackgroundTop;
@@ -462,7 +462,7 @@ short* calc_back_light(short* objptr)
 	}
 
 	for (int i = 0; i < nNormals; i++)
-		vbuf[i].g = 0x4210;
+		vbuf[i].color = 0x808080;
 
 	return objptr;
 }

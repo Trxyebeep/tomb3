@@ -1230,11 +1230,9 @@ struct PHD_VBUF
 	float ys;
 	long z;
 	char clip;
-	uchar fog;
-	short g;
+	ulong color;
 	ushort u;
 	ushort v;
-	long dynamic;
 };
 
 struct VERTEX_INFO

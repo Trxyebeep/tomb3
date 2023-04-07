@@ -97,25 +97,25 @@ short* calc_vertice_light(short* objptr, short* objptr1)
 			if (!shade)
 				shade = 255;
 
-			r = (smcr * shade) >> 11;
-			g = (smcg * shade) >> 11;
-			b = (smcb * shade) >> 11;
+			r = (smcr * shade) >> 8;
+			g = (smcg * shade) >> 8;
+			b = (smcb * shade) >> 8;
 
-			if (r > 31)
-				r = 31;
+			if (r > 255)
+				r = 255;
 
-			if (g > 31)
-				g = 31;
+			if (g > 255)
+				g = 255;
 
-			if (b > 31)
-				b = 31;
+			if (b > 255)
+				b = 255;
 
 			if (buf->z > fade)
 			{
 				val = 2048 - ((buf->z - fade) >> 16);
-				r = (val * 8 * r) >> 14;
-				g = (val * 8 * g) >> 14;
-				b = (val * 8 * b) >> 14;
+				r = (val * r) / 2048;
+				g = (val * g) / 2048;
+				b = (val * b) / 2048;
 
 				if (r < 0)
 					r = 0;
@@ -127,7 +127,7 @@ short* calc_vertice_light(short* objptr, short* objptr1)
 					b = 0;
 			}
 
-			buf->g = short(r << 10 | g << 5 | b);
+			buf->color = RGB_MAKE(r, g, b);
 			buf++;
 			objptr++;
 		}
@@ -194,16 +194,12 @@ short* calc_vertice_light(short* objptr, short* objptr1)
 			if (b < 0)
 				b = 0;
 
-			r >>= 3;
-			g >>= 3;
-			b >>= 3;
-
 			if (buf->z > fade)
 			{
 				val = 2048 - ((buf->z - fade) >> 16);
-				r = (val * 8 * r) >> 14;
-				g = (val * 8 * g) >> 14;
-				b = (val * 8 * b) >> 14;
+				r = (val * r) / 2048;
+				g = (val * g) / 2048;
+				b = (val * b) / 2048;
 
 				if (r < 0)
 					r = 0;
@@ -215,7 +211,7 @@ short* calc_vertice_light(short* objptr, short* objptr1)
 					b = 0;
 			}
 
-			buf->g = short(r << 10 | g << 5 | b);
+			buf->color = RGB_MAKE(r, g, b);
 			buf++;
 			objptr += 3;
 		}

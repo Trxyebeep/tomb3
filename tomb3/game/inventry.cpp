@@ -189,7 +189,7 @@ void DrawInventoryItem(INVENTORY_ITEM* item)
 				switch (sp->shape)
 				{
 				case 1:
-					S_DrawScreenSprite(x + sp->x, y + sp->y, sp->z, sp->param1, sp->param2, static_objects[ALPHABET].mesh_number + sp->sprnum, 4096, 0);
+					S_DrawScreenSprite(x + sp->x, y + sp->y, sp->z, sp->param1, sp->param2, static_objects[ALPHABET].mesh_number + sp->sprnum, 0x200000, 0);
 					break;
 
 				case 2:
