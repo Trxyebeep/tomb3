@@ -308,7 +308,7 @@ void LaraElectricDeath(long lr, ITEM_INFO* item)
 	long coords[600];
 	short distances[200];
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
 	phd_PushMatrix();
@@ -603,7 +603,7 @@ void S_DrawWakeFX(ITEM_INFO* item)
 	short XY[128];
 	uchar rgbs[128];
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
 	offsets[0][0] = -128;
@@ -952,7 +952,7 @@ void DoSnow()
 	short c;
 	char clipFlag;
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w;
 	h = dm->h;
 	bBlueEffect = 0;
@@ -1203,7 +1203,7 @@ void DrawExplosionRings()
 	short XY[32];
 	ushort u1, u2, v1, v2;
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -1433,7 +1433,7 @@ void DrawSummonRings()
 	ushort u1, u2, v1, v2;
 	short XY[32];
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -1691,7 +1691,7 @@ void DrawKnockBackRings()
 	ushort u1, u2, v1, v2;
 	short XY[32];
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -1926,7 +1926,7 @@ void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy)
 	short XY[120];
 	short angle;
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -2217,7 +2217,7 @@ void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy)
 	short XY[128];
 	short dists[128];
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
 	dx = lara_item->pos.x_pos - item->pos.x_pos;
@@ -2651,7 +2651,7 @@ void DrawTonyBossShield(ITEM_INFO* item)
 	ushort u1, v1, u2, v2;
 	short XY[150];
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -2843,7 +2843,7 @@ void DrawTribeBossShield(ITEM_INFO* item)
 	ushort u1, v1, u2, v2;
 	short XY[150];
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -3034,7 +3034,7 @@ void DrawLondonBossShield(ITEM_INFO* item)
 	ushort u1, v1, u2, v2;
 	short XY[150];
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -3224,7 +3224,7 @@ void DrawWillBossShield(ITEM_INFO* item)
 	ushort u1, v1, u2, v2;
 	short XY[150];
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -3402,7 +3402,7 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 	long XYZ[3];
 
 	UpdateLaserShades();
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -3537,7 +3537,7 @@ void S_DrawBat()
 	ushort u1, v1, u2, v2;
 	short XY[10];
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w;
 	h = dm->h;
 	pXY = XY;
@@ -3665,7 +3665,7 @@ void S_DrawSparks()
 	long vpos[3][3];
 	long point[3];
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w;
 	h = dm->h;
 
@@ -4003,7 +4003,7 @@ void S_DrawSplashes()
 	long coords[192];
 	long XYZ[3];
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w;
 	h = dm->h;
 
@@ -4220,7 +4220,7 @@ void S_DrawLaserBolts(ITEM_INFO* item)
 	short XY[128];
 	uchar cols[128];
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
 	speed = (item->speed * phd_cos(item->pos.x_rot)) >> W2V_SHIFT;
@@ -4454,7 +4454,7 @@ void S_DrawFish(ITEM_INFO* item)
 	ushort u1, v1, u2, v2;
 	short g;
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w;
 	h = dm->h;
 	sx = phd_winxmin + phd_winxmax;
@@ -4587,7 +4587,7 @@ void S_DrawDarts(ITEM_INFO* item)
 	long w, h, size, x, y, z;
 	long x1, y1, z1, x2, y2, z2;
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -4906,7 +4906,7 @@ void DoUwEffect()
 	ushort u1, v1, u2, v2;
 	short c;
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w;
 	h = dm->h;
 	bBlueEffect = 0;
@@ -5076,7 +5076,7 @@ void S_DrawSubWakeFX(ITEM_INFO* item)
 	if (!tomb3.upv_wake)
 		return;
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
 	h = dm->h - 1;
 

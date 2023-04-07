@@ -139,63 +139,54 @@ void WinFreeDX(bool free_dd)
 {
 	DXFreeTPages();
 
-	if (App.Palette)
+	if (App.D3DView)
 	{
-		App.Palette->Release();
-		App.Palette = 0;
+		App.D3DView->Release();
+		App.D3DView = 0;
 	}
 
-	if (App.lpViewPort)
+	if (App.D3DDev)
 	{
-		App.lpViewPort->Release();
-		App.lpViewPort = 0;
+		App.D3DDev->Release();
+		App.D3DDev = 0;
 	}
 
-	if (App.lpD3DDevice)
+	if (App.ZBuffer)
 	{
-		App.lpD3DDevice->Release();
-		App.lpD3DDevice = 0;
+		App.ZBuffer->Release();
+		App.ZBuffer = 0;
 	}
 
-	if (App.lpZBuffer)
+	if (App.BackBuffer)
 	{
-		App.lpZBuffer->Release();
-		App.lpZBuffer = 0;
+		App.BackBuffer->Release();
+		App.BackBuffer = 0;
 	}
 
-	if (App.lpBackBuffer)
+	if (App.FrontBuffer)
 	{
-		App.lpBackBuffer->Release();
-		App.lpBackBuffer = 0;
+		App.FrontBuffer->Release();
+		App.FrontBuffer = 0;
 	}
 
-	if (App.lpFrontBuffer)
+	if (App.PictureBuffer)
 	{
-		App.lpFrontBuffer->Release();
-		App.lpFrontBuffer = 0;
+		App.PictureBuffer->Release();
+		App.PictureBuffer = 0;
 	}
-
-	if (App.lpPictureBuffer)
-	{
-		App.lpPictureBuffer->Release();
-		App.lpPictureBuffer = 0;
-	}
-
-	if (App.unk)
-		free(App.unk);
 
 	if (free_dd)
 	{
-		if (App.lpD3D)
+		if (App.D3D)
 		{
-			App.lpD3D->Release();
-			App.lpD3D = 0;
+			App.D3D->Release();
+			App.D3D = 0;
 		}
 
-		if (App.lpDD)
+		if (App.DDraw)
 		{
-			App.lpDD->Release();
-			App.lpDD = 0;
+			App.DDraw->Release();
+			App.DDraw = 0;
 		}
 	}
 }
@@ -247,8 +238,8 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	UpdateWindow(App.WindowHandle);
 
 	DXGetDeviceInfo(&App.DeviceInfo, App.WindowHandle, App.hInstance);
-	App.DXConfigPtr = &App.DXConfig;
-	App.DeviceInfoPtr = &App.DeviceInfo;
+	App.lpDXConfig = &App.DXConfig;
+	App.lpDeviceInfo = &App.DeviceInfo;
 
 	tomb3.gold = UT_FindArg("gold");
 
@@ -311,23 +302,22 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	UpdateWindow(App.WindowHandle);
 	ShowWindow(App.WindowHandle, nShowCmd);
 
-	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
+	d3dinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D];
 
 	if (!(d3dinfo->DeviceDesc.dpcTriCaps.dwTextureCaps & D3DPTEXTURECAPS_ALPHA))
-		d3dinfo->Texture[App.DXConfigPtr->D3DTF].bAlpha = 0;
+		d3dinfo->Texture[App.lpDXConfig->D3DTF].bAlpha = 0;
 
-	HWConfig.Perspective = 1;
-	HWConfig.Dither = App.DXConfig.Dither;
+	HWConfig.bPersp = 1;
+	HWConfig.bDither = App.DXConfig.Dither;
 	HWConfig.nFilter = D3DFILTER_NEAREST + (App.DXConfig.Filter != 0);
 	HWConfig.nShadeMode = D3DSHADE_GOURAUD;
 	HWConfig.nFillMode = D3DFILL_SOLID;
-	HWConfig.TrueAlpha = 0;
 
 	framedump = 0;
 	App.nUVAdd = 256;
 	UT_InitAccurateTimer();
 	DXResetPalette(PictureTextures);
-	InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer);
+	InitDrawPrimitive(App.D3DDev, App.BackBuffer);
 	farz = 0x5000;
 	distanceFogValue = 0x3000;
 	TIME_Init();
@@ -353,7 +343,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 
 void S_ExitSystem(const char* msg)
 {
-	DXSetCooperativeLevel(App.lpDD, App.WindowHandle, DDSCL_NORMAL);
+	DXSetCooperativeLevel(App.DDraw, App.WindowHandle, DDSCL_NORMAL);
 	MessageBox(App.WindowHandle, msg, 0, MB_OK);
 	ShutdownGame();
 	strcpy(exit_message, msg);

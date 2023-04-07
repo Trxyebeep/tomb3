@@ -36,7 +36,7 @@ short* calc_object_vertices(short* objptr)
 	long nVtx;
 	char totalClip, clipFlag;
 
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 		fMidSort = 0;
 	else
 		fMidSort = float(mid_sort << (W2V_SHIFT + 8));
@@ -121,7 +121,7 @@ short* calc_object_verticesback(short* objptr)
 	long nVtx;
 	char totalClip, clipFlag;
 
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 		fMidSort = 0;
 	else
 		fMidSort = float(mid_sort << (W2V_SHIFT + 8));
@@ -226,7 +226,7 @@ short* calc_roomvert(short* objptr, long far_clip)
 
 	r = &room[CurrentRoom];
 
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 		fMidSort = 0;
 	else
 		fMidSort = float(mid_sort << (W2V_SHIFT + 8));

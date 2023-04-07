@@ -198,7 +198,7 @@ void DS_Start(HWND hwnd)
 	memset(DS_Samples, 0, sizeof(DS_Samples));
 	camera.mike_at_lara = 0;
 
-	if (DS_Create(App.DeviceInfoPtr->DSInfo[App.DXConfigPtr->DS].lpGuid))
+	if (DS_Create(App.lpDeviceInfo->DSInfo[App.lpDXConfig->nDS].lpGuid))
 	{
 		if (!hwnd)
 			hwnd = App.WindowHandle;

@@ -102,7 +102,7 @@ long LoadTexturePages(HANDLE file)
 	bool _16bit;
 
 	MyReadFile(file, &nPages, sizeof(long), &read, 0);
-	_16bit = !App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bPalette;
+	_16bit = !App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].Texture[App.lpDXConfig->D3DTF].bPalette;
 	size = _16bit ? 0x20000 : 0x10000;
 	p = (uchar*)GlobalAlloc(GMEM_FIXED, nPages * size);
 
@@ -802,7 +802,7 @@ long S_LoadLevelFile(char* name, long number, long type)
 		if (tomb3.gold)
 			T3_GoldifyString(buf);
 
-		LoadPicture(buf, App.lpPictureBuffer, 1);
+		LoadPicture(buf, App.PictureBuffer, 1);
 		FadePictureUp(32);
 		fade = 1;
 	}

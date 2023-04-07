@@ -1189,8 +1189,6 @@ struct DYNAMIC
 	long y;
 	long z;
 	ushort falloff;
-	uchar used;
-	uchar pad1;
 	uchar on;
 	uchar r;
 	uchar g;
@@ -1304,7 +1302,6 @@ struct DIRECT3DINFO
 	GUID Guid;
 	D3DDEVICEDESC DeviceDesc;
 	bool bAlpha;
-	bool bAGP;
 	long nDisplayMode;
 	DISPLAYMODE* DisplayMode;
 	long nTexture;
@@ -1337,7 +1334,7 @@ struct DXCONFIG
 {
 	long nDD;
 	long nD3D;
-	long DS;
+	long nDS;
 	long nVMode;
 	long D3DTF;
 	long bZBuffer;
@@ -1353,22 +1350,18 @@ struct WINAPP
 	HINSTANCE hInstance;
 	DEVICEINFO DeviceInfo;
 	DXCONFIG DXConfig;
-	DEVICEINFO* DeviceInfoPtr;
-	DXCONFIG* DXConfigPtr;
-	LPDIRECTDRAWX lpDD;
-	LPDIRECT3DX lpD3D;
-	LPDIRECT3DDEVICEX lpD3DDevice;
-	LPDIRECTDRAWSURFACEX lpFrontBuffer;
-	LPDIRECTDRAWSURFACEX lpBackBuffer;
-	LPDIRECTDRAWSURFACEX lpZBuffer;
-	LPDIRECTDRAWSURFACEX lpPictureBuffer;
-	ulong* unk;
-	LPDIRECT3DVIEWPORTX lpViewPort;
-	LPDIRECT3DMATERIALX lpViewPortMaterial;
-	LPDIRECTDRAWPALETTE Palette;
-	PALETTEENTRY PaletteEntries[257];
+	DEVICEINFO* lpDeviceInfo;
+	DXCONFIG* lpDXConfig;
+	LPDIRECTDRAWX DDraw;
+	LPDIRECT3DX D3D;
+	LPDIRECT3DDEVICEX D3DDev;
+	LPDIRECTDRAWSURFACEX FrontBuffer;
+	LPDIRECTDRAWSURFACEX BackBuffer;
+	LPDIRECTDRAWSURFACEX ZBuffer;
+	LPDIRECTDRAWSURFACEX PictureBuffer;
+	LPDIRECT3DVIEWPORTX D3DView;
+	LPDIRECT3DMATERIALX D3DMaterial;
 	bool bFocus;
-	long nRenderMode;
 	long nUVAdd;
 	ulong nFrames;
 	float fps;
@@ -1557,12 +1550,11 @@ struct STATIC_INFO
 
 struct HWCONFIG
 {
-	bool Perspective;
-	bool Dither;
+	bool bPersp;
+	bool bDither;
 	long nFilter;
 	long nShadeMode;
 	long nFillMode;
-	bool TrueAlpha;
 };
 
 struct BITE_INFO

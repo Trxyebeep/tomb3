@@ -273,7 +273,7 @@ long S_UpdateInput()
 		med_debounce--;
 
 	if (key_pressed(DIK_APOSTROPHE))
-		DXSaveScreen(App.lpBackBuffer);
+		DXSaveScreen(App.BackBuffer);
 
 	if (FinishLevelCheat)
 	{

@@ -100,7 +100,7 @@ void ShutdownGame()
 	GlobalFree(TLUnRollBuffer);
 	DXFreeTPages();
 	ACMClose();
-	DXSetCooperativeLevel(App.lpDD, App.WindowHandle, DDSCL_NORMAL);
+	DXSetCooperativeLevel(App.DDraw, App.WindowHandle, DDSCL_NORMAL);
 
 	if (malloc_buffer)
 		GlobalFree(malloc_buffer);
@@ -240,7 +240,7 @@ long S_InitialiseSystem()
 	DISPLAYMODE* dm;
 	long cval;
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	DumpX = 0;
 	DumpY = 0;
 	DumpWidth = (short)dm->w;

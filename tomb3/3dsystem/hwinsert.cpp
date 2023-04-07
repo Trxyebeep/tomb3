@@ -31,7 +31,7 @@ static __inline bool CheckDrawType(long nDrawType)
 	if(CurrentTLVertex - VertexBuffer > MAX_TLVERTICES - 32)\
 		return;\
 	\
-	if (!App.lpZBuffer || !bAlphaTesting)\
+	if (!App.ZBuffer || !bAlphaTesting)\
 	{\
 		sort = sort3dptrbf;\
 		info = info3dptrbf;\
@@ -63,7 +63,7 @@ static __inline bool CheckDrawType(long nDrawType)
 /*
 	"pass" should only be true when the code looks like
 
-	if (App.lpZBuffer && bAlphaTesting)
+	if (App.ZBuffer && bAlphaTesting)
 	{
 		sort = sort3dptrfb;
 		info = info3dptrfb;
@@ -306,7 +306,7 @@ void HWI_InsertGT4_Sorted(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHD_VBUF* v4
 {
 	float zv;
 
-	if (App.lpZBuffer || nPolyType != 3 && nPolyType != 4)
+	if (App.ZBuffer || nPolyType != 3 && nPolyType != 4)
 	{
 		HWI_InsertGT4_Poly(v1, v2, v3, v4, pTex, nSortType, double_sided);
 		return;
@@ -335,7 +335,7 @@ void HWI_InsertGT3_Sorted(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHDTEXTUREST
 {
 	float zv;
 
-	if (App.lpZBuffer || nPolyType != 3 && nPolyType != 4)
+	if (App.ZBuffer || nPolyType != 3 && nPolyType != 4)
 	{
 		HWI_InsertGT3_Poly(v1, v2, v3, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
 		return;
@@ -689,7 +689,7 @@ void HWI_InsertClippedPoly_Textured(long nPoints, float zdepth, long nDrawType, 
 
 	vtxbuf = v_buffer;
 
-	if (App.lpZBuffer && nDrawType != DT_POLY_WGTA && nDrawType != DT_POLY_WGT && nDrawType != DT_POLY_COLSUB)
+	if (App.ZBuffer && nDrawType != DT_POLY_WGTA && nDrawType != DT_POLY_WGT && nDrawType != DT_POLY_COLSUB)
 	{
 		nBucket = FindBucket(TPages[nTPage]);
 
@@ -910,7 +910,7 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 			outsideBackgroundTop = v2->ys;
 	}
 
-	if (!App.lpZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_COLSUB)
+	if (!App.ZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_COLSUB)
 	{
 		if (nSortType == MID_SORT)
 			zdepth = (v0->zv + v1->zv + v2->zv) * 0.33333334F;
@@ -1105,7 +1105,7 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 			outsideBackgroundTop = v3->ys;
 	}
 
-	if (!App.lpZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_COLSUB)
+	if (!App.ZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_COLSUB)
 	{
 		if (nSortType == MID_SORT)
 			zdepth = (v0->zv + v1->zv + v2->zv + v3->zv) * 0.25F;
@@ -1279,7 +1279,7 @@ void HWI_InsertPoly_Gouraud(long nPoints, float zdepth, long r, long g, long b, 
 	vtx = v_buffer;
 	maxCol = nDrawType != DT_POLY_GA ? 0xFFFFFFFF : 0x80FFFFFF;
 
-	if (App.lpZBuffer && nDrawType != DT_POLY_GA)
+	if (App.ZBuffer && nDrawType != DT_POLY_GA)
 	{
 		nBucket = FindBucket(0);
 
@@ -1387,7 +1387,7 @@ void HWI_InsertPoly_GouraudRGB(long nPoints, float zdepth, long nDrawType)
 	maxCol = (nDrawType == DT_POLY_GA || nDrawType == DT_POLY_GTA) ? 0x80FFFFFF : 0xFFFFFFFF;
 	vtx = v_buffer;
 
-	if (App.lpZBuffer && nDrawType != DT_POLY_GA && nDrawType != DT_POLY_GTA)
+	if (App.ZBuffer && nDrawType != DT_POLY_GA && nDrawType != DT_POLY_GTA)
 	{
 		nBucket = FindBucket(0);
 
@@ -1494,7 +1494,7 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 
 	z = one / (float)zdepth;
 
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 	{
 		nBucket = FindBucket(0);
 

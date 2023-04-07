@@ -26,7 +26,7 @@ bool bAlphaTesting;
 
 void HWR_EnableZBuffer(bool write, bool compare)
 {
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 	{
 		if (write != zBufWriteEnabled)
 		{
@@ -36,7 +36,7 @@ void HWR_EnableZBuffer(bool write, bool compare)
 
 		if (compare != zBufCompareEnabled)
 		{
-			if (App.lpZBuffer)
+			if (App.ZBuffer)
 				SetRenderState(D3DRENDERSTATE_ZFUNC, compare ? D3DCMP_LESSEQUAL : D3DCMP_ALWAYS);
 			else
 				SetRenderState(D3DRENDERSTATE_ZENABLE, compare);
@@ -119,7 +119,7 @@ void HWR_ResetZBuffer()
 	zBufWriteEnabled = 0;
 	zBufCompareEnabled = 0;
 
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 		SetRenderState(D3DRENDERSTATE_ZFUNC, D3DCMP_ALWAYS);
 	else
 	{
@@ -161,7 +161,7 @@ void HWR_BeginScene()
 	BeginScene();
 	nDrawnPoints = 0;
 
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 	{
 		for (int i = 0; i < MAX_BUCKETS; i++)
 		{
@@ -424,8 +424,8 @@ void HWR_InitState()
 	SetRenderState(D3DRENDERSTATE_SHADEMODE, HWConfig.nShadeMode);
 	SetRenderState(D3DRENDERSTATE_TEXTUREMAG, HWConfig.nFilter);
 	SetRenderState(D3DRENDERSTATE_TEXTUREMIN, HWConfig.nFilter);
-	SetRenderState(D3DRENDERSTATE_DITHERENABLE, HWConfig.Dither);
-	HWR_EnablePerspCorrect(HWConfig.Perspective);
+	SetRenderState(D3DRENDERSTATE_DITHERENABLE, HWConfig.bDither);
+	HWR_EnablePerspCorrect(HWConfig.bPersp);
 	SetRenderState(D3DRENDERSTATE_TEXTUREADDRESS, D3DTADDRESS_CLAMP);
 	SetRenderState(D3DRENDERSTATE_TEXTUREMAPBLEND, D3DTBLEND_MODULATEALPHA);
 	SetRenderState(D3DRENDERSTATE_CULLMODE, D3DCULL_NONE);
@@ -438,7 +438,7 @@ void HWR_InitState()
 	HWR_ResetCurrentTexture();
 	HWR_ResetColorKey();
 
-	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
+	d3dinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D];
 
 	if (d3dinfo->DeviceDesc.dpcTriCaps.dwAlphaCmpCaps & D3DPCMPCAPS_NOTEQUAL)
 	{

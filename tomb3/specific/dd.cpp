@@ -63,7 +63,7 @@ HRESULT DD_CreateSurface(DDSURFACEDESCX& desc, LPDIRECTDRAWSURFACEX& surf)
 	HRESULT res;
 	LPDIRECTDRAWSURFACE ps;
 
-	res = App.lpDD->CreateSurface(&desc, &ps, 0);
+	res = App.DDraw->CreateSurface(&desc, &ps, 0);
 
 	if (FAILED(res))
 		return res;

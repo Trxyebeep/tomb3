@@ -300,7 +300,7 @@ static void OutputPickupDisplay()
 {
 	DXClearBuffers(8, 0);
 
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 	{
 		for (int i = 0; i < MAX_BUCKETS; i++)
 		{
@@ -322,7 +322,7 @@ static void OutputPickupDisplay()
 	bBlueEffect = 0;
 	DrawPickup(pickups[CurrentPickup].sprnum);
 
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 	{
 		if (bAlphaTesting)
 		{
@@ -354,7 +354,7 @@ static void OutputPickupDisplay()
 
 void S_OutputPolyList()
 {
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 	{
 		HWR_EnableColorKey(0);
 		HWR_EnableAlphaBlend(0);
@@ -535,7 +535,7 @@ long S_DumpCine()
 	if (!framedump)
 		return 0;
 
-	DXSaveScreen(App.lpFrontBuffer);
+	DXSaveScreen(App.FrontBuffer);
 	return 1;
 }
 

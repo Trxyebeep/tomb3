@@ -291,7 +291,7 @@ void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACEX surf)
 
 void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf)
 {
-	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bPalette)
+	if (App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].Texture[App.lpDXConfig->D3DTF].bPalette)
 	{
 		DXFreeTPages();
 		DXCreateMaxTPages(1);
@@ -316,26 +316,26 @@ void CreateMonoScreen()
 	else
 		DXTextureSetGreyScale(1);
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 
 	if (tomb3.Windowed)
 	{
 		if (dm->w == 640 && dm->h == 480)
-			ConvertSurfaceToTextures(App.lpBackBuffer);
+			ConvertSurfaceToTextures(App.BackBuffer);
 		else
 		{
-			App.lpPictureBuffer->Blt(0, App.lpBackBuffer, 0, DDBLT_WAIT, 0);
-			ConvertSurfaceToTextures(App.lpPictureBuffer);
+			App.PictureBuffer->Blt(0, App.BackBuffer, 0, DDBLT_WAIT, 0);
+			ConvertSurfaceToTextures(App.PictureBuffer);
 		}
 	}
 	else
 	{
 		if (dm->w == 640 && dm->h == 480)
-			ConvertSurfaceToTextures(App.lpFrontBuffer);
+			ConvertSurfaceToTextures(App.FrontBuffer);
 		else
 		{
-			App.lpPictureBuffer->Blt(0, App.lpFrontBuffer, 0, DDBLT_WAIT, 0);
-			ConvertSurfaceToTextures(App.lpPictureBuffer);
+			App.PictureBuffer->Blt(0, App.FrontBuffer, 0, DDBLT_WAIT, 0);
+			ConvertSurfaceToTextures(App.PictureBuffer);
 		}
 	}
 
@@ -412,9 +412,9 @@ void FadePictureDown(long steps)
 {
 	DIRECT3DINFO* d3dinfo;
 
-	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
+	d3dinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D];
 
-	if (forceFadeDown || d3dinfo->Texture[App.DXConfigPtr->D3DTF].bPalette || !d3dinfo->bAlpha)
+	if (forceFadeDown || d3dinfo->Texture[App.lpDXConfig->D3DTF].bPalette || !d3dinfo->bAlpha)
 	{
 		for (int i = 0; i < steps; i++)
 		{
@@ -446,26 +446,26 @@ void S_FadeToBlack()
 {
 	DISPLAYMODE* dm;
 
-	dm = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode[App.DXConfigPtr->nVMode];
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 
 	if (tomb3.Windowed)
 	{
 		if (dm->w == 640 && dm->h == 480)
-			ConvertSurfaceToTextures(App.lpBackBuffer);
+			ConvertSurfaceToTextures(App.BackBuffer);
 		else
 		{
-			App.lpPictureBuffer->Blt(0, App.lpBackBuffer, 0, DDBLT_WAIT, 0);
-			ConvertSurfaceToTextures(App.lpPictureBuffer);
+			App.PictureBuffer->Blt(0, App.BackBuffer, 0, DDBLT_WAIT, 0);
+			ConvertSurfaceToTextures(App.PictureBuffer);
 		}
 	}
 	else
 	{
 		if (dm->w == 640 && dm->h == 480)
-			ConvertSurfaceToTextures(App.lpFrontBuffer);
+			ConvertSurfaceToTextures(App.FrontBuffer);
 		else
 		{
-			App.lpPictureBuffer->Blt(0, App.lpFrontBuffer, 0, DDBLT_WAIT, 0);
-			ConvertSurfaceToTextures(App.lpPictureBuffer);
+			App.PictureBuffer->Blt(0, App.FrontBuffer, 0, DDBLT_WAIT, 0);
+			ConvertSurfaceToTextures(App.PictureBuffer);
 		}
 	}
 
@@ -546,7 +546,7 @@ void FreePictureTextures(long* indices)
 	DXTextureCleanup(indices[3], PictureTextures);
 	DXTextureCleanup(indices[4], PictureTextures);
 
-	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bPalette)
+	if (App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].Texture[App.lpDXConfig->D3DTF].bPalette)
 	{
 		DXFreeTPages();
 		DXCreateMaxTPages(0);

@@ -159,7 +159,7 @@ void WinPlayFMV(const char* name, bool play)
 	r.right = 640;
 	r.bottom = 480;
 
-	if (Player_PassInDirectDrawObject(App.lpDD) || Player_InitMovie(&MovieContext, 0, 0, name, 0x200000) || Movie_GetFormat(MovieContext) != 130)
+	if (Player_PassInDirectDrawObject(App.DDraw) || Player_InitMovie(&MovieContext, 0, 0, name, 0x200000) || Movie_GetFormat(MovieContext) != 130)
 		return;
 
 	xSize = Movie_GetXSize(MovieContext);
