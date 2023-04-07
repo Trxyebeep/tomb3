@@ -1298,8 +1298,8 @@ struct DXDIRECTSOUNDINFO
 
 struct DIRECT3DINFO
 {
-	char Name[30];
-	char About[80];
+	char Name[256];
+	char About[256];
 	LPGUID lpGuid;
 	GUID Guid;
 	D3DDEVICEDESC DeviceDesc;
@@ -1313,8 +1313,8 @@ struct DIRECT3DINFO
 
 struct DIRECTDRAWINFO
 {
-	char Name[30];
-	char About[80];
+	char Name[256];
+	char About[256];
 	LPGUID lpGuid;
 	GUID Guid;
 	DDCAPS DDCaps;
@@ -1324,22 +1324,13 @@ struct DIRECTDRAWINFO
 	DIRECT3DINFO* D3DInfo;
 };
 
-struct DXDIRECTINPUTINFO
-{
-	char Name[30];
-	char About[80];
-	LPGUID lpGuid;
-	GUID Guid;
-};
-
 struct DEVICEINFO
 {
 	long nDDInfo;
 	DIRECTDRAWINFO* DDInfo;
 	long nDSInfo;
 	DXDIRECTSOUNDINFO* DSInfo;
-	long nDIInfo;
-	DXDIRECTINPUTINFO* DIInfo;
+	//Joystick enumeration stuff was here
 };
 
 struct DXCONFIG
@@ -1348,15 +1339,11 @@ struct DXCONFIG
 	long nD3D;
 	long DS;
 	long nVMode;
-	long DI;
 	long D3DTF;
 	long bZBuffer;
 	long Dither;
 	long Filter;
-	long AGP;
 	long sound;
-	long Joystick;
-	long MMX;
 };
 
 struct WINAPP

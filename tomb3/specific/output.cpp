@@ -532,16 +532,11 @@ void ProjectPCoord(long x, long y, long z, long* result, long cx, long cy, long 
 
 long S_DumpCine()
 {
-	static long nf = 0;
+	if (!framedump)
+		return 0;
 
-	if (framedump)
-	{
-		nf++;
-		DXSaveScreen(App.lpFrontBuffer);
-		return 1;
-	}
-
-	return 0;
+	DXSaveScreen(App.lpFrontBuffer);
+	return 1;
 }
 
 void S_InitialiseScreen(long type)

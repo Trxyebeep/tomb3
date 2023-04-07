@@ -204,7 +204,7 @@ void DS_Start(HWND hwnd)
 			hwnd = App.WindowHandle;
 
 		if (FAILED(lpDirectSound->SetCooperativeLevel(hwnd, DSSCL_EXCLUSIVE)))
-			throw 10;
+			S_ExitSystem("DS_Start: SetCooperativeLevel failed");
 
 		DS_SetOutputFormat();
 	}

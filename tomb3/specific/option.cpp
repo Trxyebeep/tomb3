@@ -1058,30 +1058,14 @@ void do_control_option(INVENTORY_ITEM* item)
 
 	case 2:
 
-		if (joy_fire)
+		for (c = 0; c < 256; c++)
 		{
-			for (c = 0; c < 256; c++)
-			{
-				if ((1 << c) & joy_fire)
-					break;
-			}
-
-			if (c == 32)
-				c = 0;
-			else
-				c += 256;
+			if (key_pressed(c))
+				break;
 		}
-		else
-		{
-			for (c = 0; c < 256; c++)
-			{
-				if (key_pressed(c))
-					break;
-			}
 
-			if (c == 256)
-				c = 0;
-		}
+		if (c == 256)
+			c = 0;
 
 		if (!c || !KeyboardButtons[c] || c == DIK_RETURN || c == DIK_LEFT || c == DIK_RIGHT || c == DIK_UP || c == DIK_DOWN)
 			break;
@@ -1106,12 +1090,7 @@ void do_control_option(INVENTORY_ITEM* item)
 
 	case 3:
 
-		if (layout[iconfig][keychange] & 256)
-		{
-			if (!((1 << layout[iconfig][keychange]) & joy_fire))
-				sel = 0;
-		}
-		else if (!key_pressed(layout[iconfig][keychange]))
+		if (!key_pressed(layout[iconfig][keychange]))
 		{
 			sel = 0;
 

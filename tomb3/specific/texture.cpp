@@ -377,7 +377,7 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 
 			tinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF];
 
-			if (tinfo->bAlpha || App.DXConfigPtr->MMX)
+			if (tinfo->bAlpha)
 			{
 				col =
 					(r >> (8 - tinfo->rbpp) << tinfo->rshift) |

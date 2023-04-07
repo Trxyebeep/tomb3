@@ -50,8 +50,8 @@ long DrawPhaseCinematic()
 	S_OutputPolyList();
 	camera.number_frames = S_DumpScreen();
 
-	if (S_DumpCine() == 1)
-		camera.number_frames = 2;
+	if (S_DumpCine())
+		camera.number_frames = TICKS_PER_FRAME;
 
 	S_AnimateTextures(camera.number_frames);
 	return camera.number_frames;

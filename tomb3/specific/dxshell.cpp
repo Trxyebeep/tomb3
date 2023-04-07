@@ -178,29 +178,6 @@ __inline void* AddStruct(void* p, long num, long size)	//Note: this function was
 	return ptr;
 }
 
-BOOL CALLBACK DXEnumDirectInput(LPCDIDEVICEINSTANCE lpDevInst, LPVOID lpContext)
-{
-	DEVICEINFO* dinfo;
-	DXDIRECTINPUTINFO* info;
-
-	dinfo = (DEVICEINFO*)lpContext;
-	dinfo->DIInfo = (DXDIRECTINPUTINFO*)AddStruct(dinfo->DIInfo, dinfo->nDIInfo, sizeof(DXDIRECTINPUTINFO));
-	info = &dinfo->DIInfo[dinfo->nDIInfo];
-
-	if (lpDevInst == (LPCDIDEVICEINSTANCE)-4)	//todo, fix me: properly check if guidInstance is valid
-		info->lpGuid = 0;
-	else
-	{
-		info->lpGuid = &info->Guid;
-		info->Guid = lpDevInst->guidInstance;
-	}
-
-	lstrcpy(info->About, lpDevInst->tszProductName);
-	lstrcpy(info->Name, lpDevInst->tszInstanceName);
-	dinfo->nDIInfo++;
-	return DIENUM_CONTINUE;
-}
-
 HRESULT CALLBACK DXEnumDisplayModes(LPDDSURFACEDESCX lpDDSurfaceDesc, LPVOID lpContext)
 {
 	DIRECTDRAWINFO* ddinfo;
@@ -384,9 +361,6 @@ void DXFreeDeviceInfo(DEVICEINFO* device)
 	if (device->DSInfo)
 		free(device->DSInfo);
 
-	if (device->DIInfo)
-		free(device->DIInfo);
-
 	memset(device, 0, sizeof(DEVICEINFO));
 }
 
@@ -554,14 +528,10 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 
 void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance)
 {
-	LPDIRECTINPUTX lpDinput;
-
 	MMXSupported = 1;
 	DirectDrawEnumerate(DXEnumDirectDraw, device);
 	DirectSoundEnumerate(DXEnumDirectSound, device);
-	DirectInput8Create(hInstance, DIRECTINPUT_VERSION, DIGUID, (LPVOID*)&lpDinput, 0);
-	lpDinput->EnumDevices(DI8DEVTYPE_JOYSTICK, DXEnumDirectInput, device, 1);
-	lpDinput->Release();
+	//Original joystick enumeration stuff was here
 }
 
 HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LPD3DDEVICEDESC lpHWDesc, LPD3DDEVICEDESC lpHELDesc, LPVOID lpContext)

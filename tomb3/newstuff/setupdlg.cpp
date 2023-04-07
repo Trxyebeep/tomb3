@@ -234,7 +234,6 @@ static void InitDialogBox(HWND hwnd)
 	long nDD;
 
 	nDD = dev->nDDInfo - 1;
-	config->MMX = 1;
 
 	InitVideoModes(hwnd, nDD, 0);
 	InitTextures(hwnd, nDD, 0);
@@ -292,12 +291,9 @@ static BOOL CALLBACK SetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM 
 			config->D3DTF = SendMessage(GetDlgItem(dlg, IDC_D3DTF), CB_GETCURSEL, 0, 0);
 			config->bZBuffer = (bool)SendMessage(GetDlgItem(dlg, IDC_ZBUFFER), BM_GETCHECK, 0, 0);
 			config->DS = SendMessage(GetDlgItem(dlg, IDC_SOUND), CB_GETCURSEL, 0, 0);
-			config->DI = -1;
-			config->AGP = 1;
 			config->Dither = (bool)SendMessage(GetDlgItem(dlg, IDC_DITHER), BM_GETCHECK, 0, 0);
 			config->Filter = (bool)SendMessage(GetDlgItem(dlg, IDC_BILINEAR), BM_GETCHECK, 0, 0);
 			config->sound = !(bool)SendMessage(GetDlgItem(dlg, IDC_DISABLE_SOUND), BM_GETCHECK, 0, 0);
-			config->Joystick = 0;
 			tomb3.Windowed = (bool)SendMessage(GetDlgItem(dlg, IDC_WINDOWED), BM_GETCHECK, 0, 0);
 
 			if ((ushort)wParam == IDOK)
