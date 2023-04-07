@@ -287,15 +287,15 @@ short* calc_roomvert(short* objptr, long far_clip)
 
 				if (dl->on)
 				{
-					dx = (dl->x - r->x - x) >> 7;
-					dy = (dl->y - r->y - y) >> 7;
-					dz = (dl->z - r->z - z) >> 7;
+					dx = (dl->x - r->x - x) >> 4;
+					dy = (dl->y - r->y - y) >> 4;
+					dz = (dl->z - r->z - z) >> 4;
 					dist = SQUARE(dx) + SQUARE(dy) + SQUARE(dz);
 
-					if (dist < 1024)
+					if (dist < 0x10000)
 					{
 						dist = phd_sqrt(dist);
-						falloff = dl->falloff >> 8;
+						falloff = dl->falloff >> 5;
 
 						if (dist < falloff)
 						{

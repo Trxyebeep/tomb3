@@ -30,7 +30,7 @@ D3DTLVERTEX* UnRollBuffer;
 static D3DTLVERTEX* TLVertexBuffer;
 static D3DTLVERTEX* TLUnRollBuffer;
 
-long DynamicColorTable[33][33][256];
+long DynamicColorTable[256][256][256];
 WATERTAB WaterTable[22][64];
 float wibble_table[32];
 
@@ -191,9 +191,9 @@ long S_InitialiseSystem()
 	TLUnRollBuffer = (D3DTLVERTEX*)GlobalAlloc(GMEM_FIXED, MAX_TLVERTICES * sizeof(D3DTLVERTEX));
 	UnRollBuffer = (D3DTLVERTEX*)(((long)TLUnRollBuffer + 32) & 0xFFFFFFE0);
 
-	for (int a = 1; a < 33; a++)
+	for (int a = 1; a < 256; a++)
 	{
-		for (int b = 1; b < 33; b++)
+		for (int b = 1; b < 256; b++)
 		{
 			for (int c = 1; c < 256; c++)
 			{
