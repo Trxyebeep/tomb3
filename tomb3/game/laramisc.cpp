@@ -366,7 +366,7 @@ void LaraCheat(ITEM_INFO* item, COLL_INFO* coll)
 	LaraUnderWater(item, coll);
 
 	if (input & IN_ACTION)
-		TriggerDynamic(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos, 31, 31, 31, 31);
+		TriggerDynamic(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos, 31, 255, 255, 255);
 
 	if (input & IN_WALK && !(input & IN_LOOK))
 	{

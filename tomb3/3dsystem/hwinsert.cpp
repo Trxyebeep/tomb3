@@ -31,7 +31,7 @@ static __inline bool CheckDrawType(long nDrawType)
 	if(CurrentTLVertex - VertexBuffer > MAX_TLVERTICES - 32)\
 		return;\
 	\
-	if (!App.lpZBuffer || !bAlphaTesting)\
+	if (!App.ZBuffer || !bAlphaTesting)\
 	{\
 		sort = sort3dptrbf;\
 		info = info3dptrbf;\
@@ -63,7 +63,7 @@ static __inline bool CheckDrawType(long nDrawType)
 /*
 	"pass" should only be true when the code looks like
 
-	if (App.lpZBuffer && bAlphaTesting)
+	if (App.ZBuffer && bAlphaTesting)
 	{
 		sort = sort3dptrfb;
 		info = info3dptrfb;
@@ -167,19 +167,19 @@ void SubdivideEdge(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* dest)
 			dest->clip += 8;
 	}
 
-	r0 = (v0->g >> 10) & 0x1F;
-	r1 = (v1->g >> 10) & 0x1F;
+	r0 = RGB_GETRED(v0->color);
+	r1 = RGB_GETRED(v1->color);
 
-	g0 = (v0->g >> 5) & 0x1F;
-	g1 = (v1->g >> 5) & 0x1F;
+	g0 = RGB_GETGREEN(v0->color);
+	g1 = RGB_GETGREEN(v1->color);
 
-	b0 = v0->g & 0x1F;
-	b1 = v1->g & 0x1F;
+	b0 = RGB_GETBLUE(v0->color);
+	b1 = RGB_GETBLUE(v1->color);
 
 	r = (r0 + r1) >> 1;
 	g = (g0 + g1) >> 1;
 	b = (b0 + b1) >> 1;
-	dest->g = short(r << 10 | g << 5 | b);
+	dest->color = RGB_MAKE(r, g, b);
 
 	dest->u = (v0->u + v1->u) >> 1;
 	dest->v = (v0->v + v1->v) >> 1;
@@ -306,7 +306,7 @@ void HWI_InsertGT4_Sorted(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHD_VBUF* v4
 {
 	float zv;
 
-	if (App.lpZBuffer || nPolyType != 3 && nPolyType != 4)
+	if (App.ZBuffer || nPolyType != 3 && nPolyType != 4)
 	{
 		HWI_InsertGT4_Poly(v1, v2, v3, v4, pTex, nSortType, double_sided);
 		return;
@@ -335,7 +335,7 @@ void HWI_InsertGT3_Sorted(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHDTEXTUREST
 {
 	float zv;
 
-	if (App.lpZBuffer || nPolyType != 3 && nPolyType != 4)
+	if (App.ZBuffer || nPolyType != 3 && nPolyType != 4)
 	{
 		HWI_InsertGT3_Poly(v1, v2, v3, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
 		return;
@@ -451,12 +451,11 @@ void InitUVTable()
 		UVTable[i] = float(i + 1) * (1.0F / 65536.0F);
 }
 
-long GETR(long col)
+long GETR(ulong col)
 {
 	long w, r;
 
-	r = (col >> 10) & 0x1F;
-	r <<= 3;
+	r = RGB_GETRED(col);
 	r = ColorTable[r];
 
 	if (bBlueEffect)
@@ -473,12 +472,11 @@ long GETR(long col)
 	return r;
 }
 
-long GETG(long col)
+long GETG(ulong col)
 {
 	long w, g;
 
-	g = (col >> 5) & 0x1F;
-	g <<= 3;
+	g = RGB_GETGREEN(col);
 	g = ColorTable[g];
 
 	if (bBlueEffect)
@@ -495,12 +493,11 @@ long GETG(long col)
 	return g;
 }
 
-long GETB(long col)
+long GETB(ulong col)
 {
 	long w, b;
 
-	b = (col & 0x1F);
-	b <<= 3;
+	b = RGB_GETBLUE(col);
 	b = ColorTable[b];
 
 	if (bBlueEffect)
@@ -523,9 +520,9 @@ static void PHD_VBUF_To_D3DTLVTX(PHD_VBUF* phdV, D3DTLVERTEX* v)
 	v->sy = phdV->ys;
 	v->sz = f_a - f_boo * phdV->ooz;
 	v->rhw = phdV->ooz;
-	r = GETR(phdV->g);
-	g = GETG(phdV->g);
-	b = GETB(phdV->g);
+	r = GETR(phdV->color);
+	g = GETG(phdV->color);
+	b = GETB(phdV->color);
 	v->color = GlobalAlpha | (r << 16) | (g << 8) | b;
 	v->specular = 0;
 }
@@ -538,12 +535,12 @@ void PHD_VBUF_To_D3DTLVTX_WITHUV(PHD_VBUF* phdV, D3DTLVERTEX* v, ushort* uv)
 	v->sy = phdV->ys;
 	v->sz = f_a - f_boo * phdV->ooz;
 	v->rhw = phdV->ooz;
-	r = GETR(phdV->g);
-	g = GETG(phdV->g);
-	b = GETB(phdV->g);
-	v->color = GlobalAlpha | (r << 16) | (g << 8) | b;
+	r = GETR(phdV->color);
+	g = GETG(phdV->color);
+	b = GETB(phdV->color);
 	v->tu = UVTable[uv[0]];
 	v->tv = UVTable[uv[1]];
+	v->color = GlobalAlpha | (r << 16) | (g << 8) | b;
 	v->specular = 0;
 }
 
@@ -552,9 +549,9 @@ void PHD_VBUF_To_VERTEX_INFO(PHD_VBUF* phdV, VERTEX_INFO* v)
 	v->x = phdV->xs;
 	v->y = phdV->ys;
 	v->ooz = phdV->ooz;
-	v->vr = GETR(phdV->g);
-	v->vg = GETG(phdV->g);
-	v->vb = GETB(phdV->g);
+	v->vr = GETR(phdV->color);
+	v->vg = GETG(phdV->color);
+	v->vb = GETB(phdV->color);
 }
 
 static void PHD_VBUF_To_VERTEX_INFO_WITHUV(PHD_VBUF* phdV, VERTEX_INFO* v, ushort* uv)
@@ -562,9 +559,9 @@ static void PHD_VBUF_To_VERTEX_INFO_WITHUV(PHD_VBUF* phdV, VERTEX_INFO* v, ushor
 	v->x = phdV->xs;
 	v->y = phdV->ys;
 	v->ooz = phdV->ooz;
-	v->vr = GETR(phdV->g);
-	v->vg = GETG(phdV->g);
-	v->vb = GETB(phdV->g);
+	v->vr = GETR(phdV->color);
+	v->vg = GETG(phdV->color);
+	v->vb = GETB(phdV->color);
 	v->u = phdV->ooz * uv[0];
 	v->v = phdV->ooz * uv[1];
 }
@@ -577,9 +574,9 @@ static void PHD_VBUF_To_POINT_INFO(PHD_VBUF* v, POINT_INFO* point)
 	point->ooz = v->ooz;
 	point->xs = v->xs;
 	point->ys = v->ys;
-	point->vr = GETR(v->g);
-	point->vg = GETG(v->g);
-	point->vb = GETB(v->g);
+	point->vr = GETR(v->color);
+	point->vg = GETG(v->color);
+	point->vb = GETB(v->color);
 }
 
 static void PHD_VBUF_To_POINT_INFO_WITHUV(PHD_VBUF* v, POINT_INFO* point, ushort* uv)
@@ -590,9 +587,9 @@ static void PHD_VBUF_To_POINT_INFO_WITHUV(PHD_VBUF* v, POINT_INFO* point, ushort
 	point->ooz = v->ooz;
 	point->xs = v->xs;
 	point->ys = v->ys;
-	point->vr = GETR(v->g);
-	point->vg = GETG(v->g);
-	point->vb = GETB(v->g);
+	point->vr = GETR(v->color);
+	point->vg = GETG(v->color);
+	point->vb = GETB(v->color);
 	point->u = (float)uv[0];
 	point->v = (float)uv[1];
 }
@@ -689,7 +686,7 @@ void HWI_InsertClippedPoly_Textured(long nPoints, float zdepth, long nDrawType, 
 
 	vtxbuf = v_buffer;
 
-	if (App.lpZBuffer && nDrawType != DT_POLY_WGTA && nDrawType != DT_POLY_WGT && nDrawType != DT_POLY_COLSUB)
+	if (App.ZBuffer && nDrawType != DT_POLY_WGTA && nDrawType != DT_POLY_WGT && nDrawType != DT_POLY_COLSUB)
 	{
 		nBucket = FindBucket(TPages[nTPage]);
 
@@ -910,7 +907,7 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 			outsideBackgroundTop = v2->ys;
 	}
 
-	if (!App.lpZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_COLSUB)
+	if (!App.ZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_COLSUB)
 	{
 		if (nSortType == MID_SORT)
 			zdepth = (v0->zv + v1->zv + v2->zv) * 0.33333334F;
@@ -1105,7 +1102,7 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 			outsideBackgroundTop = v3->ys;
 	}
 
-	if (!App.lpZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_COLSUB)
+	if (!App.ZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_COLSUB)
 	{
 		if (nSortType == MID_SORT)
 			zdepth = (v0->zv + v1->zv + v2->zv + v3->zv) * 0.25F;
@@ -1279,7 +1276,7 @@ void HWI_InsertPoly_Gouraud(long nPoints, float zdepth, long r, long g, long b, 
 	vtx = v_buffer;
 	maxCol = nDrawType != DT_POLY_GA ? 0xFFFFFFFF : 0x80FFFFFF;
 
-	if (App.lpZBuffer && nDrawType != DT_POLY_GA)
+	if (App.ZBuffer && nDrawType != DT_POLY_GA)
 	{
 		nBucket = FindBucket(0);
 
@@ -1387,7 +1384,7 @@ void HWI_InsertPoly_GouraudRGB(long nPoints, float zdepth, long nDrawType)
 	maxCol = (nDrawType == DT_POLY_GA || nDrawType == DT_POLY_GTA) ? 0x80FFFFFF : 0xFFFFFFFF;
 	vtx = v_buffer;
 
-	if (App.lpZBuffer && nDrawType != DT_POLY_GA && nDrawType != DT_POLY_GTA)
+	if (App.ZBuffer && nDrawType != DT_POLY_GA && nDrawType != DT_POLY_GTA)
 	{
 		nBucket = FindBucket(0);
 
@@ -1494,7 +1491,7 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 
 	z = one / (float)zdepth;
 
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 	{
 		nBucket = FindBucket(0);
 
@@ -1597,7 +1594,7 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 	}
 }
 
-void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, long nSprite, long shade, long shade1, long nDrawType, long offset)
+void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, long nSprite, ulong shade, ulong shade1, long nDrawType, long offset)
 {
 	PHDSPRITESTRUCT* sprite;
 	VERTEX_INFO* vtx;
@@ -1950,7 +1947,7 @@ short* HWI_InsertObjectGT3_Sorted(short* pFaceInfo, long nFaces, sort_type nSort
 		if (nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_WGTA)
 			HWI_InsertGT3_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]],
 				pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
-		else if (vbuf[pFaceInfo[0]].g || vbuf[pFaceInfo[1]].g || vbuf[pFaceInfo[2]].g)
+		else if (vbuf[pFaceInfo[0]].color || vbuf[pFaceInfo[1]].color || vbuf[pFaceInfo[2]].color)
 			HWI_InsertGT3_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]],
 				pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
 		else
@@ -2096,7 +2093,7 @@ short* HWI_InsertObjectGT4_Sorted(short* pFaceInfo, long nFaces, sort_type nSort
 
 		if (nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_WGTA)
 			HWI_InsertGT4_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]], &vbuf[pFaceInfo[3]], pTex, nSortType, double_sided);
-		else if (vbuf[pFaceInfo[0]].g || vbuf[pFaceInfo[1]].g || vbuf[pFaceInfo[2]].g || vbuf[pFaceInfo[3]].g)
+		else if (vbuf[pFaceInfo[0]].color || vbuf[pFaceInfo[1]].color || vbuf[pFaceInfo[2]].color || vbuf[pFaceInfo[3]].color)
 			HWI_InsertGT4_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]], &vbuf[pFaceInfo[3]], pTex, nSortType, double_sided);
 		else
 			HWI_InsertObjectG4_Sorted(pFaceInfo, 1, nSortType);

@@ -58,9 +58,6 @@ long bEffectOn = 1;
 char bInvItemsOff = 0;
 
 long input;
-long joy_fire;
-long joy_x;
-long joy_y;
 long FinishLevelCheat;
 long conflict[15];
 uchar keymap[256];
@@ -71,34 +68,29 @@ long Key(long number)
 
 	key = layout[1][number];
 
-	if (key < 256)
-	{
-		if (key_pressed(key))
-			return 1;
-
-		switch (key)
-		{
-		case DIK_RCONTROL:
-			return key_pressed(DIK_LCONTROL);
-
-		case DIK_LCONTROL:
-			return key_pressed(DIK_RCONTROL);
-
-		case DIK_RSHIFT:
-			return key_pressed(DIK_LSHIFT);
-
-		case DIK_LSHIFT:
-			return key_pressed(DIK_RSHIFT);
-
-		case DIK_RMENU:
-			return key_pressed(DIK_LMENU);
-
-		case DIK_LMENU:
-			return key_pressed(DIK_RMENU);
-		}
-	}
-	else if (joy_fire & (1 << key))
+	if (key_pressed(key))
 		return 1;
+
+	switch (key)
+	{
+	case DIK_RCONTROL:
+		return key_pressed(DIK_LCONTROL);
+
+	case DIK_LCONTROL:
+		return key_pressed(DIK_RCONTROL);
+
+	case DIK_RSHIFT:
+		return key_pressed(DIK_LSHIFT);
+
+	case DIK_LSHIFT:
+		return key_pressed(DIK_RSHIFT);
+
+	case DIK_RMENU:
+		return key_pressed(DIK_LMENU);
+
+	case DIK_LMENU:
+		return key_pressed(DIK_RMENU);
+	}
 
 	if (conflict[number])
 		return 0;
@@ -140,18 +132,7 @@ long S_UpdateInput()
 
 	DD_SpinMessageLoop(0);
 	DI_ReadKeyboard(keymap);
-	joy_fire = DI_ReadJoystick(joy_x, joy_y);
 	linput = 0;
-
-	if (joy_x < -8)
-		linput |= IN_LEFT;
-	else if (joy_x > 8)
-		linput |= IN_RIGHT;
-
-	if (joy_y > 8)
-		linput |= IN_BACK;
-	else if (joy_y < -8)
-		linput |= IN_FORWARD;
 
 	if (Key(0))
 		linput |= IN_FORWARD;
@@ -292,7 +273,7 @@ long S_UpdateInput()
 		med_debounce--;
 
 	if (key_pressed(DIK_APOSTROPHE))
-		DXSaveScreen(App.lpBackBuffer);
+		DXSaveScreen(App.BackBuffer);
 
 	if (FinishLevelCheat)
 	{

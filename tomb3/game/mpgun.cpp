@@ -48,7 +48,7 @@ void MPGunControl(short item_number)
 		pos.y = mpgun_gun.y;
 		pos.z = mpgun_gun.z;
 		GetJointAbsPosition(item, &pos, mpgun_gun.mesh_num);
-		TriggerDynamic(pos.x, pos.y, pos.z, 2 * item->fired_weapon + 4, 24, 16, 4);
+		TriggerDynamic(pos.x, pos.y, pos.z, 2 * item->fired_weapon + 4, 192, 128, 32);
 		phd_PopMatrix();
 	}
 

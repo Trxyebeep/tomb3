@@ -40,7 +40,6 @@ short* commands;
 short* floor_data;
 short* mesh_base;
 long number_cameras;
-long wet;
 long nTInfos;
 
 PHDTEXTURESTRUCT phdtextinfo[MAX_TINFOS];
@@ -103,7 +102,7 @@ long LoadTexturePages(HANDLE file)
 	bool _16bit;
 
 	MyReadFile(file, &nPages, sizeof(long), &read, 0);
-	_16bit = !App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bPalette;
+	_16bit = !App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].Texture[App.lpDXConfig->D3DTF].bPalette;
 	size = _16bit ? 0x20000 : 0x10000;
 	p = (uchar*)GlobalAlloc(GMEM_FIXED, nPages * size);
 
@@ -153,7 +152,7 @@ long LoadRooms(HANDLE file)
 		return 0;
 	}
 
-	room = (ROOM_INFO*)game_malloc(sizeof(ROOM_INFO) * number_rooms, 11);
+	room = (ROOM_INFO*)game_malloc(sizeof(ROOM_INFO) * number_rooms);
 
 	if (!room)
 	{
@@ -172,7 +171,7 @@ long LoadRooms(HANDLE file)
 		MyReadFile(file, &r->maxceiling, sizeof(long), &read, 0);
 
 		MyReadFile(file, &num, sizeof(long), &read, 0);
-		r->data = (short*)game_malloc(sizeof(short)* num, 12);
+		r->data = (short*)game_malloc(sizeof(short)* num);
 		MyReadFile(file, r->data, sizeof(short) * num, &read, 0);
 
 		MyReadFile(file, &nDoors, sizeof(short), &read, 0);
@@ -181,7 +180,7 @@ long LoadRooms(HANDLE file)
 			r->door = 0;
 		else
 		{
-			r->door = (short*)game_malloc((16 * nDoors + 1) * sizeof(short), 13);
+			r->door = (short*)game_malloc((16 * nDoors + 1) * sizeof(short));
 			r->door[0] = (short)nDoors;
 			MyReadFile(file, r->door + 1, 16 * nDoors * sizeof(short), &read, 0);
 		}
@@ -189,7 +188,7 @@ long LoadRooms(HANDLE file)
 		MyReadFile(file, &r->x_size, sizeof(short), &read, 0);
 		MyReadFile(file, &r->y_size, sizeof(short), &read, 0);
 		num = r->x_size * r->y_size;
-		r->floor = (FLOOR_INFO*)game_malloc(sizeof(FLOOR_INFO) * num, 14);
+		r->floor = (FLOOR_INFO*)game_malloc(sizeof(FLOOR_INFO) * num);
 		MyReadFile(file, r->floor, sizeof(FLOOR_INFO) * num, &read, 0);
 
 		MyReadFile(file, &r->ambient, sizeof(short), &read, 0);
@@ -200,7 +199,7 @@ long LoadRooms(HANDLE file)
 			r->light = 0;
 		else
 		{
-			r->light = (LIGHT_INFO*)game_malloc(sizeof(LIGHT_INFO) * r->num_lights, 15);
+			r->light = (LIGHT_INFO*)game_malloc(sizeof(LIGHT_INFO) * r->num_lights);
 			MyReadFile(file, r->light, sizeof(LIGHT_INFO) * r->num_lights, &read, 0);
 		}
 
@@ -210,7 +209,7 @@ long LoadRooms(HANDLE file)
 			r->mesh = 0;
 		else
 		{
-			r->mesh = (MESH_INFO*)game_malloc(sizeof(MESH_INFO) * r->num_meshes, 16);
+			r->mesh = (MESH_INFO*)game_malloc(sizeof(MESH_INFO) * r->num_meshes);
 			MyReadFile(file, r->mesh, sizeof(MESH_INFO) * r->num_meshes, &read, 0);
 		}
 
@@ -229,7 +228,7 @@ long LoadRooms(HANDLE file)
 
 	BuildOutsideTable();
 	MyReadFile(file, &num, sizeof(long), &read, 0);
-	floor_data = (short*)game_malloc(sizeof(short) * num, 17);
+	floor_data = (short*)game_malloc(sizeof(short) * num);
 	MyReadFile(file, floor_data, sizeof(short) * num, &read, 0);
 	return 1;
 }
@@ -242,38 +241,38 @@ long LoadObjects(HANDLE file)
 	long num, nAnims, slot, off;
 
 	MyReadFile(file, &num, sizeof(long), &read, 0);
-	mesh_base = (short*)game_malloc(sizeof(short) * num, 3);
+	mesh_base = (short*)game_malloc(sizeof(short) * num);
 	MyReadFile(file, mesh_base, sizeof(short) * num, &read, 0);
 
 	MyReadFile(file, &num, sizeof(long), &read, 0);
-	meshes = (short**)game_malloc(sizeof(short*) * num, 2);
+	meshes = (short**)game_malloc(sizeof(short*) * num);
 	MyReadFile(file, meshes, sizeof(short*) * num, &read, 0);
 	
 	for (int i = 0; i < num; i++)
 		meshes[i] = mesh_base + (long)meshes[i] / 2;
 
 	MyReadFile(file, &nAnims, sizeof(long), &read, 0);
-	anims = (ANIM_STRUCT*)game_malloc(sizeof(ANIM_STRUCT) * nAnims, 4);
+	anims = (ANIM_STRUCT*)game_malloc(sizeof(ANIM_STRUCT) * nAnims);
 	MyReadFile(file, anims, sizeof(ANIM_STRUCT) * nAnims, &read, 0);
 
 	MyReadFile(file, &num, sizeof(long), &read, 0);
-	changes = (CHANGE_STRUCT*)game_malloc(sizeof(CHANGE_STRUCT) * num, 5);
+	changes = (CHANGE_STRUCT*)game_malloc(sizeof(CHANGE_STRUCT) * num);
 	MyReadFile(file, changes, sizeof(CHANGE_STRUCT) * num, &read, 0);
 
 	MyReadFile(file, &num, sizeof(long), &read, 0);
-	ranges = (RANGE_STRUCT*)game_malloc(sizeof(RANGE_STRUCT) * num, 6);
+	ranges = (RANGE_STRUCT*)game_malloc(sizeof(RANGE_STRUCT) * num);
 	MyReadFile(file, ranges, sizeof(RANGE_STRUCT) * num, &read, 0);
 
 	MyReadFile(file, &num, sizeof(long), &read, 0);
-	commands = (short*)game_malloc(sizeof(short) * num, 7);
+	commands = (short*)game_malloc(sizeof(short) * num);
 	MyReadFile(file, commands, sizeof(short) * num, &read, 0);
 
 	MyReadFile(file, &num, sizeof(long), &read, 0);
-	bones = (long*)game_malloc(sizeof(long) * num, 8);
+	bones = (long*)game_malloc(sizeof(long) * num);
 	MyReadFile(file, bones, sizeof(long) * num, &read, 0);
 
 	MyReadFile(file, &num, sizeof(long), &read, 0);
-	frames = (short*)game_malloc(sizeof(short) * num, 9);
+	frames = (short*)game_malloc(sizeof(short) * num);
 	MyReadFile(file, frames, sizeof(short) * num, &read, 0);
 
 	for (int i = 0; i < nAnims; i++)
@@ -356,7 +355,7 @@ long LoadCameras(HANDLE file)
 
 	if (number_cameras)
 	{
-		camera.fixed = (OBJECT_VECTOR*)game_malloc(sizeof(OBJECT_VECTOR) * number_cameras, 19);
+		camera.fixed = (OBJECT_VECTOR*)game_malloc(sizeof(OBJECT_VECTOR) * number_cameras);
 
 		if (!camera.fixed)
 			return 0;
@@ -375,7 +374,7 @@ long LoadSoundEffects(HANDLE file)
 
 	if (number_sound_effects)
 	{
-		sound_effects = (OBJECT_VECTOR*)game_malloc(sizeof(OBJECT_VECTOR) * number_sound_effects, 20);
+		sound_effects = (OBJECT_VECTOR*)game_malloc(sizeof(OBJECT_VECTOR) * number_sound_effects);
 
 		if (!sound_effects)
 			return 0;
@@ -392,7 +391,7 @@ long LoadBoxes(HANDLE file)
 	long nOverlaps;
 
 	MyReadFile(file, &number_boxes, sizeof(long), &read, 0);
-	boxes = (BOX_INFO*)game_malloc(sizeof(BOX_INFO) * number_boxes, 21);
+	boxes = (BOX_INFO*)game_malloc(sizeof(BOX_INFO) * number_boxes);
 	MyReadFile(file, boxes, sizeof(BOX_INFO) * number_boxes, &read, 0);
 
 	if (read != sizeof(BOX_INFO) * number_boxes)
@@ -402,7 +401,7 @@ long LoadBoxes(HANDLE file)
 	}
 
 	MyReadFile(file, &nOverlaps, sizeof(long), &read, 0);
-	overlap = (short*)game_malloc(sizeof(short) * nOverlaps, 22);
+	overlap = (short*)game_malloc(sizeof(short) * nOverlaps);
 	MyReadFile(file, overlap, sizeof(short) * nOverlaps, &read, 0);
 
 	if (read != sizeof(short) * nOverlaps)
@@ -415,7 +414,7 @@ long LoadBoxes(HANDLE file)
 	{
 		for (int j = 0; j < 4; j++)
 		{
-			ground_zone[j][i] = (short*)game_malloc(sizeof(short) * number_boxes, 23);
+			ground_zone[j][i] = (short*)game_malloc(sizeof(short) * number_boxes);
 			MyReadFile(file, ground_zone[j][i], sizeof(short) * number_boxes, &read, 0);
 
 			if (read != sizeof(short) * number_boxes)
@@ -425,7 +424,7 @@ long LoadBoxes(HANDLE file)
 			}
 		}
 
-		fly_zone[i] = (short*)game_malloc(sizeof(short) * number_boxes, 24);
+		fly_zone[i] = (short*)game_malloc(sizeof(short) * number_boxes);
 		MyReadFile(file, fly_zone[i], sizeof(short) * number_boxes, &read, 0);
 
 		if (read != sizeof(short) * number_boxes)
@@ -452,7 +451,7 @@ long LoadAnimatedTextures(HANDLE file)
 	uchar flag;
 
 	MyReadFile(file, &num, sizeof(long), &read, 0);
-	aranges = (short*)game_malloc(sizeof(short) * num, 25);
+	aranges = (short*)game_malloc(sizeof(short) * num);
 	MyReadFile(file, aranges, sizeof(short) * num, &read, 0);
 
 	MyReadFile(file, &num, sizeof(long), &read, 0);
@@ -506,7 +505,7 @@ long LoadItems(HANDLE file)
 		return 0;
 	}
 
-	items = (ITEM_INFO*)game_malloc(sizeof(ITEM_INFO) * MAX_ITEMS, 18);
+	items = (ITEM_INFO*)game_malloc(sizeof(ITEM_INFO) * MAX_ITEMS);
 
 	if (!items)
 	{
@@ -566,8 +565,6 @@ long LoadDepthQ(HANDLE file)
 			gouraud_table[j][i] = depthq_table[i][j];
 	}
 
-	wet = 0;
-
 	for (int i = 0; i < 768; i += 3)
 	{
 		water_palette[i] = 2 * game_palette[i] / 3;
@@ -586,7 +583,7 @@ long LoadCinematic(HANDLE file)
 
 	if (num_cine_frames)
 	{
-		cine = (short*)game_malloc(16 * num_cine_frames, 26);
+		cine = (short*)game_malloc(16 * num_cine_frames);
 		MyReadFile(file, cine, 16 * num_cine_frames, &read, 0);
 		cine_loaded = 1;
 	}
@@ -602,7 +599,7 @@ long LoadDemo(HANDLE file)
 	short size;
 
 	democount = 0;
-	demoptr = (ulong*)game_malloc(3608 * sizeof(ulong), 27);
+	demoptr = (ulong*)game_malloc(3608 * sizeof(ulong));
 	MyReadFile(file, &size, sizeof(short), &read, 0);
 
 	if (size)
@@ -638,7 +635,7 @@ long LoadSamples(HANDLE file)
 	if (!num_sample_infos)
 		return 0;
 
-	sample_infos = (SAMPLE_INFO*)game_malloc(sizeof(SAMPLE_INFO) * num_sample_infos, 35);
+	sample_infos = (SAMPLE_INFO*)game_malloc(sizeof(SAMPLE_INFO) * num_sample_infos);
 	MyReadFile(file, sample_infos, sizeof(SAMPLE_INFO) * num_sample_infos, &read, 0);
 	MyReadFile(file, &nSamples, sizeof(long), &read, 0);
 
@@ -672,13 +669,13 @@ long LoadSamples(HANDLE file)
 
 		if (used_samples[n] == i)
 		{
-			data = (char*)game_malloc(fSize, 36);
+			data = (char*)game_malloc(fSize);
 			MyReadFile(sfxFile, data, fSize, &read, 0);
 
 			if (!DS_MakeSample(n, fmt, data, size))
 				return 0;
 
-			game_free(fSize, 36);
+			game_free(fSize);
 			n++;
 		}
 		else
@@ -805,7 +802,7 @@ long S_LoadLevelFile(char* name, long number, long type)
 		if (tomb3.gold)
 			T3_GoldifyString(buf);
 
-		LoadPicture(buf, App.lpPictureBuffer, 1);
+		LoadPicture(buf, App.PictureBuffer, 1);
 		FadePictureUp(32);
 		fade = 1;
 	}

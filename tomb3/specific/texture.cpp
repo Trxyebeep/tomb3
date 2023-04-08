@@ -24,7 +24,7 @@ long DXTextureNewPalette(uchar* palette)
 	for (int i = 0; i < 256; i++, palette += 3)
 		data[i] = RGB(palette[0], palette[1], palette[2]);
 
-	return App.lpDD->CreatePalette(DDPCAPS_8BIT | DDPCAPS_ALLOW256, (LPPALETTEENTRY)data, &DXPalette, 0);
+	return App.DDraw->CreatePalette(DDPCAPS_8BIT | DDPCAPS_ALLOW256, (LPPALETTEENTRY)data, &DXPalette, 0);
 }
 
 void DXResetPalette(DXTEXTURE* tex)
@@ -94,7 +94,7 @@ long DXTextureMakeDeviceSurface(long w, long h, LPDIRECTDRAWPALETTE palette, DXT
 	tex->nHeight = h;
 	tex->dwFlags = 1;
 	tex->pPalette = palette;
-	ddpf = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].ddsd.ddpfPixelFormat;
+	ddpf = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].Texture[App.lpDXConfig->D3DTF].ddsd.ddpfPixelFormat;
 	tex->bpp = ddpf->dwRGBBitCount;
 
 	if (DXTextureMakeSystemSurface(tex, ddpf))
@@ -125,9 +125,6 @@ bool DXCreateTextureSurface(TEXTURE* tex, LPDDPIXELFORMAT ddpf)
 	desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
 	desc.ddsCaps.dwCaps = DDSCAPS_TEXTURE | DDSCAPS_VIDEOMEMORY;
 
-	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].bAGP)
-		desc.ddsCaps.dwCaps |= DDSCAPS_NONLOCALVIDMEM;
-
 	desc.dwWidth = 256;
 	desc.dwHeight = 256;
 	memcpy(&desc.ddpfPixelFormat, ddpf, sizeof(DDPIXELFORMAT));
@@ -147,7 +144,7 @@ bool DXCreateTextureSurface(TEXTURE* tex, LPDDPIXELFORMAT ddpf)
 
 	if (bSetColorKey)
 	{
-		if (!App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bAlpha)
+		if (!App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].Texture[App.lpDXConfig->D3DTF].bAlpha)
 		{
 			ckey.dwColorSpaceLowValue = 0;
 			ckey.dwColorSpaceHighValue = 0;
@@ -156,7 +153,7 @@ bool DXCreateTextureSurface(TEXTURE* tex, LPDDPIXELFORMAT ddpf)
 	}
 
 	tex->pTexture = DXTextureGetInterface(tex->pSurf);
-	tex->pTexture->GetHandle(App.lpD3DDevice, &tex->handle);
+	tex->pTexture->GetHandle(App.D3DDev, &tex->handle);
 	tex->num = 2;
 	tex->DXTex = 0;
 	tex->bpp = desc.ddpfPixelFormat.dwRGBBitCount;
@@ -283,10 +280,10 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 	ulong col;
 	long oldTF, index, lw, a, r, g, b;
 
-	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bPalette)
+	if (App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].Texture[App.lpDXConfig->D3DTF].bPalette)
 	{
-		oldTF = App.DXConfigPtr->D3DTF;
-		App.DXConfigPtr->D3DTF = 0;
+		oldTF = App.lpDXConfig->D3DTF;
+		App.lpDXConfig->D3DTF = 0;
 	}
 	else
 		oldTF = -1;
@@ -375,9 +372,9 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 				g = b;
 			}
 
-			tinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF];
+			tinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].Texture[App.lpDXConfig->D3DTF];
 
-			if (tinfo->bAlpha || App.DXConfigPtr->MMX)
+			if (tinfo->bAlpha)
 			{
 				col =
 					(r >> (8 - tinfo->rbpp) << tinfo->rshift) |
@@ -406,7 +403,7 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 		h--;
 	}
 
-	if (flags == 8 && !App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].Texture[App.DXConfigPtr->D3DTF].bAlpha)
+	if (flags == 8 && !App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].Texture[App.lpDXConfig->D3DTF].bAlpha)
 	{
 		ckey.dwColorSpaceLowValue = 0;
 		ckey.dwColorSpaceHighValue = 0;
@@ -416,7 +413,7 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 	DD_UnlockSurface(tex->pSystemSurface, desc);
 
 	if (oldTF != -1)
-		App.DXConfigPtr->D3DTF = oldTF;
+		App.lpDXConfig->D3DTF = oldTF;
 
 	return index;
 }
@@ -428,17 +425,17 @@ void DXCreateMaxTPages(long create)
 	LPDDPIXELFORMAT ddpf, ddpf2;
 	long n, oldTF;
 
-	d3dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
-	ddpf = &d3dinfo->Texture[App.DXConfigPtr->D3DTF].ddsd.ddpfPixelFormat;
+	d3dinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D];
+	ddpf = &d3dinfo->Texture[App.lpDXConfig->D3DTF].ddsd.ddpfPixelFormat;
 	DXCreateTextureSurface(Textures, ddpf);
 	n = 1;
 
 	if (create && ddpf->dwRGBBitCount == 8)
 	{
 		bSetColorKey = 0;
-		oldTF = App.DXConfigPtr->D3DTF;
-		App.DXConfigPtr->D3DTF = 0;
-		ddpf2 = &d3dinfo->Texture[App.DXConfigPtr->D3DTF].ddsd.ddpfPixelFormat;
+		oldTF = App.lpDXConfig->D3DTF;
+		App.lpDXConfig->D3DTF = 0;
+		ddpf2 = &d3dinfo->Texture[App.lpDXConfig->D3DTF].ddsd.ddpfPixelFormat;
 
 		for (; n < 6; n++)
 		{
@@ -448,9 +445,9 @@ void DXCreateMaxTPages(long create)
 				break;
 		}
 
-		App.DXConfigPtr->D3DTF = oldTF;
+		App.lpDXConfig->D3DTF = oldTF;
 		bSetColorKey = 1;
-		ddpf = &d3dinfo->Texture[App.DXConfigPtr->D3DTF].ddsd.ddpfPixelFormat;
+		ddpf = &d3dinfo->Texture[App.lpDXConfig->D3DTF].ddsd.ddpfPixelFormat;
 	}
 
 	for (; n < MAX_TPAGES; n++)

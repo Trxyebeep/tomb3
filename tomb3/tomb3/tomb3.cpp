@@ -101,29 +101,23 @@ void T3_SaveSettings()
 {
 	OpenRegistry(SUB_KEY);
 
-	if (App.DeviceInfoPtr->nDDInfo)
-		REG_WriteLong((char*)"DD", App.DXConfigPtr->nDD);
+	if (App.lpDeviceInfo->nDDInfo)
+		REG_WriteLong((char*)"DD", App.lpDXConfig->nDD);
 
-	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].nD3DInfo)
+	if (App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].nD3DInfo)
 	{
-		REG_WriteLong((char*)"D3D", App.DXConfigPtr->nD3D);
-		REG_WriteLong((char*)"D3DTF", App.DXConfigPtr->D3DTF);
+		REG_WriteLong((char*)"D3D", App.lpDXConfig->nD3D);
+		REG_WriteLong((char*)"D3DTF", App.lpDXConfig->D3DTF);
 	}
 
-	if (App.DeviceInfoPtr->nDSInfo)
-		REG_WriteLong((char*)"DS", App.DXConfigPtr->DS);
+	if (App.lpDeviceInfo->nDSInfo)
+		REG_WriteLong((char*)"DS", App.lpDXConfig->nDS);
 
-	if (App.DeviceInfoPtr->nDIInfo)
-		REG_WriteLong((char*)"DI", App.DXConfigPtr->DI);
-
-	REG_WriteLong((char*)"VM", App.DXConfigPtr->nVMode);
-	REG_WriteLong((char*)"zbuffer", App.DXConfigPtr->bZBuffer);
-	REG_WriteLong((char*)"dither", App.DXConfigPtr->Dither);
-	REG_WriteLong((char*)"filter", App.DXConfigPtr->Filter);
-	REG_WriteLong((char*)"AGP", App.DXConfigPtr->AGP);
-	REG_WriteLong((char*)"sound", App.DXConfigPtr->sound);
-	REG_WriteLong((char*)"joystick", App.DXConfigPtr->Joystick);
-	REG_WriteLong((char*)"MMX", App.DXConfigPtr->MMX);
+	REG_WriteLong((char*)"VM", App.lpDXConfig->nVMode);
+	REG_WriteLong((char*)"zbuffer", App.lpDXConfig->bZBuffer);
+	REG_WriteLong((char*)"dither", App.lpDXConfig->Dither);
+	REG_WriteLong((char*)"filter", App.lpDXConfig->Filter);
+	REG_WriteLong((char*)"sound", App.lpDXConfig->sound);
 	REG_WriteLong((char*)"SFXVolume", Option_SFX_Volume);
 	REG_WriteLong((char*)"MusicVolume", Option_Music_Volume);
 	REG_WriteBool((char*)"Window", tomb3.Windowed);
@@ -182,29 +176,23 @@ bool T3_LoadSettings()
 		return 0;
 	}
 
-	if (App.DeviceInfoPtr->nDDInfo)
-		REG_ReadLong((char*)"DD", (ulong&)App.DXConfigPtr->nDD, 0);
+	if (App.lpDeviceInfo->nDDInfo)
+		REG_ReadLong((char*)"DD", (ulong&)App.lpDXConfig->nDD, 0);
 
-	if (App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].nD3DInfo)
+	if (App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].nD3DInfo)
 	{
-		REG_ReadLong((char*)"D3D", (ulong&)App.DXConfigPtr->nD3D, 0);
-		REG_ReadLong((char*)"D3DTF", (ulong&)App.DXConfigPtr->D3DTF, 0);
+		REG_ReadLong((char*)"D3D", (ulong&)App.lpDXConfig->nD3D, 0);
+		REG_ReadLong((char*)"D3DTF", (ulong&)App.lpDXConfig->D3DTF, 0);
 	}
 
-	if (App.DeviceInfoPtr->nDSInfo)
-		REG_ReadLong((char*)"DS", (ulong&)App.DXConfigPtr->DS, 0);
+	if (App.lpDeviceInfo->nDSInfo)
+		REG_ReadLong((char*)"DS", (ulong&)App.lpDXConfig->nDS, 0);
 
-	if (App.DeviceInfoPtr->nDIInfo)
-		REG_ReadLong((char*)"DS", (ulong&)App.DXConfigPtr->DI, 0);
-
-	REG_ReadLong((char*)"VM", (ulong&)App.DXConfigPtr->nVMode, 0);
-	REG_ReadLong((char*)"zbuffer", (ulong&)App.DXConfigPtr->bZBuffer, 0);
-	REG_ReadLong((char*)"dither", (ulong&)App.DXConfigPtr->Dither, 0);
-	REG_ReadLong((char*)"filter", (ulong&)App.DXConfigPtr->Filter, 0);
-	REG_ReadLong((char*)"AGP", (ulong&)App.DXConfigPtr->AGP, 0);
-	REG_ReadLong((char*)"sound", (ulong&)App.DXConfigPtr->sound, 0);
-	REG_ReadLong((char*)"joystick", (ulong&)App.DXConfigPtr->Joystick, 0);
-	REG_ReadLong((char*)"MMX", (ulong&)App.DXConfigPtr->MMX, 0);
+	REG_ReadLong((char*)"VM", (ulong&)App.lpDXConfig->nVMode, 0);
+	REG_ReadLong((char*)"zbuffer", (ulong&)App.lpDXConfig->bZBuffer, 0);
+	REG_ReadLong((char*)"dither", (ulong&)App.lpDXConfig->Dither, 0);
+	REG_ReadLong((char*)"filter", (ulong&)App.lpDXConfig->Filter, 0);
+	REG_ReadLong((char*)"sound", (ulong&)App.lpDXConfig->sound, 0);
 	REG_ReadLong((char*)"SFXVolume", (ulong&)Option_SFX_Volume, 0);
 	REG_ReadLong((char*)"MusicVolume", (ulong&)Option_Music_Volume, 0);
 	REG_ReadBool((char*)"Window", tomb3.Windowed, 0);

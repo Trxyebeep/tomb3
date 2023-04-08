@@ -88,11 +88,13 @@ typedef unsigned long ulong;
 #define MAX_ITEMS		1024	//was 256
 #define NLAYOUTKEYS		15
 #define MAX_WEATHER		256
-
-//*2
-#define MAX_WEATHER_ALIVE	16
+#define MAX_WEATHER_ALIVE	16	//was 8
 
 #define MALLOC_SIZE	15000000	//15 MB (was around 3.6 MB)
+
+#define FRAMES_PER_SECOND	30
+#define TICKS_PER_FRAME		2
+#define TICKS_PER_SECOND	(FRAMES_PER_SECOND * TICKS_PER_FRAME)
 
 /*enums*/
 enum bite_offsets
@@ -1185,8 +1187,6 @@ struct DYNAMIC
 	long y;
 	long z;
 	ushort falloff;
-	uchar used;
-	uchar pad1;
 	uchar on;
 	uchar r;
 	uchar g;
@@ -1228,11 +1228,9 @@ struct PHD_VBUF
 	float ys;
 	long z;
 	char clip;
-	uchar fog;
-	short g;
+	ulong color;
 	ushort u;
 	ushort v;
-	long dynamic;
 };
 
 struct VERTEX_INFO
@@ -1294,13 +1292,12 @@ struct DXDIRECTSOUNDINFO
 
 struct DIRECT3DINFO
 {
-	char Name[30];
-	char About[80];
+	char Name[256];
+	char About[256];
 	LPGUID lpGuid;
 	GUID Guid;
 	D3DDEVICEDESC DeviceDesc;
 	bool bAlpha;
-	bool bAGP;
 	long nDisplayMode;
 	DISPLAYMODE* DisplayMode;
 	long nTexture;
@@ -1309,8 +1306,8 @@ struct DIRECT3DINFO
 
 struct DIRECTDRAWINFO
 {
-	char Name[30];
-	char About[80];
+	char Name[256];
+	char About[256];
 	LPGUID lpGuid;
 	GUID Guid;
 	DDCAPS DDCaps;
@@ -1320,39 +1317,26 @@ struct DIRECTDRAWINFO
 	DIRECT3DINFO* D3DInfo;
 };
 
-struct DXDIRECTINPUTINFO
-{
-	char Name[30];
-	char About[80];
-	LPGUID lpGuid;
-	GUID Guid;
-};
-
 struct DEVICEINFO
 {
 	long nDDInfo;
 	DIRECTDRAWINFO* DDInfo;
 	long nDSInfo;
 	DXDIRECTSOUNDINFO* DSInfo;
-	long nDIInfo;
-	DXDIRECTINPUTINFO* DIInfo;
+	//Joystick enumeration stuff was here
 };
 
 struct DXCONFIG
 {
 	long nDD;
 	long nD3D;
-	long DS;
+	long nDS;
 	long nVMode;
-	long DI;
 	long D3DTF;
 	long bZBuffer;
 	long Dither;
 	long Filter;
-	long AGP;
 	long sound;
-	long Joystick;
-	long MMX;
 };
 
 struct WINAPP
@@ -1362,22 +1346,18 @@ struct WINAPP
 	HINSTANCE hInstance;
 	DEVICEINFO DeviceInfo;
 	DXCONFIG DXConfig;
-	DEVICEINFO* DeviceInfoPtr;
-	DXCONFIG* DXConfigPtr;
-	LPDIRECTDRAWX lpDD;
-	LPDIRECT3DX lpD3D;
-	LPDIRECT3DDEVICEX lpD3DDevice;
-	LPDIRECTDRAWSURFACEX lpFrontBuffer;
-	LPDIRECTDRAWSURFACEX lpBackBuffer;
-	LPDIRECTDRAWSURFACEX lpZBuffer;
-	LPDIRECTDRAWSURFACEX lpPictureBuffer;
-	ulong* unk;
-	LPDIRECT3DVIEWPORTX lpViewPort;
-	LPDIRECT3DMATERIALX lpViewPortMaterial;
-	LPDIRECTDRAWPALETTE Palette;
-	PALETTEENTRY PaletteEntries[257];
+	DEVICEINFO* lpDeviceInfo;
+	DXCONFIG* lpDXConfig;
+	LPDIRECTDRAWX DDraw;
+	LPDIRECT3DX D3D;
+	LPDIRECT3DDEVICEX D3DDev;
+	LPDIRECTDRAWSURFACEX FrontBuffer;
+	LPDIRECTDRAWSURFACEX BackBuffer;
+	LPDIRECTDRAWSURFACEX ZBuffer;
+	LPDIRECTDRAWSURFACEX PictureBuffer;
+	LPDIRECT3DVIEWPORTX D3DView;
+	LPDIRECT3DMATERIALX D3DMaterial;
 	bool bFocus;
-	long nRenderMode;
 	long nUVAdd;
 	ulong nFrames;
 	float fps;
@@ -1566,12 +1546,11 @@ struct STATIC_INFO
 
 struct HWCONFIG
 {
-	bool Perspective;
-	bool Dither;
+	bool bPersp;
+	bool bDither;
 	long nFilter;
 	long nShadeMode;
 	long nFillMode;
-	bool TrueAlpha;
 };
 
 struct BITE_INFO

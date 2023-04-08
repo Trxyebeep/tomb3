@@ -223,7 +223,7 @@ void FlamerControl(short item_number)
 	AI_INFO info;
 	AI_INFO lara_info;
 	PHD_VECTOR pos;
-	long dx, dz, dist, best_dist;
+	long dx, dz, dist, best_dist, r, g, b;
 	short rnd, torso_y, torso_x, angle, head;
 
 	if (!CreatureActive(item_number))
@@ -243,10 +243,18 @@ void FlamerControl(short item_number)
 	rnd = (short)GetRandomControl();
 
 	if (item->current_anim_state == 6 || item->current_anim_state == 11)
-		TriggerDynamic(pos.x, pos.y, pos.z, (rnd & 3) + 10, 31 - ((rnd >> 4) & 3), 24 - ((rnd >> 6) & 3), rnd & 7);
+	{
+		r = 255 - ((rnd >> 4) & 0x1F);
+		g = 192 - ((rnd >> 6) & 0x1F);
+		b = rnd & 0x3F;
+		TriggerDynamic(pos.x, pos.y, pos.z, (rnd & 3) + 10, r, g, b);
+	}
 	else
 	{
-		TriggerDynamic(pos.x, pos.y, pos.z, (rnd & 3) + 6, 24 - ((rnd >> 4) & 3), 16 - ((rnd >> 6) & 3), rnd & 3);
+		r = 192 - ((rnd >> 4) & 0x1F);
+		g = 128 - ((rnd >> 6) & 0x1F);
+		b = rnd & 0x1F;
+		TriggerDynamic(pos.x, pos.y, pos.z, (rnd & 3) + 6, r, g, b);
 		TriggerPilotFlame(item_number);
 	}
 
@@ -336,14 +344,14 @@ void FlamerControl(short item_number)
 			flamer->flags = 0;
 			flamer->maximum_turn = 0;
 
-			if (item->ai_bits & 1)
+			if (item->ai_bits & GUARD)
 			{
 				head = AIGuard(flamer);
 
 				if (!(GetRandomControl() & 0xFF))
 					item->goal_anim_state = 4;
 			}
-			else if (item->ai_bits & 4)
+			else if (item->ai_bits & PATROL1)
 				item->goal_anim_state = 2;
 			else if (flamer->mood == ESCAPE_MOOD)
 				item->goal_anim_state = 2;
@@ -366,14 +374,14 @@ void FlamerControl(short item_number)
 			flamer->flags = 0;
 			flamer->maximum_turn = 910;
 
-			if (item->ai_bits & 1)
+			if (item->ai_bits & GUARD)
 			{
 				item->anim_number = objects[item->object_number].anim_index + 12;
 				item->frame_number = anims[item->anim_number].frame_base;
 				item->current_anim_state = 1;
 				item->goal_anim_state = 1;
 			}
-			else if (item->ai_bits & 4)
+			else if (item->ai_bits & PATROL1)
 				item->goal_anim_state = 2;
 			else if (flamer->mood == ESCAPE_MOOD)
 				item->goal_anim_state = 2;
@@ -394,7 +402,7 @@ void FlamerControl(short item_number)
 		case 4:
 			head = lara_info.angle;
 
-			if (item->ai_bits & 1)
+			if (item->ai_bits & GUARD)
 			{
 				head = AIGuard(flamer);
 

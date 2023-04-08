@@ -42,7 +42,7 @@ void KayakInitialise(short item_number)
 	KAYAKINFO* kayak;
 
 	item = &items[item_number];
-	kayak = (KAYAKINFO*)game_malloc(sizeof(KAYAKINFO), 0);
+	kayak = (KAYAKINFO*)game_malloc(sizeof(KAYAKINFO));
 	item->data = kayak;
 	kayak->Flags = 0;
 	kayak->Rot = 0;
@@ -1322,6 +1322,7 @@ long KayakControl()
 			z = MistZPos[i];
 
 			phd_PushUnitMatrix();
+			phd_SetTrans(0, 0, 0);
 			phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 
 			if (tomb3.kayak_mist)

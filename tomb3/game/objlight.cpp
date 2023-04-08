@@ -23,10 +23,10 @@ void ControlStrobeLight(short item_number)
 
 	item->pos.y_rot += 2912;
 	ang = ((item->pos.y_rot + 0x5800) >> 4) & 0xFFF;
-	TriggerAlertLight(item->pos.x_pos, item->pos.y_pos - 512, item->pos.z_pos, 31, 8, 0, ang, item->room_number);
+	TriggerAlertLight(item->pos.x_pos, item->pos.y_pos - 512, item->pos.z_pos, 255, 64, 0, ang, item->room_number);
 	s = rcossin_tbl[ang << 1] >> 4;
 	c = rcossin_tbl[(ang << 1) + 1] >> 4;
-	TriggerDynamic(item->pos.x_pos + s, item->pos.y_pos - 768, item->pos.z_pos + c, 6, 31, 12, 0);
+	TriggerDynamic(item->pos.x_pos + s, item->pos.y_pos - 768, item->pos.z_pos + c, 6, 255, 96, 0);
 
 	if (!(wibble & 0x7F))
 		SoundEffect(SFX_ALARM_1, &item->pos, SFX_DEFAULT);
@@ -61,7 +61,7 @@ void ControlPulseLight(short item_number)
 		item->item_flags[0] += 2048;
 	}
 
-	TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, f, 31, 12, 0);
+	TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, f, 255, 96, 0);
 }
 
 void ControlOnOffLight(short item_number)
@@ -71,7 +71,7 @@ void ControlOnOffLight(short item_number)
 	item = &items[item_number];
 
 	if (TriggerActive(item))
-		TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 16, 31, 31, 31);
+		TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 16, 255, 255, 255);
 }
 
 void ControlElectricalLight(short item_number)
@@ -119,6 +119,8 @@ void ControlElectricalLight(short item_number)
 		b = 31 - (GetRandomControl() & 1);
 	}
 
+	rg <<= 3;
+	b <<= 3;
 	TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 16, rg, rg, b);
 }
 
@@ -136,8 +138,8 @@ void ControlBeaconLight(short item_number)
 
 	if (item->item_flags[0] < 3)
 	{
-		rg = 31 - (GetRandomControl() & 1);
-		b = 31 - (GetRandomControl() & 3);
+		rg = 255 - (GetRandomControl() & 3);
+		b = 255 - (GetRandomControl() & 0x1F);
 		TriggerDynamic(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, 16, rg, rg, b);
 	}
 }

@@ -10,12 +10,12 @@
 ulong TextLight[12] =
 {
 	0xFFFFFF,
-	0x00B0B0,
+	0xB0B000,
 	0xA0A0A0,
-	0x6060FF,
-	0xFF8080,
-	0x4080C0,
-	0x64D1B6,
+	0xFF6060,
+	0x8080FF,
+	0xC08040,
+	0xB6D164,
 	0xC0FFC0,
 	0xFFFFFF,
 	0xFF00FF,
@@ -26,12 +26,12 @@ ulong TextLight[12] =
 ulong TextDark[12] =
 {
 	0x808080,
-	0x005050,
+	0x505000,
 	0x181818,
-	0x000018,
 	0x180000,
-	0x001040,
-	0x1320B6,
+	0x000018,
+	0x401000,
+	0xB62013,
 	0xC0FFC0,
 	0xFFFFFF,
 	0x3F003F,
@@ -59,7 +59,7 @@ short* ins_room_sprite(short* objptr, long num)
 			y2 = long(((sprite->y2 << W2V_SHIFT) + vtx->yv) / zv + phd_centery);
 
 			if (x2 >= phd_left && y2 >= phd_top && x1 < phd_right && y1 < phd_bottom)
-				InsertSprite((long)vtx->zv, x1, y1, x2, y2, objptr[1], vtx->g, -1, DT_POLY_WGT, 0);
+				InsertSprite((long)vtx->zv, x1, y1, x2, y2, objptr[1], vtx->color, -1, DT_POLY_WGT, 0);
 		}
 
 		objptr += 2;
@@ -72,36 +72,36 @@ short* ins_room_sprite(short* objptr, long num)
 static void SetPSXTextColor()
 {
 	TextLight[0] = 0x808080;
-	TextLight[1] = 0x00B0B0;
+	TextLight[1] = 0xB0B000;
 	TextLight[2] = 0xA0A0A0;
-	TextLight[3] = 0x6060FF;
-	TextLight[4] = 0xFF8080;
-	TextLight[5] = 0x4080C0;
-	TextLight[6] = 0x60C0C0;
+	TextLight[3] = 0xFF6060;
+	TextLight[4] = 0x8080FF;
+	TextLight[5] = 0xC08040;
+	TextLight[6] = 0xC0C060;
 	TextLight[7] = 0x00C000;
 	TextLight[8] = 0x00C000;
-	TextLight[9] = 0x000080;
-	TextLight[10] = 0x008080;
-	TextLight[11] = 0x404080;
+	TextLight[9] = 0x800000;
+	TextLight[10] = 0x808000;
+	TextLight[11] = 0x804040;
 
 	TextDark[0] = 0x808080;
-	TextDark[1] = 0x005050;
+	TextDark[1] = 0x505000;
 	TextDark[2] = 0x181818;
-	TextDark[3] = 0x000018;
-	TextDark[4] = 0x180000;
-	TextDark[5] = 0x001040;
+	TextDark[3] = 0x180000;
+	TextDark[4] = 0x000018;
+	TextDark[5] = 0x401000;
 	TextDark[6] = 0x101010;
 	TextDark[7] = 0x004000;
 	TextDark[8] = 0x004000;
-	TextDark[9] = 0x000040;
-	TextDark[10] = 0x004040;
-	TextDark[11] = 0x101040;
+	TextDark[9] = 0x400000;
+	TextDark[10] = 0x404000;
+	TextDark[11] = 0x401010;
 }
 
 void S_DrawScreenSprite2d(long x, long y, long z, long scaleH, long scaleV, short sprnum, short shade, ushort flags)
 {
 	PHDSPRITESTRUCT* sprite;
-	long x1, y1, x2, y2, r, g, b, shade1, shade2, p;
+	long x1, y1, x2, y2, c1, c2, p;
 	static bool set = 0;
 
 	if (!set)
@@ -120,28 +120,21 @@ void S_DrawScreenSprite2d(long x, long y, long z, long scaleH, long scaleV, shor
 
 	if (x2 >= 0 && y2 >= 0 && x1 < phd_winwidth && y1 < phd_winheight)
 	{
-		r = (TextLight[shade] >> 3) & 0x1F;
-		g = (TextLight[shade] >> 11) & 0x1F;
-		b = (TextLight[shade] >> 19) & 0x1f;
-		shade1 = r << 10 | g << 5 | b;
-
-		r = (TextDark[shade] >> 3) & 0x1F;
-		g = (TextDark[shade] >> 11) & 0x1F;
-		b = (TextDark[shade] >> 19) & 0x1f;
-		shade2 = r << 10 | g << 5 | b;
+		c1 = TextLight[shade];
+		c2 = TextDark[shade];
 
 		if (flags == 0xFFFF)
-			InsertSprite(phd_znear, x1, y1, x2, y2, sprnum, shade1, shade2, DT_POLY_WGT, 0);
+			InsertSprite(phd_znear, x1, y1, x2, y2, sprnum, c1, c2, DT_POLY_WGT, 0);
 		else
 		{
 			p = GetRenderScale(1);
-			InsertSprite(phd_znear + 0x28000, x1, y1, x2, y2, sprnum, shade1, shade2, DT_POLY_WGT, 0);
+			InsertSprite(phd_znear + 0x28000, x1, y1, x2, y2, sprnum, c1, c2, DT_POLY_WGT, 0);
 			InsertSprite(phd_znear + 0x3C000, x1 + p, y1 + p, x2 + p, y2 + p, sprnum, 0, 0, DT_POLY_WGT, 0);
 		}
 	}
 }
 
-void S_DrawScreenSprite(long x, long y, long z, long scaleH, long scaleV, short sprnum, short shade, ushort flags)
+void S_DrawScreenSprite(long x, long y, long z, long scaleH, long scaleV, short sprnum, long shade, ushort flags)
 {
 	PHDSPRITESTRUCT* sprite;
 	long x1, x2, y1, y2;
@@ -159,8 +152,7 @@ void S_DrawScreenSprite(long x, long y, long z, long scaleH, long scaleV, short 
 void S_DrawSprite(ulong flags, long x, long y, long z, short sprnum, short shade, short scale)
 {
 	PHDSPRITESTRUCT* sprite;
-	long xv, yv, zv, zop, x1, y1, x2, y2;
-	short r, g, b;
+	long xv, yv, zv, zop, x1, y1, x2, y2, r, g, b, c;
 
 	if (flags & SPR_ABS)
 	{
@@ -257,13 +249,19 @@ void S_DrawSprite(ulong flags, long x, long y, long z, short sprnum, short shade
 
 	if (flags & 0xFFFFFF)
 	{
-		shade = short(flags & 0xFFFFFF);
-		r = (shade & 0xFF) >> 3;
-		g = ((shade >> 8) & 0xFF) >> 3;
-		b = ((shade >> 16) & 0xFF) >> 3;
-		shade = r << 10 | g << 5 | b;
-		InsertSprite(zv, x1, y1, x2, y2, sprnum, shade, -1, DT_POLY_WGTA, 0);
+		c = flags & 0xFFFFFF;
+		r = RGB_GETBLUE(c);
+		g = RGB_GETGREEN(c);
+		b = RGB_GETRED(c);
+		c = RGB_MAKE(r, g, b);
+		InsertSprite(zv, x1, y1, x2, y2, sprnum, c, -1, DT_POLY_WGTA, 0);
 	}
 	else
-		InsertSprite(zv, x1, y1, x2, y2, sprnum, shade, -1, DT_POLY_WGT, 0);
+	{
+		r = ((shade >> 10) & 0x1F) << 3;
+		g = ((shade >> 5) & 0x1F) << 3;
+		b = (shade & 0x1F) << 3;
+		c = RGB_MAKE(r, g, b);
+		InsertSprite(zv, x1, y1, x2, y2, sprnum, c, -1, DT_POLY_WGT, 0);
+	}
 }

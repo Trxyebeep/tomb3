@@ -221,9 +221,9 @@ void ControlArea51Rocket(short item_number)
 				else
 				{
 					b = 0x4000 - item->required_anim_state;
-					r = (b * ((GetRandomControl() & 3) + 28)) >> 12;
-					g = (b * ((GetRandomControl() & 7) + 12)) >> 12;
-					b = (b * (GetRandomControl() & 3)) >> 12;
+					r = (b * ((GetRandomControl() & 0x1F) + 224)) >> 12;
+					g = (b * ((GetRandomControl() & 0x3F) + 96)) >> 12;
+					b = (b * (GetRandomControl() & 0x1F)) >> 12;
 					TriggerDynamic(item->pos.x_pos - 7680, room[52].minfloor - (GetRandomControl() & 0x1FF) - 256, item->pos.z_pos - 1024, 24, r, g, b);
 					camera.bounce = -((0x4000 - item->required_anim_state) >> 6);
 				}
@@ -329,9 +329,9 @@ void ControlArea51Rocket(short item_number)
 
 	if (item->goal_anim_state)
 	{
-		r = (GetRandomControl() & 3) + 28;
-		g = (GetRandomControl() & 7) + 12;
-		b = GetRandomControl() & 3;
+		r = (GetRandomControl() & 0x1F) + 224;
+		g = (GetRandomControl() & 0x3F) + 96;
+		b = GetRandomControl() & 0x1F;
 		TriggerDynamic(item->pos.x_pos - 512, item->pos.y_pos, item->pos.z_pos - 512, 31, r, g, b);
 
 		rad = item->goal_anim_state;
@@ -349,9 +349,9 @@ void ControlArea51Rocket(short item_number)
 
 		x = item->pos.x_pos - rad + 512;
 		z = item->pos.z_pos - 1024;
-		r = (GetRandomControl() & 3) + 28;
-		g = (GetRandomControl() & 7) + 12;
-		b = GetRandomControl() & 3;
+		r = (GetRandomControl() & 0x1F) + 224;
+		g = (GetRandomControl() & 0x3F) + 96;
+		b = GetRandomControl() & 0x1F;
 		TriggerDynamic(x, y, z, 24, r, g, b);
 
 		if (wibble & 4)

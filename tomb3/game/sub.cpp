@@ -43,7 +43,7 @@ void SubInitialise(short item_number)
 	SUBINFO* sub;
 
 	item = &items[item_number];
-	sub = (SUBINFO*)game_malloc(sizeof(SUBINFO), 0);
+	sub = (SUBINFO*)game_malloc(sizeof(SUBINFO));
 	item->data = sub;
 	sub->Rot = 0;
 	sub->Vel = 0;
@@ -995,7 +995,7 @@ void SubEffects(short item_number)
 	PHD_VECTOR pos;
 	PHD_3DPOS bPos;
 	GAME_VECTOR s, t;
-	long rgb;
+	long c;
 	short room_number;
 
 	item = &items[item_number];
@@ -1032,7 +1032,7 @@ void SubEffects(short item_number)
 		pos.y = sub_bites[1].y;
 		pos.z = sub_bites[1].z << (6 * i);
 		GetJointAbsPosition(item, &pos, sub_bites[1].mesh_num);
-		rgb = 31 - (GetRandomControl() & 3);
+		c = 255 - (GetRandomControl() & 0x1F);
 
 		if (i == 1)
 		{
@@ -1053,7 +1053,7 @@ void SubEffects(short item_number)
 			s.room_number = item->room_number;
 		}
 
-		TriggerDynamic(pos.x, pos.y, pos.z, 8 * i + 16, rgb, rgb, rgb);
+		TriggerDynamic(pos.x, pos.y, pos.z, 8 * i + 16, c, c, c);
 	}
 
 	if (!(wibble & 0xF) && sub->Vel)

@@ -22,9 +22,9 @@ void setup_screen_size()
 	DISPLAYMODE* dm;
 	long w, h, sw, sh;
 
-	dm = App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D].DisplayMode;
-	w = dm[App.DXConfigPtr->nVMode].w;
-	h = dm[App.DXConfigPtr->nVMode].h;
+	dm = App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode;
+	w = dm[App.lpDXConfig->nVMode].w;
+	h = dm[App.lpDXConfig->nVMode].h;
 	sw = long(w * screen_sizer);
 	sh = long(h * screen_sizer);
 

@@ -23,6 +23,9 @@
 - Increase static mesh limit from 50 to 256.
 - Increase items limit from 256 to 1024.
 - Increase AI/nonlot enemy limit from 5/12 to 20/20, respectively.
+- Rework the renderer to use 32 bit color instead of 16 bit internally.
+- Improve the dynamic light formula to make the light transition smoother.
+- Improve room vert distance fog formula.
 
 ### tomb3 bug fixes
 

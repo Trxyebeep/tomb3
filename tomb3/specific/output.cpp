@@ -38,12 +38,8 @@ static short shadow[6 + (3 * 8)] =
 };
 
 long framedump;
-long SunsetTimer;
 long water_effect;
 bool bBlueEffect;
-static long shade_effect;
-static long light_level[4];
-static long objbcnt;
 
 void S_PrintShadow(short size, short* box, ITEM_INFO* item)
 {
@@ -108,16 +104,11 @@ void S_PrintShadow(short size, short* box, ITEM_INFO* item)
 void S_SetupAboveWater(long underwater)
 {
 	water_effect = underwater;
-	shade_effect = 0;
 	bBlueEffect = underwater;
 }
 
 void S_SetupBelowWater(long underwater)
 {
-	if (wet != underwater)
-		wet = underwater;
-
-	shade_effect = 1;
 	water_effect = !underwater;
 	bBlueEffect = 1;
 }
@@ -297,9 +288,7 @@ static void DrawPickup(short obj_num)
 	phd_LookAt(0, -1024, 0, 0, 0, 0, 0);
 
 	phd_PushUnitMatrix();
-	phd_mxptr[M03] = 0;
-	phd_mxptr[M13] = 0;
-	phd_mxptr[M23] = 1024 << W2V_SHIFT;
+	phd_SetTrans(0, 0, 1024);
 	phd_RotYXZ(PickupY, rotx, rotz);
 	phd_PutPolygonsPickup(meshes[objects[obj_num].mesh_index], x + PickupX, y);	
 	phd_PopMatrix();
@@ -309,7 +298,7 @@ static void OutputPickupDisplay()
 {
 	DXClearBuffers(8, 0);
 
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 	{
 		for (int i = 0; i < MAX_BUCKETS; i++)
 		{
@@ -331,7 +320,7 @@ static void OutputPickupDisplay()
 	bBlueEffect = 0;
 	DrawPickup(pickups[CurrentPickup].sprnum);
 
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 	{
 		if (bAlphaTesting)
 		{
@@ -363,7 +352,7 @@ static void OutputPickupDisplay()
 
 void S_OutputPolyList()
 {
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 	{
 		HWR_EnableColorKey(0);
 		HWR_EnableAlphaBlend(0);
@@ -405,21 +394,6 @@ void S_OutputPolyList()
 	HWR_EndScene();
 }
 
-void S_LightRoom(ROOM_INFO* r)
-{
-	short* ptr;
-	long level;
-
-	if (!r->lighting)
-		return;
-
-	level = light_level[r->lighting];
-	ptr = r->data;
-
-	for (int i = (long)*ptr++; i > 0; i++, ptr += 6)
-		((uchar*)ptr)[2] += uchar((level * (((uchar*)ptr)[3] & 0x1F)) >> 6);
-}
-
 void S_InsertBackPolygon(long xmin, long ymin, long xmax, long ymax, long col)
 {
 	InsertFlatRect(phd_winxmin + xmin, phd_winymin + ymin, phd_winxmin + xmax, phd_winymin + ymax, phd_zfar, 0);
@@ -434,7 +408,6 @@ long S_GetObjectBounds(short* box)
 	if (phd_mxptr[M23] >= phd_zfar && !outside)
 		return 0;
 
-	objbcnt++;
 	xmin = box[0];
 	xmax = box[1];
 	ymin = box[2];
@@ -557,16 +530,11 @@ void ProjectPCoord(long x, long y, long z, long* result, long cx, long cy, long 
 
 long S_DumpCine()
 {
-	static long nf = 0;
+	if (!framedump)
+		return 0;
 
-	if (framedump)
-	{
-		nf++;
-		DXSaveScreen(App.lpFrontBuffer);
-		return 1;
-	}
-
-	return 0;
+	DXSaveScreen(App.FrontBuffer);
+	return 1;
 }
 
 void S_InitialiseScreen(long type)
@@ -587,17 +555,9 @@ long S_DumpScreen()
 	long nFrames;
 
 	if (framedump)
-		nFrames = 2;
+		nFrames = TICKS_PER_FRAME;
 	else
-	{
-		nFrames = Sync();
-
-		while (nFrames < 2)
-		{
-			while (!Sync());
-			nFrames++;
-		}
-	}
+		nFrames = SyncTicks(TICKS_PER_FRAME);
 
 	ScreenPartialDump();
 	return nFrames;
@@ -618,9 +578,12 @@ void AnimateTextures(long n)
 	PHDTEXTURESTRUCT tex;
 	short* range;
 	static long comp;
+	long nFrames;
 	short nRanges, nRangeFrames;
 
-	for (comp += n; comp > 5; comp -= 5)
+	nFrames = 5 * TICKS_PER_FRAME / 2;
+
+	for (comp += n; comp > nFrames; comp -= nFrames)
 	{
 		nRanges = *aranges;
 		range = aranges + 1;
@@ -646,22 +609,6 @@ void AnimateTextures(long n)
 
 void S_AnimateTextures(long n)
 {
-	static long pulse;
-
-	pulse = (pulse + n) & 0x1F;
-	light_level[1] = GetRandomDraw() & 0x1F;
-	light_level[2] = ((phd_sin((pulse << 16) / 32) + 0x4000) * 31) >> 15;
-
-	if (GF_SunsetEnabled)
-	{
-		SunsetTimer += n;
-
-		if (SunsetTimer < 72000)
-			light_level[3] = 31 * SunsetTimer / 72000;
-		else
-			light_level[3] = 31;
-	}
-
 	AnimateTextures(n);
 }
 
@@ -691,5 +638,4 @@ void S_InitialisePolyList(bool clearBackBuffer)
 	DXClearBuffers(flags, 0);
 	HWR_BeginScene();
 	phd_InitPolyList();
-	objbcnt = 0;
 }

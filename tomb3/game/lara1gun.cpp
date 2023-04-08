@@ -188,7 +188,7 @@ void ControlRocket(short item_number)
 	PHD_VECTOR vel;
 	PHD_3DPOS bPos;
 	short* bounds;
-	long abovewater, speed, c, rad, exploded, r, s, nx, nz, nn, ox, oz, on, nn1, on1;
+	long abovewater, speed, c, rad, exploded, r, g, b, s, nx, nz, nn, ox, oz, on, nn1, on1;
 	short oldRoom, room_number, target_num, obj_num;
 
 	item = &items[item_number];
@@ -224,9 +224,7 @@ void ControlRocket(short item_number)
 	item->shade = -0x3DF0;
 
 	phd_PushUnitMatrix();
-	phd_mxptr[M03] = 0;
-	phd_mxptr[M13] = 0;
-	phd_mxptr[M23] = 0;
+	phd_SetTrans(0, 0, 0);
 	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 
 	phd_PushMatrix();
@@ -258,7 +256,10 @@ void ControlRocket(short item_number)
 	vel.x = pos.x + (GetRandomControl() & 0xF) + item->pos.x_pos - 8;
 	vel.y = pos.y + (GetRandomControl() & 0xF) + item->pos.y_pos - 8;
 	vel.z = pos.z + (GetRandomControl() & 0xF) + item->pos.z_pos - 8;
-	TriggerDynamic(vel.x, vel.y, vel.z, 14, (GetRandomControl() & 3) + 28, (GetRandomControl() & 7) + 16, GetRandomControl() & 7);
+	r = (GetRandomControl() & 0x1F) + 224;
+	g = (GetRandomControl() & 0x3F) + 128;
+	b = GetRandomControl() & 0x3F;
+	TriggerDynamic(vel.x, vel.y, vel.z, 14, r, g, b);
 
 	speed = (item->speed * phd_cos(item->pos.x_rot)) >> W2V_SHIFT;
 	item->pos.x_pos += (speed * phd_sin(item->pos.y_rot)) >> W2V_SHIFT;
@@ -490,9 +491,7 @@ void ControlGrenade(short item_number)
 	}
 
 	phd_PushUnitMatrix();
-	phd_mxptr[M03] = 0;
-	phd_mxptr[M13] = 0;
-	phd_mxptr[M23] = 0;
+	phd_SetTrans(0, 0, 0);
 	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 	phd_TranslateRel(0, 0, -64);
 	pos.x = phd_mxptr[M03] >> W2V_SHIFT;
@@ -898,9 +897,7 @@ void FireRocket()
 	savegame.ammo_used++;
 
 	phd_PushUnitMatrix();
-	phd_mxptr[M03] = 0;
-	phd_mxptr[M13] = 0;
-	phd_mxptr[M23] = 0;
+	phd_SetTrans(0, 0, 0);
 	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 
 	phd_PushMatrix();
@@ -1320,9 +1317,9 @@ void RifleHandler(long weapon_type)
 
 	if (lara.right_arm.flash_gun)
 	{
-		r = (GetRandomControl() & 7) + 24;
-		g = (GetRandomControl() & 3) + 16;
-		b = GetRandomControl() & 7;
+		r = (GetRandomControl() & 0x3F) + 192;
+		g = (GetRandomControl() & 0x1F) + 128;
+		b = GetRandomControl() & 0x3F;
 
 		if (weapon_type == LG_SHOTGUN || weapon_type == LG_M16)
 		{

@@ -209,6 +209,7 @@ void WingmuteControl(short item_number)
 	if (c > 31)
 		c = 31;
 
+	c <<= 3;
 	pos.x = 0;
 	pos.y = 0;
 	pos.z = 0;

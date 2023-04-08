@@ -44,7 +44,7 @@ void OilRedControl(short item_number)
 		pos.y = oilred_gun.y;
 		pos.z = oilred_gun.z;
 		GetJointAbsPosition(item, &pos, oilred_gun.mesh_num);
-		TriggerDynamic(pos.x, pos.y, pos.z, 2 * item->fired_weapon + 4, 24, 16, 4);
+		TriggerDynamic(pos.x, pos.y, pos.z, 2 * item->fired_weapon + 4, 192, 128, 32);
 		phd_PopMatrix();
 	}
 

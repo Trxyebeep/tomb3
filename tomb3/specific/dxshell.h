@@ -14,7 +14,6 @@ void DXBitMask2ShiftCnt(ulong mask, uchar* shift, uchar* count);
 bool DXCreateDirectDraw(DEVICEINFO* dev, DXCONFIG* conf, LPDIRECTDRAWX* ddx);
 bool DXCreateDirect3D(LPDIRECTDRAWX ddx, LPDIRECT3DX* d3dx);
 bool DXSetCooperativeLevel(LPDIRECTDRAWX ddx, HWND hwnd, long flags);
-BOOL CALLBACK DXEnumDirectInput(LPCDIDEVICEINSTANCE lpDevInst, LPVOID lpContext);
 HRESULT CALLBACK DXEnumDisplayModes(LPDDSURFACEDESCX lpDDSurfaceDesc, LPVOID lpContext);
 bool DXCreateZBuffer(DEVICEINFO* device, DXCONFIG* config);
 BOOL CALLBACK DXEnumDirectDraw(GUID FAR* lpGUID, LPSTR lpDriverDescription, LPSTR lpDriverName, LPVOID lpContext);

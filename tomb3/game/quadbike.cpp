@@ -191,7 +191,7 @@ void InitialiseQuadBike(short item_number)
 	QUADINFO* quad;
 
 	item = &items[item_number];
-	quad = (QUADINFO*)game_malloc(sizeof(QUADINFO), 0);
+	quad = (QUADINFO*)game_malloc(sizeof(QUADINFO));
 	item->data = quad;
 	quad->Velocity = 0;
 	quad->skidoo_turn = 0;

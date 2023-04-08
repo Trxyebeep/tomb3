@@ -23,7 +23,7 @@ void BigGunInitialise(short item_number)
 	BIGGUNINFO* gun;
 
 	item = &items[item_number];
-	gun = (BIGGUNINFO*)game_malloc(sizeof(BIGGUNINFO), 0);
+	gun = (BIGGUNINFO*)game_malloc(sizeof(BIGGUNINFO));
 	item->data = gun;
 	gun->FireCount = 0;
 	gun->Flags = 0;
@@ -193,16 +193,14 @@ static void FireBigGun(ITEM_INFO* item)
 		TriggerGunSmoke(pos.x, pos.y, pos.z, 0, 0, 0, 1, SmokeWeapon, SmokeCountL);
 
 	phd_PushUnitMatrix();
-	phd_mxptr[M03] = 0;
-	phd_mxptr[M13] = 0;
-	phd_mxptr[M23] = 0;
+	phd_SetTrans(0, 0, 0);
 	phd_RotYXZ(rocket->pos.y_rot, rocket->pos.x_rot, rocket->pos.z_rot);
 
 	phd_PushMatrix();
 	phd_TranslateRel(0, 0, -128);
-	x = phd_mxptr[M03] >> 14;
-	y = phd_mxptr[M13] >> 14;
-	z = phd_mxptr[M23] >> 14;
+	x = phd_mxptr[M03] >> W2V_SHIFT;
+	y = phd_mxptr[M13] >> W2V_SHIFT;
+	z = phd_mxptr[M23] >> W2V_SHIFT;
 	phd_PopMatrix();
 
 	for (int i = 0; i < 8; i++)

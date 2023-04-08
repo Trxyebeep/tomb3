@@ -204,7 +204,7 @@ void ControlClawmutePlasmaBall(short fx_number)
 	FLOOR_INFO* floor;
 	PHD_VECTOR pos;
 	PHD_VECTOR oldPos;
-	long speed, h, c, lp;
+	long speed, h, c, r, g, b, lp;
 	short room_number;
 	uchar falloffs[2];
 
@@ -286,7 +286,10 @@ void ControlClawmutePlasmaBall(short fx_number)
 		if (falloffs[fx->flag1])
 		{
 			c = GetRandomControl();
-			TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, falloffs[fx->flag1], c & 7, 24 - ((c >> 6) & 3), 31 - ((c >> 4) & 3));
+			r = c & 0x3F;
+			g = 192 - ((c >> 6) & 0x1F);
+			b = 255 - ((c >> 4) & 0x1F);
+			TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, falloffs[fx->flag1], r, g, b);
 		}
 	}
 }
@@ -539,9 +542,9 @@ void ClawmuteControl(short item_number)
 			if (lp > 0)
 			{
 				b = GetRandomControl();
-				r = (lp * (b & 7)) >> 4;
-				g = (lp * (24 - ((b >> 6) & 3))) >> 4;
-				b = (lp * (31 - ((b >> 4) & 3))) >> 4;
+				r = (lp * (b & 0x3F)) >> 4;
+				g = (lp * (192 - ((b >> 6) & 0x1F))) >> 4;
+				b = (lp * (255 - ((b >> 4) & 0x1F))) >> 4;
 				pos.x = -32;
 				pos.y = -16;
 				pos.z = -192;

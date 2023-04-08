@@ -476,9 +476,9 @@ void PistolHandler(long weapon_type)
 		else
 			GetLaraMeshPos(&pos, LMX_HAND_R);
 
-		r = (GetRandomControl() & 7) + 24;
-		g = (GetRandomControl() & 3) + 16;
-		b = GetRandomControl() & 7;
+		r = (GetRandomControl() & 0x3F) + 192;
+		g = (GetRandomControl() & 0x1F) + 128;
+		b = GetRandomControl() & 0x3F;
 		TriggerDynamic(pos.x, pos.y, pos.z, 10, r, g, b);
 	}
 }

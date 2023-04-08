@@ -653,8 +653,8 @@ void ClipRoom(ROOM_INFO* r)
 			if (div)
 			{
 				z = (phd_zfar - zv[l1]) >> W2V_SHIFT;
-				x = xv[l1] + ((z * ((xv[l2] - xv[l1]) >> 14) / div) << 14);
-				y = yv[l1] + ((z * ((yv[l2] - yv[l1]) >> 14) / div) << 14);
+				x = xv[l1] + ((z * ((xv[l2] - xv[l1]) >> W2V_SHIFT) / div) << W2V_SHIFT);
+				y = yv[l1] + ((z * ((yv[l2] - yv[l1]) >> W2V_SHIFT) / div) << W2V_SHIFT);
 
 				if (x < xmin)
 					xmin = x;
@@ -740,7 +740,6 @@ void PrintRooms(short current_room)
 	phd_right = r->right;
 	phd_top = r->top;
 	phd_bottom = r->bottom;
-	S_LightRoom(r);
 
 	if (outside > 0 && !(r->flags & ROOM_INSIDE))
 		S_InsertRoom(r->data, 1);
@@ -977,9 +976,7 @@ void CalculateObjectLighting(ITEM_INFO* item, short* frame)
 	else
 	{
 		phd_PushUnitMatrix();
-		phd_mxptr[M03] = 0;
-		phd_mxptr[M13] = 0;
-		phd_mxptr[M23] = 0;
+		phd_SetTrans(0, 0, 0);
 		phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 		x = (phd_mxptr[M03] >> W2V_SHIFT) + item->pos.x_pos;
 		y = (phd_mxptr[M13] >> W2V_SHIFT) + item->pos.y_pos;
@@ -1190,6 +1187,7 @@ long DrawPhaseGame()
 {
 	CalcLaraMatrices(0);
 	phd_PushUnitMatrix();
+	phd_SetTrans(0, 0, 0);
 	CalcLaraMatrices(1);
 	phd_PopMatrix();
 

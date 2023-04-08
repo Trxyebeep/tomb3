@@ -77,10 +77,10 @@ long ControlPhase(long nframes, long demo_mode)
 	long return_val, falloff, r, g, b;
 	short item_number, nex, room_number;
 
-	if (nframes > 10)
-		nframes = 10;
+	if (nframes > TICKS_PER_FRAME * 5)
+		nframes = TICKS_PER_FRAME * 5;
 
-	for (framecount += nframes; framecount > 0; framecount -= 2)
+	for (framecount += nframes; framecount > 0; framecount -= TICKS_PER_FRAME)
 	{
 		RPC_Update();
 
@@ -274,14 +274,16 @@ long ControlPhase(long nframes, long demo_mode)
 			{
 				r = (GetRandomControl() & 7) - lara.electric + 16;
 				g = 32 - lara.electric;
-				b = 31;
+				b = 255;
 				falloff = (GetRandomControl() & 1) - 2 * lara.electric + 25;
+				r <<= 3;
+				g <<= 3;
 			}
 			else
 			{
 				r = 0;
-				g = (GetRandomControl() & 7) + 8;
-				b = (GetRandomControl() & 7) + 16;
+				g = (GetRandomControl() & 0x3F) + 64;
+				b = (GetRandomControl() & 0x3F) + 128;
 				falloff = (GetRandomControl() & 3) + 8;
 			}
 

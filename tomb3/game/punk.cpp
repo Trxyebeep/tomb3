@@ -106,7 +106,7 @@ void PunkControl(short item_number)
 	PHD_VECTOR pos;
 	AI_INFO info;
 	AI_INFO lara_info;
-	long rnd, dx, dz;
+	long rnd, dx, dz, r, g, b;
 	short tilt, angle, head, torso_x, torso_y;
 
 	if (!CreatureActive(item_number))
@@ -128,7 +128,10 @@ void PunkControl(short item_number)
 		pos.y = ((rnd >> 4) & 0xF) + punk_hit.y - 8;
 		pos.z = ((rnd >> 8) & 0xF) + punk_hit.z - 8;
 		GetJointAbsPosition(item, &pos, punk_hit.mesh_num);
-		TriggerDynamic(pos.x, pos.y, pos.z, 13, 31 - ((rnd >> 4) & 3), 24 - ((rnd >> 6) & 3), rnd & 7);
+		r = 255 - ((rnd >> 4) & 0x1F);
+		g = 192 - ((rnd >> 6) & 0x1F);
+		b = rnd & 0x3F;
+		TriggerDynamic(pos.x, pos.y, pos.z, 13, r, g, b);
 	}
 
 	if (item->hit_points <= 0)
@@ -173,7 +176,7 @@ void PunkControl(short item_number)
 		punk->enemy = lara_item;
 
 		if (item->hit_status || (lara_info.distance < 0x100000 || TargetVisible(item, &lara_info)) &&
-			abs(lara_item->pos.y_pos - item->pos.y_pos) < 1280 && CurrentLevel != LV_TOWER && !(item->ai_bits & 0x10))
+			abs(lara_item->pos.y_pos - item->pos.y_pos) < 1280 && CurrentLevel != LV_TOWER && !(item->ai_bits & FOLLOW))
 		{
 			if (!punk->alerted)
 				SoundEffect(SFX_ENGLISH_HOY, &item->pos, SFX_DEFAULT);
@@ -198,7 +201,7 @@ void PunkControl(short item_number)
 			punk->maximum_turn = 0;
 			head = lara_info.angle;
 
-			if (item->ai_bits & 1)
+			if (item->ai_bits & GUARD)
 			{
 				head = AIGuard(punk);
 
@@ -210,14 +213,14 @@ void PunkControl(short item_number)
 						item->goal_anim_state = 1;
 				}
 			}
-			else if (item->ai_bits & 4)
+			else if (item->ai_bits & PATROL1)
 				item->goal_anim_state = 2;
 			else if (punk->mood == ESCAPE_MOOD)
 			{
 				if (lara.target != item && info.ahead && !item->hit_status)
 					item->goal_anim_state = 1;
 			}
-			else if (punk->mood == BORED_MOOD || item->ai_bits & 0x10 && (punk->reached_goal || lara_info.distance > 0x400000))
+			else if (punk->mood == BORED_MOOD || item->ai_bits & FOLLOW && (punk->reached_goal || lara_info.distance > 0x400000))
 			{
 				if (item->required_anim_state)
 					item->goal_anim_state = item->required_anim_state;
@@ -239,7 +242,7 @@ void PunkControl(short item_number)
 			punk->maximum_turn = 910;
 			head = lara_info.angle;
 
-			if (item->ai_bits & 4)
+			if (item->ai_bits & PATROL1)
 			{
 				item->goal_anim_state = 2;
 				head = 0;
@@ -408,14 +411,14 @@ void PunkControl(short item_number)
 			punk->maximum_turn = 1092;
 			tilt = angle / 2;
 
-			if (item->ai_bits & 1)
+			if (item->ai_bits & GUARD)
 				item->goal_anim_state = 5;
 			else if (punk->mood == ESCAPE_MOOD)
 			{
 				if (lara.target != item && info.ahead)
 					item->goal_anim_state = 1;
 			}
-			else if (item->ai_bits & 0x10 && (punk->reached_goal || lara_info.distance > 0x400000))
+			else if (item->ai_bits & FOLLOW && (punk->reached_goal || lara_info.distance > 0x400000))
 				item->goal_anim_state = 1;
 			else if (punk->mood == BORED_MOOD)
 				item->goal_anim_state = 2;

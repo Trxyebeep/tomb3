@@ -80,11 +80,11 @@ void do_detail_option(INVENTORY_ITEM* item)
 	nSel = DT_NUMT - DOP_NOPTS;
 	tW = 130;
 	w = GetRenderWidthDownscaled() / 2 - 115;
-	dinfo = &App.DeviceInfoPtr->DDInfo[App.DXConfigPtr->nDD].D3DInfo[App.DXConfigPtr->nD3D];
+	dinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D];
 
 	if (!dtext[DT_GAMMA])
 	{
-		cdm = &dinfo->DisplayMode[App.DXConfigPtr->nVMode];
+		cdm = &dinfo->DisplayMode[App.lpDXConfig->nVMode];
 		resolutions = (RES_TXT*)malloc(sizeof(RES_TXT) * dinfo->nDisplayMode);
 
 		for (int i = 0; i < dinfo->nDisplayMode; i++)
@@ -107,10 +107,9 @@ void do_detail_option(INVENTORY_ITEM* item)
 		dtext[DT_ZBUFFER] = T_Print(w, -25, 0, GF_PCStrings[PCSTR_ZBUFFER]);
 		dtext[DT_FILTER] = T_Print(w, -5, 0, GF_PCStrings[PCSTR_FILTERING]);
 		dtext[DT_DITHER] = T_Print(w, 15, 0, GF_PCStrings[PCSTR_DITHER]);
-		dtext[DT_TRUEALPHA] = T_Print(w, 35, 0, GF_PCStrings[PCSTR_TRUEALPHA]);
-		dtext[DT_GAMMA] = T_Print(w, 55, 0, GF_PCStrings[PCSTR_SKY]);
+		dtext[DT_GAMMA] = T_Print(w, 35, 0, GF_PCStrings[PCSTR_SKY]);
 		
-		T_AddBackground(dtext[DT_EMPTY], 240, 150, 0, 0, 48, 0, &req_bgnd_gour1, 0);
+		T_AddBackground(dtext[DT_EMPTY], 240, 130, 0, 0, 48, 0, &req_bgnd_gour1, 0);
 		T_AddOutline(dtext[DT_EMPTY], 1, 15, &req_bgnd_gour2, 0);
 		T_CentreH(dtext[DT_EMPTY], 1);
 		T_CentreV(dtext[DT_EMPTY], 1);
@@ -124,13 +123,12 @@ void do_detail_option(INVENTORY_ITEM* item)
 		T_CentreV(dtext[DT_ZBUFFER], 1);
 		T_CentreV(dtext[DT_FILTER], 1);
 		T_CentreV(dtext[DT_DITHER], 1);
-		T_CentreV(dtext[DT_TRUEALPHA], 1);
 		T_CentreV(dtext[DT_GAMMA], 1);
 
 		//actual options
 		dtext[DT_OP_RESOLUTION] = T_Print(w + tW, -45, 0, resolutions[selected_res].res);
 
-		if (App.lpZBuffer)
+		if (App.ZBuffer)
 			dtext[DT_OP_ZBUFFER] = T_Print(w + tW, -25, 0, GF_PCStrings[PCSTR_ON]);
 		else
 			dtext[DT_OP_ZBUFFER] = T_Print(w + tW, -25, 0, GF_PCStrings[PCSTR_OFF]);
@@ -140,31 +138,22 @@ void do_detail_option(INVENTORY_ITEM* item)
 		else
 			dtext[DT_OP_FILTER] = T_Print(w + tW, -5, 0, GF_PCStrings[PCSTR_OFF]);
 
-		if (HWConfig.Dither)
+		if (HWConfig.bDither)
 			dtext[DT_OP_DITHER] = T_Print(w + tW, 15, 0, GF_PCStrings[PCSTR_ON]);
 		else
 			dtext[DT_OP_DITHER] = T_Print(w + tW, 15, 0, GF_PCStrings[PCSTR_OFF]);
 
-		if (HWConfig.TrueAlpha)
-			dtext[DT_OP_TRUEALPHA] = T_Print(w + tW, 35, 0, GF_PCStrings[PCSTR_OFF]);
-		else
-			dtext[DT_OP_TRUEALPHA] = T_Print(w + tW, 35, 0, GF_PCStrings[PCSTR_ON]);
-
 		sprintf(gtxt, "%d", (ulong)GammaOption);
-		dtext[DT_OP_GAMMA] = T_Print(w + tW, 55, 0, gtxt);
+		dtext[DT_OP_GAMMA] = T_Print(w + tW, 35, 0, gtxt);
 
 		T_CentreV(dtext[DT_OP_RESOLUTION], 1);
 		T_CentreV(dtext[DT_OP_ZBUFFER], 1);
 		T_CentreV(dtext[DT_OP_FILTER], 1);
 		T_CentreV(dtext[DT_OP_DITHER], 1);
-		T_CentreV(dtext[DT_OP_TRUEALPHA], 1);
 		T_CentreV(dtext[DT_OP_GAMMA], 1);
 
 		for (int i = 0; i < DOP_NOPTS; i++)
 			available[i] = 1;
-
-		T_ChangeText(dtext[DT_OP_TRUEALPHA], GF_PCStrings[PCSTR_SPARE8]);
-		available[DOP_TRUEALPHA] = 0;
 
 		if (tomb3.disable_gamma)
 		{
@@ -249,38 +238,21 @@ void do_detail_option(INVENTORY_ITEM* item)
 			HWR_InitState();
 			T_RemovePrint(dtext[DT_OP_GAMMA]);
 			sprintf(gtxt, "%d", (ulong)GammaOption);
-			dtext[DT_OP_GAMMA] = T_Print(w + tW, 55, 0, gtxt);
+			dtext[DT_OP_GAMMA] = T_Print(w + tW, 35, 0, gtxt);
 			T_CentreV(dtext[DT_OP_GAMMA], 1);
-			break;
-
-		case DOP_TRUEALPHA:
-
-			if (HWConfig.TrueAlpha)
-			{
-				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_ON]);
-				HWConfig.TrueAlpha = 0;
-			}
-			else
-			{
-				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_OFF]);
-				HWConfig.TrueAlpha = 1;
-			}
-
-			InitDrawPrimitive(App.lpD3DDevice, App.lpBackBuffer);
-			HWR_InitState();
 			break;
 
 		case DOP_DITHER:
 
-			if (HWConfig.Dither)
+			if (HWConfig.bDither)
 			{
 				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_OFF]);
-				HWConfig.Dither = 0;
+				HWConfig.bDither = 0;
 			}
 			else
 			{
 				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_ON]);
-				HWConfig.Dither = 1;
+				HWConfig.bDither = 1;
 			}
 
 			HWR_InitState();
@@ -303,23 +275,23 @@ void do_detail_option(INVENTORY_ITEM* item)
 
 		case DOP_ZBUFFER:
 
-			if (App.lpZBuffer)
+			if (App.ZBuffer)
 			{
-				App.DXConfigPtr->bZBuffer = 0;
+				App.lpDXConfig->bZBuffer = 0;
 				DXSwitchVideoMode(selected_res, selected_res, 0);
 				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_OFF]);
-				App.lpZBuffer = 0;
+				App.ZBuffer = 0;
 			}
 			else
 			{
-				App.DXConfigPtr->bZBuffer = 1;
+				App.lpDXConfig->bZBuffer = 1;
 
 				if (DXSwitchVideoMode(selected_res, selected_res, 1))
 					T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_ON]);
 				else
 				{
-					App.DXConfigPtr->bZBuffer = 0;
-					App.lpZBuffer = 0;
+					App.lpDXConfig->bZBuffer = 0;
+					App.ZBuffer = 0;
 				}
 			}
 
@@ -604,14 +576,14 @@ void do_sound_option(INVENTORY_ITEM* item)
 		if (input & IN_LEFT && Option_SFX_Volume > 0)
 		{
 			idelay = 1;
-			idcount = 10;
+			idcount = 5 * TICKS_PER_FRAME;
 			Option_SFX_Volume--;
 			goin = 1;
 		}
 		else if (input & IN_RIGHT && Option_SFX_Volume < 10)
 		{
 			idelay = 1;
-			idcount = 10;
+			idcount = 5 * TICKS_PER_FRAME;
 			Option_SFX_Volume++;
 			goin = 1;
 		}
@@ -1058,30 +1030,14 @@ void do_control_option(INVENTORY_ITEM* item)
 
 	case 2:
 
-		if (joy_fire)
+		for (c = 0; c < 256; c++)
 		{
-			for (c = 0; c < 256; c++)
-			{
-				if ((1 << c) & joy_fire)
-					break;
-			}
-
-			if (c == 32)
-				c = 0;
-			else
-				c += 256;
+			if (key_pressed(c))
+				break;
 		}
-		else
-		{
-			for (c = 0; c < 256; c++)
-			{
-				if (key_pressed(c))
-					break;
-			}
 
-			if (c == 256)
-				c = 0;
-		}
+		if (c == 256)
+			c = 0;
 
 		if (!c || !KeyboardButtons[c] || c == DIK_RETURN || c == DIK_LEFT || c == DIK_RIGHT || c == DIK_UP || c == DIK_DOWN)
 			break;
@@ -1106,12 +1062,7 @@ void do_control_option(INVENTORY_ITEM* item)
 
 	case 3:
 
-		if (layout[iconfig][keychange] & 256)
-		{
-			if (!((1 << layout[iconfig][keychange]) & joy_fire))
-				sel = 0;
-		}
-		else if (!key_pressed(layout[iconfig][keychange]))
+		if (!key_pressed(layout[iconfig][keychange]))
 		{
 			sel = 0;
 

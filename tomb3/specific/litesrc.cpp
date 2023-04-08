@@ -47,9 +47,9 @@ void S_CalculateStaticMeshLight(long x, long y, long z, short shade, short shade
 		if (dist <= falloff)
 		{
 			falloff = 0x1FFF - 0x1FFF * dist / falloff;
-			r += short((falloff * dynamic->r) >> 10);
-			g += short((falloff * dynamic->g) >> 10);
-			b += short((falloff * dynamic->b) >> 10);
+			r += short((falloff * dynamic->r) >> 13);
+			g += short((falloff * dynamic->g) >> 13);
+			b += short((falloff * dynamic->b) >> 13);
 		}
 	}
 
@@ -97,25 +97,25 @@ short* calc_vertice_light(short* objptr, short* objptr1)
 			if (!shade)
 				shade = 255;
 
-			r = (smcr * shade) >> 11;
-			g = (smcg * shade) >> 11;
-			b = (smcb * shade) >> 11;
+			r = (smcr * shade) >> 8;
+			g = (smcg * shade) >> 8;
+			b = (smcb * shade) >> 8;
 
-			if (r > 31)
-				r = 31;
+			if (r > 255)
+				r = 255;
 
-			if (g > 31)
-				g = 31;
+			if (g > 255)
+				g = 255;
 
-			if (b > 31)
-				b = 31;
+			if (b > 255)
+				b = 255;
 
 			if (buf->z > fade)
 			{
 				val = 2048 - ((buf->z - fade) >> 16);
-				r = (val * 8 * r) >> 14;
-				g = (val * 8 * g) >> 14;
-				b = (val * 8 * b) >> 14;
+				r = (val * r) / 2048;
+				g = (val * g) / 2048;
+				b = (val * b) / 2048;
 
 				if (r < 0)
 					r = 0;
@@ -127,7 +127,7 @@ short* calc_vertice_light(short* objptr, short* objptr1)
 					b = 0;
 			}
 
-			buf->g = short(r << 10 | g << 5 | b);
+			buf->color = RGB_MAKE(r, g, b);
 			buf++;
 			objptr++;
 		}
@@ -194,16 +194,12 @@ short* calc_vertice_light(short* objptr, short* objptr1)
 			if (b < 0)
 				b = 0;
 
-			r >>= 3;
-			g >>= 3;
-			b >>= 3;
-
 			if (buf->z > fade)
 			{
 				val = 2048 - ((buf->z - fade) >> 16);
-				r = (val * 8 * r) >> 14;
-				g = (val * 8 * g) >> 14;
-				b = (val * 8 * b) >> 14;
+				r = (val * r) / 2048;
+				g = (val * g) / 2048;
+				b = (val * b) / 2048;
 
 				if (r < 0)
 					r = 0;
@@ -215,7 +211,7 @@ short* calc_vertice_light(short* objptr, short* objptr1)
 					b = 0;
 			}
 
-			buf->g = short(r << 10 | g << 5 | b);
+			buf->color = RGB_MAKE(r, g, b);
 			buf++;
 			objptr += 3;
 		}
@@ -426,18 +422,18 @@ void S_CalculateLight(long x, long y, long z, short room_number, ITEM_LIGHT* il)
 			il->dynamic.x += (ls.x - il->dynamic.x) >> 1;
 			il->dynamic.y += (ls.y - il->dynamic.y) >> 1;
 			il->dynamic.z += (ls.z - il->dynamic.z) >> 1;
-			il->dynamicr += uchar((((brightest * dl2->r) >> 10) - il->dynamicr) >> 1);
-			il->dynamicg += uchar((((brightest * dl2->g) >> 10) - il->dynamicg) >> 1);
-			il->dynamicb += uchar((((brightest * dl2->b) >> 10) - il->dynamicb) >> 1);
+			il->dynamicr += uchar((((brightest * dl2->r) >> 13) - il->dynamicr) >> 1);
+			il->dynamicg += uchar((((brightest * dl2->g) >> 13) - il->dynamicg) >> 1);
+			il->dynamicb += uchar((((brightest * dl2->b) >> 13) - il->dynamicb) >> 1);
 		}
 		else
 		{
 			il->dynamic.x = ls.x;
 			il->dynamic.y = ls.y;
 			il->dynamic.z = ls.z;
-			il->dynamicr = uchar((brightest * dl2->r) >> 10);
-			il->dynamicg = uchar((brightest * dl2->g) >> 10);
-			il->dynamicb = uchar((brightest * dl2->b) >> 10);
+			il->dynamicr = uchar((brightest * dl2->r) >> 13);
+			il->dynamicg = uchar((brightest * dl2->g) >> 13);
+			il->dynamicb = uchar((brightest * dl2->b) >> 13);
 		}
 
 		LPos[2].x = il->dynamic.x >> 2;

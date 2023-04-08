@@ -24,7 +24,7 @@ short* (*RoomInsertObjectGT4)(short* pFaceInfo, long nFaces, sort_type nSortType
 short* (*RoomInsertObjectGT3)(short* pFaceInfo, long nFaces, sort_type nSortType);
 void (*InsertFlatRect)(long x1, long y1, long x2, long y2, long zdepth, long col);
 void (*InsertTrans8)(PHD_VBUF* buf, short shade);
-void (*InsertSprite)(long zdepth, long x1, long y1, long x2, long y2, long nSprite, long shade, long shade1, long nDrawType, long offset);
+void (*InsertSprite)(long zdepth, long x1, long y1, long x2, long y2, long nSprite, ulong shade, ulong shade1, long nDrawType, long offset);
 void (*InsertTransQuad)(long x, long y, long w, long h, long z);
 
 float outsideBackgroundTop;
@@ -401,6 +401,13 @@ void phd_PushUnitMatrix()
 	phd_mxptr[M22] = 1 << W2V_SHIFT;
 }
 
+void phd_SetTrans(long x, long y, long z)
+{
+	phd_mxptr[M03] = x << W2V_SHIFT;
+	phd_mxptr[M13] = y << W2V_SHIFT;
+	phd_mxptr[M23] = z << W2V_SHIFT;
+}
+
 void phd_PopMatrix()
 {
 	phd_mxptr -= indices_count;
@@ -462,7 +469,7 @@ short* calc_back_light(short* objptr)
 	}
 
 	for (int i = 0; i < nNormals; i++)
-		vbuf[i].g = 0x4210;
+		vbuf[i].color = 0x808080;
 
 	return objptr;
 }
@@ -530,8 +537,8 @@ void phd_InitWindow(long x, long y, long w, long h, long znear, long zfar, long 
 	phd_centerx = w / 2;
 	phd_centery = h / 2;
 	phd_viewdist = zfar;
-	phd_znear = znear << 14;
-	phd_zfar = zfar << 14;
+	phd_znear = znear << W2V_SHIFT;
+	phd_zfar = zfar << W2V_SHIFT;
 	f_centerx = float(w / 2);
 	f_centery = float(h / 2);
 	AlterFOV(short(182 * fov));

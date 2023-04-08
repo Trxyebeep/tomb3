@@ -63,7 +63,7 @@ void AutogunControl(short item_number)
 			GetJointAbsPosition(item, &pos, autogun_right.mesh_num);
 		}
 
-		TriggerDynamic(pos.x, pos.y, pos.z, 2 * item->fired_weapon + 8, 24, 16, 4);
+		TriggerDynamic(pos.x, pos.y, pos.z, 2 * item->fired_weapon + 8, 192, 128, 32);
 		phd_PopMatrix();
 	}
 

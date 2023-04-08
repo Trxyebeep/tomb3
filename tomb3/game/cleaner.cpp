@@ -332,7 +332,7 @@ void CleanerControl(short item_number)
 		pos.x += (GetRandomControl() & 0x1F) - 16;
 		pos.y += (GetRandomControl() & 0x1F) - 16;
 		pos.z += (GetRandomControl() & 0x1F) - 16;
-		c = (GetRandomControl() & 0xF) + 16;
+		c = (GetRandomControl() & 0x7F) + 128;
 		TriggerDynamic(pos.x, pos.y, pos.z, 10, c >> 2, c >> 1, c);
 	}
 
@@ -351,7 +351,7 @@ void CleanerControl(short item_number)
 		pos.x += (GetRandomControl() & 0x1F) - 16;
 		pos.y += (GetRandomControl() & 0x1F) - 16;
 		pos.z += (GetRandomControl() & 0x1F) - 16;
-		c = (GetRandomControl() & 0xF) + 16;
+		c = (GetRandomControl() & 0x7F) + 128;
 		TriggerDynamic(pos.x, pos.y, pos.z, 10, c >> 2, c >> 1, c);
 	}
 
@@ -370,7 +370,7 @@ void CleanerControl(short item_number)
 		pos.x += (GetRandomControl() & 0x1F) - 16;
 		pos.y += (GetRandomControl() & 0x1F) - 16;
 		pos.z += (GetRandomControl() & 0x1F) - 16;
-		c = (GetRandomControl() & 0xF) + 16;
+		c = (GetRandomControl() & 0x7F) + 128;
 		TriggerDynamic(pos.x, pos.y, pos.z, 10, c >> 2, c >> 1, c);
 	}
 }

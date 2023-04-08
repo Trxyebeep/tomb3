@@ -38,6 +38,7 @@ long DrawPhaseCinematic()
 {
 	CalcLaraMatrices(0);
 	phd_PushUnitMatrix();
+	phd_SetTrans(0, 0, 0);
 	CalcLaraMatrices(1);
 	phd_PopMatrix();
 
@@ -50,8 +51,8 @@ long DrawPhaseCinematic()
 	S_OutputPolyList();
 	camera.number_frames = S_DumpScreen();
 
-	if (S_DumpCine() == 1)
-		camera.number_frames = 2;
+	if (S_DumpCine())
+		camera.number_frames = TICKS_PER_FRAME;
 
 	S_AnimateTextures(camera.number_frames);
 	return camera.number_frames;
@@ -232,7 +233,7 @@ void UpdateLaraGuns()
 		TriggerDynamic(pos->x + (GetRandomControl() & 0xFF) - 128,
 			pos->y - (GetRandomControl() & 0x7F) + 63,
 			pos->z + (GetRandomControl() & 0xFF) - 128,
-			10, (GetRandomControl() & 7) + 24, (GetRandomControl() & 3) + 16, GetRandomControl() & 7);
+			10, (GetRandomControl() & 0x3F) + 192, (GetRandomControl() & 0x1F) + 128, GetRandomControl() & 0x3F);
 	}
 
 	if (SmokeCountL)
@@ -453,13 +454,13 @@ long StartCinematic(long level_number)
 	do
 	{
 		DrawPhaseCinematic();
-		nframes = actual_current_frame + 2 * (4 - cine_frame);
+		nframes = actual_current_frame + TICKS_PER_FRAME * (4 - cine_frame);
 
-		if (nframes < 2)
-			nframes = 2;
+		if (nframes < TICKS_PER_FRAME)
+			nframes = TICKS_PER_FRAME;
 
 		if (framedump)
-			nframes = 2;
+			nframes = TICKS_PER_FRAME;
 
 		ret = DoCinematic(nframes);
 

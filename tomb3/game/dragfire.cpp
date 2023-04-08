@@ -206,7 +206,7 @@ void ControlFlameThrower(short fx_number)
 		if (!fx->flag1)
 		{
 			TriggerFlamethrowerHitFlame(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos);
-			TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, 24, 31, 24, GetRandomControl() & 7);
+			TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, 24, 255, 192, GetRandomControl() & 0x3F);
 		}
 
 		KillEffect(fx_number);

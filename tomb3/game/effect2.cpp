@@ -2035,30 +2035,32 @@ void UpdateSparks()
 			if (pDL->Falloff < 28)
 				pDL->Falloff += 6;
 
-			r = 31 - (rnd & 3) - falloff;
-			g = 31 - (rnd & 3) - (falloff << 1);
-			b = 31 - (rnd & 3) - (falloff << 3);
+			r = 255 - (rnd & 0x1F) - (falloff << 3);
+			g = 255 - (rnd & 0x1F) - (falloff << 4);
+			b = 255 - (rnd & 0x1F) - (falloff << 6);
 		}
 		else if (falloff < 4)
 		{
 			if (pDL->Falloff < 28)
 				pDL->Falloff += 6;
 
-			r = 31 - (rnd & 3) - falloff;
-			g = 16 - falloff;
+			r = 255 - (rnd & 0x1F) - (falloff << 3);
+			g = 128 - (falloff << 3);
 			b = (4 - falloff) << 2;
 
 			if (b < 0)
 				b = 0;
+			else
+				b <<= 3;
 		}
 		else
 		{
 			if (pDL->Falloff)
 				pDL->Falloff--;
 
-			r = (rnd & 3) + 28;
-			g = ((rnd >> 4) & 3) + 16;
-			b = (rnd >> 8) & 7;
+			r = (rnd & 0x1F) + 224;
+			g = ((rnd >> 4) & 0x1F) + 128;
+			b = (rnd >> 8) & 0x3F;
 		}
 
 		falloff = pDL->Falloff;
@@ -2531,11 +2533,11 @@ void ControlColouredLights(short item_number)
 	long objnum;
 	uchar colours[5][3] =
 	{
-		{ 31, 0, 0 },		//RED_LIGHT
-		{ 0, 31, 0 },		//GREEN_LIGHT
-		{ 0, 0, 31 },		//BLUE_LIGHT
-		{ 31, 24, 0 },		//AMBER_LIGHT 
-		{ 28, 28, 31 }		//WHITE_LIGHT
+		{ 255, 0, 0 },		//RED_LIGHT
+		{ 0, 255, 0 },		//GREEN_LIGHT
+		{ 0, 0, 255 },		//BLUE_LIGHT
+		{ 255, 192, 0 },	//AMBER_LIGHT 
+		{ 224, 224, 255 }	//WHITE_LIGHT
 	};
 
 	item = &items[item_number];

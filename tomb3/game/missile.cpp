@@ -44,7 +44,7 @@ void ControlMissile(short fx_number)
 		else if (fx->object_number == DRAGON_FIRE)
 		{
 			TriggerFireFlame(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, -1, 0);
-			TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, 24, 31, 24, GetRandomControl() & 7);
+			TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, 24, 255, 192, GetRandomControl() & 0x3F);
 		}
 
 		KillEffect(fx_number);
@@ -89,7 +89,7 @@ void ControlMissile(short fx_number)
 	}
 	else if (fx->object_number == DRAGON_FIRE && !fx->counter--)
 	{
-		TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, 24, 31, 24, GetRandomControl() & 7);
+		TriggerDynamic(fx->pos.x_pos, fx->pos.y_pos, fx->pos.z_pos, 24, 255, 192, GetRandomControl() & 0x3F);
 		SoundEffect(SFX_SECURITY_GUARD_FIRE, &fx->pos, 0);
 		KillEffect(fx_number);
 	}
@@ -135,9 +135,7 @@ long ExplodingDeath(short item_number, long mesh_bits, short counter)
 	extra_rotation = (short*)item->data;
 
 	phd_PushUnitMatrix();
-	phd_mxptr[M03] = 0;
-	phd_mxptr[M13] = 0;
-	phd_mxptr[M23] = 0;
+	phd_SetTrans(0, 0, 0);
 	phd_RotYXZ(item->pos.y_rot, item->pos.x_rot, item->pos.z_rot);
 	phd_TranslateRel(frame[6], frame[7], frame[8]);
 	rot = frame + 9;

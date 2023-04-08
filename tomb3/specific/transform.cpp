@@ -36,7 +36,7 @@ short* calc_object_vertices(short* objptr)
 	long nVtx;
 	char totalClip, clipFlag;
 
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 		fMidSort = 0;
 	else
 		fMidSort = float(mid_sort << (W2V_SHIFT + 8));
@@ -75,10 +75,10 @@ short* calc_object_vertices(short* objptr)
 			if (buf->z < phd_zfar)
 			{
 				buf->zv = zv + fMidSort;
-				zT = ZTable[((buf->z >> 14) << 1)];
+				zT = ZTable[((buf->z >> W2V_SHIFT) << 1)];
 				buf->xs = buf->xv * zT + f_centerx;
 				buf->ys = buf->yv * zT + f_centery;
-				buf->ooz = ZTable[((buf->z >> 14) << 1) + 1];
+				buf->ooz = ZTable[((buf->z >> W2V_SHIFT) << 1) + 1];
 			}
 			else
 			{
@@ -121,7 +121,7 @@ short* calc_object_verticesback(short* objptr)
 	long nVtx;
 	char totalClip, clipFlag;
 
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 		fMidSort = 0;
 	else
 		fMidSort = float(mid_sort << (W2V_SHIFT + 8));
@@ -164,10 +164,10 @@ short* calc_object_verticesback(short* objptr)
 			if (buf->z < phd_zfar)
 			{
 				buf->zv = zv + fMidSort;
-				zT = ZTable[((buf->z >> 14) << 1)];
+				zT = ZTable[((buf->z >> W2V_SHIFT) << 1)];
 				buf->xs = buf->xv * zT + f_centerx;
 				buf->ys = buf->yv * zT + f_centery;
-				buf->ooz = ZTable[((buf->z >> 14) << 1) + 1];
+				buf->ooz = ZTable[((buf->z >> W2V_SHIFT) << 1) + 1];
 			}
 			else
 			{
@@ -222,11 +222,12 @@ short* calc_roomvert(short* objptr, long far_clip)
 	DYNAMIC* dl;
 	float fMidSort, fx, fy, fz, zv, zv2;
 	long nVtx, x, y, z, cR, cG, cB, dx, dy, dz, dist, falloff, rnd, shade, shimmer, abs;
+	uchar random;
 	char clipFlag;
 
 	r = &room[CurrentRoom];
 
-	if (App.lpZBuffer)
+	if (App.ZBuffer)
 		fMidSort = 0;
 	else
 		fMidSort = float(mid_sort << (W2V_SHIFT + 8));
@@ -248,7 +249,11 @@ short* calc_roomvert(short* objptr, long far_clip)
 
 	for (; nVtx > 0; nVtx--)
 	{
-		buf->g = objptr[5];
+		cR = ((objptr[5] & 0x7C00) >> 10) << 3;
+		cG = ((objptr[5] & 0x3E0) >> 5) << 3;
+		cB = (objptr[5] & 0x1F) << 3;
+		buf->color = RGB_MAKE(cR, cG, cB);
+
 		x = objptr[0];
 		y = objptr[1];
 		z = objptr[2];
@@ -268,13 +273,13 @@ short* calc_roomvert(short* objptr, long far_clip)
 			buf->zv += fMidSort;
 			zv2 = f_persp / zv;
 
-			if (zv > farz << 14)
+			if (zv > farz << W2V_SHIFT)
 				buf->zv = f_zfar;
 
 			buf->ooz = zv2 * f_oneopersp;
-			cR = buf->g & 0x7C00;
-			cG = buf->g & 0x3E0;
-			cB = buf->g & 0x1F;
+			cR = RGB_GETRED(buf->color);
+			cG = RGB_GETGREEN(buf->color);
+			cB = RGB_GETBLUE(buf->color);
 
 			for (int j = 0; j < number_dynamics; j++)
 			{
@@ -282,103 +287,76 @@ short* calc_roomvert(short* objptr, long far_clip)
 
 				if (dl->on)
 				{
-					dx = (dl->x - r->x - x) >> 7;
-					dy = (dl->y - r->y - y) >> 7;
-					dz = (dl->z - r->z - z) >> 7;
+					dx = (dl->x - r->x - x) >> 4;
+					dy = (dl->y - r->y - y) >> 4;
+					dz = (dl->z - r->z - z) >> 4;
 					dist = SQUARE(dx) + SQUARE(dy) + SQUARE(dz);
 
-					if (dist < 1024)
+					if (dist < 0x10000)
 					{
 						dist = phd_sqrt(dist);
-						falloff = dl->falloff >> 8;
+						falloff = dl->falloff >> 5;
 
 						if (dist < falloff)
 						{
 							if (!dist)
 								dist++;
 
-							cR += RColorTable[falloff][dist][dl->r];
-							cG += GColorTable[falloff][dist][dl->g];
-							cB += BColorTable[falloff][dist][dl->b];
+							cR += DynamicColorTable[falloff][dist][dl->r];
+							cG += DynamicColorTable[falloff][dist][dl->g];
+							cB += DynamicColorTable[falloff][dist][dl->b];
 						}
 					}
 				}
 			}
 
-			if (cR > 0x7C00)
-				cR = 0x7C00;
-
-			if (cG > 0x3E0)
-				cG = 0x3E0;
-
-			if (cB > 0x1F)
-				cB = 0x1F;
-
-			buf->g = short(cR | cG | cB);
 			rnd = (((x + r->x) >> 6) + ((y + r->y) >> 6) + ((z + r->z) >> 7)) & 0xFC;
 
 			if (objptr[4] & 0x2000)
 			{
-				buf->yv += float(WaterTable[r->MeshEffect][((wibble >> 2) + WaterTable[r->MeshEffect][rnd & 0x3F].random) & 0x3F].choppy << W2V_SHIFT);
-				shade = -WaterTable[r->MeshEffect][((wibble >> 2) + WaterTable[r->MeshEffect][rnd & 0x3F].random) & 0x3F].choppy >> 4;
-				cR = shade + ((buf->g >> 10) & 0x1F);
-				cG = shade + ((buf->g >> 5) & 0x1F);
-				cB = shade + (buf->g & 0x1F);
+				random = WaterTable[r->MeshEffect][rnd & 0x3F].random;
+				buf->yv += float(WaterTable[r->MeshEffect][(random + (wibble >> 2)) & 0x3F].choppy << W2V_SHIFT);
+				shade = -WaterTable[r->MeshEffect][(random + (wibble >> 2)) & 0x3F].choppy >> 1;
 
-				if (cR > 31)
-					cR = 31;
-
-				if (cG > 31)
-					cG = 31;
-
-				if (cB > 31)
-					cB = 31;
-
-				if (cR < 0)
-					cR = 0;
-
-				if (cG < 0)
-					cG = 0;
-
-				if (cB < 0)
-					cB = 0;
-
-				buf->g = short(cR << 10 | cG << 5 | cB);
+				cR += shade;
+				cG += shade;
+				cB += shade;
 			}
-
-			buf->xs = zv2 * buf->xv + f_centerx;
-			buf->ys = zv2 * buf->yv + f_centery;
 
 			if (objptr[4] & 0x4000)
 			{
-				shimmer = WaterTable[r->MeshEffect][((wibble >> 2) + WaterTable[r->MeshEffect][rnd & 0x3F].random) & 0x3F].shimmer;
-				abs = WaterTable[r->MeshEffect][((wibble >> 2) + WaterTable[r->MeshEffect][rnd & 0x3F].random) & 0x3F].abs;
-				shade = shimmer + abs;
+				random = WaterTable[r->MeshEffect][rnd & 0x3F].random;
+				shimmer = WaterTable[r->MeshEffect][(random + (wibble >> 2)) & 0x3F].shimmer;
+				abs = WaterTable[r->MeshEffect][(random + (wibble >> 2)) & 0x3F].abs;
+				shade = (shimmer + abs) << 3;
 
-				cR = shade + ((buf->g >> 10) & 0x1F);
-				cG = shade + ((buf->g >> 5) & 0x1F);
-				cB = shade + (buf->g & 0x1F);
-
-				if (cR > 31)
-					cR = 31;
-
-				if (cG > 31)
-					cG = 31;
-
-				if (cB > 31)
-					cB = 31;
-
-				if (cR < 0)
-					cR = 0;
-
-				if (cG < 0)
-					cG = 0;
-
-				if (cB < 0)
-					cB = 0;
-
-				buf->g = short(cR << 10 | cG << 5 | cB);
+				cR += shade;
+				cG += shade;
+				cB += shade;
 			}
+
+			if (cR > 255)
+				cR = 255;
+
+			if (cG > 255)
+				cG = 255;
+
+			if (cB > 255)
+				cB = 255;
+
+			if (cR < 0)
+				cR = 0;
+
+			if (cG < 0)
+				cG = 0;
+
+			if (cB < 0)
+				cB = 0;
+
+			buf->color = RGB_MAKE(cR, cG, cB);
+
+			buf->xs = zv2 * buf->xv + f_centerx;
+			buf->ys = zv2 * buf->yv + f_centery;
 
 			if (water_effect && objptr[4] >= 0)
 				buf->ys += wibble_table[(((long)buf->xs + wibble) >> 3) & 0x1F];
@@ -403,20 +381,14 @@ short* calc_roomvert(short* objptr, long far_clip)
 			if (z > farz << W2V_SHIFT)
 				z = farz << W2V_SHIFT;
 
-			cR = ((buf->g >> 10) & 0x1F) << 3;
-			cG = ((buf->g >> 5) & 0x1F) << 3;
-			cB = (buf->g & 0x1F) << 3;
-			cR += 7;
-			cG += 7;
-			cB += 7;
+			cR = RGB_GETRED(buf->color);
+			cG = RGB_GETGREEN(buf->color);
+			cB = RGB_GETBLUE(buf->color);
 			shade = 2048 - ((z - (distanceFogValue << W2V_SHIFT)) >> 16);
-			cR *= shade;
-			cG *= shade;
-			cB *= shade;
-			cR >>= 14;
-			cG >>= 14;
-			cB >>= 14;
-			buf->g = short(cR << 10 | cG << 5 | cB);
+			cR = (cR * shade) / 2048;
+			cG = (cG * shade) / 2048;
+			cB = (cB * shade) / 2048;
+			buf->color = RGB_MAKE(cR, cG, cB);
 		}
 
 		objptr += 6;
