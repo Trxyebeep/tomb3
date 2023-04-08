@@ -176,7 +176,7 @@ void PunkControl(short item_number)
 		punk->enemy = lara_item;
 
 		if (item->hit_status || (lara_info.distance < 0x100000 || TargetVisible(item, &lara_info)) &&
-			abs(lara_item->pos.y_pos - item->pos.y_pos) < 1280 && CurrentLevel != LV_TOWER && !(item->ai_bits & 0x10))
+			abs(lara_item->pos.y_pos - item->pos.y_pos) < 1280 && CurrentLevel != LV_TOWER && !(item->ai_bits & FOLLOW))
 		{
 			if (!punk->alerted)
 				SoundEffect(SFX_ENGLISH_HOY, &item->pos, SFX_DEFAULT);
@@ -201,7 +201,7 @@ void PunkControl(short item_number)
 			punk->maximum_turn = 0;
 			head = lara_info.angle;
 
-			if (item->ai_bits & 1)
+			if (item->ai_bits & GUARD)
 			{
 				head = AIGuard(punk);
 
@@ -213,14 +213,14 @@ void PunkControl(short item_number)
 						item->goal_anim_state = 1;
 				}
 			}
-			else if (item->ai_bits & 4)
+			else if (item->ai_bits & PATROL1)
 				item->goal_anim_state = 2;
 			else if (punk->mood == ESCAPE_MOOD)
 			{
 				if (lara.target != item && info.ahead && !item->hit_status)
 					item->goal_anim_state = 1;
 			}
-			else if (punk->mood == BORED_MOOD || item->ai_bits & 0x10 && (punk->reached_goal || lara_info.distance > 0x400000))
+			else if (punk->mood == BORED_MOOD || item->ai_bits & FOLLOW && (punk->reached_goal || lara_info.distance > 0x400000))
 			{
 				if (item->required_anim_state)
 					item->goal_anim_state = item->required_anim_state;
@@ -242,7 +242,7 @@ void PunkControl(short item_number)
 			punk->maximum_turn = 910;
 			head = lara_info.angle;
 
-			if (item->ai_bits & 4)
+			if (item->ai_bits & PATROL1)
 			{
 				item->goal_anim_state = 2;
 				head = 0;
@@ -411,14 +411,14 @@ void PunkControl(short item_number)
 			punk->maximum_turn = 1092;
 			tilt = angle / 2;
 
-			if (item->ai_bits & 1)
+			if (item->ai_bits & GUARD)
 				item->goal_anim_state = 5;
 			else if (punk->mood == ESCAPE_MOOD)
 			{
 				if (lara.target != item && info.ahead)
 					item->goal_anim_state = 1;
 			}
-			else if (item->ai_bits & 0x10 && (punk->reached_goal || lara_info.distance > 0x400000))
+			else if (item->ai_bits & FOLLOW && (punk->reached_goal || lara_info.distance > 0x400000))
 				item->goal_anim_state = 1;
 			else if (punk->mood == BORED_MOOD)
 				item->goal_anim_state = 2;

@@ -344,14 +344,14 @@ void FlamerControl(short item_number)
 			flamer->flags = 0;
 			flamer->maximum_turn = 0;
 
-			if (item->ai_bits & 1)
+			if (item->ai_bits & GUARD)
 			{
 				head = AIGuard(flamer);
 
 				if (!(GetRandomControl() & 0xFF))
 					item->goal_anim_state = 4;
 			}
-			else if (item->ai_bits & 4)
+			else if (item->ai_bits & PATROL1)
 				item->goal_anim_state = 2;
 			else if (flamer->mood == ESCAPE_MOOD)
 				item->goal_anim_state = 2;
@@ -374,14 +374,14 @@ void FlamerControl(short item_number)
 			flamer->flags = 0;
 			flamer->maximum_turn = 910;
 
-			if (item->ai_bits & 1)
+			if (item->ai_bits & GUARD)
 			{
 				item->anim_number = objects[item->object_number].anim_index + 12;
 				item->frame_number = anims[item->anim_number].frame_base;
 				item->current_anim_state = 1;
 				item->goal_anim_state = 1;
 			}
-			else if (item->ai_bits & 4)
+			else if (item->ai_bits & PATROL1)
 				item->goal_anim_state = 2;
 			else if (flamer->mood == ESCAPE_MOOD)
 				item->goal_anim_state = 2;
@@ -402,7 +402,7 @@ void FlamerControl(short item_number)
 		case 4:
 			head = lara_info.angle;
 
-			if (item->ai_bits & 1)
+			if (item->ai_bits & GUARD)
 			{
 				head = AIGuard(flamer);
 
