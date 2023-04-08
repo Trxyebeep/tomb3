@@ -88,9 +88,7 @@ typedef unsigned long ulong;
 #define MAX_ITEMS		1024	//was 256
 #define NLAYOUTKEYS		15
 #define MAX_WEATHER		256
-
-//*2
-#define MAX_WEATHER_ALIVE	16
+#define MAX_WEATHER_ALIVE	16	//was 8
 
 #define MALLOC_SIZE	15000000	//15 MB (was around 3.6 MB)
 

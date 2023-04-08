@@ -198,9 +198,9 @@ static void FireBigGun(ITEM_INFO* item)
 
 	phd_PushMatrix();
 	phd_TranslateRel(0, 0, -128);
-	x = phd_mxptr[M03] >> 14;
-	y = phd_mxptr[M13] >> 14;
-	z = phd_mxptr[M23] >> 14;
+	x = phd_mxptr[M03] >> W2V_SHIFT;
+	y = phd_mxptr[M13] >> W2V_SHIFT;
+	z = phd_mxptr[M23] >> W2V_SHIFT;
 	phd_PopMatrix();
 
 	for (int i = 0; i < 8; i++)

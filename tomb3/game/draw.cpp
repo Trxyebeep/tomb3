@@ -653,8 +653,8 @@ void ClipRoom(ROOM_INFO* r)
 			if (div)
 			{
 				z = (phd_zfar - zv[l1]) >> W2V_SHIFT;
-				x = xv[l1] + ((z * ((xv[l2] - xv[l1]) >> 14) / div) << 14);
-				y = yv[l1] + ((z * ((yv[l2] - yv[l1]) >> 14) / div) << 14);
+				x = xv[l1] + ((z * ((xv[l2] - xv[l1]) >> W2V_SHIFT) / div) << W2V_SHIFT);
+				y = yv[l1] + ((z * ((yv[l2] - yv[l1]) >> W2V_SHIFT) / div) << W2V_SHIFT);
 
 				if (x < xmin)
 					xmin = x;

@@ -537,8 +537,8 @@ void phd_InitWindow(long x, long y, long w, long h, long znear, long zfar, long 
 	phd_centerx = w / 2;
 	phd_centery = h / 2;
 	phd_viewdist = zfar;
-	phd_znear = znear << 14;
-	phd_zfar = zfar << 14;
+	phd_znear = znear << W2V_SHIFT;
+	phd_zfar = zfar << W2V_SHIFT;
 	f_centerx = float(w / 2);
 	f_centery = float(h / 2);
 	AlterFOV(short(182 * fov));

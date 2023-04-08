@@ -455,7 +455,7 @@ long GETR(ulong col)
 {
 	long w, r;
 
-	r = RGBA_GETRED(col);
+	r = RGB_GETRED(col);
 	r = ColorTable[r];
 
 	if (bBlueEffect)
@@ -476,7 +476,7 @@ long GETG(ulong col)
 {
 	long w, g;
 
-	g = RGBA_GETGREEN(col);
+	g = RGB_GETGREEN(col);
 	g = ColorTable[g];
 
 	if (bBlueEffect)
@@ -497,7 +497,7 @@ long GETB(ulong col)
 {
 	long w, b;
 
-	b = RGBA_GETBLUE(col);
+	b = RGB_GETBLUE(col);
 	b = ColorTable[b];
 
 	if (bBlueEffect)

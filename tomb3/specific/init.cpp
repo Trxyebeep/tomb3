@@ -80,8 +80,10 @@ ushort GetRandom(WATERTAB* wt, long lp)
 		ret = rand() & 0xFC;
 
 		for (loop = 0; loop < lp; loop++)
+		{
 			if (wt[loop].random == ret)
 				break;
+		}
 
 	} while (loop != lp);
 
