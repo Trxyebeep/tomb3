@@ -1129,7 +1129,7 @@ void DoSnow()
 		else if (size > 16)
 			size = 16;
 
-		size = (size * 0x2AAB) >> 15;
+		size = (size * 0x2AAB) >> 15;	//this scales it down to about a third of the size
 		size = GetFixedScale(size);
 
 		v[0].xs = float(x + size);
@@ -4943,10 +4943,9 @@ void DoUwEffect()
 	PHD_VECTOR pos;
 	PHD_VBUF v[4];
 	float zv;
-	long w, h, rad, ang, x, y, z, tx, ty, tz, size;
+	long w, h, rad, ang, x, y, z, tx, ty, tz, size, c;
 	long x1, y1, x2, y2, x3, y3;
 	ushort u1, v1, u2, v2;
-	short c;
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w;
@@ -5042,15 +5041,16 @@ void DoUwEffect()
 		y = pos.y;
 		z = pos.z;
 
-		if ((z >> 16) < 32 ||
-			x < 0 || x > w ||
-			y < 0 || y > h)
+		if ((z >> W2V_SHIFT) < 128)
 		{
 			if (p->life > 16)
 				p->life = 16;
 
 			continue;
 		}
+
+		if (x < 0 || x > w || y < 0 || y > h)
+			continue;
 
 		size = phd_persp * (p->yv >> 3) / (z >> 16);
 
@@ -5059,7 +5059,7 @@ void DoUwEffect()
 		else if (size > 16)
 			size = 16;
 
-		size = (size * 0x2AAB) >> 15;
+		size = (size * 0x2AAB) >> 15;	//this scales it down to about a third of the size
 		size = GetFixedScale(size) >> 1;
 
 		x1 = x + size;
