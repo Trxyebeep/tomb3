@@ -248,7 +248,7 @@ long LevelStats(long level)
 		S_DumpScreen();
 	} while (!(input & IN_SELECT));
 
-	if (tomb3.gold)
+	if (tomb3.gold || !gameflow.globe_enabled)
 	{
 		FadePictureDown(32);
 		TempVideoRemove();
@@ -696,6 +696,12 @@ long StartGame(long level, long type)
 		CurrentLevel = 0;
 		return EXITGAME;
 	}
+
+	if (GF_NumSecrets != -1)
+		LevelSecrets[CurrentLevel] = GF_NumSecrets;
+
+	if (GF_WaterColor != -1)
+		water_color[CurrentLevel] = 0xFF000000 | GF_WaterColor;
 
 	result = GameLoop(0);
 

@@ -458,6 +458,13 @@
     <Image Include="icon.ico" />
     <Image Include="setup.bmp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="tomb3\script\english.txt" />
+    <Text Include="tomb3\script\tombpc.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="tomb3\script\TOMBPC.DAT" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

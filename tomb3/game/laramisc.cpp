@@ -726,7 +726,7 @@ void LaraControl(short item_number)
 
 		LaraAboveWater(lara_item, mycoll);
 
-		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_MINES)
+		if (GF_Cold)
 		{
 			if (lara.water_status == LARA_WADE)
 				ExposureMeter--;
@@ -756,7 +756,7 @@ void LaraControl(short item_number)
 
 		LaraUnderWater(lara_item, mycoll);
 
-		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_MINES)
+		if (GF_Cold)
 			ExposureMeter -= 2;
 
 		break;
@@ -773,7 +773,7 @@ void LaraControl(short item_number)
 
 		LaraSurface(lara_item, mycoll);
 
-		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_MINES)
+		if (GF_Cold)
 			ExposureMeter--;
 
 		break;

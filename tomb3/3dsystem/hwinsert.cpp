@@ -10,6 +10,7 @@
 #include "../game/draw.h"
 #include "../game/control.h"
 #include "../tomb3/tomb3.h"
+#include "../game/gameflow.h"
 
 static float UVTable[65536];
 static VERTEX_INFO v_buffer[MAX_VINFO];
@@ -460,7 +461,7 @@ long GETR(ulong col)
 
 	if (bBlueEffect)
 	{
-		if (tomb3.custom_water_color)
+		if (tomb3.custom_water_color || gameflow.force_water_color)
 		{
 			w = RGB_GETRED(water_color[CurrentLevel]);
 			return (w * r) >> 8;
@@ -481,7 +482,7 @@ long GETG(ulong col)
 
 	if (bBlueEffect)
 	{
-		if (tomb3.custom_water_color)
+		if (tomb3.custom_water_color || gameflow.force_water_color)
 		{
 			w = RGB_GETGREEN(water_color[CurrentLevel]);
 			return (w * g) >> 8;
@@ -502,7 +503,7 @@ long GETB(ulong col)
 
 	if (bBlueEffect)
 	{
-		if (tomb3.custom_water_color)
+		if (tomb3.custom_water_color || gameflow.force_water_color)
 		{
 			w = RGB_GETBLUE(water_color[CurrentLevel]);
 			return (w * b) >> 8;

@@ -838,4 +838,11 @@
     <Image Include="setup.bmp" />
     <Image Include="icon.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="tomb3\script\tombpc.txt" />
+    <Text Include="tomb3\script\english.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="tomb3\script\TOMBPC.DAT" />
+  </ItemGroup>
 </Project>

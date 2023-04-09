@@ -295,7 +295,7 @@ long ControlPhase(long nframes, long demo_mode)
 		CalculateCamera();
 		wibble = (wibble + 4) & 0xFC;
 
-		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_MINES)
+		if (GF_Cold)
 			LaraBreath(lara_item);
 
 		UpdateSparks();
