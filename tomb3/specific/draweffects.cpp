@@ -96,24 +96,26 @@ WAKE_PTS WakePts[32][2];
 uchar WakeShade;
 uchar CurrentStartWake;
 
+static char scratchpad[0x2000];
+
 static void ProjectPHDVBuf(FVECTOR* pos, PHD_VBUF* v, ulong c, bool cFlag)
 {
 	float zv, zT;
 	float m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23;
 	char clipFlag;
 
-	m00 = float(phd_mxptr[M00]);
-	m01 = float(phd_mxptr[M01]);
-	m02 = float(phd_mxptr[M02]);
-	m03 = float(phd_mxptr[M03]);
-	m10 = float(phd_mxptr[M10]);
-	m11 = float(phd_mxptr[M11]);
-	m12 = float(phd_mxptr[M12]);
-	m13 = float(phd_mxptr[M13]);
-	m20 = float(phd_mxptr[M20]);
-	m21 = float(phd_mxptr[M21]);
-	m22 = float(phd_mxptr[M22]);
-	m23 = float(phd_mxptr[M23]);
+	m00 = (float)phd_mxptr[M00];
+	m01 = (float)phd_mxptr[M01];
+	m02 = (float)phd_mxptr[M02];
+	m03 = (float)phd_mxptr[M03];
+	m10 = (float)phd_mxptr[M10];
+	m11 = (float)phd_mxptr[M11];
+	m12 = (float)phd_mxptr[M12];
+	m13 = (float)phd_mxptr[M13];
+	m20 = (float)phd_mxptr[M20];
+	m21 = (float)phd_mxptr[M21];
+	m22 = (float)phd_mxptr[M22];
+	m23 = (float)phd_mxptr[M23];
 
 	v->xv = m00 * pos->x + m01 * pos->y + m02 * pos->z + m03;
 	v->yv = m10 * pos->x + m11 * pos->y + m12 * pos->z + m13;
@@ -316,16 +318,16 @@ static void setXYZ4(PHD_VBUF* v,
 void LaraElectricDeath(long lr, ITEM_INFO* item)
 {
 	DISPLAYMODE* dm;
-	PHD_VECTOR pos;
+	PHD_VECTOR* pos;
 	PHD_VECTOR pos1;
 	PHD_VECTOR pos2;
 	PHD_VECTOR point;
+	short* dists;
 	short* points;
 	float zv;
+	long mx, my, mz;
 	long w, h, nDs, mesh1, mesh2, x, y, z, xStep, yStep, zStep, pX, pY, pZ;
 	long x1, y1, x2, y2, c0, c1;
-	long coords[600];
-	short distances[200];
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
@@ -333,6 +335,9 @@ void LaraElectricDeath(long lr, ITEM_INFO* item)
 	phd_PushMatrix();
 	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
 	nDs = 0;
+
+	pos = (PHD_VECTOR*)&scratchpad[0];
+	dists = (short*)&scratchpad[1024];
 
 	for (int i = 0; i < 14; i++)
 	{
@@ -399,19 +404,19 @@ void LaraElectricDeath(long lr, ITEM_INFO* item)
 
 			if (j == 4 && lara_last_points[i])
 			{
-				pos.x = pos2.x;
-				pos.y = pos2.y;
-				pos.z = pos2.z;
+				mx = pos2.x;
+				my = pos2.y;
+				mz = pos2.z;
 			}
 			else
 			{
-				pos.x = x;
-				pos.y = y;
-				pos.z = z;
+				mx = x;
+				my = y;
+				mz = z;
 			}
 
 			if (!j || j == 4)
-				distances[nDs] = 0;
+				dists[nDs] = 0;
 			else
 			{
 				point.x = *points++;
@@ -421,15 +426,15 @@ void LaraElectricDeath(long lr, ITEM_INFO* item)
 
 				if (lr)
 				{
-					pos.x -= point.x >> 3;
-					pos.y -= point.y >> 3;
-					pos.z -= point.z >> 3;
+					mx -= point.x >> 3;
+					my -= point.y >> 3;
+					mz -= point.z >> 3;
 				}
 				else
 				{
-					pos.x += point.x >> 3;
-					pos.y += point.y >> 3;
-					pos.z += point.z >> 3;
+					mx += point.x >> 3;
+					my += point.y >> 3;
+					mz += point.z >> 3;
 				}
 
 				pX = abs(point.x);
@@ -442,16 +447,16 @@ void LaraElectricDeath(long lr, ITEM_INFO* item)
 				if (pZ > pX)
 					pX = pZ;
 
-				distances[nDs] = (short)pX;
+				dists[nDs] = (short)pX;
 			}
 
-			pX = phd_mxptr[M00] * pos.x + phd_mxptr[M01] * pos.y + phd_mxptr[M02] * pos.z + phd_mxptr[M03];
-			pY = phd_mxptr[M10] * pos.x + phd_mxptr[M11] * pos.y + phd_mxptr[M12] * pos.z + phd_mxptr[M13];
-			pZ = phd_mxptr[M20] * pos.x + phd_mxptr[M21] * pos.y + phd_mxptr[M22] * pos.z + phd_mxptr[M23];
+			pX = phd_mxptr[M00] * mx + phd_mxptr[M01] * my + phd_mxptr[M02] * mz + phd_mxptr[M03];
+			pY = phd_mxptr[M10] * mx + phd_mxptr[M11] * my + phd_mxptr[M12] * mz + phd_mxptr[M13];
+			pZ = phd_mxptr[M20] * mx + phd_mxptr[M21] * my + phd_mxptr[M22] * mz + phd_mxptr[M23];
 			zv = f_persp / (float)pZ;
-			coords[3 * nDs] = short(float(pX * zv + f_centerx));
-			coords[3 * nDs + 1] = short(float(pY * zv + f_centery));
-			coords[3 * nDs + 2] = pZ >> W2V_SHIFT;
+			pos[nDs].x = long(float(pX * zv + f_centerx));
+			pos[nDs].y = long(float(pY * zv + f_centery));
+			pos[nDs].z = pZ >> W2V_SHIFT;
 			nDs++;
 			x += xStep;
 			y += yStep;
@@ -460,18 +465,20 @@ void LaraElectricDeath(long lr, ITEM_INFO* item)
 	}
 
 	nDs = 0;
+	pos = (PHD_VECTOR*)&scratchpad[0];
+	dists = (short*)&scratchpad[1024];
 
 	for (int i = 0; i < 6; i++)
 	{
 		for (int j = 0; j < lara_line_counts[i]; j++)
 		{
-			x1 = coords[3 * nDs];
-			y1 = coords[3 * nDs + 1];
-			z = coords[3 * nDs + 2];
-			x2 = coords[3 * nDs + 3];
-			y2 = coords[3 * nDs + 4];
-			c0 = distances[nDs];
-			c1 = distances[nDs + 1];
+			x1 = pos[nDs].x;
+			y1 = pos[nDs].y;
+			z = pos[nDs].z;
+			x2 = pos[nDs + 1].x;
+			y2 = pos[nDs + 1].y;
+			c0 = dists[nDs];
+			c1 = dists[nDs + 1];
 			nDs++;
 
 			if (z < 32)
@@ -501,8 +508,8 @@ void LaraElectricDeath(long lr, ITEM_INFO* item)
 
 			if (ClipLine(x1, y1, x2, y2, w, h) && x1 >= 0 && x1 <= w && y1 >= 0 && y1 <= h && x2 >= 0 && x2 <= w && y2 >= 0 && y2 <= h)
 			{
-				c0 = c0 | (c0 << 8);
-				c1 = c1 | (c1 << 8);
+				c0 = RGB_MAKE(0, c0, c0);
+				c1 = RGB_MAKE(0, c1, c1);
 				z <<= W2V_SHIFT;
 
 				if (tomb3.improved_electricity)
@@ -611,16 +618,13 @@ void S_DrawWakeFX(ITEM_INFO* item)
 	DISPLAYMODE* dm;
 	WAKE_PTS* pt;
 	PHD_VECTOR pos;
+	long* pXY;
 	long* pZ;
-	short* pXY;
 	uchar* pRGBs;
 	float zv;
 	long w, h, s, c, current, nw, s1, s2, s3, s4;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c12, c34, cval;
 	long offsets[2][2];
-	long Z[64];
-	short XY[128];
-	uchar rgbs[128];
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
@@ -635,9 +639,9 @@ void S_DrawWakeFX(ITEM_INFO* item)
 
 	for (int i = 0; i < 2; i++)
 	{
-		pXY = XY;
-		pZ = Z;
-		pRGBs = rgbs;
+		pXY = (long*)&scratchpad[0];
+		pZ = (long*)&scratchpad[512];
+		pRGBs = (uchar*)&scratchpad[1024];
 		s = phd_sin(item->pos.y_rot);
 		c = phd_cos(item->pos.y_rot);
 		x1 = (item->pos.x_pos + ((offsets[i][1] * s + offsets[i][0] * c) >> W2V_SHIFT)) - lara_item->pos.x_pos;
@@ -649,15 +653,15 @@ void S_DrawWakeFX(ITEM_INFO* item)
 		pos.z = phd_mxptr[M20] * x1 + phd_mxptr[M21] * y1 + phd_mxptr[M22] * z1 + phd_mxptr[M23];
 
 		zv = f_persp / (float)pos.z;
-		pos.x = short(float(pos.x * zv + f_centerx));
-		pos.y = short(float(pos.y * zv + f_centery));
+		pos.x = long(float(pos.x * zv + f_centerx));
+		pos.y = long(float(pos.y * zv + f_centery));
 
-		pXY[0] = (short)pos.x;
-		pXY[1] = (short)pos.y;
+		pXY[0] = pos.x;
+		pXY[1] = pos.y;
 		pXY += 2;
 		*pZ++ = pos.z;
-		pXY[0] = (short)pos.x;
-		pXY[1] = (short)pos.y;
+		pXY[0] = pos.x;
+		pXY[1] = pos.y;
 		pXY += 2;
 		*pZ++ = pos.z;
 		*pRGBs++ = 64;
@@ -679,11 +683,11 @@ void S_DrawWakeFX(ITEM_INFO* item)
 					pos.z = phd_mxptr[M20] * x1 + phd_mxptr[M21] * y1 + phd_mxptr[M22] * z1 + phd_mxptr[M23];
 
 					zv = f_persp / (float)pos.z;
-					pos.x = short(float(pos.x * zv + f_centerx));
-					pos.y = short(float(pos.y * zv + f_centery));
+					pos.x = long(float(pos.x * zv + f_centerx));
+					pos.y = long(float(pos.y * zv + f_centery));
 
-					pXY[0] = (short)pos.x;
-					pXY[1] = (short)pos.y;
+					pXY[0] = pos.x;
+					pXY[1] = pos.y;
 					pXY += 2;
 					*pZ++ = pos.z;
 				}
@@ -702,9 +706,9 @@ void S_DrawWakeFX(ITEM_INFO* item)
 		if (!nw)
 			break;
 
-		pXY = XY;
-		pZ = Z;
-		pRGBs = rgbs;
+		pXY = (long*)&scratchpad[0];
+		pZ = (long*)&scratchpad[512];
+		pRGBs = (uchar*)&scratchpad[1024];
 		x1 = *pXY++;
 		y1 = *pXY++;
 		x2 = *pXY++;
@@ -795,13 +799,13 @@ void DoRain()
 	PHDTEXTURESTRUCT tex;
 	PHD_VBUF v[4];
 	PHD_VECTOR pos;
+	long* pXY;
 	long* pZ;
-	short* pXY;
 	float zv;
 	long rad, angle, rnd, alpha;
 	long tx, ty, tz, x1, y1, x2, y2, z;
+	long XY[4];
 	long Z[2];
-	short XY[4];
 
 	for (int i = 0, num_alive = 0; i < MAX_WEATHER; i++)
 	{
@@ -897,10 +901,10 @@ void DoRain()
 		pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
 		pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
 		zv = f_persp / (float)pos.z;
-		pos.x = short(float(pos.x * zv + f_centerx));
-		pos.y = short(float(pos.y * zv + f_centery));
-		pXY[0] = (short)pos.x;
-		pXY[1] = (short)pos.y;
+		pos.x = long(float(pos.x * zv + f_centerx));
+		pos.y = long(float(pos.y * zv + f_centery));
+		pXY[0] = pos.x;
+		pXY[1] = pos.y;
 		pZ[0] = pos.z;
 		pXY += 2;
 		pZ++;
@@ -912,10 +916,10 @@ void DoRain()
 		pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
 		pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
 		zv = f_persp / (float)pos.z;
-		pos.x = short(float(pos.x * zv + f_centerx));
-		pos.y = short(float(pos.y * zv + f_centery));
-		pXY[0] = (short)pos.x;
-		pXY[1] = (short)pos.y;
+		pos.x = long(float(pos.x * zv + f_centerx));
+		pos.y = long(float(pos.y * zv + f_centery));
+		pXY[0] = pos.x;
+		pXY[1] = pos.y;
 		pZ[0] = pos.z;
 		pXY -= 2;
 		pZ--;
@@ -1104,8 +1108,8 @@ void DoSnow()
 		pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
 		pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
 		zv = f_persp / (float)pos.z;
-		pos.x = short(float(pos.x * zv + f_centerx));
-		pos.y = short(float(pos.y * zv + f_centery));
+		pos.x = long(float(pos.x * zv + f_centerx));
+		pos.y = long(float(pos.y * zv + f_centery));
 
 		x = pos.x;
 		y = pos.y;
@@ -1227,15 +1231,12 @@ void DrawExplosionRings()
 	long* pZ2;
 	long* pV;
 	long* pV2;
-	short* pXY;
-	short* pXY2;
+	long* pXY;
+	long* pXY2;
 	float zv;
 	long w, h, rad, ang, r, g, b, x, y, z;
 	long x1, x2, x3, x4, y1, y2, y3, y4, z1, z2, z3, z4, col1, col2, col3, col4;
-	long Z[16];
 	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
-	long view[32];
-	short XY[32];
 	ushort u1, u2, v1, v2;
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
@@ -1264,9 +1265,9 @@ void DrawExplosionRings()
 		ring->radius += ring->speed;
 		rad = ring->radius;
 		vtx = ring->verts;
-		pXY = XY;
-		pZ = Z;
-		pV = view;
+		pXY = (long*)&scratchpad[0];
+		pZ = (long*)&scratchpad[512];
+		pV = (long*)&scratchpad[1024];
 
 		for (int j = 0; j < 2; j++)
 		{
@@ -1324,11 +1325,11 @@ void DrawExplosionRings()
 				*pV++ = pos.y;
 
 				zv = f_persp / (float)pos.z;
-				pos.x = short(float(pos.x * zv + f_centerx));
-				pos.y = short(float(pos.y * zv + f_centery));
+				pos.x = long(float(pos.x * zv + f_centerx));
+				pos.y = long(float(pos.y * zv + f_centery));
 
-				pXY[0] = (short)pos.x;
-				pXY[1] = (short)pos.y;
+				pXY[0] = pos.x;
+				pXY[1] = pos.y;
 				pZ[0] = pos.z;
 
 				vtx++;
@@ -1341,12 +1342,12 @@ void DrawExplosionRings()
 
 		vtx = ring->verts;
 		vtx2 = &ring->verts[8];
-		pXY = XY;
-		pZ = Z;
-		pXY2 = &XY[16];
-		pZ2 = &Z[8];
-		pV = view;
-		pV2 = &view[16];
+		pXY = (long*)&scratchpad[0];
+		pZ = (long*)&scratchpad[512];
+		pXY2 = (long*)&scratchpad[0 + (16 * 4)];
+		pZ2 = (long*)&scratchpad[512 + (8 * 4)];
+		pV = (long*)&scratchpad[1024];
+		pV2 = (long*)&scratchpad[1024 + (16 * 4)];
 
 		x1 = *pXY++;
 		y1 = *pXY++;
@@ -1453,20 +1454,17 @@ void DrawSummonRings()
 	PHD_VBUF v[4];
 	PHD_VECTOR pos;
 	PHDTEXTURESTRUCT tex;
+	long* pXY;
+	long* pXY2;
 	long* pZ;
 	long* pZ2;
 	long* pV;
 	long* pV2;
-	short* pXY;
-	short* pXY2;
 	float zv;
 	long w, h, rad, ang, cval, r, g, b, x, y, z;
 	long x1, x2, x3, x4, y1, y2, y3, y4, z1, z2, z3, z4, col1, col2, col3, col4;
-	long Z[16];
 	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
-	long view[32];
 	ushort u1, u2, v1, v2;
-	short XY[32];
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
@@ -1510,9 +1508,9 @@ void DrawSummonRings()
 
 		rad = ring->radius;
 		vtx = ring->verts;
-		pXY = XY;
-		pZ = Z;
-		pV = view;
+		pXY = (long*)&scratchpad[0];
+		pZ = (long*)&scratchpad[512];
+		pV = (long*)&scratchpad[1024];
 
 		if (ring->life > 32)
 			cval = (64 - ring->life) << 1;
@@ -1556,11 +1554,11 @@ void DrawSummonRings()
 				*pV++ = pos.y;
 
 				zv = f_persp / (float)pos.z;
-				pos.x = short(float(pos.x * zv + f_centerx));
-				pos.y = short(float(pos.y * zv + f_centery));
+				pos.x = long(float(pos.x * zv + f_centerx));
+				pos.y = long(float(pos.y * zv + f_centery));
 
-				pXY[0] = (short)pos.x;
-				pXY[1] = (short)pos.y;
+				pXY[0] = pos.x;
+				pXY[1] = pos.y;
 				pZ[0] = pos.z;
 
 				vtx++;
@@ -1573,12 +1571,12 @@ void DrawSummonRings()
 
 		vtx = ring->verts;
 		vtx2 = &ring->verts[8];
-		pXY = XY;
-		pZ = Z;
-		pXY2 = &XY[16];
-		pZ2 = &Z[8];
-		pV = view;
-		pV2 = &view[16];
+		pXY = (long*)&scratchpad[0];
+		pZ = (long*)&scratchpad[512];
+		pV = (long*)&scratchpad[1024];
+		pXY2 = (long*)&scratchpad[0 + (16 * 4)];
+		pZ2 = (long*)&scratchpad[512 + (8 * 4)];
+		pV2 = (long*)&scratchpad[1024 + (16 * 4)];
 
 		x1 = *pXY++;
 		y1 = *pXY++;
@@ -1711,20 +1709,17 @@ void DrawKnockBackRings()
 	PHD_VBUF v[4];
 	PHD_VECTOR pos;
 	PHDTEXTURESTRUCT tex;
+	long* pXY;
+	long* pXY2;
 	long* pZ;
 	long* pZ2;
 	long* pV;
 	long* pV2;
-	short* pXY;
-	short* pXY2;
 	float zv;
 	long w, h, rad, ang, cval, r, g, b, x, y, z;
 	long x1, x2, x3, x4, y1, y2, y3, y4, z1, z2, z3, z4, col1, col2, col3, col4;
-	long Z[16];
 	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
-	long view[32];
 	ushort u1, u2, v1, v2;
-	short XY[32];
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
@@ -1762,9 +1757,9 @@ void DrawKnockBackRings()
 
 		rad = ring->radius;
 		vtx = ring->verts;
-		pXY = XY;
-		pZ = Z;
-		pV = view;
+		pXY = (long*)&scratchpad[0];
+		pZ = (long*)&scratchpad[512];
+		pV = (long*)&scratchpad[1024];
 
 		if (ring->life > 24)
 			cval = (32 - ring->life) << 2;
@@ -1803,11 +1798,11 @@ void DrawKnockBackRings()
 				*pV++ = pos.y;
 
 				zv = f_persp / (float)pos.z;
-				pos.x = short(float(pos.x * zv + f_centerx));
-				pos.y = short(float(pos.y * zv + f_centery));
+				pos.x = long(float(pos.x * zv + f_centerx));
+				pos.y = long(float(pos.y * zv + f_centery));
 
-				pXY[0] = (short)pos.x;
-				pXY[1] = (short)pos.y;
+				pXY[0] = pos.x;
+				pXY[1] = pos.y;
 				pZ[0] = pos.z;
 
 				vtx++;
@@ -1821,12 +1816,12 @@ void DrawKnockBackRings()
 
 		vtx = ring->verts;
 		vtx2 = &ring->verts[8];
-		pXY = XY;
-		pZ = Z;
-		pXY2 = &XY[16];
-		pZ2 = &Z[8];
-		pV = view;
-		pV2 = &view[16];
+		pXY = (long*)&scratchpad[0];
+		pZ = (long*)&scratchpad[512];
+		pV = (long*)&scratchpad[1024];
+		pXY2 = (long*)&scratchpad[0 + (16 * 4)];
+		pZ2 = (long*)&scratchpad[512 + (8 * 4)];
+		pV2 = (long*)&scratchpad[1024 + (16 * 4)];
 
 		x1 = *pXY++;
 		y1 = *pXY++;
@@ -1950,15 +1945,13 @@ void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy)
 	DISPLAYMODE* dm;
 	GAME_VECTOR target;
 	PHD_VECTOR pos;
+	long* pXY;
 	long* pZ;
-	short* pXY;
 	short* points;	//electricity
 	float zv;
 	long w, h, x, y, z, dx, dy, dz, longest, nSegments, xOff, zOff, yOff1, yOff2;
 	long xs, ys, zs, tx, ty, tz;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c1, c2, c3, c4, r, g, b;
-	long Z[120];
-	short XY[120];
 	short angle;
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
@@ -2033,19 +2026,19 @@ void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy)
 
 	yOff1 = 0;
 	yOff2 = 0;
-	pXY = XY;
-	pZ = Z;
+	pXY = (long*)&scratchpad[0];
+	pZ = (long*)&scratchpad[512];
 
 	pos.x = x * phd_mxptr[M00] + y * phd_mxptr[M01] + z * phd_mxptr[M02] + phd_mxptr[M03];
 	pos.y = x * phd_mxptr[M10] + y * phd_mxptr[M11] + z * phd_mxptr[M12] + phd_mxptr[M13];
 	pos.z = x * phd_mxptr[M20] + y * phd_mxptr[M21] + z * phd_mxptr[M22] + phd_mxptr[M23];
 	zv = f_persp / (float)pos.z;
-	pos.x = short(float(pos.x * zv + f_centerx));
-	pos.y = short(float(pos.y * zv + f_centery));
-	pXY[0] = (short)pos.x;
-	pXY[1] = (short)pos.y;
-	pXY[2] = (short)pos.x;
-	pXY[3] = (short)pos.y;
+	pos.x = long(float(pos.x * zv + f_centerx));
+	pos.y = long(float(pos.y * zv + f_centery));
+	pXY[0] = pos.x;
+	pXY[1] = pos.y;
+	pXY[2] = pos.x;
+	pXY[3] = pos.y;
 	pZ[0] = pos.z;
 	pZ[1] = pos.z;
 	pXY += 4;
@@ -2091,10 +2084,10 @@ void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy)
 		pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
 		pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
 		zv = f_persp / (float)pos.z;
-		pos.x = short(float(pos.x * zv + f_centerx));
-		pos.y = short(float(pos.y * zv + f_centery));
-		pXY[0] = (short)pos.x;
-		pXY[1] = (short)pos.y;
+		pos.x = long(float(pos.x * zv + f_centerx));
+		pos.y = long(float(pos.y * zv + f_centery));
+		pXY[0] = pos.x;
+		pXY[1] = pos.y;
 		pZ[0] = pos.z;
 
 		tx = x + xs - xOff;
@@ -2104,10 +2097,10 @@ void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy)
 		pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
 		pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
 		zv = f_persp / (float)pos.z;
-		pos.x = short(float(pos.x * zv + f_centerx));
-		pos.y = short(float(pos.y * zv + f_centery));
-		pXY[2] = (short)pos.x;
-		pXY[3] = (short)pos.y;
+		pos.x = long(float(pos.x * zv + f_centerx));
+		pos.y = long(float(pos.y * zv + f_centery));
+		pXY[2] = pos.x;
+		pXY[3] = pos.y;
 		pZ[1] = pos.z;
 
 		pXY += 4;
@@ -2121,17 +2114,17 @@ void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy)
 	pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
 	pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
 	zv = f_persp / (float)pos.z;
-	pos.x = short(float(pos.x * zv + f_centerx));
-	pos.y = short(float(pos.y * zv + f_centery));
-	pXY[0] = (short)pos.x;
-	pXY[1] = (short)pos.y;
-	pXY[2] = (short)pos.x;
-	pXY[3] = (short)pos.y;
+	pos.x = long(float(pos.x * zv + f_centerx));
+	pos.y = long(float(pos.y * zv + f_centery));
+	pXY[0] = pos.x;
+	pXY[1] = pos.y;
+	pXY[2] = pos.x;
+	pXY[3] = pos.y;
 	pZ[0] = pos.z;
 	pZ[1] = pos.z;
 
-	pXY = XY;
-	pZ = Z;
+	pXY = (long*)&scratchpad[0];
+	pZ = (long*)&scratchpad[512];
 
 	x1 = *pXY++;
 	y1 = *pXY++;
@@ -2237,16 +2230,13 @@ void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy)
 	PHD_VECTOR pos1;
 	PHD_VECTOR pos2;
 	GAME_VECTOR src;
+	long* pXY;
 	long* pZ;
 	short* points;
 	short* pDists;
-	short* pXY;
 	float zv;
 	long w, h, dx, dy, dz, s, x, y, z, tx, ty, tz, ex, ey, ez, vx, vy, vz;
 	long x1, y1, x2, y2, c1, c2, alpha;
-	long Z[128];
-	short XY[128];
-	short dists[128];
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
@@ -2261,9 +2251,9 @@ void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy)
 	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
 	s = (rcossin_tbl[wibble << 5] >> 7) + 64;
 	points = &electricity_points[0][0];
-	pDists = dists;
-	pXY = XY;
-	pZ = Z;
+	pXY = (long*)&scratchpad[0];
+	pZ = (long*)&scratchpad[512];
+	pDists = (short*)&scratchpad[1024];
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -2350,10 +2340,10 @@ void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy)
 			pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
 			pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
 			zv = f_persp / (float)pos.z;
-			pos.x = short(float(pos.x * zv + f_centerx));
-			pos.y = short(float(pos.y * zv + f_centery));
-			*pXY++ = (short)pos.x;
-			*pXY++ = (short)pos.y;
+			pos.x = long(float(pos.x * zv + f_centerx));
+			pos.y = long(float(pos.y * zv + f_centery));
+			*pXY++ = pos.x;
+			*pXY++ = pos.y;
 			*pZ++ = pos.z;
 
 			x += dx;
@@ -2460,10 +2450,10 @@ void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy)
 				pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
 				pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
 				zv = f_persp / (float)pos.z;
-				pos.x = short(float(pos.x * zv + f_centerx));
-				pos.y = short(float(pos.y * zv + f_centery));
-				*pXY++ = (short)pos.x;
-				*pXY++ = (short)pos.y;
+				pos.x = long(float(pos.x * zv + f_centerx));
+				pos.y = long(float(pos.y * zv + f_centery));
+				*pXY++ = pos.x;
+				*pXY++ = pos.y;
 				*pZ++ = pos.z;
 
 				x += dx;
@@ -2473,9 +2463,9 @@ void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy)
 		}
 	}
 
-	pDists = dists;
-	pXY = XY;
-	pZ = Z;
+	pXY = (long*)&scratchpad[0];
+	pZ = (long*)&scratchpad[512];
+	pDists = (short*)&scratchpad[1024];
 
 	for (int i = 0; i < 16; i++)
 	{
@@ -2667,20 +2657,17 @@ void DrawTonyBossShield(ITEM_INFO* item)
 	PHD_VECTOR pos;
 	PHD_VBUF v[4];
 	PHDTEXTURESTRUCT tex;
+	long* pXY0;
+	long* pXY1;
 	long* pZ0;
 	long* pZ1;
 	long* pV;
 	long* pV2;
-	short* pXY0;
-	short* pXY1;
 	float zv;
 	long w, h, r, g, b, rgb;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c1, c2, c3, c4;
-	long Z[150];
 	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
-	long view[150];
 	ushort u1, v1, u2, v2;
-	short XY[150];
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
@@ -2688,13 +2675,13 @@ void DrawTonyBossShield(ITEM_INFO* item)
 
 	phd_PushMatrix();
 	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
-	pXY0 = XY;
-	pZ0 = Z;
-	pV = view;
-	s0 = &TonyBossShield[0];
+	pXY0 = (long*)&scratchpad[0];
+	pZ0 = (long*)&scratchpad[512];
+	pV = (long*)&scratchpad[1024];
 
-	for (int i = 0; i < 40; i++, s0++)
+	for (int i = 0; i < 40; i++)
 	{
+		s0 = &TonyBossShield[i];
 		x1 = s0->x;
 		y1 = s0->y;
 		z1 = s0->z;
@@ -2729,21 +2716,21 @@ void DrawTonyBossShield(ITEM_INFO* item)
 		*pV++ = pos.y;
 
 		zv = f_persp / (float)pos.z;
-		pos.x = short(float(pos.x * zv + f_centerx));
-		pos.y = short(float(pos.y * zv + f_centery));
+		pos.x = long(float(pos.x * zv + f_centerx));
+		pos.y = long(float(pos.y * zv + f_centery));
 
-		pXY0[0] = (short)pos.x;
-		pXY0[1] = (short)pos.y;
+		pXY0[0] = pos.x;
+		pXY0[1] = pos.y;
 		pXY0 += 2;
 		*pZ0++ = pos.z;
 	}
 
-	pXY0 = &XY[0];
-	pZ0 = &Z[0];
-	pXY1 = &XY[16];
-	pZ1 = &Z[8];
-	pV = view;
-	pV2 = &view[16];
+	pXY0 = (long*)&scratchpad[0];
+	pZ0 = (long*)&scratchpad[512];
+	pV = (long*)&scratchpad[1024];
+	pXY1 = (long*)&scratchpad[0 + (16 * 4)];
+	pZ1 = (long*)&scratchpad[512 + (8 * 4)];
+	pV2 = (long*)&scratchpad[1024 + (16 * 4)];
 	s0 = &TonyBossShield[0];
 	s1 = &TonyBossShield[8];
 
@@ -2859,20 +2846,17 @@ void DrawTribeBossShield(ITEM_INFO* item)
 	PHD_VECTOR pos;
 	PHD_VBUF v[4];
 	PHDTEXTURESTRUCT tex;
+	long* pXY0;
+	long* pXY1;
 	long* pZ0;
 	long* pZ1;
 	long* pV;
 	long* pV2;
-	short* pXY0;
-	short* pXY1;
 	float zv;
 	long w, h, r, g, b, rgb;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c1, c2, c3, c4;
-	long Z[150];
 	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
-	long view[150];
 	ushort u1, v1, u2, v2;
-	short XY[150];
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
@@ -2880,9 +2864,9 @@ void DrawTribeBossShield(ITEM_INFO* item)
 
 	phd_PushMatrix();
 	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
-	pXY0 = XY;
-	pZ0 = Z;
-	pV = view;
+	pXY0 = (long*)&scratchpad[0];
+	pZ0 = (long*)&scratchpad[512];
+	pV = (long*)&scratchpad[1024];
 	shield_active = 0;
 
 	for (int i = 0; i < 40; i++)
@@ -2922,19 +2906,19 @@ void DrawTribeBossShield(ITEM_INFO* item)
 		*pV++ = pos.y;
 
 		zv = f_persp / (float)pos.z;
-		pos.x = short(float(pos.x * zv + f_centerx));
-		pos.y = short(float(pos.y * zv + f_centery));
-		*pXY0++ = (short)pos.x;
-		*pXY0++ = (short)pos.y;
+		pos.x = long(float(pos.x * zv + f_centerx));
+		pos.y = long(float(pos.y * zv + f_centery));
+		*pXY0++ = pos.x;
+		*pXY0++ = pos.y;
 		*pZ0++ = pos.z;
 	}
 
-	pXY0 = &XY[0];
-	pZ0 = &Z[0];
-	pXY1 = &XY[16];
-	pZ1 = &Z[8];
-	pV = view;
-	pV2 = &view[16];
+	pXY0 = (long*)&scratchpad[0];
+	pZ0 = (long*)&scratchpad[512];
+	pV = (long*)&scratchpad[1024];
+	pXY1 = (long*)&scratchpad[0 + (16 * 4)];
+	pZ1 = (long*)&scratchpad[512 + (8 * 4)];
+	pV2 = (long*)&scratchpad[1024 + (16 * 4)];
 	s0 = &TribeBossShield[0];
 	s1 = &TribeBossShield[8];
 
@@ -3050,20 +3034,17 @@ void DrawLondonBossShield(ITEM_INFO* item)
 	PHD_VECTOR pos;
 	PHD_VBUF v[4];
 	PHDTEXTURESTRUCT tex;
+	long* pXY0;
+	long* pXY1;
 	long* pZ0;
 	long* pZ1;
 	long* pV;
 	long* pV2;
-	short* pXY0;
-	short* pXY1;
 	float zv;
 	long w, h, r, g, b, rgb;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c1, c2, c3, c4;
-	long Z[150];
 	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
-	long view[150];
 	ushort u1, v1, u2, v2;
-	short XY[150];
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
@@ -3071,9 +3052,9 @@ void DrawLondonBossShield(ITEM_INFO* item)
 
 	phd_PushMatrix();
 	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
-	pXY0 = XY;
-	pZ0 = Z;
-	pV = view;
+	pXY0 = (long*)&scratchpad[0];
+	pZ0 = (long*)&scratchpad[512];
+	pV = (long*)&scratchpad[1024];
 
 	for (int i = 0; i < 40; i++)
 	{
@@ -3112,19 +3093,19 @@ void DrawLondonBossShield(ITEM_INFO* item)
 		*pV++ = pos.y;
 
 		zv = f_persp / (float)pos.z;
-		pos.x = short(float(pos.x * zv + f_centerx));
-		pos.y = short(float(pos.y * zv + f_centery));
-		*pXY0++ = (short)pos.x;
-		*pXY0++ = (short)pos.y;
+		pos.x = long(float(pos.x * zv + f_centerx));
+		pos.y = long(float(pos.y * zv + f_centery));
+		*pXY0++ = pos.x;
+		*pXY0++ = pos.y;
 		*pZ0++ = pos.z;
 	}
 
-	pXY0 = &XY[0];
-	pZ0 = &Z[0];
-	pXY1 = &XY[16];
-	pZ1 = &Z[8];
-	pV = view;
-	pV2 = &view[16];
+	pXY0 = (long*)&scratchpad[0];
+	pZ0 = (long*)&scratchpad[512];
+	pV = (long*)&scratchpad[1024];
+	pXY1 = (long*)&scratchpad[0 + (16 * 4)];
+	pZ1 = (long*)&scratchpad[512 + (8 * 4)];
+	pV2 = (long*)&scratchpad[1024 + (16 * 4)];
 	s0 = &LondonBossShield[0];
 	s1 = &LondonBossShield[8];
 
@@ -3240,20 +3221,17 @@ void DrawWillBossShield(ITEM_INFO* item)
 	PHD_VECTOR pos;
 	PHD_VBUF v[4];
 	PHDTEXTURESTRUCT tex;
+	long* pXY0;
+	long* pXY1;
 	long* pZ0;
 	long* pZ1;
 	long* pV;
 	long* pV2;
-	short* pXY0;
-	short* pXY1;
 	float zv;
 	long w, h, r, g, b, rgb;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c1, c2, c3, c4;
-	long Z[150];
 	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
-	long view[150];
 	ushort u1, v1, u2, v2;
-	short XY[150];
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
@@ -3261,9 +3239,9 @@ void DrawWillBossShield(ITEM_INFO* item)
 
 	phd_PushMatrix();
 	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
-	pXY0 = XY;
-	pZ0 = Z;
-	pV = view;
+	pXY0 = (long*)&scratchpad[0];
+	pZ0 = (long*)&scratchpad[512];
+	pV = (long*)&scratchpad[1024];
 
 	for (int i = 0; i < 40; i++)
 	{
@@ -3302,19 +3280,19 @@ void DrawWillBossShield(ITEM_INFO* item)
 		*pV++ = pos.y;
 
 		zv = f_persp / (float)pos.z;
-		pos.x = short(float(pos.x * zv + f_centerx));
-		pos.y = short(float(pos.y * zv + f_centery));
-		*pXY0++ = (short)pos.x;
-		*pXY0++ = (short)pos.y;
+		pos.x = long(float(pos.x * zv + f_centerx));
+		pos.y = long(float(pos.y * zv + f_centery));
+		*pXY0++ = pos.x;
+		*pXY0++ = pos.y;
 		*pZ0++ = pos.z;
 	}
 
-	pXY0 = &XY[0];
-	pZ0 = &Z[0];
-	pXY1 = &XY[16];
-	pZ1 = &Z[8];
-	pV = view;
-	pV2 = &view[16];
+	pXY0 = (long*)&scratchpad[0];
+	pZ0 = (long*)&scratchpad[512];
+	pV = (long*)&scratchpad[1024];
+	pXY1 = (long*)&scratchpad[0 + (16 * 4)];
+	pZ1 = (long*)&scratchpad[512 + (8 * 4)];
+	pV2 = (long*)&scratchpad[1024 + (16 * 4)];
 	s0 = &WillBossShield[0];
 	s1 = &WillBossShield[8];
 
@@ -3428,9 +3406,7 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 	long* c;
 	long w, h, dx, dy, dz, dist, nSegments, x, y, z, s;
 	long x1, y1, z1, x2, y2, z2, r1, g1, b1, r2, g2, b2, alpha, c1, c2;
-	long coords[600];
-	long cols[600];
-	long XYZ[3];
+	long pos[3];
 
 	UpdateLaserShades();
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
@@ -3453,13 +3429,13 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 	x = 0;
 	y = 0;
 	z = 0;
-	p = coords;
-	c = cols;
+	p = (long*)&scratchpad[0];
+	c = (long*)&scratchpad[512];
 
 	for (int i = 0; i < nSegments + 1; i++)
 	{
-		mCalcPoint(src->x + x, src->y + y, src->z + z, XYZ);
-		ProjectPCoord(XYZ[0], XYZ[1], XYZ[2], p, w >> 1, h >> 1, phd_persp);
+		mCalcPoint(src->x + x, src->y + y, src->z + z, pos);
+		ProjectPCoord(pos[0], pos[1], pos[2], p, w >> 1, h >> 1, phd_persp);
 
 		p += 3;
 		x += dx;
@@ -3483,8 +3459,8 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 		c += 3;
 	}
 
-	p = coords;
-	c = cols;
+	p = (long*)&scratchpad[0];
+	c = (long*)&scratchpad[512];
 	x1 = *p++;
 	y1 = *p++;
 	z1 = *p++;
@@ -3558,21 +3534,19 @@ void S_DrawBat()
 	PHD_VECTOR pos;
 	PHD_VBUF v[4];
 	PHDTEXTURESTRUCT tex;
+	long* pXY;
 	long* pZ;
-	short* pXY;
 	uchar* links;
 	float zv;
 	long w, h, x, y, z;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3;
-	long Z[10];
 	ushort u1, v1, u2, v2;
-	short XY[10];
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w;
 	h = dm->h;
-	pXY = XY;
-	pZ = Z;
+	pXY = (long*)&scratchpad[0];
+	pZ = (long*)&scratchpad[512];
 
 	for (int i = 0; i < 32; i++)
 	{
@@ -3601,19 +3575,19 @@ void S_DrawBat()
 			pos.z = phd_mxptr[M20] * x + phd_mxptr[M21] * y + phd_mxptr[M22] * z + phd_mxptr[M23];
 
 			zv = f_persp / (float)pos.z;
-			pos.x = short(float(pos.x * zv + f_centerx));
-			pos.y = short(float(pos.y * zv + f_centery));
+			pos.x = long(float(pos.x * zv + f_centerx));
+			pos.y = long(float(pos.y * zv + f_centery));
 
-			pXY[0] = (short)pos.x;
-			pXY[1] = (short)pos.y;
+			pXY[0] = pos.x;
+			pXY[1] = pos.y;
 			pZ[0] = pos.z;
 			pXY += 2;
 			pZ += 2;	//?
 		}
 
 		phd_PopMatrix();
-		pXY = XY;
-		pZ = Z;
+		pXY = (long*)&scratchpad[0];
+		pZ = (long*)&scratchpad[512];
 		links = BatLinks;
 
 		for (int j = 0; j < 3; j++)
@@ -4031,8 +4005,7 @@ void S_DrawSplashes()
 	uchar* links;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c, c1, c2;
 	long w, h, nSprite, linkNum, n;
-	long coords[192];
-	long XYZ[3];
+	long pos[3];
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w;
@@ -4045,17 +4018,17 @@ void S_DrawSplashes()
 		if (!(splash->flags & 1))
 			continue;
 
-		p = coords;
+		p = (long*)&scratchpad[0];
 
 		for (int j = 0; j < 48; j++)
 		{
 			sv = &splash->sv[j];
-			mCalcPoint(splash->x + (sv->wx >> 4), splash->y + sv->wy, splash->z + (sv->wz >> 4), XYZ);
-			ProjectPCoord(XYZ[0], XYZ[1], XYZ[2], p, w >> 1, h >> 1, phd_persp);
+			mCalcPoint(splash->x + (sv->wx >> 4), splash->y + sv->wy, splash->z + (sv->wz >> 4), pos);
+			ProjectPCoord(pos[0], pos[1], pos[2], p, w >> 1, h >> 1, phd_persp);
 			p += 4;
 		}
 
-		p = coords;
+		p = (long*)&scratchpad[0];
 
 		for (int j = 0; j < 3; j++)
 		{
@@ -4142,24 +4115,24 @@ void S_DrawSplashes()
 		if (!(ripple->flags & 1))
 			continue;
 
-		p = coords;
+		p = (long*)&scratchpad[0];
 		n = ripple->size << 2;
 		nSprite = objects[EXPLOSION1].mesh_index + 9;
 
-		mCalcPoint(ripple->x - n, ripple->y, ripple->z - n, XYZ);
-		ProjectPCoord(XYZ[0], XYZ[1], XYZ[2], p, w >> 1, h >> 1, phd_persp);
+		mCalcPoint(ripple->x - n, ripple->y, ripple->z - n, pos);
+		ProjectPCoord(pos[0], pos[1], pos[2], p, w >> 1, h >> 1, phd_persp);
 		p += 3;
 
-		mCalcPoint(ripple->x + n, ripple->y, ripple->z - n, XYZ);
-		ProjectPCoord(XYZ[0], XYZ[1], XYZ[2], p, w >> 1, h >> 1, phd_persp);
+		mCalcPoint(ripple->x + n, ripple->y, ripple->z - n, pos);
+		ProjectPCoord(pos[0], pos[1], pos[2], p, w >> 1, h >> 1, phd_persp);
 		p += 3;
 
-		mCalcPoint(ripple->x - n, ripple->y, ripple->z + n, XYZ);
-		ProjectPCoord(XYZ[0], XYZ[1], XYZ[2], p, w >> 1, h >> 1, phd_persp);
+		mCalcPoint(ripple->x - n, ripple->y, ripple->z + n, pos);
+		ProjectPCoord(pos[0], pos[1], pos[2], p, w >> 1, h >> 1, phd_persp);
 		p += 3;
 
-		mCalcPoint(ripple->x + n, ripple->y, ripple->z + n, XYZ);
-		ProjectPCoord(XYZ[0], XYZ[1], XYZ[2], p, w >> 1, h >> 1, phd_persp);
+		mCalcPoint(ripple->x + n, ripple->y, ripple->z + n, pos);
+		ProjectPCoord(pos[0], pos[1], pos[2], p, w >> 1, h >> 1, phd_persp);
 
 		p -= 9;	//back to the start
 
@@ -4258,16 +4231,13 @@ void S_DrawLaserBolts(ITEM_INFO* item)
 	PHD_VECTOR rad[4];
 	PHD_VECTOR sub[4];
 	PHD_VECTOR pos;
+	long* pXY;
 	long* pZ;
-	short* pXY;
 	uchar* pC;
 	char* links;
 	float zv;
 	long w, h, speed, px, py, pz, d, x, y, z, xStep, yStep, zStep, num, linkNum;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c12, c34, r, g, b, c0, c1;
-	long Z[128];
-	short XY[128];
-	uchar cols[128];
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	w = dm->w - 1;
@@ -4319,9 +4289,9 @@ void S_DrawLaserBolts(ITEM_INFO* item)
 
 	phd_PopMatrix();
 
-	pXY = XY;
-	pZ = Z;
-	pC = cols;
+	pXY = (long*)&scratchpad[0];
+	pZ = (long*)&scratchpad[256];
+	pC = (uchar*)&scratchpad[512];
 
 	phd_PushMatrix();
 	phd_TranslateAbs(lara_item->pos.x_pos, lara_item->pos.y_pos, lara_item->pos.z_pos);
@@ -4333,10 +4303,10 @@ void S_DrawLaserBolts(ITEM_INFO* item)
 	pos.y = x * phd_mxptr[M10] + y * phd_mxptr[M11] + z * phd_mxptr[M12] + phd_mxptr[M13];
 	pos.z = x * phd_mxptr[M20] + y * phd_mxptr[M21] + z * phd_mxptr[M22] + phd_mxptr[M23];
 	zv = f_persp / pos.z;
-	pos.x = short(float(pos.x * zv + f_centerx));
-	pos.y = short(float(pos.y * zv + f_centery));
-	pXY[0] = (short)pos.x;
-	pXY[1] = (short)pos.y;
+	pos.x = long(float(pos.x * zv + f_centerx));
+	pos.y = long(float(pos.y * zv + f_centery));
+	pXY[0] = pos.x;
+	pXY[1] = pos.y;
 	pZ[0] = pos.z;
 	pXY += 2;
 	pZ++;
@@ -4357,10 +4327,10 @@ void S_DrawLaserBolts(ITEM_INFO* item)
 			pos.y = x * phd_mxptr[M10] + y * phd_mxptr[M11] + z * phd_mxptr[M12] + phd_mxptr[M13];
 			pos.z = x * phd_mxptr[M20] + y * phd_mxptr[M21] + z * phd_mxptr[M22] + phd_mxptr[M23];
 			zv = f_persp / pos.z;
-			pos.x = short(float(pos.x * zv + f_centerx));
-			pos.y = short(float(pos.y * zv + f_centery));
-			pXY[0] = (short)pos.x;
-			pXY[1] = (short)pos.y;
+			pos.x = long(float(pos.x * zv + f_centerx));
+			pos.y = long(float(pos.y * zv + f_centery));
+			pXY[0] = pos.x;
+			pXY[1] = pos.y;
 			pZ[0] = pos.z;
 			pXY += 2;
 			pZ++;
@@ -4391,13 +4361,16 @@ void S_DrawLaserBolts(ITEM_INFO* item)
 	pos.y = x * phd_mxptr[M10] + y * phd_mxptr[M11] + z * phd_mxptr[M12] + phd_mxptr[M13];
 	pos.z = x * phd_mxptr[M20] + y * phd_mxptr[M21] + z * phd_mxptr[M22] + phd_mxptr[M23];
 	zv = f_persp / pos.z;
-	pos.x = short(float(pos.x * zv + f_centerx));
-	pos.y = short(float(pos.y * zv + f_centery));
-	pXY[0] = (short)pos.x;
-	pXY[1] = (short)pos.y;
+	pos.x = long(float(pos.x * zv + f_centerx));
+	pos.y = long(float(pos.y * zv + f_centery));
+	pXY[0] = pos.x;
+	pXY[1] = pos.y;
 	pZ[0] = pos.z;
 	*pC = 0;
-	pC = cols;
+
+	pXY = (long*)&scratchpad[0];
+	pZ = (long*)&scratchpad[256];
+	pC = (uchar*)&scratchpad[512];
 
 	if (item->item_flags[2])
 		links = &BoltSummonLinks[0][0];
@@ -4426,21 +4399,21 @@ void S_DrawLaserBolts(ITEM_INFO* item)
 		{
 			linkNum = num << 2;
 
-			x1 = XY[links[linkNum + 1] << 1];
-			y1 = XY[(links[linkNum + 1] << 1) + 1];
-			z1 = Z[links[linkNum + 1]];
+			x1 = pXY[links[linkNum + 1] << 1];
+			y1 = pXY[(links[linkNum + 1] << 1) + 1];
+			z1 = pZ[links[linkNum + 1]];
 
-			x2 = XY[links[linkNum] << 1];
-			y2 = XY[(links[linkNum] << 1) + 1];
-			z2 = Z[links[linkNum]];
+			x2 = pXY[links[linkNum] << 1];
+			y2 = pXY[(links[linkNum] << 1) + 1];
+			z2 = pZ[links[linkNum]];
 
-			x3 = XY[links[linkNum + 2] << 1];
-			y3 = XY[(links[linkNum + 2] << 1) + 1];
-			z3 = Z[links[linkNum + 2]];
+			x3 = pXY[links[linkNum + 2] << 1];
+			y3 = pXY[(links[linkNum + 2] << 1) + 1];
+			z3 = pZ[links[linkNum + 2]];
 
-			x4 = XY[links[linkNum + 3] << 1];
-			y4 = XY[(links[linkNum + 3] << 1) + 1];
-			z4 = Z[links[linkNum + 3]];
+			x4 = pXY[links[linkNum + 3] << 1];
+			y4 = pXY[(links[linkNum + 3] << 1) + 1];
+			z4 = pZ[links[linkNum + 3]];
 
 			z1 = (z1 + z2 + z3 + z4) >> 2;
 
@@ -4644,8 +4617,8 @@ void S_DrawDarts(ITEM_INFO* item)
 	phd_TranslateAbs(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos);
 
 	zv = f_persp / (float)phd_mxptr[M23];
-	x1 = short(float(phd_mxptr[M03] * zv + f_centerx));
-	y1 = short(float(phd_mxptr[M13] * zv + f_centery));
+	x1 = long(float(phd_mxptr[M03] * zv + f_centerx));
+	y1 = long(float(phd_mxptr[M13] * zv + f_centery));
 	z1 = phd_mxptr[M23];
 
 	size = (-96 * phd_cos(item->pos.x_rot)) >> W2V_SHIFT;
@@ -4656,8 +4629,8 @@ void S_DrawDarts(ITEM_INFO* item)
 	pos.y = x * phd_mxptr[M10] + y * phd_mxptr[M11] + z * phd_mxptr[M12] + phd_mxptr[M13];
 	pos.z = x * phd_mxptr[M20] + y * phd_mxptr[M21] + z * phd_mxptr[M22] + phd_mxptr[M23];
 	zv = f_persp / (float)pos.z;
-	x2 = short(float(pos.x * zv + f_centerx));
-	y2 = short(float(pos.y * zv + f_centery));
+	x2 = long(float(pos.x * zv + f_centerx));
+	y2 = long(float(pos.y * zv + f_centery));
 	z2 = pos.z;
 
 	if (z1 > 32 && z2 > 32 && ClipLine(x1, y1, x2, y2, w, h))
@@ -5034,8 +5007,8 @@ void DoUwEffect()
 		pos.y = tx * phd_mxptr[M10] + ty * phd_mxptr[M11] + tz * phd_mxptr[M12] + phd_mxptr[M13];
 		pos.z = tx * phd_mxptr[M20] + ty * phd_mxptr[M21] + tz * phd_mxptr[M22] + phd_mxptr[M23];
 		zv = f_persp / (float)pos.z;
-		pos.x = short(float(pos.x * zv + f_centerx));
-		pos.y = short(float(pos.y * zv + f_centery));
+		pos.x = long(float(pos.x * zv + f_centerx));
+		pos.y = long(float(pos.y * zv + f_centery));
 
 		x = pos.x;
 		y = pos.y;
@@ -5101,15 +5074,12 @@ void S_DrawSubWakeFX(ITEM_INFO* item)
 	SUB_WAKE_PTS* pt;
 	BITE_INFO* bite;
 	PHD_VECTOR pos;
+	long* pXY;
 	long* pZ;
-	short* pXY;
 	uchar* pRGBs;
 	float zv;
 	long w, h, current, nw, s1, s2, s3, s4;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c12, c34, cval;
-	long Z[64];
-	short XY[128];
-	uchar rgbs[128];
 
 	if (!tomb3.upv_wake)
 		return;
@@ -5123,9 +5093,9 @@ void S_DrawSubWakeFX(ITEM_INFO* item)
 
 	for (int i = 0; i < 2; i++)
 	{
-		pXY = XY;
-		pZ = Z;
-		pRGBs = rgbs;
+		pXY = (long*)&scratchpad[0];
+		pZ = (long*)&scratchpad[512];
+		pRGBs = (uchar*)&scratchpad[1024];
 
 		for (int j = 0; j < 2; j++)
 		{
@@ -5143,11 +5113,11 @@ void S_DrawSubWakeFX(ITEM_INFO* item)
 			pos.z = phd_mxptr[M20] * x1 + phd_mxptr[M21] * y1 + phd_mxptr[M22] * z1 + phd_mxptr[M23];
 
 			zv = f_persp / (float)pos.z;
-			pos.x = short(float(pos.x * zv + f_centerx));
-			pos.y = short(float(pos.y * zv + f_centery));
+			pos.x = long(float(pos.x * zv + f_centerx));
+			pos.y = long(float(pos.y * zv + f_centery));
 
-			pXY[0] = (short)pos.x;
-			pXY[1] = (short)pos.y;
+			pXY[0] = pos.x;
+			pXY[1] = pos.y;
 			pXY += 2;
 			*pZ++ = pos.z;
 		}
@@ -5171,11 +5141,11 @@ void S_DrawSubWakeFX(ITEM_INFO* item)
 					pos.z = phd_mxptr[M20] * x1 + phd_mxptr[M21] * y1 + phd_mxptr[M22] * z1 + phd_mxptr[M23];
 
 					zv = f_persp / (float)pos.z;
-					pos.x = short(float(pos.x * zv + f_centerx));
-					pos.y = short(float(pos.y * zv + f_centery));
+					pos.x = long(float(pos.x * zv + f_centerx));
+					pos.y = long(float(pos.y * zv + f_centery));
 
-					pXY[0] = (short)pos.x;
-					pXY[1] = (short)pos.y;
+					pXY[0] = pos.x;
+					pXY[1] = pos.y;
 					pXY += 2;
 					*pZ++ = pos.z;
 				}
@@ -5194,9 +5164,9 @@ void S_DrawSubWakeFX(ITEM_INFO* item)
 		if (!nw)
 			break;
 
-		pXY = XY;
-		pZ = Z;
-		pRGBs = rgbs;
+		pXY = (long*)&scratchpad[0];
+		pZ = (long*)&scratchpad[512];
+		pRGBs = (uchar*)&scratchpad[1024];
 
 		x2 = *pXY++;
 		y2 = *pXY++;
