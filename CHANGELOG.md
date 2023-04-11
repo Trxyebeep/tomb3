@@ -26,6 +26,7 @@
 - Rework the renderer to use 32 bit color instead of 16 bit internally.
 - Improve the dynamic light formula to make the light transition smoother.
 - Improve room vert distance fog formula.
+- Reset Lara's cold bar in DOZY mode.
 
 ### tomb3 bug fixes
 

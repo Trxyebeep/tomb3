@@ -779,8 +779,11 @@ void LaraControl(short item_number)
 		break;
 
 	case LARA_CHEAT:
-		LaraCheat(lara_item, mycoll);
 
+		if (GF_Cold)
+			ExposureMeter = 600;
+
+		LaraCheat(lara_item, mycoll);
 		break;
 	}
 
