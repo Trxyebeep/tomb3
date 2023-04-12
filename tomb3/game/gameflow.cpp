@@ -657,10 +657,10 @@ long GF_InterpretSequence(short* ptr, long type, long seq_type)
 	GF_Cold = 0;
 	GF_DeathTile = DEATH_LAVA;
 	GF_WaterColor = -1;
+	GF_NumSecrets = -1;
 	memset(GF_Add2InvItems, 0, sizeof(char) * ADDINV_NUMBEROF);
 	memset(GF_SecretInvItems, 0, sizeof(char) * ADDINV_NUMBEROF);
 	GF_CDtracks[0] = 2;
-	GF_NumSecrets = -1;
 	ntracks = 0;
 	option = EXIT_TO_TITLE;
 

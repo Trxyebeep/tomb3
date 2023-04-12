@@ -255,9 +255,6 @@ long LevelStats(long level)
 		return 0;
 	}
 
-	if (level != gameflow.num_levels - gameflow.num_demos - 1)
-		S_LoadLevelFile(GF_titlefilenames[0], 0, 6);
-
 	world = Level2World(level);
 
 	if (level == LV_INDIABOSS)
@@ -394,6 +391,8 @@ long LevelStats(long level)
 		FadePictureDown(32);
 		TempVideoRemove();
 	}
+	else if (level != gameflow.num_levels - gameflow.num_demos - 1)
+		S_LoadLevelFile(GF_titlefilenames[0], 0, 6);
 
 	return ret;
 }

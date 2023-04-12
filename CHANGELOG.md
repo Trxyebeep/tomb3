@@ -13,6 +13,7 @@
 - Make underwater blood match normal blood on German version.
 - Fix explosion dynamic lighting transferring to other sparks.
 - Fix the harpoon gun reloading at every shot in NG+.
+- Fix the game loading title between levels.
 
 ### tomb3 additions
 
