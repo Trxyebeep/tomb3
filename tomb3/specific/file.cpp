@@ -815,44 +815,6 @@ long S_LoadLevelFile(char* name, long number, long type)
 	return loaded;
 }
 
-long FindCDDrive()
-{
-	HANDLE file;
-	ulong drives;
-	char path[20];
-	char root[8];
-
-	strcpy(path, "D:\\data\\tombpc.dat");
-	drives = GetLogicalDrives();
-	cd_drive = 'A';
-	lstrcpy(root, "A:\\");
-
-	while (drives)
-	{
-		if (drives & 1)
-		{
-			root[0] = cd_drive;
-
-			if (GetDriveType(root) == DRIVE_CDROM)	//Steam no cd patch changes this to DRIVE_FIXED
-			{
-				path[0] = cd_drive;
-				file = CreateFile(path, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-
-				if (file != INVALID_HANDLE_VALUE)
-				{
-					CloseHandle(file);
-					return 1;
-				}
-			}
-		}
-
-		cd_drive++;
-		drives >>= 1;
-	}
-
-	return 0;
-}
-
 const char* GetFullPath(const char* name)
 {
 	static char path[128];

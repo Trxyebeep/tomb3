@@ -20,7 +20,6 @@ void LoadDemFile(const char* name);
 long LoadLevel(const char* name, long number);
 void S_UnloadLevelFile();
 long S_LoadLevelFile(char* name, long number, long type);
-long FindCDDrive();
 const char* GetFullPath(const char* name);
 void build_ext(char* name, const char* ext);
 void AdjustTextureUVs(bool reset);

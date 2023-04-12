@@ -1,7 +1,6 @@
 #pragma once
 #include "../global/types.h"
 
-bool CD_Init();
 long CalcVolume(long volume);
 long CalcPan(short angle);
 void S_SoundSetMasterVolume(long volume);
@@ -19,5 +18,3 @@ long S_CDGetLoc();
 void S_CDMute();
 void S_CDVolume(long volume);
 long S_StartSyncedAudio(long track);
-
-extern char cd_drive;
