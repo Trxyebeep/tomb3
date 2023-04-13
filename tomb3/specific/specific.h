@@ -11,7 +11,6 @@ void S_SoundSetPitch(long num, long pitch);
 void S_SoundStopSample(long num);
 void S_SoundStopAllSamples();
 long S_SoundSampleIsPlaying(long num);
-void S_CDLoop();
 void S_CDPlay(short track, long mode);
 void S_CDStop();
 long S_CDGetLoc();

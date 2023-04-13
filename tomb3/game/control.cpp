@@ -84,9 +84,6 @@ long ControlPhase(long nframes, long demo_mode)
 	{
 		RPC_Update();
 
-		if (cdtrack > 0)
-			S_CDLoop();
-
 		if (!gameflow.cheatmodecheck_disabled)
 			CheckCheatMode();
 
