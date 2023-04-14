@@ -28,6 +28,7 @@
 - Improve the dynamic light formula to make the light transition smoother.
 - Improve room vert distance fog formula.
 - Reset Lara's cold bar in DOZY mode.
+- Improve Puna electricity color.
 
 ### tomb3 bug fixes
 

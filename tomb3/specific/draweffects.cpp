@@ -777,7 +777,7 @@ void S_DrawWakeFX(ITEM_INFO* item)
 
 				s4 = RGB_MAKE(cval, cval, cval);
 
-				HWI_InsertAlphaSprite_Sorted(x1, y1, z1, s1, x2, y2, z2, s2, x3, y3, z3, s3, x4, y4, z4, s4, -1, 16, 1);
+				HWI_InsertAlphaSprite_Sorted(x1, y1, z1, s1, x2, y2, z2, s2, x3, y3, z3, s3, x4, y4, z4, s4, -1, DT_POLY_GTA, 1);
 			}
 
 			y1 = y4;
@@ -1950,7 +1950,7 @@ void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy)
 	short* points;	//electricity
 	float zv;
 	long w, h, x, y, z, dx, dy, dz, longest, nSegments, xOff, zOff, yOff1, yOff2;
-	long xs, ys, zs, tx, ty, tz;
+	long xs, ys, zs, tx, ty, tz, rgb1, rgb2, rgb3, rgb4;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c1, c2, c3, c4, r, g, b;
 	short angle;
 
@@ -2043,7 +2043,7 @@ void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy)
 	pZ[1] = pos.z;
 	pXY += 4;
 	pZ += 2;
-	points = &electricity_points[copy * 4][0];
+	points = &electricity_points[copy << 2][0];
 
 	for (int i = 0; i < nSegments - 1; i++)
 	{
@@ -2155,71 +2155,68 @@ void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy)
 		y4 = *pXY++;
 		z4 = *pZ++;
 
-		if ((z1 + z2 + z3 + z4) >> 2 > phd_znear)
+		if ((z1 + z2 + z3 + z4) >> 2 > phd_znear && (c1 || c2 || c3 || c4))
 		{
-			if (c1 || c2 || c3 || c4)
+			if (x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 &&
+				x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
 			{
-				if (x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 &&
-					x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
+				if (bossdata.attack_type)
 				{
-					if (bossdata.attack_type)
-					{
-						r = (c1 & 0xC0) >> 2;
-						g = c1 >> 1;
-						b = (c1 & 0xC0) >> 2;
-						c1 = RGB_MAKE(r, g, b);
+					r = c1 >> 1;
+					g = c1;
+					b = c1 >> 1;
+					rgb1 = RGB_MAKE(r, g, b);
 
-						r = (c2 & 0xC0) >> 2;
-						g = c2 >> 1;
-						b = (c2 & 0xC0) >> 2;
-						c2 = RGB_MAKE(r, g, b);
+					r = c2 >> 1;
+					g = c2;
+					b = c2 >> 1;
+					rgb2 = RGB_MAKE(r, g, b);
 
-						r = (c3 & 0xC0) >> 2;
-						g = c3 >> 1;
-						b = (c3 & 0xC0) >> 2;
-						c3 = RGB_MAKE(r, g, b);
+					r = c3 >> 1;
+					g = c3;
+					b = c3 >> 1;
+					rgb3 = RGB_MAKE(r, g, b);
 
-						r = (c4 & 0xC0) >> 2;
-						g = c4 >> 1;
-						b = (c4 & 0xC0) >> 2;
-						c4 = RGB_MAKE(r, g, b);
-					}
-					else
-					{
-						r = (c1 & 0xC0) >> 2;
-						g = c1 >> 1;
-						b = c1 >> 1;
-						c1 = RGB_MAKE(r, g, b);
-
-						r = (c2 & 0xC0) >> 2;
-						g = c2 >> 1;
-						b = c2 >> 1;
-						c2 = RGB_MAKE(r, g, b);
-
-						r = (c3 & 0xC0) >> 2;
-						g = c3 >> 1;
-						b = c3 >> 1;
-						c3 = RGB_MAKE(r, g, b);
-
-						r = (c4 & 0xC0) >> 2;
-						g = c4 >> 1;
-						b = c4 >> 1;
-						c4 = RGB_MAKE(r, g, b);
-					}
-
-					HWI_InsertAlphaSprite_Sorted(x2, y2, z2, c2, x1, y1, z1, c2, x4, y4, z4, c3, x3, y3, z3, c4, -1, 16, 1);
+					r = c4 >> 1;
+					g = c4;
+					b = c4 >> 1;
+					rgb4 = RGB_MAKE(r, g, b);
 				}
+				else
+				{
+					r = c1 >> 1;
+					g = c1;
+					b = c1;
+					rgb1 = RGB_MAKE(r, g, b);
+
+					r = c2 >> 1;
+					g = c2;
+					b = c2;
+					rgb2 = RGB_MAKE(r, g, b);
+
+					r = c3 >> 1;
+					g = c3;
+					b = c3;
+					rgb3 = RGB_MAKE(r, g, b);
+
+					r = c4 >> 1;
+					g = c4;
+					b = c4;
+					rgb4 = RGB_MAKE(r, g, b);
+				}
+
+				HWI_InsertAlphaSprite_Sorted(x2, y2, z2, rgb2, x1, y1, z1, rgb1, x4, y4, z4, rgb4, x3, y3, z3, rgb3, -1, DT_POLY_GTA, 1);
 			}
 		}
 
 		x1 = x4;
 		y1 = y4;
 		z1 = z4;
-		c1 = c3;
+		c1 = c4;
 		x2 = x3;
 		y2 = y3;
 		z2 = z3;
-		c2 = c4;
+		c2 = c3;
 	}
 }
 
@@ -5226,7 +5223,7 @@ void S_DrawSubWakeFX(ITEM_INFO* item)
 				cval = 0;
 				s4 = RGB_MAKE(cval, cval, cval);
 
-				HWI_InsertAlphaSprite_Sorted(x1, y1, z1, s1, x2, y2, z2, s2, x3, y3, z3, s3, x4, y4, z4, s4, -1, 16, 1);
+				HWI_InsertAlphaSprite_Sorted(x1, y1, z1, s1, x2, y2, z2, s2, x3, y3, z3, s3, x4, y4, z4, s4, -1, DT_POLY_GTA, 1);
 			}
 
 			x1 = x4;
