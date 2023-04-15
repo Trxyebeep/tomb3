@@ -29,6 +29,7 @@
 - Improve room vert distance fog formula.
 - Reset Lara's cold bar in DOZY mode.
 - Improve Puna electricity color.
+- Improve electric fence sparks.
 
 ### tomb3 bug fixes
 
