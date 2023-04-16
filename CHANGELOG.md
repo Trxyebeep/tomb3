@@ -30,6 +30,8 @@
 - Reset Lara's cold bar in DOZY mode.
 - Improve Puna electricity color.
 - Improve electric fence sparks.
+- Create new setup window.
+- Start setup window centered.
 
 ### tomb3 bug fixes
 
