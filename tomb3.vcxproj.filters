@@ -845,8 +845,20 @@
   <ItemGroup>
     <Text Include="tomb3\script\English\tombpc.txt" />
     <Text Include="tomb3\script\English\english.txt" />
+    <Text Include="tomb3\script\French\french.txt" />
+    <Text Include="tomb3\script\French\tombpc.txt" />
+    <Text Include="tomb3\script\German\german.txt" />
+    <Text Include="tomb3\script\German\tombpc.txt" />
+    <Text Include="tomb3\script\Italian\italian.txt" />
+    <Text Include="tomb3\script\Italian\tombpc.txt" />
+    <Text Include="tomb3\script\Japanese\japanese.txt" />
+    <Text Include="tomb3\script\Japanese\tombpc.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="tomb3\script\English\TOMBPC.DAT" />
+    <None Include="tomb3\script\French\tombPC.dat" />
+    <None Include="tomb3\script\German\TOMBPC.DAT" />
+    <None Include="tomb3\script\Italian\TOMBPC.DAT" />
+    <None Include="tomb3\script\Japanese\TOMBPC.DAT" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,144 @@
+game_strings:
+
+INVENTAIRE
+OPTIONS
+OBJETS
+PARTIE TERMINEE
+Charger une partie
+Sauvegarder la partie
+Nouvelle Partie
+Recommencer Niveau
+Ecran d'Accueil
+Quitter D)emo
+Quitter le Jeu
+Choisir un niveau
+Sauvegarder Position
+R)esolution
+Haute
+Moyenne
+Basse
+Marcher
+Rouler
+Courir
+Gauche
+Droite
+Arri$ere
+Se baisser
+?
+Sprinter
+?
+Regarder
+Sauter
+Action
+D)egainer
+?
+Inventaire
+Torche
+Sprinter
+Statistiques
+Pistolets
+Fusil $a canon sci)e
+Desert Eagle
+Uzis
+Fusil $a harpon
+MP5
+Lance-roquettes
+Lance-grenades
+Torche
+Balles de pistolet
+Cartouches de fusil
+Balles de Desert Eagle
+Balles pour Uzi
+Harpons
+Cartouches de MP5
+Roquettes
+Grenades
+Petite trousse de secours
+Grande trousse de secours
+Objet
+Enigme
+Cl)e
+Partie
+La Demeure de Lara
+Chargement en cours
+Temps r)ealis)e
+Secrets d)ecouverts
+Lieu
+Victimes
+Munitions utilis)ees
+Tirs r)eussis
+Sauvegardes effectu)ees
+Distance parcourue
+Trousses de soins utilis)ees
+Version 1.0
+Aucun
+Termin)e
+MEILLEURS TEMPS
+Pas de dur)ee
+N/D
+Position
+Statistiques de fin
+sur
+En r)esum)e...
+Pierre Infada
+Dague d'Ora
+L'oeil d'Isis
+Objet 115
+Cristal de sauvegarde
+Londres
+Nevada
+Pacifique Sud
+Antarctique
+P)erou
+Aventure
+s
+
+end:
+
+/********************************************************************************************/
+
+pc_strings:
+
+R)esolution
+Mode D)emo
+Son
+Contr(oles
+Luminosit)e
+R)egler Volume
+Touches
+Impossible de sauvegarder ce fichier
+R)eessayer?
+OUI
+NON
+Sauvegarde effectu)ee
+Pas de sauvegarde
+Non valable
+Sauvegarder partie?
+- EMPLACEMENT LIBRE -
+NON
+OUI
+Config. carte sonore
+Touches par d)efaut
+DOZY
+Detail Options
+R)esolution
+Tampon 3)eme axe
+Filtre
+Dither
+True Alpha
+Gamma
+NA
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+
+end:

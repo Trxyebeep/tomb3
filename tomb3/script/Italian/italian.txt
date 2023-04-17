@@ -1,0 +1,144 @@
+game_strings:
+
+INVENTARIO
+OPZIONI
+OGGETTI
+GAME OVER
+Carica partita
+Salva partita
+Nuova partita
+Ricomincia livello
+Esci al titolo
+Esci dal demo
+Esci dalla partita
+Scegli livello
+Salva posizione
+Seleziona dettaglio
+Alto
+Medio
+Basso
+Camminare
+Rotolare
+Correre
+Sinistra
+Destra
+Indietro
+Accucciarsi
+?
+Sprint
+?
+Guardare
+Saltare
+Azione
+Estrarre arma
+?
+Inventario
+Razzo
+Sprint
+Statistiche
+Pistole
+Fucile a pompa
+Aquila del deserto
+Uzi
+Arpione
+MP5
+Lanciarazzi
+Lanciagranate
+Razzo
+Proiettili per pistola
+Cartucce per fucile a pompa
+Proiettili per aquila del deserto
+Proiettili per uzi
+Arpioni
+Proiettili per MP5
+Razzi
+Granate
+Piccolo pronto soccorso
+Grande pronto soccorso
+Oggetto
+Enigma
+Tasto
+Partita
+Casa di Lara
+CARICAMENTO
+Cronometraggio
+Segreti scoperti
+Locazione
+Nemici uccisi
+Munizioni utilizzate
+Bersagli colpiti
+Salvataggi effettuati
+Distanza percorsa
+Pronto soccorso utilizzati
+Versione Release 1.0
+Nessuno
+Fine
+MIGLIORI TEMPI
+Nessun tempo
+N/A
+Posizione attuale
+Statistiche finali
+di
+La storia...
+Pietra Infada
+Elemento 115
+L'Occhio di Iside
+Pugnale Ora
+Cristallo di salvataggio
+Londra
+Nevada
+Pacifico del Sud
+Antartico
+Peru
+Avventura
+s
+
+end:
+
+/********************************************************************************************/
+
+pc_strings:
+
+Livelli di dettaglio
+Demo
+Sonoro
+Comandi
+Gamma
+Impostazione del volume
+Tasti di comando
+Il file potrebbe non essere stato salvato!
+Riprovare?
+Si
+No
+Salvataggio completato!
+Nessuna partita salvata!
+Nessuna valida
+Salva partita?
+- SLOT VUOTO -
+OFF
+ON
+Impostazione della scheda sonora
+Tasti predefiniti
+DOZY
+Opzioni dettaglio
+Risoluzione
+ZBuffer
+Filter
+Dithering
+Alpha
+Gamma
+NA
+vuoto
+vuoto
+vuoto
+vuoto
+vuoto
+vuoto
+vuoto
+vuoto
+vuoto
+vuoto
+vuoto
+vuoto
+
+end:
