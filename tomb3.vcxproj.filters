@@ -853,6 +853,8 @@
     <Text Include="tomb3\script\Italian\tombpc.txt" />
     <Text Include="tomb3\script\Japanese\japanese.txt" />
     <Text Include="tomb3\script\Japanese\tombpc.txt" />
+    <Text Include="tomb3\script\Spanish\spanish.txt" />
+    <Text Include="tomb3\script\Spanish\tombpc.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="tomb3\script\English\TOMBPC.DAT" />
@@ -860,5 +862,6 @@
     <None Include="tomb3\script\German\TOMBPC.DAT" />
     <None Include="tomb3\script\Italian\TOMBPC.DAT" />
     <None Include="tomb3\script\Japanese\TOMBPC.DAT" />
+    <None Include="tomb3\script\Spanish\tombPC.dat" />
   </ItemGroup>
 </Project>
