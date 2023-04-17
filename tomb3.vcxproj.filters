@@ -427,6 +427,8 @@
     <ClInclude Include="tomb3\newstuff\libs\discord\discord_rpc.h" />
     <ClInclude Include="tomb3\newstuff\discord.h" />
     <ClInclude Include="tomb3\newstuff\setupdlg.h" />
+    <ClInclude Include="tomb3\script\scripter.h" />
+    <ClInclude Include="tomb3\script\interpreter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tomb3\game\51baton.cpp">
@@ -826,6 +828,8 @@
     <ClCompile Include="tomb3\newstuff\map.cpp" />
     <ClCompile Include="tomb3\newstuff\discord.cpp" />
     <ClCompile Include="tomb3\newstuff\setupdlg.cpp" />
+    <ClCompile Include="tomb3\script\scripter.cpp" />
+    <ClCompile Include="tomb3\script\interpreter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="tomb3.rc" />
@@ -839,10 +843,10 @@
     <Image Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="tomb3\script\tombpc.txt" />
-    <Text Include="tomb3\script\english.txt" />
+    <Text Include="tomb3\script\English\tombpc.txt" />
+    <Text Include="tomb3\script\English\english.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="tomb3\script\TOMBPC.DAT" />
+    <None Include="tomb3\script\English\TOMBPC.DAT" />
   </ItemGroup>
 </Project>

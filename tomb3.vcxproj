@@ -274,6 +274,8 @@
     <ClInclude Include="tomb3\newstuff\pausemenu.h" />
     <ClInclude Include="tomb3\newstuff\psxsaves.h" />
     <ClInclude Include="tomb3\newstuff\setupdlg.h" />
+    <ClInclude Include="tomb3\script\interpreter.h" />
+    <ClInclude Include="tomb3\script\scripter.h" />
     <ClInclude Include="tomb3\specific\audio.h" />
     <ClInclude Include="tomb3\specific\dd.h" />
     <ClInclude Include="tomb3\specific\di.h" />
@@ -411,6 +413,8 @@
     <ClCompile Include="tomb3\newstuff\pausemenu.cpp" />
     <ClCompile Include="tomb3\newstuff\psxsaves.cpp" />
     <ClCompile Include="tomb3\newstuff\setupdlg.cpp" />
+    <ClCompile Include="tomb3\script\interpreter.cpp" />
+    <ClCompile Include="tomb3\script\scripter.cpp" />
     <ClCompile Include="tomb3\specific\audio.cpp" />
     <ClCompile Include="tomb3\specific\dd.cpp" />
     <ClCompile Include="tomb3\specific\di.cpp" />
@@ -459,11 +463,11 @@
     <Image Include="setup.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="tomb3\script\english.txt" />
-    <Text Include="tomb3\script\tombpc.txt" />
+    <Text Include="tomb3\script\English\english.txt" />
+    <Text Include="tomb3\script\English\tombpc.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="tomb3\script\TOMBPC.DAT" />
+    <None Include="tomb3\script\English\TOMBPC.DAT" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -23,6 +23,7 @@
 #include "../game/effect2.h"
 #include "../game/cinema.h"
 #include "../tomb3/tomb3.h"
+//#include "../script/scripter.h"
 
 //gameflow loading checks
 #define LOAD_GF(main, allocSize, buffer, readSize)\
@@ -967,5 +968,8 @@ long S_LoadGameFlow(const char* name)
 	LOAD_GF(GF_Key4Strings, sizeof(char*) * gameflow.num_levels, GF_Key4Strings_buffer, gameflow.num_levels)
 
 	CloseHandle(file);
+
+//	OutputScript();
+
 	return 1;
 }
