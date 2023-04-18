@@ -8,7 +8,7 @@
 
 #### Steam/GoG version:
 1. Get the latest release package.
-2. unzip the archive and copy over the contents to you TR3 folder, overwrite when prompted.
+2. unzip the archive and copy over the contents to your TR3 folder, overwrite when prompted.
 3. Run the setup through the config tool at least once before running the game.
 4. Move your saves from the root folder to the new saves folder.
 5. Enjoy!
@@ -27,18 +27,18 @@
 - WINSDEC.dll
 - WINSTR.dll
 3. Get the latest release package.
-4. unzip the archive and copy over the contents to you TR3 folder, overwrite when prompted.
+4. unzip the archive and copy over the contents to your TR3 folder, overwrite when prompted.
 5. Run the setup through the config tool at least once before running the game.
 6. Move your saves from the root folder to the new saves folder.
 7. Enjoy!
 
 ### *Updating/Non-first time installing:*
 1. Get the latest release package.
-2. unzip the archive and copy over the contents to you TR3 folder, overwrite when prompted.
+2. unzip the archive and copy over the contents to your TR3 folder, overwrite when prompted.
 3. Enjoy!
 
 #### Updating from pre-V1.3.0 to V1.3.0 or later:
-- Delete tomb3decomp.dll (now renamed to tomb3.dll).
+- Delete tomb3decomp.dll (now renamed to tomb3.dll). (Note: V2.0 and later have an own exe, no more dll.)
 - Delete the ExtraOptions folder (the config tool is available now).
 - Move your saves from the root folder to the new saves folder.
 ------------------------

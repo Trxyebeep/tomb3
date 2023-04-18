@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,6,0,0
- PRODUCTVERSION 1,6,0,0
+ FILEVERSION 2,0,0,0
+ PRODUCTVERSION 2,0,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -68,12 +68,12 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "FileDescription", "Tomb Raider III Community Edition"
-            VALUE "FileVersion", "1.6.0.0"
-            VALUE "InternalName", "tomb3.dll"
+            VALUE "FileVersion", "2.0.0.0"
+            VALUE "InternalName", "tomb3.exe"
             VALUE "LegalCopyright", "Copyright (C) 2023"
-            VALUE "OriginalFilename", "tomb3.dll"
+            VALUE "OriginalFilename", "tomb3.exe"
             VALUE "ProductName", "Tomb Raider III Community Edition"
-            VALUE "ProductVersion", "1.6.0.0"
+            VALUE "ProductVersion", "2.0.0.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -121,7 +121,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     PUSHBUTTON      "Save",IDOK,195,200,50,14,0,WS_EX_CLIENTEDGE
     PUSHBUTTON      "Cancel",IDCANCEL,287,200,50,14,0,WS_EX_CLIENTEDGE
-    CTEXT           "tomb3 V1.6",IDC_VERSION,6,218,105,8,NOT WS_GROUP
+    CTEXT           "tomb3 V2.0",IDC_VERSION,6,218,105,8,NOT WS_GROUP
     LTEXT           "Resolution",IDC_STATIC,251,29,39,8
     GROUPBOX        "Output Settings",IDC_STATIC,124,18,286,98,WS_GROUP
     COMBOBOX        IDC_RESOLUTION,144,39,242,59,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP

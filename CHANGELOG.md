@@ -1,6 +1,6 @@
 # tomb3 changelog
 
-## Unreleased
+## [2.0.0](https://github.com/Trxyebeep/tomb3/tree/V1.6.0) (Apr. 18 2023)
 
 ### Original bug fixes
 
@@ -17,6 +17,7 @@
 
 ### tomb3 additions
 
+- Finish decompiling the game and compile a new executable.
 - Improve falling raptor physics.
 - Increase drawn vertices limit once more.
 - Increase internal memory from 3.6MBs to 15MBs.
