@@ -33,6 +33,8 @@
 - Improve electric fence sparks.
 - Create new setup window.
 - Start setup window centered.
+- Move some hardcoded aspects of the game to the script.
+- Add new script commands for TRLE builders.
 
 ### tomb3 bug fixes
 

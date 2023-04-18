@@ -41,6 +41,11 @@
 - Delete tomb3decomp.dll (now renamed to tomb3.dll). (Note: V2.0 and later have an own exe, no more dll.)
 - Delete the ExtraOptions folder (the config tool is available now).
 - Move your saves from the root folder to the new saves folder.
+
+### Non-English support:
+
+Since V2.0 requires a modified script to run correctly, different script files have been provided for different languages. 
+- A new folder for Language support has been added. Copy the desired language's tombpc.dat file into the Data folder found in your game folder. 
 ------------------------
 
 ### TR3: The Lost Artifact support:
