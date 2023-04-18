@@ -1150,24 +1150,31 @@ void DrawRooms(short current_room)
 		S_DrawSplashes();
 		S_DrawBat();
 
-		if (CurrentLevel == LV_ANTARC || CurrentLevel == LV_CHAMBER)
+		if (tomb3.gold)
+			fx = 0;
+		else
+			fx = GF_Snow != 0;
+
+		if (fx)
 			DoSnow();
 
 		if (tomb3.gold)
 			fx = CurrentLevel == LV_JUNGLE || CurrentLevel == LV_ROOFTOPS;
 		else
-			fx = CurrentLevel == LV_JUNGLE || CurrentLevel == LV_QUADBIKE || CurrentLevel == LV_ROOFTOPS || CurrentLevel == LV_OFFICE || CurrentLevel == LV_STPAULS;
+			fx = GF_Rain != 0;
 
 		if (fx)
 			DoRain();
 
 		S_DrawFootPrints();
 
-		if (!tomb3.gold)
-		{
-			if (CurrentLevel == LV_RAPIDS || CurrentLevel == LV_SEWER || CurrentLevel == LV_TOWER)
-				DoUwEffect();
-		}
+		if (tomb3.gold)
+			fx = 0;
+		else
+			fx = GF_WaterParts != 0;
+
+		if (fx)
+			DoUwEffect();
 
 		SwapLaraWithCamera(1);
 	}

@@ -21,12 +21,12 @@ static void TriggerFenceSparks(long x, long y, long z, long kill)
 
 	sptr = &sparks[GetFreeSpark()];
 	sptr->On = 1;
-	sptr->sR = (GetRandomControl() & 0x3F) + 192;
-	sptr->sG = sptr->sR;
-	sptr->sB = sptr->sR;
+	sptr->sR = 0;
+	sptr->sG = (GetRandomControl() & 0x3F) + 192;
+	sptr->sB = sptr->sG;
+	sptr->dR = 0;
 	sptr->dB = (GetRandomControl() & 0x3F) + 192;
-	sptr->dR = sptr->sB >> 2;
-	sptr->dG = sptr->sB >> 1;
+	sptr->dG = sptr->dB;
 	sptr->ColFadeSpeed = 8;
 	sptr->FadeToBlack = 16;
 	sptr->TransType = 2;
@@ -36,20 +36,21 @@ static void TriggerFenceSparks(long x, long y, long z, long kill)
 	sptr->x = x;
 	sptr->y = y;
 	sptr->z = z;
-	sptr->Xvel = 2 * (GetRandomControl() & 0xFF) - 256;
+	sptr->Xvel = ((GetRandomControl() & 0xFF) << 1) - 256;
 	sptr->Yvel = short((GetRandomControl() & 0xF) - (kill << 5) - 8);
-	sptr->Zvel = 2 * (GetRandomControl() & 0xFF) - 256;
+	sptr->Zvel = ((GetRandomControl() & 0xFF) << 1) - 256;
 	sptr->Friction = 4;
 	sptr->Flags = SF_SCALE;
-	sptr->Scalar = uchar(kill + 1);
-	sptr->sWidth = 1;
-	sptr->dWidth = 1;
-	sptr->Width = (GetRandomControl() & 3) + 4;
-	sptr->Height = sptr->Width;
-	sptr->sHeight = sptr->Height;
-	sptr->dHeight = 1;
+	sptr->Scalar = 2;
 	sptr->MaxYvel = 0;
 	sptr->Gravity = (GetRandomControl() & 0xF) + 16;
+
+	sptr->Width = 1;
+	sptr->sWidth = sptr->Width;
+	sptr->dWidth = sptr->sWidth;
+	sptr->Height = (GetRandomControl() & 7) + 6;
+	sptr->sHeight = sptr->Height;
+	sptr->dHeight = sptr->sHeight;
 }
 
 void ControlElectricFence(short item_number)
@@ -73,8 +74,15 @@ void ControlElectricFence(short item_number)
 		x = item->pos.x_pos + 512;
 		z = item->pos.z_pos + 512;
 		ex = x - 992;
-		ez = item->pos.z_pos + 256;
-		xa = 2047;
+		ez = z;
+
+		if (CurrentLevel == LV_OFFICE)
+		{
+			xa = GetRandomControl() & 0x3FF;
+			ez += xa * -(GetRandomControl() & 1);
+		}
+
+		xa = 1024;
 		za = 0;
 		xs = 1056;
 		zs = 128;
@@ -83,10 +91,17 @@ void ControlElectricFence(short item_number)
 	{
 		x = item->pos.x_pos - 512;
 		z = item->pos.z_pos + 512;
-		ex = x + 256;
+		ex = x;
 		ez = z - 992;
+
+		if (CurrentLevel == LV_OFFICE)
+		{
+			xa = GetRandomControl() & 0x3FF;
+			ex += xa * -(GetRandomControl() & 1);
+		}
+
 		xa = 0;
-		za = 2047;
+		za = 1024;
 		xs = 128;
 		zs = 1056;
 	}
@@ -95,8 +110,15 @@ void ControlElectricFence(short item_number)
 		x = item->pos.x_pos - 512;
 		z = item->pos.z_pos - 512;
 		ex = x - 992;
-		ez = item->pos.z_pos - 256;
-		xa = 2047;
+		ez = z;
+
+		if (CurrentLevel == LV_OFFICE)
+		{
+			xa = GetRandomControl() & 0x3FF;
+			ez += xa * -(GetRandomControl() & 1);
+		}
+
+		xa = 1024;
 		za = 0;
 		xs = 1056;
 		zs = 128;
@@ -105,10 +127,17 @@ void ControlElectricFence(short item_number)
 	{
 		x = item->pos.x_pos + 512;
 		z = item->pos.z_pos - 512;
-		ex = x - 256;
+		ex = x;
 		ez = z - 992;
+
+		if (CurrentLevel == LV_OFFICE)
+		{
+			xa = GetRandomControl() & 0x3FF;
+			ex += xa * -(GetRandomControl() & 1);
+		}
+
 		xa = 0;
-		za = 2047;
+		za = 1024;
 		xs = 128;
 		zs = 1056;
 	}
@@ -124,7 +153,7 @@ void ControlElectricFence(short item_number)
 		zs = 0;
 	}
 
-	if (!(GetRandomControl() & 0x3F))
+	if (!(GetRandomControl() & 0x1F))
 	{
 		if (xa)
 			ex += GetRandomControl() & xa;

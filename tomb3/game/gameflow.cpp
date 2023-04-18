@@ -82,6 +82,14 @@ char GF_StartGame;
 char GF_Kill2Complete;
 char GF_Playing_Story;
 
+/*New events*/
+char GF_Rain;
+char GF_Snow;
+char GF_WaterParts;
+char GF_Cold;
+short GF_DeathTile;
+long GF_WaterColor;
+
 short NextAdventure;
 
 long GF_LoadScriptFile(const char* name)
@@ -643,10 +651,16 @@ long GF_InterpretSequence(short* ptr, long type, long seq_type)
 	GF_Kill2Complete = 0;
 	GF_RemoveAmmo = 0;
 	GF_RemoveWeapons = 0;
+	GF_Rain = 0;
+	GF_Snow = 0;
+	GF_WaterParts = 0;
+	GF_Cold = 0;
+	GF_DeathTile = DEATH_LAVA;
+	GF_WaterColor = -1;
+	GF_NumSecrets = -1;
 	memset(GF_Add2InvItems, 0, sizeof(char) * ADDINV_NUMBEROF);
 	memset(GF_SecretInvItems, 0, sizeof(char) * ADDINV_NUMBEROF);
 	GF_CDtracks[0] = 2;
-	GF_NumSecrets = 3;
 	ntracks = 0;
 	option = EXIT_TO_TITLE;
 
@@ -892,6 +906,36 @@ long GF_InterpretSequence(short* ptr, long type, long seq_type)
 				GF_Kill2Complete = 1;
 
 			ptr++;
+			break;
+
+		case GFE_RAIN:
+			GF_Rain = 1;
+			ptr++;
+			break;
+
+		case GFE_SNOW:
+			GF_Snow = 1;
+			ptr++;
+			break;
+
+		case GFE_WATER_PARTS:
+			GF_WaterParts = 1;
+			ptr++;
+			break;
+
+		case GFE_COLD:
+			GF_Cold = 1;
+			ptr++;
+			break;
+
+		case GFE_DEATHTILE:
+			GF_DeathTile = ptr[1];
+			ptr += 2;
+			break;
+
+		case GFE_WATERCLR:
+			GF_WaterColor = (ushort)ptr[1] | (ushort)ptr[2] << 16;
+			ptr += 3;
 			break;
 		}
 	}

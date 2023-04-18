@@ -1,0 +1,323 @@
+Description: Tomb Raider III Script. E3 Release (c) Core Design Ltd 1998
+
+/********************************************************************************************/
+
+Options:
+language: English
+secret_track: 0
+cypher_code: 166
+firstoption: EXIT_TO_TITLE
+title_replace: -1
+ondeath_demo_mode: EXIT_TO_TITLE
+on_demo_interrupt: EXIT_TO_TITLE
+on_demo_end: EXIT_TO_TITLE
+noinput_time: 9000
+singlelevel: -1
+//New options:
+Map: 1
+Globe: 1
+
+end:
+
+/********************************************************************************************/
+
+Title:
+Game: data\title.TR2
+PCfile: pix\titleuk.bmp
+PCfile: pix\copyrus.bmp
+PCfile: data\titleUS.pcx
+PCfile: data\legalUS.pcx
+PCfile: data\titleJAP.pcx
+PCfile: data\legalJAP.pcx
+track: 5
+end:
+
+/********************************************************************************************/
+
+Frontend:
+PCfmv: FMV\LOGO.RPL
+PCfmv: FMV\INTR_ENG.RPL
+fmv: FMV\LOGO.RPL
+fmv: FMV\INTR_ENG.RPL
+end:
+
+/********************************************************************************************/
+
+Gym: Lara's House
+Load_pic: pix\house.bmp
+track: 2
+game: data\house.TR2
+Key1: Racetrack Key
+end:
+
+/********************************************************************************************/
+
+//Level 1
+Level: Jungle
+track: 34
+Load_pic: pix\india.bmp
+Rain:
+game: data\jungle.TR2
+Key4: Indra Key
+track: 64
+cutangle: 16384
+cut: cuts\cut6.TR2
+complete:
+end:
+
+//Level 2
+Level: Temple Ruins
+track: 34
+Load_pic: pix\india.bmp
+game: data\temple.TR2
+Key1: Key Of Ganesha
+Key2: Key Of Ganesha
+Key3: Key Of Ganesha
+Key4: Key Of Ganesha
+Puzzle1: Scimitar
+Puzzle2: Scimitar
+track: 69
+cutangle: 16384
+cut: cuts\cut9.TR2
+complete:
+end:
+
+//Level3
+Level: The River Ganges
+track: 34
+Load_pic: pix\india.bmp
+Rain:
+game: data\quadchas.TR2
+Key1: Gate Key
+complete:
+end:
+
+//Level 4
+Level: Caves Of Kaliya
+track: 30
+Load_pic: pix\india.bmp
+game: data\tonyboss.TR2
+fmv: FMV\SAIL_ENG.RPL
+complete:
+end:
+
+//Level 5
+Level: Coastal Village
+track: 32
+Load_pic: pix\southpac.bmp
+game: data\shore.TR2
+Puzzle1: Serpent Stone
+Key1: Smuggler's Key
+track: 68
+cutangle: 16384
+cut: cuts\cut1.TR2
+complete:
+end:
+
+//Level 6
+Level: Crash Site
+track: 33
+Load_pic: pix\southpac.bmp
+StartInv: PICKUP1
+game: data\crash.TR2
+Pickup1: Swamp Map
+Key1: Commander Bishop's Key
+Key2: Lt. Tuckerman's Key
+track: 65
+cutangle: 16384
+cut: cuts\cut4.TR2
+complete:
+end:
+
+//Level 7
+Level: Madubu Gorge
+track: 36
+Load_pic: pix\southpac.bmp
+WaterParts:
+Death: RAPIDS
+game: data\rapids.TR2
+complete:
+end:
+
+//Level 8
+Level: Temple Of Puna
+track: 30
+Load_pic: pix\southpac.bmp
+game: data\triboss.TR2
+complete:
+end:
+
+//Level 9
+Level: Thames Wharf
+track: 73
+Load_pic: pix\london.bmp
+NoFloor: 1792
+Rain:
+game: data\roofs.TR2
+Key1: Flue Room Key
+Key2: Cathedral Key
+track: 67
+cutangle: 49152
+cut: cuts\cut2.TR2
+complete:
+end:
+
+//Level 10
+Level: Aldwych
+track: 74
+Load_pic: pix\london.bmp
+WaterParts:
+game: data\sewer.TR2
+Puzzle1: Old Penny
+Puzzle2: Ticket
+Puzzle3: Masonic Mallet
+Puzzle4: Ornate Star
+Key1: Maintenance Key
+Key2: Solomon's Key
+Key3: Solomon's Key
+Key4: Solomon's Key
+track: 63
+cutangle: 16384
+cut: cuts\cut5.TR2
+complete:
+end:
+
+//Level 11
+Level: Lud's Gate
+track: 31
+Load_pic: pix\london.bmp
+Key1: Boiler Room Key
+Puzzle1: Embalming Fluid
+WaterParts:
+game: data\tower.TR2
+track: 71
+cutangle: 16384
+cut: cuts\cut11.TR2
+complete:
+end:
+
+//Level 12
+Level: City
+track: 78
+NoFloor: 5120
+Load_pic: pix\london.bmp
+Rain:
+Death: ELECTRIC
+game: data\office.TR2
+complete:
+end:
+
+//Level 13
+Level: Nevada Desert
+track: 33
+Load_pic: pix\nevada.bmp
+game: data\nevada.TR2
+Key1: Generator Access
+Key2: Detonator Switch
+track: 72
+cutangle: 16384
+cut: cuts\cut7.TR2
+complete:
+end:
+
+//Level 14
+Level: High Security Compound
+track: 27
+Load_pic: pix\nevada.bmp
+Remove_weapons:
+Remove_ammo:
+game: data\compound.TR2
+Puzzle1: Blue Security Pass
+Puzzle2: Yellow Security Pass
+Key1: Keycard Type A
+Key2: Keycard Type B
+track: 70
+cutangle: 16384
+cut: cuts\cut8.TR2
+complete:
+end:
+
+//Level 15
+Level: Area 51
+track: 27
+Load_pic: pix\nevada.bmp
+Death: ELECTRIC
+game: data\area51.TR2
+Puzzle1: Tower Access Key
+Puzzle2: Code Clearance Disk
+Puzzle3: Code Clearance Disk
+Puzzle4: Hanger Access Key
+Key1: Launch Code Pass
+complete:
+end:
+
+//Level 16
+Level: Antarctica
+fmv: FMV\CRSH_ENG.RPL
+track: 28
+Load_pic: pix\antarc.bmp
+Snow:
+Cold:
+game: data\antarc.TR2
+Key1: Hut Key
+Puzzle1: Crowbar
+Puzzle2: Gate Control Key
+track: 62
+cutangle: 16384
+cut: cuts\cut3.TR2
+complete:
+end:
+
+//Level 17
+Level: RX-Tech Mines
+track: 30
+Load_pic: pix\antarc.bmp
+Cold:
+game: data\mines.TR2
+Puzzle1: Crowbar
+Puzzle2: Lead Acid Battery
+Puzzle3: Winch Starter
+complete:
+end:
+
+//Level 18
+Level: Lost City Of Tinnos
+track: 26
+Load_pic: pix\antarc.bmp
+game: data\city.TR2
+Puzzle1: Oceanic Mask
+Key1: Uli Key
+track: 66
+cutangle: 16384
+cut: cuts\cut12.TR2
+complete:
+end:
+
+//Level 19
+Level: Meteorite Cavern
+track: 26
+Load_pic: pix\antarc.bmp
+Snow:
+game: data\chamber.TR2
+fmv: FMV\ENDGAME.RPL
+gamecomplete:
+end:
+
+//Bonus level 20
+Level: All Hallows
+track: 30
+Load_Pic: pix\london.bmp
+NoFloor: 10000
+Rain:
+game: data\stpaul.TR2
+Key1: Vault Key
+complete:
+end:
+
+/********************************************************************************************/
+
+//Demo levels go here
+
+/********************************************************************************************/
+
+Gamestrings: english.txt

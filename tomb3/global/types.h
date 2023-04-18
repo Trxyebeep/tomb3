@@ -97,6 +97,13 @@ typedef unsigned long ulong;
 #define TICKS_PER_SECOND	(FRAMES_PER_SECOND * TICKS_PER_FRAME)
 
 /*enums*/
+enum death_tiles
+{
+	DEATH_LAVA,
+	DEATH_RAPIDS,
+	DEATH_ELECTRIC
+};
+
 enum bite_offsets
 {
 	OILRED_BITE,
@@ -1012,7 +1019,15 @@ struct GAMEFLOW_INFO
 	ushort play_any_level : 1;
 	ushort cheat_enable : 1;
 	ushort securitytag : 1;
+#if 0
 	ushort unused3[3];
+#else
+	//NEW STUFF
+	ushort unused3[2];
+	ushort map_enabled : 1;
+	ushort globe_enabled : 1;
+	ushort force_water_color : 1;
+#endif
 	uchar cypher_code;
 	uchar language;
 	uchar secret_track;

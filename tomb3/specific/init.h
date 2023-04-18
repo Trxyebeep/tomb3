@@ -17,6 +17,5 @@ extern D3DTLVERTEX* CurrentTLVertex;
 extern D3DTLVERTEX* VertexBuffer;
 extern D3DTLVERTEX* UnRollBuffer;
 
-extern long DynamicColorTable[256][256][256];
 extern WATERTAB WaterTable[22][64];
 extern float wibble_table[32];

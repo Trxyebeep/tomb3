@@ -8,21 +8,21 @@ static double period;
 
 double UT_GetAccurateTimer()
 {
-	LARGE_INTEGER counter;
+	__int64 counter;
 
-	if (QueryPerformanceCounter(&counter))
-		return ((double)counter.QuadPart - start_us) * period;
+	if (QueryPerformanceCounter((LARGE_INTEGER*)&counter))
+		return ((double)counter - start_us) * period;
 	else
 		return double(timeGetTime() - start) / (double)CLOCKS_PER_SEC;
 }
 
 void UT_InitAccurateTimer()
 {
-	LARGE_INTEGER fq;
+	__int64 fq;
 
-	if (QueryPerformanceFrequency(&fq))
+	if (QueryPerformanceFrequency((LARGE_INTEGER*)&fq))
 	{
-		period = 1.0 / (double)fq.QuadPart;
+		period = 1.0 / (double)fq;
 		start_us = 0;
 		start_us = UT_GetAccurateTimer();
 	}

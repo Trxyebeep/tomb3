@@ -302,9 +302,10 @@ short* calc_roomvert(short* objptr, long far_clip)
 							if (!dist)
 								dist++;
 
-							cR += DynamicColorTable[falloff][dist][dl->r];
-							cG += DynamicColorTable[falloff][dist][dl->g];
-							cB += DynamicColorTable[falloff][dist][dl->b];
+							dist = falloff - dist;
+							cR += (dist * dl->r) / falloff;
+							cG += (dist * dl->g) / falloff;
+							cB += (dist * dl->b) / falloff;
 						}
 					}
 				}

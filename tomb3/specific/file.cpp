@@ -23,6 +23,7 @@
 #include "../game/effect2.h"
 #include "../game/cinema.h"
 #include "../tomb3/tomb3.h"
+//#include "../script/scripter.h"
 
 //gameflow loading checks
 #define LOAD_GF(main, allocSize, buffer, readSize)\
@@ -815,44 +816,6 @@ long S_LoadLevelFile(char* name, long number, long type)
 	return loaded;
 }
 
-long FindCDDrive()
-{
-	HANDLE file;
-	ulong drives;
-	char path[20];
-	char root[8];
-
-	strcpy(path, "D:\\data\\tombpc.dat");
-	drives = GetLogicalDrives();
-	cd_drive = 'A';
-	lstrcpy(root, "A:\\");
-
-	while (drives)
-	{
-		if (drives & 1)
-		{
-			root[0] = cd_drive;
-
-			if (GetDriveType(root) == DRIVE_CDROM)	//Steam no cd patch changes this to DRIVE_FIXED
-			{
-				path[0] = cd_drive;
-				file = CreateFile(path, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-
-				if (file != INVALID_HANDLE_VALUE)
-				{
-					CloseHandle(file);
-					return 1;
-				}
-			}
-		}
-
-		cd_drive++;
-		drives >>= 1;
-	}
-
-	return 0;
-}
-
 const char* GetFullPath(const char* name)
 {
 	static char path[128];
@@ -985,11 +948,11 @@ long S_LoadGameFlow(const char* name)
 
 	MyReadFile(file, &num, sizeof(short), &read, 0);
 
-	if (num != 92)
+	if (num != GT_NUM_GAMESTRINGS)
 		return 0;
 
-	LOAD_GF(GF_GameStrings, sizeof(char*) * 92, GF_GameStrings_buffer, 92)
-	LOAD_GF(GF_PCStrings, sizeof(char*) * 41, GF_PCStrings_buffer, 41)
+	LOAD_GF(GF_GameStrings, sizeof(char*) * GT_NUM_GAMESTRINGS, GF_GameStrings_buffer, GT_NUM_GAMESTRINGS)
+	LOAD_GF(GF_PCStrings, sizeof(char*) * PCSTR_NUM_STRINGS, GF_PCStrings_buffer, PCSTR_NUM_STRINGS)
 
 	LOAD_GF(GF_Puzzle1Strings, sizeof(char*) * gameflow.num_levels, GF_Puzzle1Strings_buffer, gameflow.num_levels)
 	LOAD_GF(GF_Puzzle2Strings, sizeof(char*) * gameflow.num_levels, GF_Puzzle2Strings_buffer, gameflow.num_levels)
@@ -1005,5 +968,8 @@ long S_LoadGameFlow(const char* name)
 	LOAD_GF(GF_Key4Strings, sizeof(char*) * gameflow.num_levels, GF_Key4Strings_buffer, gameflow.num_levels)
 
 	CloseHandle(file);
+
+//	OutputScript();
+
 	return 1;
 }

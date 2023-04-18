@@ -1104,7 +1104,7 @@ void do_compass_option(INVENTORY_ITEM* item)
 
 	if (inputDB & (IN_SELECT | IN_DESELECT))
 	{
-		if (inputDB & IN_SELECT)
+		if (inputDB & IN_SELECT && gameflow.map_enabled)
 		{
 			do_map_option();
 			input = 0;

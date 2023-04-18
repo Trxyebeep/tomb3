@@ -1,0 +1,144 @@
+game_strings:
+
+INVENTORY
+OPTION
+ITEMS
+GAME OVER
+Load Game
+Save Game
+New Game
+Restart Stage
+Exit to Title
+Exit Demo
+Exit Game
+Select Stage
+Save Position
+Select Detail
+High
+Medium
+Low
+Walk
+Roll
+Run
+Left
+Right
+Back
+Duck
+?
+Dash
+?
+Look
+Jump
+Action
+Draw Weapon
+?
+Inventory
+Light Flare
+Duck, Dash
+Status
+Pistol
+Shotgun
+Desert Eagle
+Uzi
+Harpoon Gun
+MP5
+Rocket Launcher
+Grenade Launcher
+Light Flare
+Pistol Bullets
+Shotgun Shells
+Desert Eagle Bullets
+Uzi Bullets
+Harpoons
+MP5 Bullets
+Rockets
+Grenades
+Small Health Bag
+Large Health Bag
+Pickup
+Puzzle
+Key
+Game
+Lara's Home
+LOADING
+Time
+Secret Area
+Location
+Kill
+Shot
+Hit
+Save
+Distance
+Health Bag Used
+Release Version 1.0
+None
+Finish
+BEST TIMES
+No Times Set
+N/A
+Current Position
+Final Status
+of
+Story so far...
+Infada Stone
+Ora Dagger
+The Eye Of Isis
+Element 115
+Savegame Crystal
+London
+Nevada
+South Pacific Islands
+Antarctica
+Peru
+Next Adventure
+s
+
+end:
+
+/********************************************************************************************/
+
+pc_strings:
+
+Graphic
+Demo Mode
+Sound
+Control
+Gamma
+Volume
+Custam Key
+The file could not be saved!
+Try Again?
+YES
+NO
+Save Complete!
+No save games!
+None valid
+Save Game?
+- Empty Slot -
+OFF
+ON
+Setup Sound Card
+Default Key
+DOZY
+Graphic
+Resolution
+ZBuffer
+Filter
+Dither
+Alpha
+Gamma
+NA
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+
+end:

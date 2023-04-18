@@ -274,6 +274,8 @@
     <ClInclude Include="tomb3\newstuff\pausemenu.h" />
     <ClInclude Include="tomb3\newstuff\psxsaves.h" />
     <ClInclude Include="tomb3\newstuff\setupdlg.h" />
+    <ClInclude Include="tomb3\script\interpreter.h" />
+    <ClInclude Include="tomb3\script\scripter.h" />
     <ClInclude Include="tomb3\specific\audio.h" />
     <ClInclude Include="tomb3\specific\dd.h" />
     <ClInclude Include="tomb3\specific\di.h" />
@@ -411,6 +413,8 @@
     <ClCompile Include="tomb3\newstuff\pausemenu.cpp" />
     <ClCompile Include="tomb3\newstuff\psxsaves.cpp" />
     <ClCompile Include="tomb3\newstuff\setupdlg.cpp" />
+    <ClCompile Include="tomb3\script\interpreter.cpp" />
+    <ClCompile Include="tomb3\script\scripter.cpp" />
     <ClCompile Include="tomb3\specific\audio.cpp" />
     <ClCompile Include="tomb3\specific\dd.cpp" />
     <ClCompile Include="tomb3\specific\di.cpp" />
@@ -457,6 +461,28 @@
   <ItemGroup>
     <Image Include="icon.ico" />
     <Image Include="setup.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="tomb3\script\English\english.txt" />
+    <Text Include="tomb3\script\English\tombpc.txt" />
+    <Text Include="tomb3\script\French\french.txt" />
+    <Text Include="tomb3\script\French\tombpc.txt" />
+    <Text Include="tomb3\script\German\german.txt" />
+    <Text Include="tomb3\script\German\tombpc.txt" />
+    <Text Include="tomb3\script\Italian\italian.txt" />
+    <Text Include="tomb3\script\Italian\tombpc.txt" />
+    <Text Include="tomb3\script\Japanese\japanese.txt" />
+    <Text Include="tomb3\script\Japanese\tombpc.txt" />
+    <Text Include="tomb3\script\Spanish\spanish.txt" />
+    <Text Include="tomb3\script\Spanish\tombpc.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="tomb3\script\English\TOMBPC.DAT" />
+    <None Include="tomb3\script\French\tombPC.dat" />
+    <None Include="tomb3\script\German\TOMBPC.DAT" />
+    <None Include="tomb3\script\Italian\TOMBPC.DAT" />
+    <None Include="tomb3\script\Japanese\TOMBPC.DAT" />
+    <None Include="tomb3\script\Spanish\tombPC.dat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

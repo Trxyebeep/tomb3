@@ -3,8 +3,9 @@
 #include "../specific/winmain.h"
 #include "../tomb3/tomb3.h"
 #include "../specific/smain.h"
-#include "../../resource.h"
 #include "registry.h"
+#include "../specific/utils.h"
+#include "../../resource.h"
 
 static DXCONFIG* config;
 static DEVICEINFO* dev;
@@ -234,6 +235,8 @@ static void InitDialogBox(HWND hwnd)
 	long nDD;
 
 	nDD = dev->nDDInfo - 1;
+
+	UT_CenterWindow(hwnd);
 
 	InitVideoModes(hwnd, nDD, 0);
 	InitTextures(hwnd, nDD, 0);

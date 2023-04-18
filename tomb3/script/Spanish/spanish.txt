@@ -1,0 +1,144 @@
+game_strings:
+
+INVENTARIO
+OPCIONES
+OBJETOS
+JUEGO TERMINADO
+Cargar Juego
+Guardar Juego
+Juego Nuevo
+Reinicio Nivel
+Regresar a los T)itulos
+Salir Demo
+Salir Juego
+Seleccionar Nivel
+Guardar Posici)on
+Seleccionar Detalles
+Alto
+Medio
+Bajo
+Andar
+Rodar
+Correr
+Izquierda
+Derecha
+Atr)as
+Agachar
+?
+Carrera
+?
+Mirar
+Saltar
+Acci)on
+Sacar Armas
+?
+Inventario
+Bengala
+Carrera
+Estad)isticas
+Pistolas
+Escopetas
+Aguila del Desierto
+Uzis
+Fusil Arp)on
+MP5
+Lanza Cohetes
+Lanza Granadas
+Bengala
+Cargadores Pistola
+Proyectil Escopeta
+Cargadores Aguila del Desierto
+cargadores Uzi
+Arpones
+Cargadores MP5
+Cohetes
+Granadas
+Paq. M)edico Pequeno
+Paq. M)edico Prande
+Coger
+Puzzle
+Llave
+Juego
+Hogar de Lara
+Cargando
+Tiempo Tomado
+Secretos Encontrados
+Localizaci)on
+Muertos
+Armamento Usada
+Golpes
+Guardas Realizadas
+Distancia recorrida
+Paq. M)edicos Utilizados
+Release Version 1.0
+Ninguna
+terminada
+MEJORES TIEMPOS
+No tiempos Fijados
+N/A
+Posici)on actual
+Estad)isticas finales
+of
+Historia por ahora...
+Piedra Infada
+Elemento 115
+El Ojo de Isis
+Punal Ora
+Cristal Guardar Juego
+Londres
+Nevada
+Islas del Pac)ifico Sur
+Ant)artida
+Peru
+Aventura
+s
+
+end:
+
+/********************************************************************************************/
+
+pc_strings:
+
+Detalles Niveles
+Modo Demo
+Sonido
+Controles
+Gamma
+Fijar Volumen
+Usar Llaves
+!El archivo no ha podido ser guardado!
+?Probar de nuevo?
+Si
+No
+!Guardar Completado!
+!No hay juegos guardados!
+Ninguno valido
+?Guardar juego?
+- Rendija vac)ia -
+Off
+On
+Configurar tarj. Sonido
+Teclas por defecto
+DOZY
+Opciones Detalles
+Resoluci)on
+Tope Z
+Filtro
+Vacilación
+Alpha
+Gamma
+NA
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+spare
+
+end:

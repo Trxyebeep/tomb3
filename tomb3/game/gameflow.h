@@ -235,7 +235,14 @@ enum gf_event_types
 	GFE_STARTANIM,
 	GFE_NUMSECRETS,
 	GFE_KILL2COMPLETE,
-	GFE_REMOVE_AMMO
+	GFE_REMOVE_AMMO,
+	//NEW EVENTS:
+	GFE_RAIN,
+	GFE_SNOW,
+	GFE_WATER_PARTS,
+	GFE_COLD,
+	GFE_DEATHTILE,
+	GFE_WATERCLR,
 };
 
 extern GAMEFLOW_INFO gameflow;
@@ -296,6 +303,12 @@ extern short GF_DeadlyWater;
 extern short GF_SunsetEnabled;
 extern short GF_RemoveWeapons;
 extern short GF_NumSecrets;
+extern char GF_Rain;
+extern char GF_Snow;
+extern char GF_WaterParts;
+extern char GF_Cold;
+extern short GF_DeathTile;
+extern long GF_WaterColor;
 extern short GF_RemoveAmmo;
 extern char GF_StartGame;
 extern char GF_Kill2Complete;

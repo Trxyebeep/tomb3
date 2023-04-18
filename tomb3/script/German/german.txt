@@ -1,0 +1,144 @@
+game_strings:
+
+Inventar
+Optionen
+Gegenst~ande
+Game Over
+Spiel laden
+Spiel sichern
+Neues Spiel
+Abschnitt neu beginnen
+Zur~uck zum Titelbild
+Demo verlassen
+Spiel verlassen
+Abschnitt w~ahlen
+Spielstand sichern
+Aufl~osung w~ahlen
+Hoch
+Mittel
+Niedrig
+Gehen
+Rollen
+Laufen
+Links
+Rechts
+Zur~uck
+Ducken
+?
+Spurten
+?
+Umsehen
+Springen
+Handlung
+Waffe ziehen
+?
+Inventar
+Fackel
+Spurten
+Statistik
+Pistolen
+Gewehr
+Desert Eagle
+Uzis
+Harpune
+MP5
+Raketenwerfer
+Granatwerfer
+Fackel
+Pistolen Magazine
+Gewehrpatronen
+Desert Eagle Magazine
+Uzi Magazine
+Harpunen
+MP5 Magazine
+Raketen
+Granaten
+Kleines Medi Pack
+Grosses Medi Pack
+Extra
+R~atsel
+Schl~ussel
+Spiel
+Lara's Anwesen
+Lade...
+Ben~otigte Zeit
+Gefundene Secrets
+Schauplatz
+Besiegte Gegner
+Verbrauchte Munition
+Treffer
+Speichervorg~ange
+Zur~uckgelegte Entfernung
+Benutzte Medi Packs
+Version 1.0
+Null
+Ende
+Bestzeiten
+Keine vorgegebenen Zeiten
+--
+Derzeitige Position
+Abschlussstatistik
+von
+Was bisher geschah...
+Infada Stein
+Element 115
+Das Auge der Isis
+Ora Dolch
+Speicherkristall
+London
+Nevada
+S~udseeinseln
+Antarktis
+Peru
+Abenteuer
+s
+
+end:
+
+/********************************************************************************************/
+
+pc_strings:
+
+Detailstufen
+Demo-Modus
+Sound
+Steuerung
+Helligkeit
+Lautst~arke regeln
+Benutzerdefinierte Tasten
+Datei konnte nicht gesichert werden!
+Erneut versuchen?
+Ja
+Nein
+Spiel gesichert!
+Keine Spielst~ande!
+Keine g~ultigen
+Spiel sichern?
+- FREIER SPEICHERPLATZ -
+Aus
+Ein
+Soundkarte einrichten
+Vorgegebene Tasten
+DOZY
+Detaileinstellungen
+Aufl~osung
+Z Buffer
+Filter
+Dither
+Alpha
+Gamma
+NA
+frei
+frei
+frei
+frei
+frei
+frei
+frei
+frei
+frei
+frei
+frei
+frei
+
+end:

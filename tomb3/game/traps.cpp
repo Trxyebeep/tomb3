@@ -59,14 +59,14 @@ void LavaBurn(ITEM_INFO* item)
 
 		if (item->floor == h)
 		{
-			if (CurrentLevel == LV_RAPIDS)
+			if (GF_DeathTile == DEATH_RAPIDS)
 				LaraRapidsDrown();
 			else
 			{
 				item->hit_status = 1;
 				item->hit_points = -1;
 
-				if (CurrentLevel == LV_AREA51 || CurrentLevel == LV_OFFICE)
+				if (GF_DeathTile == DEATH_ELECTRIC)
 					lara.electric = 1;
 				else
 					LaraBurn();

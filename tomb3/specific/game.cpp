@@ -248,15 +248,12 @@ long LevelStats(long level)
 		S_DumpScreen();
 	} while (!(input & IN_SELECT));
 
-	if (tomb3.gold)
+	if (tomb3.gold || !gameflow.globe_enabled)
 	{
 		FadePictureDown(32);
 		TempVideoRemove();
 		return 0;
 	}
-
-	if (level != gameflow.num_levels - gameflow.num_demos - 1)
-		S_LoadLevelFile(GF_titlefilenames[0], 0, 6);
 
 	world = Level2World(level);
 
@@ -394,6 +391,8 @@ long LevelStats(long level)
 		FadePictureDown(32);
 		TempVideoRemove();
 	}
+	else if (level != gameflow.num_levels - gameflow.num_demos - 1)
+		S_LoadLevelFile(GF_titlefilenames[0], 0, 6);
 
 	return ret;
 }
@@ -696,6 +695,12 @@ long StartGame(long level, long type)
 		CurrentLevel = 0;
 		return EXITGAME;
 	}
+
+	if (GF_NumSecrets != -1)
+		LevelSecrets[CurrentLevel] = GF_NumSecrets;
+
+	if (GF_WaterColor != -1)
+		water_color[CurrentLevel] = 0xFF000000 | GF_WaterColor;
 
 	result = GameLoop(0);
 

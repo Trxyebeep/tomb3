@@ -479,9 +479,6 @@ long Display_Inventory(long mode)
 
 		GlobePointLight = (GlobePointLight + 16) & 0xFF;
 
-		if ((mode == INV_TITLE_MODE || mode == INV_LEVELSELECT_MODE) && cdtrack > 0)
-			S_CDLoop();
-
 		Inv_RingCalcAdders(&ring, 24);
 		S_UpdateInput();
 

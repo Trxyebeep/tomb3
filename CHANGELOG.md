@@ -13,6 +13,7 @@
 - Make underwater blood match normal blood on German version.
 - Fix explosion dynamic lighting transferring to other sparks.
 - Fix the harpoon gun reloading at every shot in NG+.
+- Fix the game loading title between levels.
 
 ### tomb3 additions
 
@@ -26,6 +27,11 @@
 - Rework the renderer to use 32 bit color instead of 16 bit internally.
 - Improve the dynamic light formula to make the light transition smoother.
 - Improve room vert distance fog formula.
+- Reset Lara's cold bar in DOZY mode.
+- Improve Puna electricity color.
+- Improve electric fence sparks.
+- Create new setup window.
+- Start setup window centered.
 
 ### tomb3 bug fixes
 

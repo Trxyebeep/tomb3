@@ -30,7 +30,6 @@ D3DTLVERTEX* UnRollBuffer;
 static D3DTLVERTEX* TLVertexBuffer;
 static D3DTLVERTEX* TLUnRollBuffer;
 
-long DynamicColorTable[256][256][256];
 WATERTAB WaterTable[22][64];
 float wibble_table[32];
 
@@ -177,7 +176,6 @@ void game_free(long size)
 long S_InitialiseSystem()
 {
 	DISPLAYMODE* dm;
-	long cval;
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 	DumpX = 0;
@@ -192,18 +190,6 @@ long S_InitialiseSystem()
 
 	TLUnRollBuffer = (D3DTLVERTEX*)GlobalAlloc(GMEM_FIXED, MAX_TLVERTICES * sizeof(D3DTLVERTEX));
 	UnRollBuffer = (D3DTLVERTEX*)(((long)TLUnRollBuffer + 32) & 0xFFFFFFE0);
-
-	for (int a = 1; a < 256; a++)
-	{
-		for (int b = 1; b < 256; b++)
-		{
-			for (int c = 1; c < 256; c++)
-			{
-				cval = ((a - b) * c) / a;
-				DynamicColorTable[a][b][c] = cval;
-			}
-		}
-	}
 
 	malloc_size = MALLOC_SIZE;
 	return 1;

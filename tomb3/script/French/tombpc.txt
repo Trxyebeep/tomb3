@@ -1,0 +1,325 @@
+Description: Tomb Raider III Script. Final Release (c) Core Design Ltd 1998
+
+/********************************************************************************************/
+
+Options:
+firstoption: EXIT_TO_TITLE
+title_replace: -1
+ondeath_demo_mode: EXIT_TO_TITLE
+ondeath_ingame: 0
+noinput_time: 500
+on_demo_interrupt: EXIT_TO_TITLE
+on_demo_end: EXIT_TO_TITLE
+singlelevel: -1
+cypher_code: 166
+language: FRENCH
+secret_track: 0
+//New options:
+Map: 1
+Globe: 1
+
+end:
+
+/********************************************************************************************/
+
+Title:
+Game: data\title.TR2
+PCfile: pix\titleuk.bmp
+PCfile: data\legal.pcx
+PCfile: data\titleUK.bmp
+PCfile: data\legalUS.pcx
+PCfile: data\titleJAP.pcx
+PCfile: data\legalJAP.pcx
+track: 5
+end:
+
+/********************************************************************************************/
+
+Frontend:
+PCfmv: FMV\LOGO.RPL
+PCfmv: FMV\INTR_FRE.RPL
+fmv: FMV\SAIL_FRE.RPL
+fmv: FMV\CRSH_FRE.RPL
+end:
+
+/********************************************************************************************/
+
+Gym: La Demeure de Lara
+Load_pic: pix\house.bmp
+track: 2
+game: data\house.TR2
+Key1: Cl)e piste de course
+StartInv: CRYSTAL
+end:
+
+/********************************************************************************************/
+
+//Level 1
+Level: La Jungle
+track: 34
+Load_pic: pix\india.bmp
+Rain:
+game: data\jungle.TR2
+Key4: Cl)e d'Indra
+track: 64
+cutangle: 16384
+cut: cuts\cut6.TR2
+complete:
+end:
+
+//Level 2
+Level: Les Ruines du Temple
+track: 34
+Load_pic: pix\india.bmp
+game: data\temple.TR2
+Puzzle1: Cimeterre
+Puzzle2: Cimeterre
+Key1: Cl)e de Ganesha
+Key2: Cl)e de Ganesha
+Key3: Cl)e de Ganesha
+Key4: Cl)e de Ganesha
+track: 69
+cutangle: 16384
+cut: cuts\cut9.TR2
+complete:
+end:
+
+//Level 3
+Level: Le Gange
+track: 34
+Load_pic: pix\india.bmp
+Rain:
+game: data\quadchas.TR2
+Key1: Cl)e du portail
+complete:
+end:
+
+//Level 4
+Level: Grottes de Kaliya
+track: 30
+Load_pic: pix\india.bmp
+game: data\tonyboss.TR2
+fmv: FMV\SAIL_FRE.RPL
+complete:
+end:
+
+//Level 5
+Level: Le Village C(otier
+track: 32
+Load_pic: pix\southpac.bmp
+game: data\shore.TR2
+Puzzle1: Pierre du serpent
+Key1: Cl)e du contrebandier
+track: 68
+cutangle: 16384
+cut: cuts\cut1.TR2
+complete:
+end:
+
+//Level 6
+Level: Le Lieu du Crash
+track: 33
+Load_pic: pix\southpac.bmp
+StartInv: PICKUP1
+game: data\crash.TR2
+Pickup1: Carte du marais
+Key1: Cl)e du commandant Bishop
+Key2: Cl)e du Lt. Tuckerman
+track: 65
+cutangle: 16384
+cut: cuts\cut4.TR2
+complete:
+end:
+
+//Level 7
+Level: La Gorge de Madubu
+track: 36
+Load_pic: pix\southpac.bmp
+WaterParts:
+Death: RAPIDS
+game: data\rapids.TR2
+complete:
+end:
+
+//Level 8
+Level: Le Temple de Puna
+track: 30
+Load_pic: pix\southpac.bmp
+game: data\triboss.TR2
+complete:
+end:
+
+//Level 9
+Level: Les Quais de la Tamise
+track: 73
+Load_pic: pix\london.bmp
+NoFloor: 1792
+Rain:
+game: data\roofs.TR2
+Key1: Cl)e salle du conduit
+Key2: Cl)e de la cath)edrale
+track: 67
+cutangle: 49152
+cut: cuts\cut2.TR2
+complete:
+end:
+
+//Level 10
+Level: Aldwych
+track: 74
+Load_pic: pix\london.bmp
+WaterParts:
+game: data\sewer.TR2
+Puzzle1: Vieux Penny
+Puzzle2: Ticket
+Puzzle3: Maillet maconnique
+Puzzle4: Etoile d)ecor)ee
+Key1: Cl)e maintenance
+Key2: Cl)e de Salomon
+Key3: Cl)e de Salomon
+Key4: Cl)e de Salomon
+track: 63
+cutangle: 16384
+cut: cuts\cut5.TR2
+complete:
+end:
+
+//Level 11
+Level: Le Portail du Lude
+track: 31
+Load_pic: pix\london.bmp
+WaterParts:
+game: data\tower.TR2
+Puzzle1: Fluide d'embaumement
+Key1: Cl)e de la chaufferie
+track: 71
+cutangle: 16384
+cut: cuts\cut11.TR2
+complete:
+end:
+
+//Level 12
+Level: La Ville
+track: 78
+NoFloor: 5120
+Load_pic: pix\london.bmp
+Rain:
+Death: ELECTRIC
+game: data\office.TR2
+complete:
+end:
+
+//Level 13
+Level: Le D)esert du Nevada
+track: 33
+Load_pic: pix\nevada.bmp
+game: data\nevada.TR2
+Key1: Passe du g)en)erateur
+Key2: Interrupteur du d)etonateur
+track: 72
+cutangle: 16384
+cut: cuts\cut7.TR2
+complete:
+end:
+
+//Level 14
+Level: Le Quartier Haute S)ecurit)e
+track: 27
+Load_pic: pix\nevada.bmp
+remove_weapons:
+remove_ammo:
+game: data\compound.TR2
+Puzzle1: Passe s)ecurit)e bleu
+Puzzle2: Passe s)ecurit)e jaune
+Key1: Carte s)ecurit)e A
+Key2: Carte s)ecurit)e B
+track: 70
+cutangle: 16384
+cut: cuts\cut8.TR2
+complete:
+end:
+
+//Level 15
+Level: La Zone 51
+track: 27
+Load_pic: pix\nevada.bmp
+Death: ELECTRIC
+game: data\area51.TR2
+Puzzle1: Cl)e de la tour
+Puzzle2: Disque du code d'acc$es
+Puzzle3: Disque du code d'acc$es
+Puzzle4: Cl)e du hangar
+Key1: Passe pour mise $a feu
+complete:
+end:
+
+//Level 16
+Level: L'Antarctique
+fmv: FMV\CRSH_FRE.RPL
+track: 28
+Load_pic: pix\antarc.bmp
+Snow:
+Cold:
+game: data\antarc.TR2
+Puzzle1: Levier
+Puzzle2: Cl)e du portail
+Key1: Cl)e de la hutte
+track: 62
+cutangle: 16384
+cut: cuts\cut3.TR2
+complete:
+end:
+
+//Level 17
+Level: Les Mines de RX-Tech
+track: 30
+Load_pic: pix\antarc.bmp
+Cold:
+game: data\mines.TR2
+Puzzle1: Levier
+Puzzle2: Acide de batterie
+Puzzle3: D)emarreur du treuil
+complete:
+end:
+
+//Level 18
+Level: La Cit)e Perdue de Tinos
+track: 26
+Load_pic: pix\antarc.bmp
+game: data\city.TR2
+Puzzle1: Masque oc)eanien
+Key1: Cl)e d'Uli
+track: 66
+cutangle: 16384
+cut: cuts\cut12.TR2
+complete:
+end:
+
+//Level 19
+Level: La Caverne du M)et)eore
+track: 26
+Load_pic: pix\antarc.bmp
+Snow:
+game: data\chamber.TR2
+fmv: FMV\ENDGAME.RPL
+gamecomplete:
+end:
+
+//Level 20
+Level: L'Eglise Hallows
+track: 30
+Load_pic: pix\london.bmp
+NoFloor: 10000
+Rain:
+game: data\stpaul.TR2
+Key1: Cl)e du caveau
+complete:
+end:
+
+/********************************************************************************************/
+
+//Demo levels go here
+
+/********************************************************************************************/
+
+Gamestrings: french.txt
