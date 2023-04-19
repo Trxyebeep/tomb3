@@ -1,5 +1,16 @@
 # tomb3 changelog
 
+## Unreleased
+
+### Original bug fixes
+
+### tomb3 additions
+
+- Increase air gradually instead of snapping to full when leaving water rooms.
+
+### tomb3 bug fixes
+
+
 ## [2.0.0](https://github.com/Trxyebeep/tomb3/tree/V1.6.0) (Apr. 18 2023)
 
 ### Original bug fixes
