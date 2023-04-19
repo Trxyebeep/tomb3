@@ -49,7 +49,7 @@ bool DXSetVideoMode(LPDIRECTDRAWX ddx, long w, long h, long bpp)
 	return ddx->SetDisplayMode(w, h, bpp, 0, 0) == DD_OK;
 }
 
-bool DXCreateSurface(LPDIRECTDRAWX ddx, LPDDSURFACEDESCX desc, LPDIRECTDRAWSURFACEX surf)
+bool DXCreateSurface(LPDIRECTDRAWX ddx, LPDDSURFACEDESCX desc, LPDIRECTDRAWSURFACEX* surf)
 {
 	LPDIRECTDRAWSURFACE s;
 	HRESULT result;
@@ -228,7 +228,7 @@ bool DXCreateZBuffer(DEVICEINFO* device, DXCONFIG* config)
 	desc.dwHeight = (*dinfopp)[config->nD3D].DisplayMode[config->nVMode].h;
 	desc.dwMipMapCount = 16;
 
-	if (!DXCreateSurface(App.DDraw, &desc, (LPDIRECTDRAWSURFACEX)&App.ZBuffer))
+	if (!DXCreateSurface(App.DDraw, &desc, &App.ZBuffer))
 		return 0;
 
 	if (!DXAddAttachedSurface(App.BackBuffer, App.ZBuffer))
@@ -529,6 +529,7 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance)
 {
 	MMXSupported = 1;
+	G_hwnd = hWnd;
 	DirectDrawEnumerate(DXEnumDirectDraw, device);
 	DirectSoundEnumerate(DXEnumDirectSound, device);
 	//Original joystick enumeration stuff was here
@@ -583,7 +584,7 @@ HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LP
 	desc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE | DDSCAPS_3DDEVICE;
 	surf = 0;
 	DXSetCooperativeLevel(G_ddraw, G_hwnd, DDSCL_FULLSCREEN | DDSCL_NOWINDOWCHANGES | DDSCL_EXCLUSIVE);
-	DXCreateSurface(G_ddraw, &desc, (LPDIRECTDRAWSURFACE3)&surf);
+	DXCreateSurface(G_ddraw, &desc, &surf);
 
 	if (surf)
 	{
@@ -599,7 +600,7 @@ HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LP
 			}
 
 			DXSetVideoMode(G_ddraw, d3dinfo->DisplayMode->w, d3dinfo->DisplayMode->h, d3dinfo->DisplayMode->bpp);
-			DXCreateSurface(G_ddraw, &desc, (LPDIRECTDRAWSURFACE3)&surf);
+			DXCreateSurface(G_ddraw, &desc, &surf);
 
 			if (surf)
 				DXCreateDirect3DDevice(G_d3d, d3dinfo->Guid, surf, &d3dDevice);
@@ -823,7 +824,7 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 		desc.dwFlags = DDSD_CAPS;
 		desc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
 
-		if (!DXCreateSurface(App.DDraw, &desc, (LPDIRECTDRAWSURFACEX)&App.FrontBuffer))
+		if (!DXCreateSurface(App.DDraw, &desc, &App.FrontBuffer))
 		{
 			Log("DXCreateSurface failed to create front buffer (windowed mode), exitting..");
 			return 0;
@@ -845,7 +846,7 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 		desc.dwHeight = dm->h;
 		desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_3DDEVICE;
 
-		if (!DXCreateSurface(App.DDraw, &desc, (LPDIRECTDRAWSURFACEX)&App.BackBuffer))
+		if (!DXCreateSurface(App.DDraw, &desc, &App.BackBuffer))
 		{
 			Log("DXCreateSurface failed to create back buffer (windowed mode), exitting..");
 			return 0;
@@ -871,7 +872,7 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 		desc.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
 		desc.ddsCaps.dwCaps = DDSCAPS_COMPLEX | DDSCAPS_FLIP | DDSCAPS_PRIMARYSURFACE | DDSCAPS_3DDEVICE;
 
-		if (!DXCreateSurface(App.DDraw, &desc, (LPDIRECTDRAWSURFACEX)&App.FrontBuffer))
+		if (!DXCreateSurface(App.DDraw, &desc, &App.FrontBuffer))
 		{
 			Log("DXCreateSurface failed to create front buffer, exitting..");
 			return 0;
@@ -933,7 +934,7 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 	desc.dwHeight = 480;
 	desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH;
 	desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-	DXCreateSurface(App.DDraw, &desc, (LPDIRECTDRAWSURFACEX)&App.PictureBuffer);
+	DXCreateSurface(App.DDraw, &desc, &App.PictureBuffer);
 	DXClearBuffers(11, 0);
 	InitDrawPrimitive(App.D3DDev, App.BackBuffer);
 	HWR_InitState();

@@ -7,9 +7,11 @@
 ### tomb3 additions
 
 - Increase air gradually instead of snapping to full when leaving water rooms.
+- Restore graphics adapter settings in the setup window.
 
 ### tomb3 bug fixes
 
+- Fix graphics adapter enumeration.
 
 ## [2.0.0](https://github.com/Trxyebeep/tomb3/tree/V1.6.0) (Apr. 18 2023)
 
