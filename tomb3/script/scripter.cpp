@@ -76,7 +76,10 @@ static void WriteMainOptions(FILE* fp)
 	fprintf(fp, "firstoption: %s\n", OptionToText(gameflow.firstOption));
 	fprintf(fp, "title_replace: %i\n", gameflow.title_replace);
 	fprintf(fp, "ondeath_demo_mode: %s\n", OptionToText(gameflow.ondeath_demo_mode));
-	fprintf(fp, "ondeath_ingame: %s\n", OptionToText(gameflow.ondeath_ingame));
+
+	if (gameflow.ondeath_ingame)
+		fprintf(fp, "ondeath_ingame: %s\n", OptionToText(gameflow.ondeath_ingame));
+
 	fprintf(fp, "noinput_time: %i\n", gameflow.noinput_time);
 	fprintf(fp, "on_demo_interrupt: %s\n", OptionToText(gameflow.on_demo_interrupt));
 	fprintf(fp, "on_demo_end: %s\n", OptionToText(gameflow.on_demo_end));

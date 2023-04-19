@@ -12,6 +12,7 @@
 ### tomb3 bug fixes
 
 - Fix graphics adapter enumeration.
+- Fix script extractor, fix Non-English scripts.
 
 ## [2.0.0](https://github.com/Trxyebeep/tomb3/tree/V1.6.0) (Apr. 18 2023)
 
