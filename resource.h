@@ -6,11 +6,13 @@
 #define IDD_SETUPDIALOG                 104
 #define IDB_BITMAP1                     110
 #define IDC_RESOLUTION                  1002
+#define IDC_GRAPHICS_ADAPTER            1003
 #define IDC_ZBUFFER                     1004
 #define IDC_DITHER                      1005
 #define IDC_BILINEAR                    1006
 #define IDC_WINDOWED                    1007
 #define IDC_FULLSCREEN                  1008
+#define IDC_D3D                         1009
 #define IDC_SOUND                       1010
 #define IDC_D3DTF                       1011
 #define IDC_DISABLE_SOUND               1015

@@ -130,7 +130,7 @@ long ControlPhase(long nframes, long demo_mode)
 				return EXIT_TO_TITLE;
 
 			if (gameflow.ondeath_ingame)
-				return  gameflow.ondeath_ingame;
+				return gameflow.ondeath_ingame;
 
 			if (overlay_flag == 2)
 			{

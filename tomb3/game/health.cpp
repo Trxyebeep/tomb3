@@ -316,21 +316,20 @@ void DrawAirBar(long flash_state)
 {
 	long air;
 
-	if (lara.skidoo != NO_ITEM && items[lara.skidoo].object_number == UPV || lara.water_status == LARA_UNDERWATER ||
-		lara.water_status == LARA_SURFACE || room[lara_item->room_number].flags & ROOM_SWAMP && lara.water_surface_dist < -775)
-	{
-		air = lara.air;
+	if (lara.air >= 1800 || lara_item->hit_points <= 0)
+		return;
 
-		if (lara.air < 0)
-			air = 0;
-		else if (lara.air > 1800)
-			air = 1800;
+	air = lara.air;
 
-		if (air > 450 || flash_state)
-			S_DrawAirBar(100 * air / 1800);
-		else
-			S_DrawAirBar(0);
-	}
+	if (lara.air < 0)
+		air = 0;
+	else if (lara.air > 1800)
+		air = 1800;
+
+	if (air > 450 || flash_state)
+		S_DrawAirBar(100 * air / 1800);
+	else
+		S_DrawAirBar(0);
 }
 
 void RemoveAmmoText()

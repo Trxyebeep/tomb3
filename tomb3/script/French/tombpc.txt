@@ -6,7 +6,6 @@ Options:
 firstoption: EXIT_TO_TITLE
 title_replace: -1
 ondeath_demo_mode: EXIT_TO_TITLE
-ondeath_ingame: 0
 noinput_time: 500
 on_demo_interrupt: EXIT_TO_TITLE
 on_demo_end: EXIT_TO_TITLE

@@ -10,6 +10,72 @@
 static DXCONFIG* config;
 static DEVICEINFO* dev;
 
+static void InitDDDrivers(HWND hwnd)
+{
+	HWND gfx;
+	long lp;
+	char about[512];
+
+	gfx = GetDlgItem(hwnd, IDC_GRAPHICS_ADAPTER);
+
+	for (lp = 0; lp < dev->nDDInfo; lp++)
+	{
+		sprintf(about, "%s (%s)", dev->DDInfo[lp].About, dev->DDInfo[lp].Name);
+		SendMessage(gfx, CB_ADDSTRING, 0, (LPARAM)about);
+	}
+}
+
+static void InitD3DDrivers(HWND hwnd, long nDrivers)
+{
+	DIRECTDRAWINFO* ddinfo;
+	HWND d3d, zbuffer, dither, filter;
+	long nHWDriver;
+	static long selected = -1;
+	char buf[256];
+	char about[256];
+
+	d3d = GetDlgItem(hwnd, IDC_D3D);
+	zbuffer = GetDlgItem(hwnd, IDC_ZBUFFER);
+	dither = GetDlgItem(hwnd, IDC_DITHER);
+	filter = GetDlgItem(hwnd, IDC_BILINEAR);
+	nHWDriver = -1;
+
+	if (selected != -1)
+		SendMessage(d3d, CB_GETLBTEXT, SendMessage(d3d, CB_GETCURSEL, 0, 0), (LPARAM)buf);
+
+	SendMessage(d3d, CB_RESETCONTENT, 0, 0);
+	ddinfo = &dev->DDInfo[nDrivers];
+
+	for (int i = 0; i < ddinfo->nD3DInfo; i++)
+	{
+		sprintf(about, "%s", ddinfo->D3DInfo[i].About);
+		SendMessage(d3d, CB_ADDSTRING, 0, (LPARAM)about);
+
+		if (selected == -1 || !strcmp(buf, about))
+			nHWDriver = i;
+	}
+
+	if (nHWDriver == -1)
+		nHWDriver = 0;
+
+	if (selected == -1)
+	{
+		SendMessage(zbuffer, BM_SETCHECK, 1, 0);
+		SendMessage(filter, BM_SETCHECK, 1, 0);
+		SendMessage(dither, BM_SETCHECK, 1, 0);
+	}
+
+	selected = nHWDriver;
+	SendMessage(d3d, CB_SETCURSEL, selected, 0);
+	
+	EnableWindow(zbuffer, 1);
+	EnableWindow(dither, 1);
+	EnableWindow(filter, 1);
+	SendMessage(zbuffer, BM_SETCHECK, 1, 0);
+	SendMessage(filter, BM_SETCHECK, 1, 0);
+	SendMessage(dither, BM_SETCHECK, 1, 0);
+}
+
 static void InitVideoModes(HWND hwnd, long nDD, long nD3D)
 {
 	DIRECT3DINFO* d3dinfo;
@@ -234,12 +300,16 @@ static void InitDialogBox(HWND hwnd)
 {
 	long nDD;
 
-	nDD = dev->nDDInfo - 1;
-
 	UT_CenterWindow(hwnd);
 
-	InitVideoModes(hwnd, nDD, 0);
-	InitTextures(hwnd, nDD, 0);
+	InitDDDrivers(hwnd);
+	nDD = dev->nDDInfo - 1;
+	SendMessage(GetDlgItem(hwnd, IDC_GRAPHICS_ADAPTER), CB_SETCURSEL, nDD, 0);
+	InitD3DDrivers(hwnd, nDD);
+
+	InitVideoModes(hwnd, nDD, SendMessage(GetDlgItem(hwnd, IDC_D3D), CB_GETCURSEL, 0, 0));
+	InitTextures(hwnd, nDD, SendMessage(GetDlgItem(hwnd, IDC_D3D), CB_GETCURSEL, 0, 0));
+
 	InitDSAdapters(hwnd);
 }
 
@@ -251,7 +321,7 @@ static BOOL CALLBACK SetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM 
 	if (message == WM_INITDIALOG)
 	{
 		InitDialogBox(dlg);
-
+		
 		if (!OpenRegistry(SUB_KEY))
 		{
 			SendMessage(GetDlgItem(dlg, IDC_FULLSCREEN), BM_SETCHECK, 0, 0);
@@ -275,8 +345,8 @@ static BOOL CALLBACK SetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM 
 			REG_ReadLong((char*)"filter", ul, 1);
 			SendMessage(GetDlgItem(dlg, IDC_BILINEAR), BM_SETCHECK, ul, 0);
 
-			if (REG_ReadLong((char*)"VM", ul, 0))
-				SendMessage(GetDlgItem(dlg, IDC_RESOLUTION), CB_SETCURSEL, ul, 0);
+			REG_ReadLong((char*)"VM", ul, 0);
+			SendMessage(GetDlgItem(dlg, IDC_RESOLUTION), CB_SETCURSEL, ul, 0);
 		}
 		
 		return 1;
@@ -288,9 +358,10 @@ static BOOL CALLBACK SetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM 
 		{
 		case IDOK:
 		case IDC_TEST:
-			config->nDD = dev->nDDInfo - 1;
-			config->nD3D = 0;
-			config->nVMode = SendMessage(GetDlgItem(dlg, IDC_RESOLUTION), CB_GETITEMDATA, SendMessage(GetDlgItem(dlg, IDC_RESOLUTION), CB_GETCURSEL, 0, 0), 0);
+			config->nDD = SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0);
+			config->nD3D = SendMessage(GetDlgItem(dlg, IDC_D3D), CB_GETCURSEL, 0, 0);
+			config->nVMode = SendMessage(GetDlgItem(dlg, IDC_RESOLUTION), CB_GETITEMDATA,
+				SendMessage(GetDlgItem(dlg, IDC_RESOLUTION), CB_GETCURSEL, 0, 0), 0);
 			config->D3DTF = SendMessage(GetDlgItem(dlg, IDC_D3DTF), CB_GETCURSEL, 0, 0);
 			config->bZBuffer = (bool)SendMessage(GetDlgItem(dlg, IDC_ZBUFFER), BM_GETCHECK, 0, 0);
 			config->nDS = SendMessage(GetDlgItem(dlg, IDC_SOUND), CB_GETCURSEL, 0, 0);
@@ -327,6 +398,20 @@ static BOOL CALLBACK SetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM 
 		case IDCANCEL:
 			EndDialog(dlg, 0);
 			return 1;
+
+		case IDC_GRAPHICS_ADAPTER:
+		case IDC_D3D:
+
+			if (HIWORD(wParam) == CBN_SELCHANGE)
+			{
+				InitD3DDrivers(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0));
+				InitVideoModes(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
+					SendMessage(GetDlgItem(dlg, IDC_D3D), CB_GETCURSEL, 0, 0));
+				InitTextures(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
+					SendMessage(GetDlgItem(dlg, IDC_D3D), CB_GETCURSEL, 0, 0));
+			}
+
+			break;
 
 		case IDC_WINDOWED:
 
