@@ -1,8 +1,6 @@
 #pragma once
 #include "math_tbls.h"
 
-#pragma pack(push, 1)
-
 /*typedefs*/
 typedef unsigned char uchar;
 typedef unsigned short ushort;
@@ -32,6 +30,8 @@ typedef unsigned long ulong;
 #define TEXHANDLE				LPDIRECT3DTEXTURE9
 #define DDSURFACEDESCX			D3DLOCKED_RECT
 #define LPDIRECT3DTEXTUREX		LPDIRECT3DTEXTURE9
+#define VTXBUF_LEN				256
+#define D3DFVF_TLVERTEX			(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_SPECULAR | D3DFVF_TEX1)
 #else
 #define LPDIRECT3DX				LPDIRECT3D2
 #define LPDIRECT3DDEVICEX		LPDIRECT3DDEVICE2
@@ -530,6 +530,21 @@ enum sfx_types
 };
 
 /*structs*/
+#if (DIRECT3D_VERSION >= 0x900)
+struct D3DTLVERTEX
+{
+	D3DVALUE sx;
+	D3DVALUE sy;
+	D3DVALUE sz;
+	D3DVALUE rhw;
+	D3DCOLOR color;
+	D3DCOLOR specular;
+	D3DVALUE tu;
+	D3DVALUE tv;
+};
+#endif
+
+#pragma pack(push, 1)
 struct GOURAUD_FILL	//not og
 {
 	ulong clr[4][4];

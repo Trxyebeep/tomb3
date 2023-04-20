@@ -10,7 +10,15 @@
 #include "drawbars.h"
 #include "../tomb3/tomb3.h"
 
-HRESULT (*DrawPrimitive)(D3DPRIMITIVETYPE, D3DVERTEXTYPE, LPVOID, ulong, ulong);
+#if (DIRECT3D_VERSION >= 0x900)
+HRESULT (*DrawPrimitive)(D3DPRIMITIVETYPE, LPVOID, ulong);
+HRESULT(*SetTextureStageState)(ulong, D3DTEXTURESTAGESTATETYPE, ulong);
+HRESULT(*SetSamplerState)(ulong, D3DSAMPLERSTATETYPE, ulong);
+LPDIRECT3DVERTEXBUFFER9 DestVB;
+#else
+HRESULT(*DrawPrimitive)(D3DPRIMITIVETYPE, D3DVERTEXTYPE, LPVOID, ulong, ulong);
+#endif
+
 HRESULT (*SetRenderState)(D3DRENDERSTATETYPE, ulong);
 HRESULT (*BeginScene)();
 HRESULT (*EndScene)();
@@ -26,28 +34,39 @@ bool bAlphaTesting;
 
 void HWR_EnableZBuffer(bool write, bool compare)
 {
-	if (App.ZBuffer)
+	if (!App.ZBuffer)
+		return;
+
+	if (write != zBufWriteEnabled)
 	{
-		if (write != zBufWriteEnabled)
-		{
-			SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, write);
-			zBufWriteEnabled = write;
-		}
+#if (DIRECT3D_VERSION >= 0x900)
+		SetRenderState(D3DRS_ZWRITEENABLE, write ? D3DZB_TRUE : D3DZB_FALSE);
+#else
+		SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, write);
+#endif
+		zBufWriteEnabled = write;
+	}
 
-		if (compare != zBufCompareEnabled)
-		{
-			if (App.ZBuffer)
-				SetRenderState(D3DRENDERSTATE_ZFUNC, compare ? D3DCMP_LESSEQUAL : D3DCMP_ALWAYS);
-			else
-				SetRenderState(D3DRENDERSTATE_ZENABLE, compare);
+	if (compare != zBufCompareEnabled)
+	{
+#if (DIRECT3D_VERSION >= 0x900)
+		SetRenderState(D3DRS_ZENABLE, compare ? D3DZB_TRUE : D3DZB_FALSE);
+#else
+		if (App.ZBuffer)
+			SetRenderState(D3DRENDERSTATE_ZFUNC, compare ? D3DCMP_LESSEQUAL : D3DCMP_ALWAYS);
+		else
+			SetRenderState(D3DRENDERSTATE_ZENABLE, compare);
+#endif
 
-			zBufCompareEnabled = compare;
-		}
+		zBufCompareEnabled = compare;
 	}
 }
 
 void HWR_EnableColorKey(bool enable)
 {
+#if (DIRECT3D_VERSION >= 0x900)
+	SetRenderState(D3DRS_ALPHABLENDENABLE, enable);
+#else
 	static bool enabled;
 
 	if (tomb3.disable_ckey)
@@ -65,6 +84,7 @@ void HWR_EnableColorKey(bool enable)
 		SetRenderState(D3DRENDERSTATE_COLORKEYENABLE, 0);
 		enabled = 0;
 	}
+#endif
 }
 
 void HWR_EnableAlphaBlend(bool enable)
@@ -75,13 +95,21 @@ void HWR_EnableAlphaBlend(bool enable)
 	{
 		if (!enabled)
 		{
+#if (DIRECT3D_VERSION >= 0x900)
+			SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
+#else
 			SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, 1);
+#endif
 			enabled = 1;
 		}
 	}
 	else if (enabled)
 	{
+#if (DIRECT3D_VERSION >= 0x900)
+		SetRenderState(D3DRS_ALPHABLENDENABLE, 0);
+#else
 		SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, 0);
+#endif
 		enabled = 0;
 	}
 }
@@ -90,13 +118,23 @@ void HWR_EnableColorAddition(bool enable)
 {
 	if (enable)
 	{
+#if (DIRECT3D_VERSION >= 0x900)
+		SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
+		SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+#else
 		SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ONE);
 		SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
+#endif
 	}
 	else
 	{
+#if (DIRECT3D_VERSION >= 0x900)
+		SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+#else
 		SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
 		SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
+#endif
 	}
 }
 
@@ -104,13 +142,23 @@ void HWR_EnableColorSubtraction(bool enable)
 {
 	if (enable)
 	{
+#if (DIRECT3D_VERSION >= 0x900)
+		SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ZERO);
+		SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCCOLOR);
+#else
 		SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ZERO);
 		SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCCOLOR);
+#endif
 	}
 	else
 	{
+#if (DIRECT3D_VERSION >= 0x900)
+		SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+#else
 		SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
 		SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
+#endif
 	}
 }
 
@@ -119,6 +167,10 @@ void HWR_ResetZBuffer()
 	zBufWriteEnabled = 0;
 	zBufCompareEnabled = 0;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+	SetRenderState(D3DRS_ZWRITEENABLE, D3DZB_FALSE);
+#else
 	if (App.ZBuffer)
 		SetRenderState(D3DRENDERSTATE_ZFUNC, D3DCMP_ALWAYS);
 	else
@@ -126,6 +178,7 @@ void HWR_ResetZBuffer()
 		SetRenderState(D3DRENDERSTATE_ZENABLE, 0);
 		SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, 0);
 	}
+#endif
 }
 
 void HWR_ResetColorKey()
@@ -137,12 +190,9 @@ void HWR_ResetColorKey()
 
 void HWR_EnablePerspCorrect(bool enable)
 {
+#if (DIRECT3D_VERSION < 0x900)
 	SetRenderState(D3DRENDERSTATE_TEXTUREPERSPECTIVE, 1);
-}
-
-void HWR_EnableFilter(bool enable)
-{
-
+#endif
 }
 
 void HWR_ResetCurrentTexture()
@@ -408,6 +458,41 @@ __inline void HWR_InitGamma(float gamma)
 
 void HWR_InitState()
 {
+#if (DIRECT3D_VERSION >= 0x900)
+	if (!SetRenderState || !SetTextureStageState)
+		return;
+
+	SetRenderState(D3DRS_CLIPPING, FALSE);
+	SetRenderState(D3DRS_FILLMODE, HWConfig.nFillMode);
+	SetRenderState(D3DRS_SHADEMODE, HWConfig.nShadeMode);
+	SetRenderState(D3DRS_DITHERENABLE, HWConfig.bDither);
+	SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+	SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+	SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+
+	SetSamplerState(0, D3DSAMP_MAGFILTER, HWConfig.nFilter);
+	SetSamplerState(0, D3DSAMP_MINFILTER, HWConfig.nFilter);
+	SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+
+	if (tomb3.disable_gamma)
+		GammaOption = 2.5F;
+
+	HWR_InitGamma(GammaOption);
+	HWR_ResetCurrentTexture();
+	HWR_ResetColorKey();
+	HWR_ResetZBuffer();
+	DrawRoutine = HWR_DrawRoutines;
+	bAlphaTesting = 1;
+	GlobalAlpha = 0xFF000000;
+#else
 	DIRECT3DINFO* d3dinfo;
 	bool blendOne, stippledAlpha, blendAlpha;
 
@@ -467,6 +552,7 @@ void HWR_InitState()
 		DrawRoutine = HWR_DrawRoutinesNoAlpha;
 		GlobalAlpha = 0x80000000;
 	}
+#endif
 }
 
 bool HWR_Init()

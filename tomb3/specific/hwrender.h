@@ -9,7 +9,6 @@ void HWR_EnableColorSubtraction(bool enable);
 void HWR_ResetZBuffer();
 void HWR_ResetColorKey();
 void HWR_EnablePerspCorrect(bool enable);
-void HWR_EnableFilter(bool enable);
 void HWR_ResetCurrentTexture();
 void HWR_BeginScene();
 void HWR_EndScene();
@@ -26,7 +25,14 @@ void HWR_GetAllTextureHandles();
 void HWR_LoadTexturePages(long nPages, uchar* src, uchar* palette);
 void HWR_SetCurrentTexture(DXTEXTURE* tex);
 
+#if (DIRECT3D_VERSION >= 0x900)
+extern HRESULT (*DrawPrimitive)(D3DPRIMITIVETYPE, LPVOID, ulong);
+extern HRESULT (*SetTextureStageState)(ulong, D3DTEXTURESTAGESTATETYPE, ulong);
+extern HRESULT (*SetSamplerState)(ulong, D3DSAMPLERSTATETYPE, ulong);
+extern LPDIRECT3DVERTEXBUFFER9 DestVB;
+#else
 extern HRESULT (*DrawPrimitive)(D3DPRIMITIVETYPE, D3DVERTEXTYPE, LPVOID, ulong, ulong);
+#endif
 extern HRESULT (*SetRenderState)(D3DRENDERSTATETYPE, ulong);
 extern HRESULT (*BeginScene)();
 extern HRESULT (*EndScene)();
