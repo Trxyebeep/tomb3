@@ -1,6 +1,6 @@
 # tomb3 changelog
 
-## Unreleased
+## [2.0.1](https://github.com/Trxyebeep/tomb3/tree/V2.0.1) (Apr. 20 2023)
 
 ### Original bug fixes
 
@@ -14,7 +14,7 @@
 - Fix graphics adapter enumeration.
 - Fix script extractor, fix Non-English scripts.
 
-## [2.0.0](https://github.com/Trxyebeep/tomb3/tree/V1.6.0) (Apr. 18 2023)
+## [2.0.0](https://github.com/Trxyebeep/tomb3/tree/V2.0.0) (Apr. 18 2023)
 
 ### Original bug fixes
 
