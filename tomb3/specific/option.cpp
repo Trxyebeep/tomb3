@@ -80,7 +80,11 @@ void do_detail_option(INVENTORY_ITEM* item)
 	nSel = DT_NUMT - DOP_NOPTS;
 	tW = 130;
 	w = GetRenderWidthDownscaled() / 2 - 115;
+#if (DIRECT3D_VERSION >= 0x900)
+	dinfo = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D];
+#else
 	dinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D];
+#endif
 
 	if (!dtext[DT_GAMMA])
 	{
@@ -133,7 +137,11 @@ void do_detail_option(INVENTORY_ITEM* item)
 		else
 			dtext[DT_OP_ZBUFFER] = T_Print(w + tW, -25, 0, GF_PCStrings[PCSTR_OFF]);
 
+#if (DIRECT3D_VERSION >= 0x900)
+		if (HWConfig.nFilter == D3DTEXF_LINEAR)
+#else
 		if (HWConfig.nFilter == D3DFILTER_LINEAR)
+#endif
 			dtext[DT_OP_FILTER] = T_Print(w + tW, -5, 0, GF_PCStrings[PCSTR_ON]);
 		else
 			dtext[DT_OP_FILTER] = T_Print(w + tW, -5, 0, GF_PCStrings[PCSTR_OFF]);
@@ -259,6 +267,18 @@ void do_detail_option(INVENTORY_ITEM* item)
 			break;
 
 		case DOP_FILTER:
+#if (DIRECT3D_VERSION >= 0x900)
+			if (HWConfig.nFilter == D3DTEXF_LINEAR)
+			{
+				HWConfig.nFilter = D3DTEXF_POINT;
+				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_OFF]);
+			}
+			else
+			{
+				HWConfig.nFilter = D3DTEXF_LINEAR;
+				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_ON]);
+			}
+#else
 			if (HWConfig.nFilter == D3DFILTER_LINEAR)
 			{
 				HWConfig.nFilter = D3DFILTER_NEAREST;
@@ -269,6 +289,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 				HWConfig.nFilter = D3DFILTER_LINEAR;
 				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_ON]);
 			}
+#endif
 
 			HWR_InitState();
 			break;

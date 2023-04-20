@@ -32,6 +32,16 @@ typedef unsigned long ulong;
 #define LPDIRECT3DTEXTUREX		LPDIRECT3DTEXTURE9
 #define VTXBUF_LEN				256
 #define D3DFVF_TLVERTEX			(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_SPECULAR | D3DFVF_TEX1)
+#define RGBA_SETALPHA(rgba, x)	(((x) << 24) | ((rgba) & 0x00ffffff))
+#define RGBA_GETALPHA(rgb)		((rgb) >> 24)
+#define RGBA_GETRED(rgb)		(((rgb) >> 16) & 0xff)
+#define RGBA_GETGREEN(rgb)		(((rgb) >> 8) & 0xff)
+#define RGBA_GETBLUE(rgb)		((rgb) & 0xff)
+#define RGBA_MAKE(r, g, b, a)	((D3DCOLOR) (((a) << 24) | ((r) << 16) | ((g) << 8) | (b)))
+#define RGB_GETRED(rgb)			(((rgb) >> 16) & 0xff)
+#define RGB_GETGREEN(rgb)		(((rgb) >> 8) & 0xff)
+#define RGB_GETBLUE(rgb)		((rgb) & 0xff)
+#define RGB_MAKE(r, g, b)		((D3DCOLOR) (((r) << 16) | ((g) << 8) | (b)))
 #else
 #define LPDIRECT3DX				LPDIRECT3D2
 #define LPDIRECT3DDEVICEX		LPDIRECT3DDEVICE2
@@ -1281,6 +1291,7 @@ struct DISPLAYMODE
 	long w;
 	long h;
 	ulong bpp;
+#if (DIRECT3D_VERSION < 0x900)
 	bool bPalette;
 	uchar rbpp;
 	uchar gbpp;
@@ -1291,6 +1302,7 @@ struct DISPLAYMODE
 	uchar gshift;
 	uchar bshift;
 	uchar ashift;
+#endif
 };
 
 struct D3DTEXTUREINFO
@@ -1320,6 +1332,28 @@ struct DXDIRECTSOUNDINFO
 	GUID Guid;
 };
 
+#if (DIRECT3D_VERSION >= 0x900)
+struct DIRECT3DINFO
+{
+	char Name[256];
+	char About[256];
+	LPGUID lpGuid;
+	GUID Guid;
+	D3DCAPS9 caps;
+	long nDisplayMode;
+	DISPLAYMODE* DisplayMode;
+	ulong index;
+};
+
+struct DEVICEINFO
+{
+	ulong nD3DInfo;
+	DIRECT3DINFO* D3DInfo;
+	long nDSInfo;
+	DXDIRECTSOUNDINFO* DSInfo;
+	//Joystick enumeration stuff was here
+};
+#else
 struct DIRECT3DINFO
 {
 	char Name[256];
@@ -1355,14 +1389,19 @@ struct DEVICEINFO
 	DXDIRECTSOUNDINFO* DSInfo;
 	//Joystick enumeration stuff was here
 };
+#endif
 
 struct DXCONFIG
 {
+#if (DIRECT3D_VERSION < 0x900)
 	long nDD;
+#endif
 	long nD3D;
 	long nDS;
 	long nVMode;
+#if (DIRECT3D_VERSION < 0x900)
 	long D3DTF;
+#endif
 	long bZBuffer;
 	long Dither;
 	long Filter;
@@ -1378,15 +1417,19 @@ struct WINAPP
 	DXCONFIG DXConfig;
 	DEVICEINFO* lpDeviceInfo;
 	DXCONFIG* lpDXConfig;
+#if (DIRECT3D_VERSION < 0x900)
 	LPDIRECTDRAWX DDraw;
+#endif
 	LPDIRECT3DX D3D;
 	LPDIRECT3DDEVICEX D3DDev;
 	LPDIRECTDRAWSURFACEX FrontBuffer;
 	LPDIRECTDRAWSURFACEX BackBuffer;
 	LPDIRECTDRAWSURFACEX ZBuffer;
 	LPDIRECTDRAWSURFACEX PictureBuffer;
+#if (DIRECT3D_VERSION < 0x900)
 	LPDIRECT3DVIEWPORTX D3DView;
 	LPDIRECT3DMATERIALX D3DMaterial;
+#endif
 	bool bFocus;
 	long nUVAdd;
 	ulong nFrames;
@@ -1488,6 +1531,15 @@ struct SP_DYNAMIC
 	uchar Pad[2];
 };
 
+#if (DIRECT3D_VERSION >= 0x900)
+struct DXTEXTURE
+{
+	TEXHANDLE tex;
+	long nWidth;
+	long nHeight;
+	ulong dwFlags;
+};
+#else
 struct TEXTURE
 {
 	LPVOID DXTex;	//DXTEXTURE*
@@ -1511,6 +1563,7 @@ struct DXTEXTURE
 	TEXTURE* tex;
 	ulong bpp;
 };
+#endif
 
 struct TEXTUREBUCKET
 {

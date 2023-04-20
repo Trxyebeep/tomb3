@@ -5,12 +5,15 @@
 
 DXTEXTURE* TPages[MAX_TPAGES];
 long nTPages;
+#if (DIRECT3D_VERSION < 0x900)
 TEXTURE Textures[MAX_TPAGES];
 LPDIRECTDRAWPALETTE DXPalette;
+#endif
 
 static bool bSetColorKey = 1;
 static bool bMakeGrey;
 
+#if (DIRECT3D_VERSION < 0x900)
 long DXTextureNewPalette(uchar* palette)
 {
 	ulong data[256];
@@ -33,11 +36,6 @@ void DXResetPalette(DXTEXTURE* tex)
 	bSetColorKey = 1;
 }
 
-void DXTextureSetGreyScale(bool set)
-{
-	bMakeGrey = set;
-}
-
 LPDIRECT3DTEXTUREX DXTextureGetInterface(LPDIRECTDRAWSURFACEX surf)
 {
 	LPDIRECT3DTEXTUREX tex;
@@ -46,73 +44,6 @@ LPDIRECT3DTEXTUREX DXTextureGetInterface(LPDIRECTDRAWSURFACEX surf)
 		return tex;
 	
 	return 0;
-}
-
-long DXTextureFindTextureSlot(DXTEXTURE* tex)
-{
-	for (int i = 0; i < MAX_TPAGES; i++)
-	{
-		if (!(tex[i].dwFlags & 1))
-			return i;
-	}
-
-	return -1;
-}
-
-bool DXTextureMakeSystemSurface(DXTEXTURE* tex, LPDDPIXELFORMAT ddpf)
-{
-	DDSURFACEDESCX desc;
-
-	memset(&desc, 0, sizeof(DDSURFACEDESCX));
-	desc.dwSize = sizeof(DDSURFACEDESCX);
-	desc.dwHeight = tex->nHeight;
-	desc.dwWidth = tex->nWidth;
-	desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
-	desc.ddsCaps.dwCaps = DDSCAPS_SYSTEMMEMORY | DDSCAPS_TEXTURE;
-	memcpy(&desc.ddpfPixelFormat, ddpf, sizeof(DDPIXELFORMAT));
-
-	if (FAILED(DD_CreateSurface(desc, tex->pSystemSurface)))
-		return 0;
-
-	return !tex->pPalette || SUCCEEDED(tex->pSystemSurface->SetPalette(tex->pPalette));
-}
-
-long DXTextureMakeDeviceSurface(long w, long h, LPDIRECTDRAWPALETTE palette, DXTEXTURE* list)
-{
-	DXTEXTURE* tex;
-	LPDDPIXELFORMAT ddpf;
-	long index;
-
-	index = DXTextureFindTextureSlot(list);
-
-	if (index < 0)
-		return -1;
-
-	tex = &list[index];
-	memset(tex, 0, sizeof(DXTEXTURE));
-	tex->nWidth = w;
-	tex->nHeight = h;
-	tex->dwFlags = 1;
-	tex->pPalette = palette;
-	ddpf = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].Texture[App.lpDXConfig->D3DTF].ddsd.ddpfPixelFormat;
-	tex->bpp = ddpf->dwRGBBitCount;
-
-	if (DXTextureMakeSystemSurface(tex, ddpf))
-		return index;
-
-	return -1;
-}
-
-void DXClearAllTextures(DXTEXTURE* list)
-{
-	for (int i = 0; i < MAX_TPAGES; i++)
-		DXTextureCleanup(i, list);
-
-	if (DXPalette)
-	{
-		DXPalette->Release();
-		DXPalette = 0;
-	}
 }
 
 bool DXCreateTextureSurface(TEXTURE* tex, LPDDPIXELFORMAT ddpf)
@@ -160,12 +91,110 @@ bool DXCreateTextureSurface(TEXTURE* tex, LPDDPIXELFORMAT ddpf)
 	return 1;
 }
 
+bool DXTextureMakeSystemSurface(DXTEXTURE* tex, LPDDPIXELFORMAT ddpf)
+{
+	DDSURFACEDESCX desc;
+
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
+	desc.dwHeight = tex->nHeight;
+	desc.dwWidth = tex->nWidth;
+	desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
+	desc.ddsCaps.dwCaps = DDSCAPS_SYSTEMMEMORY | DDSCAPS_TEXTURE;
+	memcpy(&desc.ddpfPixelFormat, ddpf, sizeof(DDPIXELFORMAT));
+
+	if (FAILED(DD_CreateSurface(desc, tex->pSystemSurface)))
+		return 0;
+
+	return !tex->pPalette || SUCCEEDED(tex->pSystemSurface->SetPalette(tex->pPalette));
+}
+
+long DXTextureMakeDeviceSurface(long w, long h, LPDIRECTDRAWPALETTE palette, DXTEXTURE* list)
+{
+	DXTEXTURE* tex;
+	LPDDPIXELFORMAT ddpf;
+	long index;
+
+	index = DXTextureFindTextureSlot(list);
+
+	if (index < 0)
+		return -1;
+
+	tex = &list[index];
+	memset(tex, 0, sizeof(DXTEXTURE));
+	tex->nWidth = w;
+	tex->nHeight = h;
+	tex->dwFlags = 1;
+	tex->pPalette = palette;
+	ddpf = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].Texture[App.lpDXConfig->D3DTF].ddsd.ddpfPixelFormat;
+	tex->bpp = ddpf->dwRGBBitCount;
+
+	if (DXTextureMakeSystemSurface(tex, ddpf))
+		return index;
+
+	return -1;
+}
+#else
+long DXTextureMakeDeviceSurface(long w, long h, DXTEXTURE* list)
+{
+	DXTEXTURE* tex;
+	long index;
+
+	index = DXTextureFindTextureSlot(list);
+
+	if (index < 0)
+		return -1;
+
+	tex = &list[index];
+	memset(tex, 0, sizeof(DXTEXTURE));
+	tex->nWidth = w;
+	tex->nHeight = h;
+	tex->dwFlags = 1;
+
+	if FAILED(App.D3DDev->CreateTexture(w, h, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &tex->tex, 0))
+		return -1;
+
+	return index;
+}
+#endif
+
+void DXTextureSetGreyScale(bool set)
+{
+	bMakeGrey = set;
+}
+
+long DXTextureFindTextureSlot(DXTEXTURE* tex)
+{
+	for (int i = 0; i < MAX_TPAGES; i++)
+	{
+		if (!(tex[i].dwFlags & 1))
+			return i;
+	}
+
+	return -1;
+}
+
+void DXClearAllTextures(DXTEXTURE* list)
+{
+	for (int i = 0; i < MAX_TPAGES; i++)
+		DXTextureCleanup(i, list);
+
+#if (DIRECT3D_VERSION < 0x900)
+	if (DXPalette)
+	{
+		DXPalette->Release();
+		DXPalette = 0;
+	}
+#endif
+}
+
 void DXTextureCleanup(long index, DXTEXTURE* list)
 {
 	DXTEXTURE* tex;
 
 	tex = &list[index];
 
+#if (DIRECT3D_VERSION < 0x900)
 	if (tex->pPalette)
 	{
 		tex->pPalette->Release();
@@ -191,6 +220,13 @@ void DXTextureCleanup(long index, DXTEXTURE* list)
 		GlobalFree(tex->pData);
 		tex->pData = 0;
 	}
+#else
+	if (tex->tex)
+	{
+		tex->tex->Release();
+		tex->tex = 0;
+	}
+#endif
 
 	tex->dwFlags = 0;
 	tex->nWidth = 0;
@@ -203,6 +239,7 @@ DXTEXTURE* DXRestoreSurfaceIfLost(long index, DXTEXTURE* list)
 
 	tex = &list[index];
 
+#if (DIRECT3D_VERSION < 0x900)
 	if (tex->tex && tex->tex->pSurf)
 	{
 		if (tex->tex->pSurf->IsLost() == DDERR_SURFACELOST)
@@ -212,10 +249,12 @@ DXTEXTURE* DXRestoreSurfaceIfLost(long index, DXTEXTURE* list)
 			tex->tex = 0;
 		}
 	}
+#endif
 
 	return &list[index];
 }
 
+#if (DIRECT3D_VERSION < 0x900)
 long DXTextureAddPal(long w, long h, uchar* src, DXTEXTURE* list, ulong flags)
 {
 	DXTEXTURE* tex;
@@ -246,27 +285,6 @@ long DXTextureAddPal(long w, long h, uchar* src, DXTEXTURE* list, ulong flags)
 
 	DD_UnlockSurface(tex->pSystemSurface, desc);
 	return index;
-}
-
-void MMXTextureCopy(ulong* dest, uchar* src, ulong step)
-{
-	ulong* pSrc;
-	long add;
-
-	add = step << 10;
-
-	for (int i = 0; i < 256; i += step)
-	{
-		pSrc = (ulong*)src;
-
-		for (int j = 0; j < 256; j += step)
-		{
-			*dest++ = *pSrc;
-			pSrc += step;
-		}
-
-		src += add;
-	}
 }
 
 long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong flags)
@@ -328,9 +346,9 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 			{
 			case 8888:
 				a = 0;
-				r = RGBA_GETRED(col);
-				g = RGBA_GETGREEN(col);
-				b = RGBA_GETBLUE(col);
+				r = (col >> 16) & 0xFF;
+				g = (col >> 8) & 0xFF;
+				b = col & 0xFF;
 
 				if (r && g && b)
 					a = 255;
@@ -339,9 +357,9 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 
 			case 888:
 				a = 0;
-				r = RGBA_GETRED(col);
-				g = RGBA_GETGREEN(col);
-				b = RGBA_GETBLUE(col);
+				r = (col >> 16) & 0xFF;
+				g = (col >> 8) & 0xFF;
+				b = col & 0xFF;
 
 				if (r && g && b)
 					a = 255;
@@ -417,7 +435,109 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 
 	return index;
 }
+#else
+static void CopyTexture16(long w, long h, uchar* src, LPDDSURFACEDESCX desc, ulong flags)
+{
+	ushort* s;
+	ulong* dest;
+	uchar r, g, b, a;
 
+	s = (ushort*)src;
+
+	for (int i = 0; i < h; i++)
+	{
+		dest = (ulong*)((uchar*)desc->pBits + desc->Pitch * i);
+		
+		for (int j = 0; j < w; j++)
+		{
+			r = (*s >> 7) & 0xF8;
+			g = (*s >> 2) & 0xF8;
+			b = (*s << 3) & 0xF8;
+			a = ((*s >> 15) & 1) ? 255 : 0;
+
+			if (bMakeGrey)
+			{
+				r = b;
+				g = b;
+			}
+
+			if (flags == 16)
+				a = 255;
+
+			*dest++ = RGBA_MAKE(r, g, b, a);
+			s++;
+		}
+	}
+}
+
+static void CopyTexture32(long w, long h, uchar* src, LPDDSURFACEDESCX desc, ulong flags)
+{
+	ulong* s;
+	ulong* dest;
+	uchar r, g, b, a;
+
+	s = (ulong*)src;
+
+	for (int i = 0; i < h; i++)
+	{
+		dest = (ulong*)((uchar*)desc->pBits + desc->Pitch * i);
+
+		for (int j = 0; j < w; j++)
+		{
+			r = RGBA_GETRED(*s);
+			g = RGBA_GETGREEN(*s);
+			b = RGBA_GETBLUE(*s);
+			a = RGBA_GETALPHA(*s);
+
+			if (bMakeGrey)
+			{
+				r = b;
+				g = b;
+			}
+
+			if (flags == 16)
+				a = 255;
+
+			*dest++ = RGBA_MAKE(r, g, b, a);
+			s++;
+		}
+	}
+}
+
+long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong flags)
+{
+	DXTEXTURE* tex;
+	DDSURFACEDESCX desc;
+	long index;
+
+	index = DXTextureMakeDeviceSurface(w, h, list);
+
+	if (index < 0)
+		return -1;
+
+	tex = &list[index];
+	tex->dwFlags |= flags;
+
+	if FAILED(tex->tex->LockRect(0, &desc, 0, 0))
+		return -1;
+
+	switch (bpp)
+	{
+	case 8888:
+		CopyTexture32(w, h, src, &desc, flags);
+		break;
+
+	case 555:
+		CopyTexture16(w, h, src, &desc, flags);
+		break;
+	}
+
+	tex->tex->UnlockRect(0);
+	return index;
+}
+#endif
+
+#if (DIRECT3D_VERSION < 0x900)
 void DXCreateMaxTPages(long create)
 {
 	DIRECT3DINFO* d3dinfo;
@@ -469,6 +589,7 @@ void DXFreeTPages()
 	for (int i = 0; i < MAX_TPAGES; i++)
 	{
 		tex = &Textures[i];
+
 		DXTex = (DXTEXTURE*)tex->DXTex;
 
 		if (DXTex)
@@ -497,3 +618,4 @@ void DXFreeTPages()
 
 	nTPages = 0;
 }
+#endif

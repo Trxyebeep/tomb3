@@ -22,7 +22,11 @@ void setup_screen_size()
 	DISPLAYMODE* dm;
 	long w, h, sw, sh;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode;
+#else
 	dm = App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode;
+#endif
 	w = dm[App.lpDXConfig->nVMode].w;
 	h = dm[App.lpDXConfig->nVMode].h;
 	sw = long(w * screen_sizer);

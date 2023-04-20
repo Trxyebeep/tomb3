@@ -101,13 +101,21 @@ void T3_SaveSettings()
 {
 	OpenRegistry(SUB_KEY);
 
+#if (DIRECT3D_VERSION < 0x900)
 	if (App.lpDeviceInfo->nDDInfo)
 		REG_WriteLong((char*)"DD", App.lpDXConfig->nDD);
+#endif
 
+#if (DIRECT3D_VERSION >= 0x900)
+	if (App.lpDeviceInfo->nD3DInfo)
+#else
 	if (App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].nD3DInfo)
+#endif
 	{
 		REG_WriteLong((char*)"D3D", App.lpDXConfig->nD3D);
+#if (DIRECT3D_VERSION < 0x900)
 		REG_WriteLong((char*)"D3DTF", App.lpDXConfig->D3DTF);
+#endif
 	}
 
 	if (App.lpDeviceInfo->nDSInfo)
@@ -176,13 +184,21 @@ bool T3_LoadSettings()
 		return 0;
 	}
 
+#if (DIRECT3D_VERSION < 0x900)
 	if (App.lpDeviceInfo->nDDInfo)
 		REG_ReadLong((char*)"DD", (ulong&)App.lpDXConfig->nDD, 0);
+#endif
 
+#if (DIRECT3D_VERSION >= 0x900)
+	if (App.lpDeviceInfo->nD3DInfo)
+#else
 	if (App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].nD3DInfo)
+#endif
 	{
 		REG_ReadLong((char*)"D3D", (ulong&)App.lpDXConfig->nD3D, 0);
+#if (DIRECT3D_VERSION < 0x900)
 		REG_ReadLong((char*)"D3DTF", (ulong&)App.lpDXConfig->D3DTF, 0);
+#endif
 	}
 
 	if (App.lpDeviceInfo->nDSInfo)

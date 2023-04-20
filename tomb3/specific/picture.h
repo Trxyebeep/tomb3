@@ -6,7 +6,11 @@ void S_FadePicture();
 void DrawTile(long x, long y, long w, long h, long tpage, long tU, long tV, long tW, long tH, long c0, long c1, long c2, long c3, float z);
 void DrawPictureAlpha(long col, long* indices, float z);
 void TRDrawPicture(long col, long* indices, float z);
+#if (DIRECT3D_VERSION >= 0x900)
+void MemBlt(LPDDSURFACEDESCX dst, long dstX, long dstY, LPDDSURFACEDESCX src, LPRECT srcRect);
+#else
 void MemBlt(char* dest, long x, long y, long w, long h, long sz, char* source, long x2, long y2, DDSURFACEDESCX desc);
+#endif
 void ConvertSurfaceToTextures16Bit(LPDIRECTDRAWSURFACEX surf);
 void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf);
 void CreateMonoScreen();

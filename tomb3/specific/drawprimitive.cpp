@@ -72,6 +72,11 @@ HRESULT HWSetSamplerState(ulong Sampler, D3DSAMPLERSTATETYPE Type, ulong Value)
 {
 	return Dev->SetSamplerState(Sampler, Type, Value);
 }
+
+HRESULT HWSetTexture(ulong Stage, TEXHANDLE pTexture)
+{
+	return Dev->SetTexture(Stage, pTexture);
+}
 #else
 HRESULT HWDrawPrimitive(D3DPRIMITIVETYPE dptPrimitiveType, D3DVERTEXTYPE dwVertexTypeDesc, LPVOID lpvVertices, ulong dwVertexCount, ulong dwFlags)
 {
@@ -102,6 +107,7 @@ void InitDrawPrimitive(LPDIRECT3DDEVICEX lpD3DDev, LPDIRECTDRAWSURFACEX surf)
 #if (DIRECT3D_VERSION >= 0x900)
 	SetTextureStageState = HWSetTextureStageState;
 	SetSamplerState = HWSetSamplerState;
+	SetTexture = HWSetTexture;
 #endif
 	BeginScene = HWBeginScene;
 	EndScene = HWEndScene;

@@ -272,8 +272,10 @@ long S_UpdateInput()
 	else if (med_debounce)
 		med_debounce--;
 
+#if (DIRECT3D_VERSION < 0x900)
 	if (key_pressed(DIK_APOSTROPHE))
 		DXSaveScreen(App.BackBuffer);
+#endif
 
 	if (FinishLevelCheat)
 	{

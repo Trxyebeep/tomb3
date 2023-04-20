@@ -622,7 +622,11 @@ long FindBucket(DXTEXTURE* TPage)
 			{
 				HWR_EnableZBuffer(1, 1);
 				HWR_SetCurrentTexture(bucket->TPage);
+#if (DIRECT3D_VERSION >= 0x900)
+				DrawPrimitive(D3DPT_TRIANGLELIST, bucket->vtx, bucket->nVtx);
+#else
 				DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+#endif
 				bucket->TPage = TPage;
 				bucket->nVtx = 0;
 				return i;
@@ -653,7 +657,11 @@ long FindBucket(DXTEXTURE* TPage)
 	bucket = &Buckets[fullest];
 	HWR_EnableZBuffer(1, 1);
 	HWR_SetCurrentTexture(bucket->TPage);
+#if (DIRECT3D_VERSION >= 0x900)
+	DrawPrimitive(D3DPT_TRIANGLELIST, bucket->vtx, bucket->nVtx);
+#else
 	DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+#endif
 	bucket->TPage = TPage;
 	bucket->nVtx = 0;
 	return fullest;
@@ -670,7 +678,11 @@ void DrawBuckets()
 		if (bucket->nVtx)
 		{
 			HWR_SetCurrentTexture(bucket->TPage);
+#if (DIRECT3D_VERSION >= 0x900)
+			DrawPrimitive(D3DPT_TRIANGLELIST, bucket->vtx, bucket->nVtx);
+#else
 			DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+#endif
 		}
 	}
 }

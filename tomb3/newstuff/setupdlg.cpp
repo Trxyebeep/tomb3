@@ -12,6 +12,12 @@ static DEVICEINFO* dev;
 
 static void InitDDDrivers(HWND hwnd)
 {
+#if (DIRECT3D_VERSION >= 0x900)
+	HWND gfx;
+
+	gfx = GetDlgItem(hwnd, IDC_GRAPHICS_ADAPTER);
+	EnableWindow(gfx, 0);
+#else
 	HWND gfx;
 	long lp;
 	char about[512];
@@ -23,8 +29,43 @@ static void InitDDDrivers(HWND hwnd)
 		sprintf(about, "%s (%s)", dev->DDInfo[lp].About, dev->DDInfo[lp].Name);
 		SendMessage(gfx, CB_ADDSTRING, 0, (LPARAM)about);
 	}
+#endif
 }
 
+#if (DIRECT3D_VERSION >= 0x900)
+static void InitD3DDrivers(HWND hwnd)
+{
+	HWND d3d;
+	ulong lp;
+	long nHWDriver;
+	static long selected = -1;
+	char buf[256];
+	char about[256];
+
+	d3d = GetDlgItem(hwnd, IDC_D3D);
+	nHWDriver = -1;
+
+	if (selected != -1)
+		SendMessage(d3d, CB_GETLBTEXT, SendMessage(d3d, CB_GETCURSEL, 0, 0), (LPARAM)buf);
+
+	SendMessage(d3d, CB_RESETCONTENT, 0, 0);
+
+	for (lp = 0; lp < dev->nD3DInfo; lp++)
+	{
+		sprintf(about, "%s", dev->D3DInfo[lp].About);
+		SendMessage(d3d, CB_ADDSTRING, 0, (LPARAM)about);
+
+		if (selected == -1 || !strcmp(buf, about))
+			nHWDriver = lp;
+	}
+
+	if (nHWDriver == -1)
+		nHWDriver = 0;
+
+	selected = nHWDriver;
+	SendMessage(d3d, CB_SETCURSEL, selected, 0);
+}
+#else
 static void InitD3DDrivers(HWND hwnd, long nDrivers)
 {
 	DIRECTDRAWINFO* ddinfo;
@@ -75,8 +116,13 @@ static void InitD3DDrivers(HWND hwnd, long nDrivers)
 	SendMessage(filter, BM_SETCHECK, 1, 0);
 	SendMessage(dither, BM_SETCHECK, 1, 0);
 }
+#endif
 
+#if (DIRECT3D_VERSION >= 0x900)
+static void InitVideoModes(HWND hwnd, long nD3D)
+#else
 static void InitVideoModes(HWND hwnd, long nDD, long nD3D)
+#endif
 {
 	DIRECT3DINFO* d3dinfo;
 	DISPLAYMODE* dm;
@@ -96,6 +142,9 @@ static void InitVideoModes(HWND hwnd, long nDD, long nD3D)
 	SendMessage(res, CB_RESETCONTENT, 0, 0);
 	nListed = 0;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	d3dinfo = &dev->D3DInfo[nD3D];
+#else
 	d3dinfo = &dev->DDInfo[nDD].D3DInfo[nD3D];
 
 	for (int i = 0; i < d3dinfo->nDisplayMode; i++)
@@ -114,6 +163,7 @@ static void InitVideoModes(HWND hwnd, long nDD, long nD3D)
 			nListed++;
 		}
 	}
+#endif
 
 	for (int i = 0; i < d3dinfo->nDisplayMode; i++)
 	{
@@ -121,7 +171,11 @@ static void InitVideoModes(HWND hwnd, long nDD, long nD3D)
 
 		if (dm->bpp == 32)
 		{
+#if (DIRECT3D_VERSION >= 0x900)
+			sprintf(vm, "%d x %d", dm->w, dm->h);
+#else
 			sprintf(vm, "%dx%d True Colour (%d Bit)", dm->w, dm->h, 32);
+#endif
 			SendMessage(res, CB_ADDSTRING, 0, (LPARAM)vm);
 			SendMessage(res, CB_SETITEMDATA, nListed, i);
 
@@ -144,6 +198,7 @@ static void InitVideoModes(HWND hwnd, long nDD, long nD3D)
 	}
 }
 
+#if (DIRECT3D_VERSION < 0x900)
 static void InitTextures(HWND hwnd, long nDD, long nD3D)
 {
 	DIRECT3DINFO* d3dinfo;
@@ -269,6 +324,7 @@ static void InitTextures(HWND hwnd, long nDD, long nD3D)
 		SendMessage(format, CB_SETCURSEL, nTF, 0);
 	}
 }
+#endif
 
 static void InitDSAdapters(HWND hwnd)
 {
@@ -298,17 +354,23 @@ static void InitDSAdapters(HWND hwnd)
 
 static void InitDialogBox(HWND hwnd)
 {
-	long nDD;
+	long n;
 
 	UT_CenterWindow(hwnd);
+	InitDDDrivers(hwnd);	//for DX9 this just disables the dropdown
 
-	InitDDDrivers(hwnd);
-	nDD = dev->nDDInfo - 1;
-	SendMessage(GetDlgItem(hwnd, IDC_GRAPHICS_ADAPTER), CB_SETCURSEL, nDD, 0);
-	InitD3DDrivers(hwnd, nDD);
-
-	InitVideoModes(hwnd, nDD, SendMessage(GetDlgItem(hwnd, IDC_D3D), CB_GETCURSEL, 0, 0));
-	InitTextures(hwnd, nDD, SendMessage(GetDlgItem(hwnd, IDC_D3D), CB_GETCURSEL, 0, 0));
+#if (DIRECT3D_VERSION >= 0x900)
+	InitD3DDrivers(hwnd);
+	n = dev->nD3DInfo - 1;
+	SendMessage(GetDlgItem(hwnd, IDC_D3D), CB_SETCURSEL, n, 0);
+	InitVideoModes(hwnd, n);
+#else
+	n = dev->nDDInfo - 1;
+	SendMessage(GetDlgItem(hwnd, IDC_GRAPHICS_ADAPTER), CB_SETCURSEL, n, 0);
+	InitD3DDrivers(hwnd, n);
+	InitVideoModes(hwnd, n, SendMessage(GetDlgItem(hwnd, IDC_D3D), CB_GETCURSEL, 0, 0));
+	InitTextures(hwnd, n, SendMessage(GetDlgItem(hwnd, IDC_D3D), CB_GETCURSEL, 0, 0));
+#endif
 
 	InitDSAdapters(hwnd);
 }
@@ -358,11 +420,15 @@ static BOOL CALLBACK SetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM 
 		{
 		case IDOK:
 		case IDC_TEST:
+#if (DIRECT3D_VERSION < 0x900)
 			config->nDD = SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0);
+#endif
 			config->nD3D = SendMessage(GetDlgItem(dlg, IDC_D3D), CB_GETCURSEL, 0, 0);
 			config->nVMode = SendMessage(GetDlgItem(dlg, IDC_RESOLUTION), CB_GETITEMDATA,
 				SendMessage(GetDlgItem(dlg, IDC_RESOLUTION), CB_GETCURSEL, 0, 0), 0);
+#if (DIRECT3D_VERSION < 0x900)
 			config->D3DTF = SendMessage(GetDlgItem(dlg, IDC_D3DTF), CB_GETCURSEL, 0, 0);
+#endif
 			config->bZBuffer = (bool)SendMessage(GetDlgItem(dlg, IDC_ZBUFFER), BM_GETCHECK, 0, 0);
 			config->nDS = SendMessage(GetDlgItem(dlg, IDC_SOUND), CB_GETCURSEL, 0, 0);
 			config->Dither = (bool)SendMessage(GetDlgItem(dlg, IDC_DITHER), BM_GETCHECK, 0, 0);
@@ -404,11 +470,16 @@ static BOOL CALLBACK SetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM 
 
 			if (HIWORD(wParam) == CBN_SELCHANGE)
 			{
+#if (DIRECT3D_VERSION >= 0x900)
+				InitD3DDrivers(dlg);
+				InitVideoModes(dlg, SendMessage(GetDlgItem(dlg, IDC_D3D), CB_GETCURSEL, 0, 0));
+#else
 				InitD3DDrivers(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0));
 				InitVideoModes(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
 					SendMessage(GetDlgItem(dlg, IDC_D3D), CB_GETCURSEL, 0, 0));
 				InitTextures(dlg, SendMessage(GetDlgItem(dlg, IDC_GRAPHICS_ADAPTER), CB_GETCURSEL, 0, 0),
 					SendMessage(GetDlgItem(dlg, IDC_D3D), CB_GETCURSEL, 0, 0));
+#endif
 			}
 
 			break;

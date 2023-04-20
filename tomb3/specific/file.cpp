@@ -100,16 +100,31 @@ long LoadTexturePages(HANDLE file)
 	uchar* p;
 	ulong read;
 	long nPages, size;
+#if (DIRECT3D_VERSION < 0x900)
 	bool _16bit;
+#endif
 
 	MyReadFile(file, &nPages, sizeof(long), &read, 0);
+
+#if (DIRECT3D_VERSION >= 0x900)
+	size = 0x20000;
+#else
 	_16bit = !App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].Texture[App.lpDXConfig->D3DTF].bPalette;
 	size = _16bit ? 0x20000 : 0x10000;
+#endif
 	p = (uchar*)GlobalAlloc(GMEM_FIXED, nPages * size);
 
 	if (!p)
 		return 0;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	SetFilePointer(file, nPages << 16, 0, FILE_CURRENT);
+
+	for (int i = 0; i < nPages; i++)
+		MyReadFile(file, p + (size * i), size, &read, 0);
+
+	HWR_LoadTexturePages(nPages, p, 0);
+#else
 	if (_16bit)
 	{
 		SetFilePointer(file, nPages << 16, 0, FILE_CURRENT);
@@ -127,6 +142,7 @@ long LoadTexturePages(HANDLE file)
 		SetFilePointer(file, nPages << 17, 0, FILE_CURRENT);
 		HWR_LoadTexturePages(nPages, p, game_palette);
 	}
+#endif
 
 	GlobalFree(p);
 	return 1;

@@ -324,13 +324,23 @@ static void OutputPickupDisplay()
 	{
 		if (bAlphaTesting)
 		{
+#if (DIRECT3D_VERSION >= 0x900)
+			SetRenderState(D3DRS_ALPHATESTENABLE, 0);
+			DrawBuckets();
+			SetRenderState(D3DRS_ALPHATESTENABLE, 1);
+#else
 			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 0);
 			DrawBuckets();
 			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 1);
+#endif
 			phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
 			HWR_DrawPolyListBF(surfacenumbf, sort3d_bufferbf);
 			HWR_EnableZBuffer(0, 1);
+#if (DIRECT3D_VERSION >= 0x900)
+			SetRenderState(D3DRS_ALPHATESTENABLE, 0);
+#else
 			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 0);
+#endif
 			phd_SortPolyList(surfacenumfb, sort3d_bufferfb);
 			HWR_DrawPolyListBF(surfacenumfb, sort3d_bufferfb);
 		}
@@ -362,13 +372,23 @@ void S_OutputPolyList()
 
 		if (bAlphaTesting)
 		{
+#if (DIRECT3D_VERSION >= 0x900)
+			SetRenderState(D3DRS_ALPHATESTENABLE, 0);
+			DrawBuckets();
+			SetRenderState(D3DRS_ALPHATESTENABLE, 1);
+#else
 			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 0);
 			DrawBuckets();
 			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 1);
+#endif
 			phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
 			HWR_DrawPolyListBF(surfacenumbf, sort3d_bufferbf);
 			HWR_EnableZBuffer(0, 1);
+#if (DIRECT3D_VERSION >= 0x900)
+			SetRenderState(D3DRS_ALPHATESTENABLE, 0);
+#else
 			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 0);
+#endif
 			phd_SortPolyList(surfacenumfb, sort3d_bufferfb);
 			HWR_DrawPolyListBF(surfacenumfb, sort3d_bufferfb);
 		}
@@ -533,7 +553,9 @@ long S_DumpCine()
 	if (!framedump)
 		return 0;
 
+#if (DIRECT3D_VERSION < 0x900)
 	DXSaveScreen(App.FrontBuffer);
+#endif
 	return 1;
 }
 
@@ -620,9 +642,13 @@ void S_InitialisePolyList(bool clearBackBuffer)
 
 	if (GtFullScreenClearNeeded)
 	{
+#if (DIRECT3D_VERSION < 0x900)
 		DXCheckForLostSurfaces();
+#endif
 		DD_SpinMessageLoop(0);
+#if (DIRECT3D_VERSION < 0x900)
 		DXDoFlipWait();
+#endif
 		DXClearBuffers(3, 0);
 		GtFullScreenClearNeeded = 0;
 		clearBackBuffer = 0;
