@@ -12,4 +12,4 @@ HRESULT HWDrawPrimitive(D3DPRIMITIVETYPE dptPrimitiveType, D3DVERTEXTYPE dwVerte
 HRESULT HWBeginScene();
 HRESULT HWEndScene();
 HRESULT HWSetRenderState(D3DRENDERSTATETYPE dwRenderStateType, ulong dwRenderState);
-void InitDrawPrimitive(LPDIRECT3DDEVICEX lpD3DDev, LPDIRECTDRAWSURFACEX surf);
+void InitDrawPrimitive(LPDIRECT3DDEVICEX lpD3DDev);

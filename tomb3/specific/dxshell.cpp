@@ -732,7 +732,7 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 	desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
 	DXCreateSurface(App.DDraw, &desc, &App.PictureBuffer);
 	DXClearBuffers(11, 0);
-	InitDrawPrimitive(App.D3DDev, App.BackBuffer);
+	InitDrawPrimitive(App.D3DDev);
 	HWR_InitState();
 	DXCreateMaxTPages(1);
 
@@ -744,6 +744,92 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 
 	Log("DXStartRenderer finished successfully");
 	return 1;
+}
+
+bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer)
+{
+	DIRECT3DINFO* d3dinfo;
+	DISPLAYMODE* dm;
+	ulong currentBpp;
+	bool change;
+
+	d3dinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D];
+	dm = &d3dinfo->DisplayMode[App.lpDXConfig->nVMode];
+	currentBpp = dm->bpp;
+
+	App.DXConfig.nVMode = needed;
+	dm = &d3dinfo->DisplayMode[App.lpDXConfig->nVMode];
+	change = 1;
+
+	if (needed != current && dm->bpp != currentBpp)
+	{
+		change = 0;
+
+		if (needed > current)
+		{
+			while (++needed <= d3dinfo->nDisplayMode)
+			{
+				App.DXConfig.nVMode = needed;
+				dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+
+				if (dm->bpp == currentBpp)
+				{
+					change = 1;
+					break;
+				}
+			}
+		}
+		else
+		{
+			while (--needed >= 0)
+			{
+				App.DXConfig.nVMode = needed;
+				dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+
+				if (dm->bpp == currentBpp)
+				{
+					change = 1;
+					break;
+				}
+			}
+		}
+	}
+
+	if (!change)
+	{
+		App.DXConfig.nVMode = current;	//abort!
+		return 0;
+	}
+
+	DXSurfBlt(App.FrontBuffer, 0, 0);
+
+	for (int i = 0; i < MAX_TPAGES; i++)
+		PictureTextures[i].tex = 0;
+
+	WinFreeDX(0);
+
+	if (WinDXInit(App.lpDeviceInfo, App.lpDXConfig, 0))
+		change = 1;
+	else
+	{
+		WinFreeDX(0);
+		App.DXConfig.nVMode = current;
+
+		if (disableZBuffer)
+			App.lpDXConfig->bZBuffer = 0;
+
+		WinDXInit(App.lpDeviceInfo, App.lpDXConfig, 0);
+		change = 0;
+	}
+
+	HWR_GetAllTextureHandles();
+
+	for (int i = 0; i < nTPages; i++)
+		HWR_SetCurrentTexture(TPages[i]);
+
+	HWR_InitState();
+	setup_screen_size();
+	return change;
 }
 #else
 static bool CreateD3D()
@@ -758,12 +844,32 @@ static void ReleaseD3D()
 	App.D3D = 0;
 }
 
+void DXCreateCaptureBuffer()
+{
+	DISPLAYMODE* dm;
+
+	DXFreeCaptureBuffer();
+
+	dm = &App.DeviceInfo.D3DInfo[App.DXConfig.nD3D].DisplayMode[App.DXConfig.nVMode];
+	App.D3DDev->CreateRenderTarget(dm->w, dm->h, D3DFMT_X8R8G8B8, D3DMULTISAMPLE_NONE, 0, 1, &App.CaptureBuffer, 0);
+	App.D3DDev->ColorFill(App.CaptureBuffer, 0, 0);
+}
+
+void DXFreeCaptureBuffer()
+{
+	if (App.CaptureBuffer)
+	{
+		App.CaptureBuffer->Release();
+		App.CaptureBuffer = 0;
+	}
+}
+
 void DXClearBuffers(ulong flags, ulong color)
 {
 
 }
 
-void DXEnumerateDisplayModes(DIRECT3DINFO* d3dinfo, long index)
+static void DXEnumerateDisplayModes(DIRECT3DINFO* d3dinfo, long index)
 {
 	DISPLAYMODE* pDM;
 	D3DDISPLAYMODE DM;
@@ -905,6 +1011,7 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 	HWND desktop;
 	DEVMODE dev;
 	HDC hDC;
+	bool res;
 
 	Log("Starting DXStartRenderer");
 
@@ -954,7 +1061,42 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 		tomb3.rScreen.bottom = dm->h;
 	}
 
-	return DXCreateDevice(windowed);
+	res = DXCreateDevice(windowed);
+
+	if (res)
+		DXCreateCaptureBuffer();
+
+	App.ZBuffer = (LPDIRECTDRAWSURFACEX)App.lpDXConfig->bZBuffer;	//hack
+	return res;
+}
+
+bool DXSwitchVideoMode(long needed, long current)
+{
+	if (current == needed)
+		return 0;
+
+	App.lpDXConfig->nVMode = needed;
+
+	if (!WinDXInit(App.lpDeviceInfo, App.lpDXConfig, 0))
+	{
+		WinFreeDX(0);
+		App.lpDXConfig->nVMode = current;
+		WinDXInit(App.lpDeviceInfo, App.lpDXConfig, 0);
+		return 0;
+	}
+
+	HWR_InitState();
+	setup_screen_size();
+	return 1;
+}
+
+bool DXToggleZbuffer()
+{
+	App.lpDXConfig->bZBuffer = !App.lpDXConfig->bZBuffer;
+	App.ZBuffer = (LPDIRECTDRAWSURFACEX)App.lpDXConfig->bZBuffer;	//hack
+
+	HWR_InitState();
+	return 1;
 }
 #endif
 
@@ -1025,9 +1167,17 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 	LPDIRECTDRAWSURFACEX BackBuffer;
 
 	App.D3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &BackBuffer);
-	App.D3DDev->StretchRect(BackBuffer, 0, App.FrontBuffer, 0, D3DTEXF_NONE);
+	App.D3DDev->StretchRect(BackBuffer, 0, App.CaptureBuffer, 0, D3DTEXF_NONE);
 	BackBuffer->Release();
-	App.D3DDev->Present(0, 0, 0, 0);
+
+	if (App.D3DDev->Present(0, 0, 0, 0) == D3DERR_DEVICELOST)
+	{
+		DXFreeCaptureBuffer();
+		DXCreateDevice(tomb3.Windowed);
+		HWR_InitState();
+		DXCreateCaptureBuffer();
+	}
+
 	App.D3DDev->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0F, 0);
 #else
 	DIRECT3DINFO* d3dinfo;
@@ -1048,109 +1198,6 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 		return DD_SpinMessageLoop(0);
 
 	return 1;
-}
-
-bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer)
-{
-	DIRECT3DINFO* d3dinfo;
-	DISPLAYMODE* dm;
-	ulong currentBpp;
-	bool change;
-
-#if (DIRECT3D_VERSION >= 0x900)
-	d3dinfo = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D];
-#else
-	d3dinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D];
-#endif
-
-	dm = &d3dinfo->DisplayMode[App.lpDXConfig->nVMode];
-	currentBpp = dm->bpp;
-
-	App.DXConfig.nVMode = needed;
-	dm = &d3dinfo->DisplayMode[App.lpDXConfig->nVMode];
-	change = 1;
-
-	if (needed != current && dm->bpp != currentBpp)
-	{
-		change = 0;
-
-		if (needed > current)
-		{
-			while (++needed <= d3dinfo->nDisplayMode)
-			{
-				App.DXConfig.nVMode = needed;
-#if (DIRECT3D_VERSION >= 0x900)
-				dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
-#else
-				dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
-#endif
-
-				if (dm->bpp == currentBpp)
-				{
-					change = 1;
-					break;
-				}
-			}
-		}
-		else
-		{
-			while (--needed >= 0)
-			{
-				App.DXConfig.nVMode = needed;
-#if (DIRECT3D_VERSION >= 0x900)
-				dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
-#else
-				dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
-#endif
-
-				if (dm->bpp == currentBpp)
-				{
-					change = 1;
-					break;
-				}
-			}
-		}
-	}
-
-	if (!change)
-	{
-		App.DXConfig.nVMode = current;	//abort!
-		return 0;
-	}
-
-#if (DIRECT3D_VERSION < 0x900)
-	DXSurfBlt(App.FrontBuffer, 0, 0);
-#endif
-
-	for (int i = 0; i < MAX_TPAGES; i++)
-		PictureTextures[i].tex = 0;
-
-	WinFreeDX(0);
-
-	if (WinDXInit(App.lpDeviceInfo, App.lpDXConfig, 0))
-		change = 1;
-	else
-	{
-		WinFreeDX(0);
-		App.DXConfig.nVMode = current;
-
-		if (disableZBuffer)
-			App.lpDXConfig->bZBuffer = 0;
-
-		WinDXInit(App.lpDeviceInfo, App.lpDXConfig, 0);
-		change = 0;
-	}
-
-	HWR_GetAllTextureHandles();
-
-#if (DIRECT3D_VERSION < 0x900)
-	for (int i = 0; i < nTPages; i++)
-		HWR_SetCurrentTexture(TPages[i]);
-#endif
-
-	HWR_InitState();
-	setup_screen_size();
-	return change;
 }
 
 long DXToggleFullScreen()

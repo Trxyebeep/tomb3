@@ -8,7 +8,6 @@ void HWR_EnableColorAddition(bool enable);
 void HWR_EnableColorSubtraction(bool enable);
 void HWR_ResetZBuffer();
 void HWR_ResetColorKey();
-void HWR_EnablePerspCorrect(bool enable);
 void HWR_ResetCurrentTexture();
 void HWR_BeginScene();
 void HWR_EndScene();

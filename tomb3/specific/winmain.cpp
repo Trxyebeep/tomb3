@@ -153,6 +153,7 @@ void WinFreeDX(bool free_dd)
 		App.D3DDev = 0;
 	}
 
+#if (DIRECT3D_VERSION < 0x900)
 	if (App.ZBuffer)
 	{
 		App.ZBuffer->Release();
@@ -176,6 +177,9 @@ void WinFreeDX(bool free_dd)
 		App.PictureBuffer->Release();
 		App.PictureBuffer = 0;
 	}
+#else
+	DXFreeCaptureBuffer();
+#endif
 
 	if (free_dd)
 	{
@@ -320,7 +324,6 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 		d3dinfo->Texture[App.lpDXConfig->D3DTF].bAlpha = 0;
 #endif
 
-	HWConfig.bPersp = 1;
 	HWConfig.bDither = App.DXConfig.Dither;
 
 #if (DIRECT3D_VERSION >= 0x900)
@@ -344,7 +347,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 #if (DIRECT3D_VERSION < 0x900)
 	DXResetPalette(PictureTextures);
 #endif
-	InitDrawPrimitive(App.D3DDev, App.BackBuffer);
+	InitDrawPrimitive(App.D3DDev);
 	farz = 0x5000;
 	distanceFogValue = 0x3000;
 	TIME_Init();

@@ -189,13 +189,6 @@ void HWR_ResetColorKey()
 	HWR_EnableColorAddition(0);
 }
 
-void HWR_EnablePerspCorrect(bool enable)
-{
-#if (DIRECT3D_VERSION < 0x900)
-	SetRenderState(D3DRENDERSTATE_TEXTUREPERSPECTIVE, 1);
-#endif
-}
-
 void HWR_ResetCurrentTexture()
 {
 	HWR_SetCurrentTexture(0);
@@ -549,7 +542,7 @@ void HWR_InitState()
 	SetRenderState(D3DRENDERSTATE_TEXTUREMAG, HWConfig.nFilter);
 	SetRenderState(D3DRENDERSTATE_TEXTUREMIN, HWConfig.nFilter);
 	SetRenderState(D3DRENDERSTATE_DITHERENABLE, HWConfig.bDither);
-	HWR_EnablePerspCorrect(HWConfig.bPersp);
+	SetRenderState(D3DRENDERSTATE_TEXTUREPERSPECTIVE, 1);
 	SetRenderState(D3DRENDERSTATE_TEXTUREADDRESS, D3DTADDRESS_CLAMP);
 	SetRenderState(D3DRENDERSTATE_TEXTUREMAPBLEND, D3DTBLEND_MODULATEALPHA);
 	SetRenderState(D3DRENDERSTATE_CULLMODE, D3DCULL_NONE);
@@ -888,6 +881,7 @@ void HWR_SetCurrentTexture(DXTEXTURE* tex)
 #if (DIRECT3D_VERSION >= 0x900)
 	if (!tex)
 	{
+		lastTextureHandle = 0;
 		SetTexture(0, 0);
 		return;
 	}

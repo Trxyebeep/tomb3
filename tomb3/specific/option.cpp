@@ -132,7 +132,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 		//actual options
 		dtext[DT_OP_RESOLUTION] = T_Print(w + tW, -45, 0, resolutions[selected_res].res);
 
-		if (App.ZBuffer)
+		if (App.lpDXConfig->bZBuffer)
 			dtext[DT_OP_ZBUFFER] = T_Print(w + tW, -25, 0, GF_PCStrings[PCSTR_ON]);
 		else
 			dtext[DT_OP_ZBUFFER] = T_Print(w + tW, -25, 0, GF_PCStrings[PCSTR_OFF]);
@@ -170,46 +170,39 @@ void do_detail_option(INVENTORY_ITEM* item)
 			GammaOption = 2.5F;
 		}
 
+#if (DIRECT3D_VERSION >= 0x900)
+		T_ChangeText(dtext[DT_OP_DITHER], GF_PCStrings[PCSTR_SPARE8]);
+		available[DOP_DITHER] = 0;
+		HWConfig.bDither = 0;
+#endif
+
 		T_AddBackground(dtext[selection + nSel], (short)T_GetTextWidth(dtext[selection + nSel]), 0, 0, 0, 48, 0, &req_sel_gour1, 1);
 		T_AddOutline(dtext[selection + nSel], 1, 4, &req_sel_gour2, 0);
 		free(resolutions);
 	}
 
-	if (inputDB & IN_LEFT && selection == DOP_RESOLUTION)
+	if (selection == DOP_RESOLUTION)
 	{
 		oldRes = selected_res;
 
-		if (selected_res > 0)
-			selected_res--;
-
-		if (oldRes != selected_res)
+		if (inputDB & IN_LEFT)
 		{
-			if (!DXSwitchVideoMode(selected_res, oldRes, 0))
-				selected_res = oldRes;
-
-			for (int i = 0; i < nSel; i++)
-			{
-				T_RemovePrint(dtext[i]);
-				dtext[i] = 0;
-			}
-
-			for (int i = nSel; i < DT_NUMT; i++)
-				T_RemovePrint(dtext[i]);
-
-			save = 1;
+			if (selected_res > 0)
+				selected_res--;
 		}
-	}
-
-	if (inputDB & IN_RIGHT && selection == DOP_RESOLUTION)
-	{
-		oldRes = selected_res;
-
-		if (selected_res < dinfo->nDisplayMode - 1)
-			selected_res++;
+		else if (inputDB & IN_RIGHT)
+		{
+			if (selected_res < dinfo->nDisplayMode - 1)
+				selected_res++;
+		}
 
 		if (oldRes != selected_res)
 		{
+#if (DIRECT3D_VERSION >= 0x900)
+			if (!DXSwitchVideoMode(selected_res, oldRes))
+#else
 			if (!DXSwitchVideoMode(selected_res, oldRes, 0))
+#endif
 				selected_res = oldRes;
 
 			for (int i = 0; i < nSel; i++)
@@ -250,6 +243,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 			T_CentreV(dtext[DT_OP_GAMMA], 1);
 			break;
 
+#if (DIRECT3D_VERSION < 0x900)
 		case DOP_DITHER:
 
 			if (HWConfig.bDither)
@@ -265,6 +259,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 
 			HWR_InitState();
 			break;
+#endif
 
 		case DOP_FILTER:
 #if (DIRECT3D_VERSION >= 0x900)
@@ -294,6 +289,17 @@ void do_detail_option(INVENTORY_ITEM* item)
 			HWR_InitState();
 			break;
 
+#if (DIRECT3D_VERSION >= 0x900)
+		case DOP_ZBUFFER:
+			DXToggleZbuffer();
+
+			if (App.lpDXConfig->bZBuffer)
+				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_ON]);
+			else
+				T_ChangeText(dtext[selection + nSel], GF_PCStrings[PCSTR_OFF]);
+
+			break;
+#else
 		case DOP_ZBUFFER:
 
 			if (App.ZBuffer)
@@ -317,8 +323,8 @@ void do_detail_option(INVENTORY_ITEM* item)
 			}
 
 			HWR_InitState();
-
 			break;
+#endif
 		}
 
 		save = 1;

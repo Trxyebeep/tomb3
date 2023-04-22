@@ -181,7 +181,6 @@ void DrawPictureAlpha(long col, long* indices, float z)
 	x[3] = phd_winxmin + phd_winwidth * screenX[3] / 640;
 
 	HWR_EnableAlphaBlend(1);
-	HWR_EnablePerspCorrect(0);
 	HWR_EnableColorAddition(0);
 
 #if (DIRECT3D_VERSION >= 0x900)
@@ -195,8 +194,6 @@ void DrawPictureAlpha(long col, long* indices, float z)
 	DrawTile(x[1], y[1], x[2] - x[1], y[2] - y[1], indices[4], 0, 0, 256, 224, col, col, col, col, z);
 	DrawTile(x[2], y[1], x[3] - x[2], y[2] - y[1], indices[2], 128, 0, 128, 224, col, col, col, col, z);
 #endif
-
-	HWR_EnablePerspCorrect(1);
 }
 
 void TRDrawPicture(long col, long* indices, float z)
@@ -222,7 +219,6 @@ void TRDrawPicture(long col, long* indices, float z)
 	x[3] = phd_winxmin + phd_winwidth * screenX[3] / 640;
 
 	HWR_EnableAlphaBlend(0);
-	HWR_EnablePerspCorrect(0);
 	HWR_EnableColorAddition(0);
 
 #if (DIRECT3D_VERSION >= 0x900)
@@ -236,8 +232,6 @@ void TRDrawPicture(long col, long* indices, float z)
 	DrawTile(x[1], y[1], x[2] - x[1], y[2] - y[1], indices[4], 0, 0, 256, 224, col, col, col, col, z);
 	DrawTile(x[2], y[1], x[3] - x[2], y[2] - y[1], indices[2], 128, 0, 128, 224, col, col, col, col, z);
 #endif
-
-	HWR_EnablePerspCorrect(1);
 }
 
 #if (DIRECT3D_VERSION >= 0x900)
@@ -422,14 +416,15 @@ void CreateMonoScreen()
 
 #if (DIRECT3D_VERSION >= 0x900)
 	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+	buffer = 0;
 #else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
-#endif
 
 	if (tomb3.Windowed)
 		buffer = App.BackBuffer;
 	else
 		buffer = App.FrontBuffer;
+#endif
 
 #if (DIRECT3D_VERSION >= 0x900)
 	ConvertSurfaceToTextures(buffer);
@@ -583,14 +578,15 @@ void S_FadeToBlack()
 
 #if (DIRECT3D_VERSION >= 0x900)
 	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+	buffer = 0;
 #else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
-#endif
 
 	if (tomb3.Windowed)
 		buffer = App.BackBuffer;
 	else
 		buffer = App.FrontBuffer;
+#endif
 
 #if (DIRECT3D_VERSION >= 0x900)
 	ConvertSurfaceToTextures(buffer);
@@ -643,7 +639,6 @@ void DrawMonoScreen(long r, long g, long b)	//do not call this function with a v
 		x[3] = phd_winxmin + phd_winwidth * screenX[3] / 640;
 
 		HWR_EnableAlphaBlend(0);
-		HWR_EnablePerspCorrect(0);
 		HWR_EnableColorAddition(0);
 
 #if (DIRECT3D_VERSION >= 0x900)
@@ -657,8 +652,6 @@ void DrawMonoScreen(long r, long g, long b)	//do not call this function with a v
 		DrawTile(x[1], y[1], x[2] - x[1], y[2] - y[1], CurPicTexIndices[4], 0, 0, 256, 224, col, col, col, col, f_zfar);
 		DrawTile(x[2], y[1], x[3] - x[2], y[2] - y[1], CurPicTexIndices[2], 128, 0, 128, 224, col, col, col, col, f_zfar);
 #endif
-
-		HWR_EnablePerspCorrect(1);
 	}
 	else
 		TRDrawPicture(0, CurPicTexIndices, f_zfar);

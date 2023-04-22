@@ -86,55 +86,244 @@ static __inline bool CheckDrawType(long nDrawType)
 	i.e when we only want to test zbuffer and alpha testing, and in all other cases go to fb- without falling back to bf if the drawtype doesn't match.
 	*/
 
-void HWI_InsertTrans8_Sorted(PHD_VBUF* buf, short shade)
+void InitUVTable()
 {
-	float z;
-	long nPoints, nVtx;
-	char clipO, clipA;
+	for (int i = 0; i < 65536; i++)
+		UVTable[i] = float(i + 1) * (1.0F / 65536.0F);
+}
 
-	nVtx = 8;
-	clipO = 0;
-	clipA = -1;
+static long GETR(ulong col)
+{
+	long w, r;
 
-	for (int i = 0; i < nVtx; i++)
+	r = RGB_GETRED(col);
+	r = ColorTable[r];
+
+	if (bBlueEffect)
 	{
-		clipO |= buf[i].clip;
-		clipA &= buf[i].clip;
+		if (tomb3.custom_water_color || gameflow.force_water_color)
+		{
+			w = RGB_GETRED(water_color[CurrentLevel]);
+			return (w * r) >> 8;
+		}
+		else
+			return (128 * r) >> 8;
 	}
 
-	if (clipO < 0 || clipA || (buf[2].xs - buf[1].xs) * (buf->ys - buf[1].ys) - (buf[2].ys - buf[1].ys) * (buf->xs - buf[1].xs) < 0)
-		return;
+	return r;
+}
 
-	for (int i = 0; i < nVtx; i++)
+static long GETG(ulong col)
+{
+	long w, g;
+
+	g = RGB_GETGREEN(col);
+	g = ColorTable[g];
+
+	if (bBlueEffect)
 	{
-		v_buffer[i].x = buf[i].xs;
-		v_buffer[i].y = buf[i].ys;
-		v_buffer[i].ooz = one / (buf[i].zv - 131072);
-		v_buffer[i].vr = 0;
-		v_buffer[i].vg = 0;
-		v_buffer[i].vb = 0;
+		if (tomb3.custom_water_color || gameflow.force_water_color)
+		{
+			w = RGB_GETGREEN(water_color[CurrentLevel]);
+			return (w * g) >> 8;
+		}
+		else
+			return (224 * g) >> 8;
 	}
 
-	nPoints = nVtx;
+	return g;
+}
 
-	if (clipO)
+static long GETB(ulong col)
+{
+	long w, b;
+
+	b = RGB_GETBLUE(col);
+	b = ColorTable[b];
+
+	if (bBlueEffect)
 	{
-		phd_leftfloat = (float)phd_winxmin;
-		phd_topfloat = (float)phd_winymin;
-		phd_rightfloat = float(phd_winxmin + phd_winwidth);
-		phd_bottomfloat = float(phd_winymin + phd_winheight);
-		nPoints = XYClipper(nPoints, v_buffer);
+		if (tomb3.custom_water_color || gameflow.force_water_color)
+		{
+			w = RGB_GETBLUE(water_color[CurrentLevel]);
+			return (w * b) >> 8;
+		}
 	}
 
-	if (nPoints)
+	return b;
+}
+
+static void PHD_VBUF_To_D3DTLVTX(PHD_VBUF* phdV, D3DTLVERTEX* v)
+{
+	long r, g, b;
+
+	v->sx = phdV->xs;
+	v->sy = phdV->ys;
+	v->sz = f_a - f_boo * phdV->ooz;
+	v->rhw = phdV->ooz;
+	r = GETR(phdV->color);
+	g = GETG(phdV->color);
+	b = GETB(phdV->color);
+	v->color = GlobalAlpha | (r << 16) | (g << 8) | b;
+	v->specular = 0;
+}
+
+static void PHD_VBUF_To_D3DTLVTX_WITHUV(PHD_VBUF* phdV, D3DTLVERTEX* v, ushort* uv)
+{
+	long r, g, b;
+
+	v->sx = phdV->xs;
+	v->sy = phdV->ys;
+	v->sz = f_a - f_boo * phdV->ooz;
+	v->rhw = phdV->ooz;
+	r = GETR(phdV->color);
+	g = GETG(phdV->color);
+	b = GETB(phdV->color);
+	v->tu = UVTable[uv[0]];
+	v->tv = UVTable[uv[1]];
+	v->color = GlobalAlpha | (r << 16) | (g << 8) | b;
+	v->specular = 0;
+}
+
+static void PHD_VBUF_To_VERTEX_INFO(PHD_VBUF* phdV, VERTEX_INFO* v)
+{
+	v->x = phdV->xs;
+	v->y = phdV->ys;
+	v->ooz = phdV->ooz;
+	v->vr = GETR(phdV->color);
+	v->vg = GETG(phdV->color);
+	v->vb = GETB(phdV->color);
+}
+
+static void PHD_VBUF_To_VERTEX_INFO_WITHUV(PHD_VBUF* phdV, VERTEX_INFO* v, ushort* uv)
+{
+	v->x = phdV->xs;
+	v->y = phdV->ys;
+	v->ooz = phdV->ooz;
+	v->vr = GETR(phdV->color);
+	v->vg = GETG(phdV->color);
+	v->vb = GETB(phdV->color);
+	v->u = phdV->ooz * uv[0];
+	v->v = phdV->ooz * uv[1];
+}
+
+static void PHD_VBUF_To_POINT_INFO(PHD_VBUF* v, POINT_INFO* point)
+{
+	point->xv = v->xv;
+	point->yv = v->yv;
+	point->zv = v->zv;
+	point->ooz = v->ooz;
+	point->xs = v->xs;
+	point->ys = v->ys;
+	point->vr = GETR(v->color);
+	point->vg = GETG(v->color);
+	point->vb = GETB(v->color);
+}
+
+static void PHD_VBUF_To_POINT_INFO_WITHUV(PHD_VBUF* v, POINT_INFO* point, ushort* uv)
+{
+	point->xv = v->xv;
+	point->yv = v->yv;
+	point->zv = v->zv;
+	point->ooz = v->ooz;
+	point->xs = v->xs;
+	point->ys = v->ys;
+	point->vr = GETR(v->color);
+	point->vg = GETG(v->color);
+	point->vb = GETB(v->color);
+	point->u = (float)uv[0];
+	point->v = (float)uv[1];
+}
+
+long visible_zclip(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2)
+{
+	return (v2->xv * v0->zv - v0->xv * v2->zv) * v1->yv +
+		(v0->xv * v2->yv - v2->xv * v0->yv) * v1->zv +
+		(v0->yv * v2->zv - v2->yv * v0->zv) * v1->xv < 0;
+}
+
+long FindBucket(DXTEXTURE* TPage)
+{
+	TEXTUREBUCKET* bucket;
+	long nVtx, fullest;
+
+	if (nDrawnPoints <= 2700)	//HACK: this seems to be a useless artifical limit (not sure though),
+								//so instead of failing to draw, immediately go find fullest bucket, draw it, and use it.
+								//TODO: make sure it's actually a useless limit and remove it, otherwise raise it.
 	{
-		z = 0;
+		for (int i = 0; i < MAX_BUCKETS; i++)
+		{
+			bucket = &Buckets[i];
 
-		for (int i = 0; i < nVtx; i++)
-			z += buf[i].zv;
+			if (bucket->TPage == TPage && bucket->nVtx < (BUCKET_VERTS - BUCKET_EXTRA))
+				return i;
 
-		z = z * 0.125F - 131072;
-		HWI_InsertPoly_Gouraud(nPoints, z, 0, 0, 0, DT_POLY_GA);
+			if (bucket->nVtx > (BUCKET_VERTS - BUCKET_EXTRA))
+			{
+				HWR_EnableZBuffer(1, 1);
+				HWR_SetCurrentTexture(bucket->TPage);
+#if (DIRECT3D_VERSION >= 0x900)
+				DrawPrimitive(D3DPT_TRIANGLELIST, bucket->vtx, bucket->nVtx);
+#else
+				DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+#endif
+				bucket->TPage = TPage;
+				bucket->nVtx = 0;
+				return i;
+			}
+		}
+	}
+
+	nVtx = 0;
+	fullest = 0;
+
+	for (int i = 0; i < MAX_BUCKETS; i++)
+	{
+		bucket = &Buckets[i];
+
+		if (bucket->TPage == (DXTEXTURE*)-1)
+		{
+			bucket->TPage = TPage;
+			return i;
+		}
+
+		if (bucket->nVtx > nVtx)
+		{
+			nVtx = bucket->nVtx;
+			fullest = i;
+		}
+	}
+
+	bucket = &Buckets[fullest];
+	HWR_EnableZBuffer(1, 1);
+	HWR_SetCurrentTexture(bucket->TPage);
+#if (DIRECT3D_VERSION >= 0x900)
+	DrawPrimitive(D3DPT_TRIANGLELIST, bucket->vtx, bucket->nVtx);
+#else
+	DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+#endif
+	bucket->TPage = TPage;
+	bucket->nVtx = 0;
+	return fullest;
+}
+
+void DrawBuckets()
+{
+	TEXTUREBUCKET* bucket;
+
+	for (int i = 0; i < MAX_BUCKETS; i++)
+	{
+		bucket = &Buckets[i];
+
+		if (bucket->nVtx)
+		{
+			HWR_SetCurrentTexture(bucket->TPage);
+#if (DIRECT3D_VERSION >= 0x900)
+			DrawPrimitive(D3DPT_TRIANGLELIST, bucket->vtx, bucket->nVtx);
+#else
+			DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+#endif
+		}
 	}
 }
 
@@ -303,6 +492,58 @@ void SubdivideGT3(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHDTEXTURESTRUCT* pT
 	SubdivideGT4(&v31, &v12, &v23, v3, &tex, nSortType, double_sided, num - 1);
 }
 
+void HWI_InsertTrans8_Sorted(PHD_VBUF* buf, short shade)
+{
+	float z;
+	long nPoints, nVtx;
+	char clipO, clipA;
+
+	nVtx = 8;
+	clipO = 0;
+	clipA = -1;
+
+	for (int i = 0; i < nVtx; i++)
+	{
+		clipO |= buf[i].clip;
+		clipA &= buf[i].clip;
+	}
+
+	if (clipO < 0 || clipA || (buf[2].xs - buf[1].xs) * (buf->ys - buf[1].ys) - (buf[2].ys - buf[1].ys) * (buf->xs - buf[1].xs) < 0)
+		return;
+
+	for (int i = 0; i < nVtx; i++)
+	{
+		v_buffer[i].x = buf[i].xs;
+		v_buffer[i].y = buf[i].ys;
+		v_buffer[i].ooz = one / (buf[i].zv - 131072);
+		v_buffer[i].vr = 0;
+		v_buffer[i].vg = 0;
+		v_buffer[i].vb = 0;
+	}
+
+	nPoints = nVtx;
+
+	if (clipO)
+	{
+		phd_leftfloat = (float)phd_winxmin;
+		phd_topfloat = (float)phd_winymin;
+		phd_rightfloat = float(phd_winxmin + phd_winwidth);
+		phd_bottomfloat = float(phd_winymin + phd_winheight);
+		nPoints = XYClipper(nPoints, v_buffer);
+	}
+
+	if (nPoints)
+	{
+		z = 0;
+
+		for (int i = 0; i < nVtx; i++)
+			z += buf[i].zv;
+
+		z = z * 0.125F - 131072;
+		HWI_InsertPoly_Gouraud(nPoints, z, 0, 0, 0, DT_POLY_GA);
+	}
+}
+
 void HWI_InsertGT4_Sorted(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHD_VBUF* v4, PHDTEXTURESTRUCT* pTex, sort_type nSortType, ushort double_sided)
 {
 	float zv;
@@ -444,247 +685,6 @@ void HWI_InsertGourQuad_Sorted(long x0, long y0, long x1, long y1, long z, ulong
 	v[3].rhw = zv;
 	v[3].color = c0;
 	CurrentTLVertex = v + 4;
-}
-
-void InitUVTable()
-{
-	for (int i = 0; i < 65536; i++)
-		UVTable[i] = float(i + 1) * (1.0F / 65536.0F);
-}
-
-long GETR(ulong col)
-{
-	long w, r;
-
-	r = RGB_GETRED(col);
-	r = ColorTable[r];
-
-	if (bBlueEffect)
-	{
-		if (tomb3.custom_water_color || gameflow.force_water_color)
-		{
-			w = RGB_GETRED(water_color[CurrentLevel]);
-			return (w * r) >> 8;
-		}
-		else
-			return (128 * r) >> 8;
-	}
-
-	return r;
-}
-
-long GETG(ulong col)
-{
-	long w, g;
-
-	g = RGB_GETGREEN(col);
-	g = ColorTable[g];
-
-	if (bBlueEffect)
-	{
-		if (tomb3.custom_water_color || gameflow.force_water_color)
-		{
-			w = RGB_GETGREEN(water_color[CurrentLevel]);
-			return (w * g) >> 8;
-		}
-		else
-			return (224 * g) >> 8;
-	}
-
-	return g;
-}
-
-long GETB(ulong col)
-{
-	long w, b;
-
-	b = RGB_GETBLUE(col);
-	b = ColorTable[b];
-
-	if (bBlueEffect)
-	{
-		if (tomb3.custom_water_color || gameflow.force_water_color)
-		{
-			w = RGB_GETBLUE(water_color[CurrentLevel]);
-			return (w * b) >> 8;
-		}
-	}
-
-	return b;
-}
-
-static void PHD_VBUF_To_D3DTLVTX(PHD_VBUF* phdV, D3DTLVERTEX* v)
-{
-	long r, g, b;
-
-	v->sx = phdV->xs;
-	v->sy = phdV->ys;
-	v->sz = f_a - f_boo * phdV->ooz;
-	v->rhw = phdV->ooz;
-	r = GETR(phdV->color);
-	g = GETG(phdV->color);
-	b = GETB(phdV->color);
-	v->color = GlobalAlpha | (r << 16) | (g << 8) | b;
-	v->specular = 0;
-}
-
-void PHD_VBUF_To_D3DTLVTX_WITHUV(PHD_VBUF* phdV, D3DTLVERTEX* v, ushort* uv)
-{
-	long r, g, b;
-
-	v->sx = phdV->xs;
-	v->sy = phdV->ys;
-	v->sz = f_a - f_boo * phdV->ooz;
-	v->rhw = phdV->ooz;
-	r = GETR(phdV->color);
-	g = GETG(phdV->color);
-	b = GETB(phdV->color);
-	v->tu = UVTable[uv[0]];
-	v->tv = UVTable[uv[1]];
-	v->color = GlobalAlpha | (r << 16) | (g << 8) | b;
-	v->specular = 0;
-}
-
-void PHD_VBUF_To_VERTEX_INFO(PHD_VBUF* phdV, VERTEX_INFO* v)
-{
-	v->x = phdV->xs;
-	v->y = phdV->ys;
-	v->ooz = phdV->ooz;
-	v->vr = GETR(phdV->color);
-	v->vg = GETG(phdV->color);
-	v->vb = GETB(phdV->color);
-}
-
-static void PHD_VBUF_To_VERTEX_INFO_WITHUV(PHD_VBUF* phdV, VERTEX_INFO* v, ushort* uv)
-{
-	v->x = phdV->xs;
-	v->y = phdV->ys;
-	v->ooz = phdV->ooz;
-	v->vr = GETR(phdV->color);
-	v->vg = GETG(phdV->color);
-	v->vb = GETB(phdV->color);
-	v->u = phdV->ooz * uv[0];
-	v->v = phdV->ooz * uv[1];
-}
-
-static void PHD_VBUF_To_POINT_INFO(PHD_VBUF* v, POINT_INFO* point)
-{
-	point->xv = v->xv;
-	point->yv = v->yv;
-	point->zv = v->zv;
-	point->ooz = v->ooz;
-	point->xs = v->xs;
-	point->ys = v->ys;
-	point->vr = GETR(v->color);
-	point->vg = GETG(v->color);
-	point->vb = GETB(v->color);
-}
-
-static void PHD_VBUF_To_POINT_INFO_WITHUV(PHD_VBUF* v, POINT_INFO* point, ushort* uv)
-{
-	point->xv = v->xv;
-	point->yv = v->yv;
-	point->zv = v->zv;
-	point->ooz = v->ooz;
-	point->xs = v->xs;
-	point->ys = v->ys;
-	point->vr = GETR(v->color);
-	point->vg = GETG(v->color);
-	point->vb = GETB(v->color);
-	point->u = (float)uv[0];
-	point->v = (float)uv[1];
-}
-
-long visible_zclip(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2)
-{
-	return (v2->xv * v0->zv - v0->xv * v2->zv) * v1->yv +
-		(v0->xv * v2->yv - v2->xv * v0->yv) * v1->zv +
-		(v0->yv * v2->zv - v2->yv * v0->zv) * v1->xv < 0;
-}
-
-long FindBucket(DXTEXTURE* TPage)
-{
-	TEXTUREBUCKET* bucket;
-	long nVtx, fullest;
-
-	if (nDrawnPoints <= 2700)	//HACK: this seems to be a useless artifical limit (not sure though),
-								//so instead of failing to draw, immediately go find fullest bucket, draw it, and use it.
-								//TODO: make sure it's actually a useless limit and remove it, otherwise raise it.
-	{
-		for (int i = 0; i < MAX_BUCKETS; i++)
-		{
-			bucket = &Buckets[i];
-
-			if (bucket->TPage == TPage && bucket->nVtx < (BUCKET_VERTS - BUCKET_EXTRA))
-				return i;
-
-			if (bucket->nVtx > (BUCKET_VERTS - BUCKET_EXTRA))
-			{
-				HWR_EnableZBuffer(1, 1);
-				HWR_SetCurrentTexture(bucket->TPage);
-#if (DIRECT3D_VERSION >= 0x900)
-				DrawPrimitive(D3DPT_TRIANGLELIST, bucket->vtx, bucket->nVtx);
-#else
-				DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
-#endif
-				bucket->TPage = TPage;
-				bucket->nVtx = 0;
-				return i;
-			}
-		}
-	}
-
-	nVtx = 0;
-	fullest = 0;
-
-	for (int i = 0; i < MAX_BUCKETS; i++)
-	{
-		bucket = &Buckets[i];
-
-		if (bucket->TPage == (DXTEXTURE*)-1)
-		{
-			bucket->TPage = TPage;
-			return i;
-		}
-
-		if (bucket->nVtx > nVtx)
-		{
-			nVtx = bucket->nVtx;
-			fullest = i;
-		}
-	}
-
-	bucket = &Buckets[fullest];
-	HWR_EnableZBuffer(1, 1);
-	HWR_SetCurrentTexture(bucket->TPage);
-#if (DIRECT3D_VERSION >= 0x900)
-	DrawPrimitive(D3DPT_TRIANGLELIST, bucket->vtx, bucket->nVtx);
-#else
-	DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
-#endif
-	bucket->TPage = TPage;
-	bucket->nVtx = 0;
-	return fullest;
-}
-
-void DrawBuckets()
-{
-	TEXTUREBUCKET* bucket;
-
-	for (int i = 0; i < MAX_BUCKETS; i++)
-	{
-		bucket = &Buckets[i];
-
-		if (bucket->nVtx)
-		{
-			HWR_SetCurrentTexture(bucket->TPage);
-#if (DIRECT3D_VERSION >= 0x900)
-			DrawPrimitive(D3DPT_TRIANGLELIST, bucket->vtx, bucket->nVtx);
-#else
-			DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
-#endif
-		}
-	}
 }
 
 void HWI_InsertClippedPoly_Textured(long nPoints, float zdepth, long nDrawType, long nTPage)

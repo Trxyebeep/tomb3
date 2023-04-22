@@ -1305,25 +1305,6 @@ struct DISPLAYMODE
 #endif
 };
 
-struct D3DTEXTUREINFO
-{
-	ulong bpp;
-	bool bPalette;
-	bool bAlpha;
-	uchar rbpp;
-	uchar gbpp;
-	uchar bbpp;
-	uchar abpp;
-	DDSURFACEDESCX ddsd;
-#if (DIRECT3D_VERSION < 0x900)
-	DDPIXELFORMAT ddpf;
-#endif
-	uchar rshift;
-	uchar gshift;
-	uchar bshift;
-	uchar ashift;
-};
-
 struct DXDIRECTSOUNDINFO
 {
 	char Name[256];
@@ -1354,6 +1335,23 @@ struct DEVICEINFO
 	//Joystick enumeration stuff was here
 };
 #else
+struct D3DTEXTUREINFO
+{
+	ulong bpp;
+	bool bPalette;
+	bool bAlpha;
+	uchar rbpp;
+	uchar gbpp;
+	uchar bbpp;
+	uchar abpp;
+	DDSURFACEDESCX ddsd;
+	DDPIXELFORMAT ddpf;
+	uchar rshift;
+	uchar gshift;
+	uchar bshift;
+	uchar ashift;
+};
+
 struct DIRECT3DINFO
 {
 	char Name[256];
@@ -1417,16 +1415,21 @@ struct WINAPP
 	DXCONFIG DXConfig;
 	DEVICEINFO* lpDeviceInfo;
 	DXCONFIG* lpDXConfig;
-#if (DIRECT3D_VERSION < 0x900)
+#if (DIRECT3D_VERSION >= 0x900)
+	LPDIRECT3DX D3D;
+	LPDIRECT3DDEVICEX D3DDev;
+	LPDIRECTDRAWSURFACEX CaptureBuffer;
+	/*TEMP*/
+	LPDIRECTDRAWSURFACEX ZBuffer;
+	LPDIRECTDRAWSURFACEX PictureBuffer;
+#else
 	LPDIRECTDRAWX DDraw;
-#endif
 	LPDIRECT3DX D3D;
 	LPDIRECT3DDEVICEX D3DDev;
 	LPDIRECTDRAWSURFACEX FrontBuffer;
 	LPDIRECTDRAWSURFACEX BackBuffer;
 	LPDIRECTDRAWSURFACEX ZBuffer;
 	LPDIRECTDRAWSURFACEX PictureBuffer;
-#if (DIRECT3D_VERSION < 0x900)
 	LPDIRECT3DVIEWPORTX D3DView;
 	LPDIRECT3DMATERIALX D3DMaterial;
 #endif
@@ -1629,7 +1632,6 @@ struct STATIC_INFO
 
 struct HWCONFIG
 {
-	bool bPersp;
 	bool bDither;
 	long nFilter;
 	long nShadeMode;

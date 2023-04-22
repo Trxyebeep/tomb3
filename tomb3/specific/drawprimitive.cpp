@@ -100,7 +100,7 @@ HRESULT HWSetRenderState(D3DRENDERSTATETYPE dwRenderStateType, ulong dwRenderSta
 	return Dev->SetRenderState(dwRenderStateType, dwRenderState);
 }
 
-void InitDrawPrimitive(LPDIRECT3DDEVICEX lpD3DDev, LPDIRECTDRAWSURFACEX surf)
+void InitDrawPrimitive(LPDIRECT3DDEVICEX lpD3DDev)
 {
 	Dev = lpD3DDev;
 	DrawPrimitive = HWDrawPrimitive;

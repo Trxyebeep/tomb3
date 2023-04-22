@@ -26,16 +26,19 @@ void DXSaveScreen(LPDIRECTDRAWSURFACEX surf);
 void DXClearBuffers(ulong flags, ulong color);
 void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance);
 bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool windowed);
+bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer);
 #else
 void DXClearBuffers(ulong flags, ulong color);
-void DXEnumerateDisplayModes(DIRECT3DINFO* d3dinfo, long index);
 bool DXGetDeviceInfo(DEVICEINFO* device);
 bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool windowed);
+bool DXSwitchVideoMode(long needed, long current);
+bool DXToggleZbuffer();
+void DXCreateCaptureBuffer();
+void DXFreeCaptureBuffer();
 #endif
 
 BOOL CALLBACK DXEnumDirectSound(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext);
 void DXFreeDeviceInfo(DEVICEINFO* device);
 bool DXUpdateFrame(bool runMessageLoop, LPRECT rect);
-bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer);
 long DXToggleFullScreen();
 void DXMove(long x, long y);

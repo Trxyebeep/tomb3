@@ -570,11 +570,6 @@ void phd_InitWindow(long x, long y, long w, long h, long znear, long zfar, long 
 
 void phd_InitPolyList()
 {
-	/*
-	dword_5D7AE8 = (int)&unk_4E34B0;	//seemingly unused, no problems so far
-	dword_5D7AE4 = 0;
-	dword_5A6AF0 = (int)&unk_4F6D60;
-	*/
 	surfacenumbf = 0;
 	surfacenumfb = 0;
 	info3dptrbf = info3d_bufferbf;
