@@ -792,7 +792,7 @@ void HWR_FreeTexturePages()
 {
 	for (int i = 0; i < MAX_TPAGES; i++)
 	{
-		if (Textures[i].dwFlags & 8)
+		if (Textures[i].dwFlags & TF_LEVELTEX)
 			DXTextureCleanup(i, Textures);
 	}
 
@@ -813,7 +813,7 @@ void HWR_GetAllTextureHandles()
 	{
 		tex = DXRestoreSurfaceIfLost(i, Textures);
 
-		if (tex->dwFlags & 8)
+		if (tex->dwFlags & TF_LEVELTEX)
 		{
 			TexturePtrs[n] = tex;
 			n++;
@@ -824,7 +824,7 @@ void HWR_GetAllTextureHandles()
 	{
 		tex = DXRestoreSurfaceIfLost(i, Textures);
 
-		if (tex->dwFlags & 16)
+		if (tex->dwFlags & TF_PICTEX)
 		{
 			TexturePtrs[n] = tex;
 			n++;
@@ -850,13 +850,13 @@ void HWR_LoadTexturePages(long nPages, uchar* src, uchar* palette)
 #if (DIRECT3D_VERSION < 0x900)
 		if (palette)
 		{
-			DXTextureAddPal(256, 256, src, Textures, 8);
+			DXTextureAddPal(256, 256, src, Textures, TF_LEVELTEX);
 			src += 0x10000;
 		}
 		else
 #endif
 		{
-			DXTextureAdd(256, 256, src, Textures, 555, 8);
+			DXTextureAdd(256, 256, src, Textures, 555, TF_LEVELTEX);
 			src += 0x20000;
 		}
 	}

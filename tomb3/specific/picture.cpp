@@ -371,7 +371,7 @@ void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf)
 	memcpy(&desc2, &desc, sizeof(DDSURFACEDESC));
 	MemBlt(dest, 0, 0, 256, 256, 256, source, 0, 0, desc2);
 	surf->Unlock(0);
-	pIndices[0] = DXTextureAdd(256, 256, (uchar*)dest, Textures, bitcnt, 16);
+	pIndices[0] = DXTextureAdd(256, 256, (uchar*)dest, Textures, bitcnt, TF_PICTEX);
 
 	memset(&desc, 0, sizeof(DDSURFACEDESCX));
 	desc.dwSize = sizeof(DDSURFACEDESCX);
@@ -380,7 +380,7 @@ void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf)
 	source = (char*)desc.lpSurface;
 	MemBlt(dest, 0, 0, 256, 256, 256, source, 256, 0, desc2);
 	surf->Unlock(0);
-	pIndices[1] = DXTextureAdd(256, 256, (uchar*)dest, Textures, bitcnt, 16);
+	pIndices[1] = DXTextureAdd(256, 256, (uchar*)dest, Textures, bitcnt, TF_PICTEX);
 
 	memset(&desc, 0, sizeof(DDSURFACEDESCX));
 	desc.dwSize = sizeof(DDSURFACEDESCX);
@@ -391,7 +391,7 @@ void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf)
 	memcpy(&desc2, &desc, sizeof(DDSURFACEDESCX));
 	MemBlt(dest, 128, 0, 128, 224, 256, source, 512, 256, desc2);
 	surf->Unlock(0);
-	pIndices[2] = DXTextureAdd(256, 256, (uchar*)dest, Textures, bitcnt, 16);
+	pIndices[2] = DXTextureAdd(256, 256, (uchar*)dest, Textures, bitcnt, TF_PICTEX);
 
 	memset(&desc, 0, sizeof(DDSURFACEDESCX));
 	desc.dwSize = sizeof(DDSURFACEDESCX);
@@ -400,7 +400,7 @@ void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf)
 	source = (char*)desc.lpSurface;
 	MemBlt(dest, 0, 0, 256, 224, 256, source, 0, 256, desc2);
 	surf->Unlock(0);
-	pIndices[3] = DXTextureAdd(256, 256, (uchar*)dest, Textures, bitcnt, 16);
+	pIndices[3] = DXTextureAdd(256, 256, (uchar*)dest, Textures, bitcnt, TF_PICTEX);
 
 	memset(&desc, 0, sizeof(DDSURFACEDESCX));
 	desc.dwSize = sizeof(DDSURFACEDESCX);
@@ -409,7 +409,7 @@ void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf)
 	source = (char*)desc.lpSurface;
 	MemBlt(dest, 0, 0, 256, 224, 256, source, 256, 256, desc2);
 	surf->Unlock(0);
-	pIndices[4] = DXTextureAdd(256, 256, (uchar*)dest, Textures, bitcnt, 16);
+	pIndices[4] = DXTextureAdd(256, 256, (uchar*)dest, Textures, bitcnt, TF_PICTEX);
 
 	free(dest);
 }

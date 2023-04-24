@@ -107,6 +107,16 @@ typedef unsigned long ulong;
 #define TICKS_PER_SECOND	(FRAMES_PER_SECOND * TICKS_PER_FRAME)
 
 /*enums*/
+enum texture_flags
+{
+	TF_EMPTY = 0,
+	TF_USED = 1 << 0,
+	TF_UNUSED = 1 << 1,
+	TF_UNUSED2 = 1 << 2,
+	TF_LEVELTEX = 1 << 3,
+	TF_PICTEX = 1 << 4
+};
+
 enum death_tiles
 {
 	DEATH_LAVA,

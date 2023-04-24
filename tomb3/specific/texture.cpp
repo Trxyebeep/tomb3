@@ -130,7 +130,7 @@ long DXTextureMakeDeviceSurface(long w, long h, LPDIRECTDRAWPALETTE palette, DXT
 	memset(tex, 0, sizeof(DXTEXTURE));
 	tex->nWidth = w;
 	tex->nHeight = h;
-	tex->dwFlags = 1;
+	tex->dwFlags = TF_USED;
 	tex->pPalette = palette;
 	ddpf = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].Texture[App.lpDXConfig->D3DTF].ddsd.ddpfPixelFormat;
 	tex->bpp = ddpf->dwRGBBitCount;
@@ -155,7 +155,7 @@ long DXTextureMakeDeviceSurface(long w, long h, DXTEXTURE* list)
 	memset(tex, 0, sizeof(DXTEXTURE));
 	tex->nWidth = w;
 	tex->nHeight = h;
-	tex->dwFlags = 1;
+	tex->dwFlags = TF_USED;
 
 	if FAILED(App.D3DDev->CreateTexture(w, h, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &tex->tex, 0))
 		return -1;
@@ -173,7 +173,7 @@ long DXTextureFindTextureSlot(DXTEXTURE* tex)
 {
 	for (int i = 0; i < MAX_TPAGES; i++)
 	{
-		if (!(tex[i].dwFlags & 1))
+		if (!(tex[i].dwFlags & TF_USED))
 			return i;
 	}
 
@@ -226,7 +226,7 @@ void DXTextureCleanup(long index, DXTEXTURE* list)
 	}
 #endif
 
-	tex->dwFlags = 0;
+	tex->dwFlags = TF_EMPTY;
 	tex->nWidth = 0;
 	tex->nHeight = 0;
 }
@@ -379,7 +379,7 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 				break;
 			}
 
-			if (flags == 16)
+			if (flags == TF_PICTEX)
 				a = 255;
 
 			if (bMakeGrey)
@@ -419,7 +419,7 @@ long DXTextureAdd(long w, long h, uchar* src, DXTEXTURE* list, long bpp, ulong f
 		h--;
 	}
 
-	if (flags == 8 && !App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].Texture[App.lpDXConfig->D3DTF].bAlpha)
+	if (flags == TF_LEVELTEX && !App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].Texture[App.lpDXConfig->D3DTF].bAlpha)
 	{
 		ckey.dwColorSpaceLowValue = 0;
 		ckey.dwColorSpaceHighValue = 0;
@@ -459,7 +459,7 @@ static void CopyTexture16(long w, long h, uchar* src, LPDDSURFACEDESCX desc, ulo
 				g = b;
 			}
 
-			if (flags == 16)
+			if (flags == TF_PICTEX)
 				a = 255;
 
 			*dest++ = RGBA_MAKE(r, g, b, a);
@@ -493,7 +493,7 @@ static void CopyTexture32(long w, long h, uchar* src, LPDDSURFACEDESCX desc, ulo
 				g = b;
 			}
 
-			if (flags == 16)
+			if (flags == TF_PICTEX)
 				a = 255;
 
 			*dest++ = RGBA_MAKE(r, g, b, a);
