@@ -298,7 +298,7 @@ static void OutputPickupDisplay()
 {
 	DXClearBuffers(8, 0);
 
-	if (App.ZBuffer)
+	if (App.lpDXConfig->bZBuffer)
 	{
 		for (int i = 0; i < MAX_BUCKETS; i++)
 		{
@@ -320,7 +320,7 @@ static void OutputPickupDisplay()
 	bBlueEffect = 0;
 	DrawPickup(pickups[CurrentPickup].sprnum);
 
-	if (App.ZBuffer)
+	if (App.lpDXConfig->bZBuffer)
 	{
 		if (bAlphaTesting)
 		{
@@ -362,7 +362,7 @@ static void OutputPickupDisplay()
 
 void S_OutputPolyList()
 {
-	if (App.ZBuffer)
+	if (App.lpDXConfig->bZBuffer)
 	{
 		HWR_EnableColorKey(0);
 		HWR_EnableAlphaBlend(0);
@@ -416,7 +416,7 @@ void S_OutputPolyList()
 
 void S_InsertBackPolygon(long xmin, long ymin, long xmax, long ymax, long col)
 {
-	InsertFlatRect(phd_winxmin + xmin, phd_winymin + ymin, phd_winxmin + xmax, phd_winymin + ymax, phd_zfar, 0);
+	InsertFlatRect(phd_winxmin + xmin, phd_winymin + ymin, phd_winxmin + xmax, phd_winymin + ymax, phd_zfar, col);
 }
 
 long S_GetObjectBounds(short* box)

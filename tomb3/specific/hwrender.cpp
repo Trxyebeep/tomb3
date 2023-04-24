@@ -35,7 +35,7 @@ bool bAlphaTesting;
 
 void HWR_EnableZBuffer(bool write, bool compare)
 {
-	if (!App.ZBuffer)
+	if (!App.lpDXConfig->bZBuffer)
 		return;
 
 	if (write != zBufWriteEnabled)
@@ -205,7 +205,7 @@ void HWR_BeginScene()
 	BeginScene();
 	nDrawnPoints = 0;
 
-	if (App.ZBuffer)
+	if (App.lpDXConfig->bZBuffer)
 	{
 		for (int i = 0; i < MAX_BUCKETS; i++)
 		{

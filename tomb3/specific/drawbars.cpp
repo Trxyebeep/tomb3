@@ -252,7 +252,7 @@ void S_DrawHealthBar(long percent)
 
 	if (tomb3.bar_mode == BAR_PSX)
 	{
-		if (App.ZBuffer)
+		if (App.lpDXConfig->bZBuffer)
 			DoPSXHealthBar(x0, y0, x1, y1, bar, p);
 		else
 			InsertPSXBar(POLYTYPE_HEALTHBAR, x0, y0, x1, y1, bar, p);
@@ -312,7 +312,7 @@ void S_DrawDashBar(long percent)
 
 	if (tomb3.bar_mode == BAR_PSX)
 	{
-		if (App.ZBuffer)
+		if (App.lpDXConfig->bZBuffer)
 			DoPSXDashBar(x0, y0, x1, y1, bar, p);
 		else
 			InsertPSXBar(POLYTYPE_DASHBAR, x0, y0, x1, y1, bar, p);
@@ -364,7 +364,7 @@ void S_DrawAirBar(long percent)
 
 	if (tomb3.bar_mode == BAR_PSX)
 	{
-		if (App.ZBuffer)
+		if (App.lpDXConfig->bZBuffer)
 			DoPSXAirBar(x0, y0, x1, y1, bar, p);
 		else
 			InsertPSXBar(POLYTYPE_AIRBAR, x0, y0, x1, y1, bar, p);
@@ -421,7 +421,7 @@ void S_DrawColdBar(long percent)
 
 	if (tomb3.bar_mode == BAR_PSX)
 	{
-		if (App.ZBuffer)
+		if (App.lpDXConfig->bZBuffer)
 			DoPSXColdBar(x0, y0, x1, y1, bar, p);
 		else
 			InsertPSXBar(POLYTYPE_COLDBAR, x0, y0, x1, y1, bar, p);

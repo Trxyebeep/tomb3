@@ -866,7 +866,18 @@ void DXFreeCaptureBuffer()
 
 void DXClearBuffers(ulong flags, ulong color)
 {
+	ulong sflags;
 
+	sflags = 0;
+
+	if (flags & 2)
+		sflags |= D3DCLEAR_TARGET;
+
+	if (flags & 8)
+		sflags |= D3DCLEAR_ZBUFFER;
+
+	if (sflags)
+		App.D3DDev->Clear(0, 0, sflags, 0, 1.0F, 0);
 }
 
 static void DXEnumerateDisplayModes(DIRECT3DINFO* d3dinfo, long index)
@@ -1066,7 +1077,6 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 	if (res)
 		DXCreateCaptureBuffer();
 
-	App.ZBuffer = (LPDIRECTDRAWSURFACEX)App.lpDXConfig->bZBuffer;	//hack
 	return res;
 }
 
@@ -1093,8 +1103,6 @@ bool DXSwitchVideoMode(long needed, long current)
 bool DXToggleZbuffer()
 {
 	App.lpDXConfig->bZBuffer = !App.lpDXConfig->bZBuffer;
-	App.ZBuffer = (LPDIRECTDRAWSURFACEX)App.lpDXConfig->bZBuffer;	//hack
-
 	HWR_InitState();
 	return 1;
 }
