@@ -256,10 +256,10 @@ long TitleSequence()
 	{
 		strcpy(name, GF_titlefilenames[1]);
 		T3_GoldifyString(name);
-		LoadPicture(name, App.PictureBuffer, 0);
+		LoadPicture(name, App.PictureBuffer);
 	}
 	else
-		LoadPicture(GF_titlefilenames[1], App.PictureBuffer, 0);
+		LoadPicture(GF_titlefilenames[1], App.PictureBuffer);
 
 	FadePictureUp(32);
 
@@ -358,9 +358,9 @@ long GameMain()
 	S_UpdateInput();
 
 	if (tomb3.gold)
-		LoadPicture("pixg\\legal.bmp", App.PictureBuffer, 1);
+		LoadPicture("pixg\\legal.bmp", App.PictureBuffer);
 	else
-		LoadPicture("pix\\legal.bmp", App.PictureBuffer, 1);
+		LoadPicture("pix\\legal.bmp", App.PictureBuffer);
 
 	FadePictureUp(32);
 	S_Wait(150 * TICKS_PER_FRAME, 1);

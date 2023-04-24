@@ -345,7 +345,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	App.nUVAdd = 256;
 	UT_InitAccurateTimer();
 #if (DIRECT3D_VERSION < 0x900)
-	DXResetPalette(PictureTextures);
+	DXResetPalette();
 #endif
 	InitDrawPrimitive(App.D3DDev);
 	farz = 0x5000;

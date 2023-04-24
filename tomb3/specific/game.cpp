@@ -108,7 +108,7 @@ long GameStats(long level_num, long type)
 			FadePictureDown(32);
 			FreePictureTextures(CurPicTexIndices);
 			FreePictureTextures(OldPicTexIndices);
-			LoadPicture("pix\\theend2.bmp", App.PictureBuffer, 1);
+			LoadPicture("pix\\theend2.bmp", App.PictureBuffer);
 			nLoadedPictures = 1;
 		}
 		else
@@ -218,7 +218,7 @@ long LevelStats(long level)
 		if (tomb3.gold)
 			T3_GoldifyString(name);
 
-		LoadPicture(name, App.PictureBuffer, 1);
+		LoadPicture(name, App.PictureBuffer);
 		FadePictureUp(32);
 		DXTextureSetGreyScale(0);
 	}
@@ -428,7 +428,7 @@ static void DisplayGoldCredits()
 		return;
 
 	S_StartSyncedAudio(121);
-	LoadPicture("pixg\\theend.bmp", App.PictureBuffer, 1);
+	LoadPicture("pixg\\theend.bmp", App.PictureBuffer);
 	FadePictureUp(32);
 	S_Wait(150 * TICKS_PER_FRAME, 0);
 	FadePictureDown(32);
@@ -436,13 +436,13 @@ static void DisplayGoldCredits()
 	for (int i = 1; i < 10; i++)
 	{
 		buf[12] = i + '0';
-		LoadPicture(buf, App.PictureBuffer, 1);
+		LoadPicture(buf, App.PictureBuffer);
 		FadePictureUp(32);
 		S_Wait(150 * TICKS_PER_FRAME, 0);
 		FadePictureDown(32);
 	}
 
-	LoadPicture("pixg\\theend2.bmp", App.PictureBuffer, 1);
+	LoadPicture("pixg\\theend2.bmp", App.PictureBuffer);
 	FadePictureUp(32);
 }
 
@@ -461,7 +461,7 @@ void DisplayCredits()
 		return;
 
 	S_StartSyncedAudio(121);
-	LoadPicture("pix\\theend.bmp", App.PictureBuffer, 1);
+	LoadPicture("pix\\theend.bmp", App.PictureBuffer);
 	FadePictureUp(32);
 	S_Wait(150 * TICKS_PER_FRAME, 0);
 	FadePictureDown(32);
@@ -469,13 +469,13 @@ void DisplayCredits()
 	for (int i = 1; i < 10; i++)
 	{
 		buf[11] = i + '0';
-		LoadPicture(buf, App.PictureBuffer, 1);
+		LoadPicture(buf, App.PictureBuffer);
 		FadePictureUp(32);
 		S_Wait(150 * TICKS_PER_FRAME, 0);
 		FadePictureDown(32);
 	}
 
-	LoadPicture("pix\\theend2.bmp", App.PictureBuffer, 1);
+	LoadPicture("pix\\theend2.bmp", App.PictureBuffer);
 	FadePictureUp(32);
 }
 

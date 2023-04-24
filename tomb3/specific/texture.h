@@ -3,7 +3,8 @@
 
 #if (DIRECT3D_VERSION < 0x900)
 long DXTextureNewPalette(uchar* palette);
-void DXResetPalette(DXTEXTURE* tex);
+void DXResetPalette();
+void DXReleasePalette();
 LPDIRECT3DTEXTUREX DXTextureGetInterface(LPDIRECTDRAWSURFACEX surf);
 bool DXCreateTextureSurface(TEXTURE* tex, LPDDPIXELFORMAT ddpf);
 bool DXTextureMakeSystemSurface(DXTEXTURE* tex, LPDDPIXELFORMAT ddpf);
@@ -24,9 +25,10 @@ void DXCreateMaxTPages(long create);
 void DXFreeTPages();
 #endif
 
-extern DXTEXTURE* TPages[MAX_TPAGES];
-extern long nTPages;
+extern DXTEXTURE Textures[MAX_TPAGES];
+extern DXTEXTURE* TexturePtrs[MAX_TPAGES];
+extern long nTextures;
 #if (DIRECT3D_VERSION < 0x900)
-extern TEXTURE Textures[MAX_TPAGES];
+extern TEXTURE TextureSurfaces[MAX_TPAGES];
 extern LPDIRECTDRAWPALETTE DXPalette;
 #endif

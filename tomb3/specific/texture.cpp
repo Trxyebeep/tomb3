@@ -3,10 +3,11 @@
 #include "dd.h"
 #include "winmain.h"
 
-DXTEXTURE* TPages[MAX_TPAGES];
-long nTPages;
+DXTEXTURE Textures[MAX_TPAGES];
+DXTEXTURE* TexturePtrs[MAX_TPAGES];
+long nTextures;
 #if (DIRECT3D_VERSION < 0x900)
-TEXTURE Textures[MAX_TPAGES];
+TEXTURE TextureSurfaces[MAX_TPAGES];
 LPDIRECTDRAWPALETTE DXPalette;
 #endif
 
@@ -18,11 +19,7 @@ long DXTextureNewPalette(uchar* palette)
 {
 	ulong data[256];
 
-	if (DXPalette)
-	{
-		DXPalette->Release();
-		DXPalette = 0;
-	}
+	DXReleasePalette();
 
 	for (int i = 0; i < 256; i++, palette += 3)
 		data[i] = RGB(palette[0], palette[1], palette[2]);
@@ -30,10 +27,19 @@ long DXTextureNewPalette(uchar* palette)
 	return App.DDraw->CreatePalette(DDPCAPS_8BIT | DDPCAPS_ALLOW256, (LPPALETTEENTRY)data, &DXPalette, 0);
 }
 
-void DXResetPalette(DXTEXTURE* tex)
+void DXResetPalette()
 {
 	DXPalette = 0;
 	bSetColorKey = 1;
+}
+
+void DXReleasePalette()
+{
+	if (DXPalette)
+	{
+		DXPalette->Release();
+		DXPalette = 0;
+	}
 }
 
 LPDIRECT3DTEXTUREX DXTextureGetInterface(LPDIRECTDRAWSURFACEX surf)
@@ -178,14 +184,6 @@ void DXClearAllTextures(DXTEXTURE* list)
 {
 	for (int i = 0; i < MAX_TPAGES; i++)
 		DXTextureCleanup(i, list);
-
-#if (DIRECT3D_VERSION < 0x900)
-	if (DXPalette)
-	{
-		DXPalette->Release();
-		DXPalette = 0;
-	}
-#endif
 }
 
 void DXTextureCleanup(long index, DXTEXTURE* list)
@@ -547,7 +545,7 @@ void DXCreateMaxTPages(long create)
 
 	d3dinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D];
 	ddpf = &d3dinfo->Texture[App.lpDXConfig->D3DTF].ddsd.ddpfPixelFormat;
-	DXCreateTextureSurface(Textures, ddpf);
+	DXCreateTextureSurface(TextureSurfaces, ddpf);
 	n = 1;
 
 	if (create && ddpf->dwRGBBitCount == 8)
@@ -559,7 +557,7 @@ void DXCreateMaxTPages(long create)
 
 		for (; n < 6; n++)
 		{
-			tex = &Textures[n];
+			tex = &TextureSurfaces[n];
 
 			if (!DXCreateTextureSurface(tex, ddpf2))
 				break;
@@ -572,13 +570,13 @@ void DXCreateMaxTPages(long create)
 
 	for (; n < MAX_TPAGES; n++)
 	{
-		tex = &Textures[n];
+		tex = &TextureSurfaces[n];
 
 		if (!DXCreateTextureSurface(tex, ddpf))
 			break;
 	}
 
-	nTPages = n;
+	nTextures = n;
 }
 
 void DXFreeTPages()
@@ -588,7 +586,7 @@ void DXFreeTPages()
 
 	for (int i = 0; i < MAX_TPAGES; i++)
 	{
-		tex = &Textures[i];
+		tex = &TextureSurfaces[i];
 
 		DXTex = (DXTEXTURE*)tex->DXTex;
 
@@ -616,6 +614,6 @@ void DXFreeTPages()
 		memset(tex, 0, sizeof(TEXTURE));
 	}
 
-	nTPages = 0;
+	nTextures = 0;
 }
 #endif

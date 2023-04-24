@@ -819,7 +819,7 @@ long S_LoadLevelFile(char* name, long number, long type)
 		if (tomb3.gold)
 			T3_GoldifyString(buf);
 
-		LoadPicture(buf, App.PictureBuffer, 1);
+		LoadPicture(buf, App.PictureBuffer);
 		FadePictureUp(32);
 		fade = 1;
 	}

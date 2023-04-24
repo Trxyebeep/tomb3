@@ -1370,7 +1370,7 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 
 	if (App.lpDXConfig->bZBuffer && nDrawType != DT_POLY_WGTA && nDrawType != DT_POLY_WGT && nDrawType != DT_POLY_COLSUB)
 	{
-		nBucket = FindBucket(TPages[pTex->tpage]);
+		nBucket = FindBucket(TexturePtrs[pTex->tpage]);
 
 		if (nBucket != -1)
 		{
@@ -1525,7 +1525,7 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 
 	if (App.lpDXConfig->bZBuffer && nDrawType != DT_POLY_WGTA && nDrawType != DT_POLY_WGT && nDrawType != DT_POLY_COLSUB)
 	{
-		nBucket = FindBucket(TPages[pTex->tpage]);
+		nBucket = FindBucket(TexturePtrs[pTex->tpage]);
 
 		if (nBucket == -1)
 			return;
@@ -1698,7 +1698,7 @@ void HWI_InsertClippedPoly_Textured(long nPoints, float zdepth, long nDrawType, 
 
 	if (App.lpDXConfig->bZBuffer && nDrawType != DT_POLY_WGTA && nDrawType != DT_POLY_WGT && nDrawType != DT_POLY_COLSUB)
 	{
-		nBucket = FindBucket(TPages[nTPage]);
+		nBucket = FindBucket(TexturePtrs[nTPage]);
 
 		if (nBucket == -1)
 			return;

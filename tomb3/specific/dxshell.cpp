@@ -5,7 +5,6 @@
 #include "hwrender.h"
 #include "drawprimitive.h"
 #include "display.h"
-#include "picture.h"
 #include "texture.h"
 #include "../tomb3/tomb3.h"
 
@@ -736,9 +735,9 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 	HWR_InitState();
 	DXCreateMaxTPages(1);
 
-	if (!nTPages)
+	if (!nTextures)
 	{
-		Log("nTPages is 0, DXCreateMaxTPages failed, exitting..");
+		Log("nTextures is 0, DXCreateMaxTPages failed, exitting..");
 		return 0;
 	}
 
@@ -804,7 +803,7 @@ bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer)
 	DXSurfBlt(App.FrontBuffer, 0, 0);
 
 	for (int i = 0; i < MAX_TPAGES; i++)
-		PictureTextures[i].tex = 0;
+		Textures[i].tex = 0;
 
 	WinFreeDX(0);
 
@@ -824,8 +823,8 @@ bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer)
 
 	HWR_GetAllTextureHandles();
 
-	for (int i = 0; i < nTPages; i++)
-		HWR_SetCurrentTexture(TPages[i]);
+	for (int i = 0; i < nTextures; i++)
+		HWR_SetCurrentTexture(TexturePtrs[i]);
 
 	HWR_InitState();
 	setup_screen_size();

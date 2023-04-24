@@ -11,7 +11,6 @@
 #include "game.h"
 #include "transform.h"
 #include "../3dsystem/hwinsert.h"
-#include "picture.h"
 #include "smain.h"
 #include "display.h"
 #include "fmv.h"
@@ -48,7 +47,10 @@ void ShutdownGame()
 	if (malloc_buffer)
 		GlobalFree(malloc_buffer);
 
-	DXClearAllTextures(PictureTextures);
+	DXClearAllTextures(Textures);
+#if (DIRECT3D_VERSION < 0x900)
+	DXReleasePalette();
+#endif
 	DI_Finish();
 	DS_Finish();
 	WinFreeDX(1);
