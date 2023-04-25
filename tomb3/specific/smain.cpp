@@ -277,7 +277,7 @@ long TitleSequence()
 		S_CDPlay(gameflow.title_track, 1);
 
 	TIME_Init();
-	Display_Inventory(1);
+	Display_Inventory(INV_TITLE_MODE);
 	dontFadePicture = 0;
 	FadePictureDown(32);
 	S_CDStop();

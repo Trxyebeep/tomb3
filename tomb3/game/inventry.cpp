@@ -46,7 +46,7 @@ TEXTSTRING* Inv_upArrow2;
 TEXTSTRING* Inv_downArrow1;
 TEXTSTRING* Inv_downArrow2;
 long Inventory_DemoMode;
-long OpenInvOnGym;
+static long OpenInvOnGym = 1;
 long idelay;
 long idcount;
 short inv_keys_objects;
