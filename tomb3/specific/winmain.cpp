@@ -179,6 +179,7 @@ void WinFreeDX(bool free_dd)
 	}
 #else
 	DXFreeCaptureBuffer();
+	DXFreePictureBuffer();
 #endif
 
 	if (free_dd)

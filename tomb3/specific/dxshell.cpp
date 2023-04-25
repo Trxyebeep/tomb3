@@ -863,6 +863,25 @@ void DXFreeCaptureBuffer()
 	}
 }
 
+void DXCreatePictureBuffer()
+{
+	DISPLAYMODE* dm;
+
+	DXFreePictureBuffer();
+
+	dm = &App.DeviceInfo.D3DInfo[App.DXConfig.nD3D].DisplayMode[App.DXConfig.nVMode];
+	App.D3DDev->CreateOffscreenPlainSurface(dm->w, dm->h, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &App.PictureBuffer, 0);
+}
+
+void DXFreePictureBuffer()
+{
+	if (App.PictureBuffer)
+	{
+		App.PictureBuffer->Release();
+		App.PictureBuffer = 0;
+	}
+}
+
 void DXClearBuffers(ulong flags, ulong color)
 {
 	ulong sflags;
@@ -1074,7 +1093,10 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 	res = DXCreateDevice(windowed);
 
 	if (res)
+	{
 		DXCreateCaptureBuffer();
+		DXCreatePictureBuffer();
+	}
 
 	return res;
 }

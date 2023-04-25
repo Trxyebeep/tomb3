@@ -58,11 +58,15 @@ void FadePictureUp(long steps)
 
 void FadePictureDown(long steps)
 {
+#if (DIRECT3D_VERSION >= 0x900)
+	if (forceFadeDown)
+#else
 	DIRECT3DINFO* d3dinfo;
 
 	d3dinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D];
 
 	if (forceFadeDown || d3dinfo->Texture[App.lpDXConfig->D3DTF].bPalette || !d3dinfo->bAlpha)
+#endif
 	{
 		for (int i = 0; i < steps; i++)
 		{
@@ -150,6 +154,9 @@ void S_FadePicture()
 
 void S_FadeToBlack()
 {
+#if (DIRECT3D_VERSION >= 0x900)
+	ConvertSurfaceToTextures(App.CaptureBuffer);
+#else
 	DISPLAYMODE* dm;
 	LPDIRECTDRAWSURFACEX buffer;
 
@@ -167,11 +174,14 @@ void S_FadeToBlack()
 		App.PictureBuffer->Blt(0, buffer, 0, DDBLT_WAIT, 0);
 		ConvertSurfaceToTextures(App.PictureBuffer);
 	}
+#endif
 
 	HWR_GetAllTextureHandles();
 
+#if (DIRECT3D_VERSION < 0x900)
 	for (int i = 0; i < nTextures; i++)
 		HWR_SetCurrentTexture(TexturePtrs[i]);
+#endif
 
 	nLoadedPictures++;
 	TIME_Init();
@@ -212,22 +222,28 @@ void FreePictureTextures(long* indices)
 	DXTextureCleanup(indices[3], Textures);
 	DXTextureCleanup(indices[4], Textures);
 
+#if (DIRECT3D_VERSION < 0x900)
 	if (App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].Texture[App.lpDXConfig->D3DTF].bPalette)
 	{
 		DXFreeTPages();
 		DXCreateMaxTPages(0);
 	}
+#endif
 
 	HWR_GetAllTextureHandles();
 
+#if (DIRECT3D_VERSION < 0x900)
 	for (int i = 0; i < nTextures; i++)
 		HWR_SetCurrentTexture(TexturePtrs[i]);
+#endif
 }
 
 void CreateMonoScreen()
 {
+#if (DIRECT3D_VERSION < 0x900)
 	DISPLAYMODE* dm;
 	LPDIRECTDRAWSURFACEX buffer;
+#endif
 
 	if (bDontGreyOut)
 	{
@@ -241,6 +257,9 @@ void CreateMonoScreen()
 	else
 		DXTextureSetGreyScale(1);
 
+#if (DIRECT3D_VERSION >= 0x900)
+	ConvertSurfaceToTextures(App.CaptureBuffer);
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 
 	if (tomb3.Windowed)
@@ -255,11 +274,14 @@ void CreateMonoScreen()
 		App.PictureBuffer->Blt(0, buffer, 0, DDBLT_WAIT, 0);
 		ConvertSurfaceToTextures(App.PictureBuffer);
 	}
+#endif
 
 	HWR_GetAllTextureHandles();
 
+#if (DIRECT3D_VERSION < 0x900)
 	for (int i = 0; i < nTextures; i++)
 		HWR_SetCurrentTexture(TexturePtrs[i]);
+#endif
 
 	DXTextureSetGreyScale(0);
 	nLoadedPictures++;
@@ -320,21 +342,88 @@ static void MemBlt(char* dest, long x, long y, long w, long h, long sz, char* so
 {
 	ulong stride;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	stride = 32 >> 3;
+#else
 	stride = desc.ddpfPixelFormat.dwRGBBitCount >> 3;
+#endif
 	dest += stride * (x + y * sz);
+#if (DIRECT3D_VERSION >= 0x900)
+	source += y2 * desc.Pitch + stride * x2;
+#else
 	source += y2 * desc.lPitch + stride * x2;
+#endif
 
 	while (h)
 	{
 		memcpy(dest, source, stride * w);
 		dest += stride * sz;
+#if (DIRECT3D_VERSION >= 0x900)
+		source += desc.Pitch;
+#else
 		source += desc.lPitch;
+#endif
 		h--;
 	}
 }
 
 void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf)
 {
+#if (DIRECT3D_VERSION >= 0x900)
+	DDSURFACEDESCX desc;
+	DDSURFACEDESCX desc2;
+	long* pIndices;
+	char* source;
+	char* dest;
+
+	if (nLoadedPictures)
+		pIndices = OldPicTexIndices;
+	else
+		pIndices = CurPicTexIndices;
+
+	dest = (char*)malloc((256 * 256) * (32 >> 3));
+
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+
+	surf->LockRect(&desc, 0, D3DLOCK_READONLY);
+	source = (char*)desc.pBits;
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESCX));
+	MemBlt(dest, 0, 0, 256, 256, 256, source, 0, 0, desc2);
+	surf->UnlockRect();
+	pIndices[0] = DXTextureAdd(256, 256, (uchar*)dest, Textures, 8888, TF_PICTEX);
+
+	surf->LockRect(&desc, 0, D3DLOCK_READONLY);
+	source = (char*)desc.pBits;
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESCX));
+	MemBlt(dest, 0, 0, 256, 256, 256, source, 256, 0, desc2);
+	surf->UnlockRect();
+	pIndices[1] = DXTextureAdd(256, 256, (uchar*)dest, Textures, 8888, TF_PICTEX);
+
+	surf->LockRect(&desc, 0, D3DLOCK_READONLY);
+	source = (char*)desc.pBits;
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESCX));
+	MemBlt(dest, 0, 0, 128, 256, 256, source, 512, 0, desc2);
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESCX));
+	MemBlt(dest, 128, 0, 128, 224, 256, source, 512, 256, desc2);
+	surf->UnlockRect();
+	pIndices[2] = DXTextureAdd(256, 256, (uchar*)dest, Textures, 8888, TF_PICTEX);
+
+	surf->LockRect(&desc, 0, D3DLOCK_READONLY);
+	source = (char*)desc.pBits;
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESCX));
+	MemBlt(dest, 0, 0, 256, 224, 256, source, 0, 256, desc2);
+	surf->UnlockRect();
+	pIndices[3] = DXTextureAdd(256, 256, (uchar*)dest, Textures, 8888, TF_PICTEX);
+
+	surf->LockRect(&desc, 0, D3DLOCK_READONLY);
+	source = (char*)desc.pBits;
+	memcpy(&desc2, &desc, sizeof(DDSURFACEDESCX));
+	MemBlt(dest, 0, 0, 256, 224, 256, source, 256, 256, desc2);
+	surf->UnlockRect();
+	pIndices[4] = DXTextureAdd(256, 256, (uchar*)dest, Textures, 8888, TF_PICTEX);
+
+	free(dest);
+#else
 	DDSURFACEDESCX desc;
 	DDSURFACEDESCX desc2;
 	long* pIndices;
@@ -412,6 +501,7 @@ void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf)
 	pIndices[4] = DXTextureAdd(256, 256, (uchar*)dest, Textures, bitcnt, TF_PICTEX);
 
 	free(dest);
+#endif
 }
 
 void DrawTile(long x, long y, long w, long h, long tpage, long tU, long tV, long tW, long tH, long c0, long c1, long c2, long c3, float z)
@@ -464,11 +554,20 @@ void DrawTile(long x, long y, long w, long h, long tpage, long tU, long tV, long
 	HWR_EnableColorKey(0);
 	HWR_EnableColorAddition(0);
 	HWR_EnableZBuffer(0, 0);
+#if (DIRECT3D_VERSION >= 0x900)
+	HWR_EnableAlphaBlend(1);
+	SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+	SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+	DrawPrimitive(D3DPT_TRIANGLEFAN, v, 4);
+	SetSamplerState(0, D3DSAMP_MAGFILTER, HWConfig.nFilter);
+	SetSamplerState(0, D3DSAMP_MINFILTER, HWConfig.nFilter);
+#else
 	SetRenderState(D3DRENDERSTATE_TEXTUREMAG, D3DFILTER_NEAREST);
 	SetRenderState(D3DRENDERSTATE_TEXTUREMIN, D3DFILTER_NEAREST);
 	DrawPrimitive(D3DPT_TRIANGLEFAN, D3DVT_TLVERTEX, v, 4, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 	SetRenderState(D3DRENDERSTATE_TEXTUREMAG, HWConfig.nFilter);
 	SetRenderState(D3DRENDERSTATE_TEXTUREMIN, HWConfig.nFilter);
+#endif
 }
 
 void DrawPictureAlpha(long col, long* indices, float z)

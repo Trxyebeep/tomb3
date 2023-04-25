@@ -35,6 +35,8 @@ bool DXSwitchVideoMode(long needed, long current);
 bool DXToggleZbuffer();
 void DXCreateCaptureBuffer();
 void DXFreeCaptureBuffer();
+void DXCreatePictureBuffer();
+void DXFreePictureBuffer();
 #endif
 
 BOOL CALLBACK DXEnumDirectSound(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext);

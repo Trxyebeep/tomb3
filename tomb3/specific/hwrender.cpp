@@ -30,6 +30,7 @@ uchar ColorTable[256];
 static D3DPRIMITIVETYPE dpPrimitiveType;
 static bool zBufWriteEnabled;
 static bool zBufCompareEnabled;
+static bool AlphaBlendEnabled;
 bool bAlphaTesting;
 
 void HWR_EnableZBuffer(bool write, bool compare)
@@ -66,6 +67,7 @@ void HWR_EnableColorKey(bool enable)
 {
 #if (DIRECT3D_VERSION >= 0x900)
 	SetRenderState(D3DRS_ALPHABLENDENABLE, enable);
+	AlphaBlendEnabled = enable;
 #else
 	static bool enabled;
 
@@ -89,28 +91,26 @@ void HWR_EnableColorKey(bool enable)
 
 void HWR_EnableAlphaBlend(bool enable)
 {
-	static bool enabled;
-
 	if (enable)
 	{
-		if (!enabled)
+		if (!AlphaBlendEnabled)
 		{
 #if (DIRECT3D_VERSION >= 0x900)
 			SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
 #else
 			SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, 1);
 #endif
-			enabled = 1;
+			AlphaBlendEnabled = 1;
 		}
 	}
-	else if (enabled)
+	else if (AlphaBlendEnabled)
 	{
 #if (DIRECT3D_VERSION >= 0x900)
 		SetRenderState(D3DRS_ALPHABLENDENABLE, 0);
 #else
 		SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, 0);
 #endif
-		enabled = 0;
+		AlphaBlendEnabled = 0;
 	}
 }
 
