@@ -915,10 +915,10 @@ static void DXEnumerateDisplayModes(DIRECT3DINFO* d3dinfo, long index)
 		pDM = &d3dinfo->DisplayMode[d3dinfo->nDisplayMode];
 
 		pDM->w = DM.Width;
-		pDM->h = DM.Height;
-		pDM->bpp = 32;
+pDM->h = DM.Height;
+pDM->bpp = 32;
 
-		d3dinfo->nDisplayMode++;
+d3dinfo->nDisplayMode++;
 	}
 }
 
@@ -1014,8 +1014,16 @@ static bool DXCreateDevice(bool windowed)
 
 		do res = App.D3DDev->TestCooperativeLevel(); while (res == D3DERR_DEVICELOST);
 
-		if ((res != D3D_OK && res != D3DERR_DEVICENOTRESET) || FAILED(App.D3DDev->Reset(&d3dpp)))
+		if (res != D3D_OK)
+		{
+			if (res == D3DERR_DEVICENOTRESET)
+			{
+				if (FAILED(App.D3DDev->Reset(&d3dpp)))
+					return 0;
+			}
+
 			return 0;
+		}
 	}
 
 	if (!DestVB)
