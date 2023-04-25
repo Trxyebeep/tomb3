@@ -298,9 +298,15 @@ void DrawMonoScreen(long r, long g, long b)	//do not call this function with a v
 
 	if (tomb3.psx_mono)
 	{
-		r <<= 1;
-		g <<= 1;	//compensate for PSX contrast
-		b <<= 1;
+#if (DIRECT3D_VERSION >= 0x900)
+		if (!tomb3.psx_contrast)
+#endif
+		{
+			r <<= 1;
+			g <<= 1;	//compensate for PSX contrast
+			b <<= 1;
+		}
+
 		col = RGBA(r, g, b, 0xFF);
 
 		for (int i = 0; i < 3; i++)
@@ -576,8 +582,16 @@ void DrawPictureAlpha(long col, long* indices, float z)
 	long y[4];
 	static long screenX[4] = { 0, 256, 512, 640 };
 	static long screenY[3] = { 0, 256, 480 };
+	long maxcol;
 
-	col = (0xFF000000 * (col + 1)) | 0xFFFFFF;
+#if (DIRECT3D_VERSION >= 0x900)
+	if (tomb3.psx_contrast)
+		maxcol = 0x808080;
+	else
+#endif
+		maxcol = 0xFFFFFF;
+
+	col = (0xFF000000 * (col + 1)) | maxcol;
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -605,6 +619,12 @@ void TRDrawPicture(long col, long* indices, float z)
 	static long screenY[3] = { 0, 256, 480 };
 
 	col = 255 - col;
+
+#if (DIRECT3D_VERSION >= 0x900)
+	if (tomb3.psx_contrast)
+		col >>= 1;
+#endif
+
 	col = RGBA(col, col, col, 0xFF);
 
 	for (int i = 0; i < 3; i++)

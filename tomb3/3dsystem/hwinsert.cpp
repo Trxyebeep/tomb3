@@ -208,6 +208,20 @@ static void PHD_VBUF_To_VERTEX_INFO(PHD_VBUF* phdV, VERTEX_INFO* v)
 	v->vr = GETR(phdV->color);
 	v->vg = GETG(phdV->color);
 	v->vb = GETB(phdV->color);
+
+#if (DIRECT3D_VERSION >= 0x900)
+	if (tomb3.psx_contrast)
+	{
+		v->vr <<= 1;
+		if (v->vr > 255) v->vr = 255;
+
+		v->vg <<= 1;
+		if (v->vg > 255) v->vg = 255;
+
+		v->vb <<= 1;
+		if (v->vb > 255) v->vb = 255;
+	}
+#endif
 }
 
 static void PHD_VBUF_To_VERTEX_INFO_WITHUV(PHD_VBUF* phdV, VERTEX_INFO* v, ushort* uv)
@@ -233,6 +247,20 @@ static void PHD_VBUF_To_POINT_INFO(PHD_VBUF* v, POINT_INFO* point)
 	point->vr = GETR(v->color);
 	point->vg = GETG(v->color);
 	point->vb = GETB(v->color);
+
+#if (DIRECT3D_VERSION >= 0x900)
+	if (tomb3.psx_contrast)
+	{
+		point->vr <<= 1;
+		if (point->vr > 255) point->vr = 255;
+
+		point->vg <<= 1;
+		if (point->vg > 255) point->vg = 255;
+
+		point->vb <<= 1;
+		if (point->vb > 255) point->vb = 255;
+	}
+#endif
 }
 
 static void PHD_VBUF_To_POINT_INFO_WITHUV(PHD_VBUF* v, POINT_INFO* point, ushort* uv)

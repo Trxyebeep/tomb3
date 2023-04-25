@@ -481,6 +481,10 @@ void HWR_DrawRoutinesNoAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long T
 
 __inline void HWR_InitGamma(float gamma)
 {
+#if (DIRECT3D_VERSION >= 0x900)
+	if (tomb3.psx_contrast)
+		gamma = 2.5F;
+#endif
 	gamma = 1.0F / (gamma / 10.0F * 4.0F);
 
 	for (int i = 0; i < 256; i++)
@@ -501,7 +505,11 @@ void HWR_InitState()
 	SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-	SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	if (tomb3.psx_contrast)
+		SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE2X);
+	else
+		SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+
 	SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 	SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
 	SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);

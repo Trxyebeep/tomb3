@@ -3897,7 +3897,13 @@ void S_DrawSparks()
 				if (sptr->TransType == 3)
 				{
 					drawType = DT_POLY_COLSUB;
-					r = 4;
+
+#if (DIRECT3D_VERSION >= 0x900)
+					if (tomb3.psx_contrast)
+						r = 2;
+					else
+#endif
+						r = 4;
 				}
 				else
 				{
@@ -3909,9 +3915,7 @@ void S_DrawSparks()
 						drawType = DT_POLY_WGT;
 				}
 
-#if (DIRECT3D_VERSION < 0x900)
-				for (g = 0; g < r; g++)	//HACK: draw colsub multiple times to make up for lack of modulate4x
-#endif
+				for (g = 0; g < r; g++)
 					HWI_InsertAlphaSprite_Sorted(x1, y1, z, c, x2, y2, z, c, x3, y3, z, c, x4, y4, z, c, sptr->Def, drawType, 0);
 
 				sptr->RotAng = (sptr->RotAng + sptr->RotAdd) & 0xFFF;
@@ -3950,7 +3954,13 @@ void S_DrawSparks()
 				if (sptr->TransType == 3)
 				{
 					drawType = DT_POLY_COLSUB;
-					r = 4;
+
+#if (DIRECT3D_VERSION >= 0x900)
+					if (tomb3.psx_contrast)
+						r = 2;
+					else
+#endif
+						r = 4;
 				}
 				else
 				{
@@ -3962,9 +3972,8 @@ void S_DrawSparks()
 						drawType = DT_POLY_WGT;
 				}
 
-#if (DIRECT3D_VERSION < 0x900)
-				for (g = 0; g < r; g++)	//HACK: draw colsub multiple times to make up for lack of modulate4x
-#endif
+
+				for (g = 0; g < r; g++)
 					HWI_InsertAlphaSprite_Sorted(x1, y1, z, c, x2, y1, z, c, x2, y2, z, c, x1, y2, z, c, sptr->Def, drawType, 0);
 			}
 		}
@@ -4038,7 +4047,13 @@ void S_DrawSparks()
 			if (sptr->TransType == 3)
 			{
 				drawType = DT_POLY_COLSUB;
-				r = 4;
+
+#if (DIRECT3D_VERSION >= 0x900)
+				if (tomb3.psx_contrast)
+					r = 2;
+				else
+#endif
+					r = 4;
 			}
 			else
 			{
@@ -4050,9 +4065,7 @@ void S_DrawSparks()
 					drawType = DT_POLY_G;
 			}
 
-#if (DIRECT3D_VERSION < 0x900)
-			for (g = 0; g < r; g++)	//HACK: draw colsub multiple times to make up for lack of modulate4x
-#endif
+			for (g = 0; g < r; g++)
 				HWI_InsertAlphaSprite_Sorted(x1, y1, z, c, x2, y1, z, c, x2, y2, z, c, x1, y2, z, c, -1, drawType, 0);
 		}
 	}
@@ -4755,6 +4768,11 @@ void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 
 	c = short((4096 - abs(item->floor - lara_item->pos.y_pos)) >> 4) - 1;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	if (tomb3.psx_contrast)
+		c >>= 1;
+#endif
+
 	if (c < 32)
 		c = 32;
 
@@ -4933,6 +4951,11 @@ void S_DrawFootPrints()
 		else
 			c = 112;
 
+#if (DIRECT3D_VERSION >= 0x900)
+		if (tomb3.psx_contrast)
+			c <<= 1;
+#endif
+
 		memset(pos, 0, sizeof(pos));
 		pos[0].x = 0;
 		pos[0].z = -64;
@@ -4981,10 +5004,15 @@ void S_DrawFootPrints()
 		tex.tpage = sprite->tpage;
 		tex.drawtype = 3;
 
-#if (DIRECT3D_VERSION < 0x900)
-		for (int j = 0; j < 4; j++)	//HACK: draw 4 times to make up for lack of modulate4x..
-#endif
+#if (DIRECT3D_VERSION >= 0x900)
+		if (tomb3.psx_contrast)
 			HWI_InsertGT3_Sorted(&v[0], &v[1], &v[2], &tex, &tex.u1, &tex.u2, &tex.u3, MID_SORT, 1);
+		else
+#endif
+		{
+			for (int j = 0; j < 4; j++)	//HACK: draw 4 times to make up for lack of modulate4x..
+				HWI_InsertGT3_Sorted(&v[0], &v[1], &v[2], &tex, &tex.u1, &tex.u2, &tex.u3, MID_SORT, 1);
+		}
 	}
 }
 

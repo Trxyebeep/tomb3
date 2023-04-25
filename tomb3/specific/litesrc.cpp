@@ -6,6 +6,7 @@
 #include "../game/effect2.h"
 #include "../game/control.h"
 #include "winmain.h"
+#include "../tomb3/tomb3.h"
 
 PHD_VECTOR LPos[3];
 long LightPos[12];
@@ -234,7 +235,7 @@ void S_CalculateLight(long x, long y, long z, short room_number, ITEM_LIGHT* il)
 	PHD_VECTOR lc;
 	long brightest, distance, shade;
 	ushort ambience;
-	uchar sun;
+	uchar sun, aShift, cShift;
 
 	sl = 0;
 	dl2 = 0;
@@ -259,10 +260,23 @@ void S_CalculateLight(long x, long y, long z, short room_number, ITEM_LIGHT* il)
 		LPos[i].z = 0;
 	}
 
+#if (DIRECT3D_VERSION >= 0x900)
+	if (tomb3.psx_contrast)
+	{
+		aShift = 6;
+		cShift = 3;
+	}
+	else
+#endif
+	{
+		aShift = 5;
+		cShift = 4;
+	}
+
 	r = &room[room_number];
 	sun = 0;
 	brightest = -1;
-	ambience = ((0x1FFF - r->ambient) >> 5) + 1;
+	ambience = ((0x1FFF - r->ambient) >> aShift) + 1;
 
 	for (int i = 0; i < r->num_lights; i++)
 	{
@@ -301,9 +315,9 @@ void S_CalculateLight(long x, long y, long z, short room_number, ITEM_LIGHT* il)
 		sunlight.sun.nx = (short)il->sun.x;
 		sunlight.sun.ny = (short)il->sun.y;
 		sunlight.sun.nz = (short)il->sun.z;
-		sunlight.r = (0x1FFF - r->ambient) >> 5;
-		sunlight.g = (0x1FFF - r->ambient) >> 5;
-		sunlight.b = (0x1FFF - r->ambient) >> 5;
+		sunlight.r = (0x1FFF - r->ambient) >> aShift;
+		sunlight.g = (0x1FFF - r->ambient) >> aShift;
+		sunlight.b = (0x1FFF - r->ambient) >> aShift;
 		sl = &sunlight;
 		sun = 1;
 	}
@@ -333,9 +347,9 @@ void S_CalculateLight(long x, long y, long z, short room_number, ITEM_LIGHT* il)
 		LPos[0].x = il->sun.x;
 		LPos[0].y = il->sun.y;
 		LPos[0].z = il->sun.z;
-		LightCol[M00] = il->sunr << 4;
-		LightCol[M10] = il->sung << 4;
-		LightCol[M20] = il->sunb << 4;
+		LightCol[M00] = il->sunr << cShift;
+		LightCol[M10] = il->sung << cShift;
+		LightCol[M20] = il->sunb << cShift;
 	}
 
 	if (brightest == -1 && il->init & 2)
@@ -344,9 +358,9 @@ void S_CalculateLight(long x, long y, long z, short room_number, ITEM_LIGHT* il)
 		ls.x = il->bulb.x;
 		ls.y = il->bulb.y;
 		ls.z = il->bulb.z;
-		sunlight.r = (0x1FFF - r->ambient) >> 5;
-		sunlight.g = (0x1FFF - r->ambient) >> 5;
-		sunlight.b = (0x1FFF - r->ambient) >> 5;
+		sunlight.r = (0x1FFF - r->ambient) >> aShift;
+		sunlight.g = (0x1FFF - r->ambient) >> aShift;
+		sunlight.b = (0x1FFF - r->ambient) >> aShift;
 		l = &sunlight;
 	}
 
@@ -377,9 +391,9 @@ void S_CalculateLight(long x, long y, long z, short room_number, ITEM_LIGHT* il)
 		LPos[1].x = il->bulb.x >> 2;
 		LPos[1].y = il->bulb.y >> 2;
 		LPos[1].z = il->bulb.z >> 2;
-		LightCol[M01] = il->bulbr << 4;
-		LightCol[M11] = il->bulbg << 4;
-		LightCol[M21] = il->bulbb << 4;
+		LightCol[M01] = il->bulbr << cShift;
+		LightCol[M11] = il->bulbg << cShift;
+		LightCol[M21] = il->bulbb << cShift;
 	}
 
 	brightest = -1;
@@ -439,9 +453,9 @@ void S_CalculateLight(long x, long y, long z, short room_number, ITEM_LIGHT* il)
 		LPos[2].x = il->dynamic.x >> 2;
 		LPos[2].y = il->dynamic.y >> 2;
 		LPos[2].z = il->dynamic.z >> 2;
-		LightCol[M02] = il->dynamicr << 4;
-		LightCol[M12] = il->dynamicg << 4;
-		LightCol[M22] = il->dynamicb << 4;
+		LightCol[M02] = il->dynamicr << cShift;
+		LightCol[M12] = il->dynamicg << cShift;
+		LightCol[M22] = il->dynamicb << cShift;
 	}
 
 	if (ambience > 255)

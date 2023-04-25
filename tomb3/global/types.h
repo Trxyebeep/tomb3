@@ -2202,6 +2202,7 @@ struct TOMB3_OPTIONS
 	bool psx_crystal_sfx;
 	bool blue_crystal_light;
 	bool improved_electricity;
+	bool psx_contrast;
 	bool gold;
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum
