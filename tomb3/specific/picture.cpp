@@ -155,7 +155,7 @@ void S_FadePicture()
 void S_FadeToBlack()
 {
 #if (DIRECT3D_VERSION >= 0x900)
-	ConvertSurfaceToTextures(App.CaptureBuffer);
+	ConvertSurfaceToTextures(App.CaptureBuffer, 0);
 #else
 	DISPLAYMODE* dm;
 	LPDIRECTDRAWSURFACEX buffer;
@@ -208,7 +208,11 @@ bool LoadPicture(const char* name, LPDIRECTDRAWSURFACEX surf)
 	surf->ReleaseDC(hdc);
 	DeleteDC(cdc);
 
+#if (DIRECT3D_VERSION >= 0x900)
+	ConvertSurfaceToTextures(surf, 0);
+#else
 	ConvertSurfaceToTextures(surf);
+#endif
 	HWR_GetAllTextureHandles();
 	nLoadedPictures++;
 	return 1;
@@ -258,7 +262,7 @@ void CreateMonoScreen()
 		DXTextureSetGreyScale(1);
 
 #if (DIRECT3D_VERSION >= 0x900)
-	ConvertSurfaceToTextures(App.CaptureBuffer);
+	ConvertSurfaceToTextures(App.CaptureBuffer, 1);
 #else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 
@@ -288,7 +292,7 @@ void CreateMonoScreen()
 	TIME_Init();
 }
 
-void DrawMonoScreen(long r, long g, long b)	//do not call this function with a value higher than 127
+void DrawMonoScreen(long r, long g, long b)	//do not call this function with color values higher than 127 (for DX5)
 {
 	long x[4];
 	long y[4];
@@ -319,12 +323,17 @@ void DrawMonoScreen(long r, long g, long b)	//do not call this function with a v
 
 		HWR_EnableAlphaBlend(0);
 		HWR_EnableColorAddition(0);
+
+#if (DIRECT3D_VERSION >= 0x900)
+		DrawTile(0, 0, phd_winxmax, phd_winymax, CurPicTexIndices[0], 0, 0, 256, 256, col, col, col, col, f_zfar);
+#else
 		DrawTile(x[0], y[0], x[1] - x[0], y[1] - y[0], CurPicTexIndices[0], 0, 0, 256, 256, col, col, col, col, f_zfar);
 		DrawTile(x[1], y[0], x[2] - x[1], y[1] - y[0], CurPicTexIndices[1], 0, 0, 256, 256, col, col, col, col, f_zfar);
 		DrawTile(x[2], y[0], x[3] - x[2], y[1] - y[0], CurPicTexIndices[2], 0, 0, 128, 256, col, col, col, col, f_zfar);
 		DrawTile(x[0], y[1], x[1] - x[0], y[2] - y[1], CurPicTexIndices[3], 0, 0, 256, 224, col, col, col, col, f_zfar);
 		DrawTile(x[1], y[1], x[2] - x[1], y[2] - y[1], CurPicTexIndices[4], 0, 0, 256, 224, col, col, col, col, f_zfar);
 		DrawTile(x[2], y[1], x[3] - x[2], y[2] - y[1], CurPicTexIndices[2], 128, 0, 128, 224, col, col, col, col, f_zfar);
+#endif
 	}
 	else
 		TRDrawPicture(0, CurPicTexIndices, f_zfar);
@@ -373,9 +382,10 @@ static void MemBlt(char* dest, long x, long y, long w, long h, long sz, char* so
 	}
 }
 
-void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf)
-{
 #if (DIRECT3D_VERSION >= 0x900)
+void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf, bool mono)
+{
+	DISPLAYMODE* dm;
 	DDSURFACEDESCX desc;
 	DDSURFACEDESCX desc2;
 	long* pIndices;
@@ -387,9 +397,32 @@ void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf)
 	else
 		pIndices = CurPicTexIndices;
 
-	dest = (char*)malloc((256 * 256) * (32 >> 3));
-
 	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+
+	if (mono)
+	{
+		dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+
+		dest = (char*)malloc((dm->w * dm->h) * (32 >> 3));
+
+		surf->LockRect(&desc, 0, D3DLOCK_READONLY);
+		source = (char*)desc.pBits;
+		memcpy(&desc2, &desc, sizeof(DDSURFACEDESCX));
+		MemBlt(dest, 0, 0, dm->w, dm->h, dm->w, source, 0, 0, desc2);
+		surf->UnlockRect();
+		pIndices[0] = DXTextureAdd(dm->w, dm->h, (uchar*)dest, Textures, 8888, TF_PICTEX);
+
+		/*hacks to stop corrupting textures*/
+		pIndices[1] = DXTextureAdd(1, 1, (uchar*)dest, Textures, 8888, TF_PICTEX);
+		pIndices[2] = DXTextureAdd(1, 1, (uchar*)dest, Textures, 8888, TF_PICTEX);
+		pIndices[3] = DXTextureAdd(1, 1, (uchar*)dest, Textures, 8888, TF_PICTEX);
+		pIndices[4] = DXTextureAdd(1, 1, (uchar*)dest, Textures, 8888, TF_PICTEX);
+
+		free(dest);
+		return;
+	}
+
+	dest = (char*)malloc((256 * 256) * (32 >> 3));
 
 	surf->LockRect(&desc, 0, D3DLOCK_READONLY);
 	source = (char*)desc.pBits;
@@ -430,6 +463,8 @@ void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf)
 
 	free(dest);
 #else
+void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf)
+{
 	DDSURFACEDESCX desc;
 	DDSURFACEDESCX desc2;
 	long* pIndices;

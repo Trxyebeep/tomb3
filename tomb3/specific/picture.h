@@ -14,7 +14,11 @@ void FreePictureTextures(long* indices);
 void CreateMonoScreen();
 void DrawMonoScreen(long r, long g, long b);
 void RemoveMonoScreen(long fade);
+#if (DIRECT3D_VERSION >= 0x900)
+void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf, bool mono);
+#else
 void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf);
+#endif
 void DrawTile(long x, long y, long w, long h, long tpage, long tU, long tV, long tW, long tH, long c0, long c1, long c2, long c3, float z);
 void DrawPictureAlpha(long col, long* indices, float z);
 void TRDrawPicture(long col, long* indices, float z);
