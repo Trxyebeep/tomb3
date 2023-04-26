@@ -272,6 +272,7 @@
     <ClInclude Include="tomb3\newstuff\LaraDraw.h" />
     <ClInclude Include="tomb3\newstuff\map.h" />
     <ClInclude Include="tomb3\newstuff\pausemenu.h" />
+    <ClInclude Include="tomb3\newstuff\Picture2.h" />
     <ClInclude Include="tomb3\newstuff\psxsaves.h" />
     <ClInclude Include="tomb3\newstuff\setupdlg.h" />
     <ClInclude Include="tomb3\script\interpreter.h" />
@@ -411,6 +412,7 @@
     <ClCompile Include="tomb3\newstuff\LaraDraw.cpp" />
     <ClCompile Include="tomb3\newstuff\map.cpp" />
     <ClCompile Include="tomb3\newstuff\pausemenu.cpp" />
+    <ClCompile Include="tomb3\newstuff\Picture2.cpp" />
     <ClCompile Include="tomb3\newstuff\psxsaves.cpp" />
     <ClCompile Include="tomb3\newstuff\setupdlg.cpp" />
     <ClCompile Include="tomb3\script\interpreter.cpp" />

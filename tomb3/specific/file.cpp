@@ -22,6 +22,9 @@
 #include "../game/effects.h"
 #include "../game/effect2.h"
 #include "../game/cinema.h"
+#if (DIRECT3D_VERSION >= 0x900)
+#include "../newstuff/Picture2.h"
+#endif
 #include "../tomb3/tomb3.h"
 //#include "../script/scripter.h"
 
@@ -819,7 +822,11 @@ long S_LoadLevelFile(char* name, long number, long type)
 		if (tomb3.gold)
 			T3_GoldifyString(buf);
 
+#if (DIRECT3D_VERSION >= 0x900)
+		LoadPicture(buf);
+#else
 		LoadPicture(buf, App.PictureBuffer);
+#endif
 		FadePictureUp(32);
 		fade = 1;
 	}

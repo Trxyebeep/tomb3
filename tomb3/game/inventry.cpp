@@ -23,6 +23,9 @@
 #include "control.h"
 #include "camera.h"
 #include "savegame.h"
+#if (DIRECT3D_VERSION >= 0x900)
+#include "../newstuff/Picture2.h"
+#endif
 #include "../newstuff/discord.h"
 #include "../tomb3/tomb3.h"
 
@@ -547,10 +550,10 @@ long Display_Inventory(long mode)
 		/*draw phase*/
 		S_InitialisePolyList(0);
 
-		if (Inventory_Mode == INV_TITLE_MODE || Inventory_Mode == INV_LEVELSELECT_MODE)
-			DoInventoryPicture();
-		else
+		if (Inventory_Mode != INV_TITLE_MODE && Inventory_Mode != INV_LEVELSELECT_MODE)
 			DrawMonoScreen(80, 80, 112);
+		else
+			DoInventoryPicture();
 
 		S_AnimateTextures(nframes);
 		Inv_RingGetView(&ring, &viewer);

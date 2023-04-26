@@ -4,7 +4,11 @@
 #include "transform.h"
 #include "hwrender.h"
 #include "../3dsystem/hwinsert.h"
+#if (DIRECT3D_VERSION >= 0x900)
+#include "../newstuff/Picture2.h"
+#else
 #include "picture.h"
+#endif
 #include "dxshell.h"
 #include "display.h"
 #include "time.h"
@@ -654,10 +658,10 @@ void S_InitialisePolyList(bool clearBackBuffer)
 		clearBackBuffer = 0;
 	}
 
+	flags = 256;
+
 	if (clearBackBuffer || HWConfig.nFillMode < D3DFILL_SOLID)
-		flags = 258;
-	else
-		flags = 256;
+		flags |= 2;
 
 	flags |= 8;
 

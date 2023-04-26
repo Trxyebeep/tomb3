@@ -429,6 +429,7 @@
     <ClInclude Include="tomb3\newstuff\setupdlg.h" />
     <ClInclude Include="tomb3\script\scripter.h" />
     <ClInclude Include="tomb3\script\interpreter.h" />
+    <ClInclude Include="tomb3\newstuff\Picture2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tomb3\game\51baton.cpp">
@@ -830,6 +831,7 @@
     <ClCompile Include="tomb3\newstuff\setupdlg.cpp" />
     <ClCompile Include="tomb3\script\scripter.cpp" />
     <ClCompile Include="tomb3\script\interpreter.cpp" />
+    <ClCompile Include="tomb3\newstuff\Picture2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="tomb3.rc" />

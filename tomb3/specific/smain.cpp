@@ -23,6 +23,9 @@
 #include "init.h"
 #include "../newstuff/discord.h"
 #include "../game/control.h"
+#if (DIRECT3D_VERSION >= 0x900)
+#include "../newstuff/Picture2.h"
+#endif
 #include "../tomb3/tomb3.h"
 
 long HiResFlag;
@@ -252,14 +255,26 @@ long TitleSequence()
 	noinput_count = 0;
 	dontFadePicture = 1;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	RemoveMonoScreen(0);
+#endif
+
 	if (tomb3.gold)
 	{
 		strcpy(name, GF_titlefilenames[1]);
 		T3_GoldifyString(name);
+#if (DIRECT3D_VERSION >= 0x900)
+		LoadPicture(name);
+#else
 		LoadPicture(name, App.PictureBuffer);
+#endif
 	}
 	else
+#if (DIRECT3D_VERSION >= 0x900)
+		LoadPicture(GF_titlefilenames[1]);
+#else
 		LoadPicture(GF_titlefilenames[1], App.PictureBuffer);
+#endif
 
 	FadePictureUp(32);
 
@@ -357,10 +372,17 @@ long GameMain()
 	TempVideoAdjust(1, 1.0);
 	S_UpdateInput();
 
+#if (DIRECT3D_VERSION >= 0x900)
+	if (tomb3.gold)
+		LoadPicture("pixg\\legal.bmp");
+	else
+		LoadPicture("pix\\legal.bmp");
+#else
 	if (tomb3.gold)
 		LoadPicture("pixg\\legal.bmp", App.PictureBuffer);
 	else
 		LoadPicture("pix\\legal.bmp", App.PictureBuffer);
+#endif
 
 	FadePictureUp(32);
 	S_Wait(150 * TICKS_PER_FRAME, 1);

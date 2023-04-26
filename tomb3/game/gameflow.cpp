@@ -15,6 +15,9 @@
 #include "../specific/smain.h"
 #include "control.h"
 #include "lara.h"
+#if (DIRECT3D_VERSION >= 0x900)
+#include "../newstuff/Picture2.h"
+#endif
 
 GAMEFLOW_INFO gameflow;
 

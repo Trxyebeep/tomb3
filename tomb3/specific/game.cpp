@@ -21,6 +21,10 @@
 #include "winmain.h"
 #include "smain.h"
 #include "option.h"
+#if (DIRECT3D_VERSION >= 0x900)
+#include "../3dsystem/3d_gen.h"
+#include "../newstuff/Picture2.h"
+#endif
 #include "../tomb3/tomb3.h"
 
 static long rand_1 = 0xD371F947;
@@ -106,9 +110,15 @@ long GameStats(long level_num, long type)
 		{
 			GF_BonusLevelEnabled = 1;
 			FadePictureDown(32);
+
+#if (DIRECT3D_VERSION >= 0x900)
+			FreePictureTextures();
+			LoadPicture("pix\\theend2.bmp");
+#else
 			FreePictureTextures(CurPicTexIndices);
 			FreePictureTextures(OldPicTexIndices);
 			LoadPicture("pix\\theend2.bmp", App.PictureBuffer);
+#endif
 			nLoadedPictures = 1;
 		}
 		else
@@ -218,7 +228,11 @@ long LevelStats(long level)
 		if (tomb3.gold)
 			T3_GoldifyString(name);
 
+#if (DIRECT3D_VERSION >= 0x900)
+		LoadPicture(name);
+#else
 		LoadPicture(name, App.PictureBuffer);
+#endif
 		FadePictureUp(32);
 		DXTextureSetGreyScale(0);
 	}
@@ -232,7 +246,13 @@ long LevelStats(long level)
 	{
 		S_InitialisePolyList(0);
 		S_UpdateInput();
-		DrawMonoScreen(48, 48, 48);
+
+#if (DIRECT3D_VERSION >= 0x900)
+		if (!bMonoScreen)
+			DrawPicture(0, CurPicTexIndices, f_zfar);
+		else
+#endif
+			DrawMonoScreen(48, 48, 48);
 
 		if (reset_flag)
 			input = IN_SELECT;
@@ -250,7 +270,14 @@ long LevelStats(long level)
 
 	if (tomb3.gold || !gameflow.globe_enabled)
 	{
+#if (DIRECT3D_VERSION >= 0x900)
+		if (!bMonoScreen)
+			FadePictureDown(32);
+		else
+			RemoveMonoScreen(1);
+#else
 		FadePictureDown(32);
+#endif
 		TempVideoRemove();
 		return 0;
 	}
@@ -388,7 +415,14 @@ long LevelStats(long level)
 
 	if (!ret)
 	{
+#if (DIRECT3D_VERSION >= 0x900)
+		if (!bMonoScreen)
+			FadePictureDown(32);
+		else
+			RemoveMonoScreen(1);
+#else
 		FadePictureDown(32);
+#endif
 		TempVideoRemove();
 	}
 	else if (level != gameflow.num_levels - gameflow.num_demos - 1)
@@ -428,7 +462,11 @@ static void DisplayGoldCredits()
 		return;
 
 	S_StartSyncedAudio(121);
+#if (DIRECT3D_VERSION >= 0x900)
+	LoadPicture("pixg\\theend.bmp");
+#else
 	LoadPicture("pixg\\theend.bmp", App.PictureBuffer);
+#endif
 	FadePictureUp(32);
 	S_Wait(150 * TICKS_PER_FRAME, 0);
 	FadePictureDown(32);
@@ -436,13 +474,21 @@ static void DisplayGoldCredits()
 	for (int i = 1; i < 10; i++)
 	{
 		buf[12] = i + '0';
+#if (DIRECT3D_VERSION >= 0x900)
+		LoadPicture(buf);
+#else
 		LoadPicture(buf, App.PictureBuffer);
+#endif
 		FadePictureUp(32);
 		S_Wait(150 * TICKS_PER_FRAME, 0);
 		FadePictureDown(32);
 	}
 
+#if (DIRECT3D_VERSION >= 0x900)
+	LoadPicture("pixg\\theend2.bmp");
+#else
 	LoadPicture("pixg\\theend2.bmp", App.PictureBuffer);
+#endif
 	FadePictureUp(32);
 }
 
@@ -461,7 +507,11 @@ void DisplayCredits()
 		return;
 
 	S_StartSyncedAudio(121);
+#if (DIRECT3D_VERSION >= 0x900)
+	LoadPicture("pix\\theend.bmp");
+#else
 	LoadPicture("pix\\theend.bmp", App.PictureBuffer);
+#endif
 	FadePictureUp(32);
 	S_Wait(150 * TICKS_PER_FRAME, 0);
 	FadePictureDown(32);
@@ -469,13 +519,21 @@ void DisplayCredits()
 	for (int i = 1; i < 10; i++)
 	{
 		buf[11] = i + '0';
+#if (DIRECT3D_VERSION >= 0x900)
+		LoadPicture(buf);
+#else
 		LoadPicture(buf, App.PictureBuffer);
+#endif
 		FadePictureUp(32);
 		S_Wait(150 * TICKS_PER_FRAME, 0);
 		FadePictureDown(32);
 	}
 
+#if (DIRECT3D_VERSION >= 0x900)
+	LoadPicture("pix\\theend2.bmp");
+#else
 	LoadPicture("pix\\theend2.bmp", App.PictureBuffer);
+#endif
 	FadePictureUp(32);
 }
 

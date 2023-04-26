@@ -521,10 +521,10 @@ void DXClearBuffers(ulong flags, ulong color)
 	sflags = 0;
 
 	if (flags & 2)
-		sflags = 1;
+		sflags |= D3DCLEAR_TARGET;
 
 	if (flags & 8)
-		sflags |= 2;
+		sflags |= D3DCLEAR_ZBUFFER;
 
 	if (sflags)
 	{
@@ -896,6 +896,9 @@ void DXClearBuffers(ulong flags, ulong color)
 
 	if (sflags)
 		App.D3DDev->Clear(0, 0, sflags, 0, 1.0F, 0);
+
+	if (flags & 0x20)
+		DXCreateCaptureBuffer();
 }
 
 static void DXEnumerateDisplayModes(DIRECT3DINFO* d3dinfo, long index)
