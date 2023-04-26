@@ -1343,6 +1343,18 @@ void Inv_RingLight(RING_INFO* ring, short object_number)
 	smcg = 32;
 	smcb = 32;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	if (tomb3.psx_contrast)
+	{
+		for (int i = 0; i < indices_count; i++)
+			LightCol[i] >>= 1;
+
+		smcr >>= 1;
+		smcg >>= 1;
+		smcb >>= 1;
+	}
+#endif
+
 	x = 0x4000;
 	y = -0x4000;
 	z = 0x3000;

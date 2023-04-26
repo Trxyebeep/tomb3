@@ -226,6 +226,18 @@ static void SetPickupLight()
 	LightCol[M12] = 2432;	//dynamic
 	LightCol[M22] = 4080;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	if (tomb3.psx_contrast)
+	{
+		for (int i = 0; i < indices_count; i++)
+			LightCol[i] >>= 1;
+
+		smcr >>= 1;
+		smcg >>= 1;
+		smcb >>= 1;
+	}
+#endif
+
 	//positions
 	x = 0x2000;
 	y = -0x2000;
