@@ -384,7 +384,6 @@ static void CrossFadePicture()
 	CurPicTexIndices[2] = OldPicTexIndices[2];
 	CurPicTexIndices[3] = OldPicTexIndices[3];
 	CurPicTexIndices[4] = OldPicTexIndices[4];
-	HWR_EnableColorKey(0);
 	HWR_EnableAlphaBlend(0);
 	HWR_EnableColorAddition(0);
 
@@ -556,7 +555,6 @@ void DrawTile(long x, long y, long w, long h, long tpage, long tU, long tV, long
 	}
 
 	HWR_SetCurrentTexture(&Textures[tpage]);
-	HWR_EnableColorKey(0);
 	HWR_EnableAlphaBlend(1);
 	HWR_EnableZBuffer(0, 0);
 

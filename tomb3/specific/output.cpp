@@ -322,7 +322,9 @@ static void OutputPickupDisplay()
 			Buckets[i].nVtx = 0;
 		}
 
+#if (DIRECT3D_VERSION < 0x900)
 		HWR_EnableColorKey(0);
+#endif
 		HWR_EnableAlphaBlend(0);
 		HWR_EnableColorAddition(0);
 		HWR_EnableZBuffer(1, 1);
@@ -369,7 +371,9 @@ static void OutputPickupDisplay()
 	}
 	else
 	{
+#if (DIRECT3D_VERSION < 0x900)
 		HWR_EnableColorKey(0);
+#endif
 		HWR_EnableAlphaBlend(0);
 		phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
 		HWR_DrawPolyList(surfacenumbf, sort3d_bufferbf);
@@ -380,7 +384,9 @@ void S_OutputPolyList()
 {
 	if (App.lpDXConfig->bZBuffer)
 	{
+#if (DIRECT3D_VERSION < 0x900)
 		HWR_EnableColorKey(0);
+#endif
 		HWR_EnableAlphaBlend(0);
 		HWR_EnableColorAddition(0);
 		HWR_EnableZBuffer(1, 1);
@@ -417,7 +423,9 @@ void S_OutputPolyList()
 	}
 	else
 	{
+#if (DIRECT3D_VERSION < 0x900)
 		HWR_EnableColorKey(0);
+#endif
 		HWR_EnableAlphaBlend(0);
 		phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
 		HWR_DrawPolyList(surfacenumbf, sort3d_bufferbf);

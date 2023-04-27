@@ -131,7 +131,9 @@ long S_UpdateInput()
 	long linput;
 	static long med_debounce = 0;
 	static bool pause_debounce = 0;
+#if (DIRECT3D_VERSION >= 0x900)
 	static bool F7_debounce = 0;
+#endif
 
 	DD_SpinMessageLoop(0);
 	DI_ReadKeyboard(keymap);
@@ -239,6 +241,7 @@ long S_UpdateInput()
 			DecreaseScreenSize();
 	}
 	
+#if (DIRECT3D_VERSION >= 0x900)
 	if (key_pressed(DIK_F7))
 	{
 		if (!F7_debounce)
@@ -251,6 +254,7 @@ long S_UpdateInput()
 	}
 	else
 		F7_debounce = 0;
+#endif
 
 	if (key_pressed(DIK_1) && Inv_RequestItem(GUN_OPTION))
 		lara.request_gun_type = LG_PISTOLS;
