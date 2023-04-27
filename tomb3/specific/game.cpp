@@ -776,15 +776,9 @@ long StartGame(long level, long type)
 		if (!gameflow.demoversion || !gameflow.singlelevel)
 		{
 			if (CurrentLevel != LV_GYM)
-			{
-				S_FadeInInventory(1);
 				result = CurrentLevel | LEVELCOMPLETE;
-			}
 			else
-			{
-				//empty function call here
 				result = EXIT_TO_TITLE;
-			}
 		}
 		else
 			result = EXIT_TO_TITLE;

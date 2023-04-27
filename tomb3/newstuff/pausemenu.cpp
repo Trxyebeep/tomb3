@@ -144,7 +144,6 @@ long S_Pause()
 	T_RemovePrint(ammotext);
 	ammotext = 0;
 
-	S_FadeInInventory(1);
 	SOUND_Stop();
 	S_CDVolume(0);
 	TempVideoAdjust(HiResFlag, 1.0);
@@ -192,7 +191,6 @@ long S_Pause()
 	else
 		S_CDVolume(25 * Option_Music_Volume + 5);
 
-	S_FadeOutInventory(1);
 	Inventory_Chosen = PASSPORT_OPTION;
 	Inventory_ExtraData[0] = 2;
 	Inventory_Mode = INV_GAME_MODE;

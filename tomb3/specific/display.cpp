@@ -3,10 +3,6 @@
 #include "../3dsystem/3d_gen.h"
 #include "winmain.h"
 
-static long fade_value = 0x100000;
-static long fade_limit = 0x100000;
-static long fade_adder = 0x8000;
-
 double screen_sizer = 1.0;
 double game_sizer = 1.0;
 long VidSizeLocked;
@@ -97,28 +93,5 @@ void TempVideoRemove()
 	{
 		screen_sizer = game_sizer;
 		setup_screen_size();
-	}
-}
-
-void S_FadeInInventory(long fade)
-{
-//	if (Inventory_Mode != INV_TITLE_MODE)
-		//empty function call here
-
-	if (fade)
-	{
-		fade_value = 0x100000;
-		fade_limit = 0x180000;
-		fade_adder = 0x8000;
-	}
-}
-
-void S_FadeOutInventory(long fade)
-{
-	if (fade)
-	{
-		fade_value = 0x180000;
-		fade_limit = 0x100000;
-		fade_adder = -0x8000;
 	}
 }
