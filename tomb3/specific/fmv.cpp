@@ -117,7 +117,7 @@ long FMV_Play(char* name)
 	return 0;
 #endif
 
-	if (tomb3.Windowed || !tomb3.WinPlayLoaded)
+	if (App.Windowed || !App.WinPlayLoaded)
 		return 0;
 
 	fmv_playing = 1;
@@ -141,7 +141,7 @@ long FMV_PlayIntro(char* name1, char* name2)
 	return 0;
 #endif
 
-	if (tomb3.Windowed || !tomb3.WinPlayLoaded)
+	if (App.Windowed || !App.WinPlayLoaded)
 		return 0;
 
 	fmv_playing = 1;

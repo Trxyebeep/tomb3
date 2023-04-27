@@ -35,7 +35,7 @@ long farz;
 
 bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 {
-	return DXStartRenderer(device, config, createNew, tomb3.Windowed);
+	return DXStartRenderer(device, config, createNew, App.Windowed);
 }
 
 void WinAppExit()
@@ -231,7 +231,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	G_lpCmdLine = lpCmdLine;
 	memset(&App, 0, sizeof(WINAPP));
 	App.hInstance = hInstance;
-	tomb3.WindowStyle = WS_OVERLAPPEDWINDOW;
+	App.WindowStyle = WS_OVERLAPPEDWINDOW;
 
 	if (!hPrevInstance && !WinRegisterWindow(hInstance))
 	{
@@ -282,12 +282,12 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 		return 0;
 	}
 
-	tomb3.WinPlayLoaded = LoadWinPlay();
+	App.WinPlayLoaded = LoadWinPlay();
 
-	if (!tomb3.WinPlayLoaded)
+	if (!App.WinPlayLoaded)
 		MessageBox(0, "Failed to load WinPlay", "tomb3", 0);
 
-	SetWindowPos(App.WindowHandle, 0, tomb3.rScreen.left, tomb3.rScreen.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+	SetWindowPos(App.WindowHandle, 0, App.rScreen.left, App.rScreen.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 	desktop = GetDesktopWindow();
 	hdc = GetDC(desktop);
 	bpp = GetDeviceCaps(hdc, BITSPIXEL);
@@ -302,15 +302,15 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 		return 0;
 	}
 
-	if (tomb3.Windowed)
+	if (App.Windowed)
 	{
-		WinSetStyle(0, tomb3.WindowStyle);
+		WinSetStyle(0, App.WindowStyle);
 		SetCursor(LoadCursor(0, IDC_ARROW));
 		ShowCursor(1);
 	}
 	else
 	{
-		WinSetStyle(1, tomb3.WindowStyle);
+		WinSetStyle(1, App.WindowStyle);
 		SetCursor(0);
 		ShowCursor(0);
 	}

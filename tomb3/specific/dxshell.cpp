@@ -609,12 +609,12 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 		r.left = 0;
 		r.right = dm->w;
 		r.bottom = dm->h;
-		AdjustWindowRect(&r, tomb3.WindowStyle, 0);
+		AdjustWindowRect(&r, App.WindowStyle, 0);
 		SetWindowPos(App.WindowHandle, 0, 0, 0, r.right - r.left, r.bottom - r.top, SWP_NOMOVE | SWP_NOZORDER);
-		GetClientRect(App.WindowHandle, &tomb3.rViewport);
-		GetClientRect(App.WindowHandle, &tomb3.rScreen);
-		ClientToScreen(App.WindowHandle, (LPPOINT)&tomb3.rScreen);
-		ClientToScreen(App.WindowHandle, (LPPOINT)&tomb3.rScreen.right);
+		GetClientRect(App.WindowHandle, &App.rViewport);
+		GetClientRect(App.WindowHandle, &App.rScreen);
+		ClientToScreen(App.WindowHandle, (LPPOINT)&App.rScreen);
+		ClientToScreen(App.WindowHandle, (LPPOINT)&App.rScreen.right);
 		desc.dwFlags = DDSD_CAPS;
 		desc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
 
@@ -688,10 +688,10 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 			return 0;
 		}
 
-		tomb3.rViewport.top = 0;
-		tomb3.rViewport.left = 0;
-		tomb3.rViewport.right = dm->w;
-		tomb3.rViewport.bottom = dm->h;
+		App.rViewport.top = 0;
+		App.rViewport.left = 0;
+		App.rViewport.right = dm->w;
+		App.rViewport.bottom = dm->h;
 	}
 
 	if (!DXCreateZBuffer(device, config))
@@ -994,8 +994,8 @@ static bool DXCreateDevice(bool windowed)
 	if (!windowed)
 	{
 		d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
-		d3dpp.BackBufferWidth = tomb3.rViewport.right;
-		d3dpp.BackBufferHeight = tomb3.rViewport.bottom;
+		d3dpp.BackBufferWidth = App.rViewport.right;
+		d3dpp.BackBufferHeight = App.rViewport.bottom;
 	}
 
 	if (!App.D3DDev)
@@ -1081,24 +1081,24 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 		r.left = 0;
 		r.right = dm->w;
 		r.bottom = dm->h;
-		AdjustWindowRect(&r, tomb3.WindowStyle, 0);
+		AdjustWindowRect(&r, App.WindowStyle, 0);
 		SetWindowPos(App.WindowHandle, 0, 0, 0, r.right - r.left, r.bottom - r.top, SWP_NOMOVE | SWP_NOZORDER);
-		GetClientRect(App.WindowHandle, &tomb3.rViewport);
-		GetClientRect(App.WindowHandle, &tomb3.rScreen);
-		ClientToScreen(App.WindowHandle, (LPPOINT)&tomb3.rScreen);
-		ClientToScreen(App.WindowHandle, (LPPOINT)&tomb3.rScreen.right);
+		GetClientRect(App.WindowHandle, &App.rViewport);
+		GetClientRect(App.WindowHandle, &App.rScreen);
+		ClientToScreen(App.WindowHandle, (LPPOINT)&App.rScreen);
+		ClientToScreen(App.WindowHandle, (LPPOINT)&App.rScreen.right);
 	}
 	else
 	{
 		Log("Creating Fullscreen");
-		tomb3.rViewport.top = 0;
-		tomb3.rViewport.left = 0;
-		tomb3.rViewport.right = dm->w;
-		tomb3.rViewport.bottom = dm->h;
-		tomb3.rScreen.top = 0;
-		tomb3.rScreen.left = 0;
-		tomb3.rScreen.right = dm->w;
-		tomb3.rScreen.bottom = dm->h;
+		App.rViewport.top = 0;
+		App.rViewport.left = 0;
+		App.rViewport.right = dm->w;
+		App.rViewport.bottom = dm->h;
+		App.rScreen.top = 0;
+		App.rScreen.left = 0;
+		App.rScreen.right = dm->w;
+		App.rScreen.bottom = dm->h;
 	}
 
 	res = DXCreateDevice(windowed);
@@ -1213,7 +1213,7 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 	if (App.D3DDev->Present(0, 0, 0, 0) == D3DERR_DEVICELOST)
 	{
 		DXFreeCaptureBuffer();
-		DXCreateDevice(tomb3.Windowed);
+		DXCreateDevice(App.Windowed);
 		HWR_InitState();
 		DXCreateCaptureBuffer();
 	}
@@ -1228,8 +1228,8 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 	d3dinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D];
 	w = d3dinfo->DisplayMode[App.lpDXConfig->nVMode].w;
 
-	if (tomb3.Windowed)
-		App.FrontBuffer->Blt(&tomb3.rScreen, App.BackBuffer, &tomb3.rViewport, DDBLT_WAIT, 0);
+	if (App.Windowed)
+		App.FrontBuffer->Blt(&App.rScreen, App.BackBuffer, &App.rViewport, DDBLT_WAIT, 0);
 	else
 		App.FrontBuffer->Flip(0, DDFLIP_WAIT);
 #endif
@@ -1242,26 +1242,26 @@ bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
 
 long DXToggleFullScreen()
 {
-	if (tomb3.Windowed)
+	if (App.Windowed)
 	{
 		Log("DXToggleFullScreen: Switching to Fullscreen");
-		tomb3.Windowed = 0;
+		App.Windowed = 0;
 	}
 	else
 	{
 		Log("DXToggleFullScreen: Switching to Windowed");
-		tomb3.Windowed = 1;
+		App.Windowed = 1;
 	}
 
 	if (WinDXInit(&App.DeviceInfo, &App.DXConfig, 0))
 	{
 		Log("DXToggleFullScreen: Switched successfully");
-		WinSetStyle(!tomb3.Windowed, tomb3.WindowStyle);
+		WinSetStyle(!App.Windowed, App.WindowStyle);
 		return 1;
 	}
 
 	Log("DXToggleFullScreen: Switching failed, try to revert");
-	tomb3.Windowed = !tomb3.Windowed;
+	App.Windowed = !App.Windowed;
 
 	if (WinDXInit(&App.DeviceInfo, &App.DXConfig, 0))
 	{
@@ -1277,7 +1277,7 @@ void DXMove(long x, long y)
 {
 	DISPLAYMODE* dm;
 
-	if (!tomb3.Windowed)
+	if (!App.Windowed)
 		return;
 
 #if (DIRECT3D_VERSION >= 0x900)
@@ -1285,5 +1285,5 @@ void DXMove(long x, long y)
 #else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 #endif
-	SetRect(&tomb3.rScreen, x, y, x + dm->w, y + dm->h);
+	SetRect(&App.rScreen, x, y, x + dm->w, y + dm->h);
 }

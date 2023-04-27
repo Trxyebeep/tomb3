@@ -434,7 +434,7 @@ static BOOL CALLBACK SetupDlgProc(HWND dlg, UINT message, WPARAM wParam, LPARAM 
 			config->Dither = (bool)SendMessage(GetDlgItem(dlg, IDC_DITHER), BM_GETCHECK, 0, 0);
 			config->Filter = (bool)SendMessage(GetDlgItem(dlg, IDC_BILINEAR), BM_GETCHECK, 0, 0);
 			config->sound = !(bool)SendMessage(GetDlgItem(dlg, IDC_DISABLE_SOUND), BM_GETCHECK, 0, 0);
-			tomb3.Windowed = (bool)SendMessage(GetDlgItem(dlg, IDC_WINDOWED), BM_GETCHECK, 0, 0);
+			App.Windowed = (bool)SendMessage(GetDlgItem(dlg, IDC_WINDOWED), BM_GETCHECK, 0, 0);
 
 			if ((ushort)wParam == IDOK)
 			{

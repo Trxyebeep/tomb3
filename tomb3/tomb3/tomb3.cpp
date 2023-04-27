@@ -59,7 +59,7 @@ static void T3_InitSettings()
 {
 	Option_Music_Volume = 7;
 	Option_SFX_Volume = 10;
-	tomb3.Windowed = 0;
+	App.Windowed = 0;
 
 	tomb3.footprints = 1;
 	tomb3.pickup_display = 1;
@@ -129,9 +129,9 @@ void T3_SaveSettings()
 	REG_WriteLong((char*)"sound", App.lpDXConfig->sound);
 	REG_WriteLong((char*)"SFXVolume", Option_SFX_Volume);
 	REG_WriteLong((char*)"MusicVolume", Option_Music_Volume);
-	REG_WriteBool((char*)"Window", tomb3.Windowed);
-	REG_WriteLong((char*)"WindowX", tomb3.rScreen.left);
-	REG_WriteLong((char*)"WindowY", tomb3.rScreen.top);
+	REG_WriteBool((char*)"Window", App.Windowed);
+	REG_WriteLong((char*)"WindowX", App.rScreen.left);
+	REG_WriteLong((char*)"WindowY", App.rScreen.top);
 	REG_WriteFloat((char*)"Gamma", GammaOption);
 	REG_WriteBlock((char*)"keyLayout", &layout[1][0], sizeof(layout) / 2);
 
@@ -213,9 +213,9 @@ bool T3_LoadSettings()
 	REG_ReadLong((char*)"sound", (ulong&)App.lpDXConfig->sound, 0);
 	REG_ReadLong((char*)"SFXVolume", (ulong&)Option_SFX_Volume, 0);
 	REG_ReadLong((char*)"MusicVolume", (ulong&)Option_Music_Volume, 0);
-	REG_ReadBool((char*)"Window", tomb3.Windowed, 0);
-	REG_ReadLong((char*)"WindowX", (ulong&)tomb3.rScreen.left, 0);
-	REG_ReadLong((char*)"WindowY", (ulong&)tomb3.rScreen.top, 0);
+	REG_ReadBool((char*)"Window", App.Windowed, 0);
+	REG_ReadLong((char*)"WindowX", (ulong&)App.rScreen.left, 0);
+	REG_ReadLong((char*)"WindowY", (ulong&)App.rScreen.top, 0);
 	REG_ReadFloat((char*)"Gamma", GammaOption, 0);
 
 	REG_ReadBlock((char*)"keyLayout", &layout[1][0], sizeof(layout) / 2, 0);

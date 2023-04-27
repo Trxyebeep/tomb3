@@ -200,6 +200,7 @@ long LevelStats(long level)
 	long ret, s, world;
 	char buf[32];
 	char name[128];
+	bool mono;
 
 	ret = 0;
 	savegame.start[level].timer = savegame.timer;
@@ -215,7 +216,13 @@ long LevelStats(long level)
 	TempVideoAdjust(HiResFlag, 1.0);
 	T_InitPrint();
 
-	if (!GF_PlayingFMV || CurrentLevel == LV_ANTARC || CurrentLevel == LV_STPAULS)
+#if (DIRECT3D_VERSION >= 0x900)
+	mono = CurrentLevel == LV_INDIABOSS || CurrentLevel == LV_ANTARC || CurrentLevel == LV_STPAULS;
+#else
+	mono = CurrentLevel == LV_ANTARC || CurrentLevel == LV_STPAULS;
+#endif
+
+	if (!GF_PlayingFMV || mono)
 	{
 		bDontGreyOut = 1;
 		CreateMonoScreen();

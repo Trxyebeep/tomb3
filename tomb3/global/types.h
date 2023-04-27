@@ -1429,7 +1429,6 @@ struct WINAPP
 	LPDIRECT3DX D3D;
 	LPDIRECT3DDEVICEX D3DDev;
 	LPDIRECTDRAWSURFACEX CaptureBuffer;
-	/*TEMP*/
 	LPDIRECTDRAWSURFACEX PictureBuffer;
 #else
 	LPDIRECTDRAWX DDraw;
@@ -1442,9 +1441,16 @@ struct WINAPP
 	LPDIRECT3DVIEWPORTX D3DView;
 	LPDIRECT3DMATERIALX D3DMaterial;
 #endif
+	RECT rScreen;
+	RECT rViewport;
+	ulong WindowStyle;
+	bool Windowed;
+	bool WinPlayLoaded;
 	bool bFocus;
 	long nUVAdd;
+#if (DIRECT3D_VERSION < 0x900)
 	ulong nFrames;
+#endif
 	float fps;
 };
 
@@ -2213,12 +2219,5 @@ struct TOMB3_OPTIONS
 	float INV_Scale;
 	float unwater_music_mute;
 	float inv_music_mute;
-
-	//windowed + winplay stuff, move to WINAPP when possible
-	RECT rScreen;
-	RECT rViewport;
-	ulong WindowStyle;
-	bool Windowed;
-	bool WinPlayLoaded;
 };
 #pragma pack(pop)

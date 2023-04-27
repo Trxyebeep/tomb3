@@ -156,7 +156,7 @@ void S_FadeToBlack()
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 
-	if (tomb3.Windowed)
+	if (App.Windowed)
 		buffer = App.BackBuffer;
 	else
 		buffer = App.FrontBuffer;
@@ -243,7 +243,7 @@ void CreateMonoScreen()
 
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 
-	if (tomb3.Windowed)
+	if (App.Windowed)
 		buffer = App.BackBuffer;
 	else
 		buffer = App.FrontBuffer;
