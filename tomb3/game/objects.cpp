@@ -333,8 +333,8 @@ void ShutThatDoor(DOORPOS_DATA* d)
 		floor->ceiling = -127;
 		floor->floor = -127;
 		floor->index = 0;
-		floor->sky_room = -1;
-		floor->pit_room = -1;
+		floor->sky_room = NO_ROOM;
+		floor->pit_room = NO_ROOM;
 
 		if (d->block != 2047)
 			boxes[d->block].overlap_index |= 0x4000;

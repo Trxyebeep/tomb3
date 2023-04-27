@@ -82,7 +82,7 @@ short GetTiltType(FLOOR_INFO* floor, long x, long y, long z)
 	short* data;
 	short type, t0, t1, t2, t3, tilt, x2, z2, x3, y2;
 
-	while (floor->pit_room != 255)
+	while (floor->pit_room != NO_ROOM)
 	{
 		if (CheckNoColFloorTriangle(floor, x, z) == 1)
 			break;
