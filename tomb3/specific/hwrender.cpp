@@ -51,6 +51,7 @@ void HWR_EnableZBuffer(bool write, bool compare)
 	if (compare != zBufCompareEnabled)
 	{
 #if (DIRECT3D_VERSION >= 0x900)
+		SetRenderState(D3DRS_ZFUNC, compare ? D3DCMP_LESSEQUAL : D3DCMP_ALWAYS);
 		SetRenderState(D3DRS_ZENABLE, compare ? D3DZB_TRUE : D3DZB_FALSE);
 #else
 		if (App.ZBuffer)
@@ -504,6 +505,10 @@ void HWR_InitState()
 	SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	SetRenderState(D3DRS_SPECULARENABLE, 0);
+	SetRenderState(D3DRS_ALPHABLENDENABLE, 0);
+	SetRenderState(D3DRS_ALPHAREF, 0);
+	SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_NOTEQUAL);
 
 	if (tomb3.psx_contrast)
 		SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE2X);
