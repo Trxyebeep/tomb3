@@ -14,7 +14,6 @@ HRESULT (*DrawPrimitive)(D3DPRIMITIVETYPE, LPVOID, ulong);
 HRESULT (*SetTextureStageState)(ulong, D3DTEXTURESTAGESTATETYPE, ulong);
 HRESULT (*SetSamplerState)(ulong, D3DSAMPLERSTATETYPE, ulong);
 HRESULT (*SetTexture)(ulong, TEXHANDLE);
-LPDIRECT3DVERTEXBUFFER9 DestVB;
 #else
 HRESULT(*DrawPrimitive)(D3DPRIMITIVETYPE, D3DVERTEXTYPE, LPVOID, ulong, ulong);
 #endif
@@ -534,7 +533,7 @@ void HWR_InitState()
 	if (!SetRenderState || !SetTextureStageState || !SetSamplerState)
 		return;
 
-	SetRenderState(D3DRS_CLIPPING, FALSE);
+	SetRenderState(D3DRS_CLIPPING, 0);
 	SetRenderState(D3DRS_FILLMODE, HWConfig.nFillMode);
 	SetRenderState(D3DRS_SHADEMODE, HWConfig.nShadeMode);
 	SetRenderState(D3DRS_DITHERENABLE, HWConfig.bDither);

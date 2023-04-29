@@ -52,11 +52,11 @@ HRESULT HWDrawPrimitive(D3DPRIMITIVETYPE PrimitiveType, LPVOID Vertices, ulong V
 		flags = D3DLOCK_DISCARD;
 	}
 
-	if (FAILED(ret = DestVB->Lock(sizeof(D3DTLVERTEX) * index, sizeof(D3DTLVERTEX) * VertexCount, &pVtx, flags)))
+	if (FAILED(ret = App.DestVB->Lock(sizeof(D3DTLVERTEX) * index, sizeof(D3DTLVERTEX) * VertexCount, &pVtx, flags)))
 		return ret;
 
 	memcpy(pVtx, Vertices, sizeof(D3DTLVERTEX) * VertexCount);
-	DestVB->Unlock();
+	App.DestVB->Unlock();
 
 	ret = Dev->DrawPrimitive(PrimitiveType, index, nPrimitive);
 	index += VertexCount;

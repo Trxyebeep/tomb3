@@ -9,7 +9,6 @@ void TempVideoRemove();
 
 extern double screen_sizer;
 extern double game_sizer;
-extern long BarsWidth;
 extern long VidSizeLocked;
 extern short DumpX;
 extern short DumpY;

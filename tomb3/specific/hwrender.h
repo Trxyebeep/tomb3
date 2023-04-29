@@ -31,7 +31,6 @@ extern HRESULT (*DrawPrimitive)(D3DPRIMITIVETYPE, LPVOID, ulong);
 extern HRESULT (*SetTextureStageState)(ulong, D3DTEXTURESTAGESTATETYPE, ulong);
 extern HRESULT (*SetSamplerState)(ulong, D3DSAMPLERSTATETYPE, ulong);
 extern HRESULT (*SetTexture)(ulong, TEXHANDLE);
-extern LPDIRECT3DVERTEXBUFFER9 DestVB;
 #else
 extern HRESULT (*DrawPrimitive)(D3DPRIMITIVETYPE, D3DVERTEXTYPE, LPVOID, ulong, ulong);
 #endif

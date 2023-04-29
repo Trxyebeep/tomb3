@@ -1007,10 +1007,10 @@ static bool DXCreateDevice(bool windowed)
 	}
 	else
 	{
-		if (DestVB)
+		if (App.DestVB)
 		{
-			DestVB->Release();
-			DestVB = 0;
+			App.DestVB->Release();
+			App.DestVB = 0;
 		}
 
 		res = D3D_OK;
@@ -1029,17 +1029,17 @@ static bool DXCreateDevice(bool windowed)
 		}
 	}
 
-	if (!DestVB)
+	if (!App.DestVB)
 	{
 		if (FAILED(App.D3DDev->CreateVertexBuffer(sizeof(D3DTLVERTEX) * VTXBUF_LEN,
-			D3DUSAGE_WRITEONLY | D3DUSAGE_DONOTCLIP | D3DUSAGE_DYNAMIC, D3DFVF_TLVERTEX, D3DPOOL_DEFAULT, &DestVB, 0)))
+			D3DUSAGE_WRITEONLY | D3DUSAGE_DONOTCLIP | D3DUSAGE_DYNAMIC, D3DFVF_TLVERTEX, D3DPOOL_DEFAULT, &App.DestVB, 0)))
 		{
 			Log("Can't create vertex buffer.");
 			return 0;
 		}
 	}
 
-	App.D3DDev->SetStreamSource(0, DestVB, 0, sizeof(D3DTLVERTEX));
+	App.D3DDev->SetStreamSource(0, App.DestVB, 0, sizeof(D3DTLVERTEX));
 	App.D3DDev->SetFVF(D3DFVF_TLVERTEX);
 	return 1;
 }

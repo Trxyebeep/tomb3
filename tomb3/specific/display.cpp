@@ -6,7 +6,6 @@
 double screen_sizer = 1.0;
 double game_sizer = 1.0;
 long VidSizeLocked;
-long BarsWidth = 100;
 short DumpX = 25;
 short DumpY = 25;
 short DumpWidth = 50;
@@ -19,12 +18,12 @@ void setup_screen_size()
 	long w, h, sw, sh;
 
 #if (DIRECT3D_VERSION >= 0x900)
-	dm = App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode;
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 #else
-	dm = App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode;
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
 #endif
-	w = dm[App.lpDXConfig->nVMode].w;
-	h = dm[App.lpDXConfig->nVMode].h;
+	w = dm->w;
+	h = dm->h;
 	sw = long(w * screen_sizer);
 	sh = long(h * screen_sizer);
 
@@ -40,10 +39,6 @@ void setup_screen_size()
 	DumpWidth = (short)sw;
 	DumpHeight = (short)sh;
 	GtFullScreenClearNeeded = 1;
-	BarsWidth = sw / 5;
-
-	if (BarsWidth > 100)
-		BarsWidth = 100;
 }
 
 void IncreaseScreenSize()
