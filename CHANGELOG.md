@@ -11,6 +11,7 @@
 ### tomb3 bug fixes
 
 - Fix title starting with the passport selected.
+- Fix audio looping.
 
 
 ## [2.0.1](https://github.com/Trxyebeep/tomb3/tree/V2.0.1) (Apr. 20 2023)
