@@ -4,6 +4,8 @@
 
 ### Original bug fixes
 
+- Fix wade snapping.
+
 ### tomb3 additions
 
 ### tomb3 bug fixes

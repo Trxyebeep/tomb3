@@ -3718,10 +3718,12 @@ void lara_col_back(ITEM_INFO* item, COLL_INFO* coll)
 	if (TestLaraSlide(item, coll))
 		return;
 
-	if (coll->mid_floor < 0 || !(room[item->room_number].flags & ROOM_SWAMP))
-		item->pos.y_pos += coll->mid_floor;
-	else
+	if (coll->mid_floor >= 0 && room[item->room_number].flags & ROOM_SWAMP)
 		item->pos.y_pos += 2;
+	else if (lara.water_status == LARA_WADE && coll->mid_floor >= 50)
+		item->pos.y_pos += 50;
+	else
+		item->pos.y_pos += coll->mid_floor;
 }
 
 void lara_col_stepright(ITEM_INFO* item, COLL_INFO* coll)
@@ -3754,7 +3756,10 @@ void lara_col_stepright(ITEM_INFO* item, COLL_INFO* coll)
 	if (LaraFallen(item, coll) || TestLaraSlide(item, coll))
 		return;
 
-	item->pos.y_pos += coll->mid_floor;
+	if (lara.water_status == LARA_WADE && coll->mid_floor >= 50)
+		item->pos.y_pos += 50;
+	else
+		item->pos.y_pos += coll->mid_floor;
 }
 
 void lara_col_stepleft(ITEM_INFO* item, COLL_INFO* coll)
