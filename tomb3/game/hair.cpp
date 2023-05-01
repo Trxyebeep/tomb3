@@ -385,45 +385,32 @@ void HairControl(long in_cutscene)
 			hair[i].z_pos += SmokeWindZ;
 		}
 
-		if (lara.skidoo != NO_ITEM && items[lara.skidoo].object_number == UPV)
-		{
-			spaz = lara.water_status;
-			lara.water_status = LARA_UNDERWATER;
-		}
+	//	if (lara.skidoo != NO_ITEM && items[lara.skidoo].object_number == UPV)
+	//	{
+	//		spaz = lara.water_status;
+	//		lara.water_status = LARA_UNDERWATER;
+	//	}
 
-		switch (lara.water_status)
+		if (water_level == NO_HEIGHT || hair[i].y_pos < water_level)
 		{
-		case LARA_ABOVEWATER:
-		case LARA_WADE:			//here to avoid stiff hair
 			hair[i].y_pos += 10;
 
 			if (water_level != NO_HEIGHT && hair[i].y_pos > water_level)
 				hair[i].y_pos = water_level;
-			else if (hair[i].y_pos > h)
-			{
-				hair[i].x_pos = hvel[0].x;
-
-				if (hair[i].y_pos - h <= 256)	//snap to floor if it goes below, no more than 1 click to avoid hairection when going through corners
-					hair[i].y_pos = h;
-
-				hair[i].z_pos = hvel[0].z;
-			}
-
-			break;
-
-		case LARA_UNDERWATER:
-		case LARA_SURFACE:
-
-			if (hair[i].y_pos < water_level)
-				hair[i].y_pos = water_level;
-			else if (hair[i].y_pos > h)
-				hair[i].y_pos = h;
-
-			break;
 		}
 
-		if (lara.skidoo != NO_ITEM && items[lara.skidoo].object_number == UPV)
-			lara.water_status = spaz;
+		if (hair[i].y_pos > h)
+		{
+			hair[i].x_pos = pos.x;
+
+			if (hair[i].y_pos - h <= 256)	//snap to floor if it goes below, no more than 1 click to avoid hairection when going through corners
+				hair[i].y_pos = h;
+
+			hair[i].z_pos = pos.z;
+		}
+
+	//	if (lara.skidoo != NO_ITEM && items[lara.skidoo].object_number == UPV)
+	//		lara.water_status = spaz;
 
 		for (int j = 0; j < 5; j++)
 		{

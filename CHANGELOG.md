@@ -5,8 +5,11 @@
 ### Original bug fixes
 
 - Fix wade snapping.
+- Fix floordata issues with triangular geometry, no collision tiles, and more generic situations.
 
 ### tomb3 additions
+
+- Improve hair interaction with water surfaces.
 
 ### tomb3 bug fixes
 
