@@ -1447,7 +1447,7 @@ struct WINAPP
 	ulong WindowStyle;
 	bool Windowed;
 	bool WinPlayLoaded;
-	bool bFocus;
+	volatile bool bFocus;
 	long nUVAdd;
 #if (DIRECT3D_VERSION < 0x900)
 	ulong nFrames;
