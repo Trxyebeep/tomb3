@@ -88,7 +88,7 @@ enum INV_ORDER2	//for keys ring
 };
 
 
-enum INV_ORDER3	//for options ring (new enum, not in symbols)
+enum INV_ORDER3	//for options ring
 {
 	PAS_POS,
 	DTL_POS,

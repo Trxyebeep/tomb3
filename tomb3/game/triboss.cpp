@@ -325,7 +325,6 @@ void TriggerElectricSparks(GAME_VECTOR* pos, long shield)
 	if (dx < -0x5000 || dx > 0x5000 || dz < -0x5000 || dz > 0x5000)
 		return;
 
-	//This corrupts TribeBossShield, fixme
 	TrigDynamics[1].x = pos->x;
 	TrigDynamics[1].y = pos->y;
 	TrigDynamics[1].z = pos->z;

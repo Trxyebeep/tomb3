@@ -1668,7 +1668,7 @@ void DrawSummonRings()
 			setXYZ4(v, x1, y1, z1, xv1, yv1, col1, x2, y2, z2, xv2, yv2, col2, x4, y4, z4, xv4, yv4, col4, x3, y3, z3, xv3, yv3, col3);
 
 			if (tomb3.sophia_rings == SRINGS_PSX)
-				tex.tpage = 0;	//make it a semitransparent quad, no sprite, like PSX.
+				tex.tpage = 0;	//make it a semitransparent quad
 			else if (tomb3.sophia_rings == SRINGS_IMPROVED_PC)	//flip UVs
 			{
 				tex.u1 = u1;
@@ -3635,7 +3635,7 @@ void S_DrawBat()
 			pXY[1] = pos.y;
 			pZ[0] = pos.z;
 			pXY += 2;
-			pZ += 2;	//?
+			pZ += 2;
 		}
 
 		phd_PopMatrix();

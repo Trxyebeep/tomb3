@@ -14,7 +14,7 @@ static LPDIRECTDRAWX G_ddraw;
 static LPDIRECT3DX G_d3d;
 static HWND G_hwnd;
 
-__inline void* AddStruct(void* p, long num, long size)	//Note: this function wasn't present/was inlined in the original (taken from TR4)
+static void* AddStruct(void* p, long num, long size)
 {
 	void* ptr;
 

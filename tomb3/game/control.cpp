@@ -2022,7 +2022,7 @@ long ObjectOnLOS(GAME_VECTOR* start, GAME_VECTOR* target)
 
 			objnum = item->object_number;
 
-			if (objnum != SMASH_WINDOW && objnum != SMASH_OBJECT1 && objnum != SMASH_OBJECT2 &&		//ok
+			if (objnum != SMASH_WINDOW && objnum != SMASH_OBJECT1 && objnum != SMASH_OBJECT2 &&
 				objnum != SMASH_OBJECT3 && objnum != CARCASS && objnum != EXTRAFX6)
 				continue;
 

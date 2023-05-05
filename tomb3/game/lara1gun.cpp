@@ -606,7 +606,7 @@ void ControlGrenade(short item_number)
 					target->status = ITEM_ACTIVE;
 					AddActiveItem(target_num);
 
-					if (!exploded)	//and explode the nade now!
+					if (!exploded)
 					{
 						exploded = 1;
 						rad = WALL_SIZE;
@@ -1074,17 +1074,6 @@ void FireM16(long running)
 	{
 		angles[0] += lara.torso_y_rot;
 		angles[1] += lara.torso_x_rot;
-	}
-
-	if (running)	//should be using LG_M16, do NOT fix though.
-	{
-		weapons[M16].shot_accuracy = 2184;	/*Technically LG_ROCKET*/
-		weapons[M16].damage = 1;
-	}
-	else
-	{
-		weapons[M16].shot_accuracy = 728;
-		weapons[M16].damage = 3;
 	}
 
 	if (FireWeapon(LG_M16, lara.target, lara_item, angles))

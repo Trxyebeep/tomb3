@@ -266,7 +266,7 @@ void CreateMonoScreen()
 	TIME_Init();
 }
 
-void DrawMonoScreen(long r, long g, long b)	//do not call this function with color values higher than 127 (for DX5)
+void DrawMonoScreen(long r, long g, long b)	//do not call this function with color values higher than 127
 {
 	long x[4];
 	long y[4];
@@ -387,7 +387,6 @@ void ConvertSurfaceToTextures(LPDIRECTDRAWSURFACEX surf)
 	desc.dwSize = sizeof(DDSURFACEDESCX);
 	surf->Lock(0, &desc, DDLOCK_WAIT | DDLOCK_NOSYSLOCK, 0);
 	memcpy(&desc2, &desc, sizeof(DDSURFACEDESCX));
-	//	source = (char*)desc.lpSurface;
 	MemBlt(dest, 0, 0, 128, 256, 256, source, 512, 0, desc2);
 	memcpy(&desc2, &desc, sizeof(DDSURFACEDESCX));
 	MemBlt(dest, 128, 0, 128, 224, 256, source, 512, 256, desc2);

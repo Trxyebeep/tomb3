@@ -27,7 +27,6 @@ enum d_txt
 	DT_EMPTY,
 	DT_VIDEOTITLE,
 	DT_OP_GAMMA,
-//	DT_OP_TRUEALPHA,
 	DT_OP_DITHER,
 	DT_OP_FILTER,
 	DT_OP_ZBUFFER,
@@ -38,7 +37,6 @@ enum d_txt
 enum d_options
 {
 	DOP_GAMMA,
-//	DOP_TRUEALPHA,
 	DOP_DITHER,
 	DOP_FILTER,
 	DOP_ZBUFFER,

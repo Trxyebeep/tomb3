@@ -68,7 +68,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 	DIRECT3DINFO* dinfo;
 	DISPLAYMODE* dm;
 	DISPLAYMODE* cdm;
-	static RES_TXT* resolutions;	//unlimited, original was limited to 30.
+	static RES_TXT* resolutions;
 	static long selected_res;
 	static long selection = DOP_NOPTS - 1;
 	long nSel, w, tW, oldRes;
@@ -380,7 +380,7 @@ void do_detail_option(INVENTORY_ITEM* item)
 	}
 
 	if (save)
-		S_SaveSettings();	//save everything if needed
+		S_SaveSettings();
 }
 
 void do_levelselect_option(INVENTORY_ITEM* item)
@@ -663,7 +663,7 @@ void do_sound_option(INVENTORY_ITEM* item)
 	}
 
 	if (goin)
-		S_SaveSettings();	//save if needed
+		S_SaveSettings();
 
 	if (inputDB & (IN_SELECT | IN_DESELECT))
 	{
@@ -1106,7 +1106,7 @@ void do_control_option(INVENTORY_ITEM* item)
 		}
 
 		if (!sel)
-			S_SaveSettings();	//same them if needed
+			S_SaveSettings();
 
 		break;
 	}

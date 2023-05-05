@@ -312,9 +312,9 @@ void LaraCheatyBits()
 	}
 
 	if (key_pressed(DIK_F2))
-#else	//_DEBUG
+#else
 	if (tomb3.dozy && key_pressed(DIK_D) && key_pressed(DIK_O) && key_pressed(DIK_Z) && key_pressed(DIK_Y))
-#endif	//_DEBUG
+#endif
 	{
 		if (lara.skidoo == NO_ITEM)
 		{

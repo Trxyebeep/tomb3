@@ -73,7 +73,7 @@ void HairControl(long in_cutscene)
 	if (lara.hit_direction < 0)
 	{
 		frame = GetBestFrame(lara_item);
-		frac = GetFrames(lara_item, frm, &rate);	//for interpolation
+		frac = GetFrames(lara_item, frm, &rate);
 	}
 	else
 	{
@@ -186,7 +186,7 @@ void HairControl(long in_cutscene)
 		phd_PushMatrix_I();
 		phd_TranslateRel_I(bone[41], bone[42], bone[43]);
 		gar_RotYXZsuperpack_I(&rot[0], &rot[1], 2);
-		objptr = lara.mesh_ptrs[UARM_L];	//original was right hand, that's a bug
+		objptr = lara.mesh_ptrs[UARM_L];
 		phd_TranslateRel_I(objptr[0], objptr[1], objptr[2]);
 		InterpolateMatrix();
 		sphere[4].x = phd_mxptr[M03] >> W2V_SHIFT;
@@ -270,7 +270,7 @@ void HairControl(long in_cutscene)
 		phd_PushMatrix();
 		phd_TranslateRel(bone[41], bone[42], bone[43]);
 		gar_RotYXZsuperpack(&rotation, 2);
-		objptr = lara.mesh_ptrs[UARM_L];	//original was right hand, that's a bug
+		objptr = lara.mesh_ptrs[UARM_L];
 		phd_TranslateRel(objptr[0], objptr[1], objptr[2]);
 		sphere[4].x = phd_mxptr[M03] >> W2V_SHIFT;
 		sphere[4].y = phd_mxptr[M13] >> W2V_SHIFT;
@@ -385,12 +385,6 @@ void HairControl(long in_cutscene)
 			hair[i].z_pos += SmokeWindZ;
 		}
 
-	//	if (lara.skidoo != NO_ITEM && items[lara.skidoo].object_number == UPV)
-	//	{
-	//		spaz = lara.water_status;
-	//		lara.water_status = LARA_UNDERWATER;
-	//	}
-
 		if (water_level == NO_HEIGHT || hair[i].y_pos < water_level)
 		{
 			hair[i].y_pos += 10;
@@ -408,9 +402,6 @@ void HairControl(long in_cutscene)
 
 			hair[i].z_pos = pos.z;
 		}
-
-	//	if (lara.skidoo != NO_ITEM && items[lara.skidoo].object_number == UPV)
-	//		lara.water_status = spaz;
 
 		for (int j = 0; j < 5; j++)
 		{

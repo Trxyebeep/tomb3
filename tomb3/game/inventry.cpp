@@ -406,8 +406,6 @@ long Display_Inventory(long mode)
 		GlobePointLight = 0;
 	}
 
-	//Empty function call here
-
 	if (mode == INV_KEYS_MODE && !inv_keys_objects)
 	{
 		Inventory_Chosen = NO_ITEM;

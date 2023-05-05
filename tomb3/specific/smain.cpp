@@ -240,7 +240,9 @@ void CheckCheatMode()
 				lara_item->flags |= IFL_INVISIBLE;
 			}
 		}
-																	//no break on purpose
+		
+		//fallthrough
+
 	default:
 		mode = 0;
 	}

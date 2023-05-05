@@ -69,7 +69,7 @@ GOURAUD_OUTLINE req_sel_gour2 =
 	0xFF000000, 0xFF38F080, 0xFF000000,
 };
 
-ulong inv_colours[17] =	//now 32bit color
+ulong inv_colours[17] =
 {
 	0xFF000000,
 	0xFF404040,
@@ -1759,7 +1759,7 @@ void RingNotActive(INVENTORY_ITEM* inv_item)
 	case BIGMEDI_OPTION:
 		health_bar_timer = 40;
 		DrawHealthBar(FlashIt());
-		//NO BREAK!
+		//fallthrough
 
 	case SAVEGAME_CRYSTAL_OPTION:
 	case PUZZLE_OPTION1:

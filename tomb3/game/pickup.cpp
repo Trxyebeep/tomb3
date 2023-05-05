@@ -204,7 +204,7 @@ void BossDropIcon(short item_number)
 
 	item = &items[item_number];
 
-	for (short n = item->carried_item; n != NO_ITEM; n = icon->carried_item)	//uhm..
+	for (short n = item->carried_item; n != NO_ITEM; n = icon->carried_item)
 	{
 		icon = &items[n];
 		icon->pos.x_pos = item->pos.x_pos;

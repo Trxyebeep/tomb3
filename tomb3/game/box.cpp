@@ -1014,10 +1014,9 @@ long CreatureAnimation(short item_number, short angle, short tilt)
 		else if (wx > xShift)
 			item->pos.x_pos = oldPos.x | WALL_MASK;
 
-		//ORIGINAL BUG: should be wz instead of wx here!! (was fixed in TR4)
-		if (wx < zShift)
+		if (wz < zShift)
 			item->pos.z_pos = oldPos.z & ~WALL_MASK;
-		else if (wx > zShift)
+		else if (wz > zShift)
 			item->pos.z_pos = oldPos.z | WALL_MASK;
 
 		floor = GetFloor(item->pos.x_pos, y, item->pos.z_pos, &room_number);

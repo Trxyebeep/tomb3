@@ -82,7 +82,7 @@ LRESULT CALLBACK WinAppProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 long WinRegisterWindow(HINSTANCE hinstance)
 {
-	App.WindowClass.hIcon = LoadIcon(hinstance, (LPCSTR)115);		//todo: icon resource define
+	App.WindowClass.hIcon = 0;
 	App.WindowClass.lpszMenuName = 0;
 	App.WindowClass.lpszClassName = "Window Class";
 	App.WindowClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
@@ -383,7 +383,7 @@ void S_ExitSystem(const char* msg)
 	exit(1);
 }
 
-void Log(const char* s, ...)		//NOT present in original code
+void Log(const char* s, ...)
 {
 #ifdef DO_LOG
 	va_list list;

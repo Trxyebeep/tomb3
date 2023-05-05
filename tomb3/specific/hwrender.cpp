@@ -578,7 +578,7 @@ void HWR_InitState()
 	if (tomb3.disable_gamma)
 		GammaOption = 2.5F;
 
-	HWR_InitGamma(GammaOption);		//og has the code directly here
+	HWR_InitGamma(GammaOption);
 
 	if (!SetRenderState)
 		return;
