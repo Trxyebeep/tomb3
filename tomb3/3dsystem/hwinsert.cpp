@@ -27,64 +27,41 @@ static __inline bool CheckDrawType(long nDrawType)
 		nDrawType == DT_LINE_SOLID || nDrawType == DT_LINE_ALPHA;
 }
 
-#define	SetBufferPtrs(sort, info, nDrawType, pass)\
-{\
-	if(CurrentTLVertex - VertexBuffer > MAX_TLVERTICES - 32)\
-		return;\
-	\
-	if (!App.lpDXConfig->bZBuffer || !bAlphaTesting)\
-	{\
-		sort = sort3dptrbf;\
-		info = info3dptrbf;\
-		sort[2] = nPolyType;\
-		surfacenumbf++;\
-		sort3dptrbf += 3;\
-		info3dptrbf += 5;\
-	}\
-	else if (pass || CheckDrawType(nDrawType))\
-	{\
-		sort = sort3dptrfb;\
-		info = info3dptrfb;\
-		sort[2] = nPolyType;\
-		surfacenumfb++;\
-		sort3dptrfb += 3;\
-		info3dptrfb += 5;\
-	}\
-	else\
-	{\
-		sort = sort3dptrbf;\
-		info = info3dptrbf;\
-		sort[2] = nPolyType;\
-		surfacenumbf++;\
-		sort3dptrbf += 3;\
-		info3dptrbf += 5;\
-	}\
-}\
+static bool SetBufferPtrs(long** sort, short** info, long nDrawType, bool pass)
+{
+	if (CurrentTLVertex - VertexBuffer > MAX_TLVERTICES - 32)
+		return 0;
 
-/*
-	"pass" should only be true when the code looks like
-
-	if (App.lpDXConfig->bZBuffer && bAlphaTesting)
+	if (!App.lpDXConfig->bZBuffer || !bAlphaTesting)
 	{
-		sort = sort3dptrfb;
-		info = info3dptrfb;
-		sort[2] = nPolyType;
+		*sort = sort3dptrbf;
+		*info = info3dptrbf;
+		sort[0][2] = nPolyType;
+		surfacenumbf++;
+		sort3dptrbf += 3;
+		info3dptrbf += 5;
+	}
+	else if (pass || CheckDrawType(nDrawType))
+	{
+		*sort = sort3dptrfb;
+		*info = info3dptrfb;
+		sort[0][2] = nPolyType;
 		surfacenumfb++;
 		sort3dptrfb += 3;
 		info3dptrfb += 5;
 	}
 	else
 	{
-		sort = sort3dptrbf;
-		info = info3dptrbf;
-		sort[2] = nPolyType;
+		*sort = sort3dptrbf;
+		*info = info3dptrbf;
+		sort[0][2] = nPolyType;
 		surfacenumbf++;
 		sort3dptrbf += 3;
 		info3dptrbf += 5;
 	}
 
-	i.e when we only want to test zbuffer and alpha testing, and in all other cases go to fb- without falling back to bf if the drawtype doesn't match.
-	*/
+	return 1;
+}
 
 void SetFunctionPointers()
 {
@@ -934,7 +911,9 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 	}
 	else
 	{
-		SetBufferPtrs(sort, info, 0, 0);
+		if (!SetBufferPtrs(&sort, &info, 0, 0))
+			return;
+
 		sort[0] = (long)info;
 		sort[1] = zdepth;
 		info[0] = DT_POLY_G;
@@ -981,7 +960,9 @@ void HWI_InsertLine_Sorted(long x1, long y1, long x2, long y2, long z, long c0, 
 	long* sort;
 	short* info;
 
-	SetBufferPtrs(sort, info, 0, 1);
+	if (!SetBufferPtrs(&sort, &info, 0, 1))
+		return;
+
 	sort[0] = (long)info;
 	sort[1] = z;
 
@@ -1167,7 +1148,9 @@ void HWI_InsertTransQuad_Sorted(long x, long y, long w, long h, long z)
 	short* info;
 	float zv;
 
-	SetBufferPtrs(sort, info, 0, 1);
+	if (!SetBufferPtrs(&sort, &info, 0, 1))
+		return;
+
 	sort[0] = (long)info;
 	sort[1] = z;
 	info[0] = DT_POLY_GA;
@@ -1211,7 +1194,9 @@ void HWI_InsertGourQuad_Sorted(long x0, long y0, long x1, long y1, long z, ulong
 	short* info;
 	float zv;
 
-	SetBufferPtrs(sort, info, 0, 1);
+	if (!SetBufferPtrs(&sort, &info, 0, 1))
+		return;
+
 	sort[0] = (long)info;
 	sort[1] = z;
 	info[0] = add ? DT_POLY_GTA : DT_POLY_GA;
@@ -1460,7 +1445,9 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 		else
 			zdepth = 1000000000;
 
-		SetBufferPtrs(sort, info, nDrawType, 0);
+		if (!SetBufferPtrs(&sort, &info, nDrawType, 0))
+			return;
+
 		sort[0] = (long)info;
 		sort[1] = (long)zdepth;
 		info[0] = (short)nDrawType;
@@ -1683,7 +1670,9 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 		else
 			zdepth = 1000000000;
 
-		SetBufferPtrs(sort, info, nDrawType, 0);
+		if (!SetBufferPtrs(&sort, &info, nDrawType, 0))
+			return;
+
 		sort[0] = (long)info;
 		sort[1] = (long)zdepth;
 		info[0] = (short)nDrawType;
@@ -1826,7 +1815,9 @@ void HWI_InsertClippedPoly_Textured(long nPoints, float zdepth, long nDrawType, 
 	}
 	else
 	{
-		SetBufferPtrs(sort, info, nDrawType, 0);
+		if (!SetBufferPtrs(&sort, &info, nDrawType, 0))
+			return;
+
 		sort[0] = (long)info;
 		sort[1] = (long)zdepth;
 		info[0] = (short)nDrawType;
@@ -1934,7 +1925,9 @@ void HWI_InsertPoly_Gouraud(long nPoints, float zdepth, long r, long g, long b, 
 	}
 	else
 	{
-		SetBufferPtrs(sort, info, nDrawType, 0);
+		if (!SetBufferPtrs(&sort, &info, nDrawType, 0))
+			return;
+
 		sort[0] = (long)info;
 		sort[1] = (long)zdepth;
 		info[0] = (short)nDrawType;
@@ -2032,7 +2025,9 @@ void HWI_InsertPoly_GouraudRGB(long nPoints, float zdepth, long nDrawType)
 	}
 	else
 	{
-		SetBufferPtrs(sort, info, nDrawType, 0);
+		if (!SetBufferPtrs(&sort, &info, nDrawType, 0))
+			return;
+
 		sort[0] = (long)info;
 		sort[1] = (long)zdepth;
 		info[0] = (short)nDrawType;
