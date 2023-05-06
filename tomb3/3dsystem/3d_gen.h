@@ -38,6 +38,8 @@ extern void (*InsertTrans8)(PHD_VBUF* buf, short shade);
 extern void (*InsertSprite)(long zdepth, long x1, long y1, long x2, long y2, long nSprite, ulong shade, ulong shade1, long nDrawType, long offset);
 extern void (*InsertTransQuad)(long x, long y, long w, long h, long z);
 extern void (*InsertGourQuad)(long x0, long y0, long x1, long y1, long z, ulong c0, ulong c1, ulong c2, ulong c3, bool add);
+extern bool (*IsVisible)(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2);
+extern bool (*IsInvisible)(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2);
 
 extern float outsideBackgroundTop;
 extern long BlackGouraudIndex;

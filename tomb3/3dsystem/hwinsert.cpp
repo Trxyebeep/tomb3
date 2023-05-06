@@ -99,6 +99,31 @@ void SetFunctionPointers()
 	InsertTrans8 = HWI_InsertTrans8_Sorted;
 	InsertTransQuad = HWI_InsertTransQuad_Sorted;
 	InsertGourQuad = HWI_InsertGourQuad_Sorted;
+
+	IsVisible = CheckVisible;
+	IsInvisible = CheckInvisible;
+}
+
+bool CheckVisible(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2)
+{
+	return (v2->xs - v1->xs) * (v0->ys - v1->ys) - (v0->xs - v1->xs) * (v2->ys - v1->ys) > 0;
+}
+
+bool CheckInvisible(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2)
+{
+	return (v2->xs - v1->xs) * (v0->ys - v1->ys) - (v0->xs - v1->xs) * (v2->ys - v1->ys) < 0;
+}
+
+void SetCullCW()
+{
+	IsVisible = CheckVisible;
+	IsInvisible = CheckInvisible;
+}
+
+void SetCullCCW()
+{
+	IsVisible = CheckInvisible;
+	IsInvisible = CheckVisible;
 }
 
 void InitUVTable()
@@ -655,7 +680,7 @@ short* HWI_InsertObjectG3_Sorted(short* pFaceInfo, long nFaces, sort_type nSortT
 		}
 		else
 		{
-			if (long((v2->xs - v1->xs) * (v0->ys - v1->ys) - (v2->ys - v1->ys) * (v0->xs - v1->xs)) < 0)
+			if (IsInvisible(v0, v1, v2))
 			{
 				pFaceInfo += 4;
 				nFaces--;
@@ -766,7 +791,7 @@ short* HWI_InsertObjectG4_Sorted(short* pFaceInfo, long nFaces, sort_type nSortT
 		}
 		else
 		{
-			if (long((v0->ys - v1->ys) * (v2->xs - v1->xs) - (v0->xs - v1->xs) * (v2->ys - v1->ys)) < 0)
+			if (IsInvisible(v0, v1, v2))
 			{
 				pFaceInfo += 5;
 				nFaces--;
@@ -1099,7 +1124,7 @@ void HWI_InsertTrans8_Sorted(PHD_VBUF* buf, short shade)
 		clipA &= buf[i].clip;
 	}
 
-	if (clipO < 0 || clipA || (buf[2].xs - buf[1].xs) * (buf->ys - buf[1].ys) - (buf[2].ys - buf[1].ys) * (buf->xs - buf[1].xs) < 0)
+	if (clipO < 0 || clipA || IsInvisible(&buf[0], &buf[1], &buf[2]))
 		return;
 
 	for (int i = 0; i < nVtx; i++)
@@ -1354,7 +1379,7 @@ void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRU
 		return;
 	}
 
-	if (long((v2->xs - v1->xs) * (v0->ys - v1->ys) - (v2->ys - v1->ys) * (v0->xs - v1->xs)) < 0)
+	if (IsInvisible(v0, v1, v2))
 	{
 		if (!double_sided)
 			return;
@@ -1503,9 +1528,7 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 		return;
 	}
 
-	if (long((v0->ys - v1->ys) * (v2->xs - v1->xs) - (v2->ys - v1->ys) * (v0->xs - v1->xs)) >= 0)
-		double_sided = 0;
-	else
+	if (IsInvisible(v0, v1, v2))
 	{
 		if (!double_sided)
 			return;
@@ -1521,6 +1544,8 @@ void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, 
 			return;
 		}
 	}
+	else
+		double_sided = 0;
 
 	if (v0->clip | v1->clip | v2->clip | v3->clip)
 	{
@@ -2129,6 +2154,7 @@ void HWI_InsertAlphaSprite_Sorted(long x1, long y1, long z1, long shade1, long x
 		}
 	}
 
+	//Change this to support phd_vbuf :>
 	if (nSprite == -1 && double_sided &&
 		long((v_buffer[0].y - v_buffer[1].y) * (v_buffer[2].x - v_buffer[1].x) - (v_buffer[0].x - v_buffer[1].x) * (v_buffer[2].y - v_buffer[1].y)) < 0)
 	{

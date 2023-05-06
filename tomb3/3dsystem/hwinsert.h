@@ -2,6 +2,10 @@
 #include "../global/types.h"
 
 void SetFunctionPointers();
+bool CheckVisible(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2);
+bool CheckInvisible(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2);
+void SetCullCW();
+void SetCullCCW();
 void InitUVTable();
 long visible_zclip(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2);
 long FindBucket(DXTEXTURE* TPage);
