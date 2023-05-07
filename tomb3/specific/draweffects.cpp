@@ -745,13 +745,8 @@ void S_DrawWakeFX(ITEM_INFO* item)
 			if (WakeShade < 16)
 				c34 = (c34 * WakeShade) >> 4;
 
-			z1 = (z1 + z2 + z3 + z4) >> 2;
-
-			if ((z1 >> W2V_SHIFT) > 32 &&
-				x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 &&
-				x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
-				y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 &&
-				y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
+			if (z1 >= phd_znear && z1 <= phd_zfar && z2 >= phd_znear && z2 <= phd_zfar &&
+				z3 >= phd_znear && z3 <= phd_zfar && z4 >= phd_znear && z4 <= phd_zfar)
 			{
 				cval = c12 >> 2;
 				cval <<= 3;
@@ -2183,58 +2178,56 @@ void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy)
 		y4 = *pXY++;
 		z4 = *pZ++;
 
-		if ((z1 + z2 + z3 + z4) >> 2 > phd_znear && (c1 || c2 || c3 || c4))
+		if (z1 >= phd_znear && z1 <= phd_zfar && z2 >= phd_znear && z2 <= phd_zfar &&
+			z3 >= phd_znear && z3 <= phd_zfar && z4 >= phd_znear && z4 <= phd_zfar &&
+			(c1 || c2 || c3 || c4))
 		{
-			if (x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 &&
-				x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
+			if (bossdata.attack_type)
 			{
-				if (bossdata.attack_type)
-				{
-					r = c1 >> 1;
-					g = c1;
-					b = c1 >> 1;
-					rgb1 = RGB_MAKE(r, g, b);
+				r = c1 >> 1;
+				g = c1;
+				b = c1 >> 1;
+				rgb1 = RGB_MAKE(r, g, b);
 
-					r = c2 >> 1;
-					g = c2;
-					b = c2 >> 1;
-					rgb2 = RGB_MAKE(r, g, b);
+				r = c2 >> 1;
+				g = c2;
+				b = c2 >> 1;
+				rgb2 = RGB_MAKE(r, g, b);
 
-					r = c3 >> 1;
-					g = c3;
-					b = c3 >> 1;
-					rgb3 = RGB_MAKE(r, g, b);
+				r = c3 >> 1;
+				g = c3;
+				b = c3 >> 1;
+				rgb3 = RGB_MAKE(r, g, b);
 
-					r = c4 >> 1;
-					g = c4;
-					b = c4 >> 1;
-					rgb4 = RGB_MAKE(r, g, b);
-				}
-				else
-				{
-					r = c1 >> 1;
-					g = c1;
-					b = c1;
-					rgb1 = RGB_MAKE(r, g, b);
-
-					r = c2 >> 1;
-					g = c2;
-					b = c2;
-					rgb2 = RGB_MAKE(r, g, b);
-
-					r = c3 >> 1;
-					g = c3;
-					b = c3;
-					rgb3 = RGB_MAKE(r, g, b);
-
-					r = c4 >> 1;
-					g = c4;
-					b = c4;
-					rgb4 = RGB_MAKE(r, g, b);
-				}
-
-				HWI_InsertAlphaSprite_Sorted(x2, y2, z2, rgb2, x1, y1, z1, rgb1, x4, y4, z4, rgb4, x3, y3, z3, rgb3, -1, DT_POLY_GTA, 1);
+				r = c4 >> 1;
+				g = c4;
+				b = c4 >> 1;
+				rgb4 = RGB_MAKE(r, g, b);
 			}
+			else
+			{
+				r = c1 >> 1;
+				g = c1;
+				b = c1;
+				rgb1 = RGB_MAKE(r, g, b);
+
+				r = c2 >> 1;
+				g = c2;
+				b = c2;
+				rgb2 = RGB_MAKE(r, g, b);
+
+				r = c3 >> 1;
+				g = c3;
+				b = c3;
+				rgb3 = RGB_MAKE(r, g, b);
+
+				r = c4 >> 1;
+				g = c4;
+				b = c4;
+				rgb4 = RGB_MAKE(r, g, b);
+			}
+
+			HWI_InsertAlphaSprite_Sorted(x2, y2, z2, rgb2, x1, y1, z1, rgb1, x4, y4, z4, rgb4, x3, y3, z3, rgb3, -1, DT_POLY_GTA, 1);
 		}
 
 		x1 = x4;
@@ -3844,8 +3837,7 @@ void S_DrawSparks()
 			x = vpos[0][0];
 			y = vpos[0][1];
 
-			if (x + (sw >> 1) < 0 || x - (sw >> 1) > w ||
-				y + (sh >> 1) < 0 || y - (sh >> 1) > h)
+			if (x + (sw >> 1) < 0 || x - (sw >> 1) > w || y + (sh >> 1) < 0 || y - (sh >> 1) > h)
 				continue;
 
 			if (sptr->Flags & SF_ROTATE)
@@ -4011,8 +4003,7 @@ void S_DrawSparks()
 			x = vpos[0][0];
 			y = vpos[0][1];
 
-			if (x + (sw >> 1) < 0 || x - (sw >> 1) > w ||
-				y + (sh >> 1) < 0 || y - (sh >> 1) > h)
+			if (x + (sw >> 1) < 0 || x - (sw >> 1) > w || y + (sh >> 1) < 0 || y - (sh >> 1) > h)
 				continue;
 
 			x1 = x - (sw >> 1);
@@ -4142,10 +4133,6 @@ void S_DrawSplashes()
 				y4 = p[n + 1];
 				z4 = p[n + 2];
 
-				if ((x1 < 0 && x2 < 0 && x3 < 0 && x4 < 0) || (x1 >= w && x2 >= w && x3 >= w && x4 >= w) ||
-					(y1 < 0 && y2 < 0 && y3 < 0 && y4 < 0) || (y1 >= h && y2 >= h && y3 >= h && y4 >= h))
-					continue;
-
 				z1 <<= W2V_SHIFT;
 
 				if (z1 < phd_znear || z1 > phd_zfar)
@@ -4231,10 +4218,6 @@ void S_DrawSplashes()
 		x4 = *p++;
 		y4 = *p++;
 		z4 = *p++;
-
-		if ((x1 < 0 && x2 < 0 && x3 < 0 && x4 < 0) || (x1 >= w && x2 >= w && x3 >= w && x4 >= w) ||
-			(y1 < 0 && y2 < 0 && y3 < 0 && y4 < 0) || (y1 >= h && y2 >= h && y3 >= h && y4 >= h))
-			continue;
 
 		z1 <<= W2V_SHIFT;
 
@@ -4498,19 +4481,6 @@ void S_DrawLaserBolts(ITEM_INFO* item)
 			x4 = pXY[links[linkNum + 3] << 1];
 			y4 = pXY[(links[linkNum + 3] << 1) + 1];
 			z4 = pZ[links[linkNum + 3]];
-
-			z1 = (z1 + z2 + z3 + z4) >> 2;
-
-			if (z1 <= phd_znear + 0x3E8000)
-				continue;
-
-			if (x1 <= -128 || x2 <= -128 || x3 <= -128 || x4 <= -128 ||
-				x1 >= w + 128 || x2 >= w + 128 || x3 >= w + 128 || x4 >= w + 128)
-				continue;
-
-			if (y1 <= -128 || y2 <= -128 || y3 <= -128 || y4 <= -128 ||
-				y1 >= h + 128 || y2 >= h + 128 || y3 >= h + 128 || y4 >= h + 128)
-				continue;
 
 			if (z1 < phd_znear)
 				z1 = phd_znear;
@@ -5313,13 +5283,8 @@ void S_DrawSubWakeFX(ITEM_INFO* item)
 			if (SubWakeShade < 16)
 				c34 = (c34 * SubWakeShade) >> 4;
 
-			z1 = (z1 + z2 + z3 + z4) >> 2;
-
-			if ((z1 >> W2V_SHIFT) > 32 &&
-				x1 > -512 && x2 > -512 && x3 > -512 && x4 > -512 &&
-				x1 < w + 512 && x2 < w + 512 && x3 < w + 512 && x4 < w + 512 &&
-				y1 > -512 && y2 > -512 && y3 > -512 && y4 > -512 &&
-				y1 < h + 512 && y2 < h + 512 && y3 < h + 512 && y4 < h + 512)
+			if (z1 >= phd_znear && z1 <= phd_zfar && z2 >= phd_znear && z2 <= phd_zfar &&
+				z3 >= phd_znear && z3 <= phd_zfar && z4 >= phd_znear && z4 <= phd_zfar)
 			{
 				cval = 0;
 				s1 = RGB_MAKE(cval, cval, cval);

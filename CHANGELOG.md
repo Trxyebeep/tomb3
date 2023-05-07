@@ -6,6 +6,7 @@
 
 - Fix wade snapping.
 - Fix floordata issues with triangular geometry, no collision tiles, and more generic situations.
+- Fix some effects clipping.
 
 ### tomb3 additions
 
