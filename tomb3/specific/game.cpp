@@ -21,6 +21,8 @@
 #include "winmain.h"
 #include "smain.h"
 #include "option.h"
+#include <sys/stat.h>
+#include <direct.h>
 #if (DIRECT3D_VERSION >= 0x900)
 #include "../3dsystem/3d_gen.h"
 #include "../newstuff/Picture2.h"
@@ -629,8 +631,20 @@ long S_LoadGame(LPVOID data, long size, long slot)
 long S_SaveGame(LPVOID data, long size, long slot)
 {
 	HANDLE file;
+	struct stat st;
 	ulong bytes;
-	char buffer[80], counter[16];
+	char buffer[80], counter[16], dir[7];
+
+	if (tomb3.gold)
+		sprintf(dir, "savesg");
+	else
+		sprintf(dir, "saves");
+
+	if (stat(dir, &st))
+	{
+		if (_mkdir(dir))
+			return 0;
+	}
 
 	SetSaveDir(buffer, sizeof(buffer), slot);
 	file = CreateFile(buffer, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
