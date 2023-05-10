@@ -329,7 +329,11 @@ void LaraElectricDeath(long lr, ITEM_INFO* item)
 	long w, h, nDs, mesh1, mesh2, x, y, z, xStep, yStep, zStep, pX, pY, pZ;
 	long x1, y1, x2, y2, c0, c1;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w - 1;
 	h = dm->h - 1;
 	phd_PushMatrix();
@@ -626,7 +630,11 @@ void S_DrawWakeFX(ITEM_INFO* item)
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c12, c34, cval;
 	long offsets[2][2];
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w - 1;
 	h = dm->h - 1;
 	offsets[0][0] = -128;
@@ -737,13 +745,8 @@ void S_DrawWakeFX(ITEM_INFO* item)
 			if (WakeShade < 16)
 				c34 = (c34 * WakeShade) >> 4;
 
-			z1 = (z1 + z2 + z3 + z4) >> 2;
-
-			if ((z1 >> W2V_SHIFT) > 32 &&
-				x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 &&
-				x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 &&
-				y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 &&
-				y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
+			if (z1 >= phd_znear && z1 <= phd_zfar && z2 >= phd_znear && z2 <= phd_zfar &&
+				z3 >= phd_znear && z3 <= phd_zfar && z4 >= phd_znear && z4 <= phd_zfar)
 			{
 				cval = c12 >> 2;
 				cval <<= 3;
@@ -995,7 +998,11 @@ void DoSnow()
 	ushort u1, v1, u2, v2;
 	char clipFlag;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w;
 	h = dm->h;
 	bBlueEffect = 0;
@@ -1239,7 +1246,11 @@ void DrawExplosionRings()
 	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
 	ushort u1, u2, v1, v2;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -1466,7 +1477,11 @@ void DrawSummonRings()
 	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
 	ushort u1, u2, v1, v2;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -1648,7 +1663,7 @@ void DrawSummonRings()
 			setXYZ4(v, x1, y1, z1, xv1, yv1, col1, x2, y2, z2, xv2, yv2, col2, x4, y4, z4, xv4, yv4, col4, x3, y3, z3, xv3, yv3, col3);
 
 			if (tomb3.sophia_rings == SRINGS_PSX)
-				tex.tpage = 0;	//make it a semitransparent quad, no sprite, like PSX.
+				tex.tpage = 0;	//make it a semitransparent quad
 			else if (tomb3.sophia_rings == SRINGS_IMPROVED_PC)	//flip UVs
 			{
 				tex.u1 = u1;
@@ -1721,7 +1736,11 @@ void DrawKnockBackRings()
 	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
 	ushort u1, u2, v1, v2;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -1954,7 +1973,11 @@ void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy)
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c1, c2, c3, c4, r, g, b;
 	short angle;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -2155,58 +2178,56 @@ void TriggerElectricBeam(ITEM_INFO* item, GAME_VECTOR* src, long copy)
 		y4 = *pXY++;
 		z4 = *pZ++;
 
-		if ((z1 + z2 + z3 + z4) >> 2 > phd_znear && (c1 || c2 || c3 || c4))
+		if (z1 >= phd_znear && z1 <= phd_zfar && z2 >= phd_znear && z2 <= phd_zfar &&
+			z3 >= phd_znear && z3 <= phd_zfar && z4 >= phd_znear && z4 <= phd_zfar &&
+			(c1 || c2 || c3 || c4))
 		{
-			if (x1 > -128 && x2 > -128 && x3 > -128 && x4 > -128 && y1 > -128 && y2 > -128 && y3 > -128 && y4 > -128 &&
-				x1 < w + 128 && x2 < w + 128 && x3 < w + 128 && x4 < w + 128 && y1 < h + 128 && y2 < h + 128 && y3 < h + 128 && y4 < h + 128)
+			if (bossdata.attack_type)
 			{
-				if (bossdata.attack_type)
-				{
-					r = c1 >> 1;
-					g = c1;
-					b = c1 >> 1;
-					rgb1 = RGB_MAKE(r, g, b);
+				r = c1 >> 1;
+				g = c1;
+				b = c1 >> 1;
+				rgb1 = RGB_MAKE(r, g, b);
 
-					r = c2 >> 1;
-					g = c2;
-					b = c2 >> 1;
-					rgb2 = RGB_MAKE(r, g, b);
+				r = c2 >> 1;
+				g = c2;
+				b = c2 >> 1;
+				rgb2 = RGB_MAKE(r, g, b);
 
-					r = c3 >> 1;
-					g = c3;
-					b = c3 >> 1;
-					rgb3 = RGB_MAKE(r, g, b);
+				r = c3 >> 1;
+				g = c3;
+				b = c3 >> 1;
+				rgb3 = RGB_MAKE(r, g, b);
 
-					r = c4 >> 1;
-					g = c4;
-					b = c4 >> 1;
-					rgb4 = RGB_MAKE(r, g, b);
-				}
-				else
-				{
-					r = c1 >> 1;
-					g = c1;
-					b = c1;
-					rgb1 = RGB_MAKE(r, g, b);
-
-					r = c2 >> 1;
-					g = c2;
-					b = c2;
-					rgb2 = RGB_MAKE(r, g, b);
-
-					r = c3 >> 1;
-					g = c3;
-					b = c3;
-					rgb3 = RGB_MAKE(r, g, b);
-
-					r = c4 >> 1;
-					g = c4;
-					b = c4;
-					rgb4 = RGB_MAKE(r, g, b);
-				}
-
-				HWI_InsertAlphaSprite_Sorted(x2, y2, z2, rgb2, x1, y1, z1, rgb1, x4, y4, z4, rgb4, x3, y3, z3, rgb3, -1, DT_POLY_GTA, 1);
+				r = c4 >> 1;
+				g = c4;
+				b = c4 >> 1;
+				rgb4 = RGB_MAKE(r, g, b);
 			}
+			else
+			{
+				r = c1 >> 1;
+				g = c1;
+				b = c1;
+				rgb1 = RGB_MAKE(r, g, b);
+
+				r = c2 >> 1;
+				g = c2;
+				b = c2;
+				rgb2 = RGB_MAKE(r, g, b);
+
+				r = c3 >> 1;
+				g = c3;
+				b = c3;
+				rgb3 = RGB_MAKE(r, g, b);
+
+				r = c4 >> 1;
+				g = c4;
+				b = c4;
+				rgb4 = RGB_MAKE(r, g, b);
+			}
+
+			HWI_InsertAlphaSprite_Sorted(x2, y2, z2, rgb2, x1, y1, z1, rgb1, x4, y4, z4, rgb4, x3, y3, z3, rgb3, -1, DT_POLY_GTA, 1);
 		}
 
 		x1 = x4;
@@ -2235,7 +2256,11 @@ void TriggerTribeBossHeadElectricity(ITEM_INFO* item, long copy)
 	long w, h, dx, dy, dz, s, x, y, z, tx, ty, tz, ex, ey, ez, vx, vy, vz;
 	long x1, y1, x2, y2, c1, c2, alpha;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w - 1;
 	h = dm->h - 1;
 	dx = lara_item->pos.x_pos - item->pos.x_pos;
@@ -2666,7 +2691,11 @@ void DrawTonyBossShield(ITEM_INFO* item)
 	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
 	ushort u1, v1, u2, v2;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -2855,7 +2884,11 @@ void DrawTribeBossShield(ITEM_INFO* item)
 	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
 	ushort u1, v1, u2, v2;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -3043,7 +3076,11 @@ void DrawLondonBossShield(ITEM_INFO* item)
 	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
 	ushort u1, v1, u2, v2;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -3230,7 +3267,11 @@ void DrawWillBossShield(ITEM_INFO* item)
 	long xv1, yv1, xv2, yv2, xv3, yv3, xv4, yv4;
 	ushort u1, v1, u2, v2;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -3406,7 +3447,11 @@ void S_DrawLaserBeam(GAME_VECTOR* src, GAME_VECTOR* dest, uchar cr, uchar cg, uc
 	long pos[3];
 
 	UpdateLaserShades();
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -3539,7 +3584,11 @@ void S_DrawBat()
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3;
 	ushort u1, v1, u2, v2;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w;
 	h = dm->h;
 	pXY = (long*)&scratchpad[0];
@@ -3579,7 +3628,7 @@ void S_DrawBat()
 			pXY[1] = pos.y;
 			pZ[0] = pos.z;
 			pXY += 2;
-			pZ += 2;	//?
+			pZ += 2;
 		}
 
 		phd_PopMatrix();
@@ -3667,7 +3716,11 @@ void S_DrawSparks()
 	long vpos[3][3];
 	long point[3];
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w;
 	h = dm->h;
 
@@ -3784,8 +3837,7 @@ void S_DrawSparks()
 			x = vpos[0][0];
 			y = vpos[0][1];
 
-			if (x + (sw >> 1) < 0 || x - (sw >> 1) > w ||
-				y + (sh >> 1) < 0 || y - (sh >> 1) > h)
+			if (x + (sw >> 1) < 0 || x - (sw >> 1) > w || y + (sh >> 1) < 0 || y - (sh >> 1) > h)
 				continue;
 
 			if (sptr->Flags & SF_ROTATE)
@@ -3837,7 +3889,13 @@ void S_DrawSparks()
 				if (sptr->TransType == 3)
 				{
 					drawType = DT_POLY_COLSUB;
-					r = 4;
+
+#if (DIRECT3D_VERSION >= 0x900)
+					if (tomb3.psx_contrast)
+						r = 2;
+					else
+#endif
+						r = 4;
 				}
 				else
 				{
@@ -3849,7 +3907,7 @@ void S_DrawSparks()
 						drawType = DT_POLY_WGT;
 				}
 
-				for (g = 0; g < r; g++)	//HACK: draw colsub multiple times to make up for lack of modulate4x
+				for (g = 0; g < r; g++)
 					HWI_InsertAlphaSprite_Sorted(x1, y1, z, c, x2, y2, z, c, x3, y3, z, c, x4, y4, z, c, sptr->Def, drawType, 0);
 
 				sptr->RotAng = (sptr->RotAng + sptr->RotAdd) & 0xFFF;
@@ -3888,7 +3946,13 @@ void S_DrawSparks()
 				if (sptr->TransType == 3)
 				{
 					drawType = DT_POLY_COLSUB;
-					r = 4;
+
+#if (DIRECT3D_VERSION >= 0x900)
+					if (tomb3.psx_contrast)
+						r = 2;
+					else
+#endif
+						r = 4;
 				}
 				else
 				{
@@ -3900,7 +3964,8 @@ void S_DrawSparks()
 						drawType = DT_POLY_WGT;
 				}
 
-				for (g = 0; g < r; g++)	//HACK: draw colsub multiple times to make up for lack of modulate4x
+
+				for (g = 0; g < r; g++)
 					HWI_InsertAlphaSprite_Sorted(x1, y1, z, c, x2, y1, z, c, x2, y2, z, c, x1, y2, z, c, sptr->Def, drawType, 0);
 			}
 		}
@@ -3938,8 +4003,7 @@ void S_DrawSparks()
 			x = vpos[0][0];
 			y = vpos[0][1];
 
-			if (x + (sw >> 1) < 0 || x - (sw >> 1) > w ||
-				y + (sh >> 1) < 0 || y - (sh >> 1) > h)
+			if (x + (sw >> 1) < 0 || x - (sw >> 1) > w || y + (sh >> 1) < 0 || y - (sh >> 1) > h)
 				continue;
 
 			x1 = x - (sw >> 1);
@@ -3974,7 +4038,13 @@ void S_DrawSparks()
 			if (sptr->TransType == 3)
 			{
 				drawType = DT_POLY_COLSUB;
-				r = 4;
+
+#if (DIRECT3D_VERSION >= 0x900)
+				if (tomb3.psx_contrast)
+					r = 2;
+				else
+#endif
+					r = 4;
 			}
 			else
 			{
@@ -3986,7 +4056,7 @@ void S_DrawSparks()
 					drawType = DT_POLY_G;
 			}
 
-			for (g = 0; g < r; g++)	//HACK: draw colsub multiple times to make up for lack of modulate4x
+			for (g = 0; g < r; g++)
 				HWI_InsertAlphaSprite_Sorted(x1, y1, z, c, x2, y1, z, c, x2, y2, z, c, x1, y2, z, c, -1, drawType, 0);
 		}
 	}
@@ -4004,7 +4074,11 @@ void S_DrawSplashes()
 	long w, h, nSprite, linkNum, n;
 	long pos[3];
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w;
 	h = dm->h;
 
@@ -4058,10 +4132,6 @@ void S_DrawSplashes()
 				x4 = p[n];
 				y4 = p[n + 1];
 				z4 = p[n + 2];
-
-				if ((x1 < 0 && x2 < 0 && x3 < 0 && x4 < 0) || (x1 >= w && x2 >= w && x3 >= w && x4 >= w) ||
-					(y1 < 0 && y2 < 0 && y3 < 0 && y4 < 0) || (y1 >= h && y2 >= h && y3 >= h && y4 >= h))
-					continue;
 
 				z1 <<= W2V_SHIFT;
 
@@ -4149,10 +4219,6 @@ void S_DrawSplashes()
 		y4 = *p++;
 		z4 = *p++;
 
-		if ((x1 < 0 && x2 < 0 && x3 < 0 && x4 < 0) || (x1 >= w && x2 >= w && x3 >= w && x4 >= w) ||
-			(y1 < 0 && y2 < 0 && y3 < 0 && y4 < 0) || (y1 >= h && y2 >= h && y3 >= h && y4 >= h))
-			continue;
-
 		z1 <<= W2V_SHIFT;
 
 		if (z1 < phd_znear || z1 > phd_zfar)
@@ -4236,7 +4302,11 @@ void S_DrawLaserBolts(ITEM_INFO* item)
 	long w, h, speed, px, py, pz, d, x, y, z, xStep, yStep, zStep, num, linkNum;
 	long x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, c12, c34, r, g, b, c0, c1;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w - 1;
 	h = dm->h - 1;
 	speed = (item->speed * phd_cos(item->pos.x_rot)) >> W2V_SHIFT;
@@ -4412,19 +4482,6 @@ void S_DrawLaserBolts(ITEM_INFO* item)
 			y4 = pXY[(links[linkNum + 3] << 1) + 1];
 			z4 = pZ[links[linkNum + 3]];
 
-			z1 = (z1 + z2 + z3 + z4) >> 2;
-
-			if (z1 <= phd_znear + 0x3E8000)
-				continue;
-
-			if (x1 <= -128 || x2 <= -128 || x3 <= -128 || x4 <= -128 ||
-				x1 >= w + 128 || x2 >= w + 128 || x3 >= w + 128 || x4 >= w + 128)
-				continue;
-
-			if (y1 <= -128 || y2 <= -128 || y3 <= -128 || y4 <= -128 ||
-				y1 >= h + 128 || y2 >= h + 128 || y3 >= h + 128 || y4 >= h + 128)
-				continue;
-
 			if (z1 < phd_znear)
 				z1 = phd_znear;
 
@@ -4474,7 +4531,11 @@ void S_DrawFish(ITEM_INFO* item)
 	long point[3];
 	ushort u1, v1, u2, v2;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w;
 	h = dm->h;
 	sx = phd_winxmin + phd_winxmax;
@@ -4606,7 +4667,11 @@ void S_DrawDarts(ITEM_INFO* item)
 	long w, h, size, x, y, z;
 	long x1, y1, z1, x2, y2, z2;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -4672,6 +4737,11 @@ void S_PrintSpriteShadow(short size, short* box, ITEM_INFO* item)
 	hXZ = hxz;
 
 	c = short((4096 - abs(item->floor - lara_item->pos.y_pos)) >> 4) - 1;
+
+#if (DIRECT3D_VERSION >= 0x900)
+	if (tomb3.psx_contrast)
+		c >>= 1;
+#endif
 
 	if (c < 32)
 		c = 32;
@@ -4851,6 +4921,11 @@ void S_DrawFootPrints()
 		else
 			c = 112;
 
+#if (DIRECT3D_VERSION >= 0x900)
+		if (tomb3.psx_contrast)
+			c <<= 1;
+#endif
+
 		memset(pos, 0, sizeof(pos));
 		pos[0].x = 0;
 		pos[0].z = -64;
@@ -4899,8 +4974,15 @@ void S_DrawFootPrints()
 		tex.tpage = sprite->tpage;
 		tex.drawtype = 3;
 
-		for (int j = 0; j < 4; j++)	//HACK: draw 4 times to make up for lack of modulate4x..
+#if (DIRECT3D_VERSION >= 0x900)
+		if (tomb3.psx_contrast)
 			HWI_InsertGT3_Sorted(&v[0], &v[1], &v[2], &tex, &tex.u1, &tex.u2, &tex.u3, MID_SORT, 1);
+		else
+#endif
+		{
+			for (int j = 0; j < 4; j++)	//HACK: draw 4 times to make up for lack of modulate4x..
+				HWI_InsertGT3_Sorted(&v[0], &v[1], &v[2], &tex, &tex.u1, &tex.u2, &tex.u3, MID_SORT, 1);
+		}
 	}
 }
 
@@ -4917,7 +4999,11 @@ void DoUwEffect()
 	long x1, y1, x2, y2, x3, y3;
 	ushort u1, v1, u2, v2;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w;
 	h = dm->h;
 	bBlueEffect = 0;
@@ -5081,7 +5167,11 @@ void S_DrawSubWakeFX(ITEM_INFO* item)
 	if (!tomb3.upv_wake)
 		return;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
 	w = dm->w - 1;
 	h = dm->h - 1;
 
@@ -5193,13 +5283,8 @@ void S_DrawSubWakeFX(ITEM_INFO* item)
 			if (SubWakeShade < 16)
 				c34 = (c34 * SubWakeShade) >> 4;
 
-			z1 = (z1 + z2 + z3 + z4) >> 2;
-
-			if ((z1 >> W2V_SHIFT) > 32 &&
-				x1 > -512 && x2 > -512 && x3 > -512 && x4 > -512 &&
-				x1 < w + 512 && x2 < w + 512 && x3 < w + 512 && x4 < w + 512 &&
-				y1 > -512 && y2 > -512 && y3 > -512 && y4 > -512 &&
-				y1 < h + 512 && y2 < h + 512 && y3 < h + 512 && y4 < h + 512)
+			if (z1 >= phd_znear && z1 <= phd_zfar && z2 >= phd_znear && z2 <= phd_zfar &&
+				z3 >= phd_znear && z3 <= phd_zfar && z4 >= phd_znear && z4 <= phd_zfar)
 			{
 				cval = 0;
 				s1 = RGB_MAKE(cval, cval, cval);

@@ -717,9 +717,9 @@ void ClipRoom(ROOM_INFO* r)
 			ymax = phd_bottom;
 
 		if (outside)
-			S_InsertBackPolygon(xmin, (long)outsideBackgroundTop, xmax, ymax, 0x800000);
+			S_InsertBackPolygon(xmin, (long)outsideBackgroundTop, xmax, ymax, 0);
 		else
-			S_InsertBackPolygon(xmin, ymin, xmax, ymax, 0x800000);
+			S_InsertBackPolygon(xmin, ymin, xmax, ymax, 0);
 	}
 }
 

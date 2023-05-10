@@ -65,9 +65,14 @@ static void DrawColoredRect(long x0, long y0, long x1, long y1, long z, ulong c0
 	}
 
 	HWR_SetCurrentTexture(0);
-	HWR_EnableColorKey(1);
 	HWR_EnableColorAddition(0);
+#if (DIRECT3D_VERSION >= 0x900)
+	HWR_EnableAlphaBlend(1);
+	DrawPrimitive(D3DPT_TRIANGLESTRIP, v, 4);
+#else
+	HWR_EnableColorKey(1);
 	DrawPrimitive(D3DPT_TRIANGLESTRIP, D3DVT_TLVERTEX, v, 4, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+#endif
 }
 
 static void DrawPSXBar(long x0, long y0, long x1, long y1, long bar, long p, ulong* l, ulong* r, ulong* f)
@@ -248,7 +253,7 @@ void S_DrawHealthBar(long percent)
 
 	if (tomb3.bar_mode == BAR_PSX)
 	{
-		if (App.ZBuffer)
+		if (App.lpDXConfig->bZBuffer)
 			DoPSXHealthBar(x0, y0, x1, y1, bar, p);
 		else
 			InsertPSXBar(POLYTYPE_HEALTHBAR, x0, y0, x1, y1, bar, p);
@@ -308,7 +313,7 @@ void S_DrawDashBar(long percent)
 
 	if (tomb3.bar_mode == BAR_PSX)
 	{
-		if (App.ZBuffer)
+		if (App.lpDXConfig->bZBuffer)
 			DoPSXDashBar(x0, y0, x1, y1, bar, p);
 		else
 			InsertPSXBar(POLYTYPE_DASHBAR, x0, y0, x1, y1, bar, p);
@@ -360,7 +365,7 @@ void S_DrawAirBar(long percent)
 
 	if (tomb3.bar_mode == BAR_PSX)
 	{
-		if (App.ZBuffer)
+		if (App.lpDXConfig->bZBuffer)
 			DoPSXAirBar(x0, y0, x1, y1, bar, p);
 		else
 			InsertPSXBar(POLYTYPE_AIRBAR, x0, y0, x1, y1, bar, p);
@@ -417,7 +422,7 @@ void S_DrawColdBar(long percent)
 
 	if (tomb3.bar_mode == BAR_PSX)
 	{
-		if (App.ZBuffer)
+		if (App.lpDXConfig->bZBuffer)
 			DoPSXColdBar(x0, y0, x1, y1, bar, p);
 		else
 			InsertPSXBar(POLYTYPE_COLDBAR, x0, y0, x1, y1, bar, p);

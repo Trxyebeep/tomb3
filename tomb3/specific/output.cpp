@@ -4,7 +4,11 @@
 #include "transform.h"
 #include "hwrender.h"
 #include "../3dsystem/hwinsert.h"
+#if (DIRECT3D_VERSION >= 0x900)
+#include "../newstuff/Picture2.h"
+#else
 #include "picture.h"
+#endif
 #include "dxshell.h"
 #include "display.h"
 #include "time.h"
@@ -222,6 +226,18 @@ static void SetPickupLight()
 	LightCol[M12] = 2432;	//dynamic
 	LightCol[M22] = 4080;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	if (tomb3.psx_contrast)
+	{
+		for (int i = 0; i < indices_count; i++)
+			LightCol[i] >>= 1;
+
+		smcr >>= 1;
+		smcg >>= 1;
+		smcb >>= 1;
+	}
+#endif
+
 	//positions
 	x = 0x2000;
 	y = -0x2000;
@@ -298,7 +314,7 @@ static void OutputPickupDisplay()
 {
 	DXClearBuffers(8, 0);
 
-	if (App.ZBuffer)
+	if (App.lpDXConfig->bZBuffer)
 	{
 		for (int i = 0; i < MAX_BUCKETS; i++)
 		{
@@ -306,7 +322,9 @@ static void OutputPickupDisplay()
 			Buckets[i].nVtx = 0;
 		}
 
+#if (DIRECT3D_VERSION < 0x900)
 		HWR_EnableColorKey(0);
+#endif
 		HWR_EnableAlphaBlend(0);
 		HWR_EnableColorAddition(0);
 		HWR_EnableZBuffer(1, 1);
@@ -320,17 +338,27 @@ static void OutputPickupDisplay()
 	bBlueEffect = 0;
 	DrawPickup(pickups[CurrentPickup].sprnum);
 
-	if (App.ZBuffer)
+	if (App.lpDXConfig->bZBuffer)
 	{
 		if (bAlphaTesting)
 		{
+#if (DIRECT3D_VERSION >= 0x900)
+			SetRenderState(D3DRS_ALPHATESTENABLE, 0);
+			DrawBuckets();
+			SetRenderState(D3DRS_ALPHATESTENABLE, 1);
+#else
 			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 0);
 			DrawBuckets();
 			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 1);
+#endif
 			phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
 			HWR_DrawPolyListBF(surfacenumbf, sort3d_bufferbf);
 			HWR_EnableZBuffer(0, 1);
+#if (DIRECT3D_VERSION >= 0x900)
+			SetRenderState(D3DRS_ALPHATESTENABLE, 0);
+#else
 			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 0);
+#endif
 			phd_SortPolyList(surfacenumfb, sort3d_bufferfb);
 			HWR_DrawPolyListBF(surfacenumfb, sort3d_bufferfb);
 		}
@@ -343,7 +371,9 @@ static void OutputPickupDisplay()
 	}
 	else
 	{
+#if (DIRECT3D_VERSION < 0x900)
 		HWR_EnableColorKey(0);
+#endif
 		HWR_EnableAlphaBlend(0);
 		phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
 		HWR_DrawPolyList(surfacenumbf, sort3d_bufferbf);
@@ -352,9 +382,11 @@ static void OutputPickupDisplay()
 
 void S_OutputPolyList()
 {
-	if (App.ZBuffer)
+	if (App.lpDXConfig->bZBuffer)
 	{
+#if (DIRECT3D_VERSION < 0x900)
 		HWR_EnableColorKey(0);
+#endif
 		HWR_EnableAlphaBlend(0);
 		HWR_EnableColorAddition(0);
 		HWR_EnableZBuffer(1, 1);
@@ -362,13 +394,23 @@ void S_OutputPolyList()
 
 		if (bAlphaTesting)
 		{
+#if (DIRECT3D_VERSION >= 0x900)
+			SetRenderState(D3DRS_ALPHATESTENABLE, 0);
+			DrawBuckets();
+			SetRenderState(D3DRS_ALPHATESTENABLE, 1);
+#else
 			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 0);
 			DrawBuckets();
 			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 1);
+#endif
 			phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
 			HWR_DrawPolyListBF(surfacenumbf, sort3d_bufferbf);
 			HWR_EnableZBuffer(0, 1);
+#if (DIRECT3D_VERSION >= 0x900)
+			SetRenderState(D3DRS_ALPHATESTENABLE, 0);
+#else
 			SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, 0);
+#endif
 			phd_SortPolyList(surfacenumfb, sort3d_bufferfb);
 			HWR_DrawPolyListBF(surfacenumfb, sort3d_bufferfb);
 		}
@@ -381,7 +423,9 @@ void S_OutputPolyList()
 	}
 	else
 	{
+#if (DIRECT3D_VERSION < 0x900)
 		HWR_EnableColorKey(0);
+#endif
 		HWR_EnableAlphaBlend(0);
 		phd_SortPolyList(surfacenumbf, sort3d_bufferbf);
 		HWR_DrawPolyList(surfacenumbf, sort3d_bufferbf);
@@ -396,7 +440,7 @@ void S_OutputPolyList()
 
 void S_InsertBackPolygon(long xmin, long ymin, long xmax, long ymax, long col)
 {
-	InsertFlatRect(phd_winxmin + xmin, phd_winymin + ymin, phd_winxmin + xmax, phd_winymin + ymax, phd_zfar, 0);
+	InsertFlatRect(phd_winxmin + xmin, phd_winymin + ymin, phd_winxmin + xmax, phd_winymin + ymax, phd_zfar, col);
 }
 
 long S_GetObjectBounds(short* box)
@@ -533,7 +577,9 @@ long S_DumpCine()
 	if (!framedump)
 		return 0;
 
+#if (DIRECT3D_VERSION < 0x900)
 	DXSaveScreen(App.FrontBuffer);
+#endif
 	return 1;
 }
 
@@ -620,18 +666,22 @@ void S_InitialisePolyList(bool clearBackBuffer)
 
 	if (GtFullScreenClearNeeded)
 	{
+#if (DIRECT3D_VERSION < 0x900)
 		DXCheckForLostSurfaces();
+#endif
 		DD_SpinMessageLoop(0);
+#if (DIRECT3D_VERSION < 0x900)
 		DXDoFlipWait();
+#endif
 		DXClearBuffers(3, 0);
 		GtFullScreenClearNeeded = 0;
 		clearBackBuffer = 0;
 	}
 
+	flags = 256;
+
 	if (clearBackBuffer || HWConfig.nFillMode < D3DFILL_SOLID)
-		flags = 258;
-	else
-		flags = 256;
+		flags |= 2;
 
 	flags |= 8;
 

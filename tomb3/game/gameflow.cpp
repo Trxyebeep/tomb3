@@ -15,6 +15,9 @@
 #include "../specific/smain.h"
 #include "control.h"
 #include "lara.h"
+#if (DIRECT3D_VERSION >= 0x900)
+#include "../newstuff/Picture2.h"
+#endif
 
 GAMEFLOW_INFO gameflow;
 
@@ -671,10 +674,7 @@ long GF_InterpretSequence(short* ptr, long type, long seq_type)
 		case GFE_PICTURE:
 
 			if (type != 2)
-			{
 				sprintf(string, "PICTURE %s", GF_picfilenames[ptr[1]]);
-				//empty function call here
-			}
 
 			ptr += 2;
 			break;

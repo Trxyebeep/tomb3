@@ -2,7 +2,6 @@
 #include "../tomb3/pch.h"
 #include "hwrender.h"
 #include "texture.h"
-#include "picture.h"
 #include "../3dsystem/hwinsert.h"
 #include "init.h"
 #include "winmain.h"
@@ -10,7 +9,15 @@
 #include "drawbars.h"
 #include "../tomb3/tomb3.h"
 
-HRESULT (*DrawPrimitive)(D3DPRIMITIVETYPE, D3DVERTEXTYPE, LPVOID, ulong, ulong);
+#if (DIRECT3D_VERSION >= 0x900)
+HRESULT (*DrawPrimitive)(D3DPRIMITIVETYPE, LPVOID, ulong);
+HRESULT (*SetTextureStageState)(ulong, D3DTEXTURESTAGESTATETYPE, ulong);
+HRESULT (*SetSamplerState)(ulong, D3DSAMPLERSTATETYPE, ulong);
+HRESULT (*SetTexture)(ulong, TEXHANDLE);
+#else
+HRESULT(*DrawPrimitive)(D3DPRIMITIVETYPE, D3DVERTEXTYPE, LPVOID, ulong, ulong);
+#endif
+
 HRESULT (*SetRenderState)(D3DRENDERSTATETYPE, ulong);
 HRESULT (*BeginScene)();
 HRESULT (*EndScene)();
@@ -22,32 +29,46 @@ uchar ColorTable[256];
 static D3DPRIMITIVETYPE dpPrimitiveType;
 static bool zBufWriteEnabled;
 static bool zBufCompareEnabled;
+static bool AlphaBlendEnabled;
 bool bAlphaTesting;
 
 void HWR_EnableZBuffer(bool write, bool compare)
 {
-	if (App.ZBuffer)
+	if (!App.lpDXConfig->bZBuffer)
+		return;
+
+	if (write != zBufWriteEnabled)
 	{
-		if (write != zBufWriteEnabled)
-		{
-			SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, write);
-			zBufWriteEnabled = write;
-		}
+#if (DIRECT3D_VERSION >= 0x900)
+		SetRenderState(D3DRS_ZWRITEENABLE, write ? D3DZB_TRUE : D3DZB_FALSE);
+#else
+		SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, write);
+#endif
+		zBufWriteEnabled = write;
+	}
 
-		if (compare != zBufCompareEnabled)
-		{
-			if (App.ZBuffer)
-				SetRenderState(D3DRENDERSTATE_ZFUNC, compare ? D3DCMP_LESSEQUAL : D3DCMP_ALWAYS);
-			else
-				SetRenderState(D3DRENDERSTATE_ZENABLE, compare);
+	if (compare != zBufCompareEnabled)
+	{
+#if (DIRECT3D_VERSION >= 0x900)
+		SetRenderState(D3DRS_ZFUNC, compare ? D3DCMP_LESSEQUAL : D3DCMP_ALWAYS);
+		SetRenderState(D3DRS_ZENABLE, compare ? D3DZB_TRUE : D3DZB_FALSE);
+#else
+		if (App.ZBuffer)
+			SetRenderState(D3DRENDERSTATE_ZFUNC, compare ? D3DCMP_LESSEQUAL : D3DCMP_ALWAYS);
+		else
+			SetRenderState(D3DRENDERSTATE_ZENABLE, compare);
+#endif
 
-			zBufCompareEnabled = compare;
-		}
+		zBufCompareEnabled = compare;
 	}
 }
 
 void HWR_EnableColorKey(bool enable)
 {
+#if (DIRECT3D_VERSION >= 0x900)
+	SetRenderState(D3DRS_ALPHABLENDENABLE, enable);
+	AlphaBlendEnabled = enable;
+#else
 	static bool enabled;
 
 	if (tomb3.disable_ckey)
@@ -65,24 +86,31 @@ void HWR_EnableColorKey(bool enable)
 		SetRenderState(D3DRENDERSTATE_COLORKEYENABLE, 0);
 		enabled = 0;
 	}
+#endif
 }
 
 void HWR_EnableAlphaBlend(bool enable)
 {
-	static bool enabled;
-
 	if (enable)
 	{
-		if (!enabled)
+		if (!AlphaBlendEnabled)
 		{
+#if (DIRECT3D_VERSION >= 0x900)
+			SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
+#else
 			SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, 1);
-			enabled = 1;
+#endif
+			AlphaBlendEnabled = 1;
 		}
 	}
-	else if (enabled)
+	else if (AlphaBlendEnabled)
 	{
+#if (DIRECT3D_VERSION >= 0x900)
+		SetRenderState(D3DRS_ALPHABLENDENABLE, 0);
+#else
 		SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, 0);
-		enabled = 0;
+#endif
+		AlphaBlendEnabled = 0;
 	}
 }
 
@@ -90,13 +118,23 @@ void HWR_EnableColorAddition(bool enable)
 {
 	if (enable)
 	{
+#if (DIRECT3D_VERSION >= 0x900)
+		SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
+		SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+#else
 		SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ONE);
 		SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
+#endif
 	}
 	else
 	{
+#if (DIRECT3D_VERSION >= 0x900)
+		SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+#else
 		SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
 		SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
+#endif
 	}
 }
 
@@ -104,13 +142,23 @@ void HWR_EnableColorSubtraction(bool enable)
 {
 	if (enable)
 	{
+#if (DIRECT3D_VERSION >= 0x900)
+		SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ZERO);
+		SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCCOLOR);
+#else
 		SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ZERO);
 		SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCCOLOR);
+#endif
 	}
 	else
 	{
+#if (DIRECT3D_VERSION >= 0x900)
+		SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+#else
 		SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
 		SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
+#endif
 	}
 }
 
@@ -119,6 +167,10 @@ void HWR_ResetZBuffer()
 	zBufWriteEnabled = 0;
 	zBufCompareEnabled = 0;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+	SetRenderState(D3DRS_ZWRITEENABLE, D3DZB_FALSE);
+#else
 	if (App.ZBuffer)
 		SetRenderState(D3DRENDERSTATE_ZFUNC, D3DCMP_ALWAYS);
 	else
@@ -126,6 +178,7 @@ void HWR_ResetZBuffer()
 		SetRenderState(D3DRENDERSTATE_ZENABLE, 0);
 		SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, 0);
 	}
+#endif
 }
 
 void HWR_ResetColorKey()
@@ -133,16 +186,6 @@ void HWR_ResetColorKey()
 	HWR_EnableAlphaBlend(0);
 	HWR_EnableColorKey(0);
 	HWR_EnableColorAddition(0);
-}
-
-void HWR_EnablePerspCorrect(bool enable)
-{
-	SetRenderState(D3DRENDERSTATE_TEXTUREPERSPECTIVE, 1);
-}
-
-void HWR_EnableFilter(bool enable)
-{
-
 }
 
 void HWR_ResetCurrentTexture()
@@ -161,7 +204,7 @@ void HWR_BeginScene()
 	BeginScene();
 	nDrawnPoints = 0;
 
-	if (App.ZBuffer)
+	if (App.lpDXConfig->bZBuffer)
 	{
 		for (int i = 0; i < MAX_BUCKETS; i++)
 		{
@@ -176,6 +219,79 @@ void HWR_EndScene()
 	EndScene();
 }
 
+#if (DIRECT3D_VERSION >= 0x900)
+void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage)
+{
+	switch (nDrawType)
+	{
+	case DT_POLY_GT:
+		HWR_EnableAlphaBlend(0);
+		HWR_EnableAlphaBlend(0);
+		HWR_SetCurrentTexture(TexturePtrs[TPage]);
+		DrawPrimitive(dpPrimitiveType, vtx, nVtx);
+		return;
+
+	case DT_POLY_WGT:
+		HWR_SetCurrentTexture(TexturePtrs[TPage]);
+		HWR_EnableZBuffer(1, 1);
+		HWR_EnableAlphaBlend(1);
+		HWR_EnableColorAddition(0);
+		DrawPrimitive(dpPrimitiveType, vtx, nVtx);
+		HWR_EnableZBuffer(0, 1);
+		return;
+
+	case DT_POLY_G:
+		HWR_SetCurrentTexture(0);
+		HWR_EnableAlphaBlend(0);
+		DrawPrimitive(dpPrimitiveType, vtx, nVtx);
+		return;
+
+	case DT_LINE_SOLID:
+		HWR_SetCurrentTexture(0);
+		HWR_EnableAlphaBlend(0);
+		HWR_EnableColorAddition(0);
+		DrawPrimitive(D3DPT_LINELIST, vtx, nVtx);
+		return;
+
+	case DT_LINE_ALPHA:
+		HWR_SetCurrentTexture(0);
+		HWR_EnableAlphaBlend(1);
+		HWR_EnableColorAddition(1);
+		DrawPrimitive(D3DPT_LINELIST, vtx, nVtx);
+		return;
+
+	case DT_POLY_GA:
+		HWR_SetCurrentTexture(0);
+		HWR_EnableAlphaBlend(1);
+		HWR_EnableColorAddition(0);
+		DrawPrimitive(dpPrimitiveType, vtx, nVtx);
+		return;
+
+	case DT_POLY_WGTA:
+		HWR_EnableZBuffer(0, 1);
+		HWR_SetCurrentTexture(TexturePtrs[TPage]);
+		HWR_EnableColorAddition(1);
+		HWR_EnableAlphaBlend(1);
+		DrawPrimitive(dpPrimitiveType, vtx, nVtx);
+		return;
+
+	case DT_POLY_COLSUB:
+		HWR_EnableZBuffer(0, 1);
+		HWR_SetCurrentTexture(TexturePtrs[TPage]);
+		HWR_EnableColorSubtraction(1);
+		HWR_EnableAlphaBlend(1);
+		DrawPrimitive(dpPrimitiveType, vtx, nVtx);
+		return;
+
+	case DT_POLY_GTA:
+		HWR_SetCurrentTexture(0);
+		HWR_EnableAlphaBlend(1);
+		HWR_EnableColorAddition(1);
+		DrawPrimitive(dpPrimitiveType, vtx, nVtx);
+		return;
+	}
+}
+#else
 void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage)
 {
 	switch (nDrawType)
@@ -183,12 +299,12 @@ void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage)
 	case DT_POLY_GT:
 		HWR_EnableAlphaBlend(0);
 		HWR_EnableColorKey(0);
-		HWR_SetCurrentTexture(TPages[TPage]);
+		HWR_SetCurrentTexture(TexturePtrs[TPage]);
 		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
 
 	case DT_POLY_WGT:
-		HWR_SetCurrentTexture(TPages[TPage]);
+		HWR_SetCurrentTexture(TexturePtrs[TPage]);
 		HWR_EnableZBuffer(1, 1);
 		HWR_EnableColorKey(1);
 		HWR_EnableAlphaBlend(1);
@@ -229,7 +345,7 @@ void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage)
 
 	case DT_POLY_WGTA:
 		HWR_EnableZBuffer(0, 1);
-		HWR_SetCurrentTexture(TPages[TPage]);
+		HWR_SetCurrentTexture(TexturePtrs[TPage]);
 		HWR_EnableColorAddition(1);
 		HWR_EnableAlphaBlend(1);
 		HWR_EnableColorKey(1);
@@ -238,7 +354,7 @@ void HWR_DrawRoutines(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long TPage)
 
 	case DT_POLY_COLSUB:
 		HWR_EnableZBuffer(0, 1);
-		HWR_SetCurrentTexture(TPages[TPage]);
+		HWR_SetCurrentTexture(TexturePtrs[TPage]);
 		HWR_EnableColorSubtraction(1);
 		HWR_EnableAlphaBlend(1);
 		HWR_EnableColorKey(1);
@@ -259,14 +375,14 @@ void HWR_DrawRoutinesStippledAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, 
 	switch (nDrawType)
 	{
 	case DT_POLY_GT:
-		HWR_SetCurrentTexture(TPages[TPage]);
+		HWR_SetCurrentTexture(TexturePtrs[TPage]);
 		HWR_EnableAlphaBlend(0);
 		HWR_EnableColorKey(0);
 		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
 
 	case DT_POLY_WGT:
-		HWR_SetCurrentTexture(TPages[TPage]);
+		HWR_SetCurrentTexture(TexturePtrs[TPage]);
 		HWR_EnableZBuffer(1, 1);
 		HWR_EnableAlphaBlend(1);
 		HWR_EnableColorKey(1);
@@ -306,7 +422,7 @@ void HWR_DrawRoutinesStippledAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, 
 		return;
 
 	case DT_POLY_WGTA:
-		HWR_SetCurrentTexture(TPages[TPage]);
+		HWR_SetCurrentTexture(TexturePtrs[TPage]);
 		HWR_EnableColorAddition(1);
 		HWR_EnableAlphaBlend(1);
 		HWR_EnableColorKey(1);
@@ -316,7 +432,7 @@ void HWR_DrawRoutinesStippledAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, 
 		return;
 
 	case DT_POLY_COLSUB:
-		HWR_SetCurrentTexture(TPages[TPage]);
+		HWR_SetCurrentTexture(TexturePtrs[TPage]);
 		HWR_EnableColorSubtraction(1);
 		HWR_EnableAlphaBlend(1);
 		HWR_EnableColorKey(1);
@@ -341,14 +457,14 @@ void HWR_DrawRoutinesNoAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long T
 	switch (nDrawType)
 	{
 	case DT_POLY_GT:
-		HWR_SetCurrentTexture(TPages[TPage]);
+		HWR_SetCurrentTexture(TexturePtrs[TPage]);
 		HWR_EnableAlphaBlend(0);
 		HWR_EnableColorKey(0);
 		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
 
 	case DT_POLY_WGT:
-		HWR_SetCurrentTexture(TPages[TPage]);
+		HWR_SetCurrentTexture(TexturePtrs[TPage]);
 		HWR_EnableAlphaBlend(1);
 		HWR_EnableColorKey(1);
 		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
@@ -382,14 +498,14 @@ void HWR_DrawRoutinesNoAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long T
 		return;
 
 	case DT_POLY_WGTA:
-		HWR_SetCurrentTexture(TPages[TPage]);
+		HWR_SetCurrentTexture(TexturePtrs[TPage]);
 		HWR_EnableAlphaBlend(1);
 		HWR_EnableColorKey(1);
 		DrawPrimitive(dpPrimitiveType, D3DVT_TLVERTEX, vtx, nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
 		return;
 
 	case DT_POLY_COLSUB:
-		HWR_SetCurrentTexture(TPages[TPage]);
+		HWR_SetCurrentTexture(TexturePtrs[TPage]);
 		HWR_EnableColorSubtraction(1);
 		HWR_EnableAlphaBlend(1);
 		HWR_EnableColorKey(1);
@@ -397,9 +513,14 @@ void HWR_DrawRoutinesNoAlpha(long nVtx, D3DTLVERTEX* vtx, long nDrawType, long T
 		return;
 	}
 }
+#endif
 
 __inline void HWR_InitGamma(float gamma)
 {
+#if (DIRECT3D_VERSION >= 0x900)
+	if (tomb3.psx_contrast)
+		gamma = 2.5F;
+#endif
 	gamma = 1.0F / (gamma / 10.0F * 4.0F);
 
 	for (int i = 0; i < 256; i++)
@@ -408,13 +529,56 @@ __inline void HWR_InitGamma(float gamma)
 
 void HWR_InitState()
 {
+#if (DIRECT3D_VERSION >= 0x900)
+	if (!SetRenderState || !SetTextureStageState || !SetSamplerState)
+		return;
+
+	SetRenderState(D3DRS_CLIPPING, 0);
+	SetRenderState(D3DRS_FILLMODE, HWConfig.nFillMode);
+	SetRenderState(D3DRS_SHADEMODE, HWConfig.nShadeMode);
+	SetRenderState(D3DRS_DITHERENABLE, HWConfig.bDither);
+	SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	SetRenderState(D3DRS_SPECULARENABLE, 0);
+	SetRenderState(D3DRS_ALPHABLENDENABLE, 0);
+	SetRenderState(D3DRS_ALPHAREF, 0);
+	SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_NOTEQUAL);
+
+	if (tomb3.psx_contrast)
+		SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE2X);
+	else
+		SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+
+	SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+	SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+	SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+
+	SetSamplerState(0, D3DSAMP_MAGFILTER, HWConfig.nFilter);
+	SetSamplerState(0, D3DSAMP_MINFILTER, HWConfig.nFilter);
+	SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+
+	if (tomb3.disable_gamma)
+		GammaOption = 2.5F;
+
+	HWR_InitGamma(GammaOption);
+	HWR_ResetCurrentTexture();
+	HWR_ResetColorKey();
+	HWR_ResetZBuffer();
+	DrawRoutine = HWR_DrawRoutines;
+	bAlphaTesting = 1;
+	GlobalAlpha = 0xFF000000;
+#else
 	DIRECT3DINFO* d3dinfo;
 	bool blendOne, stippledAlpha, blendAlpha;
 
 	if (tomb3.disable_gamma)
 		GammaOption = 2.5F;
 
-	HWR_InitGamma(GammaOption);		//og has the code directly here
+	HWR_InitGamma(GammaOption);
 
 	if (!SetRenderState)
 		return;
@@ -425,7 +589,7 @@ void HWR_InitState()
 	SetRenderState(D3DRENDERSTATE_TEXTUREMAG, HWConfig.nFilter);
 	SetRenderState(D3DRENDERSTATE_TEXTUREMIN, HWConfig.nFilter);
 	SetRenderState(D3DRENDERSTATE_DITHERENABLE, HWConfig.bDither);
-	HWR_EnablePerspCorrect(HWConfig.bPersp);
+	SetRenderState(D3DRENDERSTATE_TEXTUREPERSPECTIVE, 1);
 	SetRenderState(D3DRENDERSTATE_TEXTUREADDRESS, D3DTADDRESS_CLAMP);
 	SetRenderState(D3DRENDERSTATE_TEXTUREMAPBLEND, D3DTBLEND_MODULATEALPHA);
 	SetRenderState(D3DRENDERSTATE_CULLMODE, D3DCULL_NONE);
@@ -467,6 +631,7 @@ void HWR_InitState()
 		DrawRoutine = HWR_DrawRoutinesNoAlpha;
 		GlobalAlpha = 0x80000000;
 	}
+#endif
 }
 
 bool HWR_Init()
@@ -675,15 +840,13 @@ void HWR_FreeTexturePages()
 {
 	for (int i = 0; i < MAX_TPAGES; i++)
 	{
-		if (PictureTextures[i].dwFlags & 8)
-			DXTextureCleanup(i, PictureTextures);
+		if (Textures[i].dwFlags & TF_LEVELTEX)
+			DXTextureCleanup(i, Textures);
 	}
 
-	if (DXPalette)
-	{
-		DXPalette->Release();
-		DXPalette = 0;
-	}
+#if (DIRECT3D_VERSION < 0x900)
+	DXReleasePalette();
+#endif
 }
 
 void HWR_GetAllTextureHandles()
@@ -691,27 +854,27 @@ void HWR_GetAllTextureHandles()
 	DXTEXTURE* tex;
 	long n;
 
-	memset(TPages, 0, sizeof(TPages));
+	memset(TexturePtrs, 0, sizeof(TexturePtrs));
 	n = 0;
 
 	for (int i = 0; i < MAX_TPAGES; i++)
 	{
-		tex = DXRestoreSurfaceIfLost(i, PictureTextures);
+		tex = DXRestoreSurfaceIfLost(i, Textures);
 
-		if (tex->dwFlags & 8)
+		if (tex->dwFlags & TF_LEVELTEX)
 		{
-			TPages[n] = tex;
+			TexturePtrs[n] = tex;
 			n++;
 		}
 	}
 
 	for (int i = 0; i < MAX_TPAGES; i++)
 	{
-		tex = DXRestoreSurfaceIfLost(i, PictureTextures);
+		tex = DXRestoreSurfaceIfLost(i, Textures);
 
-		if (tex->dwFlags & 16)
+		if (tex->dwFlags & TF_PICTEX)
 		{
-			TPages[n] = tex;
+			TexturePtrs[n] = tex;
 			n++;
 		}
 	}
@@ -721,55 +884,76 @@ void HWR_LoadTexturePages(long nPages, uchar* src, uchar* palette)
 {
 	HWR_FreeTexturePages();
 
+#if (DIRECT3D_VERSION < 0x900)
 	if (palette)
 	{
 		DXTextureNewPalette(palette);
 		DXFreeTPages();
 		DXCreateMaxTPages(1);
 	}
+#endif
 
 	for (int i = 0; i < nPages; i++)
 	{
+#if (DIRECT3D_VERSION < 0x900)
 		if (palette)
 		{
-			DXTextureAddPal(256, 256, src, PictureTextures, 8);
+			DXTextureAddPal(256, 256, src, Textures, TF_LEVELTEX);
 			src += 0x10000;
 		}
 		else
+#endif
 		{
-			DXTextureAdd(256, 256, src, PictureTextures, 555, 8);
+			DXTextureAdd(256, 256, src, Textures, 555, TF_LEVELTEX);
 			src += 0x20000;
 		}
 	}
 
 	HWR_GetAllTextureHandles();
 
-	for (int i = 0; i < nTPages; i++)
-		HWR_SetCurrentTexture(TPages[i]);
+#if (DIRECT3D_VERSION < 0x900)
+	for (int i = 0; i < nTextures; i++)
+		HWR_SetCurrentTexture(TexturePtrs[i]);
+#endif
 }
 
 void HWR_SetCurrentTexture(DXTEXTURE* tex)
 {
+	static TEXHANDLE lastTextureHandle;
+
+#if (DIRECT3D_VERSION >= 0x900)
+	if (!tex)
+	{
+		lastTextureHandle = 0;
+		SetTexture(0, 0);
+		return;
+	}
+
+	if (tex->tex != lastTextureHandle)
+	{
+		SetTexture(0, tex->tex);
+		lastTextureHandle = tex->tex;
+	}
+#else
 	TEXTURE* tdata;
 	TEXTURE* temp;
 	LPDIRECT3DTEXTUREX d3dtex;
 	TEXHANDLE handle;
-	static TEXHANDLE lastTextureHandle;
 	ulong n;
 
 	handle = 0;
 
-	if (!nTPages)
+	if (!nTextures)
 		return;
 
 	if (tex)
 	{
 		for (int i = 0; i < MAX_TPAGES; i++)
 		{
-			if (Textures[i].DXTex == tex)
+			if (TextureSurfaces[i].DXTex == tex)
 			{
-				handle = Textures[i].handle;
-				Textures[i].nFrames = App.nFrames;
+				handle = TextureSurfaces[i].handle;
+				TextureSurfaces[i].nFrames = App.nFrames;
 				break;
 			}
 		}
@@ -779,9 +963,9 @@ void HWR_SetCurrentTexture(DXTEXTURE* tex)
 			n = 0;
 			tdata = (TEXTURE*)tex;
 
-			for (int i = 0; i < nTPages; i++)
+			for (int i = 0; i < nTextures; i++)
 			{
-				temp = &Textures[i];
+				temp = &TextureSurfaces[i];
 
 				if (!temp->DXTex && tex->bpp == temp->bpp)
 				{
@@ -826,4 +1010,5 @@ void HWR_SetCurrentTexture(DXTEXTURE* tex)
 		SetRenderState(D3DRENDERSTATE_TEXTUREHANDLE, handle);
 		lastTextureHandle = handle;
 	}
+#endif
 }

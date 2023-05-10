@@ -55,37 +55,40 @@ static void TiltHer(ITEM_INFO* item, long rad, long height)
 	}
 	else
 	{
-		wx = item->pos.x_pos & 0xFFFFFC00 | 0xFF;
-		wz = item->pos.z_pos & 0xFFFFFC00 | 0xFF;
+		wx = item->pos.x_pos & ~WALL_MASK | 0xFF;
+		wz = item->pos.z_pos & ~WALL_MASK | 0xFF;
 		room_number = item->room_number;
 		floor = GetFloor(wx, yT, wz, &room_number);
 		wy[0] = GetHeight(floor, wx, yT, wz);
-		wx = item->pos.x_pos & 0xFFFFFC00 | 0x2FF;
-		wz = item->pos.z_pos & 0xFFFFFC00 | 0xFF;
+
+		wx = item->pos.x_pos & ~WALL_MASK | 0x2FF;
+		wz = item->pos.z_pos & ~WALL_MASK | 0xFF;
 		room_number = item->room_number;
 		floor = GetFloor(wx, yT, wz, &room_number);
 		wy[1] = GetHeight(floor, wx, yT, wz);
-		wx = item->pos.x_pos & 0xFFFFFC00 | 0xFF;
-		wz = item->pos.z_pos & 0xFFFFFC00 | 0x2FF;
+
+		wx = item->pos.x_pos & ~WALL_MASK | 0xFF;
+		wz = item->pos.z_pos & ~WALL_MASK | 0x2FF;
 		room_number = item->room_number;
 		floor = GetFloor(wx, yT, wz, &room_number);
 		wy[2] = GetHeight(floor, wx, yT, wz);
-		plane.x = (float)(wy[1] - wy[0]) / 512;
-		plane.y = (float)(wy[2] - wy[0]) / 512;
+
+		plane.x = float(wy[1] - wy[0]) / 512;
+		plane.y = float(wy[2] - wy[0]) / 512;
 	}
 
 	plane.z = item->pos.y_pos - plane.x * item->pos.x_pos - plane.y * item->pos.z_pos;
 
 	for (int i = 0; i < 4; i++)
 	{
-		wx = item->pos.x_pos + (rad * phd_sin(item->pos.y_rot + 16384 * i) >> W2V_SHIFT);
-		wz = item->pos.z_pos + (rad * phd_cos(item->pos.y_rot + 16384 * i) >> W2V_SHIFT);
+		wx = item->pos.x_pos + (rad * phd_sin(item->pos.y_rot + 0x4000 * i) >> W2V_SHIFT);
+		wz = item->pos.z_pos + (rad * phd_cos(item->pos.y_rot + 0x4000 * i) >> W2V_SHIFT);
 		room_number = item->room_number;
 		floor = GetFloor(wx, yT, wz, &room_number);
 		wy[i] = GetHeight(floor, wx, yT, wz);
 
 		if (abs(y - wy[i]) > rad / 2)
-			wy[i] = (long)(plane.x * wx + plane.y * wz + plane.z);
+			wy[i] = long(plane.x * wx + plane.y * wz + plane.z);
 	}
 
 	dy = wy[0] - wy[2];
@@ -107,10 +110,10 @@ static void TiltHer(ITEM_INFO* item, long rad, long height)
 	else if (rotX < item->pos.x_rot)
 		item->pos.x_rot -= 546;
 
-	if (item->pos.x_rot > 8192)
-		item->pos.x_rot = 8192;
-	else if (item->pos.x_rot < -8192)
-		item->pos.x_rot = -8192;
+	if (item->pos.x_rot > 0x2000)
+		item->pos.x_rot = 0x2000;
+	else if (item->pos.x_rot < -0x2000)
+		item->pos.x_rot = -0x2000;
 
 	if (abs(rotZ - item->pos.z_rot) < 546)
 		item->pos.z_rot = rotZ;
@@ -119,10 +122,10 @@ static void TiltHer(ITEM_INFO* item, long rad, long height)
 	else if (rotZ < item->pos.z_rot)
 		item->pos.z_rot -= 546;
 
-	if (item->pos.z_rot > 8192)
-		item->pos.z_rot = 8192;
-	else if (item->pos.z_rot < -8192)
-		item->pos.z_rot = -8192;
+	if (item->pos.z_rot > 0x2000)
+		item->pos.z_rot = 0x2000;
+	else if (item->pos.z_rot < -0x2000)
+		item->pos.z_rot = -0x2000;
 }
 
 void LaraAboveWater(ITEM_INFO* item, COLL_INFO* coll)
@@ -3715,10 +3718,12 @@ void lara_col_back(ITEM_INFO* item, COLL_INFO* coll)
 	if (TestLaraSlide(item, coll))
 		return;
 
-	if (coll->mid_floor < 0 || !(room[item->room_number].flags & ROOM_SWAMP))
-		item->pos.y_pos += coll->mid_floor;
-	else
+	if (coll->mid_floor >= 0 && room[item->room_number].flags & ROOM_SWAMP)
 		item->pos.y_pos += 2;
+	else if (lara.water_status == LARA_WADE && coll->mid_floor >= 50)
+		item->pos.y_pos += 50;
+	else
+		item->pos.y_pos += coll->mid_floor;
 }
 
 void lara_col_stepright(ITEM_INFO* item, COLL_INFO* coll)
@@ -3751,7 +3756,10 @@ void lara_col_stepright(ITEM_INFO* item, COLL_INFO* coll)
 	if (LaraFallen(item, coll) || TestLaraSlide(item, coll))
 		return;
 
-	item->pos.y_pos += coll->mid_floor;
+	if (lara.water_status == LARA_WADE && coll->mid_floor >= 50)
+		item->pos.y_pos += 50;
+	else
+		item->pos.y_pos += coll->mid_floor;
 }
 
 void lara_col_stepleft(ITEM_INFO* item, COLL_INFO* coll)

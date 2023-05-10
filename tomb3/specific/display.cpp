@@ -3,14 +3,9 @@
 #include "../3dsystem/3d_gen.h"
 #include "winmain.h"
 
-static long fade_value = 0x100000;
-static long fade_limit = 0x100000;
-static long fade_adder = 0x8000;
-
 double screen_sizer = 1.0;
 double game_sizer = 1.0;
 long VidSizeLocked;
-long BarsWidth = 100;
 short DumpX = 25;
 short DumpY = 25;
 short DumpWidth = 50;
@@ -22,9 +17,13 @@ void setup_screen_size()
 	DISPLAYMODE* dm;
 	long w, h, sw, sh;
 
-	dm = App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode;
-	w = dm[App.lpDXConfig->nVMode].w;
-	h = dm[App.lpDXConfig->nVMode].h;
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
+	w = dm->w;
+	h = dm->h;
 	sw = long(w * screen_sizer);
 	sh = long(h * screen_sizer);
 
@@ -40,10 +39,6 @@ void setup_screen_size()
 	DumpWidth = (short)sw;
 	DumpHeight = (short)sh;
 	GtFullScreenClearNeeded = 1;
-	BarsWidth = sw / 5;
-
-	if (BarsWidth > 100)
-		BarsWidth = 100;
 }
 
 void IncreaseScreenSize()
@@ -93,28 +88,5 @@ void TempVideoRemove()
 	{
 		screen_sizer = game_sizer;
 		setup_screen_size();
-	}
-}
-
-void S_FadeInInventory(long fade)
-{
-//	if (Inventory_Mode != INV_TITLE_MODE)
-		//empty function call here
-
-	if (fade)
-	{
-		fade_value = 0x100000;
-		fade_limit = 0x180000;
-		fade_adder = 0x8000;
-	}
-}
-
-void S_FadeOutInventory(long fade)
-{
-	if (fade)
-	{
-		fade_value = 0x180000;
-		fade_limit = 0x100000;
-		fade_adder = -0x8000;
 	}
 }

@@ -46,6 +46,7 @@ bool DD_SpinMessageLoop(bool wait)
 	return 1;
 }
 
+#if (DIRECT3D_VERSION < 0x900)
 HRESULT DD_LockSurface(LPDIRECTDRAWSURFACEX surf, DDSURFACEDESCX& desc, ulong flags)
 {
 	memset(&desc, 0, sizeof(DDSURFACEDESCX));
@@ -102,3 +103,4 @@ bool DD_ClearSurface(LPDIRECTDRAWSURFACEX surf, LPRECT rect, ulong col)
 	blt.dwFillColor = col;
 	return SUCCEEDED(surf->Blt(rect, 0, 0, DDBLT_WAIT | DDBLT_COLORFILL, &blt));
 }
+#endif

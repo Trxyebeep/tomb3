@@ -9,7 +9,7 @@ static ulong DS_SampleFrequencies[256];
 static long DS_SamplesPlaying[32];
 
 LPDIRECTSOUNDBUFFER DS_Samples[32];
-LPDIRECTSOUND lpDirectSound;
+LPDIRECTSOUND8 lpDirectSound;
 
 bool DS_IsChannelPlaying(long num)
 {
@@ -155,7 +155,7 @@ void DS_StopSample(long num)
 
 bool DS_Create(LPGUID lpGuid)
 {
-	return SUCCEEDED(DirectSoundCreate(lpGuid, &lpDirectSound, 0));
+	return SUCCEEDED(DirectSoundCreate8(lpGuid, &lpDirectSound, 0));
 }
 
 bool DS_IsSoundEnabled()

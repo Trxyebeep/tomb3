@@ -365,7 +365,7 @@ void WaterFall(short item_number)
 	if (dx < -0x4000 || dx > 0x4000 || dy < -0x4000 || dy > 0x4000 || dz < -0x4000 || dz > 0x4000)
 		return;
 
-	S_CalculateLight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, &item->il);	//why
+	S_CalculateLight(item->pos.x_pos, item->pos.y_pos, item->pos.z_pos, item->room_number, &item->il);
 	ang = (item->pos.y_rot >> 3) & 0x1FFE;
 	s = (544 * rcossin_tbl[ang]) >> 12;
 	c = (544 * rcossin_tbl[ang + 1]) >> 12;

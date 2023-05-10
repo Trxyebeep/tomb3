@@ -27,114 +27,348 @@ static __inline bool CheckDrawType(long nDrawType)
 		nDrawType == DT_LINE_SOLID || nDrawType == DT_LINE_ALPHA;
 }
 
-#define	SetBufferPtrs(sort, info, nDrawType, pass)\
-{\
-	if(CurrentTLVertex - VertexBuffer > MAX_TLVERTICES - 32)\
-		return;\
-	\
-	if (!App.ZBuffer || !bAlphaTesting)\
-	{\
-		sort = sort3dptrbf;\
-		info = info3dptrbf;\
-		sort[2] = nPolyType;\
-		surfacenumbf++;\
-		sort3dptrbf += 3;\
-		info3dptrbf += 5;\
-	}\
-	else if (pass || CheckDrawType(nDrawType))\
-	{\
-		sort = sort3dptrfb;\
-		info = info3dptrfb;\
-		sort[2] = nPolyType;\
-		surfacenumfb++;\
-		sort3dptrfb += 3;\
-		info3dptrfb += 5;\
-	}\
-	else\
-	{\
-		sort = sort3dptrbf;\
-		info = info3dptrbf;\
-		sort[2] = nPolyType;\
-		surfacenumbf++;\
-		sort3dptrbf += 3;\
-		info3dptrbf += 5;\
-	}\
-}\
+static bool SetBufferPtrs(long** sort, short** info, long nDrawType, bool pass)
+{
+	if (CurrentTLVertex - VertexBuffer > MAX_TLVERTICES - 32)
+		return 0;
 
-/*
-	"pass" should only be true when the code looks like
-
-	if (App.ZBuffer && bAlphaTesting)
+	if (!App.lpDXConfig->bZBuffer || !bAlphaTesting)
 	{
-		sort = sort3dptrfb;
-		info = info3dptrfb;
-		sort[2] = nPolyType;
+		*sort = sort3dptrbf;
+		*info = info3dptrbf;
+		sort[0][2] = nPolyType;
+		surfacenumbf++;
+		sort3dptrbf += 3;
+		info3dptrbf += 5;
+	}
+	else if (pass || CheckDrawType(nDrawType))
+	{
+		*sort = sort3dptrfb;
+		*info = info3dptrfb;
+		sort[0][2] = nPolyType;
 		surfacenumfb++;
 		sort3dptrfb += 3;
 		info3dptrfb += 5;
 	}
 	else
 	{
-		sort = sort3dptrbf;
-		info = info3dptrbf;
-		sort[2] = nPolyType;
+		*sort = sort3dptrbf;
+		*info = info3dptrbf;
+		sort[0][2] = nPolyType;
 		surfacenumbf++;
 		sort3dptrbf += 3;
 		info3dptrbf += 5;
 	}
 
-	i.e when we only want to test zbuffer and alpha testing, and in all other cases go to fb- without falling back to bf if the drawtype doesn't match.
-	*/
+	return 1;
+}
 
-void HWI_InsertTrans8_Sorted(PHD_VBUF* buf, short shade)
+void SetFunctionPointers()
 {
-	float z;
-	long nPoints, nVtx;
-	char clipO, clipA;
+	InsertObjectGT3 = HWI_InsertObjectGT3_Sorted;
+	InsertObjectGT4 = HWI_InsertObjectGT4_Sorted;
+	InsertObjectG3 = HWI_InsertObjectG3_Sorted;
+	InsertObjectG4 = HWI_InsertObjectG4_Sorted;
+	InsertFlatRect = HWI_InsertFlatRect_Sorted;
+	InsertLine = HWI_InsertLine_Sorted;
 
-	nVtx = 8;
-	clipO = 0;
-	clipA = -1;
+	InsertSprite = HWI_InsertSprite_Sorted;
+	InsertTrans8 = HWI_InsertTrans8_Sorted;
+	InsertTransQuad = HWI_InsertTransQuad_Sorted;
+	InsertGourQuad = HWI_InsertGourQuad_Sorted;
 
-	for (int i = 0; i < nVtx; i++)
+	IsVisible = CheckVisible;
+	IsInvisible = CheckInvisible;
+}
+
+bool CheckVisible(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2)
+{
+	return (v2->xs - v1->xs) * (v0->ys - v1->ys) - (v0->xs - v1->xs) * (v2->ys - v1->ys) > 0;
+}
+
+bool CheckInvisible(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2)
+{
+	return (v2->xs - v1->xs) * (v0->ys - v1->ys) - (v0->xs - v1->xs) * (v2->ys - v1->ys) < 0;
+}
+
+void SetCullCW()
+{
+	IsVisible = CheckVisible;
+	IsInvisible = CheckInvisible;
+}
+
+void SetCullCCW()
+{
+	IsVisible = CheckInvisible;
+	IsInvisible = CheckVisible;
+}
+
+void InitUVTable()
+{
+	for (int i = 0; i < 65536; i++)
+		UVTable[i] = float(i + 1) * (1.0F / 65536.0F);
+}
+
+static long GETR(ulong col)
+{
+	long w, r;
+
+	r = RGB_GETRED(col);
+	r = ColorTable[r];
+
+	if (bBlueEffect)
 	{
-		clipO |= buf[i].clip;
-		clipA &= buf[i].clip;
+		if (tomb3.custom_water_color || gameflow.force_water_color)
+		{
+			w = RGB_GETRED(water_color[CurrentLevel]);
+			return (w * r) >> 8;
+		}
+		else
+			return (128 * r) >> 8;
 	}
 
-	if (clipO < 0 || clipA || (buf[2].xs - buf[1].xs) * (buf->ys - buf[1].ys) - (buf[2].ys - buf[1].ys) * (buf->xs - buf[1].xs) < 0)
-		return;
+	return r;
+}
 
-	for (int i = 0; i < nVtx; i++)
+static long GETG(ulong col)
+{
+	long w, g;
+
+	g = RGB_GETGREEN(col);
+	g = ColorTable[g];
+
+	if (bBlueEffect)
 	{
-		v_buffer[i].x = buf[i].xs;
-		v_buffer[i].y = buf[i].ys;
-		v_buffer[i].ooz = one / (buf[i].zv - 131072);
-		v_buffer[i].vr = 0;
-		v_buffer[i].vg = 0;
-		v_buffer[i].vb = 0;
+		if (tomb3.custom_water_color || gameflow.force_water_color)
+		{
+			w = RGB_GETGREEN(water_color[CurrentLevel]);
+			return (w * g) >> 8;
+		}
+		else
+			return (224 * g) >> 8;
 	}
 
-	nPoints = nVtx;
+	return g;
+}
 
-	if (clipO)
+static long GETB(ulong col)
+{
+	long w, b;
+
+	b = RGB_GETBLUE(col);
+	b = ColorTable[b];
+
+	if (bBlueEffect)
 	{
-		phd_leftfloat = (float)phd_winxmin;
-		phd_topfloat = (float)phd_winymin;
-		phd_rightfloat = float(phd_winxmin + phd_winwidth);
-		phd_bottomfloat = float(phd_winymin + phd_winheight);
-		nPoints = XYClipper(nPoints, v_buffer);
+		if (tomb3.custom_water_color || gameflow.force_water_color)
+		{
+			w = RGB_GETBLUE(water_color[CurrentLevel]);
+			return (w * b) >> 8;
+		}
 	}
 
-	if (nPoints)
+	return b;
+}
+
+static void PHD_VBUF_To_D3DTLVTX(PHD_VBUF* phdV, D3DTLVERTEX* v)
+{
+	long r, g, b;
+
+	v->sx = phdV->xs;
+	v->sy = phdV->ys;
+	v->sz = f_a - f_boo * phdV->ooz;
+	v->rhw = phdV->ooz;
+	r = GETR(phdV->color);
+	g = GETG(phdV->color);
+	b = GETB(phdV->color);
+	v->color = GlobalAlpha | (r << 16) | (g << 8) | b;
+	v->specular = 0;
+}
+
+static void PHD_VBUF_To_D3DTLVTX_WITHUV(PHD_VBUF* phdV, D3DTLVERTEX* v, ushort* uv)
+{
+	long r, g, b;
+
+	v->sx = phdV->xs;
+	v->sy = phdV->ys;
+	v->sz = f_a - f_boo * phdV->ooz;
+	v->rhw = phdV->ooz;
+	r = GETR(phdV->color);
+	g = GETG(phdV->color);
+	b = GETB(phdV->color);
+	v->tu = UVTable[uv[0]];
+	v->tv = UVTable[uv[1]];
+	v->color = GlobalAlpha | (r << 16) | (g << 8) | b;
+	v->specular = 0;
+}
+
+static void PHD_VBUF_To_VERTEX_INFO(PHD_VBUF* phdV, VERTEX_INFO* v)
+{
+	v->x = phdV->xs;
+	v->y = phdV->ys;
+	v->ooz = phdV->ooz;
+	v->vr = GETR(phdV->color);
+	v->vg = GETG(phdV->color);
+	v->vb = GETB(phdV->color);
+
+#if (DIRECT3D_VERSION >= 0x900)
+	if (tomb3.psx_contrast)
 	{
-		z = 0;
+		v->vr <<= 1;
+		if (v->vr > 255) v->vr = 255;
 
-		for (int i = 0; i < nVtx; i++)
-			z += buf[i].zv;
+		v->vg <<= 1;
+		if (v->vg > 255) v->vg = 255;
 
-		z = z * 0.125F - 131072;
-		HWI_InsertPoly_Gouraud(nPoints, z, 0, 0, 0, DT_POLY_GA);
+		v->vb <<= 1;
+		if (v->vb > 255) v->vb = 255;
+	}
+#endif
+}
+
+static void PHD_VBUF_To_VERTEX_INFO_WITHUV(PHD_VBUF* phdV, VERTEX_INFO* v, ushort* uv)
+{
+	v->x = phdV->xs;
+	v->y = phdV->ys;
+	v->ooz = phdV->ooz;
+	v->vr = GETR(phdV->color);
+	v->vg = GETG(phdV->color);
+	v->vb = GETB(phdV->color);
+	v->u = phdV->ooz * uv[0];
+	v->v = phdV->ooz * uv[1];
+}
+
+static void PHD_VBUF_To_POINT_INFO(PHD_VBUF* v, POINT_INFO* point)
+{
+	point->xv = v->xv;
+	point->yv = v->yv;
+	point->zv = v->zv;
+	point->ooz = v->ooz;
+	point->xs = v->xs;
+	point->ys = v->ys;
+	point->vr = GETR(v->color);
+	point->vg = GETG(v->color);
+	point->vb = GETB(v->color);
+
+#if (DIRECT3D_VERSION >= 0x900)
+	if (tomb3.psx_contrast)
+	{
+		point->vr <<= 1;
+		if (point->vr > 255) point->vr = 255;
+
+		point->vg <<= 1;
+		if (point->vg > 255) point->vg = 255;
+
+		point->vb <<= 1;
+		if (point->vb > 255) point->vb = 255;
+	}
+#endif
+}
+
+static void PHD_VBUF_To_POINT_INFO_WITHUV(PHD_VBUF* v, POINT_INFO* point, ushort* uv)
+{
+	point->xv = v->xv;
+	point->yv = v->yv;
+	point->zv = v->zv;
+	point->ooz = v->ooz;
+	point->xs = v->xs;
+	point->ys = v->ys;
+	point->vr = GETR(v->color);
+	point->vg = GETG(v->color);
+	point->vb = GETB(v->color);
+	point->u = (float)uv[0];
+	point->v = (float)uv[1];
+}
+
+long visible_zclip(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2)
+{
+	return (v2->xv * v0->zv - v0->xv * v2->zv) * v1->yv +
+		(v0->xv * v2->yv - v2->xv * v0->yv) * v1->zv +
+		(v0->yv * v2->zv - v2->yv * v0->zv) * v1->xv < 0;
+}
+
+long FindBucket(DXTEXTURE* TPage)
+{
+	TEXTUREBUCKET* bucket;
+	long nVtx, fullest;
+
+	if (nDrawnPoints <= 2700)	//HACK: this seems to be a useless artifical limit (not sure though),
+								//so instead of failing to draw, immediately go find fullest bucket, draw it, and use it.
+								//TODO: make sure it's actually a useless limit and remove it, otherwise raise it.
+	{
+		for (int i = 0; i < MAX_BUCKETS; i++)
+		{
+			bucket = &Buckets[i];
+
+			if (bucket->TPage == TPage && bucket->nVtx < (BUCKET_VERTS - BUCKET_EXTRA))
+				return i;
+
+			if (bucket->nVtx > (BUCKET_VERTS - BUCKET_EXTRA))
+			{
+				HWR_EnableZBuffer(1, 1);
+				HWR_SetCurrentTexture(bucket->TPage);
+#if (DIRECT3D_VERSION >= 0x900)
+				DrawPrimitive(D3DPT_TRIANGLELIST, bucket->vtx, bucket->nVtx);
+#else
+				DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+#endif
+				bucket->TPage = TPage;
+				bucket->nVtx = 0;
+				return i;
+			}
+		}
+	}
+
+	nVtx = 0;
+	fullest = 0;
+
+	for (int i = 0; i < MAX_BUCKETS; i++)
+	{
+		bucket = &Buckets[i];
+
+		if (bucket->TPage == (DXTEXTURE*)-1)
+		{
+			bucket->TPage = TPage;
+			return i;
+		}
+
+		if (bucket->nVtx > nVtx)
+		{
+			nVtx = bucket->nVtx;
+			fullest = i;
+		}
+	}
+
+	bucket = &Buckets[fullest];
+	HWR_EnableZBuffer(1, 1);
+	HWR_SetCurrentTexture(bucket->TPage);
+#if (DIRECT3D_VERSION >= 0x900)
+	DrawPrimitive(D3DPT_TRIANGLELIST, bucket->vtx, bucket->nVtx);
+#else
+	DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+#endif
+	bucket->TPage = TPage;
+	bucket->nVtx = 0;
+	return fullest;
+}
+
+void DrawBuckets()
+{
+	TEXTUREBUCKET* bucket;
+
+	for (int i = 0; i < MAX_BUCKETS; i++)
+	{
+		bucket = &Buckets[i];
+
+		if (bucket->nVtx)
+		{
+			HWR_SetCurrentTexture(bucket->TPage);
+#if (DIRECT3D_VERSION >= 0x900)
+			DrawPrimitive(D3DPT_TRIANGLELIST, bucket->vtx, bucket->nVtx);
+#else
+			DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
+#endif
+		}
 	}
 }
 
@@ -303,1167 +537,290 @@ void SubdivideGT3(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHDTEXTURESTRUCT* pT
 	SubdivideGT4(&v31, &v12, &v23, v3, &tex, nSortType, double_sided, num - 1);
 }
 
-void HWI_InsertGT4_Sorted(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHD_VBUF* v4, PHDTEXTURESTRUCT* pTex, sort_type nSortType, ushort double_sided)
+short* HWI_InsertObjectGT3_Sorted(short* pFaceInfo, long nFaces, sort_type nSortType)
 {
-	float zv;
+	PHDTEXTURESTRUCT* pTex;
+	long nDrawType;
+	ushort double_sided;
 
-	if (App.ZBuffer || nPolyType != 3 && nPolyType != 4)
+	while (nFaces)
 	{
-		HWI_InsertGT4_Poly(v1, v2, v3, v4, pTex, nSortType, double_sided);
-		return;
-	}
+		pTex = &phdtextinfo[pFaceInfo[3] & 0x7FFF];
+		double_sided = (pFaceInfo[3] >> 0xF) & 1;
 
-	zv = v1->zv;
-
-	if (zv < v2->zv)
-		zv = v2->zv;
-
-	if (zv < v3->zv)
-		zv = v3->zv;
-
-	if (zv < v4->zv)
-		zv = v4->zv;
-
-	if (zv < 0x1F40000)
-		SubdivideGT4(v1, v2, v3, v4, pTex, nSortType, double_sided, 2);
-	else if (zv < 0x36B0000)
-		SubdivideGT4(v1, v2, v3, v4, pTex, nSortType, double_sided, 1);
-	else
-		HWI_InsertGT4_Poly(v1, v2, v3, v4, pTex, nSortType, double_sided);
-}
-
-void HWI_InsertGT3_Sorted(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHDTEXTURESTRUCT* pTex, ushort* uv1, ushort* uv2, ushort* uv3, sort_type nSortType, ushort double_sided)
-{
-	float zv;
-
-	if (App.ZBuffer || nPolyType != 3 && nPolyType != 4)
-	{
-		HWI_InsertGT3_Poly(v1, v2, v3, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
-		return;
-	}
-
-	zv = v1->zv;
-
-	if (zv < v2->zv)
-		zv = v2->zv;
-
-	if (zv < v3->zv)
-		zv = v3->zv;
-
-	if (zv < 0x1F40000)
-		SubdivideGT3(v1, v2, v3, pTex, nSortType, double_sided, 2);
-	else if (zv < 0x36B0000)
-		SubdivideGT3(v1, v2, v3, pTex, nSortType, double_sided, 1);
-	else
-		HWI_InsertGT3_Poly(v1, v2, v3, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
-}
-
-void HWI_InsertTransQuad_Sorted(long x, long y, long w, long h, long z)
-{
-	D3DTLVERTEX* v;
-	long* sort;
-	short* info;
-	float zv;
-
-	SetBufferPtrs(sort, info, 0, 1);
-	sort[0] = (long)info;
-	sort[1] = z;
-	info[0] = DT_POLY_GA;
-	info[1] = 0;
-	info[2] = 4;
-
-	v = CurrentTLVertex;
-	*((D3DTLVERTEX**)(info + 3)) = CurrentTLVertex;
-	zv = one / (float)z;
-
-	v[0].sx = (float)x;
-	v[0].sy = (float)y;
-	v[0].sz = f_a - zv * f_boo;
-	v[0].rhw = zv;
-	v[0].color = 0x50003FFF;
-
-	v[1].sx = float(x + w);
-	v[1].sy = (float)y;
-	v[1].sz = f_a - zv * f_boo;
-	v[1].rhw = zv;
-	v[1].color = 0x50003FFF;
-
-	v[2].sx = float(x + w);
-	v[2].sy = float(y + h);
-	v[2].sz = f_a - zv * f_boo;
-	v[2].rhw = zv;
-	v[2].color = 0x50003F1F;
-
-	v[3].sx = (float)x;
-	v[3].sy = float(y + h);
-	v[3].sz = f_a - zv * f_boo;
-	v[3].rhw = zv;
-	v[3].color = 0x50003F1F;
-	CurrentTLVertex = v + 4;
-}
-
-void HWI_InsertGourQuad_Sorted(long x0, long y0, long x1, long y1, long z, ulong c0, ulong c1, ulong c2, ulong c3, bool add)
-{
-	D3DTLVERTEX* v;
-	long* sort;
-	short* info;
-	float zv;
-
-	SetBufferPtrs(sort, info, 0, 1);
-	sort[0] = (long)info;
-	sort[1] = z;
-	info[0] = add ? DT_POLY_GTA : DT_POLY_GA;
-	info[1] = 0;
-	info[2] = 4;
-
-	v = CurrentTLVertex;
-	*((D3DTLVERTEX**)(info + 3)) = CurrentTLVertex;
-	zv = one / (float)z;
-
-	v[0].sx = (float)x1;
-	v[0].sy = (float)y0;
-	v[0].sz = f_a - zv * f_boo;
-	v[0].rhw = zv;
-	v[0].color = c1;
-
-	v[1].sx = (float)x1;
-	v[1].sy = (float)y1;
-	v[1].sz = f_a - zv * f_boo;
-	v[1].rhw = zv;
-	v[1].color = c2;
-
-	v[2].sx = (float)x0;
-	v[2].sy = (float)y1;
-	v[2].sz = f_a - zv * f_boo;
-	v[2].rhw = zv;
-	v[2].color = c3;
-
-	v[3].sx = (float)x0;
-	v[3].sy = (float)y0;
-	v[3].sz = f_a - zv * f_boo;
-	v[3].rhw = zv;
-	v[3].color = c0;
-	CurrentTLVertex = v + 4;
-}
-
-void InitUVTable()
-{
-	for (int i = 0; i < 65536; i++)
-		UVTable[i] = float(i + 1) * (1.0F / 65536.0F);
-}
-
-long GETR(ulong col)
-{
-	long w, r;
-
-	r = RGB_GETRED(col);
-	r = ColorTable[r];
-
-	if (bBlueEffect)
-	{
-		if (tomb3.custom_water_color || gameflow.force_water_color)
-		{
-			w = RGB_GETRED(water_color[CurrentLevel]);
-			return (w * r) >> 8;
-		}
+		if (pTex->drawtype > 1)
+			nDrawType = DT_POLY_WGTA;
 		else
-			return (128 * r) >> 8;
-	}
+			nDrawType = pTex->drawtype + DT_POLY_GT;
 
-	return r;
-}
-
-long GETG(ulong col)
-{
-	long w, g;
-
-	g = RGB_GETGREEN(col);
-	g = ColorTable[g];
-
-	if (bBlueEffect)
-	{
-		if (tomb3.custom_water_color || gameflow.force_water_color)
-		{
-			w = RGB_GETGREEN(water_color[CurrentLevel]);
-			return (w * g) >> 8;
-		}
+		if (nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_WGTA)
+			HWI_InsertGT3_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]],
+				pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
+		else if (vbuf[pFaceInfo[0]].color || vbuf[pFaceInfo[1]].color || vbuf[pFaceInfo[2]].color)
+			HWI_InsertGT3_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]],
+				pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
 		else
-			return (224 * g) >> 8;
+			HWI_InsertObjectG3_Sorted(pFaceInfo, 1, nSortType);
+
+		pFaceInfo += 4;
+		nFaces--;
 	}
 
-	return g;
+	return pFaceInfo;
 }
 
-long GETB(ulong col)
+short* HWI_InsertObjectGT4_Sorted(short* pFaceInfo, long nFaces, sort_type nSortType)
 {
-	long w, b;
+	PHDTEXTURESTRUCT* pTex;
+	long nDrawType;
+	ushort double_sided;
 
-	b = RGB_GETBLUE(col);
-	b = ColorTable[b];
-
-	if (bBlueEffect)
+	while (nFaces)
 	{
-		if (tomb3.custom_water_color || gameflow.force_water_color)
-		{
-			w = RGB_GETBLUE(water_color[CurrentLevel]);
-			return (w * b) >> 8;
-		}
+		pTex = &phdtextinfo[pFaceInfo[4] & 0x7FFF];
+		double_sided = (pFaceInfo[4] >> 0xF) & 1;
+
+		if (pTex->drawtype > 1)
+			nDrawType = DT_POLY_WGTA;
+		else
+			nDrawType = pTex->drawtype + DT_POLY_GT;
+
+		if (nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_WGTA)
+			HWI_InsertGT4_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]], &vbuf[pFaceInfo[3]], pTex, nSortType, double_sided);
+		else if (vbuf[pFaceInfo[0]].color || vbuf[pFaceInfo[1]].color || vbuf[pFaceInfo[2]].color || vbuf[pFaceInfo[3]].color)
+			HWI_InsertGT4_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]], &vbuf[pFaceInfo[3]], pTex, nSortType, double_sided);
+		else
+			HWI_InsertObjectG4_Sorted(pFaceInfo, 1, nSortType);
+
+		pFaceInfo += 5;
+		nFaces--;
 	}
 
-	return b;
+	return pFaceInfo;
 }
 
-static void PHD_VBUF_To_D3DTLVTX(PHD_VBUF* phdV, D3DTLVERTEX* v)
+short* HWI_InsertObjectG3_Sorted(short* pFaceInfo, long nFaces, sort_type nSortType)
 {
-	long r, g, b;
-
-	v->sx = phdV->xs;
-	v->sy = phdV->ys;
-	v->sz = f_a - f_boo * phdV->ooz;
-	v->rhw = phdV->ooz;
-	r = GETR(phdV->color);
-	g = GETG(phdV->color);
-	b = GETB(phdV->color);
-	v->color = GlobalAlpha | (r << 16) | (g << 8) | b;
-	v->specular = 0;
-}
-
-void PHD_VBUF_To_D3DTLVTX_WITHUV(PHD_VBUF* phdV, D3DTLVERTEX* v, ushort* uv)
-{
-	long r, g, b;
-
-	v->sx = phdV->xs;
-	v->sy = phdV->ys;
-	v->sz = f_a - f_boo * phdV->ooz;
-	v->rhw = phdV->ooz;
-	r = GETR(phdV->color);
-	g = GETG(phdV->color);
-	b = GETB(phdV->color);
-	v->tu = UVTable[uv[0]];
-	v->tv = UVTable[uv[1]];
-	v->color = GlobalAlpha | (r << 16) | (g << 8) | b;
-	v->specular = 0;
-}
-
-void PHD_VBUF_To_VERTEX_INFO(PHD_VBUF* phdV, VERTEX_INFO* v)
-{
-	v->x = phdV->xs;
-	v->y = phdV->ys;
-	v->ooz = phdV->ooz;
-	v->vr = GETR(phdV->color);
-	v->vg = GETG(phdV->color);
-	v->vb = GETB(phdV->color);
-}
-
-static void PHD_VBUF_To_VERTEX_INFO_WITHUV(PHD_VBUF* phdV, VERTEX_INFO* v, ushort* uv)
-{
-	v->x = phdV->xs;
-	v->y = phdV->ys;
-	v->ooz = phdV->ooz;
-	v->vr = GETR(phdV->color);
-	v->vg = GETG(phdV->color);
-	v->vb = GETB(phdV->color);
-	v->u = phdV->ooz * uv[0];
-	v->v = phdV->ooz * uv[1];
-}
-
-static void PHD_VBUF_To_POINT_INFO(PHD_VBUF* v, POINT_INFO* point)
-{
-	point->xv = v->xv;
-	point->yv = v->yv;
-	point->zv = v->zv;
-	point->ooz = v->ooz;
-	point->xs = v->xs;
-	point->ys = v->ys;
-	point->vr = GETR(v->color);
-	point->vg = GETG(v->color);
-	point->vb = GETB(v->color);
-}
-
-static void PHD_VBUF_To_POINT_INFO_WITHUV(PHD_VBUF* v, POINT_INFO* point, ushort* uv)
-{
-	point->xv = v->xv;
-	point->yv = v->yv;
-	point->zv = v->zv;
-	point->ooz = v->ooz;
-	point->xs = v->xs;
-	point->ys = v->ys;
-	point->vr = GETR(v->color);
-	point->vg = GETG(v->color);
-	point->vb = GETB(v->color);
-	point->u = (float)uv[0];
-	point->v = (float)uv[1];
-}
-
-long visible_zclip(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2)
-{
-	return (v2->xv * v0->zv - v0->xv * v2->zv) * v1->yv +
-		(v0->xv * v2->yv - v2->xv * v0->yv) * v1->zv +
-		(v0->yv * v2->zv - v2->yv * v0->zv) * v1->xv < 0;
-}
-
-long FindBucket(DXTEXTURE* TPage)
-{
-	TEXTUREBUCKET* bucket;
-	long nVtx, fullest;
-
-	if (nDrawnPoints <= 2700)	//HACK: this seems to be a useless artifical limit (not sure though),
-								//so instead of failing to draw, immediately go find fullest bucket, draw it, and use it.
-								//TODO: make sure it's actually a useless limit and remove it, otherwise raise it.
-	{
-		for (int i = 0; i < MAX_BUCKETS; i++)
-		{
-			bucket = &Buckets[i];
-
-			if (bucket->TPage == TPage && bucket->nVtx < (BUCKET_VERTS - BUCKET_EXTRA))
-				return i;
-
-			if (bucket->nVtx > (BUCKET_VERTS - BUCKET_EXTRA))
-			{
-				HWR_EnableZBuffer(1, 1);
-				HWR_SetCurrentTexture(bucket->TPage);
-				DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
-				bucket->TPage = TPage;
-				bucket->nVtx = 0;
-				return i;
-			}
-		}
-	}
-
-	nVtx = 0;
-	fullest = 0;
-
-	for (int i = 0; i < MAX_BUCKETS; i++)
-	{
-		bucket = &Buckets[i];
-
-		if (bucket->TPage == (DXTEXTURE*)-1)
-		{
-			bucket->TPage = TPage;
-			return i;
-		}
-
-		if (bucket->nVtx > nVtx)
-		{
-			nVtx = bucket->nVtx;
-			fullest = i;
-		}
-	}
-
-	bucket = &Buckets[fullest];
-	HWR_EnableZBuffer(1, 1);
-	HWR_SetCurrentTexture(bucket->TPage);
-	DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
-	bucket->TPage = TPage;
-	bucket->nVtx = 0;
-	return fullest;
-}
-
-void DrawBuckets()
-{
-	TEXTUREBUCKET* bucket;
-
-	for (int i = 0; i < MAX_BUCKETS; i++)
-	{
-		bucket = &Buckets[i];
-
-		if (bucket->nVtx)
-		{
-			HWR_SetCurrentTexture(bucket->TPage);
-			DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, bucket->vtx, bucket->nVtx, D3DDP_DONOTCLIP | D3DDP_DONOTUPDATEEXTENTS);
-		}
-	}
-}
-
-void HWI_InsertClippedPoly_Textured(long nPoints, float zdepth, long nDrawType, long nTPage)
-{
-	VERTEX_INFO* vtxbuf;
-	D3DTLVERTEX* v;
-	TEXTUREBUCKET* bucket;
-	long* sort;
-	short* info;
-	float z;
-	long nBucket, nVtx;
-
-	vtxbuf = v_buffer;
-
-	if (App.ZBuffer && nDrawType != DT_POLY_WGTA && nDrawType != DT_POLY_WGT && nDrawType != DT_POLY_COLSUB)
-	{
-		nBucket = FindBucket(TPages[nTPage]);
-
-		if (nBucket == -1)
-			return;
-
-		for (int i = 0; i < 3; i++, vtxbuf++)
-		{
-			bucket = &Buckets[nBucket];
-			nVtx = bucket->nVtx;
-			v = &bucket->vtx[nVtx];
-			v->sx = vtxbuf->x;
-			v->sy = vtxbuf->y;
-			v->sz = f_a - f_boo * vtxbuf->ooz;
-			v->rhw = vtxbuf->ooz;
-			v->color = GlobalAlpha | (vtxbuf->vr << 16) | (vtxbuf->vg << 8) | vtxbuf->vb;
-			v->specular = 0;
-			z = (1.0F / 65536.0F) / vtxbuf->ooz;
-			v->tu = vtxbuf->u * z;
-			v->tv = vtxbuf->v * z;
-			bucket->nVtx++;
-		}
-
-		vtxbuf--;
-		nPoints -= 3;
-		nDrawnPoints++;
-
-		if (nPoints)
-		{
-			nDrawnPoints += nPoints;
-
-			for (int i = nPoints; i; i--)
-			{
-				bucket = &Buckets[nBucket];
-				nVtx = bucket->nVtx;
-
-				v = &bucket->vtx[nVtx];
-				v->sx = v_buffer->x;
-				v->sy = v_buffer->y;
-				v->sz = f_a - f_boo * v_buffer->ooz;
-				v->rhw = v_buffer->ooz;
-				v->color = GlobalAlpha | (v_buffer->vr << 16) | (v_buffer->vg << 8) | v_buffer->vb;
-				v->specular = 0;
-				z = (1.0F / 65536.0F) / v_buffer->ooz;
-				v->tu = v_buffer->u * z;
-				v->tv = v_buffer->v * z;
-
-				v = &bucket->vtx[nVtx + 1];
-				v->sx = vtxbuf->x;
-				v->sy = vtxbuf->y;
-				v->sz = f_a - f_boo * vtxbuf->ooz;
-				v->rhw = vtxbuf->ooz;
-				v->color = GlobalAlpha | (vtxbuf->vr << 16) | (vtxbuf->vg << 8) | vtxbuf->vb;
-				v->specular = 0;
-				z = (1.0F / 65536.0F) / vtxbuf->ooz;
-				v->tu = vtxbuf->u * z;
-				v->tv = vtxbuf->v * z;
-
-				vtxbuf++;
-				v = &bucket->vtx[nVtx + 2];
-				v->sx = vtxbuf->x;
-				v->sy = vtxbuf->y;
-				v->sz = f_a - f_boo * vtxbuf->ooz;
-				v->rhw = vtxbuf->ooz;
-				v->color = GlobalAlpha | (vtxbuf->vr << 16) | (vtxbuf->vg << 8) | vtxbuf->vb;
-				v->specular = 0;
-				z = (1.0F / 65536.0F) / vtxbuf->ooz;
-				v->tu = vtxbuf->u * z;
-				v->tv = vtxbuf->v * z;
-
-				bucket->nVtx += 3;
-			}
-		}
-	}
-	else
-	{
-		SetBufferPtrs(sort, info, nDrawType, 0);
-		sort[0] = (long)info;
-		sort[1] = (long)zdepth;
-		info[0] = (short)nDrawType;
-		info[1] = (short)nTPage;
-		info[2] = (short)nPoints;
-		v = CurrentTLVertex;
-		*((D3DTLVERTEX**)(info + 3)) = v;
-
-		for (int i = nPoints; i; i--, v++, vtxbuf++)
-		{
-			v->sx = vtxbuf->x;
-			v->sy = vtxbuf->y;
-			v->sz = f_a - f_boo * vtxbuf->ooz;
-			v->rhw = vtxbuf->ooz;
-			v->color = GlobalAlpha | (vtxbuf->vr << 16) | (vtxbuf->vg << 8) | vtxbuf->vb;
-			v->specular = 0;
-			z = (1.0F / 65536.0F) / vtxbuf->ooz;
-			v->tu = vtxbuf->u * z;
-			v->tv = vtxbuf->v * z;
-		}
-
-		CurrentTLVertex = v;
-	}
-}
-
-void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRUCT* pTex, ushort* uv0, ushort* uv1, ushort* uv2, sort_type nSortType, ushort double_sided)
-{
-	PHD_VBUF* swapvtx;
-	D3DTLVERTEX* v;
-	TEXTUREBUCKET* bucket;
+	PHD_VBUF* v0;
+	PHD_VBUF* v1;
+	PHD_VBUF* v2;
 	POINT_INFO points[3];
-	long* sort;
-	ushort* swapuv;
-	short* info;
+	uchar* pC;
+	long nPoints;
 	float zdepth;
-	long nPoints, nDrawType, nBucket;
 
-	if (outside && nPolyType != 1 &&
-		v0->zv == f_zfar && v1->zv == f_zfar && v2->zv == f_zfar &&
-		v0->ys > outsideBackgroundTop && v1->ys > outsideBackgroundTop && v2->ys > outsideBackgroundTop)
-		return;
-
-	if ((v0->clip | v2->clip | v1->clip) < 0)
+	while (nFaces)
 	{
-		PHD_VBUF_To_POINT_INFO_WITHUV(v0, &points[0], uv0);	//these 3 calls are originally inlined
-		PHD_VBUF_To_POINT_INFO_WITHUV(v1, &points[1], uv1);
-		PHD_VBUF_To_POINT_INFO_WITHUV(v2, &points[2], uv2);
-		nPoints = RoomZedClipper(3, points, v_buffer);
+		v0 = &vbuf[pFaceInfo[0]];
+		v1 = &vbuf[pFaceInfo[1]];
+		v2 = &vbuf[pFaceInfo[2]];
 
-		if (!nPoints)
-			return;
+		if (outside && nPolyType != 1 &&
+			v0->zv == f_zfar && v1->zv == f_zfar && v2->zv == f_zfar &&
+			v0->ys > outsideBackgroundTop && v1->ys > outsideBackgroundTop && v2->ys > outsideBackgroundTop)
+		{
+			pFaceInfo += 4;
+			nFaces--;
+			continue;
+		}
 
-	drawtextured:
-		phd_leftfloat = (float)phd_winxmin;
-		phd_rightfloat = float(phd_winxmin + phd_winwidth);
-		phd_topfloat = (float)phd_winymin;
-		phd_bottomfloat = float(phd_winymin + phd_winheight);
-		nPoints = RoomXYGUVClipper(nPoints, v_buffer);
+		if (v0->clip & v1->clip & v2->clip)
+		{
+			pFaceInfo += 4;
+			nFaces--;
+			continue;
+		}
+
+		if ((v0->clip | v1->clip | v2->clip) < 0)
+		{
+			if (!visible_zclip(v0, v1, v2))
+			{
+				pFaceInfo += 4;
+				nFaces--;
+				continue;
+			}
+
+			PHD_VBUF_To_POINT_INFO(v0, &points[0]);
+			PHD_VBUF_To_POINT_INFO(v1, &points[1]);
+			PHD_VBUF_To_POINT_INFO(v2, &points[2]);
+
+			nPoints = RoomZedClipper(3, points, v_buffer);
+
+			if (nPoints)
+			{
+				phd_leftfloat = (float)phd_winxmin;
+				phd_topfloat = (float)phd_winymin;
+				phd_rightfloat = float(phd_winxmin + phd_winwidth);
+				phd_bottomfloat = float(phd_winymin + phd_winheight);
+				nPoints = XYGClipper(nPoints, v_buffer);
+			}
+		}
+		else
+		{
+			if (IsInvisible(v0, v1, v2))
+			{
+				pFaceInfo += 4;
+				nFaces--;
+				continue;
+			}
+
+			PHD_VBUF_To_VERTEX_INFO(v0, &v_buffer[0]);
+			PHD_VBUF_To_VERTEX_INFO(v1, &v_buffer[1]);
+			PHD_VBUF_To_VERTEX_INFO(v2, &v_buffer[2]);
+			nPoints = 3;
+
+			if (v0->clip | v1->clip | v2->clip)
+			{
+				phd_leftfloat = (float)phd_winxmin;
+				phd_topfloat = (float)phd_winymin;
+				phd_rightfloat = float(phd_winxmin + phd_winwidth);
+				phd_bottomfloat = float(phd_winymin + phd_winheight);
+				nPoints = XYGClipper(nPoints, v_buffer);
+			}
+		}
 
 		if (nPoints)
 		{
+			pC = &G_GouraudPalette[(pFaceInfo[3] >> 6) & 0x3FC];
+
 			if (nSortType == MID_SORT)
 				zdepth = (v0->zv + v1->zv + v2->zv) * 0.33333334F;
 			else if (nSortType == FAR_SORT)
 			{
 				zdepth = v0->zv;
 
-				if (zdepth < v1->zv)
+				if (v1->zv > zdepth)
 					zdepth = v1->zv;
 
-				if (zdepth < v2->zv)
+				if (v2->zv > zdepth)
 					zdepth = v2->zv;
 			}
 			else
 				zdepth = 1000000000;
 
-			if (pTex->drawtype == 3)
-				nDrawType = DT_POLY_COLSUB;
-			else if (pTex->drawtype > 1)
-				nDrawType = DT_POLY_WGTA;
-			else
-				nDrawType = pTex->drawtype + DT_POLY_GT;
-
-			if (nPolyType == 1)
-			{
-				if (v0->ys > outsideBackgroundTop)
-					outsideBackgroundTop = v0->ys;
-
-				if (v1->ys > outsideBackgroundTop)
-					outsideBackgroundTop = v1->ys;
-
-				if (v2->ys > outsideBackgroundTop)
-					outsideBackgroundTop = v2->ys;
-			}
-
-			HWI_InsertClippedPoly_Textured(nPoints, zdepth, nDrawType, pTex->tpage);
+			HWI_InsertPoly_Gouraud(nPoints, zdepth, pC[0], pC[1], pC[2], DT_POLY_G);
 		}
 
-		return;
+		pFaceInfo += 4;
+		nFaces--;
 	}
 
-	if (long((v2->xs - v1->xs) * (v0->ys - v1->ys) - (v2->ys - v1->ys) * (v0->xs - v1->xs)) < 0)
-	{
-		if (!double_sided)
-			return;
-
-		swapvtx = v1;
-		v1 = v2;
-		v2 = swapvtx;
-
-		swapuv = uv1;
-		uv1 = uv2;
-		uv2 = swapuv;
-	}
-
-	if (v0->clip | v1->clip | v2->clip)
-	{
-		PHD_VBUF_To_VERTEX_INFO_WITHUV(v0, &v_buffer[0], uv0);	//these 3 calls are originally inlined
-		PHD_VBUF_To_VERTEX_INFO_WITHUV(v1, &v_buffer[1], uv1);
-		PHD_VBUF_To_VERTEX_INFO_WITHUV(v2, &v_buffer[2], uv2);
-		nPoints = 3;
-		goto drawtextured;
-	}
-
-	if (pTex->drawtype == 3)
-		nDrawType = DT_POLY_COLSUB;
-	else if (pTex->drawtype > 1)
-		nDrawType = DT_POLY_WGTA;
-	else
-		nDrawType = pTex->drawtype + DT_POLY_GT;
-
-	if (nPolyType == 1)
-	{
-		if (v0->ys > outsideBackgroundTop)
-			outsideBackgroundTop = v0->ys;
-
-		if (v1->ys > outsideBackgroundTop)
-			outsideBackgroundTop = v1->ys;
-
-		if (v2->ys > outsideBackgroundTop)
-			outsideBackgroundTop = v2->ys;
-	}
-
-	if (!App.ZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_COLSUB)
-	{
-		if (nSortType == MID_SORT)
-			zdepth = (v0->zv + v1->zv + v2->zv) * 0.33333334F;
-		else if (nSortType == FAR_SORT)
-		{
-			zdepth = v0->zv;
-
-			if (zdepth < v1->zv)
-				zdepth = v1->zv;
-
-			if (zdepth < v2->zv)
-				zdepth = v2->zv;
-		}
-		else
-			zdepth = 1000000000;
-
-		SetBufferPtrs(sort, info, nDrawType, 0);
-		sort[0] = (long)info;
-		sort[1] = (long)zdepth;
-		info[0] = (short)nDrawType;
-		info[1] = pTex->tpage;
-		info[2] = 3;
-		v = CurrentTLVertex;
-		*((D3DTLVERTEX**)(info + 3)) = v;
-		PHD_VBUF_To_D3DTLVTX_WITHUV(v0, v, uv0);	//all 3 originally inlined
-		v++;
-		PHD_VBUF_To_D3DTLVTX_WITHUV(v1, v, uv1);
-		v++;
-		PHD_VBUF_To_D3DTLVTX_WITHUV(v2, v, uv2);
-		v++;
-		CurrentTLVertex = v;
-	}
-	else
-	{
-		nBucket = FindBucket(TPages[pTex->tpage]);
-
-		if (nBucket != -1)
-		{
-			nDrawnPoints++;
-			bucket = &Buckets[nBucket];
-
-			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX_WITHUV(v0, v, uv0);	//inlined
-			bucket->nVtx++;
-
-			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX_WITHUV(v1, v, uv1);	//inlined
-			bucket->nVtx++;
-
-			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX_WITHUV(v2, v, uv2);	//the one call that actually survived!!!!!!!!
-			bucket->nVtx++;
-		}
-	}
+	return pFaceInfo;
 }
 
-void HWI_InsertLine_Sorted(long x1, long y1, long x2, long y2, long z, long c0, long c1)
+short* HWI_InsertObjectG4_Sorted(short* pFaceInfo, long nFaces, sort_type nSortType)
 {
-	D3DTLVERTEX* v;
-	long* sort;
-	short* info;
-
-	SetBufferPtrs(sort, info, 0, 1);
-	sort[0] = (long)info;
-	sort[1] = z;
-
-	if (GlobalAlpha == 0xDEADBEEF)
-	{
-		info[0] = DT_LINE_ALPHA;
-		GlobalAlpha = 0xFF000000;
-	}
-	else
-		info[0] = DT_LINE_SOLID;
-
-	info[1] = 0;
-	info[2] = 2;
-	v = CurrentTLVertex;
-	*((D3DTLVERTEX**)(info + 3)) = v;
-
-	v[0].sx = float(phd_winxmin + x1);
-	v[0].sy = float(phd_winymin + y1);
-	v[0].rhw = one / (float)z;
-	v[0].sz = f_a - v[0].rhw * f_boo;
-	v[0].color = GlobalAlpha | c0;
-	v[0].specular = 0;
-
-	v[1].sx = float(phd_winxmin + x2);
-	v[1].sy = float(phd_winymin + y2);
-	v[1].rhw = one / (float)z;
-	v[1].sz = f_a - v[1].rhw * f_boo;
-	v[1].color = GlobalAlpha | c1;
-	v[1].specular = 0;
-
-	CurrentTLVertex = v + 2;
-}
-
-void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHDTEXTURESTRUCT* pTex, sort_type nSortType, ushort double_sided)
-{
-	PHD_VBUF* swap;
-	D3DTLVERTEX* v;
-	TEXTUREBUCKET* bucket;
-	long* sort;
-	short* info;
+	PHD_VBUF* v0;
+	PHD_VBUF* v1;
+	PHD_VBUF* v2;
+	PHD_VBUF* v3;
+	POINT_INFO points[4];
+	uchar* pC;
 	float zdepth;
-	long nDrawType, nBucket;
+	long nPoints;
 
-	if (outside && nPolyType != 1 &&
-		v0->zv == f_zfar && v1->zv == f_zfar && v2->zv == f_zfar && v3->zv == f_zfar &&
-		v0->ys > outsideBackgroundTop && v1->ys > outsideBackgroundTop && v2->ys > outsideBackgroundTop && v3->ys > outsideBackgroundTop)
-		return;
-
-	if (v0->clip & v1->clip & v2->clip & v3->clip)
-		return;
-
-	if ((v0->clip | v1->clip | v2->clip | v3->clip) < 0)
+	while (nFaces)
 	{
-		if (double_sided)
+		v0 = &vbuf[pFaceInfo[0]];
+		v1 = &vbuf[pFaceInfo[1]];
+		v2 = &vbuf[pFaceInfo[2]];
+		v3 = &vbuf[pFaceInfo[3]];
+
+		if (outside && nPolyType != 1 &&
+			v0->zv == f_zfar && v1->zv == f_zfar && v2->zv == f_zfar && v3->zv == f_zfar &&
+			v0->ys > outsideBackgroundTop && v1->ys > outsideBackgroundTop && v2->ys > outsideBackgroundTop && v3->ys > outsideBackgroundTop)
 		{
-			if (visible_zclip(v0, v1, v2))
+			pFaceInfo += 5;
+			nFaces--;
+			continue;
+		}
+
+		if (v0->clip & v1->clip & v2->clip & v3->clip)
+		{
+			pFaceInfo += 5;
+			nFaces--;
+			continue;
+		}
+
+		if ((v0->clip | v1->clip | v2->clip | v3->clip) < 0)
+		{
+			if (!visible_zclip(v0, v1, v2))
 			{
-				HWI_InsertGT3_Poly(v0, v1, v2, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, 0);
-				HWI_InsertGT3_Poly(v0, v2, v3, pTex, &pTex->u1, &pTex->u3, &pTex->u4, nSortType, 0);
+				pFaceInfo += 5;
+				nFaces--;
+				continue;
 			}
 
-			swap = v0;
-			v0 = v2;
-			v2 = swap;
+			PHD_VBUF_To_POINT_INFO(v0, &points[0]);
+			PHD_VBUF_To_POINT_INFO(v1, &points[1]);
+			PHD_VBUF_To_POINT_INFO(v2, &points[2]);
+			PHD_VBUF_To_POINT_INFO(v3, &points[3]);
+			nPoints = RoomZedClipper(4, points, v_buffer);
 
-			if (visible_zclip(v0, v1, v2))
+			if (nPoints)
 			{
-				HWI_InsertGT3_Poly(v0, v1, v2, pTex, &pTex->u3, &pTex->u2, &pTex->u1, nSortType, 0);
-				HWI_InsertGT3_Poly(v0, v2, v3, pTex, &pTex->u3, &pTex->u1, &pTex->u4, nSortType, 0);
+				phd_leftfloat = (float)phd_winxmin;
+				phd_topfloat = (float)phd_winymin;
+				phd_rightfloat = float(phd_winxmin + phd_winwidth);
+				phd_bottomfloat = float(phd_winymin + phd_winheight);
+				nPoints = XYGClipper(nPoints, v_buffer);
 			}
 		}
 		else
 		{
-			if (visible_zclip(v0, v1, v2))
+			if (IsInvisible(v0, v1, v2))
 			{
-				HWI_InsertGT3_Poly(v0, v1, v2, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, 0);
-				HWI_InsertGT3_Poly(v0, v2, v3, pTex, &pTex->u1, &pTex->u3, &pTex->u4, nSortType, 0);
+				pFaceInfo += 5;
+				nFaces--;
+				continue;
+			}
+
+			PHD_VBUF_To_VERTEX_INFO(v0, &v_buffer[0]);
+			PHD_VBUF_To_VERTEX_INFO(v1, &v_buffer[1]);
+			PHD_VBUF_To_VERTEX_INFO(v2, &v_buffer[2]);
+			PHD_VBUF_To_VERTEX_INFO(v3, &v_buffer[3]);	//actually survived the inline
+			nPoints = 4;
+
+			if (v0->clip | v1->clip | v2->clip | v3->clip)
+			{
+				phd_leftfloat = (float)phd_winxmin;
+				phd_topfloat = (float)phd_winymin;
+				phd_rightfloat = float(phd_winxmin + phd_winwidth);
+				phd_bottomfloat = float(phd_winymin + phd_winheight);
+				nPoints = XYGClipper(nPoints, v_buffer);
 			}
 		}
-
-		return;
-	}
-
-	if (long((v0->ys - v1->ys) * (v2->xs - v1->xs) - (v2->ys - v1->ys) * (v0->xs - v1->xs)) >= 0)
-		double_sided = 0;
-	else
-	{
-		if (!double_sided)
-			return;
-
-		swap = v0;
-		v0 = v2;
-		v2 = swap;
-
-		if (v0->clip | v1->clip | v2->clip | v3->clip)
-		{
-			HWI_InsertGT3_Poly(v0, v1, v2, pTex, &pTex->u3, &pTex->u2, &pTex->u1, nSortType, 0);
-			HWI_InsertGT3_Poly(v0, v2, v3, pTex, &pTex->u3, &pTex->u1, &pTex->u4, nSortType, 0);
-			return;
-		}
-	}
-
-	if (v0->clip | v1->clip | v2->clip | v3->clip)
-	{
-		HWI_InsertGT3_Poly(v0, v1, v2, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
-		HWI_InsertGT3_Poly(v0, v2, v3, pTex, &pTex->u1, &pTex->u3, &pTex->u4, nSortType, double_sided);
-		return;
-	}
-
-	if (pTex->drawtype == 3)
-		nDrawType = DT_POLY_COLSUB;
-	else if (pTex->drawtype > 1)
-		nDrawType = DT_POLY_WGTA;
-	else
-		nDrawType = pTex->drawtype + DT_POLY_GT;
-
-	if (nPolyType == 1)
-	{
-		if (v0->ys > outsideBackgroundTop)
-			outsideBackgroundTop = v0->ys;
-
-		if (v1->ys > outsideBackgroundTop)
-			outsideBackgroundTop = v1->ys;
-
-		if (v2->ys > outsideBackgroundTop)
-			outsideBackgroundTop = v2->ys;
-
-		if (v3->ys > outsideBackgroundTop)
-			outsideBackgroundTop = v3->ys;
-	}
-
-	if (!App.ZBuffer || nDrawType == DT_POLY_WGTA || nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_COLSUB)
-	{
-		if (nSortType == MID_SORT)
-			zdepth = (v0->zv + v1->zv + v2->zv + v3->zv) * 0.25F;
-		else if (nSortType == FAR_SORT)
-		{
-			zdepth = v0->zv;
-
-			if (zdepth < v1->zv)
-				zdepth = v1->zv;
-
-			if (zdepth < v2->zv)
-				zdepth = v2->zv;
-
-			if (zdepth < v3->zv)
-				zdepth = v3->zv;
-		}
-		else
-			zdepth = 1000000000;
-
-		SetBufferPtrs(sort, info, nDrawType, 0);
-		sort[0] = (long)info;
-		sort[1] = (long)zdepth;
-		info[0] = (short)nDrawType;
-		info[1] = pTex->tpage;
-		info[2] = 4;
-
-		v = CurrentTLVertex;
-		*((D3DTLVERTEX**)(info + 3)) = v;
-
-		if (double_sided)
-		{
-			PHD_VBUF_To_D3DTLVTX(v0, v);
-			v->tu = UVTable[pTex->u3];
-			v->tv = UVTable[pTex->v3];
-			v++;
-
-			PHD_VBUF_To_D3DTLVTX(v1, v);
-			v->tu = UVTable[pTex->u2];
-			v->tv = UVTable[pTex->v2];
-			v++;
-
-			PHD_VBUF_To_D3DTLVTX(v2, v);
-			v->tu = UVTable[pTex->u1];
-			v->tv = UVTable[pTex->v1];
-			v++;
-		}
-		else
-		{
-			PHD_VBUF_To_D3DTLVTX(v0, v);
-			v->tu = UVTable[pTex->u1];
-			v->tv = UVTable[pTex->v1];
-			v++;
-
-			PHD_VBUF_To_D3DTLVTX(v1, v);
-			v->tu = UVTable[pTex->u2];
-			v->tv = UVTable[pTex->v2];
-			v++;
-
-			PHD_VBUF_To_D3DTLVTX(v2, v);
-			v->tu = UVTable[pTex->u3];
-			v->tv = UVTable[pTex->v3];
-			v++;
-		}
-
-		PHD_VBUF_To_D3DTLVTX(v3, v);
-		v->tu = UVTable[pTex->u4];
-		v->tv = UVTable[pTex->v4];
-		v++;
-
-		CurrentTLVertex = v;
-	}
-	else
-	{
-		nBucket = FindBucket(TPages[pTex->tpage]);
-
-		if (nBucket == -1)
-			return;
-
-		bucket = &Buckets[nBucket];
-		nDrawnPoints += 2;
-
-		if (double_sided)
-		{
-			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX(v0, v);
-			v->tu = UVTable[pTex->u3];
-			v->tv = UVTable[pTex->v3];
-			bucket->nVtx++;
-
-			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX(v1, v);
-			v->tu = UVTable[pTex->u2];
-			v->tv = UVTable[pTex->v2];
-			bucket->nVtx++;
-
-			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX(v2, v);
-			v->tu = UVTable[pTex->u1];
-			v->tv = UVTable[pTex->v1];
-			bucket->nVtx++;
-
-			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX(v0, v);
-			v->tu = UVTable[pTex->u3];
-			v->tv = UVTable[pTex->v3];
-			bucket->nVtx++;
-
-			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX(v2, v);
-			v->tu = UVTable[pTex->u1];
-			v->tv = UVTable[pTex->v1];
-			bucket->nVtx++;
-
-			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX(v3, v);
-			v->tu = UVTable[pTex->u4];
-			v->tv = UVTable[pTex->v4];
-			bucket->nVtx++;
-		}
-		else
-		{
-			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX(v0, v);
-			v->tu = UVTable[pTex->u1];
-			v->tv = UVTable[pTex->v1];
-			bucket->nVtx++;
-
-			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX(v1, v);
-			v->tu = UVTable[pTex->u2];
-			v->tv = UVTable[pTex->v2];
-			bucket->nVtx++;
-
-			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX(v2, v);
-			v->tu = UVTable[pTex->u3];
-			v->tv = UVTable[pTex->v3];
-			bucket->nVtx++;
-
-			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX(v0, v);
-			v->tu = UVTable[pTex->u1];
-			v->tv = UVTable[pTex->v1];
-			bucket->nVtx++;
-
-			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX(v2, v);
-			v->tu = UVTable[pTex->u3];
-			v->tv = UVTable[pTex->v3];
-			bucket->nVtx++;
-
-			v = &bucket->vtx[bucket->nVtx];
-			PHD_VBUF_To_D3DTLVTX(v3, v);
-			v->tu = UVTable[pTex->u4];
-			v->tv = UVTable[pTex->v4];
-			bucket->nVtx++;
-		}
-	}
-}
-
-void HWI_InsertPoly_Gouraud(long nPoints, float zdepth, long r, long g, long b, long nDrawType)
-{
-	VERTEX_INFO* vtx;
-	TEXTUREBUCKET* bucket;
-	D3DTLVERTEX* v;
-	long* sort;
-	short* info;
-	ulong maxCol;
-	long nBucket;
-
-	vtx = v_buffer;
-	maxCol = nDrawType != DT_POLY_GA ? 0xFFFFFFFF : 0x80FFFFFF;
-
-	if (App.ZBuffer && nDrawType != DT_POLY_GA)
-	{
-		nBucket = FindBucket(0);
-
-		if (nBucket == -1)
-			return;
-
-		bucket = &Buckets[nBucket];
-
-		for (int i = 0; i < 3; i++)
-		{
-			v = &bucket->vtx[bucket->nVtx];
-			v->sx = vtx->x;
-			v->sy = vtx->y;
-			v->sz = f_a - f_boo * vtx->ooz;
-			v->rhw = vtx->ooz;
-			vtx->vr = (vtx->vr * r) >> 8;
-			vtx->vg = (vtx->vg * g) >> 8;
-			vtx->vb = (vtx->vb * b) >> 8;
-			v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
-			v->specular = 0;
-			vtx++;
-			bucket->nVtx++;
-		}
-
-		nDrawnPoints++;
-		nPoints -= 3;
-		vtx--;
 
 		if (nPoints)
 		{
-			nDrawnPoints += nPoints;
+			pC = &G_GouraudPalette[(pFaceInfo[4] >> 6) & 0x3FC];
 
-			for (int i = 0; i < nPoints; i++)
+			if (nSortType == MID_SORT)
+				zdepth = (v0->zv + v1->zv + v2->zv + v3->zv) * 0.25F;
+			else if (nSortType == FAR_SORT)
 			{
-				v = &bucket->vtx[bucket->nVtx];
-				v->sx = v_buffer->x;
-				v->sy = v_buffer->y;
-				v->sz = f_a - f_boo * v_buffer->ooz;
-				v->rhw = v_buffer->ooz;
-				v->color = (0xFF000000 | (v_buffer->vr << 16) | (v_buffer->vg << 8) | v_buffer->vb) & maxCol;
-				v->specular = 0;
+				zdepth = v0->zv;
 
-				v = &bucket->vtx[bucket->nVtx + 1];
-				v->sx = vtx->x;
-				v->sy = vtx->y;
-				v->sz = f_a - f_boo * vtx->ooz;
-				v->rhw = vtx->ooz;
-				v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
-				v->specular = 0;
+				if (v1->zv > zdepth)
+					zdepth = v1->zv;
 
-				vtx++;
-				vtx->vr = (vtx->vr * r) >> 8;
-				vtx->vg = (vtx->vg * g) >> 8;
-				vtx->vb = (vtx->vb * b) >> 8;
-				v = &bucket->vtx[bucket->nVtx + 2];
-				v->sx = vtx->x;
-				v->sy = vtx->y;
-				v->sz = f_a - f_boo * vtx->ooz;
-				v->rhw = vtx->ooz;
-				v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
-				v->specular = 0;
+				if (v2->zv > zdepth)
+					zdepth = v2->zv;
 
-				bucket->nVtx += 3;
+				if (v3->zv > zdepth)
+					zdepth = v3->zv;
 			}
+			else
+				zdepth = 1000000000;
+
+			HWI_InsertPoly_Gouraud(nPoints, zdepth, pC[0], pC[1], pC[2], DT_POLY_G);
 		}
+
+		pFaceInfo += 5;
+		nFaces--;
 	}
-	else
-	{
-		SetBufferPtrs(sort, info, nDrawType, 0);
-		sort[0] = (long)info;
-		sort[1] = (long)zdepth;
-		info[0] = (short)nDrawType;
-		info[1] = 0;
-		info[2] = (short)nPoints;
-		v = CurrentTLVertex;
-		*((D3DTLVERTEX**)(info + 3)) = v;
 
-		for (int i = nPoints; i; i--, v++, vtx++)
-		{
-			v->sx = vtx->x;
-			v->sy = vtx->y;
-			v->rhw = vtx->ooz;
-			v->sz = f_a - f_boo * v->rhw;
-			vtx->vr = (vtx->vr * r) >> 8;
-			vtx->vg = (vtx->vg * g) >> 8;
-			vtx->vb = (vtx->vb * b) >> 8;
-			v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
-			v->specular = 0;
-		}
-
-		CurrentTLVertex = v;
-	}
-}
-
-void HWI_InsertPoly_GouraudRGB(long nPoints, float zdepth, long nDrawType)
-{
-	VERTEX_INFO* vtx;
-	TEXTUREBUCKET* bucket;
-	D3DTLVERTEX* v;
-	long* sort;
-	short* info;
-	ulong maxCol;
-	long nBucket;
-
-	maxCol = (nDrawType == DT_POLY_GA || nDrawType == DT_POLY_GTA) ? 0x80FFFFFF : 0xFFFFFFFF;
-	vtx = v_buffer;
-
-	if (App.ZBuffer && nDrawType != DT_POLY_GA && nDrawType != DT_POLY_GTA)
-	{
-		nBucket = FindBucket(0);
-
-		if (nBucket == -1)
-			return;
-
-		bucket = &Buckets[nBucket];
-
-		for (int i = 0; i < 3; i++)
-		{
-			v = &bucket->vtx[bucket->nVtx];
-			v->sx = vtx->x;
-			v->sy = vtx->y;
-			v->sz = f_a - f_boo * vtx->ooz;
-			v->rhw = vtx->ooz;
-			v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
-			vtx++;
-			bucket->nVtx++;
-		}
-
-		nDrawnPoints++;
-		nPoints -= 3;
-		vtx--;
-
-		if (nPoints)
-		{
-			nDrawnPoints += nPoints;
-
-			for (int i = 0; i < nPoints; i++)
-			{
-				v = &bucket->vtx[bucket->nVtx];
-				v->sx = v_buffer->x;
-				v->sy = v_buffer->y;
-				v->sz = f_a - f_boo * v_buffer->ooz;
-				v->rhw = v_buffer->ooz;
-				v->color = (0xFF000000 | (v_buffer->vr << 16) | (v_buffer->vg << 8) | v_buffer->vb) & maxCol;
-
-				v = &bucket->vtx[bucket->nVtx + 1];
-				v->sx = vtx->x;
-				v->sy = vtx->y;
-				v->sz = f_a - f_boo * vtx->ooz;
-				v->rhw = vtx->ooz;
-				v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
-
-				vtx++;
-				v = &bucket->vtx[bucket->nVtx + 2];
-				v->sx = vtx->x;
-				v->sy = vtx->y;
-				v->sz = f_a - f_boo * vtx->ooz;
-				v->rhw = vtx->ooz;
-				v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
-
-				bucket->nVtx += 3;
-			}
-		}
-	}
-	else
-	{
-		SetBufferPtrs(sort, info, nDrawType, 0);
-		sort[0] = (long)info;
-		sort[1] = (long)zdepth;
-		info[0] = (short)nDrawType;
-		info[1] = 0;
-		info[2] = (short)nPoints;
-		v = CurrentTLVertex;
-		*((D3DTLVERTEX**)(info + 3)) = v;
-
-		for (int i = nPoints; i; i--, v++, vtx++)
-		{
-			v->sx = vtx->x;
-			v->sy = vtx->y;
-			v->sz = f_a - f_boo * vtx->ooz;
-			v->rhw = vtx->ooz;
-			v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
-		}
-
-		CurrentTLVertex = v;
-	}
+	return pFaceInfo;
 }
 
 void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, long col)
@@ -1492,7 +849,7 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 
 	z = one / (float)zdepth;
 
-	if (App.ZBuffer)
+	if (App.lpDXConfig->bZBuffer)
 	{
 		nBucket = FindBucket(0);
 
@@ -1554,7 +911,9 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 	}
 	else
 	{
-		SetBufferPtrs(sort, info, 0, 0);
+		if (!SetBufferPtrs(&sort, &info, 0, 0))
+			return;
+
 		sort[0] = (long)info;
 		sort[1] = zdepth;
 		info[0] = DT_POLY_G;
@@ -1593,6 +952,48 @@ void HWI_InsertFlatRect_Sorted(long x1, long y1, long x2, long y2, long zdepth, 
 
 		CurrentTLVertex = v + 4;
 	}
+}
+
+void HWI_InsertLine_Sorted(long x1, long y1, long x2, long y2, long z, long c0, long c1)
+{
+	D3DTLVERTEX* v;
+	long* sort;
+	short* info;
+
+	if (!SetBufferPtrs(&sort, &info, 0, 1))
+		return;
+
+	sort[0] = (long)info;
+	sort[1] = z;
+
+	if (GlobalAlpha == 0xDEADBEEF)
+	{
+		info[0] = DT_LINE_ALPHA;
+		GlobalAlpha = 0xFF000000;
+	}
+	else
+		info[0] = DT_LINE_SOLID;
+
+	info[1] = 0;
+	info[2] = 2;
+	v = CurrentTLVertex;
+	*((D3DTLVERTEX**)(info + 3)) = v;
+
+	v[0].sx = float(phd_winxmin + x1);
+	v[0].sy = float(phd_winymin + y1);
+	v[0].rhw = one / (float)z;
+	v[0].sz = f_a - v[0].rhw * f_boo;
+	v[0].color = GlobalAlpha | c0;
+	v[0].specular = 0;
+
+	v[1].sx = float(phd_winxmin + x2);
+	v[1].sy = float(phd_winymin + y2);
+	v[1].rhw = one / (float)z;
+	v[1].sz = f_a - v[1].rhw * f_boo;
+	v[1].color = GlobalAlpha | c1;
+	v[1].specular = 0;
+
+	CurrentTLVertex = v + 2;
 }
 
 void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, long nSprite, ulong shade, ulong shade1, long nDrawType, long offset)
@@ -1688,6 +1089,966 @@ void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, lo
 	bBlueEffect = blueEffect;
 }
 
+void HWI_InsertTrans8_Sorted(PHD_VBUF* buf, short shade)
+{
+	float z;
+	long nPoints, nVtx;
+	char clipO, clipA;
+
+	nVtx = 8;
+	clipO = 0;
+	clipA = -1;
+
+	for (int i = 0; i < nVtx; i++)
+	{
+		clipO |= buf[i].clip;
+		clipA &= buf[i].clip;
+	}
+
+	if (clipO < 0 || clipA || IsInvisible(&buf[0], &buf[1], &buf[2]))
+		return;
+
+	for (int i = 0; i < nVtx; i++)
+	{
+		v_buffer[i].x = buf[i].xs;
+		v_buffer[i].y = buf[i].ys;
+		v_buffer[i].ooz = one / (buf[i].zv - 131072);
+		v_buffer[i].vr = 0;
+		v_buffer[i].vg = 0;
+		v_buffer[i].vb = 0;
+	}
+
+	nPoints = nVtx;
+
+	if (clipO)
+	{
+		phd_leftfloat = (float)phd_winxmin;
+		phd_topfloat = (float)phd_winymin;
+		phd_rightfloat = float(phd_winxmin + phd_winwidth);
+		phd_bottomfloat = float(phd_winymin + phd_winheight);
+		nPoints = XYClipper(nPoints, v_buffer);
+	}
+
+	if (nPoints)
+	{
+		z = 0;
+
+		for (int i = 0; i < nVtx; i++)
+			z += buf[i].zv;
+
+		z = z * 0.125F - 131072;
+		HWI_InsertPoly_Gouraud(nPoints, z, 0, 0, 0, DT_POLY_GA);
+	}
+}
+
+void HWI_InsertTransQuad_Sorted(long x, long y, long w, long h, long z)
+{
+	D3DTLVERTEX* v;
+	long* sort;
+	short* info;
+	float zv;
+
+	if (!SetBufferPtrs(&sort, &info, 0, 1))
+		return;
+
+	sort[0] = (long)info;
+	sort[1] = z;
+	info[0] = DT_POLY_GA;
+	info[1] = 0;
+	info[2] = 4;
+
+	v = CurrentTLVertex;
+	*((D3DTLVERTEX**)(info + 3)) = CurrentTLVertex;
+	zv = one / (float)z;
+
+	v[0].sx = (float)x;
+	v[0].sy = (float)y;
+	v[0].sz = f_a - zv * f_boo;
+	v[0].rhw = zv;
+	v[0].color = 0x50003FFF;
+
+	v[1].sx = float(x + w);
+	v[1].sy = (float)y;
+	v[1].sz = f_a - zv * f_boo;
+	v[1].rhw = zv;
+	v[1].color = 0x50003FFF;
+
+	v[2].sx = float(x + w);
+	v[2].sy = float(y + h);
+	v[2].sz = f_a - zv * f_boo;
+	v[2].rhw = zv;
+	v[2].color = 0x50003F1F;
+
+	v[3].sx = (float)x;
+	v[3].sy = float(y + h);
+	v[3].sz = f_a - zv * f_boo;
+	v[3].rhw = zv;
+	v[3].color = 0x50003F1F;
+	CurrentTLVertex = v + 4;
+}
+
+void HWI_InsertGourQuad_Sorted(long x0, long y0, long x1, long y1, long z, ulong c0, ulong c1, ulong c2, ulong c3, bool add)
+{
+	D3DTLVERTEX* v;
+	long* sort;
+	short* info;
+	float zv;
+
+	if (!SetBufferPtrs(&sort, &info, 0, 1))
+		return;
+
+	sort[0] = (long)info;
+	sort[1] = z;
+	info[0] = add ? DT_POLY_GTA : DT_POLY_GA;
+	info[1] = 0;
+	info[2] = 4;
+
+	v = CurrentTLVertex;
+	*((D3DTLVERTEX**)(info + 3)) = CurrentTLVertex;
+	zv = one / (float)z;
+
+	v[0].sx = (float)x1;
+	v[0].sy = (float)y0;
+	v[0].sz = f_a - zv * f_boo;
+	v[0].rhw = zv;
+	v[0].color = c1;
+
+	v[1].sx = (float)x1;
+	v[1].sy = (float)y1;
+	v[1].sz = f_a - zv * f_boo;
+	v[1].rhw = zv;
+	v[1].color = c2;
+
+	v[2].sx = (float)x0;
+	v[2].sy = (float)y1;
+	v[2].sz = f_a - zv * f_boo;
+	v[2].rhw = zv;
+	v[2].color = c3;
+
+	v[3].sx = (float)x0;
+	v[3].sy = (float)y0;
+	v[3].sz = f_a - zv * f_boo;
+	v[3].rhw = zv;
+	v[3].color = c0;
+	CurrentTLVertex = v + 4;
+}
+
+void HWI_InsertGT4_Sorted(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHD_VBUF* v4, PHDTEXTURESTRUCT* pTex, sort_type nSortType, ushort double_sided)
+{
+	float zv;
+
+	if (App.lpDXConfig->bZBuffer || nPolyType != 3 && nPolyType != 4)
+	{
+		HWI_InsertGT4_Poly(v1, v2, v3, v4, pTex, nSortType, double_sided);
+		return;
+	}
+
+	zv = v1->zv;
+
+	if (zv < v2->zv)
+		zv = v2->zv;
+
+	if (zv < v3->zv)
+		zv = v3->zv;
+
+	if (zv < v4->zv)
+		zv = v4->zv;
+
+	if (zv < 0x1F40000)
+		SubdivideGT4(v1, v2, v3, v4, pTex, nSortType, double_sided, 2);
+	else if (zv < 0x36B0000)
+		SubdivideGT4(v1, v2, v3, v4, pTex, nSortType, double_sided, 1);
+	else
+		HWI_InsertGT4_Poly(v1, v2, v3, v4, pTex, nSortType, double_sided);
+}
+
+void HWI_InsertGT3_Sorted(PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHDTEXTURESTRUCT* pTex, ushort* uv1, ushort* uv2, ushort* uv3, sort_type nSortType, ushort double_sided)
+{
+	float zv;
+
+	if (App.lpDXConfig->bZBuffer || nPolyType != 3 && nPolyType != 4)
+	{
+		HWI_InsertGT3_Poly(v1, v2, v3, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
+		return;
+	}
+
+	zv = v1->zv;
+
+	if (zv < v2->zv)
+		zv = v2->zv;
+
+	if (zv < v3->zv)
+		zv = v3->zv;
+
+	if (zv < 0x1F40000)
+		SubdivideGT3(v1, v2, v3, pTex, nSortType, double_sided, 2);
+	else if (zv < 0x36B0000)
+		SubdivideGT3(v1, v2, v3, pTex, nSortType, double_sided, 1);
+	else
+		HWI_InsertGT3_Poly(v1, v2, v3, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
+}
+
+void HWI_InsertGT3_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHDTEXTURESTRUCT* pTex, ushort* uv0, ushort* uv1, ushort* uv2, sort_type nSortType, ushort double_sided)
+{
+	PHD_VBUF* swapvtx;
+	D3DTLVERTEX* v;
+	TEXTUREBUCKET* bucket;
+	POINT_INFO points[3];
+	long* sort;
+	ushort* swapuv;
+	short* info;
+	float zdepth;
+	long nPoints, nDrawType, nBucket;
+
+	if (outside && nPolyType != 1 &&
+		v0->zv == f_zfar && v1->zv == f_zfar && v2->zv == f_zfar &&
+		v0->ys > outsideBackgroundTop && v1->ys > outsideBackgroundTop && v2->ys > outsideBackgroundTop)
+		return;
+
+	if ((v0->clip | v2->clip | v1->clip) < 0)
+	{
+		PHD_VBUF_To_POINT_INFO_WITHUV(v0, &points[0], uv0);	//these 3 calls are originally inlined
+		PHD_VBUF_To_POINT_INFO_WITHUV(v1, &points[1], uv1);
+		PHD_VBUF_To_POINT_INFO_WITHUV(v2, &points[2], uv2);
+		nPoints = RoomZedClipper(3, points, v_buffer);
+
+		if (!nPoints)
+			return;
+
+	drawtextured:
+		phd_leftfloat = (float)phd_winxmin;
+		phd_rightfloat = float(phd_winxmin + phd_winwidth);
+		phd_topfloat = (float)phd_winymin;
+		phd_bottomfloat = float(phd_winymin + phd_winheight);
+		nPoints = RoomXYGUVClipper(nPoints, v_buffer);
+
+		if (nPoints)
+		{
+			if (nSortType == MID_SORT)
+				zdepth = (v0->zv + v1->zv + v2->zv) * 0.33333334F;
+			else if (nSortType == FAR_SORT)
+			{
+				zdepth = v0->zv;
+
+				if (zdepth < v1->zv)
+					zdepth = v1->zv;
+
+				if (zdepth < v2->zv)
+					zdepth = v2->zv;
+			}
+			else
+				zdepth = 1000000000;
+
+			if (pTex->drawtype == 3)
+				nDrawType = DT_POLY_COLSUB;
+			else if (pTex->drawtype > 1)
+				nDrawType = DT_POLY_WGTA;
+			else
+				nDrawType = pTex->drawtype + DT_POLY_GT;
+
+			if (nPolyType == 1)
+			{
+				if (v0->ys > outsideBackgroundTop)
+					outsideBackgroundTop = v0->ys;
+
+				if (v1->ys > outsideBackgroundTop)
+					outsideBackgroundTop = v1->ys;
+
+				if (v2->ys > outsideBackgroundTop)
+					outsideBackgroundTop = v2->ys;
+			}
+
+			HWI_InsertClippedPoly_Textured(nPoints, zdepth, nDrawType, pTex->tpage);
+		}
+
+		return;
+	}
+
+	if (IsInvisible(v0, v1, v2))
+	{
+		if (!double_sided)
+			return;
+
+		swapvtx = v1;
+		v1 = v2;
+		v2 = swapvtx;
+
+		swapuv = uv1;
+		uv1 = uv2;
+		uv2 = swapuv;
+	}
+
+	if (v0->clip | v1->clip | v2->clip)
+	{
+		PHD_VBUF_To_VERTEX_INFO_WITHUV(v0, &v_buffer[0], uv0);	//these 3 calls are originally inlined
+		PHD_VBUF_To_VERTEX_INFO_WITHUV(v1, &v_buffer[1], uv1);
+		PHD_VBUF_To_VERTEX_INFO_WITHUV(v2, &v_buffer[2], uv2);
+		nPoints = 3;
+		goto drawtextured;
+	}
+
+	if (pTex->drawtype == 3)
+		nDrawType = DT_POLY_COLSUB;
+	else if (pTex->drawtype > 1)
+		nDrawType = DT_POLY_WGTA;
+	else
+		nDrawType = pTex->drawtype + DT_POLY_GT;
+
+	if (nPolyType == 1)
+	{
+		if (v0->ys > outsideBackgroundTop)
+			outsideBackgroundTop = v0->ys;
+
+		if (v1->ys > outsideBackgroundTop)
+			outsideBackgroundTop = v1->ys;
+
+		if (v2->ys > outsideBackgroundTop)
+			outsideBackgroundTop = v2->ys;
+	}
+
+	if (App.lpDXConfig->bZBuffer && nDrawType != DT_POLY_WGTA && nDrawType != DT_POLY_WGT && nDrawType != DT_POLY_COLSUB)
+	{
+		nBucket = FindBucket(TexturePtrs[pTex->tpage]);
+
+		if (nBucket != -1)
+		{
+			nDrawnPoints++;
+			bucket = &Buckets[nBucket];
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX_WITHUV(v0, v, uv0);	//inlined
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX_WITHUV(v1, v, uv1);	//inlined
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX_WITHUV(v2, v, uv2);	//the one call that actually survived!!!!!!!!
+			bucket->nVtx++;
+		}
+	}
+	else
+	{
+		if (nSortType == MID_SORT)
+			zdepth = (v0->zv + v1->zv + v2->zv) * 0.33333334F;
+		else if (nSortType == FAR_SORT)
+		{
+			zdepth = v0->zv;
+
+			if (zdepth < v1->zv)
+				zdepth = v1->zv;
+
+			if (zdepth < v2->zv)
+				zdepth = v2->zv;
+		}
+		else
+			zdepth = 1000000000;
+
+		if (!SetBufferPtrs(&sort, &info, nDrawType, 0))
+			return;
+
+		sort[0] = (long)info;
+		sort[1] = (long)zdepth;
+		info[0] = (short)nDrawType;
+		info[1] = pTex->tpage;
+		info[2] = 3;
+		v = CurrentTLVertex;
+		*((D3DTLVERTEX**)(info + 3)) = v;
+		PHD_VBUF_To_D3DTLVTX_WITHUV(v0, v, uv0);	//all 3 originally inlined
+		v++;
+		PHD_VBUF_To_D3DTLVTX_WITHUV(v1, v, uv1);
+		v++;
+		PHD_VBUF_To_D3DTLVTX_WITHUV(v2, v, uv2);
+		v++;
+		CurrentTLVertex = v;
+	}
+}
+
+void HWI_InsertGT4_Poly(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2, PHD_VBUF* v3, PHDTEXTURESTRUCT* pTex, sort_type nSortType, ushort double_sided)
+{
+	PHD_VBUF* swap;
+	D3DTLVERTEX* v;
+	TEXTUREBUCKET* bucket;
+	long* sort;
+	short* info;
+	float zdepth;
+	long nDrawType, nBucket;
+
+	if (outside && nPolyType != 1 &&
+		v0->zv == f_zfar && v1->zv == f_zfar && v2->zv == f_zfar && v3->zv == f_zfar &&
+		v0->ys > outsideBackgroundTop && v1->ys > outsideBackgroundTop && v2->ys > outsideBackgroundTop && v3->ys > outsideBackgroundTop)
+		return;
+
+	if (v0->clip & v1->clip & v2->clip & v3->clip)
+		return;
+
+	if ((v0->clip | v1->clip | v2->clip | v3->clip) < 0)
+	{
+		if (double_sided)
+		{
+			if (visible_zclip(v0, v1, v2))
+			{
+				HWI_InsertGT3_Poly(v0, v1, v2, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, 0);
+				HWI_InsertGT3_Poly(v0, v2, v3, pTex, &pTex->u1, &pTex->u3, &pTex->u4, nSortType, 0);
+			}
+
+			swap = v0;
+			v0 = v2;
+			v2 = swap;
+
+			if (visible_zclip(v0, v1, v2))
+			{
+				HWI_InsertGT3_Poly(v0, v1, v2, pTex, &pTex->u3, &pTex->u2, &pTex->u1, nSortType, 0);
+				HWI_InsertGT3_Poly(v0, v2, v3, pTex, &pTex->u3, &pTex->u1, &pTex->u4, nSortType, 0);
+			}
+		}
+		else
+		{
+			if (visible_zclip(v0, v1, v2))
+			{
+				HWI_InsertGT3_Poly(v0, v1, v2, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, 0);
+				HWI_InsertGT3_Poly(v0, v2, v3, pTex, &pTex->u1, &pTex->u3, &pTex->u4, nSortType, 0);
+			}
+		}
+
+		return;
+	}
+
+	if (IsInvisible(v0, v1, v2))
+	{
+		if (!double_sided)
+			return;
+
+		swap = v0;
+		v0 = v2;
+		v2 = swap;
+
+		if (v0->clip | v1->clip | v2->clip | v3->clip)
+		{
+			HWI_InsertGT3_Poly(v0, v1, v2, pTex, &pTex->u3, &pTex->u2, &pTex->u1, nSortType, 0);
+			HWI_InsertGT3_Poly(v0, v2, v3, pTex, &pTex->u3, &pTex->u1, &pTex->u4, nSortType, 0);
+			return;
+		}
+	}
+	else
+		double_sided = 0;
+
+	if (v0->clip | v1->clip | v2->clip | v3->clip)
+	{
+		HWI_InsertGT3_Poly(v0, v1, v2, pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
+		HWI_InsertGT3_Poly(v0, v2, v3, pTex, &pTex->u1, &pTex->u3, &pTex->u4, nSortType, double_sided);
+		return;
+	}
+
+	if (pTex->drawtype == 3)
+		nDrawType = DT_POLY_COLSUB;
+	else if (pTex->drawtype > 1)
+		nDrawType = DT_POLY_WGTA;
+	else
+		nDrawType = pTex->drawtype + DT_POLY_GT;
+
+	if (nPolyType == 1)
+	{
+		if (v0->ys > outsideBackgroundTop)
+			outsideBackgroundTop = v0->ys;
+
+		if (v1->ys > outsideBackgroundTop)
+			outsideBackgroundTop = v1->ys;
+
+		if (v2->ys > outsideBackgroundTop)
+			outsideBackgroundTop = v2->ys;
+
+		if (v3->ys > outsideBackgroundTop)
+			outsideBackgroundTop = v3->ys;
+	}
+
+	if (App.lpDXConfig->bZBuffer && nDrawType != DT_POLY_WGTA && nDrawType != DT_POLY_WGT && nDrawType != DT_POLY_COLSUB)
+	{
+		nBucket = FindBucket(TexturePtrs[pTex->tpage]);
+
+		if (nBucket == -1)
+			return;
+
+		bucket = &Buckets[nBucket];
+		nDrawnPoints += 2;
+
+		if (double_sided)
+		{
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v0, v);
+			v->tu = UVTable[pTex->u3];
+			v->tv = UVTable[pTex->v3];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v1, v);
+			v->tu = UVTable[pTex->u2];
+			v->tv = UVTable[pTex->v2];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v2, v);
+			v->tu = UVTable[pTex->u1];
+			v->tv = UVTable[pTex->v1];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v0, v);
+			v->tu = UVTable[pTex->u3];
+			v->tv = UVTable[pTex->v3];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v2, v);
+			v->tu = UVTable[pTex->u1];
+			v->tv = UVTable[pTex->v1];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v3, v);
+			v->tu = UVTable[pTex->u4];
+			v->tv = UVTable[pTex->v4];
+			bucket->nVtx++;
+		}
+		else
+		{
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v0, v);
+			v->tu = UVTable[pTex->u1];
+			v->tv = UVTable[pTex->v1];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v1, v);
+			v->tu = UVTable[pTex->u2];
+			v->tv = UVTable[pTex->v2];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v2, v);
+			v->tu = UVTable[pTex->u3];
+			v->tv = UVTable[pTex->v3];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v0, v);
+			v->tu = UVTable[pTex->u1];
+			v->tv = UVTable[pTex->v1];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v2, v);
+			v->tu = UVTable[pTex->u3];
+			v->tv = UVTable[pTex->v3];
+			bucket->nVtx++;
+
+			v = &bucket->vtx[bucket->nVtx];
+			PHD_VBUF_To_D3DTLVTX(v3, v);
+			v->tu = UVTable[pTex->u4];
+			v->tv = UVTable[pTex->v4];
+			bucket->nVtx++;
+		}
+	}
+	else
+	{
+		if (nSortType == MID_SORT)
+			zdepth = (v0->zv + v1->zv + v2->zv + v3->zv) * 0.25F;
+		else if (nSortType == FAR_SORT)
+		{
+			zdepth = v0->zv;
+
+			if (zdepth < v1->zv)
+				zdepth = v1->zv;
+
+			if (zdepth < v2->zv)
+				zdepth = v2->zv;
+
+			if (zdepth < v3->zv)
+				zdepth = v3->zv;
+		}
+		else
+			zdepth = 1000000000;
+
+		if (!SetBufferPtrs(&sort, &info, nDrawType, 0))
+			return;
+
+		sort[0] = (long)info;
+		sort[1] = (long)zdepth;
+		info[0] = (short)nDrawType;
+		info[1] = pTex->tpage;
+		info[2] = 4;
+
+		v = CurrentTLVertex;
+		*((D3DTLVERTEX**)(info + 3)) = v;
+
+		if (double_sided)
+		{
+			PHD_VBUF_To_D3DTLVTX(v0, v);
+			v->tu = UVTable[pTex->u3];
+			v->tv = UVTable[pTex->v3];
+			v++;
+
+			PHD_VBUF_To_D3DTLVTX(v1, v);
+			v->tu = UVTable[pTex->u2];
+			v->tv = UVTable[pTex->v2];
+			v++;
+
+			PHD_VBUF_To_D3DTLVTX(v2, v);
+			v->tu = UVTable[pTex->u1];
+			v->tv = UVTable[pTex->v1];
+			v++;
+		}
+		else
+		{
+			PHD_VBUF_To_D3DTLVTX(v0, v);
+			v->tu = UVTable[pTex->u1];
+			v->tv = UVTable[pTex->v1];
+			v++;
+
+			PHD_VBUF_To_D3DTLVTX(v1, v);
+			v->tu = UVTable[pTex->u2];
+			v->tv = UVTable[pTex->v2];
+			v++;
+
+			PHD_VBUF_To_D3DTLVTX(v2, v);
+			v->tu = UVTable[pTex->u3];
+			v->tv = UVTable[pTex->v3];
+			v++;
+		}
+
+		PHD_VBUF_To_D3DTLVTX(v3, v);
+		v->tu = UVTable[pTex->u4];
+		v->tv = UVTable[pTex->v4];
+		v++;
+
+		CurrentTLVertex = v;
+	}
+}
+
+void HWI_InsertClippedPoly_Textured(long nPoints, float zdepth, long nDrawType, long nTPage)
+{
+	VERTEX_INFO* vtxbuf;
+	D3DTLVERTEX* v;
+	TEXTUREBUCKET* bucket;
+	long* sort;
+	short* info;
+	float z;
+	long nBucket, nVtx;
+
+	vtxbuf = v_buffer;
+
+	if (App.lpDXConfig->bZBuffer && nDrawType != DT_POLY_WGTA && nDrawType != DT_POLY_WGT && nDrawType != DT_POLY_COLSUB)
+	{
+		nBucket = FindBucket(TexturePtrs[nTPage]);
+
+		if (nBucket == -1)
+			return;
+
+		for (int i = 0; i < 3; i++, vtxbuf++)
+		{
+			bucket = &Buckets[nBucket];
+			nVtx = bucket->nVtx;
+			v = &bucket->vtx[nVtx];
+			v->sx = vtxbuf->x;
+			v->sy = vtxbuf->y;
+			v->sz = f_a - f_boo * vtxbuf->ooz;
+			v->rhw = vtxbuf->ooz;
+			v->color = GlobalAlpha | (vtxbuf->vr << 16) | (vtxbuf->vg << 8) | vtxbuf->vb;
+			v->specular = 0;
+			z = (1.0F / 65536.0F) / vtxbuf->ooz;
+			v->tu = vtxbuf->u * z;
+			v->tv = vtxbuf->v * z;
+			bucket->nVtx++;
+		}
+
+		vtxbuf--;
+		nPoints -= 3;
+		nDrawnPoints++;
+
+		if (nPoints)
+		{
+			nDrawnPoints += nPoints;
+
+			for (int i = nPoints; i; i--)
+			{
+				bucket = &Buckets[nBucket];
+				nVtx = bucket->nVtx;
+
+				v = &bucket->vtx[nVtx];
+				v->sx = v_buffer->x;
+				v->sy = v_buffer->y;
+				v->sz = f_a - f_boo * v_buffer->ooz;
+				v->rhw = v_buffer->ooz;
+				v->color = GlobalAlpha | (v_buffer->vr << 16) | (v_buffer->vg << 8) | v_buffer->vb;
+				v->specular = 0;
+				z = (1.0F / 65536.0F) / v_buffer->ooz;
+				v->tu = v_buffer->u * z;
+				v->tv = v_buffer->v * z;
+
+				v = &bucket->vtx[nVtx + 1];
+				v->sx = vtxbuf->x;
+				v->sy = vtxbuf->y;
+				v->sz = f_a - f_boo * vtxbuf->ooz;
+				v->rhw = vtxbuf->ooz;
+				v->color = GlobalAlpha | (vtxbuf->vr << 16) | (vtxbuf->vg << 8) | vtxbuf->vb;
+				v->specular = 0;
+				z = (1.0F / 65536.0F) / vtxbuf->ooz;
+				v->tu = vtxbuf->u * z;
+				v->tv = vtxbuf->v * z;
+
+				vtxbuf++;
+				v = &bucket->vtx[nVtx + 2];
+				v->sx = vtxbuf->x;
+				v->sy = vtxbuf->y;
+				v->sz = f_a - f_boo * vtxbuf->ooz;
+				v->rhw = vtxbuf->ooz;
+				v->color = GlobalAlpha | (vtxbuf->vr << 16) | (vtxbuf->vg << 8) | vtxbuf->vb;
+				v->specular = 0;
+				z = (1.0F / 65536.0F) / vtxbuf->ooz;
+				v->tu = vtxbuf->u * z;
+				v->tv = vtxbuf->v * z;
+
+				bucket->nVtx += 3;
+			}
+		}
+	}
+	else
+	{
+		if (!SetBufferPtrs(&sort, &info, nDrawType, 0))
+			return;
+
+		sort[0] = (long)info;
+		sort[1] = (long)zdepth;
+		info[0] = (short)nDrawType;
+		info[1] = (short)nTPage;
+		info[2] = (short)nPoints;
+		v = CurrentTLVertex;
+		*((D3DTLVERTEX**)(info + 3)) = v;
+
+		for (int i = nPoints; i; i--, v++, vtxbuf++)
+		{
+			v->sx = vtxbuf->x;
+			v->sy = vtxbuf->y;
+			v->sz = f_a - f_boo * vtxbuf->ooz;
+			v->rhw = vtxbuf->ooz;
+			v->color = GlobalAlpha | (vtxbuf->vr << 16) | (vtxbuf->vg << 8) | vtxbuf->vb;
+			v->specular = 0;
+			z = (1.0F / 65536.0F) / vtxbuf->ooz;
+			v->tu = vtxbuf->u * z;
+			v->tv = vtxbuf->v * z;
+		}
+
+		CurrentTLVertex = v;
+	}
+}
+
+void HWI_InsertPoly_Gouraud(long nPoints, float zdepth, long r, long g, long b, long nDrawType)
+{
+	VERTEX_INFO* vtx;
+	TEXTUREBUCKET* bucket;
+	D3DTLVERTEX* v;
+	long* sort;
+	short* info;
+	ulong maxCol;
+	long nBucket;
+
+	vtx = v_buffer;
+	maxCol = nDrawType != DT_POLY_GA ? 0xFFFFFFFF : 0x80FFFFFF;
+
+	if (App.lpDXConfig->bZBuffer && nDrawType != DT_POLY_GA)
+	{
+		nBucket = FindBucket(0);
+
+		if (nBucket == -1)
+			return;
+
+		bucket = &Buckets[nBucket];
+
+		for (int i = 0; i < 3; i++)
+		{
+			v = &bucket->vtx[bucket->nVtx];
+			v->sx = vtx->x;
+			v->sy = vtx->y;
+			v->sz = f_a - f_boo * vtx->ooz;
+			v->rhw = vtx->ooz;
+			vtx->vr = (vtx->vr * r) >> 8;
+			vtx->vg = (vtx->vg * g) >> 8;
+			vtx->vb = (vtx->vb * b) >> 8;
+			v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
+			v->specular = 0;
+			vtx++;
+			bucket->nVtx++;
+		}
+
+		nDrawnPoints++;
+		nPoints -= 3;
+		vtx--;
+
+		if (nPoints)
+		{
+			nDrawnPoints += nPoints;
+
+			for (int i = 0; i < nPoints; i++)
+			{
+				v = &bucket->vtx[bucket->nVtx];
+				v->sx = v_buffer->x;
+				v->sy = v_buffer->y;
+				v->sz = f_a - f_boo * v_buffer->ooz;
+				v->rhw = v_buffer->ooz;
+				v->color = (0xFF000000 | (v_buffer->vr << 16) | (v_buffer->vg << 8) | v_buffer->vb) & maxCol;
+				v->specular = 0;
+
+				v = &bucket->vtx[bucket->nVtx + 1];
+				v->sx = vtx->x;
+				v->sy = vtx->y;
+				v->sz = f_a - f_boo * vtx->ooz;
+				v->rhw = vtx->ooz;
+				v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
+				v->specular = 0;
+
+				vtx++;
+				vtx->vr = (vtx->vr * r) >> 8;
+				vtx->vg = (vtx->vg * g) >> 8;
+				vtx->vb = (vtx->vb * b) >> 8;
+				v = &bucket->vtx[bucket->nVtx + 2];
+				v->sx = vtx->x;
+				v->sy = vtx->y;
+				v->sz = f_a - f_boo * vtx->ooz;
+				v->rhw = vtx->ooz;
+				v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
+				v->specular = 0;
+
+				bucket->nVtx += 3;
+			}
+		}
+	}
+	else
+	{
+		if (!SetBufferPtrs(&sort, &info, nDrawType, 0))
+			return;
+
+		sort[0] = (long)info;
+		sort[1] = (long)zdepth;
+		info[0] = (short)nDrawType;
+		info[1] = 0;
+		info[2] = (short)nPoints;
+		v = CurrentTLVertex;
+		*((D3DTLVERTEX**)(info + 3)) = v;
+
+		for (int i = nPoints; i; i--, v++, vtx++)
+		{
+			v->sx = vtx->x;
+			v->sy = vtx->y;
+			v->rhw = vtx->ooz;
+			v->sz = f_a - f_boo * v->rhw;
+			vtx->vr = (vtx->vr * r) >> 8;
+			vtx->vg = (vtx->vg * g) >> 8;
+			vtx->vb = (vtx->vb * b) >> 8;
+			v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
+			v->specular = 0;
+		}
+
+		CurrentTLVertex = v;
+	}
+}
+
+void HWI_InsertPoly_GouraudRGB(long nPoints, float zdepth, long nDrawType)
+{
+	VERTEX_INFO* vtx;
+	TEXTUREBUCKET* bucket;
+	D3DTLVERTEX* v;
+	long* sort;
+	short* info;
+	ulong maxCol;
+	long nBucket;
+
+	maxCol = (nDrawType == DT_POLY_GA || nDrawType == DT_POLY_GTA) ? 0x80FFFFFF : 0xFFFFFFFF;
+	vtx = v_buffer;
+
+	if (App.lpDXConfig->bZBuffer && nDrawType != DT_POLY_GA && nDrawType != DT_POLY_GTA)
+	{
+		nBucket = FindBucket(0);
+
+		if (nBucket == -1)
+			return;
+
+		bucket = &Buckets[nBucket];
+
+		for (int i = 0; i < 3; i++)
+		{
+			v = &bucket->vtx[bucket->nVtx];
+			v->sx = vtx->x;
+			v->sy = vtx->y;
+			v->sz = f_a - f_boo * vtx->ooz;
+			v->rhw = vtx->ooz;
+			v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
+			vtx++;
+			bucket->nVtx++;
+		}
+
+		nDrawnPoints++;
+		nPoints -= 3;
+		vtx--;
+
+		if (nPoints)
+		{
+			nDrawnPoints += nPoints;
+
+			for (int i = 0; i < nPoints; i++)
+			{
+				v = &bucket->vtx[bucket->nVtx];
+				v->sx = v_buffer->x;
+				v->sy = v_buffer->y;
+				v->sz = f_a - f_boo * v_buffer->ooz;
+				v->rhw = v_buffer->ooz;
+				v->color = (0xFF000000 | (v_buffer->vr << 16) | (v_buffer->vg << 8) | v_buffer->vb) & maxCol;
+
+				v = &bucket->vtx[bucket->nVtx + 1];
+				v->sx = vtx->x;
+				v->sy = vtx->y;
+				v->sz = f_a - f_boo * vtx->ooz;
+				v->rhw = vtx->ooz;
+				v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
+
+				vtx++;
+				v = &bucket->vtx[bucket->nVtx + 2];
+				v->sx = vtx->x;
+				v->sy = vtx->y;
+				v->sz = f_a - f_boo * vtx->ooz;
+				v->rhw = vtx->ooz;
+				v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
+
+				bucket->nVtx += 3;
+			}
+		}
+	}
+	else
+	{
+		if (!SetBufferPtrs(&sort, &info, nDrawType, 0))
+			return;
+
+		sort[0] = (long)info;
+		sort[1] = (long)zdepth;
+		info[0] = (short)nDrawType;
+		info[1] = 0;
+		info[2] = (short)nPoints;
+		v = CurrentTLVertex;
+		*((D3DTLVERTEX**)(info + 3)) = v;
+
+		for (int i = nPoints; i; i--, v++, vtx++)
+		{
+			v->sx = vtx->x;
+			v->sy = vtx->y;
+			v->sz = f_a - f_boo * vtx->ooz;
+			v->rhw = vtx->ooz;
+			v->color = (0xFF000000 | (vtx->vr << 16) | (vtx->vg << 8) | vtx->vb) & maxCol;
+		}
+
+		CurrentTLVertex = v;
+	}
+}
+
 void HWI_InsertAlphaSprite_Sorted(long x1, long y1, long z1, long shade1, long x2, long y2, long z2, long shade2,
 	long x3, long y3, long z3, long shade3, long x4, long y4, long z4, long shade4,
 	long nSprite, long nDrawtype, long double_sided)
@@ -1701,7 +2062,7 @@ void HWI_InsertAlphaSprite_Sorted(long x1, long y1, long z1, long shade1, long x
 
 	blueEffect = bBlueEffect;
 	bBlueEffect = 0;
-	sprite = 0;	//new line: compiler complains that sprite is possibly uninitialized at the HWI_InsertClippedPoly_Textured below
+	sprite = 0;	//new line: compiler complains that sprite is possibly uninitialized at the HWI_InsertClippedPoly_Textured call below
 				//which is not possible anyway, so 0 is fine
 
 	if (nSprite != -1)
@@ -1788,6 +2149,7 @@ void HWI_InsertAlphaSprite_Sorted(long x1, long y1, long z1, long shade1, long x
 		}
 	}
 
+	//Change this to support phd_vbuf :>
 	if (nSprite == -1 && double_sided &&
 		long((v_buffer[0].y - v_buffer[1].y) * (v_buffer[2].x - v_buffer[1].x) - (v_buffer[0].x - v_buffer[1].x) * (v_buffer[2].y - v_buffer[1].y)) < 0)
 	{
@@ -1818,292 +2180,6 @@ void HWI_InsertAlphaSprite_Sorted(long x1, long y1, long z1, long shade1, long x
 	}
 
 	bBlueEffect = blueEffect;
-}
-
-short* HWI_InsertObjectG3_Sorted(short* pFaceInfo, long nFaces, sort_type nSortType)
-{
-	PHD_VBUF* v0;
-	PHD_VBUF* v1;
-	PHD_VBUF* v2;
-	POINT_INFO points[3];
-	uchar* pC;
-	long nPoints;
-	float zdepth;
-
-	while (nFaces)
-	{
-		v0 = &vbuf[pFaceInfo[0]];
-		v1 = &vbuf[pFaceInfo[1]];
-		v2 = &vbuf[pFaceInfo[2]];
-
-		if (outside && nPolyType != 1 &&
-			v0->zv == f_zfar && v1->zv == f_zfar && v2->zv == f_zfar &&
-			v0->ys > outsideBackgroundTop && v1->ys > outsideBackgroundTop && v2->ys > outsideBackgroundTop)
-		{
-			pFaceInfo += 4;
-			nFaces--;
-			continue;
-		}
-
-		if (v0->clip & v1->clip & v2->clip)
-		{
-			pFaceInfo += 4;
-			nFaces--;
-			continue;
-		}
-
-		if ((v0->clip | v1->clip | v2->clip) < 0)
-		{
-			if (!visible_zclip(v0, v1, v2))
-			{
-				pFaceInfo += 4;
-				nFaces--;
-				continue;
-			}
-
-			PHD_VBUF_To_POINT_INFO(v0, &points[0]);
-			PHD_VBUF_To_POINT_INFO(v1, &points[1]);
-			PHD_VBUF_To_POINT_INFO(v2, &points[2]);
-
-			nPoints = RoomZedClipper(3, points, v_buffer);
-
-			if (nPoints)
-			{
-				phd_leftfloat = (float)phd_winxmin;
-				phd_topfloat = (float)phd_winymin;
-				phd_rightfloat = float(phd_winxmin + phd_winwidth);
-				phd_bottomfloat = float(phd_winymin + phd_winheight);
-				nPoints = XYGClipper(nPoints, v_buffer);
-			}
-		}
-		else
-		{
-			if (long((v2->xs - v1->xs) * (v0->ys - v1->ys) - (v2->ys - v1->ys) * (v0->xs - v1->xs)) < 0)
-			{
-				pFaceInfo += 4;
-				nFaces--;
-				continue;
-			}
-
-			PHD_VBUF_To_VERTEX_INFO(v0, &v_buffer[0]);
-			PHD_VBUF_To_VERTEX_INFO(v1, &v_buffer[1]);
-			PHD_VBUF_To_VERTEX_INFO(v2, &v_buffer[2]);
-			nPoints = 3;
-
-			if (v0->clip | v1->clip | v2->clip)
-			{
-				phd_leftfloat = (float)phd_winxmin;
-				phd_topfloat = (float)phd_winymin;
-				phd_rightfloat = float(phd_winxmin + phd_winwidth);
-				phd_bottomfloat = float(phd_winymin + phd_winheight);
-				nPoints = XYGClipper(nPoints, v_buffer);
-			}
-		}
-
-		if (nPoints)
-		{
-			pC = &G_GouraudPalette[(pFaceInfo[3] >> 6) & 0x3FC];
-
-			if (nSortType == MID_SORT)
-				zdepth = (v0->zv + v1->zv + v2->zv) * 0.33333334F;
-			else if (nSortType == FAR_SORT)
-			{
-				zdepth = v0->zv;
-
-				if (v1->zv > zdepth)
-					zdepth = v1->zv;
-
-				if (v2->zv > zdepth)
-					zdepth = v2->zv;
-			}
-			else
-				zdepth = 1000000000;
-
-			HWI_InsertPoly_Gouraud(nPoints, zdepth, pC[0], pC[1], pC[2], DT_POLY_G);
-		}
-
-		pFaceInfo += 4;
-		nFaces--;
-	}
-
-	return pFaceInfo;
-}
-
-short* HWI_InsertObjectGT3_Sorted(short* pFaceInfo, long nFaces, sort_type nSortType)
-{
-	PHDTEXTURESTRUCT* pTex;
-	long nDrawType;
-	ushort double_sided;
-
-	while (nFaces)
-	{
-		pTex = &phdtextinfo[pFaceInfo[3] & 0x7FFF];
-		double_sided = (pFaceInfo[3] >> 0xF) & 1;
-
-		if (pTex->drawtype > 1)
-			nDrawType = DT_POLY_WGTA;
-		else
-			nDrawType = pTex->drawtype + DT_POLY_GT;
-
-		if (nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_WGTA)
-			HWI_InsertGT3_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]],
-				pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
-		else if (vbuf[pFaceInfo[0]].color || vbuf[pFaceInfo[1]].color || vbuf[pFaceInfo[2]].color)
-			HWI_InsertGT3_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]],
-				pTex, &pTex->u1, &pTex->u2, &pTex->u3, nSortType, double_sided);
-		else
-			HWI_InsertObjectG3_Sorted(pFaceInfo, 1, nSortType);
-
-		pFaceInfo += 4;
-		nFaces--;
-	}
-
-	return pFaceInfo;
-}
-
-short* HWI_InsertObjectG4_Sorted(short* pFaceInfo, long nFaces, sort_type nSortType)
-{
-	PHD_VBUF* v0;
-	PHD_VBUF* v1;
-	PHD_VBUF* v2;
-	PHD_VBUF* v3;
-	POINT_INFO points[4];
-	uchar* pC;
-	float zdepth;
-	long nPoints;
-
-	while (nFaces)
-	{
-		v0 = &vbuf[pFaceInfo[0]];
-		v1 = &vbuf[pFaceInfo[1]];
-		v2 = &vbuf[pFaceInfo[2]];
-		v3 = &vbuf[pFaceInfo[3]];
-
-		if (outside && nPolyType != 1 &&
-			v0->zv == f_zfar && v1->zv == f_zfar && v2->zv == f_zfar && v3->zv == f_zfar &&
-			v0->ys > outsideBackgroundTop && v1->ys > outsideBackgroundTop && v2->ys > outsideBackgroundTop && v3->ys > outsideBackgroundTop)
-		{
-			pFaceInfo += 5;
-			nFaces--;
-			continue;
-		}
-
-		if (v0->clip & v1->clip & v2->clip & v3->clip)
-		{
-			pFaceInfo += 5;
-			nFaces--;
-			continue;
-		}
-
-		if ((v0->clip | v1->clip | v2->clip | v3->clip) < 0)
-		{
-			if (!visible_zclip(v0, v1, v2))
-			{
-				pFaceInfo += 5;
-				nFaces--;
-				continue;
-			}
-
-			PHD_VBUF_To_POINT_INFO(v0, &points[0]);
-			PHD_VBUF_To_POINT_INFO(v1, &points[1]);
-			PHD_VBUF_To_POINT_INFO(v2, &points[2]);
-			PHD_VBUF_To_POINT_INFO(v3, &points[3]);
-			nPoints = RoomZedClipper(4, points, v_buffer);
-
-			if (nPoints)
-			{
-				phd_leftfloat = (float)phd_winxmin;
-				phd_topfloat = (float)phd_winymin;
-				phd_rightfloat = float(phd_winxmin + phd_winwidth);
-				phd_bottomfloat = float(phd_winymin + phd_winheight);
-				nPoints = XYGClipper(nPoints, v_buffer);
-			}
-		}
-		else
-		{
-			if (long((v0->ys - v1->ys) * (v2->xs - v1->xs) - (v0->xs - v1->xs) * (v2->ys - v1->ys)) < 0)
-			{
-				pFaceInfo += 5;
-				nFaces--;
-				continue;
-			}
-
-			PHD_VBUF_To_VERTEX_INFO(v0, &v_buffer[0]);
-			PHD_VBUF_To_VERTEX_INFO(v1, &v_buffer[1]);
-			PHD_VBUF_To_VERTEX_INFO(v2, &v_buffer[2]);
-			PHD_VBUF_To_VERTEX_INFO(v3, &v_buffer[3]);	//actually survived the inline
-			nPoints = 4;
-
-			if (v0->clip | v1->clip | v2->clip | v3->clip)
-			{
-				phd_leftfloat = (float)phd_winxmin;
-				phd_topfloat = (float)phd_winymin;
-				phd_rightfloat = float(phd_winxmin + phd_winwidth);
-				phd_bottomfloat = float(phd_winymin + phd_winheight);
-				nPoints = XYGClipper(nPoints, v_buffer);
-			}
-		}
-
-		if (nPoints)
-		{
-			pC = &G_GouraudPalette[(pFaceInfo[4] >> 6) & 0x3FC];
-
-			if (nSortType == MID_SORT)
-				zdepth = (v0->zv + v1->zv + v2->zv + v3->zv) * 0.25F;
-			else if (nSortType == FAR_SORT)
-			{
-				zdepth = v0->zv;
-
-				if (v1->zv > zdepth)
-					zdepth = v1->zv;
-
-				if (v2->zv > zdepth)
-					zdepth = v2->zv;
-
-				if (v3->zv > zdepth)
-					zdepth = v3->zv;
-			}
-			else
-				zdepth = 1000000000;
-
-			HWI_InsertPoly_Gouraud(nPoints, zdepth, *pC, pC[1], pC[2], DT_POLY_G);
-		}
-
-		pFaceInfo += 5;
-		nFaces--;
-	}
-
-	return pFaceInfo;
-}
-
-short* HWI_InsertObjectGT4_Sorted(short* pFaceInfo, long nFaces, sort_type nSortType)
-{
-	PHDTEXTURESTRUCT* pTex;
-	long nDrawType;
-	ushort double_sided;
-
-	while (nFaces)
-	{
-		pTex = &phdtextinfo[pFaceInfo[4] & 0x7FFF];
-		double_sided = (pFaceInfo[4] >> 0xF) & 1;
-
-		if (pTex->drawtype > 1)
-			nDrawType = DT_POLY_WGTA;
-		else
-			nDrawType = pTex->drawtype + DT_POLY_GT;
-
-		if (nDrawType == DT_POLY_WGT || nDrawType == DT_POLY_WGTA)
-			HWI_InsertGT4_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]], &vbuf[pFaceInfo[3]], pTex, nSortType, double_sided);
-		else if (vbuf[pFaceInfo[0]].color || vbuf[pFaceInfo[1]].color || vbuf[pFaceInfo[2]].color || vbuf[pFaceInfo[3]].color)
-			HWI_InsertGT4_Sorted(&vbuf[pFaceInfo[0]], &vbuf[pFaceInfo[1]], &vbuf[pFaceInfo[2]], &vbuf[pFaceInfo[3]], pTex, nSortType, double_sided);
-		else
-			HWI_InsertObjectG4_Sorted(pFaceInfo, 1, nSortType);
-
-		pFaceInfo += 5;
-		nFaces--;
-	}
-
-	return pFaceInfo;
 }
 
 long RoomZedClipper(long n, POINT_INFO* in, VERTEX_INFO* out)

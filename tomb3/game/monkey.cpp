@@ -211,7 +211,7 @@ void MonkeyControl(short item_number)
 			}
 			else if (item->ai_bits & FOLLOW && (monkey->reached_goal || iDist > 0x400000))
 				item->goal_anim_state = MONKEY_STAND;
-			else if (monkey->mood = BORED_MOOD)
+			else if (monkey->mood == BORED_MOOD)
 				item->goal_anim_state = MONKEY_ROLL;
 			else if (info.distance < 0x718E4)
 				item->goal_anim_state = MONKEY_STAND;

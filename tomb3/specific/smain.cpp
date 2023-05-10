@@ -23,6 +23,9 @@
 #include "init.h"
 #include "../newstuff/discord.h"
 #include "../game/control.h"
+#if (DIRECT3D_VERSION >= 0x900)
+#include "../newstuff/Picture2.h"
+#endif
 #include "../tomb3/tomb3.h"
 
 long HiResFlag;
@@ -237,7 +240,9 @@ void CheckCheatMode()
 				lara_item->flags |= IFL_INVISIBLE;
 			}
 		}
-																	//no break on purpose
+		
+		//fallthrough
+
 	default:
 		mode = 0;
 	}
@@ -252,14 +257,26 @@ long TitleSequence()
 	noinput_count = 0;
 	dontFadePicture = 1;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	RemoveMonoScreen(0);
+#endif
+
 	if (tomb3.gold)
 	{
 		strcpy(name, GF_titlefilenames[1]);
 		T3_GoldifyString(name);
-		LoadPicture(name, App.PictureBuffer, 0);
+#if (DIRECT3D_VERSION >= 0x900)
+		LoadPicture(name);
+#else
+		LoadPicture(name, App.PictureBuffer);
+#endif
 	}
 	else
-		LoadPicture(GF_titlefilenames[1], App.PictureBuffer, 0);
+#if (DIRECT3D_VERSION >= 0x900)
+		LoadPicture(GF_titlefilenames[1]);
+#else
+		LoadPicture(GF_titlefilenames[1], App.PictureBuffer);
+#endif
 
 	FadePictureUp(32);
 
@@ -277,7 +294,7 @@ long TitleSequence()
 		S_CDPlay(gameflow.title_track, 1);
 
 	TIME_Init();
-	Display_Inventory(1);
+	Display_Inventory(INV_TITLE_MODE);
 	dontFadePicture = 0;
 	FadePictureDown(32);
 	S_CDStop();
@@ -357,10 +374,17 @@ long GameMain()
 	TempVideoAdjust(1, 1.0);
 	S_UpdateInput();
 
+#if (DIRECT3D_VERSION >= 0x900)
 	if (tomb3.gold)
-		LoadPicture("pixg\\legal.bmp", App.PictureBuffer, 1);
+		LoadPicture("pixg\\legal.bmp");
 	else
-		LoadPicture("pix\\legal.bmp", App.PictureBuffer, 1);
+		LoadPicture("pix\\legal.bmp");
+#else
+	if (tomb3.gold)
+		LoadPicture("pixg\\legal.bmp", App.PictureBuffer);
+	else
+		LoadPicture("pix\\legal.bmp", App.PictureBuffer);
+#endif
 
 	FadePictureUp(32);
 	S_Wait(150 * TICKS_PER_FRAME, 1);

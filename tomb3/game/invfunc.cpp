@@ -69,7 +69,7 @@ GOURAUD_OUTLINE req_sel_gour2 =
 	0xFF000000, 0xFF38F080, 0xFF000000,
 };
 
-ulong inv_colours[17] =	//now 32bit color
+ulong inv_colours[17] =
 {
 	0xFF000000,
 	0xFF404040,
@@ -1343,6 +1343,18 @@ void Inv_RingLight(RING_INFO* ring, short object_number)
 	smcg = 32;
 	smcb = 32;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	if (tomb3.psx_contrast)
+	{
+		for (int i = 0; i < indices_count; i++)
+			LightCol[i] >>= 1;
+
+		smcr >>= 1;
+		smcg >>= 1;
+		smcb >>= 1;
+	}
+#endif
+
 	x = 0x4000;
 	y = -0x4000;
 	z = 0x3000;
@@ -1747,7 +1759,7 @@ void RingNotActive(INVENTORY_ITEM* inv_item)
 	case BIGMEDI_OPTION:
 		health_bar_timer = 40;
 		DrawHealthBar(FlashIt());
-		//NO BREAK!
+		//fallthrough
 
 	case SAVEGAME_CRYSTAL_OPTION:
 	case PUZZLE_OPTION1:

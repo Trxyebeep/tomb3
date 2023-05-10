@@ -26,6 +26,8 @@ void TriggerNormalCDTrack(short value, short flags, short type);
 long CheckNoColFloorTriangle(FLOOR_INFO* floor, long x, long z);
 long CheckNoColCeilingTriangle(FLOOR_INFO* floor, long x, long z);
 long IsRoomOutside(long x, long y, long z);
+long GetMaximumFloor(FLOOR_INFO* floor, long x, long z);
+long GetMinimumCeiling(FLOOR_INFO* floor, long x, long z);
 
 extern ITEM_INFO* items;
 extern ANIM_STRUCT* anims;

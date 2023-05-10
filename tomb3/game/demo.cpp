@@ -124,6 +124,5 @@ long StartDemo(long level)
 	Inventory_DemoMode = 0;
 	T_RemovePrint(demoText);
 	memcpy(s, &start, sizeof(START_INFO));
-	//empty function call here
 	return lp;
 }

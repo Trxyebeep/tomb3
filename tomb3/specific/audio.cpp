@@ -247,8 +247,9 @@ long ACMHandleNotifications()
 	uchar* write;
 	ulong wait, bytes, flag, abytes;
 	static long count;
-	bool eot;
-	volatile bool lostFocus = 0;
+	bool lostFocus, eot;
+
+	lostFocus = 0;
 
 	while ((wait = WaitForMultipleObjects(2, NotifyEventHandles, 0, INFINITE)) != WAIT_FAILED)
 	{

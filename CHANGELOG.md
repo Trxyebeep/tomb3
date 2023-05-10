@@ -1,8 +1,25 @@
 # tomb3 changelog
 
-## [2.0.1](https://github.com/Trxyebeep/tomb3/tree/V2.0.1) (Apr. 20 2023)
+## [2.0.2](https://github.com/Trxyebeep/tomb3/tree/V2.0.1) (May. 8 2023)
 
 ### Original bug fixes
+
+- Fix wade snapping.
+- Fix floordata issues with triangular geometry, no collision tiles, and more generic situations.
+- Fix some effects clipping.
+
+### tomb3 additions
+
+- Improve hair interaction with water surfaces.
+
+### tomb3 bug fixes
+
+- Fix title starting with the passport selected.
+- Fix audio looping.
+- Fix savegame fail if the saves/savesg folder doesn't exist, and create it instead.
+
+
+## [2.0.1](https://github.com/Trxyebeep/tomb3/tree/V2.0.1) (Apr. 20 2023)
 
 ### tomb3 additions
 

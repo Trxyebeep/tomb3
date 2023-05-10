@@ -24,6 +24,9 @@
 #include "effects.h"
 #include "inventry.h"
 #include "../newstuff/LaraDraw.h"
+#if (DIRECT3D_VERSION >= 0x900)
+#include "../newstuff/Picture2.h"
+#endif
 
 short* cine;
 PHD_3DPOS cinematic_pos;

@@ -20,12 +20,13 @@ short* (*InsertObjectGT4)(short* pFaceInfo, long nFaces, sort_type nSortType);
 short* (*InsertObjectGT3)(short* pFaceInfo, long nFaces, sort_type nSortType);
 short* (*InsertObjectG4)(short* pFaceInfo, long nFaces, sort_type nSortType);
 short* (*InsertObjectG3)(short* pFaceInfo, long nFaces, sort_type nSortType);
-short* (*RoomInsertObjectGT4)(short* pFaceInfo, long nFaces, sort_type nSortType);
-short* (*RoomInsertObjectGT3)(short* pFaceInfo, long nFaces, sort_type nSortType);
 void (*InsertFlatRect)(long x1, long y1, long x2, long y2, long zdepth, long col);
 void (*InsertTrans8)(PHD_VBUF* buf, short shade);
 void (*InsertSprite)(long zdepth, long x1, long y1, long x2, long y2, long nSprite, ulong shade, ulong shade1, long nDrawType, long offset);
 void (*InsertTransQuad)(long x, long y, long w, long h, long z);
+void (*InsertGourQuad)(long x0, long y0, long x1, long y1, long z, ulong c0, ulong c1, ulong c2, ulong c3, bool add);
+bool (*IsVisible)(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2);
+bool (*IsInvisible)(PHD_VBUF* v0, PHD_VBUF* v1, PHD_VBUF* v2);
 
 float outsideBackgroundTop;
 long BlackGouraudIndex = 0;
@@ -521,7 +522,7 @@ void S_InsertBackground(short* objptr)
 	}
 
 	if (CurrentLevel == LV_GYM)
-		S_InsertBackPolygon(0, (long)outsideBackgroundTop, phd_right + phd_winxmin, phd_winymax, 0x800000);
+		S_InsertBackPolygon(0, (long)outsideBackgroundTop, phd_right + phd_winxmin, phd_winymax, 0);
 }
 
 void phd_InitWindow(long x, long y, long w, long h, long znear, long zfar, long fov, long sw, long sh)
@@ -555,26 +556,11 @@ void phd_InitWindow(long x, long y, long w, long h, long znear, long zfar, long 
 	phd_WindowRect.top = phd_winymin;
 	phd_WindowRect.right = phd_winxmin + phd_winwidth;
 
-	InsertObjectGT3 = HWI_InsertObjectGT3_Sorted;
-	InsertObjectGT4 = HWI_InsertObjectGT4_Sorted;
-	InsertObjectG3 = HWI_InsertObjectG3_Sorted;
-	InsertObjectG4 = HWI_InsertObjectG4_Sorted;
-	InsertFlatRect = HWI_InsertFlatRect_Sorted;
-	InsertLine = HWI_InsertLine_Sorted;
-	RoomInsertObjectGT3 = HWI_InsertObjectGT3_Sorted;
-	RoomInsertObjectGT4 = HWI_InsertObjectGT4_Sorted;
-	InsertSprite = HWI_InsertSprite_Sorted;
-	InsertTrans8 = HWI_InsertTrans8_Sorted;
-	InsertTransQuad = HWI_InsertTransQuad_Sorted;
+	SetFunctionPointers();
 }
 
 void phd_InitPolyList()
 {
-	/*
-	dword_5D7AE8 = (int)&unk_4E34B0;	//seemingly unused, no problems so far
-	dword_5D7AE4 = 0;
-	dword_5A6AF0 = (int)&unk_4F6D60;
-	*/
 	surfacenumbf = 0;
 	surfacenumfb = 0;
 	info3dptrbf = info3d_bufferbf;

@@ -19,7 +19,9 @@ static LPVOID FmvSoundContext;
 	if(!proc) throw #proc; \
 }
 
+#if (DIRECT3D_VERSION < 0x900)
 static long(__cdecl* Player_PassInDirectDrawObject)(LPDIRECTDRAWX);
+#endif
 static long(__cdecl* Player_InitMovie)(LPVOID, long, long, const char*, long);
 static long(__cdecl* Player_InitVideo)(LPVOID, LPVOID, long, long, long, long, long, long, long, long, long, long, long);
 static long(__cdecl* Player_InitPlaybackMode)(HWND, LPVOID, long, long);
@@ -59,7 +61,9 @@ bool LoadWinPlay()
 
 	try
 	{
+#if (DIRECT3D_VERSION < 0x900)
 		GET_DLL_PROC(hWinPlay, Player_PassInDirectDrawObject);
+#endif
 		GET_DLL_PROC(hWinPlay, Player_InitMovie);
 		GET_DLL_PROC(hWinPlay, Player_InitVideo);
 		GET_DLL_PROC(hWinPlay, Player_InitPlaybackMode);
@@ -109,7 +113,11 @@ void FreeWinPlay()
 
 long FMV_Play(char* name)
 {
-	if (tomb3.Windowed || !tomb3.WinPlayLoaded)
+#if (DIRECT3D_VERSION >= 0x900)
+	return 0;
+#endif
+
+	if (App.Windowed || !App.WinPlayLoaded)
 		return 0;
 
 	fmv_playing = 1;
@@ -129,7 +137,11 @@ long FMV_Play(char* name)
 
 long FMV_PlayIntro(char* name1, char* name2)
 {
-	if (tomb3.Windowed || !tomb3.WinPlayLoaded)
+#if (DIRECT3D_VERSION >= 0x900)
+	return 0;
+#endif
+
+	if (App.Windowed || !App.WinPlayLoaded)
 		return 0;
 
 	fmv_playing = 1;
@@ -154,13 +166,19 @@ void WinPlayFMV(const char* name, bool play)
 	long lp;
 	RECT r;
 
+#if (DIRECT3D_VERSION >= 0x900)
+	return;
+#endif
+
 	r.left = 0;
 	r.top = 0;
 	r.right = 640;
 	r.bottom = 480;
 
+#if (DIRECT3D_VERSION < 0x900)
 	if (Player_PassInDirectDrawObject(App.DDraw) || Player_InitMovie(&MovieContext, 0, 0, name, 0x200000) || Movie_GetFormat(MovieContext) != 130)
 		return;
+#endif
 
 	xSize = Movie_GetXSize(MovieContext);
 	ySize = Movie_GetYSize(MovieContext);
@@ -208,6 +226,9 @@ void WinPlayFMV(const char* name, bool play)
 
 void WinStopFMV(bool play)
 {
+#if (DIRECT3D_VERSION >= 0x900)
+	return;
+#endif
 	Player_StopTimer(MovieContext);
 	Player_ShutDownSound(&FmvSoundContext);
 	Player_ShutDownVideo(&FmvContext);

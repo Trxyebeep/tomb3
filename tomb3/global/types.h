@@ -1,8 +1,6 @@
 #pragma once
 #include "math_tbls.h"
 
-#pragma pack(push, 1)
-
 /*typedefs*/
 typedef unsigned char uchar;
 typedef unsigned short ushort;
@@ -32,6 +30,18 @@ typedef unsigned long ulong;
 #define TEXHANDLE				LPDIRECT3DTEXTURE9
 #define DDSURFACEDESCX			D3DLOCKED_RECT
 #define LPDIRECT3DTEXTUREX		LPDIRECT3DTEXTURE9
+#define VTXBUF_LEN				512
+#define D3DFVF_TLVERTEX			(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_SPECULAR | D3DFVF_TEX1)
+#define RGBA_SETALPHA(rgba, x)	(((x) << 24) | ((rgba) & 0x00ffffff))
+#define RGBA_GETALPHA(rgb)		((rgb) >> 24)
+#define RGBA_GETRED(rgb)		(((rgb) >> 16) & 0xff)
+#define RGBA_GETGREEN(rgb)		(((rgb) >> 8) & 0xff)
+#define RGBA_GETBLUE(rgb)		((rgb) & 0xff)
+#define RGBA_MAKE(r, g, b, a)	((D3DCOLOR) (((a) << 24) | ((r) << 16) | ((g) << 8) | (b)))
+#define RGB_GETRED(rgb)			(((rgb) >> 16) & 0xff)
+#define RGB_GETGREEN(rgb)		(((rgb) >> 8) & 0xff)
+#define RGB_GETBLUE(rgb)		((rgb) & 0xff)
+#define RGB_MAKE(r, g, b)		((D3DCOLOR) (((r) << 16) | ((g) << 8) | (b)))
 #else
 #define LPDIRECT3DX				LPDIRECT3D2
 #define LPDIRECT3DDEVICEX		LPDIRECT3DDEVICE2
@@ -97,6 +107,16 @@ typedef unsigned long ulong;
 #define TICKS_PER_SECOND	(FRAMES_PER_SECOND * TICKS_PER_FRAME)
 
 /*enums*/
+enum texture_flags
+{
+	TF_EMPTY = 0,
+	TF_USED = 1 << 0,
+	TF_UNUSED = 1 << 1,
+	TF_UNUSED2 = 1 << 2,
+	TF_LEVELTEX = 1 << 3,
+	TF_PICTEX = 1 << 4
+};
+
 enum death_tiles
 {
 	DEATH_LAVA,
@@ -530,6 +550,21 @@ enum sfx_types
 };
 
 /*structs*/
+#if (DIRECT3D_VERSION >= 0x900)
+struct D3DTLVERTEX
+{
+	D3DVALUE sx;
+	D3DVALUE sy;
+	D3DVALUE sz;
+	D3DVALUE rhw;
+	D3DCOLOR color;
+	D3DCOLOR specular;
+	D3DVALUE tu;
+	D3DVALUE tv;
+};
+#endif
+
+#pragma pack(push, 1)
 struct GOURAUD_FILL	//not og
 {
 	ulong clr[4][4];
@@ -1266,6 +1301,7 @@ struct DISPLAYMODE
 	long w;
 	long h;
 	ulong bpp;
+#if (DIRECT3D_VERSION < 0x900)
 	bool bPalette;
 	uchar rbpp;
 	uchar gbpp;
@@ -1276,8 +1312,39 @@ struct DISPLAYMODE
 	uchar gshift;
 	uchar bshift;
 	uchar ashift;
+#endif
 };
 
+struct DXDIRECTSOUNDINFO
+{
+	char Name[256];
+	char About[256];
+	LPGUID lpGuid;
+	GUID Guid;
+};
+
+#if (DIRECT3D_VERSION >= 0x900)
+struct DIRECT3DINFO
+{
+	char Name[256];
+	char About[256];
+	LPGUID lpGuid;
+	GUID Guid;
+	D3DCAPS9 caps;
+	long nDisplayMode;
+	DISPLAYMODE* DisplayMode;
+	ulong index;
+};
+
+struct DEVICEINFO
+{
+	ulong nD3DInfo;
+	DIRECT3DINFO* D3DInfo;
+	long nDSInfo;
+	DXDIRECTSOUNDINFO* DSInfo;
+	//Joystick enumeration stuff was here
+};
+#else
 struct D3DTEXTUREINFO
 {
 	ulong bpp;
@@ -1288,21 +1355,11 @@ struct D3DTEXTUREINFO
 	uchar bbpp;
 	uchar abpp;
 	DDSURFACEDESCX ddsd;
-#if (DIRECT3D_VERSION < 0x900)
 	DDPIXELFORMAT ddpf;
-#endif
 	uchar rshift;
 	uchar gshift;
 	uchar bshift;
 	uchar ashift;
-};
-
-struct DXDIRECTSOUNDINFO
-{
-	char Name[256];
-	char About[256];
-	LPGUID lpGuid;
-	GUID Guid;
 };
 
 struct DIRECT3DINFO
@@ -1340,14 +1397,19 @@ struct DEVICEINFO
 	DXDIRECTSOUNDINFO* DSInfo;
 	//Joystick enumeration stuff was here
 };
+#endif
 
 struct DXCONFIG
 {
+#if (DIRECT3D_VERSION < 0x900)
 	long nDD;
+#endif
 	long nD3D;
 	long nDS;
 	long nVMode;
+#if (DIRECT3D_VERSION < 0x900)
 	long D3DTF;
+#endif
 	long bZBuffer;
 	long Dither;
 	long Filter;
@@ -1363,6 +1425,13 @@ struct WINAPP
 	DXCONFIG DXConfig;
 	DEVICEINFO* lpDeviceInfo;
 	DXCONFIG* lpDXConfig;
+#if (DIRECT3D_VERSION >= 0x900)
+	LPDIRECT3DX D3D;
+	LPDIRECT3DDEVICEX D3DDev;
+	LPDIRECT3DVERTEXBUFFER9 DestVB;
+	LPDIRECTDRAWSURFACEX CaptureBuffer;
+	LPDIRECTDRAWSURFACEX PictureBuffer;
+#else
 	LPDIRECTDRAWX DDraw;
 	LPDIRECT3DX D3D;
 	LPDIRECT3DDEVICEX D3DDev;
@@ -1372,9 +1441,17 @@ struct WINAPP
 	LPDIRECTDRAWSURFACEX PictureBuffer;
 	LPDIRECT3DVIEWPORTX D3DView;
 	LPDIRECT3DMATERIALX D3DMaterial;
-	bool bFocus;
+#endif
+	RECT rScreen;
+	RECT rViewport;
+	ulong WindowStyle;
+	bool Windowed;
+	bool WinPlayLoaded;
+	volatile bool bFocus;
 	long nUVAdd;
+#if (DIRECT3D_VERSION < 0x900)
 	ulong nFrames;
+#endif
 	float fps;
 };
 
@@ -1473,6 +1550,15 @@ struct SP_DYNAMIC
 	uchar Pad[2];
 };
 
+#if (DIRECT3D_VERSION >= 0x900)
+struct DXTEXTURE
+{
+	TEXHANDLE tex;
+	long nWidth;
+	long nHeight;
+	ulong dwFlags;
+};
+#else
 struct TEXTURE
 {
 	LPVOID DXTex;	//DXTEXTURE*
@@ -1496,6 +1582,7 @@ struct DXTEXTURE
 	TEXTURE* tex;
 	ulong bpp;
 };
+#endif
 
 struct TEXTUREBUCKET
 {
@@ -1561,7 +1648,6 @@ struct STATIC_INFO
 
 struct HWCONFIG
 {
-	bool bPersp;
 	bool bDither;
 	long nFilter;
 	long nShadeMode;
@@ -2123,6 +2209,7 @@ struct TOMB3_OPTIONS
 	bool psx_crystal_sfx;
 	bool blue_crystal_light;
 	bool improved_electricity;
+	bool psx_contrast;
 	bool gold;
 	long shadow_mode;	//t3_shadow_mode enum
 	long bar_mode;		//t3_bar_mode enum
@@ -2133,12 +2220,5 @@ struct TOMB3_OPTIONS
 	float INV_Scale;
 	float unwater_music_mute;
 	float inv_music_mute;
-
-	//windowed + winplay stuff, move to WINAPP when possible
-	RECT rScreen;
-	RECT rViewport;
-	ulong WindowStyle;
-	bool Windowed;
-	bool WinPlayLoaded;
 };
 #pragma pack(pop)

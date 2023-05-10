@@ -64,7 +64,7 @@ void ModifyStartInfo(long level)
 		pInfo->num_sgcrystals = 1;
 		pInfo->gun_type = LG_UNARMED;
 	}
-	else if (level == LV_FIRSTLEVEL)	//forgets to reset shotgun!
+	else if (level == LV_FIRSTLEVEL)
 	{
 		pInfo->available = 1;
 
@@ -231,7 +231,7 @@ void CreateStartInfo(long level)
 	else
 	{
 		pInfo->got_harpoon = 0;
-		pInfo->harpoon_ammo = (ushort)lara.harpoon.ammo;	//...ok
+		pInfo->harpoon_ammo = (ushort)lara.harpoon.ammo;
 	}
 
 	if (Inv_RequestItem(M16_ITEM))
@@ -663,7 +663,7 @@ void ExtractSaveGameInfo()
 					item->object_number += 4;
 			}
 
-			if (obj->collision == PickUpCollision)	//use PickUpCollision when ObjectObjects etc. are decompiled
+			if (obj->collision == PickUpCollision)
 			{
 				if (item->status == ITEM_DEACTIVATED)
 					RemoveDrawnItem(i);
@@ -682,7 +682,7 @@ void ExtractSaveGameInfo()
 		{
 			if (item->status == ITEM_INACTIVE)
 				AlterFloorHeight(item, -1024);
-			else if (obj->control == MovableBlock && item->status != ITEM_INACTIVE)		//ok
+			else if (obj->control == MovableBlock && item->status != ITEM_INACTIVE)
 				SetupCleanerFromSavegame(item, 1);
 		}
 

@@ -23,6 +23,9 @@
 #include "control.h"
 #include "camera.h"
 #include "savegame.h"
+#if (DIRECT3D_VERSION >= 0x900)
+#include "../newstuff/Picture2.h"
+#endif
 #include "../newstuff/discord.h"
 #include "../tomb3/tomb3.h"
 
@@ -46,7 +49,7 @@ TEXTSTRING* Inv_upArrow2;
 TEXTSTRING* Inv_downArrow1;
 TEXTSTRING* Inv_downArrow2;
 long Inventory_DemoMode;
-long OpenInvOnGym;
+static long OpenInvOnGym = 1;
 long idelay;
 long idcount;
 short inv_keys_objects;
@@ -403,8 +406,6 @@ long Display_Inventory(long mode)
 		GlobePointLight = 0;
 	}
 
-	//Empty function call here
-
 	if (mode == INV_KEYS_MODE && !inv_keys_objects)
 	{
 		Inventory_Chosen = NO_ITEM;
@@ -421,12 +422,6 @@ long Display_Inventory(long mode)
 	Inventory_Mode = mode;
 	nframes = TICKS_PER_FRAME;
 	Construct_Inventory();
-
-	if (mode == INV_TITLE_MODE || mode == INV_LEVELSELECT_MODE)
-		S_FadeInInventory(0);
-	else
-		S_FadeInInventory(1);
-
 	SOUND_Stop();
 
 	if (mode != INV_TITLE_MODE && mode != INV_LEVELSELECT_MODE)
@@ -547,10 +542,10 @@ long Display_Inventory(long mode)
 		/*draw phase*/
 		S_InitialisePolyList(0);
 
-		if (Inventory_Mode == INV_TITLE_MODE || Inventory_Mode == INV_LEVELSELECT_MODE)
-			DoInventoryPicture();
-		else
+		if (Inventory_Mode != INV_TITLE_MODE && Inventory_Mode != INV_LEVELSELECT_MODE)
 			DrawMonoScreen(80, 80, 112);
+		else
+			DoInventoryPicture();
 
 		S_AnimateTextures(nframes);
 		Inv_RingGetView(&ring, &viewer);
@@ -681,11 +676,6 @@ long Display_Inventory(long mode)
 					inv_option_current = ring.current_object;
 				else
 					inv_main_current = ring.current_object;
-
-				if (mode == INV_TITLE_MODE || mode == INV_LEVELSELECT_MODE)
-					S_FadeOutInventory(0);
-				else
-					S_FadeOutInventory(1);
 
 				Inv_RingMotionSetup(&ring, RNG_CLOSING, RNG_DONE, 32);
 				Inv_RingMotionRadius(&ring, 0);
@@ -967,11 +957,6 @@ long Display_Inventory(long mode)
 
 			if (!imo.count)
 			{
-				if (mode == INV_TITLE_MODE || mode == INV_LEVELSELECT_MODE)
-					S_FadeOutInventory(0);
-				else
-					S_FadeOutInventory(1);
-
 				Inv_RingMotionSetup(&ring, RNG_CLOSING, RNG_DONE, 32);
 				Inv_RingMotionRadius(&ring, 0);
 				Inv_RingMotionCameraPos(&ring, -1536);

@@ -29,7 +29,6 @@ extern TEXTSTRING* Inv_upArrow2;
 extern TEXTSTRING* Inv_downArrow1;
 extern TEXTSTRING* Inv_downArrow2;
 extern long Inventory_DemoMode;
-extern long OpenInvOnGym;
 extern long idelay;
 extern long idcount;
 extern short inv_keys_objects;

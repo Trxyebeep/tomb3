@@ -16,4 +16,4 @@ void DS_Start(HWND hwnd);
 void DS_Finish();
 
 extern LPDIRECTSOUNDBUFFER DS_Samples[32];
-extern LPDIRECTSOUND lpDirectSound;
+extern LPDIRECTSOUND8 lpDirectSound;

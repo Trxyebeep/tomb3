@@ -59,7 +59,7 @@ static void T3_InitSettings()
 {
 	Option_Music_Volume = 7;
 	Option_SFX_Volume = 10;
-	tomb3.Windowed = 0;
+	App.Windowed = 0;
 
 	tomb3.footprints = 1;
 	tomb3.pickup_display = 1;
@@ -86,6 +86,7 @@ static void T3_InitSettings()
 	tomb3.psx_crystal_sfx = 0;
 	tomb3.blue_crystal_light = 0;
 	tomb3.improved_electricity = 1;
+	tomb3.psx_contrast = 0;
 	tomb3.shadow_mode = SHADOW_PSX;
 	tomb3.bar_mode = BAR_PSX;
 	tomb3.sophia_rings = SRINGS_PSX;
@@ -101,13 +102,21 @@ void T3_SaveSettings()
 {
 	OpenRegistry(SUB_KEY);
 
+#if (DIRECT3D_VERSION < 0x900)
 	if (App.lpDeviceInfo->nDDInfo)
 		REG_WriteLong((char*)"DD", App.lpDXConfig->nDD);
+#endif
 
+#if (DIRECT3D_VERSION >= 0x900)
+	if (App.lpDeviceInfo->nD3DInfo)
+#else
 	if (App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].nD3DInfo)
+#endif
 	{
 		REG_WriteLong((char*)"D3D", App.lpDXConfig->nD3D);
+#if (DIRECT3D_VERSION < 0x900)
 		REG_WriteLong((char*)"D3DTF", App.lpDXConfig->D3DTF);
+#endif
 	}
 
 	if (App.lpDeviceInfo->nDSInfo)
@@ -120,9 +129,9 @@ void T3_SaveSettings()
 	REG_WriteLong((char*)"sound", App.lpDXConfig->sound);
 	REG_WriteLong((char*)"SFXVolume", Option_SFX_Volume);
 	REG_WriteLong((char*)"MusicVolume", Option_Music_Volume);
-	REG_WriteBool((char*)"Window", tomb3.Windowed);
-	REG_WriteLong((char*)"WindowX", tomb3.rScreen.left);
-	REG_WriteLong((char*)"WindowY", tomb3.rScreen.top);
+	REG_WriteBool((char*)"Window", App.Windowed);
+	REG_WriteLong((char*)"WindowX", App.rScreen.left);
+	REG_WriteLong((char*)"WindowY", App.rScreen.top);
 	REG_WriteFloat((char*)"Gamma", GammaOption);
 	REG_WriteBlock((char*)"keyLayout", &layout[1][0], sizeof(layout) / 2);
 
@@ -155,6 +164,7 @@ void T3_SaveSettings()
 	REG_WriteBool((char*)"psx_crystal_sfx", tomb3.psx_crystal_sfx);
 	REG_WriteBool((char*)"blue_crystal_light", tomb3.blue_crystal_light);
 	REG_WriteBool((char*)"improved_electricity", tomb3.improved_electricity);
+	REG_WriteBool((char*)"psx_contrast", tomb3.psx_contrast);
 	REG_WriteLong((char*)"shadow_mode", tomb3.shadow_mode);
 	REG_WriteLong((char*)"bar_mode", tomb3.bar_mode);
 	REG_WriteLong((char*)"sophia_rings", tomb3.sophia_rings);
@@ -176,13 +186,21 @@ bool T3_LoadSettings()
 		return 0;
 	}
 
+#if (DIRECT3D_VERSION < 0x900)
 	if (App.lpDeviceInfo->nDDInfo)
 		REG_ReadLong((char*)"DD", (ulong&)App.lpDXConfig->nDD, 0);
+#endif
 
+#if (DIRECT3D_VERSION >= 0x900)
+	if (App.lpDeviceInfo->nD3DInfo)
+#else
 	if (App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].nD3DInfo)
+#endif
 	{
 		REG_ReadLong((char*)"D3D", (ulong&)App.lpDXConfig->nD3D, 0);
+#if (DIRECT3D_VERSION < 0x900)
 		REG_ReadLong((char*)"D3DTF", (ulong&)App.lpDXConfig->D3DTF, 0);
+#endif
 	}
 
 	if (App.lpDeviceInfo->nDSInfo)
@@ -195,9 +213,9 @@ bool T3_LoadSettings()
 	REG_ReadLong((char*)"sound", (ulong&)App.lpDXConfig->sound, 0);
 	REG_ReadLong((char*)"SFXVolume", (ulong&)Option_SFX_Volume, 0);
 	REG_ReadLong((char*)"MusicVolume", (ulong&)Option_Music_Volume, 0);
-	REG_ReadBool((char*)"Window", tomb3.Windowed, 0);
-	REG_ReadLong((char*)"WindowX", (ulong&)tomb3.rScreen.left, 0);
-	REG_ReadLong((char*)"WindowY", (ulong&)tomb3.rScreen.top, 0);
+	REG_ReadBool((char*)"Window", App.Windowed, 0);
+	REG_ReadLong((char*)"WindowX", (ulong&)App.rScreen.left, 0);
+	REG_ReadLong((char*)"WindowY", (ulong&)App.rScreen.top, 0);
 	REG_ReadFloat((char*)"Gamma", GammaOption, 0);
 
 	REG_ReadBlock((char*)"keyLayout", &layout[1][0], sizeof(layout) / 2, 0);
@@ -233,6 +251,7 @@ bool T3_LoadSettings()
 	REG_ReadBool((char*)"psx_crystal_sfx", tomb3.psx_crystal_sfx, 0);
 	REG_ReadBool((char*)"blue_crystal_light", tomb3.blue_crystal_light, 0);
 	REG_ReadBool((char*)"improved_electricity", tomb3.improved_electricity, 1);
+	REG_ReadBool((char*)"psx_contrast", tomb3.psx_contrast, 0);
 	REG_ReadLong((char*)"shadow_mode", (ulong&)tomb3.shadow_mode, SHADOW_PSX);
 	REG_ReadLong((char*)"bar_mode", (ulong&)tomb3.bar_mode, BAR_PSX);
 	REG_ReadLong((char*)"sophia_rings", (ulong&)tomb3.sophia_rings, SRINGS_PSX);

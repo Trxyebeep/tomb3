@@ -21,6 +21,12 @@
 #include "winmain.h"
 #include "smain.h"
 #include "option.h"
+#include <sys/stat.h>
+#include <direct.h>
+#if (DIRECT3D_VERSION >= 0x900)
+#include "../3dsystem/3d_gen.h"
+#include "../newstuff/Picture2.h"
+#endif
 #include "../tomb3/tomb3.h"
 
 static long rand_1 = 0xD371F947;
@@ -106,9 +112,15 @@ long GameStats(long level_num, long type)
 		{
 			GF_BonusLevelEnabled = 1;
 			FadePictureDown(32);
+
+#if (DIRECT3D_VERSION >= 0x900)
+			FreePictureTextures();
+			LoadPicture("pix\\theend2.bmp");
+#else
 			FreePictureTextures(CurPicTexIndices);
 			FreePictureTextures(OldPicTexIndices);
-			LoadPicture("pix\\theend2.bmp", App.PictureBuffer, 1);
+			LoadPicture("pix\\theend2.bmp", App.PictureBuffer);
+#endif
 			nLoadedPictures = 1;
 		}
 		else
@@ -190,6 +202,7 @@ long LevelStats(long level)
 	long ret, s, world;
 	char buf[32];
 	char name[128];
+	bool mono;
 
 	ret = 0;
 	savegame.start[level].timer = savegame.timer;
@@ -205,7 +218,13 @@ long LevelStats(long level)
 	TempVideoAdjust(HiResFlag, 1.0);
 	T_InitPrint();
 
-	if (!GF_PlayingFMV || CurrentLevel == LV_ANTARC || CurrentLevel == LV_STPAULS)
+#if (DIRECT3D_VERSION >= 0x900)
+	mono = CurrentLevel == LV_INDIABOSS || CurrentLevel == LV_ANTARC || CurrentLevel == LV_STPAULS;
+#else
+	mono = CurrentLevel == LV_ANTARC || CurrentLevel == LV_STPAULS;
+#endif
+
+	if (!GF_PlayingFMV || mono)
 	{
 		bDontGreyOut = 1;
 		CreateMonoScreen();
@@ -218,7 +237,11 @@ long LevelStats(long level)
 		if (tomb3.gold)
 			T3_GoldifyString(name);
 
-		LoadPicture(name, App.PictureBuffer, 1);
+#if (DIRECT3D_VERSION >= 0x900)
+		LoadPicture(name);
+#else
+		LoadPicture(name, App.PictureBuffer);
+#endif
 		FadePictureUp(32);
 		DXTextureSetGreyScale(0);
 	}
@@ -232,7 +255,13 @@ long LevelStats(long level)
 	{
 		S_InitialisePolyList(0);
 		S_UpdateInput();
-		DrawMonoScreen(48, 48, 48);
+
+#if (DIRECT3D_VERSION >= 0x900)
+		if (!bMonoScreen)
+			DrawPicture(0, CurPicTexIndices, f_zfar);
+		else
+#endif
+			DrawMonoScreen(48, 48, 48);
 
 		if (reset_flag)
 			input = IN_SELECT;
@@ -250,7 +279,14 @@ long LevelStats(long level)
 
 	if (tomb3.gold || !gameflow.globe_enabled)
 	{
+#if (DIRECT3D_VERSION >= 0x900)
+		if (!bMonoScreen)
+			FadePictureDown(32);
+		else
+			RemoveMonoScreen(1);
+#else
 		FadePictureDown(32);
+#endif
 		TempVideoRemove();
 		return 0;
 	}
@@ -388,7 +424,14 @@ long LevelStats(long level)
 
 	if (!ret)
 	{
+#if (DIRECT3D_VERSION >= 0x900)
+		if (!bMonoScreen)
+			FadePictureDown(32);
+		else
+			RemoveMonoScreen(1);
+#else
 		FadePictureDown(32);
+#endif
 		TempVideoRemove();
 	}
 	else if (level != gameflow.num_levels - gameflow.num_demos - 1)
@@ -428,7 +471,11 @@ static void DisplayGoldCredits()
 		return;
 
 	S_StartSyncedAudio(121);
-	LoadPicture("pixg\\theend.bmp", App.PictureBuffer, 1);
+#if (DIRECT3D_VERSION >= 0x900)
+	LoadPicture("pixg\\theend.bmp");
+#else
+	LoadPicture("pixg\\theend.bmp", App.PictureBuffer);
+#endif
 	FadePictureUp(32);
 	S_Wait(150 * TICKS_PER_FRAME, 0);
 	FadePictureDown(32);
@@ -436,13 +483,21 @@ static void DisplayGoldCredits()
 	for (int i = 1; i < 10; i++)
 	{
 		buf[12] = i + '0';
-		LoadPicture(buf, App.PictureBuffer, 1);
+#if (DIRECT3D_VERSION >= 0x900)
+		LoadPicture(buf);
+#else
+		LoadPicture(buf, App.PictureBuffer);
+#endif
 		FadePictureUp(32);
 		S_Wait(150 * TICKS_PER_FRAME, 0);
 		FadePictureDown(32);
 	}
 
-	LoadPicture("pixg\\theend2.bmp", App.PictureBuffer, 1);
+#if (DIRECT3D_VERSION >= 0x900)
+	LoadPicture("pixg\\theend2.bmp");
+#else
+	LoadPicture("pixg\\theend2.bmp", App.PictureBuffer);
+#endif
 	FadePictureUp(32);
 }
 
@@ -461,7 +516,11 @@ void DisplayCredits()
 		return;
 
 	S_StartSyncedAudio(121);
-	LoadPicture("pix\\theend.bmp", App.PictureBuffer, 1);
+#if (DIRECT3D_VERSION >= 0x900)
+	LoadPicture("pix\\theend.bmp");
+#else
+	LoadPicture("pix\\theend.bmp", App.PictureBuffer);
+#endif
 	FadePictureUp(32);
 	S_Wait(150 * TICKS_PER_FRAME, 0);
 	FadePictureDown(32);
@@ -469,13 +528,21 @@ void DisplayCredits()
 	for (int i = 1; i < 10; i++)
 	{
 		buf[11] = i + '0';
-		LoadPicture(buf, App.PictureBuffer, 1);
+#if (DIRECT3D_VERSION >= 0x900)
+		LoadPicture(buf);
+#else
+		LoadPicture(buf, App.PictureBuffer);
+#endif
 		FadePictureUp(32);
 		S_Wait(150 * TICKS_PER_FRAME, 0);
 		FadePictureDown(32);
 	}
 
-	LoadPicture("pix\\theend2.bmp", App.PictureBuffer, 1);
+#if (DIRECT3D_VERSION >= 0x900)
+	LoadPicture("pix\\theend2.bmp");
+#else
+	LoadPicture("pix\\theend2.bmp", App.PictureBuffer);
+#endif
 	FadePictureUp(32);
 }
 
@@ -564,8 +631,20 @@ long S_LoadGame(LPVOID data, long size, long slot)
 long S_SaveGame(LPVOID data, long size, long slot)
 {
 	HANDLE file;
+	struct stat st;
 	ulong bytes;
-	char buffer[80], counter[16];
+	char buffer[80], counter[16], dir[7];
+
+	if (tomb3.gold)
+		sprintf(dir, "savesg");
+	else
+		sprintf(dir, "saves");
+
+	if (stat(dir, &st))
+	{
+		if (_mkdir(dir))
+			return 0;
+	}
 
 	SetSaveDir(buffer, sizeof(buffer), slot);
 	file = CreateFile(buffer, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
@@ -718,15 +797,9 @@ long StartGame(long level, long type)
 		if (!gameflow.demoversion || !gameflow.singlelevel)
 		{
 			if (CurrentLevel != LV_GYM)
-			{
-				S_FadeInInventory(1);
 				result = CurrentLevel | LEVELCOMPLETE;
-			}
 			else
-			{
-				//empty function call here
 				result = EXIT_TO_TITLE;
-			}
 		}
 		else
 			result = EXIT_TO_TITLE;

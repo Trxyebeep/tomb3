@@ -102,7 +102,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalOptions>/SECTION:.text,RWE /pdbaltpath:%_PDB% /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>dxguid.lib;ddraw.lib;Winmm.lib;dinput8.lib;Msacm32.lib;dsound.lib;discord-rpcd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;ddraw.lib;Winmm.lib;dinput8.lib;Msacm32.lib;dsound.lib;D3d9.lib;discord-rpcd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)tomb3\newstuff\libs\discord\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -125,7 +125,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalOptions>/SECTION:.text,RWE /pdbaltpath:%_PDB% /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>dxguid.lib;ddraw.lib;Winmm.lib;dinput8.lib;Msacm32.lib;dsound.lib;discord-rpc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;ddraw.lib;Winmm.lib;dinput8.lib;Msacm32.lib;dsound.lib;D3d9.lib;discord-rpc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)tomb3\newstuff\libs\discord\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -272,6 +272,7 @@
     <ClInclude Include="tomb3\newstuff\LaraDraw.h" />
     <ClInclude Include="tomb3\newstuff\map.h" />
     <ClInclude Include="tomb3\newstuff\pausemenu.h" />
+    <ClInclude Include="tomb3\newstuff\Picture2.h" />
     <ClInclude Include="tomb3\newstuff\psxsaves.h" />
     <ClInclude Include="tomb3\newstuff\setupdlg.h" />
     <ClInclude Include="tomb3\script\interpreter.h" />
@@ -411,6 +412,7 @@
     <ClCompile Include="tomb3\newstuff\LaraDraw.cpp" />
     <ClCompile Include="tomb3\newstuff\map.cpp" />
     <ClCompile Include="tomb3\newstuff\pausemenu.cpp" />
+    <ClCompile Include="tomb3\newstuff\Picture2.cpp" />
     <ClCompile Include="tomb3\newstuff\psxsaves.cpp" />
     <ClCompile Include="tomb3\newstuff\setupdlg.cpp" />
     <ClCompile Include="tomb3\script\interpreter.cpp" />

@@ -22,7 +22,7 @@ long GetWaterSurface(long x, long y, long z, short room_number)
 
 	if (r->flags & ROOM_UNDERWATER)
 	{
-		while (floor->sky_room != 0xFF)
+		while (floor->sky_room != NO_ROOM)
 		{
 			r = &room[floor->sky_room];
 
@@ -34,7 +34,7 @@ long GetWaterSurface(long x, long y, long z, short room_number)
 	}
 	else
 	{
-		while (floor->pit_room != 0xFF)
+		while (floor->pit_room != NO_ROOM)
 		{
 			r = &room[floor->pit_room];
 

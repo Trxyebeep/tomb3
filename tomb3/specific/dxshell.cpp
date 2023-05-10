@@ -5,14 +5,74 @@
 #include "hwrender.h"
 #include "drawprimitive.h"
 #include "display.h"
-#include "picture.h"
 #include "texture.h"
 #include "../tomb3/tomb3.h"
 
+#if (DIRECT3D_VERSION < 0x900)
 static LPDIRECTDRAWX G_ddraw;
+#endif
 static LPDIRECT3DX G_d3d;
 static HWND G_hwnd;
-static bool MMXSupported;
+
+static void* AddStruct(void* p, long num, long size)
+{
+	void* ptr;
+
+	if (!num)
+		ptr = malloc(size);
+	else
+		ptr = realloc(p, size * (num + 1));
+
+	memset((char*)ptr + size * num, 0, size);
+	return ptr;
+}
+
+#if (DIRECT3D_VERSION < 0x900)
+bool DXCreateDirect3DDevice(LPDIRECT3DX dd3x, GUID guid, LPDIRECTDRAWSURFACEX surf, LPDIRECT3DDEVICEX* device)
+{
+	return dd3x->CreateDevice(guid, (LPDIRECTDRAWSURFACE)surf, device) == DD_OK;
+}
+
+void DXBitMask2ShiftCnt(ulong mask, uchar* shift, uchar* count)
+{
+	uchar i;
+
+	for (i = 0; !(mask & 1); i++)
+		mask >>= 1;
+
+	*shift = i;
+
+	for (i = 0; mask & 1; i++)
+		mask >>= 1;
+
+	*count = i;
+}
+
+void DXDoFlipWait()
+{
+	while (App.FrontBuffer->GetFlipStatus(DDGFS_ISFLIPDONE) == DDERR_WASSTILLDRAWING);
+}
+
+bool DXCheckForLostSurfaces()
+{
+	bool pass;
+
+	if (!App.FrontBuffer)
+		S_ExitSystem("Oops... no front buffer");
+
+	pass = SUCCEEDED(DD_EnsureSurfaceAvailable(App.FrontBuffer, 0, 1)) ||
+		SUCCEEDED(DD_EnsureSurfaceAvailable(App.BackBuffer, App.FrontBuffer, 1));
+
+	if (App.ZBuffer)
+		pass = pass || SUCCEEDED(DD_EnsureSurfaceAvailable(App.ZBuffer, 0, 0));
+
+	pass = pass || SUCCEEDED(DD_EnsureSurfaceAvailable(App.PictureBuffer, 0, 0));
+
+	if (pass && !GtWindowClosed)
+		HWR_GetAllTextureHandles();
+
+	return pass;
+}
 
 long BPPToDDBD(long BPP)
 {
@@ -75,11 +135,6 @@ bool DXAddAttachedSurface(LPDIRECTDRAWSURFACEX surf, LPDIRECTDRAWSURFACEX attach
 	return surf->AddAttachedSurface(attach) == DD_OK;
 }
 
-bool DXCreateDirect3DDevice(LPDIRECT3DX dd3x, GUID guid, LPDIRECTDRAWSURFACEX surf, LPDIRECT3DDEVICEX* device)
-{
-	return dd3x->CreateDevice(guid, (LPDIRECTDRAWSURFACE)surf, device) == DD_OK;
-}
-
 bool DXCreateViewPort(LPDIRECT3DX dd3x, LPDIRECT3DDEVICEX device, long w, long h, LPDIRECT3DVIEWPORTX* lpvp)
 {
 	D3DVIEWPORT2 vp;
@@ -109,11 +164,6 @@ bool DXCreateViewPort(LPDIRECT3DX dd3x, LPDIRECT3DDEVICEX device, long w, long h
 	return 1;
 }
 
-void DXGetSurfaceDesc(LPDIRECTDRAWSURFACEX surf, LPDDSURFACEDESCX desc)
-{
-	surf->GetSurfaceDesc(desc);
-}
-
 bool DXSurfBlt(LPDIRECTDRAWSURFACEX surf, LPRECT rect, long FillColor)
 {
 	DDBLTFX bfx;
@@ -122,21 +172,6 @@ bool DXSurfBlt(LPDIRECTDRAWSURFACEX surf, LPRECT rect, long FillColor)
 	bfx.dwSize = sizeof(DDBLTFX);
 	bfx.dwFillColor = FillColor;
 	return surf->Blt(rect, 0, 0, DDBLT_COLORFILL | DDBLT_WAIT, &bfx) == DD_OK;
-}
-
-void DXBitMask2ShiftCnt(ulong mask, uchar* shift, uchar* count)
-{
-	uchar i;
-
-	for (i = 0; !(mask & 1); i++)
-		mask >>= 1;
-
-	*shift = i;
-
-	for (i = 0; mask & 1; i++)
-		mask >>= 1;
-
-	*count = i;
 }
 
 bool DXCreateDirectDraw(DEVICEINFO* dev, DXCONFIG* conf, LPDIRECTDRAWX* ddx)
@@ -163,19 +198,6 @@ bool DXCreateDirect3D(LPDIRECTDRAWX ddx, LPDIRECT3DX* d3dx)
 bool DXSetCooperativeLevel(LPDIRECTDRAWX ddx, HWND hwnd, long flags)
 {
 	return ddx->SetCooperativeLevel(hwnd, flags) == DD_OK;
-}
-
-__inline void* AddStruct(void* p, long num, long size)	//Note: this function wasn't present/was inlined in the original (taken from TR4)
-{
-	void* ptr;
-
-	if (!num)
-		ptr = malloc(size);
-	else
-		ptr = realloc(p, size * (num + 1));
-
-	memset((char*)ptr + size * num, 0, size);
-	return ptr;
 }
 
 HRESULT CALLBACK DXEnumDisplayModes(LPDDSURFACEDESCX lpDDSurfaceDesc, LPVOID lpContext)
@@ -315,226 +337,6 @@ HRESULT CALLBACK DXEnumTextureFormats(LPDDSURFACEDESCX lpDDPixFmt, LPVOID lpCont
 	return D3DENUMRET_OK;
 }
 
-BOOL CALLBACK DXEnumDirectSound(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext)
-{
-	DEVICEINFO* device;
-	DXDIRECTSOUNDINFO* sinfo;
-
-	device = (DEVICEINFO*)lpContext;
-	device->DSInfo = (DXDIRECTSOUNDINFO*)AddStruct(device->DSInfo, device->nDSInfo, sizeof(DXDIRECTSOUNDINFO));
-	sinfo = &device->DSInfo[device->nDSInfo];
-
-	if (lpGuid)
-	{
-		sinfo->lpGuid = &sinfo->Guid;
-		sinfo->Guid = *lpGuid;
-	}
-	else
-		sinfo->lpGuid = 0;
-
-	lstrcpy(sinfo->About, lpcstrDescription);
-	lstrcpy(sinfo->Name, lpcstrModule);
-	device->nDSInfo++;
-	return 1;
-}
-
-void DXFreeDeviceInfo(DEVICEINFO* device)
-{
-	DIRECTDRAWINFO* dinfo;
-
-	for (int i = 0; i < device->nDDInfo; i++)
-	{
-		dinfo = &device->DDInfo[i];
-
-		for (int j = 0; j < dinfo->nD3DInfo; j++)
-		{
-			free(dinfo->D3DInfo[j].DisplayMode);
-			free(dinfo->D3DInfo[j].Texture);
-		}
-
-		free(dinfo->D3DInfo);
-		free(dinfo->DisplayMode);
-	}
-
-	free(device->DDInfo);
-
-	if (device->DSInfo)
-		free(device->DSInfo);
-
-	memset(device, 0, sizeof(DEVICEINFO));
-}
-
-void DXSaveScreen(LPDIRECTDRAWSURFACEX surf)
-{
-	FILE* file;
-	DDSURFACEDESCX desc;
-	ushort* pSurf;
-	short* pDest;
-	char* pM;
-	long r, g, b;
-	static long num;
-	ushort c;
-	char buf[16];
-	static char tga_header[18] = { 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 1, 0, 1, 16, 0 };
-
-	memset(&desc, 0, sizeof(DDSURFACEDESCX));
-	desc.dwSize = sizeof(DDSURFACEDESCX);
-
-	if (FAILED(surf->GetSurfaceDesc(&desc)))
-		return;
-
-	if (FAILED(surf->Lock(0, &desc, DDLOCK_WAIT, 0)))
-		return;
-
-	pSurf = (ushort*)desc.lpSurface;
-	sprintf(buf, "tomb%04d.tga", num);
-	num++;
-	file = fopen(buf, "wb");
-
-	if (file)
-	{
-		*(short*)&tga_header[12] = (short)desc.dwWidth;
-		*(short*)&tga_header[14] = (short)desc.dwHeight;
-		fwrite(tga_header, sizeof(tga_header), 1, file);
-		pM = (char*)malloc(2 * desc.dwWidth * desc.dwHeight);
-		pDest = (short*)pM;
-		pSurf += desc.dwHeight * (desc.lPitch / 2);
-
-		for (ulong h = 0; h < desc.dwHeight; h++)
-		{
-			for (ulong w = 0; w < desc.dwWidth; w++)
-			{
-				c = pSurf[w];
-
-				if (desc.ddpfPixelFormat.dwRBitMask == 0xF800)
-				{
-					r = (c >> 11) & 0x1F;
-					g = (c >> 6) & 0x1F;
-					b = c & 0x1F;
-					*pDest++ = short(r << 10 | g << 5 | b);
-				}
-				else
-					*pDest++ = (short)c;
-			}
-
-			pSurf -= desc.lPitch / 2;
-		}
-
-		fwrite(pM, 2 * desc.dwWidth * desc.dwHeight, 1, file);
-		free(pM);
-		fclose(file);
-
-		buf[7]++;
-
-		if (buf[7] > '9')
-		{
-			buf[7] = '0';
-			buf[6]++;
-		}
-	}
-
-	DD_UnlockSurface(surf, desc);
-}
-
-void DXDoFlipWait()
-{
-	while (App.FrontBuffer->GetFlipStatus(DDGFS_ISFLIPDONE) == DDERR_WASSTILLDRAWING);
-}
-
-bool DXCheckForLostSurfaces()
-{
-	bool pass;
-
-	if (!App.FrontBuffer)
-		S_ExitSystem("Oops... no front buffer");
-
-	pass = SUCCEEDED(DD_EnsureSurfaceAvailable(App.FrontBuffer, 0, 1)) ||
-		SUCCEEDED(DD_EnsureSurfaceAvailable(App.BackBuffer, App.FrontBuffer, 1));
-
-	if (App.ZBuffer)
-		pass = pass || SUCCEEDED(DD_EnsureSurfaceAvailable(App.ZBuffer, 0, 0));
-
-	pass = pass || SUCCEEDED(DD_EnsureSurfaceAvailable(App.PictureBuffer, 0, 0));
-
-	if (pass && !GtWindowClosed)
-		HWR_GetAllTextureHandles();
-
-	return pass;
-}
-
-void DXClearBuffers(ulong flags, ulong color)
-{
-	DISPLAYMODE* dm;
-	RECT r;
-	D3DRECT vr;
-	ulong sflags;
-
-	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
-	r.top = 0;
-	r.left = 0;
-	r.right = dm->w;
-	r.bottom = dm->h;
-
-	sflags = 0;
-
-	if (flags & 2)
-		sflags = 1;
-
-	if (flags & 8)
-		sflags |= 2;
-
-	if (sflags)
-	{
-		vr.x1 = 0;
-		vr.y1 = 0;
-		vr.x2 = dm->w;
-		vr.y2 = dm->h;
-		App.D3DView->Clear(1, &vr, sflags);
-	}
-
-	if (flags & 1)
-		DD_ClearSurface(App.FrontBuffer, &r, color);
-
-	if (flags & 0x20)
-	{
-		r.top = 0;
-		r.left = 0;
-		r.right = 640;
-		r.bottom = 480;
-		DD_ClearSurface(App.PictureBuffer, &r, color);
-	}
-}
-
-bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
-{
-	DIRECT3DINFO* d3dinfo;
-	ulong w;
-
-	App.nFrames++;
-	DXCheckForLostSurfaces();
-	d3dinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D];
-	w = d3dinfo->DisplayMode[App.lpDXConfig->nVMode].w;
-
-	if (tomb3.Windowed)
-		App.FrontBuffer->Blt(&tomb3.rScreen, App.BackBuffer, &tomb3.rViewport, DDBLT_WAIT, 0);
-	else
-		App.FrontBuffer->Flip(0, DDFLIP_WAIT);
-
-	if (runMessageLoop)
-		return DD_SpinMessageLoop(0);
-
-	return 1;
-}
-
-void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance)
-{
-	MMXSupported = 1;
-	G_hwnd = hWnd;
-	DirectDrawEnumerate(DXEnumDirectDraw, device);
-	DirectSoundEnumerate(DXEnumDirectSound, device);
-	//Original joystick enumeration stuff was here
-}
-
 HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LPD3DDEVICEDESC lpHWDesc, LPD3DDEVICEDESC lpHELDesc, LPVOID lpContext)
 {
 	DIRECTDRAWINFO* ddinfo;
@@ -631,135 +433,127 @@ HRESULT CALLBACK DXEnumDirect3D(LPGUID lpGuid, LPSTR description, LPSTR name, LP
 	return D3DENUMRET_OK;
 }
 
-bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer)
+void DXSaveScreen(LPDIRECTDRAWSURFACEX surf)
 {
-	DIRECT3DINFO* d3dinfo;
-	DISPLAYMODE* dm;
-	ulong currentBpp;
-	bool change;
+	FILE* file;
+	DDSURFACEDESCX desc;
+	ushort* pSurf;
+	short* pDest;
+	char* pM;
+	long r, g, b;
+	static long num;
+	ushort c;
+	char buf[16];
+	static char tga_header[18] = { 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 1, 0, 1, 16, 0 };
 
-	d3dinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D];
+	memset(&desc, 0, sizeof(DDSURFACEDESCX));
+	desc.dwSize = sizeof(DDSURFACEDESCX);
 
-	dm = &d3dinfo->DisplayMode[App.lpDXConfig->nVMode];
-	currentBpp = dm->bpp;
-
-	App.DXConfig.nVMode = needed;
-	dm = &d3dinfo->DisplayMode[App.lpDXConfig->nVMode];
-	change = 1;
-
-	if (needed != current && dm->bpp != currentBpp)
-	{
-		change = 0;
-
-		if (needed > current)
-		{
-			while (++needed <= d3dinfo->nDisplayMode)
-			{
-				App.DXConfig.nVMode = needed;
-				dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
-
-				if (dm->bpp == currentBpp)
-				{
-					change = 1;
-					break;
-				}
-			}
-		}
-		else
-		{
-			while (--needed >= 0)
-			{
-				App.DXConfig.nVMode = needed;
-				dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
-
-				if (dm->bpp == currentBpp)
-				{
-					change = 1;
-					break;
-				}
-			}
-		}
-	}
-
-	if (!change)
-	{
-		App.DXConfig.nVMode = current;	//abort!
-		return 0;
-	}
-
-	DXSurfBlt(App.FrontBuffer, 0, 0);
-
-	for (int i = 0; i < MAX_TPAGES; i++)
-		PictureTextures[i].tex = 0;
-
-	WinFreeDX(0);
-
-	if (WinDXInit(App.lpDeviceInfo, App.lpDXConfig, 0))
-		change = 1;
-	else
-	{
-		WinFreeDX(0);
-		App.DXConfig.nVMode = current;
-
-		if (disableZBuffer)
-			App.lpDXConfig->bZBuffer = 0;
-
-		WinDXInit(App.lpDeviceInfo, App.lpDXConfig, 0);
-		change = 0;
-	}
-
-	HWR_GetAllTextureHandles();
-
-	for (int i = 0; i < nTPages; i++)
-		HWR_SetCurrentTexture(TPages[i]);
-
-	HWR_InitState();
-	setup_screen_size();
-	return change;
-}
-
-long DXToggleFullScreen()
-{
-	if (tomb3.Windowed)
-	{
-		Log("DXToggleFullScreen: Switching to Fullscreen");
-		tomb3.Windowed = 0;
-	}
-	else
-	{
-		Log("DXToggleFullScreen: Switching to Windowed");
-		tomb3.Windowed = 1;
-	}
-
-	if (WinDXInit(&App.DeviceInfo, &App.DXConfig, 0))
-	{
-		Log("DXToggleFullScreen: Switched successfully");
-		WinSetStyle(!tomb3.Windowed, tomb3.WindowStyle);
-		return 1;
-	}
-
-	Log("DXToggleFullScreen: Switching failed, try to revert");
-	tomb3.Windowed = !tomb3.Windowed;
-
-	if (WinDXInit(&App.DeviceInfo, &App.DXConfig, 0))
-	{
-		Log("DXToggleFullScreen: reverted fine");
-		return 0;
-	}
-
-	S_ExitSystem("Failed to reinit DX after DXToggleFullScreen");
-	return -1;
-}
-
-void DXMove(long x, long y)
-{
-	DISPLAYMODE* dm;
-
-	if (!tomb3.Windowed)
+	if (FAILED(surf->GetSurfaceDesc(&desc)))
 		return;
 
+	if (FAILED(surf->Lock(0, &desc, DDLOCK_WAIT, 0)))
+		return;
+
+	pSurf = (ushort*)desc.lpSurface;
+	sprintf(buf, "tomb%04d.tga", num);
+	num++;
+	file = fopen(buf, "wb");
+
+	if (file)
+	{
+		*(short*)&tga_header[12] = (short)desc.dwWidth;
+		*(short*)&tga_header[14] = (short)desc.dwHeight;
+		fwrite(tga_header, sizeof(tga_header), 1, file);
+		pM = (char*)malloc(2 * desc.dwWidth * desc.dwHeight);
+		pDest = (short*)pM;
+		pSurf += desc.dwHeight * (desc.lPitch / 2);
+
+		for (ulong h = 0; h < desc.dwHeight; h++)
+		{
+			for (ulong w = 0; w < desc.dwWidth; w++)
+			{
+				c = pSurf[w];
+
+				if (desc.ddpfPixelFormat.dwRBitMask == 0xF800)
+				{
+					r = (c >> 11) & 0x1F;
+					g = (c >> 6) & 0x1F;
+					b = c & 0x1F;
+					*pDest++ = short(r << 10 | g << 5 | b);
+				}
+				else
+					*pDest++ = (short)c;
+			}
+
+			pSurf -= desc.lPitch / 2;
+		}
+
+		fwrite(pM, 2 * desc.dwWidth * desc.dwHeight, 1, file);
+		free(pM);
+		fclose(file);
+
+		buf[7]++;
+
+		if (buf[7] > '9')
+		{
+			buf[7] = '0';
+			buf[6]++;
+		}
+	}
+
+	surf->Unlock(desc.lpSurface);
+}
+
+void DXClearBuffers(ulong flags, ulong color)
+{
+	DISPLAYMODE* dm;
+	RECT r;
+	D3DRECT vr;
+	ulong sflags;
+
 	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
-	SetRect(&tomb3.rScreen, x, y, x + dm->w, y + dm->h);
+	r.top = 0;
+	r.left = 0;
+	r.right = dm->w;
+	r.bottom = dm->h;
+
+	sflags = 0;
+
+	if (flags & 2)
+		sflags |= D3DCLEAR_TARGET;
+
+	if (flags & 8)
+		sflags |= D3DCLEAR_ZBUFFER;
+
+	if (sflags)
+	{
+		vr.x1 = 0;
+		vr.y1 = 0;
+		vr.x2 = dm->w;
+		vr.y2 = dm->h;
+		App.D3DView->Clear(1, &vr, sflags);
+	}
+
+	if (flags & 1)
+		DD_ClearSurface(App.FrontBuffer, &r, color);
+
+	if (flags & 0x20)
+	{
+		r.top = 0;
+		r.left = 0;
+		r.right = 640;
+		r.bottom = 480;
+		DD_ClearSurface(App.PictureBuffer, &r, color);
+	}
+}
+
+void DXGetDeviceInfo(DEVICEINFO* device, HWND hWnd, HINSTANCE hInstance)
+{
+	G_hwnd = hWnd;
+	DirectDrawEnumerate(DXEnumDirectDraw, device);
+	DirectSoundEnumerate(DXEnumDirectSound, device);
+	//Original joystick enumeration stuff was here
 }
 
 bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool windowed)
@@ -815,12 +609,12 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 		r.left = 0;
 		r.right = dm->w;
 		r.bottom = dm->h;
-		AdjustWindowRect(&r, tomb3.WindowStyle, 0);
+		AdjustWindowRect(&r, App.WindowStyle, 0);
 		SetWindowPos(App.WindowHandle, 0, 0, 0, r.right - r.left, r.bottom - r.top, SWP_NOMOVE | SWP_NOZORDER);
-		GetClientRect(App.WindowHandle, &tomb3.rViewport);
-		GetClientRect(App.WindowHandle, &tomb3.rScreen);
-		ClientToScreen(App.WindowHandle, (LPPOINT)&tomb3.rScreen);
-		ClientToScreen(App.WindowHandle, (LPPOINT)&tomb3.rScreen.right);
+		GetClientRect(App.WindowHandle, &App.rViewport);
+		GetClientRect(App.WindowHandle, &App.rScreen);
+		ClientToScreen(App.WindowHandle, (LPPOINT)&App.rScreen);
+		ClientToScreen(App.WindowHandle, (LPPOINT)&App.rScreen.right);
 		desc.dwFlags = DDSD_CAPS;
 		desc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
 
@@ -894,10 +688,10 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 			return 0;
 		}
 
-		tomb3.rViewport.top = 0;
-		tomb3.rViewport.left = 0;
-		tomb3.rViewport.right = dm->w;
-		tomb3.rViewport.bottom = dm->h;
+		App.rViewport.top = 0;
+		App.rViewport.left = 0;
+		App.rViewport.right = dm->w;
+		App.rViewport.bottom = dm->h;
 	}
 
 	if (!DXCreateZBuffer(device, config))
@@ -911,6 +705,7 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 		Log("DXCreateDirect3DDevice failed, exitting..");
 		return 0;
 	}
+
 
 	dm = &device->DDInfo[config->nDD].D3DInfo[config->nD3D].DisplayMode[config->nVMode];
 
@@ -936,16 +731,559 @@ bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool 
 	desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
 	DXCreateSurface(App.DDraw, &desc, &App.PictureBuffer);
 	DXClearBuffers(11, 0);
-	InitDrawPrimitive(App.D3DDev, App.BackBuffer);
+	InitDrawPrimitive(App.D3DDev);
 	HWR_InitState();
 	DXCreateMaxTPages(1);
 
-	if (!nTPages)
+	if (!nTextures)
 	{
-		Log("nTPages is 0, DXCreateMaxTPages failed, exitting..");
+		Log("nTextures is 0, DXCreateMaxTPages failed, exitting..");
 		return 0;
 	}
 
 	Log("DXStartRenderer finished successfully");
 	return 1;
+}
+
+bool DXSwitchVideoMode(long needed, long current, bool disableZBuffer)
+{
+	DIRECT3DINFO* d3dinfo;
+	DISPLAYMODE* dm;
+	ulong currentBpp;
+	bool change;
+
+	d3dinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D];
+	dm = &d3dinfo->DisplayMode[App.lpDXConfig->nVMode];
+	currentBpp = dm->bpp;
+
+	App.DXConfig.nVMode = needed;
+	dm = &d3dinfo->DisplayMode[App.lpDXConfig->nVMode];
+	change = 1;
+
+	if (needed != current && dm->bpp != currentBpp)
+	{
+		change = 0;
+
+		if (needed > current)
+		{
+			while (++needed <= d3dinfo->nDisplayMode)
+			{
+				App.DXConfig.nVMode = needed;
+				dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+
+				if (dm->bpp == currentBpp)
+				{
+					change = 1;
+					break;
+				}
+			}
+		}
+		else
+		{
+			while (--needed >= 0)
+			{
+				App.DXConfig.nVMode = needed;
+				dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+
+				if (dm->bpp == currentBpp)
+				{
+					change = 1;
+					break;
+				}
+			}
+		}
+	}
+
+	if (!change)
+	{
+		App.DXConfig.nVMode = current;	//abort!
+		return 0;
+	}
+
+	DXSurfBlt(App.FrontBuffer, 0, 0);
+
+	for (int i = 0; i < MAX_TPAGES; i++)
+		Textures[i].tex = 0;
+
+	WinFreeDX(0);
+
+	if (WinDXInit(App.lpDeviceInfo, App.lpDXConfig, 0))
+		change = 1;
+	else
+	{
+		WinFreeDX(0);
+		App.DXConfig.nVMode = current;
+
+		if (disableZBuffer)
+			App.lpDXConfig->bZBuffer = 0;
+
+		WinDXInit(App.lpDeviceInfo, App.lpDXConfig, 0);
+		change = 0;
+	}
+
+	HWR_GetAllTextureHandles();
+
+	for (int i = 0; i < nTextures; i++)
+		HWR_SetCurrentTexture(TexturePtrs[i]);
+
+	HWR_InitState();
+	setup_screen_size();
+	return change;
+}
+#else
+static bool CreateD3D()
+{
+	App.D3D = Direct3DCreate9(D3D_SDK_VERSION);
+	return App.D3D != 0;
+}
+
+static void ReleaseD3D()
+{
+	App.D3D->Release();
+	App.D3D = 0;
+}
+
+void DXCreateCaptureBuffer()
+{
+	DISPLAYMODE* dm;
+
+	DXFreeCaptureBuffer();
+
+	dm = &App.DeviceInfo.D3DInfo[App.DXConfig.nD3D].DisplayMode[App.DXConfig.nVMode];
+	App.D3DDev->CreateRenderTarget(dm->w, dm->h, D3DFMT_X8R8G8B8, D3DMULTISAMPLE_NONE, 0, 1, &App.CaptureBuffer, 0);
+	App.D3DDev->ColorFill(App.CaptureBuffer, 0, 0);
+}
+
+void DXFreeCaptureBuffer()
+{
+	if (App.CaptureBuffer)
+	{
+		App.CaptureBuffer->Release();
+		App.CaptureBuffer = 0;
+	}
+}
+
+void DXCreatePictureBuffer()
+{
+	DISPLAYMODE* dm;
+
+	DXFreePictureBuffer();
+
+	dm = &App.DeviceInfo.D3DInfo[App.DXConfig.nD3D].DisplayMode[App.DXConfig.nVMode];
+	App.D3DDev->CreateOffscreenPlainSurface(dm->w, dm->h, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &App.PictureBuffer, 0);
+}
+
+void DXFreePictureBuffer()
+{
+	if (App.PictureBuffer)
+	{
+		App.PictureBuffer->Release();
+		App.PictureBuffer = 0;
+	}
+}
+
+void DXClearBuffers(ulong flags, ulong color)
+{
+	ulong sflags;
+
+	sflags = 0;
+
+	if (flags & 2)
+		sflags |= D3DCLEAR_TARGET;
+
+	if (flags & 8)
+		sflags |= D3DCLEAR_ZBUFFER;
+
+	if (sflags)
+		App.D3DDev->Clear(0, 0, sflags, 0, 1.0F, 0);
+
+	if (flags & 0x20)
+		DXCreateCaptureBuffer();
+}
+
+static void DXEnumerateDisplayModes(DIRECT3DINFO* d3dinfo, long index)
+{
+	DISPLAYMODE* pDM;
+	D3DDISPLAYMODE DM;
+	ulong nDM, lp;
+
+	nDM = App.D3D->GetAdapterModeCount(index, D3DFMT_X8R8G8B8);
+
+	for (lp = 0; lp < nDM; lp++)
+	{
+		if FAILED(App.D3D->EnumAdapterModes(index, D3DFMT_X8R8G8B8, lp, &DM))
+			continue;
+
+		d3dinfo->DisplayMode = (DISPLAYMODE*)AddStruct(d3dinfo->DisplayMode, d3dinfo->nDisplayMode, sizeof(DISPLAYMODE));
+		pDM = &d3dinfo->DisplayMode[d3dinfo->nDisplayMode];
+
+		pDM->w = DM.Width;
+pDM->h = DM.Height;
+pDM->bpp = 32;
+
+d3dinfo->nDisplayMode++;
+	}
+}
+
+bool DXGetDeviceInfo(DEVICEINFO* device)
+{
+	DIRECT3DINFO* d3dinfo;
+	D3DADAPTER_IDENTIFIER9 ID;
+	D3DCAPS9 caps;
+	ulong nD3D, lp;
+
+	if (!CreateD3D())
+		return 0;
+
+	nD3D = App.D3D->GetAdapterCount();
+
+	for (lp = 0; lp < nD3D; lp++)
+	{
+		if (FAILED(App.D3D->GetAdapterIdentifier(lp, 0, &ID)) || FAILED(App.D3D->GetDeviceCaps(lp, D3DDEVTYPE_HAL, &caps)))
+			continue;
+
+		device->D3DInfo = (DIRECT3DINFO*)AddStruct(device->D3DInfo, device->nD3DInfo, sizeof(DIRECT3DINFO));
+		d3dinfo = &device->D3DInfo[device->nD3DInfo];
+
+		lstrcpy(d3dinfo->About, ID.Description);
+		lstrcpy(d3dinfo->Name, ID.DeviceName);
+
+		d3dinfo->Guid = ID.DeviceIdentifier;
+		d3dinfo->lpGuid = &d3dinfo->Guid;
+
+		d3dinfo->caps = caps;
+
+		d3dinfo->nDisplayMode = 0;
+		d3dinfo->DisplayMode = 0;
+		DXEnumerateDisplayModes(d3dinfo, lp);
+
+		d3dinfo->index = lp;
+		device->nD3DInfo++;
+	}
+
+	DirectSoundEnumerate(DXEnumDirectSound, device);
+	ReleaseD3D();
+	return 1;
+}
+
+static bool DXCreateDevice(bool windowed)
+{
+	D3DCAPS9* caps;
+	DIRECT3DINFO* d3dinfo;
+	D3DPRESENT_PARAMETERS d3dpp;
+	HRESULT res;
+	ulong flag;
+
+	memset(&d3dpp, 0, sizeof(d3dpp));
+	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	d3dpp.hDeviceWindow = App.WindowHandle;
+	d3dpp.EnableAutoDepthStencil = 1;
+
+	d3dinfo = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D];
+	caps = &d3dinfo->caps;
+
+	if SUCCEEDED(App.D3D->CheckDepthStencilMatch(caps->AdapterOrdinal, caps->DeviceType, D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_D16))
+		d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
+	else if SUCCEEDED(App.D3D->CheckDepthStencilMatch(caps->AdapterOrdinal, caps->DeviceType, D3DFMT_X8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_D24X8))
+		d3dpp.AutoDepthStencilFormat = D3DFMT_D24X8;
+	else
+		return 0;
+
+	d3dpp.Windowed = windowed;
+
+	if (!windowed)
+	{
+		d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
+		d3dpp.BackBufferWidth = App.rViewport.right;
+		d3dpp.BackBufferHeight = App.rViewport.bottom;
+	}
+
+	if (!App.D3DDev)
+	{
+		flag = (caps->DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) ? D3DCREATE_HARDWARE_VERTEXPROCESSING : D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+
+		if FAILED(App.D3D->CreateDevice(d3dinfo->index, D3DDEVTYPE_HAL, App.WindowHandle, flag, &d3dpp, &App.D3DDev))
+			return 0;
+	}
+	else
+	{
+		if (App.DestVB)
+		{
+			App.DestVB->Release();
+			App.DestVB = 0;
+		}
+
+		res = D3D_OK;
+
+		do res = App.D3DDev->TestCooperativeLevel(); while (res == D3DERR_DEVICELOST);
+
+		if (res != D3D_OK)
+		{
+			if (res == D3DERR_DEVICENOTRESET)
+			{
+				if (FAILED(App.D3DDev->Reset(&d3dpp)))
+					return 0;
+			}
+
+			return 0;
+		}
+	}
+
+	if (!App.DestVB)
+	{
+		if (FAILED(App.D3DDev->CreateVertexBuffer(sizeof(D3DTLVERTEX) * VTXBUF_LEN,
+			D3DUSAGE_WRITEONLY | D3DUSAGE_DONOTCLIP | D3DUSAGE_DYNAMIC, D3DFVF_TLVERTEX, D3DPOOL_DEFAULT, &App.DestVB, 0)))
+		{
+			Log("Can't create vertex buffer.");
+			return 0;
+		}
+	}
+
+	App.D3DDev->SetStreamSource(0, App.DestVB, 0, sizeof(D3DTLVERTEX));
+	App.D3DDev->SetFVF(D3DFVF_TLVERTEX);
+	return 1;
+}
+
+bool DXStartRenderer(DEVICEINFO* device, DXCONFIG* config, bool createNew, bool windowed)
+{
+	DISPLAYMODE* dm;
+	RECT r;
+	HWND desktop;
+	DEVMODE dev;
+	HDC hDC;
+	bool res;
+
+	Log("Starting DXStartRenderer");
+
+	if (createNew)
+	{
+		if (!CreateD3D())
+		{
+			Log("Failed to CreateD3D");
+			return 0;
+		}
+	}
+
+	dm = &device->D3DInfo[config->nD3D].DisplayMode[config->nVMode];
+
+	if (windowed)
+	{
+		Log("Creating windowed");
+		desktop = GetDesktopWindow();
+		hDC = GetDC(desktop);
+		ReleaseDC(desktop, hDC);
+		dev.dmBitsPerPel = dm->bpp;
+		dev.dmSize = sizeof(DEVMODE);
+		dev.dmFields = DM_BITSPERPEL;
+		ChangeDisplaySettings(&dev, 0);
+
+		r.top = 0;
+		r.left = 0;
+		r.right = dm->w;
+		r.bottom = dm->h;
+		AdjustWindowRect(&r, App.WindowStyle, 0);
+		SetWindowPos(App.WindowHandle, 0, 0, 0, r.right - r.left, r.bottom - r.top, SWP_NOMOVE | SWP_NOZORDER);
+		GetClientRect(App.WindowHandle, &App.rViewport);
+		GetClientRect(App.WindowHandle, &App.rScreen);
+		ClientToScreen(App.WindowHandle, (LPPOINT)&App.rScreen);
+		ClientToScreen(App.WindowHandle, (LPPOINT)&App.rScreen.right);
+	}
+	else
+	{
+		Log("Creating Fullscreen");
+		App.rViewport.top = 0;
+		App.rViewport.left = 0;
+		App.rViewport.right = dm->w;
+		App.rViewport.bottom = dm->h;
+		App.rScreen.top = 0;
+		App.rScreen.left = 0;
+		App.rScreen.right = dm->w;
+		App.rScreen.bottom = dm->h;
+	}
+
+	res = DXCreateDevice(windowed);
+
+	if (res)
+	{
+		DXCreateCaptureBuffer();
+		DXCreatePictureBuffer();
+	}
+
+	return res;
+}
+
+bool DXSwitchVideoMode(long needed, long current)
+{
+	if (current == needed)
+		return 0;
+
+	App.lpDXConfig->nVMode = needed;
+
+	if (!WinDXInit(App.lpDeviceInfo, App.lpDXConfig, 0))
+	{
+		WinFreeDX(0);
+		App.lpDXConfig->nVMode = current;
+		WinDXInit(App.lpDeviceInfo, App.lpDXConfig, 0);
+		return 0;
+	}
+
+	HWR_InitState();
+	setup_screen_size();
+	return 1;
+}
+
+bool DXToggleZbuffer()
+{
+	App.lpDXConfig->bZBuffer = !App.lpDXConfig->bZBuffer;
+	HWR_InitState();
+	return 1;
+}
+#endif
+
+BOOL CALLBACK DXEnumDirectSound(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext)
+{
+	DEVICEINFO* device;
+	DXDIRECTSOUNDINFO* sinfo;
+
+	device = (DEVICEINFO*)lpContext;
+	device->DSInfo = (DXDIRECTSOUNDINFO*)AddStruct(device->DSInfo, device->nDSInfo, sizeof(DXDIRECTSOUNDINFO));
+	sinfo = &device->DSInfo[device->nDSInfo];
+
+	if (lpGuid)
+	{
+		sinfo->lpGuid = &sinfo->Guid;
+		sinfo->Guid = *lpGuid;
+	}
+	else
+		sinfo->lpGuid = 0;
+
+	lstrcpy(sinfo->About, lpcstrDescription);
+	lstrcpy(sinfo->Name, lpcstrModule);
+	device->nDSInfo++;
+	return 1;
+}
+
+void DXFreeDeviceInfo(DEVICEINFO* device)
+{
+#if (DIRECT3D_VERSION >= 0x900)
+	DIRECT3DINFO* d3dinfo;
+	ulong lp;
+
+	for (lp = 0; lp < device->nD3DInfo; lp++)
+	{
+		d3dinfo = &device->D3DInfo[lp];
+		free(d3dinfo->DisplayMode);
+	}
+
+	free(device->D3DInfo);
+#else
+	DIRECTDRAWINFO* dinfo;
+
+	for (int i = 0; i < device->nDDInfo; i++)
+	{
+		dinfo = &device->DDInfo[i];
+
+		for (int j = 0; j < dinfo->nD3DInfo; j++)
+		{
+			free(dinfo->D3DInfo[j].DisplayMode);
+			free(dinfo->D3DInfo[j].Texture);
+		}
+
+		free(dinfo->D3DInfo);
+		free(dinfo->DisplayMode);
+	}
+
+	free(device->DDInfo);
+#endif
+	if (device->DSInfo)
+		free(device->DSInfo);
+
+	memset(device, 0, sizeof(DEVICEINFO));
+}
+
+bool DXUpdateFrame(bool runMessageLoop, LPRECT rect)
+{
+#if (DIRECT3D_VERSION >= 0x900)
+	LPDIRECTDRAWSURFACEX BackBuffer;
+
+	App.D3DDev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &BackBuffer);
+	App.D3DDev->StretchRect(BackBuffer, 0, App.CaptureBuffer, 0, D3DTEXF_NONE);
+	BackBuffer->Release();
+
+	if (App.D3DDev->Present(0, 0, 0, 0) == D3DERR_DEVICELOST)
+	{
+		DXFreeCaptureBuffer();
+		DXCreateDevice(App.Windowed);
+		HWR_InitState();
+		DXCreateCaptureBuffer();
+	}
+
+	App.D3DDev->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0, 1.0F, 0);
+#else
+	DIRECT3DINFO* d3dinfo;
+	ulong w;
+
+	App.nFrames++;
+	DXCheckForLostSurfaces();
+	d3dinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D];
+	w = d3dinfo->DisplayMode[App.lpDXConfig->nVMode].w;
+
+	if (App.Windowed)
+		App.FrontBuffer->Blt(&App.rScreen, App.BackBuffer, &App.rViewport, DDBLT_WAIT, 0);
+	else
+		App.FrontBuffer->Flip(0, DDFLIP_WAIT);
+#endif
+
+	if (runMessageLoop)
+		return DD_SpinMessageLoop(0);
+
+	return 1;
+}
+
+long DXToggleFullScreen()
+{
+	if (App.Windowed)
+	{
+		Log("DXToggleFullScreen: Switching to Fullscreen");
+		App.Windowed = 0;
+	}
+	else
+	{
+		Log("DXToggleFullScreen: Switching to Windowed");
+		App.Windowed = 1;
+	}
+
+	if (WinDXInit(&App.DeviceInfo, &App.DXConfig, 0))
+	{
+		Log("DXToggleFullScreen: Switched successfully");
+		WinSetStyle(!App.Windowed, App.WindowStyle);
+		return 1;
+	}
+
+	Log("DXToggleFullScreen: Switching failed, try to revert");
+	App.Windowed = !App.Windowed;
+
+	if (WinDXInit(&App.DeviceInfo, &App.DXConfig, 0))
+	{
+		Log("DXToggleFullScreen: reverted fine");
+		return 0;
+	}
+
+	S_ExitSystem("Failed to reinit DX after DXToggleFullScreen");
+	return -1;
+}
+
+void DXMove(long x, long y)
+{
+	DISPLAYMODE* dm;
+
+	if (!App.Windowed)
+		return;
+
+#if (DIRECT3D_VERSION >= 0x900)
+	dm = &App.lpDeviceInfo->D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#else
+	dm = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D].DisplayMode[App.lpDXConfig->nVMode];
+#endif
+	SetRect(&App.rScreen, x, y, x + dm->w, y + dm->h);
 }

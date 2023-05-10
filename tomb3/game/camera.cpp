@@ -575,8 +575,9 @@ void CombatCamera(ITEM_INFO* item)
 
 	room_number = camera.target.room_number;
 	floor = GetFloor(camera.target.x, camera.target.y + 256, camera.target.z, &room_number);
+
 	if (room[room_number].flags & ROOM_SWAMP)
-		camera.target.y = room[room_number].maxceiling - 256;	//check me
+		camera.target.y = room[room_number].maxceiling - 256;
 
 	x = camera.target.x;
 	y = camera.target.y;

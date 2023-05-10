@@ -207,7 +207,7 @@ void ShivaControl(short item_number)
 			{
 				shiva->flags++;
 				x = (GetRandomControl() & 0x5FF) + item->pos.x_pos - 768;
-				y = item->pos.y_pos - (GetRandomControl() & 0x5FF);	//typo maybe?
+				y = item->pos.y_pos - (GetRandomControl() & 0x5FF);
 				z = (GetRandomControl() & 0x5FF) + item->pos.z_pos - 768;
 				TriggerShivaSmoke(x, y, z, 1);
 			}

@@ -13,6 +13,8 @@
 #include "../game/control.h"
 #include "../game/lara.h"
 #include "picture.h"
+#include "smain.h"
+#include "hwrender.h"
 #include "../tomb3/tomb3.h"
 
 const char* KeyboardButtons[272] =
@@ -129,6 +131,9 @@ long S_UpdateInput()
 	long linput;
 	static long med_debounce = 0;
 	static bool pause_debounce = 0;
+#if (DIRECT3D_VERSION >= 0x900)
+	static bool F7_debounce = 0;
+#endif
 
 	DD_SpinMessageLoop(0);
 	DI_ReadKeyboard(keymap);
@@ -235,6 +240,21 @@ long S_UpdateInput()
 		if (key_pressed(DIK_SUBTRACT))
 			DecreaseScreenSize();
 	}
+	
+#if (DIRECT3D_VERSION >= 0x900)
+	if (key_pressed(DIK_F7))
+	{
+		if (!F7_debounce)
+		{
+			F7_debounce = 1;
+			tomb3.psx_contrast = !tomb3.psx_contrast;
+			HWR_InitState();
+			S_SaveSettings();
+		}
+	}
+	else
+		F7_debounce = 0;
+#endif
 
 	if (key_pressed(DIK_1) && Inv_RequestItem(GUN_OPTION))
 		lara.request_gun_type = LG_PISTOLS;
@@ -272,8 +292,10 @@ long S_UpdateInput()
 	else if (med_debounce)
 		med_debounce--;
 
+#if (DIRECT3D_VERSION < 0x900)
 	if (key_pressed(DIK_APOSTROPHE))
 		DXSaveScreen(App.BackBuffer);
+#endif
 
 	if (FinishLevelCheat)
 	{

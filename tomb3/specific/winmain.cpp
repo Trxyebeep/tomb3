@@ -35,7 +35,7 @@ long farz;
 
 bool WinDXInit(DEVICEINFO* device, DXCONFIG* config, bool createNew)
 {
-	return DXStartRenderer(device, config, createNew, tomb3.Windowed);
+	return DXStartRenderer(device, config, createNew, App.Windowed);
 }
 
 void WinAppExit()
@@ -82,7 +82,7 @@ LRESULT CALLBACK WinAppProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 long WinRegisterWindow(HINSTANCE hinstance)
 {
-	App.WindowClass.hIcon = LoadIcon(hinstance, (LPCSTR)115);		//todo: icon resource define
+	App.WindowClass.hIcon = 0;
 	App.WindowClass.lpszMenuName = 0;
 	App.WindowClass.lpszClassName = "Window Class";
 	App.WindowClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
@@ -137,6 +137,7 @@ float WinFrameRate()
 
 void WinFreeDX(bool free_dd)
 {
+#if (DIRECT3D_VERSION < 0x900)
 	DXFreeTPages();
 
 	if (App.D3DView)
@@ -144,6 +145,7 @@ void WinFreeDX(bool free_dd)
 		App.D3DView->Release();
 		App.D3DView = 0;
 	}
+#endif
 
 	if (App.D3DDev)
 	{
@@ -151,6 +153,7 @@ void WinFreeDX(bool free_dd)
 		App.D3DDev = 0;
 	}
 
+#if (DIRECT3D_VERSION < 0x900)
 	if (App.ZBuffer)
 	{
 		App.ZBuffer->Release();
@@ -174,6 +177,10 @@ void WinFreeDX(bool free_dd)
 		App.PictureBuffer->Release();
 		App.PictureBuffer = 0;
 	}
+#else
+	DXFreeCaptureBuffer();
+	DXFreePictureBuffer();
+#endif
 
 	if (free_dd)
 	{
@@ -183,11 +190,13 @@ void WinFreeDX(bool free_dd)
 			App.D3D = 0;
 		}
 
+#if (DIRECT3D_VERSION < 0x900)
 		if (App.DDraw)
 		{
 			App.DDraw->Release();
 			App.DDraw = 0;
 		}
+#endif
 	}
 }
 
@@ -211,7 +220,9 @@ void WinSetStyle(bool fullscreen, ulong& set)
 
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nShowCmd)
 {
+#if (DIRECT3D_VERSION < 0x900)
 	DIRECT3DINFO* d3dinfo;
+#endif
 	HWND desktop;
 	HDC hdc;
 	DEVMODE devmode;
@@ -220,7 +231,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	G_lpCmdLine = lpCmdLine;
 	memset(&App, 0, sizeof(WINAPP));
 	App.hInstance = hInstance;
-	tomb3.WindowStyle = WS_OVERLAPPEDWINDOW;
+	App.WindowStyle = WS_OVERLAPPEDWINDOW;
 
 	if (!hPrevInstance && !WinRegisterWindow(hInstance))
 	{
@@ -237,7 +248,12 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	ShowWindow(App.WindowHandle, SW_HIDE);
 	UpdateWindow(App.WindowHandle);
 
+#if (DIRECT3D_VERSION >= 0x900)
+	if (!DXGetDeviceInfo(&App.DeviceInfo))
+		return 0;
+#else
 	DXGetDeviceInfo(&App.DeviceInfo, App.WindowHandle, App.hInstance);
+#endif
 	App.lpDXConfig = &App.DXConfig;
 	App.lpDeviceInfo = &App.DeviceInfo;
 
@@ -266,12 +282,12 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 		return 0;
 	}
 
-	tomb3.WinPlayLoaded = LoadWinPlay();
+	App.WinPlayLoaded = LoadWinPlay();
 
-	if (!tomb3.WinPlayLoaded)
+	if (!App.WinPlayLoaded)
 		MessageBox(0, "Failed to load WinPlay", "tomb3", 0);
 
-	SetWindowPos(App.WindowHandle, 0, tomb3.rScreen.left, tomb3.rScreen.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+	SetWindowPos(App.WindowHandle, 0, App.rScreen.left, App.rScreen.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 	desktop = GetDesktopWindow();
 	hdc = GetDC(desktop);
 	bpp = GetDeviceCaps(hdc, BITSPIXEL);
@@ -286,15 +302,15 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 		return 0;
 	}
 
-	if (tomb3.Windowed)
+	if (App.Windowed)
 	{
-		WinSetStyle(0, tomb3.WindowStyle);
+		WinSetStyle(0, App.WindowStyle);
 		SetCursor(LoadCursor(0, IDC_ARROW));
 		ShowCursor(1);
 	}
 	else
 	{
-		WinSetStyle(1, tomb3.WindowStyle);
+		WinSetStyle(1, App.WindowStyle);
 		SetCursor(0);
 		ShowCursor(0);
 	}
@@ -302,22 +318,37 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 	UpdateWindow(App.WindowHandle);
 	ShowWindow(App.WindowHandle, nShowCmd);
 
+#if (DIRECT3D_VERSION < 0x900)
 	d3dinfo = &App.lpDeviceInfo->DDInfo[App.lpDXConfig->nDD].D3DInfo[App.lpDXConfig->nD3D];
 
 	if (!(d3dinfo->DeviceDesc.dpcTriCaps.dwTextureCaps & D3DPTEXTURECAPS_ALPHA))
 		d3dinfo->Texture[App.lpDXConfig->D3DTF].bAlpha = 0;
+#endif
 
-	HWConfig.bPersp = 1;
 	HWConfig.bDither = App.DXConfig.Dither;
-	HWConfig.nFilter = D3DFILTER_NEAREST + (App.DXConfig.Filter != 0);
+
+#if (DIRECT3D_VERSION >= 0x900)
+	if (App.DXConfig.Filter)
+		HWConfig.nFilter = D3DTEXF_LINEAR;
+	else
+		HWConfig.nFilter = D3DTEXF_POINT;
+#else
+	if (App.DXConfig.Filter)
+		HWConfig.nFilter = D3DFILTER_LINEAR;
+	else
+		HWConfig.nFilter = D3DFILTER_NEAREST;
+#endif
+
 	HWConfig.nShadeMode = D3DSHADE_GOURAUD;
 	HWConfig.nFillMode = D3DFILL_SOLID;
 
 	framedump = 0;
 	App.nUVAdd = 256;
 	UT_InitAccurateTimer();
-	DXResetPalette(PictureTextures);
-	InitDrawPrimitive(App.D3DDev, App.BackBuffer);
+#if (DIRECT3D_VERSION < 0x900)
+	DXResetPalette();
+#endif
+	InitDrawPrimitive(App.D3DDev);
 	farz = 0x5000;
 	distanceFogValue = 0x3000;
 	TIME_Init();
@@ -343,14 +374,16 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmd
 
 void S_ExitSystem(const char* msg)
 {
+#if (DIRECT3D_VERSION < 0x900)
 	DXSetCooperativeLevel(App.DDraw, App.WindowHandle, DDSCL_NORMAL);
+#endif
 	MessageBox(App.WindowHandle, msg, 0, MB_OK);
 	ShutdownGame();
 	strcpy(exit_message, msg);
 	exit(1);
 }
 
-void Log(const char* s, ...)		//NOT present in original code
+void Log(const char* s, ...)
 {
 #ifdef DO_LOG
 	va_list list;
