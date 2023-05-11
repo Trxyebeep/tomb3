@@ -1401,7 +1401,8 @@ long GetCeiling(FLOOR_INFO* floor, long x, long y, long z)
 	ROOM_INFO* r;
 	FLOOR_INFO* f;
 	long xoff, yoff, height, h1, h2, ch1, ch2;
-	short* data, type, trigger, dx, dz, t0, t1, t2, t3, hadj, ended;
+	short* data;
+	short type, ftype, trigger, dx, dz, t0, t1, t2, t3, hadj, ended;
 
 	f = floor;
 
@@ -1425,9 +1426,10 @@ long GetCeiling(FLOOR_INFO* floor, long x, long y, long z)
 	{
 		data = &floor_data[f->index];
 		type = *data++;
+		ftype = type & 0x1F;
 		ended = 0;
 
-		if ((type & 0x1F) == TILT_TYPE || (type & 0x1F) == SPLIT1 || (type & 0x1F) == SPLIT2 || (type & 0x1F) == NOCOLF1T || (type & 0x1F) == NOCOLF1B || (type & 0x1F) == NOCOLF2T || (type & 0x1F) == NOCOLF2B)
+		if (ftype == TILT_TYPE || ftype == SPLIT1 || ftype == SPLIT2 || ftype == NOCOLF1T || ftype == NOCOLF1B || ftype == NOCOLF2T || ftype == NOCOLF2B)
 		{
 			data++;
 
@@ -1437,101 +1439,97 @@ long GetCeiling(FLOOR_INFO* floor, long x, long y, long z)
 			type = *data++;
 		}
 
+		ftype = type & 0x1F;
+
 		if (!ended)
 		{
 			h1 = 0;
 			h2 = 0;
 
-			if ((type & 0x1F) != ROOF_TYPE)
-			{
-				if ((type & 0x1F) == SPLIT3 || (type & 0x1F) == SPLIT4 || (type & 0x1F) == NOCOLC1T || (type & 0x1F) == NOCOLC1B || (type & 0x1F) == NOCOLC2T || (type & 0x1F) == NOCOLC2B)
-				{
-					dx = x & WALL_MASK;
-					dz = z & WALL_MASK;
-					t0 = -(*data & 0xF);
-					t1 = -(*data >> 4 & 0xF);
-					t2 = -(*data >> 8 & 0xF);
-					t3 = -(*data >> 12 & 0xF);
-
-					if ((type & 0x1F) == SPLIT3 || (type & 0x1F) == NOCOLC1T || (type & 0x1F) == NOCOLC1B)
-					{
-						if (dx <= WALL_SIZE - dz)
-						{
-							hadj = type >> 10 & 0x1F;
-
-							if (hadj & 0x10)
-								hadj |= 0xFFF0;
-
-							height += hadj << 8;
-							h1 = t2 - t1;
-							h2 = t3 - t2;
-						}
-						else
-						{
-							hadj = type >> 5 & 0x1F;
-
-							if (hadj & 0x10)
-								hadj |= 0xFFF0;
-
-							height += hadj << 8;
-							h1 = t3 - t0;
-							h2 = t0 - t1;
-						}
-					}
-					else
-					{
-						if (dx <= dz)
-						{
-							hadj = type >> 10 & 0x1F;
-
-							if (hadj & 0x10)
-								hadj |= 0xFFF0;
-
-							height += hadj << 8;
-							h1 = t2 - t1;
-							h2 = t0 - t1;
-						}
-						else
-						{
-							hadj = type >> 5 & 0x1F;
-
-							if (hadj & 0x10)
-								hadj |= 0xFFF0;
-
-							height += hadj << 8;
-							h1 = t3 - t0;
-							h2 = t3 - t2;
-						}
-					}
-
-					if (chunky_flag)
-					{
-						hadj = hadj >> 10 & 0x1F;
-
-						if (hadj & 0x10)
-							hadj |= 0xFFF0;
-
-						ch2 = f->ceiling << 8;
-						ch1 = ch2 + (hadj << 8);
-
-						hadj = hadj >> 5 & 0x1F;
-
-						if (hadj & 0x10)
-							hadj |= 0xFFF0;
-
-						ch2 += hadj << 8;
-
-						if (ch1 > ch2)
-							height = ch1;
-						else
-							height = ch2;
-					}
-				}
-			}
-			else
+			if (ftype == ROOF_TYPE)
 			{
 				h1 = *data >> 8;
 				h2 = *(char*)data;
+			}
+			else if (ftype == SPLIT3 || ftype == SPLIT4 || ftype == NOCOLC1T || ftype == NOCOLC1B || ftype == NOCOLC2T || ftype == NOCOLC2B)
+			{
+				dx = x & WALL_MASK;
+				dz = z & WALL_MASK;
+				t0 = -(*data & 0xF);
+				t1 = -(*data >> 4 & 0xF);
+				t2 = -(*data >> 8 & 0xF);
+				t3 = -(*data >> 12 & 0xF);
+
+				if (ftype == SPLIT3 || ftype == NOCOLC1T || ftype == NOCOLC1B)
+				{
+					if (dx <= WALL_SIZE - dz)
+					{
+						hadj = type >> 10 & 0x1F;
+
+						if (hadj & 0x10)
+							hadj |= 0xFFF0;
+
+						height += hadj << 8;
+						h1 = t2 - t1;
+						h2 = t3 - t2;
+					}
+					else
+					{
+						hadj = type >> 5 & 0x1F;
+
+						if (hadj & 0x10)
+							hadj |= 0xFFF0;
+
+						height += hadj << 8;
+						h1 = t3 - t0;
+						h2 = t0 - t1;
+					}
+				}
+				else if (dx <= dz)
+				{
+					hadj = type >> 10 & 0x1F;
+
+					if (hadj & 0x10)
+						hadj |= 0xFFF0;
+
+					height += hadj << 8;
+					h1 = t2 - t1;
+					h2 = t0 - t1;
+				}
+				else
+				{
+					hadj = type >> 5 & 0x1F;
+
+					if (hadj & 0x10)
+						hadj |= 0xFFF0;
+
+					height += hadj << 8;
+					h1 = t3 - t0;
+					h2 = t3 - t2;
+				}
+
+				if (chunky_flag)
+				{
+					hadj = hadj >> 10 & 0x1F;
+
+					if (hadj & 0x10)
+						hadj |= 0xFFF0;
+
+					ch2 = f->ceiling << 8;
+					ch1 = ch2 + (hadj << 8);
+
+					hadj = hadj >> 5 & 0x1F;
+
+					if (hadj & 0x10)
+						hadj |= 0xFFF0;
+
+					ch2 += hadj << 8;
+
+					if (ch1 > ch2)
+						height = ch1;
+					else
+						height = ch2;
+				}
 			}
 
 			if (!chunky_flag)
@@ -1632,16 +1630,16 @@ long GetCeiling(FLOOR_INFO* floor, long x, long y, long z)
 short GetDoor(FLOOR_INFO* floor)
 {
 	short* data;
-	short type;
+	short type, ftype;
 
 	if (!floor->index)
 		return NO_ROOM;
 
 	data = &floor_data[floor->index];
 	type = *data++;
+	ftype = type & 0x1F;
 
-	if ((type & 0x1F) == TILT_TYPE || (type & 0x1F) == SPLIT1 || (type & 0x1F) == SPLIT2 || (type & 0x1F) == NOCOLF1B ||
-		(type & 0x1F) == NOCOLF1T || (type & 0x1F) == NOCOLF2B || (type & 0x1F) == NOCOLF2T)
+	if (ftype == TILT_TYPE || ftype == SPLIT1 || ftype == SPLIT2 || ftype == NOCOLF1B || ftype == NOCOLF1T || ftype == NOCOLF2B || ftype == NOCOLF2T)
 	{
 		if (type & 0x8000)
 			return NO_ROOM;
@@ -1650,8 +1648,9 @@ short GetDoor(FLOOR_INFO* floor)
 		type = *data++;
 	}
 
-	if ((type & 0x1F) == ROOF_TYPE || (type & 0x1F) == SPLIT3 || (type & 0x1F) == SPLIT4 || (type & 0x1F) == NOCOLC1B ||
-		(type & 0x1F) == NOCOLC1T || (type & 0x1F) == NOCOLC2B || (type & 0x1F) == NOCOLC2T)
+	ftype = type & 0x1F;
+
+	if (ftype == ROOF_TYPE || ftype == SPLIT3 || ftype == SPLIT4 || ftype == NOCOLC1B || ftype == NOCOLC1T || ftype == NOCOLC2B || ftype == NOCOLC2T)
 	{
 		if (type & 0x8000)
 			return NO_ROOM;
@@ -1660,7 +1659,9 @@ short GetDoor(FLOOR_INFO* floor)
 		type = *data++;
 	}
 
-	if ((type & 0x1F) == DOOR_TYPE)
+	ftype = type & 0x1F;
+
+	if (ftype == DOOR_TYPE)
 		return *data;
 
 	return NO_ROOM;
@@ -2245,11 +2246,11 @@ long CheckNoColCeilingTriangle(FLOOR_INFO* floor, long x, long z)
 		return 0;
 
 	data = &floor_data[floor->index];
-	type = data[0] & 0x1F;
+	type = *data & 0x1F;
 
 	if (type == TILT_TYPE || type == SPLIT1 || type == SPLIT2 || type == NOCOLF1T || type == NOCOLF1B || type == NOCOLF2T || type == NOCOLF2B)
 	{
-		if (data[0] & 0x8000)
+		if (*data & 0x8000)
 			return 0;
 
 		type = data[2] & 0x1F;
@@ -2327,7 +2328,8 @@ long IsRoomOutside(long x, long y, long z)
 long GetMaximumFloor(FLOOR_INFO* floor, long x, long z)
 {
 	long height, h1, h2;
-	short* data, type, dx, dz, t0, t1, t2, t3, hadj;
+	short* data;
+	short type, ftype, dx, dz, t0, t1, t2, t3, hadj;
 
 	height = floor->floor << 8;
 
@@ -2336,15 +2338,16 @@ long GetMaximumFloor(FLOOR_INFO* floor, long x, long z)
 
 	data = &floor_data[floor->index];
 	type = *data++;
+	ftype = type & 0x1F;
 	h1 = 0;
 	h2 = 0;
 
-	if ((type & 0x1F) == TILT_TYPE)
+	if (ftype == TILT_TYPE)
 	{
 		h1 = *data >> 8;
 		h2 = *(char*)data;
 	}
-	else if ((type & 0x1F) == SPLIT1 || (type & 0x1F) == SPLIT2 || (type & 0x1F) == NOCOLF1T || (type & 0x1F) == NOCOLF1B || (type & 0x1F) == NOCOLF2T || (type & 0x1F) == NOCOLF2B)
+	else if (ftype == SPLIT1 || ftype == SPLIT2 || ftype == NOCOLF1T || ftype == NOCOLF1B || ftype == NOCOLF2T || ftype == NOCOLF2B)
 	{
 		dx = x & WALL_MASK;
 		dz = z & WALL_MASK;
@@ -2353,7 +2356,7 @@ long GetMaximumFloor(FLOOR_INFO* floor, long x, long z)
 		t2 = *data >> 8 & 0xF;
 		t3 = *data >> 12 & 0xF;
 
-		if ((type & 0x1F) == SPLIT1 || (type & 0x1F) == NOCOLF1T || (type & 0x1F) == NOCOLF1B)
+		if (ftype == SPLIT1 || ftype == NOCOLF1T || ftype == NOCOLF1B)
 		{
 			if (dx <= WALL_SIZE - dz)
 			{
@@ -2397,7 +2400,8 @@ long GetMaximumFloor(FLOOR_INFO* floor, long x, long z)
 long GetMinimumCeiling(FLOOR_INFO* floor, long x, long z)
 {
 	long height, h1, h2;
-	short* data, type, dx, dz, t0, t1, t2, t3, hadj, ended;
+	short* data;
+	short type, ftype, dx, dz, t0, t1, t2, t3, hadj, ended;
 
 	height = floor->ceiling << 8;
 
@@ -2406,9 +2410,10 @@ long GetMinimumCeiling(FLOOR_INFO* floor, long x, long z)
 
 	data = &floor_data[floor->index];
 	type = *data++;
+	ftype = type & 0x1F;
 	ended = 0;
 
-	if ((type & 0x1F) == TILT_TYPE || (type & 0x1F) == SPLIT1 || (type & 0x1F) == SPLIT2 || (type & 0x1F) == NOCOLF1T || (type & 0x1F) == NOCOLF1B || (type & 0x1F) == NOCOLF2T || (type & 0x1F) == NOCOLF2B)
+	if (ftype == TILT_TYPE || ftype == SPLIT1 || ftype == SPLIT2 || ftype == NOCOLF1T || ftype == NOCOLF1B || ftype == NOCOLF2T || ftype == NOCOLF2B)
 	{
 		data++;
 
@@ -2421,15 +2426,16 @@ long GetMinimumCeiling(FLOOR_INFO* floor, long x, long z)
 	if (ended)
 		return height;
 
+	ftype = type & 0x1F;
 	h1 = 0;
 	h2 = 0;
 
-	if ((type & 0x1F) == ROOF_TYPE)
+	if (ftype == ROOF_TYPE)
 	{
 		h1 = *data >> 8;
 		h2 = *(char*)data;
 	}
-	else if ((type & 0x1F) == SPLIT3 || (type & 0x1F) == SPLIT4 || (type & 0x1F) == NOCOLC1T || (type & 0x1F) == NOCOLC1B || (type & 0x1F) == NOCOLC2T || (type & 0x1F) == NOCOLC2B)
+	else if (ftype == SPLIT3 || ftype == SPLIT4 || ftype == NOCOLC1T || ftype == NOCOLC1B || ftype == NOCOLC2T || ftype == NOCOLC2B)
 	{
 		dx = x & WALL_MASK;
 		dz = z & WALL_MASK;
@@ -2438,7 +2444,7 @@ long GetMinimumCeiling(FLOOR_INFO* floor, long x, long z)
 		t2 = -(*data >> 8 & 0xF);
 		t3 = -(*data >> 12 & 0xF);
 
-		if ((type & 0x1F) == SPLIT3 || (type & 0x1F) == NOCOLC1T || (type & 0x1F) == NOCOLC1B)
+		if (ftype == SPLIT3 || ftype == NOCOLC1T || ftype == NOCOLC1B)
 		{
 			if (dx <= WALL_SIZE - dz)
 			{
