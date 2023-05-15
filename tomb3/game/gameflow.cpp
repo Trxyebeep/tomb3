@@ -102,6 +102,9 @@ long GF_LoadScriptFile(const char* name)
 	if (!S_LoadGameFlow(name))
 		return 0;
 
+#ifdef _DEBUG
+	gameflow.play_any_level = 1;
+#endif
 	gameflow.dozy_cheat_enabled = 1;	//huh?
 	gameflow.stats_track = 14;
 
