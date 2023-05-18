@@ -3,58 +3,58 @@ game_strings:
 INVENTARIO
 OPCIONES
 OBJETOS
-JUEGO TERMINADO
-Cargar Juego
-Guardar Juego
-Juego Nuevo
-Reinicio Nivel
-Regresar a los T)itulos
-Salir Demo
-Salir Juego
+FIN DEL JUEGO
+Cargar Partida
+Guardar Partida
+Nueva Partida
+Reiniciar Nivel
+Regresar al Men)u Principal
+Salir de la Demo
+Salir del Juego
 Seleccionar Nivel
 Guardar Posici)on
-Seleccionar Detalles
+Nivel de Detalle
 Alto
 Medio
 Bajo
-Andar
+Caminar
 Rodar
 Correr
 Izquierda
 Derecha
 Atr)as
-Agachar
+Agacharse
 ?
-Carrera
+Correr
 ?
-Mirar
+Observar
 Saltar
 Acci)on
 Sacar Armas
 ?
 Inventario
 Bengala
-Carrera
+Correr
 Estad)isticas
 Pistolas
-Escopetas
-Aguila del Desierto
+Escopeta
+Desert Eagle
 Uzis
-Fusil Arp)on
+Fusil de Arpones
 MP5
-Lanza Cohetes
-Lanza Granadas
+Lanzacohetes
+Lanzagranadas
 Bengala
-Cargadores Pistola
-Proyectil Escopeta
-Cargadores Aguila del Desierto
-cargadores Uzi
+Munici)on de Pistola
+Cartuchos de Escopeta
+Munici)on de Desert Eagle
+Munici)on de Uzi
 Arpones
-Cargadores MP5
+Cargadores de MP5
 Cohetes
 Granadas
-Paq. M)edico Pequeno
-Paq. M)edico Prande
+Botiqu)in Peque)no
+Botiqu)in Grande
 Coger
 Puzzle
 Llave
@@ -64,33 +64,33 @@ Cargando
 Tiempo Tomado
 Secretos Encontrados
 Localizaci)on
-Muertos
-Armamento Usada
-Golpes
-Guardas Realizadas
-Distancia recorrida
-Paq. M)edicos Utilizados
+Matanzas
+Munici)on Usada
+Aciertos
+Cantidad de Guardados
+Distancia Recorrida
+Botiquines Utilizados
 Release Version 1.0
 Ninguna
 terminada
 MEJORES TIEMPOS
-No tiempos Fijados
+No hay tiempos registrados
 N/A
 Posici)on actual
 Estad)isticas finales
-of
+de
 Historia por ahora...
 Piedra Infada
 Elemento 115
 El Ojo de Isis
-Punal Ora
-Cristal Guardar Juego
+Pu)nal Ora
+Cristal de Guardado
 Londres
 Nevada
 Islas del Pac)ifico Sur
 Ant)artida
-Peru
-Aventura
+Per)u
+Pr)oxima Aventura
 s
 
 end:
@@ -99,34 +99,34 @@ end:
 
 pc_strings:
 
-Detalles Niveles
+Nivel de Detalle
 Modo Demo
 Sonido
 Controles
-Gamma
-Fijar Volumen
-Usar Llaves
+Brillo
+Configurar Sonido
+Configurar Teclas
 !El archivo no ha podido ser guardado!
 ?Probar de nuevo?
-Si
+S)i
 No
-!Guardar Completado!
-!No hay juegos guardados!
-Ninguno valido
+!Guardado Completado!
+!No hay partidas guardadas!
+Ninguno v)alido
 ?Guardar juego?
-- Rendija vac)ia -
-Off
-On
+- Espacio vac)ia -
+Desactivado
+Activado
 Configurar tarj. Sonido
 Teclas por defecto
 DOZY
-Opciones Detalles
+Configurar Gr)aficos
 Resoluci)on
-Tope Z
+Z-buffer
 Filtro
-Vacilación
+Dither
 Alpha
-Gamma
+Brillo
 NA
 spare
 spare

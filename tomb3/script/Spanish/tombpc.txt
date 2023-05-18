@@ -47,7 +47,7 @@ Gym: Hogar de Lara
 Load_pic: pix\house.bmp
 track: 2
 game: data\house.TR2
-Key1: Llave de Carrera
+Key1: Llave de la Pista de Carreras
 StartInv: CRYSTAL
 end:
 
@@ -73,10 +73,10 @@ Load_pic: pix\india.bmp
 game: data\temple.TR2
 Puzzle1: Cimitarra
 Puzzle2: Cimitarra
-Key1: La llave de Ganesha
-Key2: La llave de Ganesha
-Key3: La llave de Ganesha
-Key4: La llave de Ganesha
+Key1: Llave de Ganesha
+Key2: Llave de Ganesha
+Key3: Llave de Ganesha
+Key4: Llave de Ganesha
 track: 69
 cutangle: 16384
 cut: cuts\cut9.TR2
@@ -108,7 +108,7 @@ track: 32
 Load_pic: pix\southpac.bmp
 game: data\shore.TR2
 Puzzle1: Piedra de Serpiente
-Key1: Llave Contrabandista
+Key1: Llave del Contrabandista
 track: 68
 cutangle: 16384
 cut: cuts\cut1.TR2
@@ -122,8 +122,8 @@ Load_pic: pix\southpac.bmp
 StartInv: PICKUP1
 game: data\crash.TR2
 Pickup1: Mapa del pantano
-Key1: Llave Comandante Bishop
-Key2: Llave Lt. Tuckerman
+Key1: Llave del Comandante Bishop
+Key2: Llave del Tte. Tuckerman
 track: 65
 cutangle: 16384
 cut: cuts\cut4.TR2
@@ -155,8 +155,8 @@ Load_pic: pix\london.bmp
 NoFloor: 1792
 Rain:
 game: data\roofs.TR2
-Key1: Llave Habitaci)on Flue
-Key2: Llave de Catedral
+Key1: Llave de las Tuber)ias
+Key2: Llave de la Catedral
 track: 67
 cutangle: 49152
 cut: cuts\cut2.TR2
@@ -171,12 +171,12 @@ WaterParts:
 game: data\sewer.TR2
 Puzzle1: Penique antiguo
 Puzzle2: Ticket
-Puzzle3: Mzo Mas)onico
+Puzzle3: Mazo Mas)onico
 Puzzle4: Estrella Ornamentada
-Key1: Llave Mantenimiento
-Key2: Llave Salom)on
-Key3: Llave Salom)on
-Key4: Llave Salom)on
+Key1: Llave de Mantenimiento
+Key2: Llave de Salom)on
+Key3: Llave de Salom)on
+Key4: Llave de Salom)on
 track: 63
 cutangle: 16384
 cut: cuts\cut5.TR2
@@ -190,7 +190,7 @@ Load_pic: pix\london.bmp
 WaterParts:
 game: data\tower.TR2
 Puzzle1: L)iquido para Embalsamar
-Key1: Llave Habitaci)on Caldera
+Key1: Llave de la Habitaci)on de la Caldera
 track: 71
 cutangle: 16384
 cut: cuts\cut11.TR2
@@ -214,7 +214,7 @@ track: 33
 Load_pic: pix\nevada.bmp
 game: data\nevada.TR2
 Key1: Acceso al Generador
-Key2: Palanca Detonadora
+Key2: Interruptor de la Detonadora
 track: 72
 cutangle: 16384
 cut: cuts\cut7.TR2
@@ -222,7 +222,7 @@ complete:
 end:
 
 //Level 14
-Level: Compuesto Alta Seguridad
+Level: Compuesto de Alta Seguridad
 track: 27
 Load_pic: pix\nevada.bmp
 remove_weapons:
@@ -244,11 +244,11 @@ track: 27
 Load_pic: pix\nevada.bmp
 Death: ELECTRIC
 game: data\area51.TR2
-Puzzle1: Llave Acceso a Torre
-Puzzle2: Disco C)odigos libre
-Puzzle3: Disco C)odigo libre
-Puzzle4: Llave Acceso perchero
-Key1: Pase C)odogo Lanzamiento
+Puzzle1: Llave de Acceso a Torre
+Puzzle2: Disco de C)odigo libre
+Puzzle3: Disco de C)odigo libre
+Puzzle4: Llave de acceso al Hangar
+Key1: Pase del C)odigo de Lanzamiento
 complete:
 end:
 
@@ -276,8 +276,8 @@ Load_pic: pix\antarc.bmp
 Cold:
 game: data\mines.TR2
 Puzzle1: Palanca
-Puzzle2: Indicador de )acido de bater)ia
-Puzzle3: Encendido del Torno
+Puzzle2: Indicador de )acido de Bater)ia
+Puzzle3: Arrancador del Cabresante
 complete:
 end:
 
@@ -311,7 +311,7 @@ Load_pic: pix\london.bmp
 NoFloor: 10000
 Rain:
 game: data\stpaul.TR2
-Key1: Llave Sotano
+Key1: Llave del S)otano
 complete:
 end:
 
