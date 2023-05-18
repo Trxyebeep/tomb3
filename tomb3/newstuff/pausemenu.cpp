@@ -14,6 +14,7 @@
 #include "../specific/smain.h"
 #include "../game/camera.h"
 #include "../game/control.h"
+#include "../game/gameflow.h"
 #if (DIRECT3D_VERSION >= 0x900)
 #include "Picture2.h"
 #else
@@ -22,6 +23,94 @@
 
 static TEXTSTRING* pause_text;
 static REQUEST_INFO Pause_Requester = {0};
+
+static const char* GetStupidText(long type)	//0-> Exit to Title?, 1-> Are you sure?, 2-> Yes, 3-> No, 4-> PAUSED
+{
+	static char buf[128];
+
+	switch (gameflow.language)
+	{
+	case 1:	//French
+
+		if (!type)
+			strcpy(buf, "Retour au menu principal ?");
+		else if (type == 1)
+			strcpy(buf, "(etes-vous s(ur ?");
+		else if (type == 2)
+			strcpy(buf, "Oui");
+		else if (type == 3)
+			strcpy(buf, "Non");
+		else
+			strcpy(buf, "PAUSE");
+
+		break;
+
+	case 2:	//German
+
+		if (!type)
+			strcpy(buf, "Zur~uck zum Titelbild?");
+		else if (type == 1)
+			strcpy(buf, "Sind Sie sicher?");
+		else if (type == 2)
+			strcpy(buf, "Ja");
+		else if (type == 3)
+			strcpy(buf, "Nein");
+		else
+			strcpy(buf, "PAUSE");
+
+		break;
+
+	case 5:	//Italian
+
+		if (!type)
+			strcpy(buf, "Esci al titolo?");
+		else if (type == 1)
+			strcpy(buf, "Sei sicuro?");
+		else if (type == 2)
+			strcpy(buf, "Si");
+		else if (type == 3)
+			strcpy(buf, "No");
+		else
+			strcpy(buf, "IN PAUSA");
+
+		break;
+
+	case 6:	//Spanish
+
+		if (!type)
+			strcpy(buf, "Volver al Men)u?");
+		else if (type == 1)
+			strcpy(buf, "Est)as seguro?");
+		else if (type == 2)
+			strcpy(buf, "S)i");
+		else if (type == 3)
+			strcpy(buf, "No");
+		else
+			strcpy(buf, "PAUSADO");
+
+		break;
+
+	case 0:	//English
+	case 3:	//"American"
+	case 4:	//Japanese
+	default:
+
+		if (!type)
+			strcpy(buf, "Exit to Title?");
+		else if (type == 1)
+			strcpy(buf, "Are you sure?");
+		else if (type == 2)
+			strcpy(buf, "Yes");
+		else if (type == 3)
+			strcpy(buf, "No");
+		else
+			strcpy(buf, "PAUSED");
+
+		break;
+	}
+
+	return buf;
+}
 
 static long ShowPauseRequester(const char* txt, const char* opt1, const char* opt2, ushort selected)
 {
@@ -70,9 +159,13 @@ static long DoPauseRequester()
 {
 	static long page;
 	long selected, p;
+	char t[32], y[32], n[32];
 
 	selected = 0;
 	inputDB = GetDebouncedInput(input);
+
+	strcpy(y, GetStupidText(2));
+	strcpy(n, GetStupidText(3));
 
 	switch (page)
 	{
@@ -91,8 +184,8 @@ static long DoPauseRequester()
 			break;
 
 	case 1:
-
-		p = ShowPauseRequester("Exit to Title?", "Yes", "No", 1);
+		strcpy(t, GetStupidText(0));
+		p = ShowPauseRequester(t, y, n, 1);
 
 		if (p == 1)
 		{
@@ -110,8 +203,8 @@ static long DoPauseRequester()
 			break;
 
 	case 2:
-
-		p = ShowPauseRequester("Are you sure?", "Yes", "No", 1);
+		strcpy(t, GetStupidText(1));
+		p = ShowPauseRequester(t, y, n, 1);
 
 		if (p == 1)
 		{
@@ -159,7 +252,7 @@ long S_Pause()
 
 		if (!pause_text)
 		{
-			pause_text = T_Print(0, -24, 5, "PAUSED");
+			pause_text = T_Print(0, -24, 5, GetStupidText(4));
 			T_CentreH(pause_text, 1);
 			T_BottomAlign(pause_text, 1);
 		}
