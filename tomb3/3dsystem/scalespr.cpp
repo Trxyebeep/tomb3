@@ -113,8 +113,8 @@ void S_DrawScreenSprite2d(long x, long y, long z, long scaleH, long scaleV, shor
 	}
 
 	sprite = &phdspriteinfo[sprnum];
-	y1 = y + ((scaleV * sprite->y1) >> 16);
 	x1 = x + ((scaleH * sprite->x1) >> 16);
+	y1 = y + ((scaleV * sprite->y1) >> 16);
 	x2 = x + ((scaleH * sprite->x2) >> 16);
 	y2 = y + ((scaleV * sprite->y2) >> 16);
 
@@ -128,8 +128,8 @@ void S_DrawScreenSprite2d(long x, long y, long z, long scaleH, long scaleV, shor
 		else
 		{
 			p = GetRenderScale(1);
-			InsertSprite(phd_znear + 0x28000, x1, y1, x2, y2, sprnum, c1, c2, DT_POLY_WGT, 0);
-			InsertSprite(phd_znear + 0x3C000, x1 + p, y1 + p, x2 + p, y2 + p, sprnum, 0, 0, DT_POLY_WGT, 0);
+			InsertSprite(phd_znear + (10 << W2V_SHIFT), x1, y1, x2, y2, sprnum, c1, c2, DT_POLY_WGT, 2);
+			InsertSprite(phd_znear + (15 << W2V_SHIFT), x1 + p, y1 + p, x2 + p, y2 + p, sprnum, 0, 0, DT_POLY_WGT, 2);
 		}
 	}
 }

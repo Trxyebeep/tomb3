@@ -4,7 +4,12 @@
 
 ### Original bug fixes
 
+- Fix text sprites getting cut off at the bottom.
+
 ### tomb3 additions
+
+- Improve Spanish localization.
+- Localize pause menu text.
 
 ### tomb3 bug fixes
 

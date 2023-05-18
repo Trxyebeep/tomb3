@@ -218,7 +218,7 @@ INVENTORY_ITEM* inv_levelselect_list[1] =
 
 #define STATS_LN_COUNT	7
 #define STATS_Y_POS		-44
-#define REQ_LN_HEIGHT	15
+#define REQ_LN_HEIGHT	18
 
 bool noAdditiveBG;
 
