@@ -26,7 +26,7 @@ static REQUEST_INFO Pause_Requester = {0};
 
 static const char* GetStupidText(long type)	//0-> Exit to Title?, 1-> Are you sure?, 2-> Yes, 3-> No, 4-> PAUSED
 {
-	static char buf[128];
+	static char buf[64];
 
 	switch (gameflow.language)
 	{
@@ -63,15 +63,15 @@ static const char* GetStupidText(long type)	//0-> Exit to Title?, 1-> Are you su
 	case 5:	//Italian
 
 		if (!type)
-			strcpy(buf, "Esci al titolo?");
+			strcpy(buf, "Tornare alla schermata principale?");
 		else if (type == 1)
 			strcpy(buf, "Sei sicuro?");
 		else if (type == 2)
-			strcpy(buf, "Si");
+			strcpy(buf, "S$i");
 		else if (type == 3)
 			strcpy(buf, "No");
 		else
-			strcpy(buf, "IN PAUSA");
+			strcpy(buf, "PAUSA");
 
 		break;
 
@@ -159,7 +159,7 @@ static long DoPauseRequester()
 {
 	static long page;
 	long selected, p;
-	char t[32], y[32], n[32];
+	char t[64], y[32], n[32];
 
 	selected = 0;
 	inputDB = GetDebouncedInput(input);
