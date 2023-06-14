@@ -4156,6 +4156,7 @@ void lara_as_duckroll(ITEM_INFO* item, COLL_INFO* coll)
 {
 	camera.target_elevation = -3640;
 	item->goal_anim_state = AS_DUCK;
+	lara.IsDucked = 1;	//she's ducked for all intents and purposes
 }
 
 void lara_col_duckroll(ITEM_INFO* item, COLL_INFO* coll)

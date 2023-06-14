@@ -1,5 +1,21 @@
 # tomb3 changelog
 
+## Unreleased:
+
+### Original bug fixes
+
+- Fix text sprites getting cut off at the bottom.
+
+### tomb3 additions
+
+- Improve Spanish localization.
+- Localize pause menu text.
+
+### tomb3 bug fixes
+
+- Fix duckroll pickups.
+
+
 ## [2.0.2](https://github.com/Trxyebeep/tomb3/tree/V2.0.1) (May. 8 2023)
 
 ### Original bug fixes

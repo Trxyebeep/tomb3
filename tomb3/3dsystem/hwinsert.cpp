@@ -1025,14 +1025,18 @@ void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, lo
 	z = one / (float)zdepth;
 	u1 = float((sprite->offset << 8) & 0xFF00);
 	v1 = float(sprite->offset & 0xFF00);
-	u2 = (u1 + sprite->width - float(App.nUVAdd)) * z;
-	v2 = (v1 + sprite->height - float(App.nUVAdd)) * z;
-	u1 = (u1 + float(App.nUVAdd)) * z;
-	v1 = (v1 + float(App.nUVAdd)) * z;
+	u2 = (u1 + sprite->width - (float)App.nUVAdd) * z;
+	v2 = (v1 + sprite->height - (float)App.nUVAdd) * z;
+	u1 = (u1 + (float)App.nUVAdd) * z;
+	v1 = (v1 + (float)App.nUVAdd) * z;
+
+	v1 += offset << W2V_SHIFT;
+	v2 += offset << W2V_SHIFT;
+
 	vtx = v_buffer;
 	nPoints = 4;
 
-	vtx->x = float(x1 + offset);
+	vtx->x = (float)x1;
 	vtx->y = (float)y1;
 	vtx->ooz = z;
 	vtx->vr = GETR(shade);
@@ -1042,7 +1046,7 @@ void HWI_InsertSprite_Sorted(long zdepth, long x1, long y1, long x2, long y2, lo
 	vtx->v = v1;
 	vtx++;
 
-	vtx->x = float(x2 + offset);
+	vtx->x = (float)x2;
 	vtx->y = (float)y1;
 	vtx->ooz = z;
 	vtx->vr = GETR(shade);

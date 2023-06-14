@@ -1877,8 +1877,8 @@ struct REQUEST_INFO
 	TEXTSTRING* moredowntext;
 	TEXTSTRING* texts1[24];
 	TEXTSTRING* texts2[24];
-	char heading1_str[32];
-	char heading2_str[32];
+	char heading1_str[64];
+	char heading2_str[64];
 	long original_render_width;
 	long original_render_height;
 };
