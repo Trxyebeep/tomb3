@@ -570,7 +570,7 @@ long S_FrontEndCheck(SAVEGAME_INFO* pData, long nBytes)
 	Init_Requester(&Load_Game_Requester);
 	SavedGames = 0;
 
-	for (int i = 0; i < 16; i++)
+	for (int i = 0; i < 24; i++)
 	{
 		SetSaveDir(name, sizeof(name), i);
 		handle = CreateFile(name, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
