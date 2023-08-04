@@ -1595,6 +1595,6 @@ void RollingBallCollision(short item_number, ITEM_INFO* l, COLL_INFO* coll)
 			}
 		}
 	}
-	else if (item->active != ITEM_INVISIBLE)
+	else if (item->status != ITEM_INVISIBLE)
 		ObjectCollision(item_number, l, coll);
 }
